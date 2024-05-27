@@ -315,6 +315,7 @@ static Napi::Value getContext(const Napi::CallbackInfo &info) {
         #if CC_USE_EDITBOX
             exports["onTextChange"] = Napi::Function::New(env, OpenHarmonyEditBox::napiOnTextChange);
             exports["onComplete"] = Napi::Function::New(env, OpenHarmonyEditBox::napiOnComplete);
+            exports["onConfirm"] = Napi::Function::New(env, OpenHarmonyEditBox::napiOnConfirm);
         #endif
         } break;
         case WEBVIEW_UTILS: {

@@ -29,7 +29,6 @@
 #include "application/ApplicationManager.h"
 #include "platform/openharmony/napi/NapiHelper.h"
 #include "bindings/jswrapper/SeApi.h"
-
 namespace cc {
 
 /*************************************************************************
@@ -70,7 +69,34 @@ void callJSFunc(const ccstd::string &type, const ccstd::string &text) {
 Implementation of EditBox.
 ************************************************************************/
 void EditBox::show(const EditBox::ShowInfo &showInfo) {
-    NapiHelper::postMessageToUIThread("showEditBox", Napi::String::New(NapiHelper::getWorkerEnv(), showInfo.defaultValue));
+    auto env = NapiHelper::getWorkerEnv();
+    auto args = Napi::Object::New(env);
+    args["defaultValue"] = Napi::String::New(env, showInfo.defaultValue);
+    args["confirmType"] = Napi::String::New(env, showInfo.confirmType);
+    args["inputType"] = Napi::String::New(env, showInfo.inputType);
+    
+    args["maxLength"] = Napi::Number::New(env, showInfo.maxLength);
+    args["x"] = Napi::Number::New(env, showInfo.x);
+    args["y"] = Napi::Number::New(env, showInfo.y);
+    args["width"] = Napi::Number::New(env, showInfo.width);
+    args["height"] = Napi::Number::New(env, showInfo.height);
+    
+    args["confirmHold"] = Napi::Boolean::New(env, showInfo.confirmHold);
+    args["isMultiline"] = Napi::Boolean::New(env, showInfo.isMultiline);
+
+    args["fontSize"] = Napi::Number::New(env, showInfo.fontSize);
+    args["fontColor"] = Napi::Number::New(env, showInfo.fontColor);
+    args["backColor"] = Napi::Number::New(env, showInfo.backColor);
+    args["backgroundColor"] = Napi::Number::New(env, showInfo.backgroundColor);
+
+    args["isBold"] = Napi::Boolean::New(env, showInfo.isBold);
+    args["isItalic"] = Napi::Boolean::New(env, showInfo.isItalic);
+    args["isUnderline"] = Napi::Boolean::New(env, showInfo.isUnderline);
+
+    args["underlineColor"] = Napi::Number::New(env, showInfo.underlineColor);
+    args["textAlignment"] = Napi::Number::New(env, showInfo.textAlignment);
+    
+    NapiHelper::postMessageToUIThread("showEditBox", args);
 }
 
 void EditBox::hide() {
@@ -100,6 +126,22 @@ void OpenHarmonyEditBox::napiOnTextChange(const Napi::CallbackInfo &info) {
 
     ccstd::string buffer = info[0].As<Napi::String>().Utf8Value();
     callJSFunc("input", buffer);
+}
+
+
+void OpenHarmonyEditBox::napiOnConfirm(const Napi::CallbackInfo &info) {
+    auto env = info.Env();
+    if (info.Length() != 1) {
+        Napi::Error::New(env, "napiOnConfirm, 1 argument expected").ThrowAsJavaScriptException();
+        return;
+    }
+
+    if (!info[0].IsString()) {
+        Napi::TypeError::New(env, "napiOnConfirm, string argument expected").ThrowAsJavaScriptException();
+        return;
+    }
+    ccstd::string buffer = info[0].As<Napi::String>().Utf8Value();
+    callJSFunc("confirm", buffer);
 }
 
 } // namespace cc

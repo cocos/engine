@@ -67,50 +67,54 @@ uiPort._messageHandle = function(e) {
     var data = e.data;
     var msg = data.data;
     switch(msg.name) {
-        case "onXCLoad":
-            const renderContext = nativerender.getContext(ContextType.NATIVE_RENDER_API);
-            renderContext.nativeEngineInit();
+    case "onXCLoad":
+      const renderContext = nativerender.getContext(ContextType.NATIVE_RENDER_API);
+      renderContext.nativeEngineInit();
 
-            <% if(!useV8) { %>
-            launchEngine().then(() => {
-                console.info('launch CC engine finished');
-            }).catch(e => {
-                console.error('launch CC engine failed');
-            });
-            <% } %>
-           // @ts-ignore
-            globalThis.oh.postMessage = nativeContext.postMessage;
-           // @ts-ignore
-            globalThis.oh.postSyncMessage = nativeContext.postSyncMessage;
-            renderContext.nativeEngineStart();
-            break;
-        case "onTextInput":
-            nativeEditBox.onTextChange(msg.param);
-            break;
-        case "onComplete":
-            nativeEditBox.onComplete(msg.param);
-            break;
-        case "onPageBegin":
-            nativeWebView.shouldStartLoading(msg.param.viewTag, msg.param.url);
-            break;
-        case "onPageEnd":
-            nativeWebView.finishLoading(msg.param.viewTag, msg.param.url);
-            break;
-        case "onErrorReceive":
-            nativeWebView.failLoading(msg.param.viewTag, msg.param.url);
-            break;
-        case "onVideoEvent":
-            // @ts-ignore
-            if(globalThis.oh && typeof globalThis.oh.onVideoEvent === "function") {
-                // @ts-ignore
-                globalThis.oh.onVideoEvent(msg.param.videoTag, msg.param.videoEvent, msg.param.args);
-            } else {
-	    	nativeVideo.onVideoEvent(msg.param.videoTag, msg.param.videoEvent, msg.param.args);
-	    }
-            break;
-        default:
-            console.error("cocos worker: message type unknown");
-            break;
-    }
+
+      <% if(!useV8) { %>
+        launchEngine().then(() => {
+          console.info('launch CC engine finished');
+        }).catch(e => {
+          console.error('launch CC engine failed');
+        });
+      <% } %>
+      // @ts-ignore
+      globalThis.oh.postMessage = nativeContext.postMessage;
+      // @ts-ignore
+      globalThis.oh.postSyncMessage = nativeContext.postSyncMessage;
+      renderContext.nativeEngineStart();
+      break;
+    case "onTextInput":
+      nativeEditBox.onTextChange(msg.param);
+      break;
+    case "onComplete":
+      nativeEditBox.onComplete(msg.param);
+      break;
+    case "onConfirm":
+      nativeEditBox.onConfirm(msg.param);
+      break;
+    case "onPageBegin":
+      nativeWebView.shouldStartLoading(msg.param.viewTag, msg.param.url);
+      break;
+    case "onPageEnd":
+      nativeWebView.finishLoading(msg.param.viewTag, msg.param.url);
+      break;
+    case "onErrorReceive":
+      nativeWebView.failLoading(msg.param.viewTag, msg.param.url);
+      break;
+    case "onVideoEvent":
+      // @ts-ignore
+      if (globalThis.oh && typeof globalThis.oh.onVideoEvent === "function") {
+        // @ts-ignore
+        globalThis.oh.onVideoEvent(msg.param.videoTag, msg.param.videoEvent, msg.param.args);
+      } else {
+    	nativeVideo.onVideoEvent(msg.param.videoTag, msg.param.videoEvent, msg.param.args);
+      }
+      break;
+    default:
+      console.error("cocos worker: message type unknown");
+      break;
+  }
 }
 
