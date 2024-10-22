@@ -209,7 +209,7 @@ export function safeMeasureText (ctx: CanvasRenderingContext2D, string: string, 
     }
 
     const metric = ctx.measureText(string);
-    const width = metric && metric.width || 0;
+    const width = metric && metric.actualBoundingBoxLeft?(metric.actualBoundingBoxLeft + metric.actualBoundingBoxRight): (metric.width || 0);
     measureCache.put(key, width);
 
     return width;

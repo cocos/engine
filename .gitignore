@@ -25,6 +25,7 @@ native/external/
 
 !templates/**/*
 templates/**/.DS_Store
+templates/**/.gradle
 
 platforms/runtime/local-commit.json
 platforms/runtime/common/web-adapter.js
