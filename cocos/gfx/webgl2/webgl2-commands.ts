@@ -2970,30 +2970,36 @@ export function WebGL2CmdFuncCopyBuffersToTexture (
                     gpuTexture.glType$,
                     pixels,
                 );
-            } else if (gpuTexture.glInternalFmt$ !== WebGL2EXT.COMPRESSED_RGB_ETC1_WEBGL as number) {
-                gl.compressedTexSubImage3D(
-                    WebGLConstants.TEXTURE_2D_ARRAY,
-                    mipLevel,
-                    offset.x,
-                    offset.y,
-                    offset.z,
-                    destWidth,
-                    destHeight,
-                    extent.depth,
-                    gpuTexture.glFormat$,
-                    pixels,
+            } else {
+                const isFullCopy = (
+                    gpuTexture.width$ === destWidth && gpuTexture.height$ === destHeight &&
+                    offset.x === 0 && offset.y === 0
                 );
-            } else { // WEBGL_compressed_texture_etc1
-                gl.compressedTexImage3D(
-                    WebGLConstants.TEXTURE_2D_ARRAY,
-                    mipLevel,
-                    gpuTexture.glInternalFmt$,
-                    destWidth,
-                    destHeight,
-                    extent.depth,
-                    0,
-                    pixels,
-                );
+                if (!isFullCopy && gpuTexture.glInternalFmt$ !== WebGL2EXT.COMPRESSED_RGB_ETC1_WEBGL as number) {
+                    gl.compressedTexSubImage3D(
+                        WebGLConstants.TEXTURE_2D_ARRAY,
+                        mipLevel,
+                        offset.x,
+                        offset.y,
+                        offset.z,
+                        destWidth,
+                        destHeight,
+                        extent.depth,
+                        gpuTexture.glFormat$,
+                        pixels,
+                    );
+                } else { // WEBGL_compressed_texture_etc1
+                    gl.compressedTexImage3D(
+                        WebGLConstants.TEXTURE_2D_ARRAY,
+                        mipLevel,
+                        gpuTexture.glInternalFmt$,
+                        destWidth,
+                        destHeight,
+                        extent.depth,
+                        0,
+                        pixels,
+                    );
+                }
             }
         }
         break;
