@@ -2972,8 +2972,8 @@ export function WebGL2CmdFuncCopyBuffersToTexture (
                 );
             } else {
                 const isFullCopy = (
-                    gpuTexture.width$ === destWidth && gpuTexture.height$ === destHeight &&
-                    offset.x === 0 && offset.y === 0
+                    gpuTexture.width$ === destWidth && gpuTexture.height$ === destHeight
+                    && offset.x === 0 && offset.y === 0
                 );
                 if (!isFullCopy && gpuTexture.glInternalFmt$ !== WebGL2EXT.COMPRESSED_RGB_ETC1_WEBGL as number) {
                     gl.compressedTexSubImage3D(
