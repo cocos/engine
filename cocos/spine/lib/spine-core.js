@@ -1,7 +1,12 @@
 var spine;
 (function (spine) {
 
-    var enums = [];
+    function defineReverseKeyEnum(e) {
+        for (var key in e) {
+            var value = e[key];
+            e[value] = key;
+        }
+    }
 
     var e = spine.MixBlend = {
         setup: 0,
@@ -9,13 +14,13 @@ var spine;
         replace: 2,
         add: 3
     };
-    enums.push(e);
+    defineReverseKeyEnum(e);
     
     e = spine.MixDirection = {
         mixIn: 0,
         mixOut: 1
     };
-    enums.push(e);
+    defineReverseKeyEnum(e);
 
     e = spine.TimelineType = {
         rotate: 0,
@@ -34,7 +39,7 @@ var spine;
         pathConstraintMix: 13,
         twoColor: 14
     };
-    enums.push(e);
+    defineReverseKeyEnum(e);
 
     e = spine.EventType = {
         start:0,
@@ -44,7 +49,7 @@ var spine;
         complete: 4,
         event: 5
     };
-    enums.push(e);
+    defineReverseKeyEnum(e);
 
     e = spine.BlendMode = {
         Normal:0,
@@ -52,7 +57,7 @@ var spine;
         Multiply: 2,
         Screen: 3
     };
-    enums.push(e);
+    defineReverseKeyEnum(e);
 
     e = spine.TransformMode = {
         Normal: 0,
@@ -61,27 +66,27 @@ var spine;
         NoScale: 3,
         NoScaleOrReflection: 4
     };
-    enums.push(e);
+    defineReverseKeyEnum(e);
 
     e = spine.PositionMode = {
         Fixed: 0,
         Percent: 1
     };
-    enums.push(e);
+    defineReverseKeyEnum(e);
     
     e = spine.SpacingMode = {
         Length: 0,
         Fixed: 1,
         Percent: 2
     };
-    enums.push(e);
+    defineReverseKeyEnum(e);
 
     e = spine.RotateMode = {
         Tangent: 0,
         Chain: 1,
         ChainScale: 2
     };
-    enums.push(e);
+    defineReverseKeyEnum(e);
 
     e = spine.TextureFilter = {
         Nearest: 9728,
@@ -92,14 +97,14 @@ var spine;
         MipMapNearestLinear: 9986,
         MipMapLinearLinear: 9987
     };
-    enums.push(e);
+    defineReverseKeyEnum(e);
     
     e = spine.TextureWrap = {
         MirroredRepeat: 33648,
         ClampToEdge: 33071,
         Repeat: 10497
     };
-    enums.push(e);
+    defineReverseKeyEnum(e);
 
     e = spine.AttachmentType = {
         Region: 0,
@@ -110,15 +115,7 @@ var spine;
         Point: 5,
         Clipping: 6
     };
-    enums.push(e);
-
-    // Support reverse keys
-    enums.forEach((e) => {
-        for (var key in e) {
-            var value = e[key];
-            e[value] = key;
-        }
-    });
+    defineReverseKeyEnum(e);
 
     e = null;
 
