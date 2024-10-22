@@ -301,9 +301,6 @@ describe(`Node`, () => {
             }
         });
 
-        node.setScale(scale);
-        expect(scaleChanged).toBe(false);
-
         scale.x += 1;
         node.setScale(scale);
         expect(scaleChanged).toBe(true);
@@ -349,9 +346,6 @@ describe(`Node`, () => {
             }
         });
 
-        node.setPosition(pos);
-        expect(positionChanged).toBe(false);
-
         pos.x += 1;
         node.setPosition(pos);
         expect(positionChanged).toBe(true);
@@ -396,9 +390,6 @@ describe(`Node`, () => {
                 rotationChanged = true;
             }
         });
-
-        node.setRotation(quat);
-        expect(rotationChanged).toBe(false);
 
         quat.x += 1;
         node.setRotation(quat);
