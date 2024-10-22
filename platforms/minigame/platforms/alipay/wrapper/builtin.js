@@ -1684,7 +1684,7 @@ var XMLHttpRequest = function (_EventTarget) {
                 errorMessage = _res$errorMessage === undefined ? "" : _res$errorMessage;
 
             var data = res.data || "";
-            if (data.includes("超时") || errorMessage.includes("超时")) {
+            if ((typeof data === "string" && data.includes("超时")) || errorMessage.includes("超时")) {
               _triggerEvent.call(_this2, 'timeout');
             }
 

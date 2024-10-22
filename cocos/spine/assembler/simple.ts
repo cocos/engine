@@ -72,7 +72,7 @@ function _getSlotMaterial (blendMode: number, comp: Skeleton): MaterialInstance 
         dst = BlendFactor.ONE_MINUS_SRC_ALPHA;
         break;
     case 3:
-        src = BlendFactor.ONE;
+        src = _premultipliedAlpha ? BlendFactor.ONE :  BlendFactor.SRC_ALPHA;
         dst = BlendFactor.ONE_MINUS_SRC_COLOR;
         break;
     case 0:

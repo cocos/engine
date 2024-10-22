@@ -169,8 +169,8 @@
 
         _getRect () {
             const node = this._delegate.node;
-            let viewScaleX = cc.view._scaleX;
-            let viewScaleY = cc.view._scaleY;
+            let viewScaleX = cc.view.getScaleX();
+            let viewScaleY = cc.view.getScaleY();
             const dpr = jsb.device.getDevicePixelRatio() || 1;
             node.getWorldMatrix(worldMat);
 
@@ -197,7 +197,7 @@
             const finalScaleX = worldMat.m00 * viewScaleX;
             const finaleScaleY = worldMat.m05 * viewScaleY;
 
-            const viewportRect = cc.view._viewportRect;
+            const viewportRect = cc.view.getViewportRect();
             const offsetX = viewportRect.x / dpr;
                 const offsetY = viewportRect.y / dpr;
             return {

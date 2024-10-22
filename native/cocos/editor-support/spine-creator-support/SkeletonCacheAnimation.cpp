@@ -287,7 +287,7 @@ void SkeletonCacheAnimation::render(float /*dt*/) {
                 curBlendDst = static_cast<int>(BlendFactor::ONE_MINUS_SRC_ALPHA);
                 break;
             case BlendMode_Screen:
-                curBlendSrc = static_cast<int>(BlendFactor::ONE);
+                curBlendSrc = static_cast<int>(_premultipliedAlpha ? BlendFactor::ONE : BlendFactor::SRC_ALPHA);
                 curBlendDst = static_cast<int>(BlendFactor::ONE_MINUS_SRC_COLOR);
                 break;
             default:
