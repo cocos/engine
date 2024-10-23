@@ -1,5 +1,4 @@
-#ifndef __SPINE_ATLAS_ATTACHMENT_LOADER_EXT_H
-#define __SPINE_ATLAS_ATTACHMENT_LOADER_EXT_H
+#pragma once
 
 #include "mesh-type-define.h"
 #include "spine/spine.h"
@@ -22,5 +21,3 @@ public:
 private:
     spine::Atlas *_atlasCache;
 };
-
-#endif

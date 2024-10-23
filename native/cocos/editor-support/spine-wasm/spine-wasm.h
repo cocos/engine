@@ -1,10 +1,7 @@
+#pragma once
 
-#ifndef _SPINE_WASM_H_
-#define _SPINE_WASM_H_
 #include <spine/spine.h>
 #include <string>
-#include "spine-skeleton-instance.h"
-using namespace spine;
 
 class SpineWasmUtil {
 public:
@@ -13,25 +10,23 @@ public:
     static uint32_t queryStoreMemory(uint32_t size);
     static void freeStoreMemory();
 
-    static SkeletonData* querySpineSkeletonDataByUUID(const std::string& uuid);
-    static SkeletonData* createSpineSkeletonDataWithJson(const std::string& jsonStr, const std::string& altasStr);
-    static SkeletonData* createSpineSkeletonDataWithBinary(uint32_t byteSize, const std::string& altasStr);
-    static void registerSpineSkeletonDataWithUUID(SkeletonData* data, const std::string& uuid);
+    static spine::SkeletonData* querySpineSkeletonDataByUUID(const std::string& uuid);
+    static spine::SkeletonData* createSpineSkeletonDataWithJson(const std::string& jsonStr, const std::string& altasStr);
+    static spine::SkeletonData* createSpineSkeletonDataWithBinary(uint32_t byteSize, const std::string& altasStr);
+    static void registerSpineSkeletonDataWithUUID(spine::SkeletonData* data, const std::string& uuid);
     static void destroySpineSkeletonDataWithUUID(const std::string& uuid);
-    static void destroySpineSkeleton(Skeleton* skeleton);
+    static void destroySpineSkeleton(spine::Skeleton* skeleton);
 
     static uint32_t getCurrentListenerID();
-    static EventType getCurrentEventType();
-    static TrackEntry* getCurrentTrackEntry();
-    static Event* getCurrentEvent();
+    static spine::EventType getCurrentEventType();
+    static spine::TrackEntry* getCurrentTrackEntry();
+    static spine::Event* getCurrentEvent();
 
     static uint32_t s_listenerID;
-    static EventType s_currentType;
-    static TrackEntry* s_currentEntry;
-    static Event* s_currentEvent;
+    static spine::EventType s_currentType;
+    static spine::TrackEntry* s_currentEntry;
+    static spine::Event* s_currentEvent;
 
     static uint8_t* s_mem;
     static uint32_t s_memSize;
 };
-
-#endif

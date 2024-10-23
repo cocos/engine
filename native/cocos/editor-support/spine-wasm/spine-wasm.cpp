@@ -5,6 +5,8 @@
 #include "util-function.h"
 #include "wasmSpineExtension.h"
 
+using namespace spine;
+
 std::map<std::string, SkeletonData*> skeletonDataMap{};
 
 uint32_t SpineWasmUtil::s_listenerID = 0;

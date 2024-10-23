@@ -366,8 +366,8 @@ void SpineSkeletonInstance::collectMeshData() {
 
         currMesh.blendMode = static_cast<uint32_t>(slot->getData().getBlendMode());
         if (_userData.useSlotTexture) {
-            auto iter = slotTextureSet.find(slot);
-            if (iter != slotTextureSet.end()) {
+            auto iter = _slotTextureSet.find(slot);
+            if (iter != _slotTextureSet.end()) {
                 currMesh.textureID = iter->second;
             }
         }
@@ -514,10 +514,10 @@ void SpineSkeletonInstance::setSlotTexture(const std::string &slotName, uint32_t
     auto slot = _skeleton->findSlot(slotName.c_str());
     if (!slot) return;
     _userData.useSlotTexture = true;
-    auto iter = slotTextureSet.find(slot);
-    if (iter != slotTextureSet.end()) {
+    auto iter = _slotTextureSet.find(slot);
+    if (iter != _slotTextureSet.end()) {
         iter->second = textureID;
     } else {
-        slotTextureSet[slot] = textureID;
+        _slotTextureSet[slot] = textureID;
     }
 }

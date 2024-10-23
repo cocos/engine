@@ -1,10 +1,7 @@
-#ifndef __SPINE_MODEL_H__
-#define __SPINE_MODEL_H__
+#pragma once
+
 #include <spine/spine.h>
 #include <vector>
-#include "mesh-type-define.h"
-
-using namespace spine;
 class SlotMesh {
 public:
     SlotMesh() {}
@@ -43,5 +40,3 @@ public:
     uint32_t iPtr;
     uint32_t byteStride;
 };
-
-#endif

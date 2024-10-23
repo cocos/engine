@@ -1,5 +1,5 @@
-#ifndef __MESH_TYPE_DEF_H__
-#define __MESH_TYPE_DEF_H__
+#pragma once
+
 #include <stdint.h>
 
 struct Vec3 {
@@ -69,5 +69,3 @@ struct Triangles {
     /**The number of indices.*/
     int indexCount = 0;
 };
-
-#endif
