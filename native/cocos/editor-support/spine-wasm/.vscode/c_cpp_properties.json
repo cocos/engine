@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "name": "emscripten",
+            "includePath": [
+                "${workspaceFolder}",
+                "${workspaceFolder}/.."
+            ],
+            "compileCommands": "${workspaceFolder}/compile_commands.json"
+        }
+    ],
+    "version": 4
+}

@@ -1,7 +1,5 @@
 #include <emscripten/bind.h>
-#include <spine/spine.h>
-#include <functional>
-#include <memory>
+#include <type_traits>
 #include <vector>
 #include "spine-skeleton-instance.h"
 #include "spine-wasm.h"
@@ -88,9 +86,31 @@ using SPVectorTimelinePtr = Vector<Timeline*>;
 using SPVectorTrackEntryPtr = Vector<TrackEntry*>;
 using SPVectorUpdatablePtr = Vector<Updatable*>;
 
+template <typename T> static void register_integer(const char* name) {
+  using namespace internal;
+  using UnderlyingType = typename std::underlying_type<T>::type;
+  _embind_register_integer(TypeID<T>::get(), name, sizeof(T), std::numeric_limits<UnderlyingType>::min(),
+    std::numeric_limits<UnderlyingType>::max());
+}
+
+#define REGISTER_SPINE_ENUM(name) \
+    register_integer<spine::name>("spine::" #name)
+
 } // namespace
 
 EMSCRIPTEN_BINDINGS(spine) {
+    REGISTER_SPINE_ENUM(TimelineType);
+    REGISTER_SPINE_ENUM(MixDirection);
+    REGISTER_SPINE_ENUM(MixBlend);
+    REGISTER_SPINE_ENUM(EventType);
+    REGISTER_SPINE_ENUM(BlendMode);
+    REGISTER_SPINE_ENUM(TransformMode);
+    REGISTER_SPINE_ENUM(PositionMode);
+    REGISTER_SPINE_ENUM(SpacingMode);
+    REGISTER_SPINE_ENUM(RotateMode);
+    REGISTER_SPINE_ENUM(TextureFilter);
+    REGISTER_SPINE_ENUM(TextureWrap);
+    REGISTER_SPINE_ENUM(AttachmentType);
 
     register_vector<float>("VectorFloat");
     register_vector<std::vector<float>>("VectorVectorFloat");
@@ -312,119 +332,6 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("str", optional_override([](String &obj) {
             std::string stdStr(obj.buffer(), obj.length());
             return stdStr; }), allow_raw_pointers());
-
-    enum_<TimelineType>("TimelineType")
-        .value("rotate", TimelineType_Rotate)
-        .value("translate", TimelineType_Translate)
-        .value("scale", TimelineType_Scale)
-        .value("shear", TimelineType_Shear)
-        .value("attachment", TimelineType_Attachment)
-        .value("color", TimelineType_Color)
-        .value("deform", TimelineType_Deform)
-        .value("event", TimelineType_Event)
-        .value("drawOrder", TimelineType_DrawOrder)
-        .value("ikConstraint", TimelineType_IkConstraint)
-        .value("transformConstraint", TimelineType_TransformConstraint)
-        .value("pathConstraintPosition", TimelineType_PathConstraintPosition)
-        .value("pathConstraintSpacing", TimelineType_PathConstraintSpacing)
-        .value("pathConstraintMix", TimelineType_PathConstraintMix)
-        .value("twoColor", TimelineType_TwoColor);
-
-    enum_<MixDirection>("MixDirection")
-        .value("mixIn", MixDirection_In)
-        .value("mixOut", MixDirection_Out);
-
-    enum_<MixBlend>("MixBlend")
-        .value("setup", MixBlend_Setup)
-        .value("first", MixBlend_First)
-        .value("replace", MixBlend_Replace)
-        .value("add", MixBlend_Add);
-
-    enum_<BlendMode>("BlendMode")
-        .value("Normal", BlendMode_Normal)
-        .value("Additive", BlendMode_Additive)
-        .value("Multiply", BlendMode_Multiply)
-        .value("Screen", BlendMode_Screen);
-
-    enum_<EventType>("EventType")
-        .value("start", EventType_Start)
-        .value("interrupt", EventType_Interrupt)
-        .value("end", EventType_End)
-        .value("dispose", EventType_Dispose)
-        .value("complete", EventType_Complete)
-        .value("event", EventType_Event);
-
-    enum_<TransformMode>("TransformMode")
-        .value("Normal", TransformMode_Normal)
-        .value("OnlyTranslation", TransformMode_OnlyTranslation)
-        .value("NoRotationOrReflection", TransformMode_NoRotationOrReflection)
-        .value("NoScale", TransformMode_NoScale)
-        .value("NoScaleOrReflection", TransformMode_NoScaleOrReflection);
-
-    enum_<PositionMode>("PositionMode")
-        .value("Fixed", PositionMode_Fixed)
-        .value("Percent", PositionMode_Percent);
-
-    enum_<SpacingMode>("SpacingMode")
-        .value("Length", SpacingMode_Length)
-        .value("Fixed", SpacingMode_Fixed)
-        .value("Percent", SpacingMode_Percent);
-
-    enum_<RotateMode>("RotateMode")
-        .value("Tangent", RotateMode_Tangent)
-        .value("Chain", RotateMode_Chain)
-        .value("ChainScale", RotateMode_ChainScale);
-
-    enum_<TextureFilter>("TextureFilter")
-        .value("Unknown", TextureFilter_Unknown)
-        .value("Nearest", TextureFilter_Nearest)
-        .value("Linear", TextureFilter_Linear)
-        .value("MipMap", TextureFilter_MipMap)
-        .value("MipMapNearestNearest", TextureFilter_MipMapNearestNearest)
-        .value("MipMapLinearNearest", TextureFilter_MipMapLinearNearest)
-        .value("MipMapNearestLinear", TextureFilter_MipMapNearestLinear)
-        .value("MipMapLinearLinear", TextureFilter_MipMapLinearLinear);
-
-    enum_<TextureWrap>("TextureWrap")
-        .value("MirroredRepeat", TextureWrap_MirroredRepeat)
-        .value("ClampToEdge", TextureWrap_ClampToEdge)
-        .value("Repeat", TextureWrap_Repeat);
-
-    enum_<AttachmentType>("AttachmentType")
-        .value("Region", AttachmentType_Region)
-        .value("BoundingBox", AttachmentType_Boundingbox)
-        .value("Mesh", AttachmentType_Mesh)
-        .value("LinkedMesh", AttachmentType_Linkedmesh)
-        .value("Path", AttachmentType_Path)
-        .value("Point", AttachmentType_Point)
-        .value("Clipping", AttachmentType_Clipping);
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
-
-    class_<MathUtil>("MathUtils")
-        .class_property("PI", &MathUtil::Pi)
-        .class_property("PI2", &MathUtil::Pi_2)
-        .class_property("radDeg", &MathUtil::Rad_Deg)
-        .class_property("degreesToRadians", &MathUtil::Rad_Deg)
-        .class_property("degRad", &MathUtil::Deg_Rad)
-        .class_property("degreesToRadians", &MathUtil::Deg_Rad)
-        .class_function("abs", &MathUtil::abs)
-        .class_function("signum", &MathUtil::sign)
-        .class_function("clamp", &MathUtil::clamp)
-        .class_function("fmod", &MathUtil::fmod)
-        .class_function("atan2", &MathUtil::atan2)
-        .class_function("cos", &MathUtil::cos)
-        .class_function("sin", &MathUtil::sin)
-        .class_function("sqrt", &MathUtil::sqrt)
-        .class_function("acos", &MathUtil::acos)
-        .class_function("sinDeg", &MathUtil::sinDeg)
-        .class_function("cosDeg", &MathUtil::cosDeg)
-        .class_function("isNan", &MathUtil::isNan)
-        .class_function("random", &MathUtil::random)
-        .class_function("randomTriangular", select_overload<float(float, float)>(&MathUtil::randomTriangular))
-        .class_function("randomTriangularWith", select_overload<float(float, float, float)>(&MathUtil::randomTriangular))
-        .class_function("pow", &MathUtil::pow);
 
     class_<Color>("Color")
         .constructor<>()

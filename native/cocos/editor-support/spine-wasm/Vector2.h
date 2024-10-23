@@ -27,39 +27,28 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#ifndef Spine_HasRendererObject_h
-#define Spine_HasRendererObject_h
+#pragma once
 
-#include "spine/dll.h"
-#include <cstdlib>
+#include "spine/spine.h"
 
 namespace spine {
+    class Vector2
+    {
+    public:
+        float x, y;
+    public:
+        Vector2();
+        Vector2(float x, float y);
+        ~Vector2();
 
-typedef void (*DisposeRendererObject)(void* rendererObject);
+        void setX(float x);
+        float getX();
 
-class SP_API HasRendererObject {
-public:
-    explicit HasRendererObject() : _rendererObject(NULL), _dispose(NULL){};
+        void setY(float y);
+        float getY();
 
-    virtual ~HasRendererObject() {
-        if (_dispose && _rendererObject)
-            _dispose(_rendererObject);
-    }
-
-    void* getRendererObject() { return _rendererObject; }
-    void setRendererObject(void* rendererObject, DisposeRendererObject dispose = NULL) {
-        if (_dispose && _rendererObject && _rendererObject != rendererObject)
-            _dispose(_rendererObject);
-
-        _rendererObject = rendererObject;
-        _dispose = dispose;
-    }
-
-private:
-    void* _rendererObject;
-    DisposeRendererObject _dispose;
-};
-
-} // namespace spine
-
-#endif
+        Vector2 &set(float x, float y);
+        float length();
+        Vector2 &normalize();
+    };
+}
