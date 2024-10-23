@@ -1,7 +1,5 @@
 #include <emscripten/bind.h>
-#include <spine/spine.h>
-#include <functional>
-#include <memory>
+#include <type_traits>
 #include <vector>
 #include "spine-skeleton-instance.h"
 #include "spine-wasm.h"
@@ -88,9 +86,31 @@ using SPVectorTimelinePtr = Vector<Timeline*>;
 using SPVectorTrackEntryPtr = Vector<TrackEntry*>;
 using SPVectorUpdatablePtr = Vector<Updatable*>;
 
+template <typename T> static void register_integer(const char* name) {
+  using namespace internal;
+  using UnderlyingType = typename std::underlying_type<T>::type;
+  _embind_register_integer(TypeID<T>::get(), name, sizeof(T), std::numeric_limits<UnderlyingType>::min(),
+    std::numeric_limits<UnderlyingType>::max());
+}
+
+#define REGISTER_SPINE_ENUM(name) \
+    register_integer<spine::name>("spine::" #name)
+
 } // namespace
 
 EMSCRIPTEN_BINDINGS(spine) {
+    REGISTER_SPINE_ENUM(TimelineType);
+    REGISTER_SPINE_ENUM(MixDirection);
+    REGISTER_SPINE_ENUM(MixBlend);
+    REGISTER_SPINE_ENUM(EventType);
+    REGISTER_SPINE_ENUM(BlendMode);
+    REGISTER_SPINE_ENUM(TransformMode);
+    REGISTER_SPINE_ENUM(PositionMode);
+    REGISTER_SPINE_ENUM(SpacingMode);
+    REGISTER_SPINE_ENUM(RotateMode);
+    REGISTER_SPINE_ENUM(TextureFilter);
+    REGISTER_SPINE_ENUM(TextureWrap);
+    REGISTER_SPINE_ENUM(AttachmentType);
 
     register_vector<float>("VectorFloat");
     register_vector<std::vector<float>>("VectorVectorFloat");
@@ -312,10 +332,6 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("str", optional_override([](String &obj) {
             std::string stdStr(obj.buffer(), obj.length());
             return stdStr; }), allow_raw_pointers());
-
-
-    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////// 
 
     class_<Color>("Color")
         .constructor<>()
