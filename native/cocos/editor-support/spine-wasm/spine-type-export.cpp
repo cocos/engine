@@ -77,6 +77,7 @@ using SPVectorConstraintDataPtr = Vector<ConstraintData*>;
 using SPVectorSlotPtr = Vector<Slot*>;
 using SPVectorSkinPtr = Vector<Skin*>;
 using SPVectorEventDataPtr = Vector<spine::EventData*>;
+using SPVectorEventPtr = Vector<spine::Event*>;
 using SPVectorAnimationPtr = Vector<Animation*>;
 using SPVectorIkConstraintPtr = Vector<IkConstraint*>;
 using SPVectorIkConstraintDataPtr = Vector<IkConstraintData*>;
@@ -236,6 +237,10 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("size", &SPVectorEventDataPtr::size)
         .function("get", &SPVectorEventDataPtr::operator[], allow_raw_pointers());
 
+    class_<SPVectorEventPtr>("SPVectorEventPtr")
+        .function("size", &SPVectorEventPtr::size)
+        .function("get", &SPVectorEventPtr::operator[], allow_raw_pointers());
+
     class_<SPVectorAnimationPtr>("SPVectorAnimationPtr")
         .function("size", &SPVectorAnimationPtr::size)
         .function("get", &SPVectorAnimationPtr::operator[], allow_raw_pointers());
@@ -323,7 +328,7 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("isEmpty", &String::isEmpty)
         .function("append", select_overload<String&(const String&)>(&String::append))
         .function("equals", select_overload<String&(const String&)>(&String::operator=))
-        .function("buffer", &String::buffer, allow_raw_pointer<const char*>())
+        // .function("buffer", &String::buffer, allow_raw_pointer<const char*>())
         //.function("estr", optional_override([](String &obj) {
         //    auto str = emscripten::val(obj.buffer());
         //    return str; }), allow_raw_pointers())
@@ -347,10 +352,13 @@ EMSCRIPTEN_BINDINGS(spine) {
     class_<Interpolation>("Interpolation")
         .function("apply", &Interpolation::apply, pure_virtual());
 
-    class_<Triangulator>("Triangulator")
-        .constructor<>()
-        .function("triangulate", &Triangulator::triangulate)
-        .function("decompose", &Triangulator::decompose, allow_raw_pointers());
+    class_<HasRendererObject>("HasRendererObject")
+        .constructor<>();
+
+    // class_<Triangulator>("Triangulator")
+    //     .constructor<>()
+    //     .function("triangulate", &Triangulator::triangulate)
+    //     .function("decompose", &Triangulator::decompose, allow_raw_pointers());
 
     class_<ConstraintData>("ConstraintData")
         .constructor<const String &>()
@@ -410,14 +418,14 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("aabbIntersectsSkeleton", &SkeletonBounds::aabbIntersectsSkeleton)
         .function("containsPoint", optional_override([](SkeletonBounds &obj, float x, float y) {
             return obj.containsPoint(x, y); }),allow_raw_pointers())
-        .function("containsPointPolygon", optional_override([](SkeletonBounds &obj,Polygon* polygon, float x, float y) {
-            return obj.containsPoint(polygon, x, y); }),allow_raw_pointers())
+        // .function("containsPointPolygon", optional_override([](SkeletonBounds &obj,Polygon* polygon, float x, float y) {
+            // return obj.containsPoint(polygon, x, y); }),allow_raw_pointers())
         .function("intersectsSegment", optional_override([](SkeletonBounds &obj, float x1, float y1, float x2, float y2){
             return obj.intersectsSegment(x1, y1, x2, y2); }),allow_raw_pointers())
-        .function("intersectsSegmentPolygon", optional_override([](SkeletonBounds &obj,Polygon* polygon,
-        float x1, float y1, float x2, float y2){
-            return obj.intersectsSegment(polygon, x1, y1, x2, y2); }),allow_raw_pointers())
-        .function("getPolygon", &SkeletonBounds::getPolygon, allow_raw_pointers())
+        // .function("intersectsSegmentPolygon", optional_override([](SkeletonBounds &obj,Polygon* polygon,
+        // float x1, float y1, float x2, float y2){
+            // return obj.intersectsSegment(polygon, x1, y1, x2, y2); }),allow_raw_pointers())
+        // .function("getPolygon", &SkeletonBounds::getPolygon, allow_raw_pointers())
         .function("getWidth", &SkeletonBounds::getWidth)
         .function("getHeight", &SkeletonBounds::getHeight);
 
@@ -567,7 +575,7 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("setPath", optional_override([](RegionAttachment &obj, const std::string &path) {
             const String &pathSP = STRING_STD2SP(path);
             obj.setPath(pathSP); }))
-        .function("getRendererObject", &RegionAttachment::getRendererObject, allow_raw_pointers())
+        // .function("getRendererObject", &RegionAttachment::getRendererObject, allow_raw_pointers())
         .function("getOffset", optional_override([](RegionAttachment &obj) {
             return &obj.getOffset(); }), allow_raw_pointer<SPVectorFloat>())
         .function("setUVs", &RegionAttachment::setUVs)
@@ -618,6 +626,9 @@ EMSCRIPTEN_BINDINGS(spine) {
         .property("rotate", &AtlasRegion::rotate)
         .property("degrees", &AtlasRegion::degrees);
         //.property("texture", &AtlasRegion::height)
+
+    class_<TextureLoader>("TextureLoader");
+        
 
     class_<Atlas>("TextureAtlas")
         .constructor<const String &, TextureLoader *, bool>()
@@ -1169,7 +1180,7 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("getFrames", optional_override([](EventTimeline &obj) {
             return &obj.getFrames(); }), allow_raw_pointer<SPVectorFloat>())
         .function("getEvents",  optional_override([](EventTimeline &obj) {
-            return &obj.getEvents(); }), allow_raw_pointer<SPVectorEventDataPtr>())
+            return &obj.getEvents(); }), allow_raw_pointer<SPVectorEventPtr>())
         .function("getPropertyId", &EventTimeline::getPropertyId)
         .function("getFrameCount", &EventTimeline::getFrameCount)
         .function("setFrame", &EventTimeline::setFrame, allow_raw_pointers())
@@ -1326,10 +1337,10 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("addEmptyAnimation", &AnimationState::addEmptyAnimation, allow_raw_pointers())
         .function("setEmptyAnimations", &AnimationState::setEmptyAnimations)
         .function("getCurrent", &AnimationState::getCurrent, allow_raw_pointer<TrackEntry>())
-        .function("setListener",  optional_override([](AnimationState &obj, AnimationStateListener inValue) {
-            obj.setListener(inValue); }),allow_raw_pointers())
-        .function("setListenerObject", optional_override([](AnimationState &obj, AnimationStateListenerObject *inValue) {
-            obj.setListener(inValue); }),allow_raw_pointers())
+        // .function("setListener",  optional_override([](AnimationState &obj, AnimationStateListener inValue) {
+        //     obj.setListener(inValue); }),allow_raw_pointers())
+        // .function("setListenerObject", optional_override([](AnimationState &obj, AnimationStateListenerObject *inValue) {
+        //     obj.setListener(inValue); }),allow_raw_pointers())
         .function("disableQueue", &AnimationState::disableQueue)
         .function("enableQueue", &AnimationState::enableQueue);
         //.function("addListener", &AnimationState::addListener)
