@@ -106,7 +106,12 @@ function overrideClass (wasm): void {
     spine.wasmUtil.wasm = wasm;
     spine.wasmUtil.spineWasmInit();
 
-    Object.assign(spine, wasm);
+    for (const k in wasm) {
+        const v = wasm[k];
+        if (!spine[k]) {
+            spine[k] = v;
+        }
+    }
 }
 
 function overrideProperty_String (): void {
