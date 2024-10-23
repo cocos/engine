@@ -127,17 +127,6 @@ function overrideProperty_String (): void {
     overrideDefinePtrStringFunction(prototype, prototype.strPtr, 'strPtr');
 }
 
-function overrideProperty_Vector2 (): void {
-    const prototype = spine.Vector2.prototype as any;
-    const propertyPolyfills = [
-        ['x', prototype.getX, prototype.setX],
-        ['y', prototype.getY, prototype.setY],
-    ];
-    propertyPolyfills.forEach((prop): void => {
-        js.get(prototype, prop[0], prop[1], prop[2]);
-    });
-}
-
 function overrideProperty_BoneData (): void {
     const prototype = spine.BoneData.prototype as any;
     const propertyPolyfills = [
@@ -180,7 +169,7 @@ function overrideProperty_ConstraintData (): void {
 function overrideProperty_IkConstraintData (): void {
     const prototype = spine.IkConstraintData.prototype as any;
     const propertyPolyfills = [
-        ['target', prototype.getTarget, prototype.setTarget],
+        // ['target', prototype.getTarget, prototype.setTarget],
         ['bendDirection', prototype.getBendDirection, prototype.setBendDirection],
         ['compress', prototype.getCompress, prototype.setCompress],
         ['stretch', prototype.getStretch, prototype.setStretch],
@@ -484,7 +473,7 @@ function overrideProperty_TransformConstraint (): void {
 function overrideProperty_Bone (): void {
     const prototype = spine.Bone.prototype as any;
     const propertyPolyfills = [
-        ['skeleton', prototype.getSkeleton],
+        // ['skeleton', prototype.getSkeleton],
         ['data', prototype.getData],
         ['parent', prototype.getParent],
         ['x', prototype.getX, prototype.setX],
@@ -807,7 +796,6 @@ function overrideProperty_SwirlEffect (): void {
 export function overrideSpineDefine (wasm): void {
     overrideClass(wasm);
     overrideProperty_String();
-    overrideProperty_Vector2();
     overrideProperty_BoneData();
     overrideProperty_ConstraintData();
     overrideProperty_IkConstraintData();

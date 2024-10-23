@@ -144,6 +144,7 @@ public:
     void copySkin(Skin *other);
 
     AttachmentMap::Entries getAttachments();
+    Vector<Vector<AttachmentMap::Entry>> & getAttachmentEntries() { return _attachments._buckets; }
 
     Vector<BoneData *> &getBones();
 

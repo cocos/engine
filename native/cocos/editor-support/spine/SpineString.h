@@ -47,19 +47,23 @@ public:
     String() : _length(0), _buffer(NULL) {
     }
 
-    String(const char *chars, bool own = false) {
+    String(const char *chars, size_t len, bool own) {
         if (!chars) {
             _length = 0;
             _buffer = NULL;
         } else {
-            _length = strlen(chars);
+            _length = len;
             if (!own) {
                 _buffer = SpineExtension::calloc<char>(_length + 1, __FILE__, __LINE__);
-                memcpy((void *)_buffer, chars, _length + 1);
+                _buffer[_length] = '\0';
+                memcpy((void *)_buffer, chars, _length);
             } else {
                 _buffer = (char *)chars;
             }
         }
+    }
+
+    String(const char *chars, bool own = false): String(chars, strlen(chars), own) {
     }
 
     String(const String &other) {
