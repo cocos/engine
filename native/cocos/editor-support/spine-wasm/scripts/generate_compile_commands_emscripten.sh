@@ -2,6 +2,13 @@
 
 set -e
 
+if [ -n "$EMSDK" ]; then
+    echo "EMSDK=$EMSDK"
+else
+    echo "[ERROR] EMSDK env variable is not set!"
+    exit 1
+fi
+
 rm -rf build
 mkdir build
 cd build
