@@ -39,35 +39,35 @@ const std::vector<std::string> VECTOR_SP2STD_STRING(Vector<String> &container) {
     return stdVector;
 }
 
-template <typename T>
-Vector<T> VECTOR_STD2SP(std::vector<T> &container) {
-    int count = container.size();
-    Vector<T> vecSP;
-    vecSP.setSize(count, 0);
-    for (int i = 0; i < count; i++) {
-        vecSP[i] = container[i];
-    }
-    return vecSP;
-}
+// template <typename T>
+// Vector<T> VECTOR_STD2SP(std::vector<T> &container) {
+//     int count = container.size();
+//     Vector<T> vecSP;
+//     vecSP.setSize(count, 0);
+//     for (int i = 0; i < count; i++) {
+//         vecSP[i] = container[i];
+//     }
+//     return vecSP;
+// }
 
-template <typename T>
-Vector<T *> VECTOR_STD2SP_POINTER(std::vector<T *> &container) {
-    int count = container.size();
-    Vector<T *> vecSP = Vector<T *>();
-    vecSP.setSize(count, nullptr);
-    for (int i = 0; i < count; i++) {
-        vecSP[i] = container[i];
-    }
-    return vecSP;
-}
+// template <typename T>
+// Vector<T *> VECTOR_STD2SP_POINTER(std::vector<T *> &container) {
+//     int count = container.size();
+//     Vector<T *> vecSP = Vector<T *>();
+//     vecSP.setSize(count, nullptr);
+//     for (int i = 0; i < count; i++) {
+//         vecSP[i] = container[i];
+//     }
+//     return vecSP;
+// }
 
-template <typename T>
-void VECTOR_STD_COPY_SP(std::vector<T> &stdVector, Vector<T> &spVector) {
-    int count = stdVector.size();
-    for (int i = 0; i < count; i++) {
-        stdVector[i] = spVector[i];
-    }
-}
+// template <typename T>
+// void VECTOR_STD_COPY_SP(std::vector<T> &stdVector, Vector<T> &spVector) {
+//     int count = stdVector.size();
+//     for (int i = 0; i < count; i++) {
+//         stdVector[i] = spVector[i];
+//     }
+// }
 
 // String* constructorSpineString(emscripten::val name, bool own) {
 //     return new String(name.as<std::string>().c_str(), own);
@@ -162,13 +162,34 @@ struct GetterPolicy<GetterReturnType (GetterThisType::*)()> {
     using Binding = internal::BindingType<ReturnType>;
     using WireType = typename Binding::WireType;
 
-    template<typename ClassType, typename ReturnPolicy>
+    // template<typename ClassType, typename ReturnPolicy>
+    template<typename ClassType>
     static WireType get(const Context& context, ClassType& ptr) {
-        return Binding::toWireType(((ptr.*context)()), ReturnPolicy{});
+        // return Binding::toWireType(((ptr.*context)()), ReturnPolicy{});
+        return Binding::toWireType(((ptr.*context)()));
     }
 
     static void* getContext(Context context) {
         return internal::getContext(context);
+    }
+};
+
+template<>
+struct BindingType<String> {
+    using T = char;
+    static_assert(std::is_trivially_copyable<T>::value, "basic_string elements are memcpy'd");
+    using WireType = struct {
+        size_t length;
+        T data[1]; // trailing data
+    } *;
+    static WireType toWireType(const String& v) {
+        auto* wt = static_cast<WireType>(malloc(sizeof(size_t) + v.length() * sizeof(T)));
+        wt->length = v.length();
+        memcpy(wt->data, v.buffer(), v.length() * sizeof(T));
+        return wt;
+    }
+    static String fromWireType(WireType v) {
+        return String(v->data, v->length, false);
     }
 };
 
@@ -380,7 +401,7 @@ EMSCRIPTEN_BINDINGS(spine) {
         .constructor<const String &>()
         .function("getBones", optional_override([](IkConstraintData &obj) {
             return &obj.getBones(); }), allow_raw_pointer<SPVectorBoneDataPtr>()) 
-        .property("target", &IkConstraintData::getTarget, &IkConstraintData::setTarget, allow_raw_pointer<BoneData>())
+        .property("target", &IkConstraintData::getTarget, &IkConstraintData::setTarget)
         // .function("getTarget", &IkConstraintData::getTarget, allow_raw_pointer<BoneData>())
         // .function("setTarget", &IkConstraintData::setTarget, allow_raw_pointer<BoneData>())
         .function("getBendDirection", &IkConstraintData::getBendDirection)
@@ -1050,9 +1071,7 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("setSlotIndex", &AttachmentTimeline::setSlotIndex)
         .function("getFrames", optional_override([](AttachmentTimeline &obj) {
              return &obj.getFrames(); }), allow_raw_pointer<SPVectorFloat>())
-        .function("getAttachmentNames",optional_override([](AttachmentTimeline &obj) {
-            Vector<String> attachmentNames = obj.getAttachmentNames();
-            return VECTOR_SP2STD_STRING(attachmentNames); }), allow_raw_pointers())
+        .function("getAttachmentNames", &AttachmentTimeline::getAttachmentNames)
         .function("getPropertyId", &AttachmentTimeline::getPropertyId)
         .function("getFrameCount", &AttachmentTimeline::getFrameCount)
         .function("setFrame", &AttachmentTimeline::setFrame, allow_raw_pointers());
