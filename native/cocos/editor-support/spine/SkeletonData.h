@@ -117,7 +117,7 @@ public:
 
     void setDefaultSkin(Skin *inValue);
 
-    Vector<spine::EventData *> &getEvents();
+    Vector<EventData *> &getEvents();
 
     Vector<Animation *> &getAnimations();
 
