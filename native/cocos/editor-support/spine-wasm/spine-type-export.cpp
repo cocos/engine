@@ -1068,8 +1068,13 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("getFrameVertices", optional_override([](DeformTimeline &obj) {
             return &obj.getVertices(); }), allow_raw_pointer<SPVectorVectorFloat>())
         .function("getPropertyId", &DeformTimeline::getPropertyId)
-        .function("setFrame", optional_override([](DeformTimeline &obj, int frameIndex, float time, std::vector<float> &vertices){
-            Vector<float> spVertices = VECTOR_STD2SP(vertices);
+        .function("setFrame", optional_override([](DeformTimeline &obj, int frameIndex, float time, emscripten::val jsArray){
+            unsigned count = jsArray["length"].as<unsigned>();
+            Vector<float> spVertices;
+            spVertices.setSize(count, 0);
+            for (int i = 0; i < count; i++) {
+                spVertices[i] = jsArray[i].as<float>();
+            }
             obj.setFrame(frameIndex, time, spVertices);
         }), allow_raw_pointers());
 
