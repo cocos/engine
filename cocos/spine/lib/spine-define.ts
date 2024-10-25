@@ -114,18 +114,18 @@ function overrideClass (wasm): void {
     }
 }
 
-function overrideProperty_String (): void {
-    const prototype = spine.String.prototype as any;
-    const propertyPolyfills = [
-        ['length', prototype.length],
-        ['isEmpty', prototype.isEmpty],
-        ['str', prototype.str],
-    ];
-    propertyPolyfills.forEach((prop): void => {
-        js.get(prototype, prop[0], prop[1]);
-    });
-    overrideDefinePtrStringFunction(prototype, prototype.strPtr, 'strPtr');
-}
+// function overrideProperty_String (): void {
+//     const prototype = spine.String.prototype as any;
+//     const propertyPolyfills = [
+//         ['length', prototype.length],
+//         ['isEmpty', prototype.isEmpty],
+//         ['str', prototype.str],
+//     ];
+//     propertyPolyfills.forEach((prop): void => {
+//         js.get(prototype, prop[0], prop[1]);
+//     });
+//     overrideDefinePtrStringFunction(prototype, prototype.strPtr, 'strPtr');
+// }
 
 function overrideProperty_BoneData (): void {
     const prototype = spine.BoneData.prototype as any;
@@ -795,7 +795,7 @@ function overrideProperty_SwirlEffect (): void {
 
 export function overrideSpineDefine (wasm): void {
     overrideClass(wasm);
-    overrideProperty_String();
+    // overrideProperty_String();
     overrideProperty_BoneData();
     overrideProperty_ConstraintData();
     overrideProperty_IkConstraintData();
