@@ -42,13 +42,13 @@ namespace spine {
         ~Vector2();
 
         void setX(float x);
-        float getX();
+        float getX() const;
 
         void setY(float y);
-        float getY();
+        float getY() const;
 
         Vector2 &set(float x, float y);
-        float length();
+        float length() const;
         Vector2 &normalize();
     };
 }

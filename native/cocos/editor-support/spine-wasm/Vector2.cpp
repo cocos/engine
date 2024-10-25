@@ -17,7 +17,7 @@ void Vector2::setX(float x) {
     this->x = x;
 }
      
-float Vector2::getX() {
+float Vector2::getX() const {
     return x;
 }
 
@@ -25,7 +25,7 @@ void Vector2::setY(float y) {
     this->y = y;
 }
 
-float Vector2::getY() {
+float Vector2::getY() const {
     return y;
 }
 
@@ -35,7 +35,7 @@ Vector2& Vector2::set(float x, float y) {
     return *this;
 }
 
-float Vector2::length() {
+float Vector2::length() const {
     return sqrt(x * x + y * y);
 }
 
