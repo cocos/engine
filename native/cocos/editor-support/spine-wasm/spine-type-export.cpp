@@ -20,24 +20,24 @@ namespace emscripten { namespace internal { \
 }}
 
 namespace {
-std::string STRING_SP2STD(const spine::String &str) {
-    std::string stdStr(str.buffer(), str.length());
-    return stdStr;
-}
+// std::string STRING_SP2STD(const spine::String &str) {
+//     std::string stdStr(str.buffer(), str.length());
+//     return stdStr;
+// }
 
 // const String STRING_STD2SP(const std::string &str) {
 //     const String spString(str.c_str());
 //     return spString;
 // }
 
-const std::vector<std::string> VECTOR_SP2STD_STRING(Vector<String> &container) {
-    int count = container.size();
-    std::vector<std::string> stdVector(count);
-    for (int i = 0; i < count; i++) {
-        stdVector[i] = STRING_SP2STD(container[i]);
-    }
-    return stdVector;
-}
+// const std::vector<std::string> VECTOR_SP2STD_STRING(Vector<String> &container) {
+//     int count = container.size();
+//     std::vector<std::string> stdVector(count);
+//     for (int i = 0; i < count; i++) {
+//         stdVector[i] = STRING_SP2STD(container[i]);
+//     }
+//     return stdVector;
+// }
 
 // template <typename T>
 // Vector<T> VECTOR_STD2SP(std::vector<T> &container) {
@@ -84,6 +84,7 @@ using SPVectorSlotDataPtr = Vector<SlotData*>;
 using SPVectorTransformConstraintDataPtr = Vector<TransformConstraintData*>;
 using SPVectorPathConstraintDataPtr = Vector<PathConstraintData*>;
 using SPVectorUnsignedShort = Vector<unsigned short>;
+using SPVectorSPString = Vector<String>;
 using SPVectorConstraintDataPtr = Vector<ConstraintData*>;
 using SPVectorSlotPtr = Vector<Slot*>;
 using SPVectorSkinPtr = Vector<Skin*>;
@@ -319,6 +320,7 @@ EMSCRIPTEN_BINDINGS(spine) {
     REGISTER_SPINE_VECTOR(SPVectorSize_t, true);
     REGISTER_SPINE_VECTOR(SPVectorUnsignedShort, true);
 
+    REGISTER_SPINE_VECTOR(SPVectorSPString, true);
     REGISTER_SPINE_VECTOR(SPVectorBonePtr, false);
     REGISTER_SPINE_VECTOR(SPVectorBoneDataPtr, false);
     REGISTER_SPINE_VECTOR(SPVectorSlotDataPtr, false);
