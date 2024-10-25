@@ -43,6 +43,7 @@ class BoneData;
 class SlotData;
 
 class SP_API PathConstraintData : public ConstraintData {
+    RTTI_DECL
     friend class SkeletonBinary;
     friend class SkeletonJson;
 

@@ -13,11 +13,70 @@ using namespace spine;
 namespace emscripten { namespace internal { \
     template<> \
     struct TypeID<type*> { \
-        static constexpr TYPEID get() { \
+        static TYPEID get() { \
             return TypeID<type>::get(); \
         } \
     }; \
 }}
+
+
+#define DEFINE_SPINE_CLASS_TYPEID(cls) \
+namespace emscripten { namespace internal { \
+    template<> \
+    constexpr TYPEID getLightTypeID<cls>(const cls& value) { \
+        return value.getRTTI().getClassName(); \
+    } \
+    \ 
+    template<> \
+    struct TypeID<cls> { \
+        static TYPEID get() { \
+            return cls::rtti.getClassName(); \
+        } \
+    }; \
+}}
+
+DEFINE_SPINE_CLASS_TYPEID(ConstraintData)
+DEFINE_SPINE_CLASS_TYPEID(IkConstraintData)
+DEFINE_SPINE_CLASS_TYPEID(PathConstraintData)
+DEFINE_SPINE_CLASS_TYPEID(Attachment)
+DEFINE_SPINE_CLASS_TYPEID(VertexAttachment)
+DEFINE_SPINE_CLASS_TYPEID(BoundingBoxAttachment)
+DEFINE_SPINE_CLASS_TYPEID(ClippingAttachment)
+DEFINE_SPINE_CLASS_TYPEID(MeshAttachment)
+DEFINE_SPINE_CLASS_TYPEID(PathAttachment)
+DEFINE_SPINE_CLASS_TYPEID(PointAttachment)
+DEFINE_SPINE_CLASS_TYPEID(RegionAttachment)
+DEFINE_SPINE_CLASS_TYPEID(AttachmentLoader)
+DEFINE_SPINE_CLASS_TYPEID(AtlasAttachmentLoader)
+DEFINE_SPINE_CLASS_TYPEID(Interpolation)
+DEFINE_SPINE_CLASS_TYPEID(PowInterpolation)
+DEFINE_SPINE_CLASS_TYPEID(PowOutInterpolation)
+DEFINE_SPINE_CLASS_TYPEID(Updatable)
+DEFINE_SPINE_CLASS_TYPEID(IkConstraint)
+DEFINE_SPINE_CLASS_TYPEID(PathConstraint)
+DEFINE_SPINE_CLASS_TYPEID(TransformConstraintData)
+DEFINE_SPINE_CLASS_TYPEID(TransformConstraint)
+DEFINE_SPINE_CLASS_TYPEID(Bone)
+DEFINE_SPINE_CLASS_TYPEID(Timeline)
+DEFINE_SPINE_CLASS_TYPEID(CurveTimeline)
+DEFINE_SPINE_CLASS_TYPEID(TranslateTimeline)
+DEFINE_SPINE_CLASS_TYPEID(ScaleTimeline)
+DEFINE_SPINE_CLASS_TYPEID(ShearTimeline)
+DEFINE_SPINE_CLASS_TYPEID(RotateTimeline)
+DEFINE_SPINE_CLASS_TYPEID(ColorTimeline)
+DEFINE_SPINE_CLASS_TYPEID(TwoColorTimeline)
+DEFINE_SPINE_CLASS_TYPEID(AttachmentTimeline)
+DEFINE_SPINE_CLASS_TYPEID(DeformTimeline)
+DEFINE_SPINE_CLASS_TYPEID(EventTimeline)
+DEFINE_SPINE_CLASS_TYPEID(DrawOrderTimeline)
+DEFINE_SPINE_CLASS_TYPEID(IkConstraintTimeline)
+DEFINE_SPINE_CLASS_TYPEID(TransformConstraintTimeline)
+DEFINE_SPINE_CLASS_TYPEID(PathConstraintPositionTimeline)
+DEFINE_SPINE_CLASS_TYPEID(PathConstraintMixTimeline)
+DEFINE_SPINE_CLASS_TYPEID(VertexEffect)
+DEFINE_SPINE_CLASS_TYPEID(JitterVertexEffect)
+DEFINE_SPINE_CLASS_TYPEID(SwirlVertexEffect)
+
 
 namespace {
 // std::string STRING_SP2STD(const spine::String &str) {
@@ -201,7 +260,18 @@ struct BindingType<String> {
 
 #if ENABLE_EMBIND_TEST
 
-class TestFoo {
+class TestBase {
+    RTTI_DECL
+public:
+    virtual void hello(const String& msg) {
+        printf("TestBase::hello: %s\n", msg.buffer());
+    }
+};
+
+RTTI_IMPL_NOPARENT(TestBase)
+
+class TestFoo: public TestBase {
+    RTTI_DECL
 public:
     TestFoo() {
         printf("TestFoo::TestFoo: %p\n", this);
@@ -224,6 +294,10 @@ public:
         return *this;
     }
 
+    virtual void hello(const String& msg) override {
+        printf("TestFoo::hello: %s\n", msg.buffer());
+    }
+
     void setX(int x) { 
         _x = x;
     }
@@ -233,6 +307,7 @@ public:
 private:
     int _x = 0;
 };
+RTTI_IMPL(TestFoo, TestBase)
 
 class TestBar {
 public:
@@ -261,6 +336,7 @@ public:
     TestFoo* getFoo() const { 
         return _foo;
     }
+
     void setFoo(TestFoo *foo) {
         if (_foo != foo) {
             delete _foo;
@@ -268,11 +344,47 @@ public:
         }
     }
 
+    TestBase* getBase() const {
+        return _foo;
+    }
+
 private:
     TestFoo *_foo = new TestFoo();
 };
 
+// namespace emscripten { namespace internal {
+//     template <>
+//     constexpr TYPEID getLightTypeID<TestBase>(const TestBase& value) {
+//         return value.getRTTI().getClassName();
+//     }
+
+//     template <>
+//     struct TypeID<TestBase> {
+//         static TYPEID get() {
+//             return TestBase::rtti.getClassName();
+//         }
+//     };
+// }}
+// namespace emscripten { namespace internal {
+//     template<>
+//     constexpr TYPEID getLightTypeID<TestFoo>(const TestFoo& value) {
+//         return value.getRTTI().getClassName();
+//     }
+
+//     template <>
+//     struct TypeID<TestFoo> {
+//         static TYPEID get() {
+//             return TestFoo::rtti.getClassName();
+//         }
+//     };
+// }}
+
+DEFINE_SPINE_CLASS_TYPEID(TestBase)
+DEFINE_SPINE_CLASS_TYPEID(TestFoo)
+
+DEFINE_ALLOW_RAW_POINTER(TestBase)
 DEFINE_ALLOW_RAW_POINTER(TestFoo)
+
 
 #endif // ENABLE_EMBIND_TEST
 
@@ -285,13 +397,19 @@ EMSCRIPTEN_BINDINGS(spine) {
     using namespace emscripten::internal;
 
 #if ENABLE_EMBIND_TEST
-    class_<TestFoo>("TestFoo")
+    class_<TestBase>("TestBase")
+        .constructor()
+        .function("hello", &TestBase::hello);
+
+    class_<TestFoo, base<TestBase>>("TestFoo")
         .constructor()
         .property("x", &TestFoo::getX, &TestFoo::setX);
 
     class_<TestBar>("TestBar")
         .constructor()
-        .property("foo", &TestBar::getFoo, &TestBar::setFoo);
+        .property("foo", &TestBar::getFoo, &TestBar::setFoo)
+        .property("base", &TestBar::getBase)
+        .function("getBase", &TestBar::getBase, allow_raw_pointers());
 #endif // ENABLE_EMBIND_TEST
 
 	_embind_register_std_string(TypeID<spine::String>::get(), "std::string");

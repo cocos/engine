@@ -21,7 +21,7 @@ set(APP_NAME "spine" CACHE STRING "Project Name")
 project(${APP_NAME}_wasm)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -frtti -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=1")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
 
 message(">>> --------------------------------------------------------------")
 message(">>> Current directory: ${CMAKE_CURRENT_LIST_DIR}")

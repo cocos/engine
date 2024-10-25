@@ -37,6 +37,8 @@
 
 using namespace spine;
 
+RTTI_IMPL(IkConstraintData, ConstraintData)
+
 IkConstraintData::IkConstraintData(const String &name) : ConstraintData(name),
                                                          _target(NULL),
                                                          _bendDirection(1),

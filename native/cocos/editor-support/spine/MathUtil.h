@@ -31,7 +31,7 @@
 #define Spine_MathUtil_h
 
 #include <spine/SpineObject.h>
-
+#include <spine/RTTI.h>
 #include <string.h>
 
 namespace spine {
@@ -92,6 +92,7 @@ public:
 };
 
 struct SP_API Interpolation {
+    RTTI_DECL
     virtual float apply(float a) = 0;
 
     virtual float interpolate(float start, float end, float a) {
@@ -101,7 +102,9 @@ struct SP_API Interpolation {
     virtual ~Interpolation(){};
 };
 
+
 struct SP_API PowInterpolation : public Interpolation {
+    RTTI_DECL
     PowInterpolation(int power) : power(power) {
     }
 
@@ -114,6 +117,7 @@ struct SP_API PowInterpolation : public Interpolation {
 };
 
 struct SP_API PowOutInterpolation : public Interpolation {
+    RTTI_DECL
     PowOutInterpolation(int power) : power(power) {
     }
 

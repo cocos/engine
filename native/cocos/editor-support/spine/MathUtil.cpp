@@ -42,6 +42,10 @@
 
 using namespace spine;
 
+RTTI_IMPL_NOPARENT(Interpolation)
+RTTI_IMPL(PowInterpolation, Interpolation)
+RTTI_IMPL(PowOutInterpolation, Interpolation)
+
 const float MathUtil::Pi = 3.1415926535897932385f;
 const float MathUtil::Pi_2 = 3.1415926535897932385f * 2;
 const float MathUtil::Deg_Rad = (3.1415926535897932385f / 180.0f);

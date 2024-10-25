@@ -40,6 +40,8 @@
 
 using namespace spine;
 
+RTTI_IMPL(PathConstraintData, ConstraintData)
+
 PathConstraintData::PathConstraintData(const String &name) : ConstraintData(name),
                                                              _target(NULL),
                                                              _positionMode(PositionMode_Fixed),
