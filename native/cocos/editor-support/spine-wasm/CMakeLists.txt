@@ -4,9 +4,8 @@ set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(BUILD_WASM 1)
 
-# set(CMAKE_BUILD_TYPE "MinSizeRel")
-set(CMAKE_BUILD_TYPE "Debug")
-# set(CMAKE_BUILD_TYPE "Release")
+set(CMAKE_BUILD_TYPE "MinSizeRel")
+# set(CMAKE_BUILD_TYPE "Debug")
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(ENABLE_CLOSURE_COMPILER 0)
