@@ -39,6 +39,9 @@ namespace spine {
 template <typename T>
 class SP_API Vector : public SpineObject {
 public:
+    using size_type = size_t;
+    using value_type = T;
+
     Vector() : _size(0), _capacity(0), _buffer(NULL) {
     }
 
@@ -159,6 +162,12 @@ public:
     }
 
     inline T &operator[](size_t inIndex) {
+        assert(inIndex < _size);
+
+        return _buffer[inIndex];
+    }
+
+    inline const T &operator[](size_t inIndex) const {
         assert(inIndex < _size);
 
         return _buffer[inIndex];
