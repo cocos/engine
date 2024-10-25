@@ -314,6 +314,17 @@ DEFINE_ALLOW_RAW_POINTER(BoneData)
 
 
 EMSCRIPTEN_BINDINGS(spine) {
+
+#if ENABLE_EMBIND_TEST
+    class_<TestFoo>("TestFoo")
+        .constructor()
+        .property("x", &TestFoo::getX, &TestFoo::setX);
+
+    class_<TestBar>("TestBar")
+        .constructor()
+        .property("foo", &TestBar::getFoo, &TestBar::setFoo);
+#endif // ENABLE_EMBIND_TEST
+
     REGISTER_SPINE_ENUM(TimelineType);
     REGISTER_SPINE_ENUM(MixDirection);
     REGISTER_SPINE_ENUM(MixBlend);
@@ -358,14 +369,6 @@ EMSCRIPTEN_BINDINGS(spine) {
     REGISTER_SPINE_VECTOR(SPVectorUpdatablePtr, false);
     REGISTER_SPINE_VECTOR(SPVectorSkinEntry, false);
     REGISTER_SPINE_VECTOR(SPVectorVectorSkinEntry, false);
-
-    class_<TestFoo>("TestFoo")
-        .constructor()
-        .property("x", &TestFoo::getX, &TestFoo::setX);
-
-    class_<TestBar>("TestBar")
-        .constructor()
-        .property("foo", &TestBar::getFoo, &TestBar::setFoo);
 
     class_<Vector2>("Vector2")
         .constructor<>()
