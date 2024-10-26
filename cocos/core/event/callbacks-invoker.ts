@@ -47,7 +47,7 @@ class CallbackInfo {
         return this;
     }
 
-    invalidate () {
+    reset () {
         this.callback = empty;
         this.target = null;
         this.once = false;
@@ -55,7 +55,7 @@ class CallbackInfo {
     }
 
     clear () {
-        this.invalidate();
+        this.reset();
         this.next = null;
         return this;
     }
@@ -117,7 +117,7 @@ class CallbackList {
         let info = this.head;
         while (info) {
             if (info.callback === callback && info.target === target) {
-                this.removeNode(info, tail);
+                this.erase(info, tail);
                 break;
             }
             tail = info;
@@ -130,7 +130,7 @@ class CallbackList {
         let info = this.head;
         while (info) {
             if (info.target === target) {
-                info = this.removeNode(info, tail);
+                info = this.erase(info, tail);
             } else {
                 tail = info;
                 info = info.next;
@@ -138,27 +138,9 @@ class CallbackList {
         }
     }
 
-    private removeNode (info: CallbackInfo, tail: CallbackInfo | null) {
-        const next = info.next;
-        if (next) {
-            if (tail) {
-                tail.next = next;
-            } else {
-                this.head = next;
-            }
-        } else {
-            if (tail) {
-                tail.next = null;
-            } else {
-                this.head = null;// current info is head
-            }
-        }
-        callbackInfoPool.free(info.clear());
-        return next;
-    }
 
     cancel(info: CallbackInfo) {
-        info.invalidate();
+        info.reset();
         this.containCanceled = true;
     }
 
@@ -196,13 +178,32 @@ class CallbackList {
         let info = this.head;
         while (info) {
             if (!info.valid) {
-                info = this.removeNode(info, tail);
+                info = this.erase(info, tail);
             } else {
                 tail = info;
                 info = info.next;
             }
         }
         this.containCanceled = false;
+    }
+
+    private erase (info: CallbackInfo, tail: CallbackInfo | null) {
+        const next = info.next;
+        if (next) {
+            if (tail) {
+                tail.next = next;
+            } else {
+                this.head = next;
+            }
+        } else {
+            if (tail) {
+                tail.next = null;
+            } else {
+                this.head = null;// current info is head
+            }
+        }
+        callbackInfoPool.free(info.clear());
+        return next;
     }
 
     clear (): this {
