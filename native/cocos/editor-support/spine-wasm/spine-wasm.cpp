@@ -45,7 +45,7 @@ SkeletonData* SpineWasmUtil::querySpineSkeletonDataByUUID(const std::string& uui
 
 SkeletonData* SpineWasmUtil::createSpineSkeletonDataWithJson(const std::string& jsonStr, const std::string& altasStr) {
 #if ENABLE_JSON_PARSER
-    auto* atlas = new Atlas(altasStr.c_str(), altasStr.size(), "", nullptr, false);
+        auto* atlas = new Atlas(altasStr.c_str(), altasStr.size(), "", nullptr, false);
     if (!atlas) {
         return nullptr;
     }
