@@ -206,19 +206,19 @@ function overrideProperty_PathConstraintData (): void {
     overrideDefineArrayProp(prototype, prototype.getBones, 'bones');
 }
 
-function overrideProperty_Event (): void {
-    const prototype = spine.Event.prototype as any;
-    const propertyPolyfills = [
-        ['data', prototype.getData],
-        // ['intValue', prototype.getIntValue, prototype.setIntValue],
-        // ['floatValue', prototype.getFloatValue, prototype.setFloatValue],
-        // ['stringValue', prototype.getStringValue, prototype.setStringValue],
-        // ['time', prototype.getTime],
-        // ['volume', prototype.getVolume, prototype.setVolume],
-        // ['balance', prototype.getBalance, prototype.setBalance],
-    ];
-    doPolyfill(prototype, propertyPolyfills);
-}
+// function overrideProperty_Event (): void {
+//     const prototype = spine.Event.prototype as any;
+//     const propertyPolyfills = [
+//         ['data', prototype.getData],
+//         // ['intValue', prototype.getIntValue, prototype.setIntValue],
+//         // ['floatValue', prototype.getFloatValue, prototype.setFloatValue],
+//         // ['stringValue', prototype.getStringValue, prototype.setStringValue],
+//         // ['time', prototype.getTime],
+//         // ['volume', prototype.getVolume, prototype.setVolume],
+//         // ['balance', prototype.getBalance, prototype.setBalance],
+//     ];
+//     doPolyfill(prototype, propertyPolyfills);
+// }
 
 // function overrideProperty_EventData (): void {
 //     const prototype = spine.EventData.prototype as any;
@@ -347,24 +347,24 @@ function overrideProperty_RegionAttachment (): void {
     });
 }
 
-function overrideProperty_TextureAtlas (): void {
-    // const prototype = spine.TextureAtlas.prototype as any;
-    // const propertyPolyfills = [
-    //     {
-    //         proto: prototype,
-    //         property: 'pages',
-    //         getter: prototype.getProp_pages,
-    //     },
-    //     {
-    //         proto: prototype,
-    //         property: 'regions',
-    //         getter: prototype.getProp_regions,
-    //     },
-    // ];
-    // propertyPolyfills.forEach((prop) => {
-    //     js.getset(prototype, prop[0], prop[1]);
-    // });
-}
+// function overrideProperty_TextureAtlas (): void {
+// const prototype = spine.TextureAtlas.prototype as any;
+// const propertyPolyfills = [
+//     {
+//         proto: prototype,
+//         property: 'pages',
+//         getter: prototype.getProp_pages,
+//     },
+//     {
+//         proto: prototype,
+//         property: 'regions',
+//         getter: prototype.getProp_regions,
+//     },
+// ];
+// propertyPolyfills.forEach((prop) => {
+//     js.getset(prototype, prop[0], prop[1]);
+// });
+// }
 
 // function overrideProperty_SlotData (): void {
 //     const prototype = spine.SlotData.prototype as any;
@@ -693,11 +693,11 @@ function overrideProperty_DrawOrderTimeline (): void {
 
 function overrideProperty_AnimationState (): void {
     const prototype = spine.AnimationState.prototype as any;
-    const propertyPolyfills = [
-        ['data', prototype.getData],
-        ['timeScale', prototype.getTimeScale, prototype.setTimeScale],
-    ];
-    doPolyfill(prototype, propertyPolyfills);
+    // const propertyPolyfills = [
+    //     ['data', prototype.getData],
+    //     ['timeScale', prototype.getTimeScale, prototype.setTimeScale],
+    // ];
+    // doPolyfill(prototype, propertyPolyfills);
 
     overrideDefineArrayProp(prototype, prototype.getTracks, 'tracks');
 }
@@ -766,7 +766,7 @@ export function overrideSpineDefine (wasm): void {
     // overrideProperty_ConstraintData();
     overrideProperty_IkConstraintData();
     overrideProperty_PathConstraintData();
-    overrideProperty_Event();
+    // overrideProperty_Event();
     // overrideProperty_EventData();
     // overrideProperty_BoundingBoxAttachment();
     // overrideProperty_ClippingAttachment();
@@ -775,7 +775,7 @@ export function overrideSpineDefine (wasm): void {
     // overrideProperty_PointAttachment();
     overrideProperty_RegionAttachment();
     overrideProperty_VertexAttachment();
-    overrideProperty_TextureAtlas();
+    // overrideProperty_TextureAtlas();
     // overrideProperty_SlotData();
     overrideProperty_IkConstraint();
     overrideProperty_PathConstraint();

@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.8)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(BUILD_WASM 1)
-set(ENABLE_JSON_PARSER 1)
+set(ENABLE_JSON_PARSER 0)
 
 set(CMAKE_BUILD_TYPE "MinSizeRel")
 # set(CMAKE_BUILD_TYPE "Debug")
