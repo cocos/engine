@@ -41,7 +41,7 @@ BoundingBoxAttachment::BoundingBoxAttachment(const String& name) : VertexAttachm
 }
 
 Attachment* BoundingBoxAttachment::copy() {
-    BoundingBoxAttachment* copy = new (__FILE__, __LINE__) BoundingBoxAttachment(getName());
+    BoundingBoxAttachment* copy = spine_new BoundingBoxAttachment(getName());
     copyTo(copy);
     return copy;
 }

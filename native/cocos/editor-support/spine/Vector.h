@@ -82,7 +82,7 @@ public:
         if (_capacity < newSize) {
             _capacity = (int)(_size * 1.75f);
             if (_capacity < 8) _capacity = 8;
-            _buffer = spine::SpineExtension::realloc<T>(_buffer, _capacity, __FILE__, __LINE__);
+            _buffer = spine::SpineExtension::realloc<T>(_buffer, _capacity, __SPINE_FILE__, __SPINE_LINE__);
         }
         if (oldSize < _size) {
             for (size_t i = oldSize; i < _size; i++) {
@@ -94,7 +94,7 @@ public:
     inline void ensureCapacity(size_t newCapacity = 0) {
         if (_capacity >= newCapacity) return;
         _capacity = newCapacity;
-        _buffer = SpineExtension::realloc<T>(_buffer, newCapacity, __FILE__, __LINE__);
+        _buffer = SpineExtension::realloc<T>(_buffer, newCapacity, __SPINE_FILE__, __SPINE_LINE__);
     }
 
     inline void add(const T &inValue) {
@@ -106,7 +106,7 @@ public:
             T valueCopy = inValue;
             _capacity = (int)(_size * 1.75f);
             if (_capacity < 8) _capacity = 8;
-            _buffer = spine::SpineExtension::realloc<T>(_buffer, _capacity, __FILE__, __LINE__);
+            _buffer = spine::SpineExtension::realloc<T>(_buffer, _capacity, __SPINE_FILE__, __SPINE_LINE__);
             construct(_buffer + _size++, valueCopy);
         } else {
             construct(_buffer + _size++, inValue);
@@ -203,7 +203,7 @@ private:
     inline T *allocate(size_t n) {
         assert(n > 0);
 
-        T *ptr = SpineExtension::calloc<T>(n, __FILE__, __LINE__);
+        T *ptr = SpineExtension::calloc<T>(n, __SPINE_FILE__, __SPINE_LINE__);
 
         assert(ptr);
 
@@ -212,7 +212,7 @@ private:
 
     inline void deallocate(T *buffer) {
         if (_buffer) {
-            SpineExtension::free(buffer, __FILE__, __LINE__);
+            SpineExtension::free(buffer, __SPINE_FILE__, __SPINE_LINE__);
         }
     }
 

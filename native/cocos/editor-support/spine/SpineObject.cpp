@@ -37,7 +37,7 @@
 using namespace spine;
 
 void *SpineObject::operator new(size_t sz) {
-    return SpineExtension::getInstance()->_calloc(sz, __FILE__, __LINE__);
+    return SpineExtension::getInstance()->_calloc(sz, __SPINE_FILE__, __SPINE_LINE__);
 }
 
 void *SpineObject::operator new(size_t sz, const char *file, int line) {
@@ -55,11 +55,11 @@ void SpineObject::operator delete(void *p, const char *file, int line) {
 
 void SpineObject::operator delete(void *p, void *mem) {
     SP_UNUSED(mem);
-    SpineExtension::free(p, __FILE__, __LINE__);
+    SpineExtension::free(p, __SPINE_FILE__, __SPINE_LINE__);
 }
 
 void SpineObject::operator delete(void *p) {
-    SpineExtension::free(p, __FILE__, __LINE__);
+    SpineExtension::free(p, __SPINE_FILE__, __SPINE_LINE__);
 }
 
 SpineObject::~SpineObject() {

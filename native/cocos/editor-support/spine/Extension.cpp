@@ -116,7 +116,7 @@ char *DefaultSpineExtension::_readFile(const String &path, int *length) {
     *length = (int)ftell(file);
     fseek(file, 0, SEEK_SET);
 
-    data = SpineExtension::alloc<char>(*length, __FILE__, __LINE__);
+    data = SpineExtension::alloc<char>(*length, __SPINE_FILE__, __SPINE_LINE__);
     fread(data, 1, *length, file);
     fclose(file);
 

@@ -51,7 +51,7 @@ Atlas::Atlas(const String &path, TextureLoader *textureLoader, bool createTextur
     const char *lastSlash = lastForwardSlash > lastBackwardSlash ? lastForwardSlash : lastBackwardSlash;
     if (lastSlash == path) lastSlash++; /* Never drop starting slash. */
     dirLength = (int)(lastSlash ? lastSlash - path.buffer() : 0);
-    dir = SpineExtension::calloc<char>(dirLength + 1, __FILE__, __LINE__);
+    dir = SpineExtension::calloc<char>(dirLength + 1, __SPINE_FILE__, __SPINE_LINE__);
     memcpy(dir, path.buffer(), dirLength);
     dir[dirLength] = '\0';
 
@@ -60,8 +60,8 @@ Atlas::Atlas(const String &path, TextureLoader *textureLoader, bool createTextur
         load(data, length, dir, createTexture);
     }
 
-    SpineExtension::free(data, __FILE__, __LINE__);
-    SpineExtension::free(dir, __FILE__, __LINE__);
+    SpineExtension::free(data, __SPINE_FILE__, __SPINE_LINE__);
+    SpineExtension::free(dir, __SPINE_FILE__, __SPINE_LINE__);
 }
 
 Atlas::Atlas(const char *data, int length, const char *dir, TextureLoader *textureLoader, bool createTexture) : _textureLoader(
@@ -117,12 +117,12 @@ void Atlas::load(const char *begin, int length, const char *dir, bool createText
             page = 0;
         } else if (!page) {
             char *name = mallocString(&str);
-            char *path = SpineExtension::calloc<char>(dirLength + needsSlash + strlen(name) + 1, __FILE__, __LINE__);
+            char *path = SpineExtension::calloc<char>(dirLength + needsSlash + strlen(name) + 1, __SPINE_FILE__, __SPINE_LINE__);
             memcpy(path, dir, dirLength);
             if (needsSlash) path[dirLength] = '/';
             strcpy(path + dirLength + needsSlash, name);
 
-            page = new (__FILE__, __LINE__) AtlasPage(String(name, true));
+            page = spine_new AtlasPage(String(name, true));
 
             int tupleVal = readTuple(&begin, end, tuple);
             assert(tupleVal == 2);
@@ -157,13 +157,13 @@ void Atlas::load(const char *begin, int length, const char *dir, bool createText
 
             if (createTexture) {
                 if (_textureLoader) _textureLoader->load(*page, String(path));
-                SpineExtension::free(path, __FILE__, __LINE__);
+                SpineExtension::free(path, __SPINE_FILE__, __SPINE_LINE__);
             } else
                 page->texturePath = String(path, true);
 
             _pages.add(page);
         } else {
-            AtlasRegion *region = new (__FILE__, __LINE__) AtlasRegion();
+            AtlasRegion *region = spine_new AtlasRegion();
 
             region->page = page;
             region->name = String(mallocString(&str), true);
@@ -309,7 +309,7 @@ int Atlas::readTuple(const char **begin, const char *end, Str tuple[]) {
 
 char *Atlas::mallocString(Str *str) {
     int length = (int)(str->end - str->begin);
-    char *string = SpineExtension::calloc<char>(length + 1, __FILE__, __LINE__);
+    char *string = SpineExtension::calloc<char>(length + 1, __SPINE_FILE__, __SPINE_LINE__);
     memcpy(string, str->begin, length);
     string[length] = '\0';
     return string;

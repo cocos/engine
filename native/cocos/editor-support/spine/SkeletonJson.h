@@ -30,6 +30,8 @@
 #ifndef Spine_SkeletonJson_h
 #define Spine_SkeletonJson_h
 
+#if 1//ENABLE_JSON_PARSER
+
 #include <spine/SpineObject.h>
 #include <spine/SpineString.h>
 #include <spine/Vector.h>
@@ -87,5 +89,7 @@ private:
     void setError(Json *root, const String &value1, const String &value2);
 };
 } // namespace spine
+
+#endif // ENABLE_JSON_PARSER
 
 #endif /* Spine_SkeletonJson_h */

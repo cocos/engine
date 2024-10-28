@@ -71,10 +71,10 @@ Skeleton::Skeleton(SkeletonData *skeletonData) : _data(skeletonData),
 
         Bone *bone;
         if (data->getParent() == NULL) {
-            bone = new (__FILE__, __LINE__) Bone(*data, *this, NULL);
+            bone = spine_new Bone(*data, *this, NULL);
         } else {
             Bone *parent = _bones[data->getParent()->getIndex()];
-            bone = new (__FILE__, __LINE__) Bone(*data, *this, parent);
+            bone = spine_new Bone(*data, *this, parent);
             parent->getChildren().add(bone);
         }
 
@@ -87,7 +87,7 @@ Skeleton::Skeleton(SkeletonData *skeletonData) : _data(skeletonData),
         SlotData *data = _data->getSlots()[i];
 
         Bone *bone = _bones[data->getBoneData().getIndex()];
-        Slot *slot = new (__FILE__, __LINE__) Slot(*data, *bone);
+        Slot *slot = spine_new Slot(*data, *bone);
 
         _slots.add(slot);
         _drawOrder.add(slot);
@@ -97,7 +97,7 @@ Skeleton::Skeleton(SkeletonData *skeletonData) : _data(skeletonData),
     for (size_t i = 0; i < _data->getIkConstraints().size(); ++i) {
         IkConstraintData *data = _data->getIkConstraints()[i];
 
-        IkConstraint *constraint = new (__FILE__, __LINE__) IkConstraint(*data, *this);
+        IkConstraint *constraint = spine_new IkConstraint(*data, *this);
 
         _ikConstraints.add(constraint);
     }
@@ -106,7 +106,7 @@ Skeleton::Skeleton(SkeletonData *skeletonData) : _data(skeletonData),
     for (size_t i = 0; i < _data->getTransformConstraints().size(); ++i) {
         TransformConstraintData *data = _data->getTransformConstraints()[i];
 
-        TransformConstraint *constraint = new (__FILE__, __LINE__) TransformConstraint(*data, *this);
+        TransformConstraint *constraint = spine_new TransformConstraint(*data, *this);
 
         _transformConstraints.add(constraint);
     }
@@ -115,7 +115,7 @@ Skeleton::Skeleton(SkeletonData *skeletonData) : _data(skeletonData),
     for (size_t i = 0; i < _data->getPathConstraints().size(); ++i) {
         PathConstraintData *data = _data->getPathConstraints()[i];
 
-        PathConstraint *constraint = new (__FILE__, __LINE__) PathConstraint(*data, *this);
+        PathConstraint *constraint = spine_new PathConstraint(*data, *this);
 
         _pathConstraints.add(constraint);
     }

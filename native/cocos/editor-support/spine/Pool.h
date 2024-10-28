@@ -54,7 +54,7 @@ public:
 
             return ret;
         } else {
-            T *ret = new (__FILE__, __LINE__) T();
+            T *ret = spine_new T();
 
             return ret;
         }

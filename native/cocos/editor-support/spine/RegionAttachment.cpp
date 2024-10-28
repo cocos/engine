@@ -264,7 +264,7 @@ spine::Color &RegionAttachment::getColor() {
 }
 
 Attachment *RegionAttachment::copy() {
-    RegionAttachment *copy = new (__FILE__, __LINE__) RegionAttachment(getName());
+    RegionAttachment *copy = spine_new RegionAttachment(getName());
     copy->_regionWidth = _regionWidth;
     copy->_regionHeight = _regionHeight;
     copy->_regionOffsetX = _regionOffsetX;

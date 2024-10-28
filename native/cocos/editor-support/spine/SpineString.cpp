@@ -46,7 +46,7 @@ String::String(const char *chars, size_t len, bool own) {
     } else {
         _length = len;
         if (!own) {
-            _buffer = SpineExtension::calloc<char>(_length + 1, __FILE__, __LINE__);
+            _buffer = SpineExtension::calloc<char>(_length + 1, __SPINE_FILE__, __SPINE_LINE__);
             _buffer[_length] = '\0';
             memcpy((void *)_buffer, chars, _length);
         } else {
@@ -64,7 +64,7 @@ String::String(const String &other) {
         _buffer = NULL;
     } else {
         _length = other._length;
-        _buffer = SpineExtension::calloc<char>(other._length + 1, __FILE__, __LINE__);
+        _buffer = SpineExtension::calloc<char>(other._length + 1, __SPINE_FILE__, __SPINE_LINE__);
         memcpy((void *)_buffer, other._buffer, other._length + 1);
     }
 }
@@ -72,7 +72,7 @@ String::String(const String &other) {
 void String::own(const String &other) {
     if (this == &other) return;
     if (_buffer) {
-        SpineExtension::free(_buffer, __FILE__, __LINE__);
+        SpineExtension::free(_buffer, __SPINE_FILE__, __SPINE_LINE__);
     }
     _length = other._length;
     _buffer = other._buffer;
@@ -83,7 +83,7 @@ void String::own(const String &other) {
 void String::own(const char *chars) {
     if (_buffer == chars) return;
     if (_buffer) {
-        SpineExtension::free(_buffer, __FILE__, __LINE__);
+        SpineExtension::free(_buffer, __SPINE_FILE__, __SPINE_LINE__);
     }
 
     if (!chars) {
@@ -103,14 +103,14 @@ void String::unown() {
 String &String::operator=(const String &other) {
     if (this == &other) return *this;
     if (_buffer) {
-        SpineExtension::free(_buffer, __FILE__, __LINE__);
+        SpineExtension::free(_buffer, __SPINE_FILE__, __SPINE_LINE__);
     }
     if (!other._buffer) {
         _length = 0;
         _buffer = NULL;
     } else {
         _length = other._length;
-        _buffer = SpineExtension::calloc<char>(other._length + 1, __FILE__, __LINE__);
+        _buffer = SpineExtension::calloc<char>(other._length + 1, __SPINE_FILE__, __SPINE_LINE__);
         memcpy((void *)_buffer, other._buffer, other._length + 1);
     }
     return *this;
@@ -119,14 +119,14 @@ String &String::operator=(const String &other) {
 String &String::operator=(const char *chars) {
     if (_buffer == chars) return *this;
     if (_buffer) {
-        SpineExtension::free(_buffer, __FILE__, __LINE__);
+        SpineExtension::free(_buffer, __SPINE_FILE__, __SPINE_LINE__);
     }
     if (!chars) {
         _length = 0;
         _buffer = NULL;
     } else {
         _length = strlen(chars);
-        _buffer = SpineExtension::calloc<char>(_length + 1, __FILE__, __LINE__);
+        _buffer = SpineExtension::calloc<char>(_length + 1, __SPINE_FILE__, __SPINE_LINE__);
         memcpy((void *)_buffer, chars, _length + 1);
     }
     return *this;
@@ -137,7 +137,7 @@ String &String::append(const char *chars) {
     size_t thisLen = _length;
     _length = _length + len;
     bool same = chars == _buffer;
-    _buffer = SpineExtension::realloc(_buffer, _length + 1, __FILE__, __LINE__);
+    _buffer = SpineExtension::realloc(_buffer, _length + 1, __SPINE_FILE__, __SPINE_LINE__);
     memcpy((void *)(_buffer + thisLen), (void *)(same ? _buffer : chars), len + 1);
     return *this;
 }
@@ -147,7 +147,7 @@ String &String::append(const String &other) {
     size_t thisLen = _length;
     _length = _length + len;
     bool same = other._buffer == _buffer;
-    _buffer = SpineExtension::realloc(_buffer, _length + 1, __FILE__, __LINE__);
+    _buffer = SpineExtension::realloc(_buffer, _length + 1, __SPINE_FILE__, __SPINE_LINE__);
     memcpy((void *)(_buffer + thisLen), (void *)(same ? _buffer : other._buffer), len + 1);
     return *this;
 }
@@ -182,7 +182,7 @@ bool operator!=(const String &a, const String &b) {
 
 String::~String() {
     if (_buffer) {
-        SpineExtension::free(_buffer, __FILE__, __LINE__);
+        SpineExtension::free(_buffer, __SPINE_FILE__, __SPINE_LINE__);
     }
 }
 

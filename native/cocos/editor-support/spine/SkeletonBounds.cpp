@@ -72,7 +72,7 @@ void SkeletonBounds::update(Skeleton &skeleton, bool updateAabb) {
             polygonP = _polygonPool[poolCount - 1];
             _polygonPool.removeAt(poolCount - 1);
         } else
-            polygonP = new (__FILE__, __LINE__) Polygon();
+            polygonP = spine_new Polygon();
 
         _polygons.add(polygonP);
 

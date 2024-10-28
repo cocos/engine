@@ -187,7 +187,7 @@ EventQueueEntry::EventQueueEntry(EventType eventType, TrackEntry *trackEntry, Ev
 }
 
 EventQueue *EventQueue::newEventQueue(AnimationState &state, Pool<TrackEntry> &trackEntryPool) {
-    return new (__FILE__, __LINE__) EventQueue(state, trackEntryPool);
+    return spine_new EventQueue(state, trackEntryPool);
 }
 
 EventQueueEntry EventQueue::newEventQueueEntry(EventType eventType, TrackEntry *entry, Event *event) {

@@ -20,6 +20,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
+#if 1//ENABLE_JSON_PARSER
 
 #ifdef SPINE_UE4
     #include "SpinePluginPrivatePCH.h"
@@ -132,11 +133,11 @@ Json::~Json() {
     } while (next);
 
     if (_valueString) {
-        SpineExtension::free(_valueString, __FILE__, __LINE__);
+        SpineExtension::free(_valueString, __SPINE_FILE__, __SPINE_LINE__);
     }
 
     if (_name) {
-        SpineExtension::free(_name, __FILE__, __LINE__);
+        SpineExtension::free(_name, __SPINE_FILE__, __SPINE_LINE__);
     }
 }
 
@@ -233,7 +234,7 @@ const char *Json::parseString(Json *item, const char *str) {
         }
     }
 
-    out = SpineExtension::alloc<char>(len + 1, __FILE__, __LINE__); /* The length needed for the string, roughly. */
+    out = SpineExtension::alloc<char>(len + 1, __SPINE_FILE__, __SPINE_LINE__); /* The length needed for the string, roughly. */
     if (!out) {
         return 0;
     }
@@ -554,3 +555,5 @@ int Json::json_strcasecmp(const char *s1, const char *s2) {
         }
     }
 }
+
+#endif // ENABLE_JSON_PARSER
