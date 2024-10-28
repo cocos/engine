@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.8)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 
 set(BUILD_WASM 1)
+set(ENABLE_JSON_PARSER 1)
 
 set(CMAKE_BUILD_TYPE "MinSizeRel")
 # set(CMAKE_BUILD_TYPE "Debug")
@@ -20,13 +21,14 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(APP_NAME "spine" CACHE STRING "Project Name")
 project(${APP_NAME}_wasm)
 
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0 -DENABLE_JSON_PARSER=${ENABLE_JSON_PARSER}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0 -DENABLE_JSON_PARSER=${ENABLE_JSON_PARSER}")
 
 message(">>> --------------------------------------------------------------")
 message(">>> Current directory: ${CMAKE_CURRENT_LIST_DIR}")
 message(">>> CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 message(">>> ENABLE_CLOSURE_COMPILER: ${ENABLE_CLOSURE_COMPILER}")
+message(">>> ENABLE_JSON_PARSER: ${ENABLE_JSON_PARSER}")
 message(">>> --------------------------------------------------------------")
 
 include_directories(${CMAKE_CURRENT_LIST_DIR}/..)
