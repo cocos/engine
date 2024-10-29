@@ -78,12 +78,7 @@ const eventMap = {
     'scroll-began': 12,
 };
 
-interface MoveDeltaOptions {
-    anchor: Vec2,
-    applyToHorizontal: boolean,
-    applyToVertical: boolean,
-}
-const _moveDeltaOptions: MoveDeltaOptions = {
+const _moveDeltaOptions = {
     anchor: _tempVec2,
     applyToHorizontal: false,
     applyToVertical: false,
@@ -1838,7 +1833,7 @@ export class ScrollView extends ViewGroup {
         }
     }
 
-    protected _calculateMovePercentDelta (options: MoveDeltaOptions): Vec3 {
+    protected _calculateMovePercentDelta (options): Vec3 {
         const anchor = options.anchor;
         const applyToHorizontal = options.applyToHorizontal;
         const applyToVertical = options.applyToVertical;
