@@ -1117,7 +1117,6 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("getPropertyId", &Timeline::getPropertyId, pure_virtual());
 
     class_<CurveTimeline, base<Timeline>>("CurveTimeline")
-        .function("getPropertyId", &CurveTimeline::getPropertyId, pure_virtual())
         .function("getFrameCount", &CurveTimeline::getFrameCount)
         .function("setLinear", &CurveTimeline::setLinear)
         .function("setStepped", &CurveTimeline::setStepped)
@@ -1128,24 +1127,21 @@ EMSCRIPTEN_BINDINGS(spine) {
     class_<TranslateTimeline, base<CurveTimeline>>("TranslateTimeline")
         .constructor<int>()
         .class_property("ENTRIES", &TranslateTimeline::ENTRIES)
-        .function("getPropertyId", &TranslateTimeline::getPropertyId)
         .function("setFrame", &TranslateTimeline::setFrame);
 
     class_<ScaleTimeline, base<TranslateTimeline>>("ScaleTimeline")
         .constructor<int>()
-        .function("getPropertyId", &ScaleTimeline::getPropertyId);
+        ;
 
     class_<ShearTimeline, base<TranslateTimeline>>("ShearTimeline")
         .constructor<int>()
-        .function("getPropertyId", &ShearTimeline::getPropertyId);
+        ;
 
     class_<RotateTimeline, base<CurveTimeline>>("RotateTimeline")
         .constructor<int>()
         //.class_property("ENTRIES", &RotateTimeline::ENTRIES) not bind
         .property("boneIndex", &RotateTimeline::getBoneIndex, &RotateTimeline::setBoneIndex)
-        .function("getFrames", optional_override([](RotateTimeline &obj) {
-            return &obj.getFrames(); }), allow_raw_pointer<SPVectorFloat>())
-        .function("getPropertyId", &RotateTimeline::getPropertyId)
+        .function("getFrames", GETTER_RVAL_TO_PTR(RotateTimeline, getFrames, SPVectorFloat*), allow_raw_pointer<SPVectorFloat>())
         .function("setFrame", &RotateTimeline::setFrame);
 
     class_<ColorTimeline, base<CurveTimeline>>("ColorTimeline")
@@ -1153,25 +1149,20 @@ EMSCRIPTEN_BINDINGS(spine) {
         .class_property("ENTRIES", &ColorTimeline::ENTRIES) 
         .property("slotIndex", &ColorTimeline::getSlotIndex, &ColorTimeline::setSlotIndex)
 
-        .function("getFrames", optional_override([](ColorTimeline &obj) {
-            return &obj.getFrames(); }), allow_raw_pointer<SPVectorFloat>())
-        .function("getPropertyId", &ColorTimeline::getPropertyId)
+        .function("getFrames", GETTER_RVAL_TO_PTR(ColorTimeline, getFrames, SPVectorFloat*), allow_raw_pointer<SPVectorFloat>())
         .function("setFrame", &ColorTimeline::setFrame);
 
     class_<TwoColorTimeline, base<CurveTimeline>>("TwoColorTimeline")
         .constructor<int>()
         .class_property("ENTRIES", &ColorTimeline::ENTRIES)
         .property("slotIndex", &TwoColorTimeline::getSlotIndex, &TwoColorTimeline::setSlotIndex)
-        .function("getPropertyId", &TwoColorTimeline::getPropertyId)
         .function("setFrame", &TwoColorTimeline::setFrame);
 
     class_<AttachmentTimeline, base<Timeline>>("AttachmentTimeline")
         .constructor<int>()
         .property("slotIndex", &AttachmentTimeline::getSlotIndex, &AttachmentTimeline::setSlotIndex)
-        .function("getFrames", optional_override([](AttachmentTimeline &obj) {
-             return &obj.getFrames(); }), allow_raw_pointer<SPVectorFloat>())
+        .function("getFrames", GETTER_RVAL_TO_PTR(AttachmentTimeline, getFrames, SPVectorFloat*), allow_raw_pointer<SPVectorFloat>())
         .function("getAttachmentNames", &AttachmentTimeline::getAttachmentNames)
-        .function("getPropertyId", &AttachmentTimeline::getPropertyId)
         .function("getFrameCount", &AttachmentTimeline::getFrameCount)
         .function("setFrame", &AttachmentTimeline::setFrame, allow_raw_pointers());
 
@@ -1179,11 +1170,9 @@ EMSCRIPTEN_BINDINGS(spine) {
         .constructor<int>()
         .property("slotIndex", &DeformTimeline::getSlotIndex, &DeformTimeline::setSlotIndex)
         .property("attachment", &DeformTimeline::getAttachment, &DeformTimeline::setAttachment)
-        .function("getFrames", optional_override([](DeformTimeline &obj) {
-            return &obj.getFrames(); }), allow_raw_pointer<SPVectorFloat>())
+        .function("getFrames", GETTER_RVAL_TO_PTR(DeformTimeline, getFrames, SPVectorFloat*), allow_raw_pointer<SPVectorFloat>())
         .function("getFrameVertices", optional_override([](DeformTimeline &obj) {
             return &obj.getVertices(); }), allow_raw_pointer<SPVectorVectorFloat>())
-        .function("getPropertyId", &DeformTimeline::getPropertyId)
         .function("setFrame", optional_override([](DeformTimeline &obj, int frameIndex, float time, emscripten::val jsArray){
             unsigned count = jsArray["length"].as<unsigned>();
             Vector<float> spVertices;
@@ -1196,19 +1185,15 @@ EMSCRIPTEN_BINDINGS(spine) {
 
     class_<EventTimeline, base<Timeline>>("EventTimeline")
         .constructor<int>()
-        .function("getFrames", optional_override([](EventTimeline &obj) {
-            return &obj.getFrames(); }), allow_raw_pointer<SPVectorFloat>())
+        .function("getFrames", GETTER_RVAL_TO_PTR(EventTimeline, getFrames, SPVectorFloat*), allow_raw_pointer<SPVectorFloat>())
         .function("getEvents",  optional_override([](EventTimeline &obj) {
             return &obj.getEvents(); }), allow_raw_pointer<SPVectorEventPtr>())
-        .function("getPropertyId", &EventTimeline::getPropertyId)
         .function("getFrameCount", &EventTimeline::getFrameCount)
         .function("setFrame", &EventTimeline::setFrame, allow_raw_pointers());
 
     class_<DrawOrderTimeline, base<Timeline>>("DrawOrderTimeline")
         .constructor<int>()
-        .function("getFrames", optional_override([](DrawOrderTimeline &obj) {
-            return &obj.getFrames(); }), allow_raw_pointer<SPVectorFloat>())
-        .function("getPropertyId", &DrawOrderTimeline::getPropertyId)
+        .function("getFrames", GETTER_RVAL_TO_PTR(DrawOrderTimeline, getFrames, SPVectorFloat*), allow_raw_pointer<SPVectorFloat>())
         .function("getFrameCount", &DrawOrderTimeline::getFrameCount)
         .function("getDrawOrders", optional_override([](DrawOrderTimeline &obj) { 
             return &obj.getDrawOrders(); }), allow_raw_pointer<SPVectorVectorInt>())
@@ -1217,25 +1202,22 @@ EMSCRIPTEN_BINDINGS(spine) {
     class_<IkConstraintTimeline, base<CurveTimeline>>("IkConstraintTimeline")
         .constructor<int>()
         .class_property("ENTRIES", &IkConstraintTimeline::ENTRIES)
-        .function("getPropertyId", &IkConstraintTimeline::getPropertyId)
         .function("setFrame", &IkConstraintTimeline::setFrame);
 
     class_<TransformConstraintTimeline, base<CurveTimeline>>("TransformConstraintTimeline")
         .constructor<int>()
         .class_property("ENTRIES", &TransformConstraintTimeline::ENTRIES)
-        .function("getPropertyId", &TransformConstraintTimeline::getPropertyId)
         .function("setFrame", &TransformConstraintTimeline::setFrame);
 
     class_<PathConstraintPositionTimeline, base<CurveTimeline>>("PathConstraintPositionTimeline")
         .constructor<int>()
         .class_property("ENTRIES", &TransformConstraintTimeline::ENTRIES)
-        .function("getPropertyId", &PathConstraintPositionTimeline::getPropertyId)
         .function("setFrame", &PathConstraintPositionTimeline::setFrame);
 
     class_<PathConstraintMixTimeline, base<CurveTimeline>>("PathConstraintMixTimeline")
         .constructor<int>()
         .class_property("ENTRIES", &PathConstraintMixTimeline::ENTRIES)
-        .function("getPropertyId", &PathConstraintMixTimeline::getPropertyId);
+        ;
 
     class_<TrackEntry>("TrackEntry")
         .constructor<>()
