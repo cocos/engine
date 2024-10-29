@@ -63,7 +63,7 @@ public:
 #else
     #define __SPINE_FILE__ ""
     #define __SPINE_LINE__ __LINE__
-    #define spine_new new ("", 0)
+    #define spine_new new
 #endif
 
 #endif
