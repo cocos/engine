@@ -80,7 +80,7 @@ public:
     Bone(BoneData &data, Skeleton &skeleton, Bone *parent = NULL);
 
     /// Same as updateWorldTransform. This method exists for Bone to implement Spine::Updatable.
-    void update() override;
+    virtual void update();
 
     /// Computes the world transform using the parent bone and this bone's local transform.
     void updateWorldTransform();
@@ -221,9 +221,9 @@ public:
     bool isAppliedValid();
     void setAppliedValid(bool valid);
 
-    bool isActive() override;
+    virtual bool isActive();
 
-    void setActive(bool inValue) override;
+    virtual void setActive(bool inValue);;
 
 private:
     static bool yDown;

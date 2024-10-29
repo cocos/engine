@@ -63,7 +63,7 @@ public:
     /// Applies the constraint to the constrained bones.
     void apply();
 
-    void update() override;
+    virtual void update();
 
     virtual int getOrder();
 
@@ -95,9 +95,9 @@ public:
 
     void setSoftness(float inValue);
 
-    bool isActive() override;
+    virtual bool isActive();
 
-    void setActive(bool inValue) override;
+    virtual void setActive(bool inValue);;
 
 private:
     IkConstraintData &_data;
