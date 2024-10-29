@@ -79,7 +79,7 @@ const eventMap = {
 };
 
 const _moveDeltaOptions = {
-    anchor: _tempVec2,
+    anchor: v2(),
     applyToHorizontal: false,
     applyToVertical: false,
 };
