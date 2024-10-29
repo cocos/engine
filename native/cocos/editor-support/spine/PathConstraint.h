@@ -55,7 +55,7 @@ public:
     /// Applies the constraint to the constrained bones.
     void apply();
 
-    virtual void update();
+    void update() override;
 
     virtual int getOrder();
 
@@ -78,9 +78,9 @@ public:
 
     PathConstraintData& getData();
 
-    bool isActive();
+    bool isActive() override;
 
-    void setActive(bool inValue);
+    void setActive(bool inValue) override;
 
 private:
     static const float EPSILON;

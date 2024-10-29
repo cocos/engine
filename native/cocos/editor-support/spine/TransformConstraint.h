@@ -50,7 +50,7 @@ public:
 
     void apply();
 
-    virtual void update();
+    void update() override;
 
     virtual int getOrder();
 
@@ -73,9 +73,9 @@ public:
     float getShearMix();
     void setShearMix(float inValue);
 
-    bool isActive();
+    bool isActive() override;
 
-    void setActive(bool inValue);
+    void setActive(bool inValue) override;
 
 private:
     TransformConstraintData& _data;

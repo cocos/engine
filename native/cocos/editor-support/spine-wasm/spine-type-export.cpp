@@ -845,7 +845,9 @@ EMSCRIPTEN_BINDINGS(spine) {
 
     class_<Updatable>("Updatable")
         .function("update", &Updatable::update, pure_virtual())
-        .function("isActive", &Updatable::isActive, pure_virtual());
+        .function("isActive", &Updatable::isActive, pure_virtual())
+        .property("active", &Updatable::isActive, &Updatable::setActive)
+        ;
 
     class_<IkConstraint, base<Updatable>>("IkConstraint")
         .constructor<IkConstraintData &, Skeleton &>()
@@ -858,9 +860,6 @@ EMSCRIPTEN_BINDINGS(spine) {
         .property("stretch", &IkConstraint::getStretch, &IkConstraint::setStretch)
         .property("mix", &IkConstraint::getMix, &IkConstraint::setMix)
         .property("softness", &IkConstraint::getSoftness, &IkConstraint::setSoftness)
-        .property("active", &IkConstraint::isActive, &IkConstraint::setActive)
-        .function("isActive", &IkConstraint::isActive)
-        .function("update", &IkConstraint::update)
         .class_function("apply1", optional_override([](
             IkConstraint &obj, Bone &bone, float targetX, float targetY, 
             bool compress, bool stretch, bool uniform, float alpha){
@@ -882,9 +881,7 @@ EMSCRIPTEN_BINDINGS(spine) {
         .property("spacing", &PathConstraint::getSpacing, &PathConstraint::setSpacing)
         .property("rotateMix", &PathConstraint::getRotateMix, &PathConstraint::setRotateMix)
         .property("translateMix", &PathConstraint::getTranslateMix, &PathConstraint::setTranslateMix)
-        .property("active", &PathConstraint::isActive, &PathConstraint::setActive)
-        .function("isActive", &PathConstraint::isActive)
-        .function("update", &PathConstraint::update);
+        ;
 
     class_<TransformConstraintData, base<ConstraintData>>("TransformConstraintData")
         .constructor<const String &>()
@@ -914,9 +911,7 @@ EMSCRIPTEN_BINDINGS(spine) {
         .property("translateMix", &TransformConstraint::getTranslateMix, &TransformConstraint::setTranslateMix)
         .property("scaleMix", &TransformConstraint::getScaleMix, &TransformConstraint::setScaleMix)
         .property("shearMix", &TransformConstraint::getShearMix, &TransformConstraint::setShearMix)
-        .property("active", &TransformConstraint::isActive, &TransformConstraint::setActive)
-        .function("isActive", &TransformConstraint::isActive)
-        .function("update", &TransformConstraint::update);
+        ;
 
     class_<Bone, base<Updatable>>("Bone")
         .constructor<BoneData &, Skeleton &, Bone *>()
@@ -946,11 +941,7 @@ EMSCRIPTEN_BINDINGS(spine) {
         .property("d", &Bone::getD, &Bone::setD)
         .property("worldX", &Bone::getWorldX, &Bone::setWorldX)
         .property("worldY", &Bone::getWorldY, &Bone::setWorldY)
-        .property("active", &Bone::isActive, &Bone::setActive)
         
-        .function("isActive", &Bone::isActive)
-        .function("update", &Bone::update)
-
         .function("updateWorldTransform", select_overload<void()>(&Bone::updateWorldTransform))
         .function("updateWorldTransformWith", select_overload<void(float, float, float, float, float, float, float)>(&Bone::updateWorldTransform))
         .function("setToSetupPose", &Bone::setToSetupPose)

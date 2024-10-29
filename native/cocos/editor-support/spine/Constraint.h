@@ -43,8 +43,6 @@ public:
 
     virtual ~Constraint();
 
-    virtual void update() = 0;
-
     /// The ordinal for the order a skeleton's constraints will be applied.
     virtual int getOrder() = 0;
 };
