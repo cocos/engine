@@ -1,5 +1,6 @@
 #include <emscripten/bind.h>
 #include <emscripten/wire.h>
+#include <cstdint>
 #include <type_traits>
 #include <vector>
 #include "spine-skeleton-instance.h"
@@ -249,8 +250,8 @@ using SPVectorPathConstraintPtr = Vector<PathConstraint*>;
 using SPVectorTimelinePtr = Vector<Timeline*>;
 using SPVectorTrackEntryPtr = Vector<TrackEntry*>;
 using SPVectorUpdatablePtr = Vector<Updatable*>;
-using SPVectorSkinEntry = Vector<Skin::AttachmentMap::Entry>;
-using SPVectorVectorSkinEntry = Vector<SPVectorSkinEntry>;
+using SPVectorSkinEntryPtr = Vector<Skin::AttachmentMap::Entry*>;
+using SPVectorVectorSkinEntryPtr = Vector<SPVectorSkinEntryPtr>;
 
 template <typename T>
 void registerSpineInteger(const char* name) {
@@ -568,8 +569,8 @@ EMSCRIPTEN_BINDINGS(spine) {
     REGISTER_SPINE_VECTOR(SPVectorTimelinePtr, true); // .set used in Animation constructor 
     REGISTER_SPINE_VECTOR(SPVectorTrackEntryPtr, false);
     REGISTER_SPINE_VECTOR(SPVectorUpdatablePtr, false);
-    REGISTER_SPINE_VECTOR(SPVectorSkinEntry, false);
-    REGISTER_SPINE_VECTOR(SPVectorVectorSkinEntry, false);
+    REGISTER_SPINE_VECTOR(SPVectorSkinEntryPtr, false);
+    REGISTER_SPINE_VECTOR(SPVectorVectorSkinEntryPtr, false);
 
     class_<Vector2>("Vector2")
         .constructor<>()
@@ -1001,7 +1002,7 @@ EMSCRIPTEN_BINDINGS(spine) {
         .property("color", GETTER_RVAL_TO_PTR(Slot, getColor, Color*))
         .property("darkColor", GETTER_RVAL_TO_PTR(Slot, getDarkColor, Color*))
         .function("getDeform", &Slot::getDeform, allow_raw_pointers())
-        .property("skeleton", GETTER_RVAL_TO_PTR(Slot, getSkeleton, Skeleton*))
+        .function("getSkeleton", GETTER_RVAL_TO_PTR(Slot, getSkeleton, Skeleton*))
         .function("getAttachment", &Slot::getAttachment, allow_raw_pointers())
         .function("setAttachment", &Slot::setAttachment, allow_raw_pointers())
         .function("setAttachmentTime", &Slot::setAttachmentTime)
@@ -1020,7 +1021,6 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("copySkin", select_overload<void(Skin *)>(&Skin::copySkin), allow_raw_pointers())
         .function("findNamesForSlot", optional_override([](Skin &obj, size_t slotIndex) {
             std::vector<std::string> vetNames;
-            std::vector<Skin::AttachmentMap::Entry *> entriesVector;
             auto entries = obj.getAttachments();
             while (entries.hasNext()) {
                 Skin::AttachmentMap::Entry &entry = entries.next();
@@ -1030,20 +1030,20 @@ EMSCRIPTEN_BINDINGS(spine) {
         }), allow_raw_pointers())
         .function("getAttachment", &Skin::getAttachment, allow_raw_pointers())
         .function("getAttachments", optional_override([](Skin &obj) {
-            std::vector<Skin::AttachmentMap::Entry *> entriesVector;
+            SPVectorSkinEntryPtr entriesVector;
             auto entries = obj.getAttachments();
             while (entries.hasNext()) {
-                entriesVector.push_back(&entries.next());
+                entriesVector.add(&entries.next());
             }
             return entriesVector;
         }),allow_raw_pointers())
         .function("removeAttachment", &Skin::removeAttachment)
         .function("getAttachmentsForSlot", optional_override([](Skin &obj, size_t index) {
-            std::vector<Skin::AttachmentMap::Entry *> entriesVector;
+            SPVectorSkinEntryPtr entriesVector;
             auto entries = obj.getAttachments();
             while (entries.hasNext()) {
                 Skin::AttachmentMap::Entry &entry = entries.next();
-                if (entry._slotIndex == index) entriesVector.push_back(&entry);
+                if (entry._slotIndex == index) entriesVector.add(&entry);
             }
             return entriesVector;
         }),allow_raw_pointers());
@@ -1107,7 +1107,15 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("findPathConstraintIndex", &SkeletonData::findPathConstraintIndex);
 
     class_<Animation>("Animation")
-        .constructor<const String &, Vector<Timeline *> &, float>()
+        .constructor(optional_override([](const String &name, const emscripten::val &value, float duration) -> Animation* {
+            auto length = value["length"].as<uint32_t>();
+            Vector<Timeline *> timelines;
+            timelines.setSize(length, nullptr);
+            for (uint32_t i = 0; i < length; ++i) {
+                timelines[i] = value[i].as<Timeline*>(allow_raw_pointers());
+            }
+            return new Animation(name, timelines, duration);
+        }))
         .property("name", &Animation::getName)
         .function("getTimelines", optional_override([](Animation &obj) {
             return &obj.getTimelines(); }), allow_raw_pointer<SPVectorTimelinePtr>())
@@ -1297,7 +1305,7 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("setAnimation", select_overload<TrackEntry* (size_t, const String&, bool)>(&AnimationState::setAnimation), allow_raw_pointers())
         .function("setAnimationWith", optional_override([](AnimationState &obj, uint32_t trackIndex, Animation *animation, bool loop) { return obj.setAnimation(trackIndex, animation, loop); }), allow_raw_pointers())
         .function("addAnimation", select_overload<TrackEntry* (size_t, const String&, bool, float)>(&AnimationState::addAnimation), allow_raw_pointers())
-        .function("addAnimationWith", select_overload<TrackEntry* (size_t, const String&, bool, float)>(&AnimationState::addAnimation), allow_raw_pointers())
+        .function("addAnimationWith", select_overload<TrackEntry* (size_t, Animation *animation, bool, float)>(&AnimationState::addAnimation), allow_raw_pointers())
         .function("setEmptyAnimation", &AnimationState::setEmptyAnimation, allow_raw_pointers())
         .function("addEmptyAnimation", &AnimationState::addEmptyAnimation, allow_raw_pointers())
         .function("setEmptyAnimations", &AnimationState::setEmptyAnimations)

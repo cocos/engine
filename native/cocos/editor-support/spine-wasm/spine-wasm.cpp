@@ -61,6 +61,7 @@ SkeletonData* SpineWasmUtil::createSpineSkeletonDataWithJson(const std::string& 
 }
 
 SkeletonData* SpineWasmUtil::createSpineSkeletonDataWithBinary(uint32_t byteSize, const std::string& altasStr) {
+#if ENABLE_BINARY_PARSER
     auto* atlas = new Atlas(altasStr.c_str(), altasStr.size(), "", nullptr, false);
     if (!atlas) {
         return nullptr;
@@ -70,6 +71,9 @@ SkeletonData* SpineWasmUtil::createSpineSkeletonDataWithBinary(uint32_t byteSize
     binary.setScale(1.0F);
     SkeletonData* skeletonData = binary.readSkeletonData(s_mem, byteSize);
     return skeletonData;
+#else
+    return nullptr;
+#endif
 }
 
 void SpineWasmUtil::registerSpineSkeletonDataWithUUID(SkeletonData* data, const std::string& uuid) {
