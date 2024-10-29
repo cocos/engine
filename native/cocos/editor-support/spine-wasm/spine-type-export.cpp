@@ -1330,8 +1330,8 @@ EMSCRIPTEN_BINDINGS(spine) {
             return &obj.getPathConstraints(); }), allow_raw_pointer<SPVectorPathConstraintPtr>())
         .function("getUpdateCacheList", optional_override([](Skeleton &obj){
             return &obj.getUpdateCacheList(); }), allow_raw_pointer<SPVectorUpdatablePtr>())
-        .property("getSkin", &Skeleton::getSkin)
-        .property("getColor", GETTER_RVAL_TO_PTR(Skeleton, getColor, Color*))
+        .property("skin", &Skeleton::getSkin)
+        .property("color", GETTER_RVAL_TO_PTR(Skeleton, getColor, Color*))
         .property("time", &Skeleton::getTime, &Skeleton::setTime)
         .property("scaleX", &Skeleton::getScaleX, &Skeleton::setScaleX)
         .property("scaleY", &Skeleton::getScaleY, &Skeleton::setScaleY)
