@@ -2,7 +2,6 @@
 
 #include <spine/spine.h>
 
-// #include <map>
 #include <cstdint>
 #include <string>
 #include "mesh-type-define.h"
@@ -75,6 +74,5 @@ private:
     uint32_t _trackEntryListenerID = 0;
     UserData _userData;
     spine::Vector<SpineDebugShape> _debugShapes{};
-    // std::map<spine::Slot *, uint32_t> _slotTextureSet{};
     spine::HashMap<spine::Slot*, uint32_t> _slotTextureSet{};
 };
