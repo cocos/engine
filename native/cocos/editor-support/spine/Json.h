@@ -30,8 +30,6 @@
 #ifndef Spine_Json_h
 #define Spine_Json_h
 
-#if 1//ENABLE_JSON_PARSER
-
 #include <spine/SpineObject.h>
 
 #ifndef SPINE_JSON_HAVE_PREV
@@ -111,7 +109,5 @@ private:
     static int json_strcasecmp(const char *s1, const char *s2);
 };
 } // namespace spine
-
-#endif // ENABLE_JSON_PARSER
 
 #endif /* Spine_Json_h */

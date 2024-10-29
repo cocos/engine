@@ -20,7 +20,6 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
-#if 1//ENABLE_JSON_PARSER
 
 #ifdef SPINE_UE4
     #include "SpinePluginPrivatePCH.h"
@@ -555,5 +554,3 @@ int Json::json_strcasecmp(const char *s1, const char *s2) {
         }
     }
 }
-
-#endif // ENABLE_JSON_PARSER
