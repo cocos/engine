@@ -924,7 +924,7 @@ export class Skeleton extends UIRenderer {
             let cache = this._skeletonCache.getAnimationCache(this._skeletonData!.uuid, name);
             if (!cache) {
                 cache = this._skeletonCache.initAnimationCache(this.skeletonData!.uuid, this._skeletonData!, name);
-                cache?.setSkin(this._skinName);
+                if (cache && this._skinName) cache.setSkin(this._skinName);
             }
             if (cache) {
                 this._animationName = name;
