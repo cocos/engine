@@ -27,8 +27,6 @@
  * THE SPINE RUNTIMES, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *****************************************************************************/
 
-#if 1//ENABLE_JSON_PARSER
-
 #ifdef SPINE_UE4
     #include "SpinePluginPrivatePCH.h"
 #endif
@@ -1260,5 +1258,3 @@ void SkeletonJson::setError(Json *root, const String &value1, const String &valu
     _error = String(value1).append(value2);
     delete root;
 }
-
-#endif // ENABLE_JSON_PARSER
