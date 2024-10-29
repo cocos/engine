@@ -2349,6 +2349,7 @@ if(USE_MIDDLEWARE)
                                      cocos/editor-support/spine/spine.h
             NO_WERROR                cocos/editor-support/spine/SpineObject.cpp
                                      cocos/editor-support/spine/SpineObject.h
+                                     cocos/editor-support/spine/SpineString.cpp
                                      cocos/editor-support/spine/SpineString.h
             NO_WERROR                cocos/editor-support/spine/TextureLoader.cpp
                                      cocos/editor-support/spine/TextureLoader.h

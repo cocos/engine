@@ -102,6 +102,10 @@ using namespace spine;
 %ignore spine::TranslateTimeline::getRTTI;
 %ignore spine::TwoColorTimeline::getRTTI;
 %ignore spine::VertexAttachment::getRTTI;
+%ignore spine::Interpolation::getRTTI;
+%ignore spine::VertexEffect::getRTTI;
+%ignore spine::ConstraintData::getRTTI;
+
 %ignore spine::SkeletonDataMgr::destroyInstance;
 %ignore spine::SkeletonDataMgr::hasSkeletonData;
 %ignore spine::SkeletonDataMgr::setSkeletonData;
