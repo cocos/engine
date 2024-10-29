@@ -189,7 +189,7 @@ declare namespace spine {
         setFrame(frameIndex: number, time: number, drawOrder: Array<number>): void;
         apply(skeleton: Skeleton, lastTime: number, time: number, firedEvents: Array<Event>, alpha: number, blend: MixBlend, direction: MixDirection): void;
     }
-    class IkConstraintTimeline extends Updatable {
+    class IkConstraintTimeline extends CurveTimeline {
         static readonly ENTRIES: number;
         frames: ArrayLike<number>;
         constructor(frameCount: number);
