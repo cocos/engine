@@ -373,9 +373,20 @@ public:
     int getX() const { 
         return _x;
     }
+
+    static void apply(int a, int b) {
+        printf("apply1, a: %d, b: %d\n", a, b);
+    }
+    static void apply(const Vector<int>& a, bool b) {
+        printf("apply2, a, size: %d, b: %d\n", (int)a.size(), b);
+        for (int i = 0; i < a.size(); ++i) {
+            printf("apply2, aaa: [%d]=%d\n", i, a[i]);
+        }
+    }
 private:
     int _x = 0;
 };
+
 RTTI_IMPL(TestFoo, TestBase)
 
 DEFINE_SPINE_CLASS_TYPEID(TestBase)
@@ -460,7 +471,10 @@ EMSCRIPTEN_BINDINGS(spine) {
 
     class_<TestFoo, base<TestBase>>("TestFoo")
         .constructor()
-        .property("x", &TestFoo::getX, &TestFoo::setX);
+        .property("x", &TestFoo::getX, &TestFoo::setX)
+        .class_function("apply1", select_overload<void (int, int)>(&TestFoo::apply))
+        .class_function("apply2", select_overload<void (const Vector<int> &, bool)>(&TestFoo::apply))
+        ;
 
     class_<TestBar>("TestBar")
         .constructor()
@@ -758,13 +772,11 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("findRegion", &Atlas::findRegion, allow_raw_pointers());
 
     class_<PowInterpolation, base<Interpolation>>("Pow")
-        .constructor<int>()
-        .function("apply", &PowInterpolation::apply);
+        .constructor<int>();
 
 
     class_<PowOutInterpolation, base<Interpolation>>("PowOut")
-        .constructor<int>()
-        .function("apply", &PowOutInterpolation::apply);
+        .constructor<int>();
 
     class_<SlotData>("SlotData")
         .constructor<int, const String &, BoneData &>()
@@ -792,16 +804,9 @@ EMSCRIPTEN_BINDINGS(spine) {
         .property("stretch", &IkConstraint::getStretch, &IkConstraint::setStretch)
         .property("mix", &IkConstraint::getMix, &IkConstraint::setMix)
         .property("softness", &IkConstraint::getSoftness, &IkConstraint::setSoftness)
-        .class_function("apply1", optional_override([](
-            IkConstraint &obj, Bone &bone, float targetX, float targetY, 
-            bool compress, bool stretch, bool uniform, float alpha){
-                obj.apply(bone, targetX, targetY, compress, stretch, uniform, alpha);
-        }))
-        .class_function("apply2", optional_override([](
-            IkConstraint &obj, Bone &parent, Bone &child, float targetX, float targetY,
-            int bendDir, bool stretch, float softness, float alpha){
-                obj.apply(parent, child, targetX, targetY, bendDir, stretch, softness, alpha);
-        }));
+        .class_function("apply1", select_overload<void (Bone &, float, float, bool, bool, bool, float)>(&IkConstraint::apply))
+        .class_function("apply2", select_overload<void (Bone &, Bone &, float, float, int, bool, float, float)>(&IkConstraint::apply))
+        ;
 
     class_<PathConstraint, base<Updatable>>("PathConstraint")
         .constructor<PathConstraintData &, Skeleton &>()
