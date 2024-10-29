@@ -361,7 +361,7 @@ void SpineSkeletonInstance::collectMeshData() {
             debugShape.vCount = currMesh.vCount;
             debugShape.iOffset = _model->iCount;
             debugShape.iCount = currMesh.iCount;
-            _debugShapes.push_back(debugShape);
+            _debugShapes.add(debugShape);
         }
 
         currMesh.blendMode = static_cast<uint32_t>(slot->getData().getBlendMode());
@@ -448,7 +448,7 @@ void SpineSkeletonInstance::onAnimationStateEvent(TrackEntry *entry, EventType t
     }
 }
 
-std::vector<SpineDebugShape> &SpineSkeletonInstance::getDebugShapes() {
+Vector<SpineDebugShape> &SpineSkeletonInstance::getDebugShapes() {
     return this->_debugShapes;
 }
 

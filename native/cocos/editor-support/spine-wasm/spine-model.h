@@ -1,7 +1,6 @@
 #pragma once
 
 #include <spine/spine.h>
-#include <vector>
 class SlotMesh {
 public:
     SlotMesh() = default;
@@ -31,9 +30,9 @@ public:
     void clearMeshes();
     void setBufferPtr(uint8_t* vp, uint16_t* ip);
     
-    std::vector<uint32_t>* getData();
+    spine::Vector<uint32_t>* getData();
 private:
-    std::vector<uint32_t> _data;
+    spine::Vector<uint32_t> _data;
 public:
     uint32_t vCount{};
     uint32_t iCount{};

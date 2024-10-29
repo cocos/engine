@@ -53,7 +53,7 @@ public:
     void setTrackEntryListener(uint32_t trackId, spine::TrackEntry *entry);
     void onAnimationStateEvent(spine::TrackEntry *entry, spine::EventType type, spine::Event *event);
     void onTrackEntryEvent(spine::TrackEntry *entry, spine::EventType type, spine::Event *event);
-    std::vector<SpineDebugShape> &getDebugShapes();
+    spine::Vector<SpineDebugShape> &getDebugShapes();
     void resizeSlotRegion(const std::string &slotName, uint32_t width, uint32_t height, bool createNew = false);
     void setSlotTexture(const std::string &slotName, uint32_t index);
     void destroy();
@@ -74,7 +74,7 @@ private:
     uint32_t _eventListenerID = 0;
     uint32_t _trackEntryListenerID = 0;
     UserData _userData;
-    std::vector<SpineDebugShape> _debugShapes{};
+    spine::Vector<SpineDebugShape> _debugShapes{};
     // std::map<spine::Slot *, uint32_t> _slotTextureSet{};
     spine::HashMap<spine::Slot*, uint32_t> _slotTextureSet{};
 };

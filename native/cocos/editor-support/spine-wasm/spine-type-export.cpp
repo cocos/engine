@@ -2,13 +2,41 @@
 #include <emscripten/wire.h>
 #include <cstdint>
 #include <type_traits>
-#include <vector>
 #include "spine-skeleton-instance.h"
 #include "spine-wasm.h"
 #include "Vector2.h"
 
-
 using namespace spine;
+
+using SPVectorFloat = Vector<float>;
+using SPVectorVectorFloat = Vector<Vector<float>>;
+using SPVectorInt = Vector<int>;
+using SPVectorUint = Vector<unsigned int>;
+using SPVectorVectorInt = Vector<Vector<int>>;
+using SPVectorSize_t = Vector<size_t>;
+using SPVectorBonePtr = Vector<Bone*>;
+using SPVectorBoneDataPtr = Vector<BoneData*>;
+using SPVectorSlotDataPtr = Vector<SlotData*>;
+using SPVectorTransformConstraintDataPtr = Vector<TransformConstraintData*>;
+using SPVectorPathConstraintDataPtr = Vector<PathConstraintData*>;
+using SPVectorUnsignedShort = Vector<unsigned short>;
+using SPVectorSPString = Vector<String>;
+using SPVectorConstraintDataPtr = Vector<ConstraintData*>;
+using SPVectorSlotPtr = Vector<Slot*>;
+using SPVectorSkinPtr = Vector<Skin*>;
+using SPVectorEventDataPtr = Vector<EventData*>;
+using SPVectorEventPtr = Vector<spine::Event*>;
+using SPVectorAnimationPtr = Vector<Animation*>;
+using SPVectorIkConstraintPtr = Vector<IkConstraint*>;
+using SPVectorIkConstraintDataPtr = Vector<IkConstraintData*>;
+using SPVectorTransformConstraintPtr = Vector<TransformConstraint*>;
+using SPVectorPathConstraintPtr = Vector<PathConstraint*>;
+using SPVectorTimelinePtr = Vector<Timeline*>;
+using SPVectorTrackEntryPtr = Vector<TrackEntry*>;
+using SPVectorUpdatablePtr = Vector<Updatable*>;
+using SPVectorSkinEntryPtr = Vector<Skin::AttachmentMap::Entry*>;
+using SPVectorVectorSkinEntryPtr = Vector<SPVectorSkinEntryPtr>;
+using SPVectorDebugShape = Vector<SpineDebugShape>;
 
 #define DEFINE_ALLOW_RAW_POINTER(type) \
 namespace emscripten { namespace internal { \
@@ -170,88 +198,10 @@ DEFINE_ALLOW_RAW_POINTER(TrackEntry)
 DEFINE_ALLOW_RAW_POINTER(IkConstraintData)
 DEFINE_ALLOW_RAW_POINTER(PathConstraintData)
 DEFINE_ALLOW_RAW_POINTER(TransformConstraintData)
+DEFINE_ALLOW_RAW_POINTER(SPVectorUnsignedShort)
+DEFINE_ALLOW_RAW_POINTER(SPVectorFloat)
 
 namespace {
-// std::string STRING_SP2STD(const spine::String &str) {
-//     std::string stdStr(str.buffer(), str.length());
-//     return stdStr;
-// }
-
-// const String STRING_STD2SP(const std::string &str) {
-//     const String spString(str.c_str());
-//     return spString;
-// }
-
-// const std::vector<std::string> VECTOR_SP2STD_STRING(Vector<String> &container) {
-//     int count = container.size();
-//     std::vector<std::string> stdVector(count);
-//     for (int i = 0; i < count; i++) {
-//         stdVector[i] = STRING_SP2STD(container[i]);
-//     }
-//     return stdVector;
-// }
-
-// template <typename T>
-// Vector<T> VECTOR_STD2SP(std::vector<T> &container) {
-//     int count = container.size();
-//     Vector<T> vecSP;
-//     vecSP.setSize(count, 0);
-//     for (int i = 0; i < count; i++) {
-//         vecSP[i] = container[i];
-//     }
-//     return vecSP;
-// }
-
-// template <typename T>
-// Vector<T *> VECTOR_STD2SP_POINTER(std::vector<T *> &container) {
-//     int count = container.size();
-//     Vector<T *> vecSP = Vector<T *>();
-//     vecSP.setSize(count, nullptr);
-//     for (int i = 0; i < count; i++) {
-//         vecSP[i] = container[i];
-//     }
-//     return vecSP;
-// }
-
-// template <typename T>
-// void VECTOR_STD_COPY_SP(std::vector<T> &stdVector, Vector<T> &spVector) {
-//     int count = stdVector.size();
-//     for (int i = 0; i < count; i++) {
-//         stdVector[i] = spVector[i];
-//     }
-// }
-
-// String* constructorSpineString(emscripten::val name, bool own) {
-//     return new String(name.as<std::string>().c_str(), own);
-// }
-
-using SPVectorFloat = Vector<float>;
-using SPVectorVectorFloat = Vector<Vector<float>>;
-using SPVectorInt = Vector<int>;
-using SPVectorVectorInt = Vector<Vector<int>>;
-using SPVectorSize_t = Vector<size_t>;
-using SPVectorBonePtr = Vector<Bone*>;
-using SPVectorBoneDataPtr = Vector<BoneData*>;
-using SPVectorSlotDataPtr = Vector<SlotData*>;
-using SPVectorTransformConstraintDataPtr = Vector<TransformConstraintData*>;
-using SPVectorPathConstraintDataPtr = Vector<PathConstraintData*>;
-using SPVectorUnsignedShort = Vector<unsigned short>;
-using SPVectorSPString = Vector<String>;
-using SPVectorConstraintDataPtr = Vector<ConstraintData*>;
-using SPVectorSlotPtr = Vector<Slot*>;
-using SPVectorSkinPtr = Vector<Skin*>;
-using SPVectorEventDataPtr = Vector<EventData*>;
-using SPVectorEventPtr = Vector<spine::Event*>;
-using SPVectorAnimationPtr = Vector<Animation*>;
-using SPVectorIkConstraintPtr = Vector<IkConstraint*>;
-using SPVectorIkConstraintDataPtr = Vector<IkConstraintData*>;
-using SPVectorTransformConstraintPtr = Vector<TransformConstraint*>;
-using SPVectorPathConstraintPtr = Vector<PathConstraint*>;
-using SPVectorTimelinePtr = Vector<Timeline*>;
-using SPVectorTrackEntryPtr = Vector<TrackEntry*>;
-using SPVectorUpdatablePtr = Vector<Updatable*>;
-using SPVectorSkinEntryPtr = Vector<Skin::AttachmentMap::Entry*>;
-using SPVectorVectorSkinEntryPtr = Vector<SPVectorSkinEntryPtr>;
 
 template <typename T>
 void registerSpineInteger(const char* name) {
@@ -539,13 +489,13 @@ EMSCRIPTEN_BINDINGS(spine) {
     REGISTER_SPINE_ENUM(TextureWrap);
     REGISTER_SPINE_ENUM(AttachmentType);
 
-    register_vector<unsigned short>("VectorUnsignedShort");
-    register_vector<unsigned int>("VectorOfUInt");
-    register_vector<std::string>("VectorString");
+
+    REGISTER_SPINE_VECTOR(SPVectorDebugShape, false);
 
     REGISTER_SPINE_VECTOR(SPVectorFloat, true);
     REGISTER_SPINE_VECTOR(SPVectorVectorFloat, true);
     REGISTER_SPINE_VECTOR(SPVectorInt, true);
+    REGISTER_SPINE_VECTOR(SPVectorUint, true);
     REGISTER_SPINE_VECTOR(SPVectorVectorInt, true);
     REGISTER_SPINE_VECTOR(SPVectorSize_t, true);
     REGISTER_SPINE_VECTOR(SPVectorUnsignedShort, true);
@@ -580,24 +530,6 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("set", &Vector2::set)
         .function("length", &Vector2::length)
         .function("normalize", &Vector2::normalize);
-
-    // class_<String>("String")
-    //     .constructor<>()
-    //     .constructor(constructorSpineString)
-    //     .constructor<const String &>()
-    //     .function("length", &String::length)
-    //     .function("isEmpty", &String::isEmpty)
-    //     .function("append", select_overload<String&(const String&)>(&String::append))
-    //     .function("equals", select_overload<String&(const String&)>(&String::operator=))
-    //     .function("buffer", &String::buffer, allow_raw_pointer<const char*>())
-    //     //.function("estr", optional_override([](String &obj) {
-    //     //    auto str = emscripten::val(obj.buffer());
-    //     //    return str; }), allow_raw_pointers())
-    //     .function("strPtr", optional_override([](String &obj) {
-    //         return reinterpret_cast<uintptr_t>(obj.buffer());}), allow_raw_pointers())
-    //     .function("str", optional_override([](String &obj) {
-    //         std::string stdStr(obj.buffer(), obj.length());
-    //         return stdStr; }), allow_raw_pointers());
 
     class_<Color>("Color")
         .constructor<>()
@@ -916,7 +848,7 @@ EMSCRIPTEN_BINDINGS(spine) {
     class_<Bone, base<Updatable>>("Bone")
         .constructor<BoneData &, Skeleton &, Bone *>()
         .property("data", GETTER_RVAL_TO_PTR(Bone, getData, BoneData*))
-        .property("skeleton", &Bone::getSkeleton)
+        .property("skeleton",  GETTER_RVAL_TO_PTR(Bone, getSkeleton, Skeleton*))
         .property("parent", &Bone::getParent)
         .function("getChildren", optional_override([](Bone &obj) {
             return &obj.getChildren(); }), allow_raw_pointer<SPVectorBonePtr>())
@@ -992,7 +924,7 @@ EMSCRIPTEN_BINDINGS(spine) {
         .property("bone", GETTER_RVAL_TO_PTR(Slot, getBone, Bone*))
         .property("color", GETTER_RVAL_TO_PTR(Slot, getColor, Color*))
         .property("darkColor", GETTER_RVAL_TO_PTR(Slot, getDarkColor, Color*))
-        .function("getDeform", &Slot::getDeform, allow_raw_pointers())
+        .function("getDeform", GETTER_RVAL_TO_PTR(Slot, getDeform, SPVectorFloat*), allow_raw_pointers())
         .function("getSkeleton", GETTER_RVAL_TO_PTR(Slot, getSkeleton, Skeleton*))
         .function("getAttachment", &Slot::getAttachment, allow_raw_pointers())
         .function("setAttachment", &Slot::setAttachment, allow_raw_pointers())
@@ -1011,11 +943,11 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("addSkin", select_overload<void(Skin *)>(&Skin::addSkin), allow_raw_pointers())
         .function("copySkin", select_overload<void(Skin *)>(&Skin::copySkin), allow_raw_pointers())
         .function("findNamesForSlot", optional_override([](Skin &obj, size_t slotIndex) {
-            std::vector<std::string> vetNames;
+            Vector<String> vetNames;
             auto entries = obj.getAttachments();
             while (entries.hasNext()) {
-                Skin::AttachmentMap::Entry &entry = entries.next();
-                if (entry._slotIndex == slotIndex) vetNames.push_back(entry._name.buffer());
+                auto &entry = entries.next();
+                if (entry._slotIndex == slotIndex) vetNames.add(entry._name);
             }
             return vetNames; 
         }), allow_raw_pointers())
@@ -1047,9 +979,9 @@ EMSCRIPTEN_BINDINGS(spine) {
 
     class_<SkeletonClipping>("SkeletonClipping")
         .constructor<>()
-        .property("clippedVertices", &SkeletonClipping::getClippedVertices)
-        .property("clippedTriangles", &SkeletonClipping::getClippedTriangles)
-        .property("clippedUVs", &SkeletonClipping::getClippedUVs)
+        .property("clippedVertices", GETTER_RVAL_TO_PTR(SkeletonClipping, getClippedVertices, SPVectorFloat*))
+        .property("clippedTriangles", GETTER_RVAL_TO_PTR(SkeletonClipping, getClippedTriangles, SPVectorUnsignedShort*))
+        .property("clippedUVs", GETTER_RVAL_TO_PTR(SkeletonClipping, getClippedUVs, SPVectorFloat*))
         .function("clipStart", &SkeletonClipping::clipStart, allow_raw_pointers())
         .function("clipEndWithSlot", select_overload<void(Slot &)>(&SkeletonClipping::clipEnd))
         .function("clipEnd", select_overload<void()>(&SkeletonClipping::clipEnd))
@@ -1408,7 +1340,7 @@ EMSCRIPTEN_BINDINGS(spine) {
         .property("iCount", &SpineModel::iCount)
         .property("vPtr", &SpineModel::vPtr)
         .property("iPtr", &SpineModel::iPtr)
-        .function("getData", &SpineModel::getData, allow_raw_pointer<std::vector<unsigned int>>());
+        .function("getData", &SpineModel::getData, allow_raw_pointer<SPVectorUint>());
 
     class_<SpineDebugShape>("SpineDebugShape")
         .property("type", &SpineDebugShape::type)
@@ -1417,7 +1349,6 @@ EMSCRIPTEN_BINDINGS(spine) {
         .property("iOffset", &SpineDebugShape::iOffset)
         .property("iCount", &SpineDebugShape::iCount);
 
-    register_vector<SpineDebugShape>("VectorDebugShape");
     class_<SpineSkeletonInstance>("SkeletonInstance")
         .constructor<>()
         .property("isCache", &SpineSkeletonInstance::isCache)
@@ -1439,7 +1370,7 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("setListener", &SpineSkeletonInstance::setListener)
         .function("setTrackEntryListener", &SpineSkeletonInstance::setTrackEntryListener, allow_raw_pointer<TrackEntry *>())
         .function("setDebugMode", &SpineSkeletonInstance::setDebugMode)
-        .function("getDebugShapes", &SpineSkeletonInstance::getDebugShapes)
+        .function("getDebugShapes", GETTER_RVAL_TO_PTR(SpineSkeletonInstance, getDebugShapes, SPVectorDebugShape*), allow_raw_pointers())
         .function("resizeSlotRegion", &SpineSkeletonInstance::resizeSlotRegion)
         .function("destroy", &SpineSkeletonInstance::destroy)
         .function("setSlotTexture", &SpineSkeletonInstance::setSlotTexture);
