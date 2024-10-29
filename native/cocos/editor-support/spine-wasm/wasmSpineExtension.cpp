@@ -30,33 +30,36 @@ void *WasmSpineExtension::_alloc(size_t size, const char *file, int line) {
     SP_UNUSED(file);
     SP_UNUSED(line);
 
-    if (size == 0)
-        return 0;
-    void *ptr = new uint8_t[size];
-    return (void *)ptr;
+    if (size == 0) {
+        return nullptr;
+    }
+    return ::malloc(sizeof(uint8_t) * size);
 }
 
 void *WasmSpineExtension::_calloc(size_t size, const char *file, int line) {
     SP_UNUSED(file);
     SP_UNUSED(line);
 
-    if (size == 0)
-        return 0;
-    uint8_t *ptr = new uint8_t[size];
-    if (ptr) memset(ptr, 0, size);
-    return (void *)ptr;
+    if (size == 0) {
+        return nullptr;
+    }
+    const size_t bytes = sizeof(uint8_t) * size;
+    uint8_t *ptr = static_cast<uint8_t*>(::malloc(bytes));
+    if (ptr) memset(ptr, 0, bytes);
+    return ptr;
 }
 
 void *WasmSpineExtension::_realloc(void *ptr, size_t size, const char *file, int line) {
     SP_UNUSED(file);
     SP_UNUSED(line);
 
-    if (size == 0)
-        return 0;
-    uint8_t *mem = new uint8_t[size];
-    memcpy(mem, ptr, size);
-    delete[](char *) ptr;
-    ptr = mem;
+    if (size == 0) {
+        return nullptr;
+    }
+    const size_t bytes = sizeof(uint8_t) * size;
+    uint8_t *mem = static_cast<uint8_t*>(::malloc(bytes));
+    if (mem) memset(mem, 0, bytes);
+    ::free(ptr);
     return mem;
 }
 
@@ -64,7 +67,7 @@ void WasmSpineExtension::_free(void *mem, const char *file, int line) {
     SP_UNUSED(file);
     SP_UNUSED(line);
 
-    delete[](char *) mem;
+    ::free(mem);
 }
 
 SpineExtension *spine::getDefaultExtension() {
