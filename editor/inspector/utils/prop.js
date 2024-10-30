@@ -351,14 +351,15 @@ exports.getName = function(dump) {
         return '';
     }
 
-    if (dump.displayName) {
-        if (dump.displayName.startsWith(i18nPrefix)) {
-            const key = dump.displayName.substring(i18nPrefix.length);
+    if (typeof dump.displayName === 'string') {
+        const displayName = dump.displayName.trim();
+        if (displayName.startsWith(i18nPrefix)) {
+            const key = displayName.substring(i18nPrefix.length);
             if (Editor.I18n.t(key)) {
-                return dump.displayName;
+                return displayName;
             }
-        } else {
-            return dump.displayName;
+        } else if (displayName) {
+            return displayName;
         }
     }
 
@@ -557,6 +558,42 @@ exports.disconnectGroup = function(panel) {
     }
 };
 
+/**
+ * 根据配置创建 ui-radio-group
+ * @param {object} options
+ * @param {any[]} options.enumList
+ * @param {string} options.tooltip
+ * @param {(elementName: string) => string}options.getIconName
+ * @param {(event: CustomEvent) => {}} options.onChange
+ * @returns
+ */
+exports.createRadioGroup = function(options) {
+    const { enumList, getIconName, onChange, tooltip: rawTooltip } = options;
+    const $radioGroup = document.createElement('ui-radio-group');
+    $radioGroup.setAttribute('slot', 'content');
+    $radioGroup.addEventListener('change', (e) => {
+        onChange(e);
+    });
+
+    for (let index = 0; index < enumList.length; index++) {
+        const element = enumList[index];
+        const icon = document.createElement('ui-icon');
+        const button = document.createElement('ui-radio-button');
+
+        const iconName = getIconName(element.name);
+        const tooltip = `${rawTooltip}_${element.name.toLocaleLowerCase()}`;
+
+        icon.value = iconName;
+        button.appendChild(icon);
+        button.value = element.value;
+        button.setAttribute('tooltip', tooltip);
+
+        $radioGroup.appendChild(button);
+    }
+
+    return $radioGroup;
+};
+
 exports.injectionStyle = `
 ui-prop,
 ui-section { margin-top: 4px; }
@@ -577,3 +614,51 @@ ui-prop[ui-section-config]:last-child {
     border-bottom: solid 1px var(--color-normal-fill-emphasis);
 }
 `;
+
+/**
+ * 获取 api 文档路径，通过 i18n 配置的 cc.xxx.properties
+ * 格式来获取 className 如果没有就不加入 ui-link 组件
+ * @param dump
+ */
+function getDocsURL(dump) {
+    const mathResults = dump.displayName && dump.displayName.match(/(?<=cc\.\s*)(\w+)/);
+    const className = mathResults && mathResults.length > 0 ? mathResults[0] : '';
+    if (!className) {
+        return '';
+    }
+    return `${Editor.App.urls.api}/class/${className}?id=${dump.name}`;
+}
+
+exports.setTooltip = function(dump, $label, name) {
+    if (!name) {
+        name = exports.getName(dump);
+    }
+    if (dump.tooltip) {
+        let tooltipValid = true;
+        if (dump.tooltip.startsWith(i18nPrefix)) {
+            const key = dump.tooltip.substring(i18nPrefix.length);
+            if (!Editor.I18n.t(key)) {
+                tooltipValid = false;
+            }
+        }
+
+        if (tooltipValid) {
+            const url = getDocsURL(dump);
+            const attributeTitle = `<ui-label style="font-weight:bold;" value="i18n:ENGINE.common.attribute.title"></ui-label>`;
+            const attributeName = url ? `
+                <ui-link value='${url}'>
+                    <ui-label value="${dump.name || name}"></ui-label>
+                </ui-link>`.trim() : `<ui-label value="${dump.name || name}"></ui-label>`;
+
+            $label.setAttribute('tooltip', `
+                <div>${attributeTitle}${attributeName}</div><br><ui-label value="${dump.tooltip}"></ui-label>`.trim()
+            );
+        }
+    }
+};
+
+exports.setLabel = function(dump, $label) {
+    const name = exports.getName(dump);
+    $label.value = name;
+    exports.setTooltip(dump, $label, name);
+};
