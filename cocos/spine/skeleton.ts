@@ -1017,6 +1017,7 @@ export class Skeleton extends UIRenderer {
      * @param skinName @en The name of skin. @zh 皮肤名称。
      */
     public setSkin (name: string): void {
+        if (!name) return;
         if (this._skeleton) this._skeleton.setSkinByName(name);
         this._instance!.setSkin(name);
         if (this.isAnimationCached()) {
