@@ -32,6 +32,7 @@
 
 #include <spine/Extension.h>
 #include <spine/SpineObject.h>
+#include <stdio.h>
 #include <string.h>
 
 namespace spine {
