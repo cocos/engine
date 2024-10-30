@@ -71,7 +71,11 @@ protected:
     static const int B;
     static const int A;
 
+#ifdef __EMSCRIPTEN__
+public:
+#else
 private:
+#endif
     int _slotIndex;
     Vector<float> _frames;
 };

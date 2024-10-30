@@ -99,7 +99,9 @@ public:
 
     virtual void setActive(bool inValue);;
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     IkConstraintData &_data;
     Vector<Bone *> _bones;
     int _bendDirection;

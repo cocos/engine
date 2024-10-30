@@ -230,8 +230,9 @@ public:
     void setListener(AnimationStateListener listener);
 
     void setListener(AnimationStateListenerObject* listener);
-
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     Animation* _animation;
 
     TrackEntry* _next;

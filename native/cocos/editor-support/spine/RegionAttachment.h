@@ -117,8 +117,12 @@ private:
     static const int BRX;
     static const int BRY;
 
+#ifdef __EMSCRIPTEN__
+public:
+#endif
     float _x, _y, _rotation, _scaleX, _scaleY, _width, _height;
     float _regionOffsetX, _regionOffsetY, _regionWidth, _regionHeight, _regionOriginalWidth, _regionOriginalHeight;
+
     Vector<float> _vertexOffset;
     Vector<float> _uvs;
     String _path;

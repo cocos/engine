@@ -64,7 +64,9 @@ public:
     const Vector<String>& getAttachmentNames();
     size_t getFrameCount();
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     size_t _slotIndex;
     Vector<float> _frames;
     Vector<String> _attachmentNames;

@@ -51,7 +51,9 @@ public:
 
     virtual Attachment* copy();
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     Vector<float> _lengths;
     bool _closed;
     bool _constantSpeed;

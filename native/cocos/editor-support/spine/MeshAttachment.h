@@ -119,7 +119,9 @@ public:
 
     MeshAttachment* newLinkedMesh();
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     float _regionOffsetX, _regionOffsetY, _regionWidth, _regionHeight, _regionOriginalWidth, _regionOriginalHeight;
     MeshAttachment* _parentMesh;
     Vector<float> _uvs;

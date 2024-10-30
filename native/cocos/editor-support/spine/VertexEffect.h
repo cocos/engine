@@ -62,7 +62,9 @@ public:
     void setJitterY(float jitterY);
     float getJitterY();
 
+#ifndef __EMSCRIPTEN__
 protected:
+#endif
     float _jitterX;
     float _jitterY;
 };
@@ -94,7 +96,9 @@ public:
     void setWorldY(float worldY);
     float getWorldY();
 
+#ifndef __EMSCRIPTEN__
 protected:
+#endif
     float _centerX;
     float _centerY;
     float _radius;

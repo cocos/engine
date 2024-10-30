@@ -109,7 +109,9 @@ public:
     bool isSkinRequired();
     void setSkinRequired(bool inValue);
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     const int _index;
     const String _name;
     BoneData *_parent;

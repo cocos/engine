@@ -516,51 +516,6 @@ Color &Skeleton::getColor() {
     return _color;
 }
 
-float Skeleton::getTime() {
-    return _time;
-}
-
-void Skeleton::setTime(float inValue) {
-    _time = inValue;
-}
-
-void Skeleton::setPosition(float x, float y) {
-    _x = x;
-    _y = y;
-}
-
-float Skeleton::getX() {
-    return _x;
-}
-
-void Skeleton::setX(float inValue) {
-    _x = inValue;
-}
-
-float Skeleton::getY() {
-    return _y;
-}
-
-void Skeleton::setY(float inValue) {
-    _y = inValue;
-}
-
-float Skeleton::getScaleX() {
-    return _scaleX;
-}
-
-void Skeleton::setScaleX(float inValue) {
-    _scaleX = inValue;
-}
-
-float Skeleton::getScaleY() {
-    return _scaleY * (Bone::isYDown() ? -1 : 1);
-}
-
-void Skeleton::setScaleY(float inValue) {
-    _scaleY = inValue;
-}
-
 void Skeleton::sortIkConstraint(IkConstraint *constraint) {
     constraint->_active = constraint->_target->_active && (!constraint->_data.isSkinRequired() || (_skin && _skin->_constraints.contains(&constraint->_data)));
     if (!constraint->_active) return;

@@ -77,7 +77,9 @@ public:
 
     virtual void setActive(bool inValue);;
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     TransformConstraintData& _data;
     Vector<Bone*> _bones;
     Bone* _target;

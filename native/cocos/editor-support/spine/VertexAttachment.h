@@ -77,7 +77,9 @@ public:
 
     void copyTo(VertexAttachment* other);
 
+#ifndef __EMSCRIPTEN__
 protected:
+#endif
     Vector<size_t> _bones;
     Vector<float> _vertices;
     size_t _worldVerticesLength;

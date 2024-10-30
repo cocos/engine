@@ -85,7 +85,9 @@ public:
     float getTranslateMix();
     void setTranslateMix(float inValue);
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     Vector<BoneData*> _bones;
     SlotData* _target;
     PositionMode _positionMode;

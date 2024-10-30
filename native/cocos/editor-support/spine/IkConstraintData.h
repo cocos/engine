@@ -75,7 +75,9 @@ public:
     float getSoftness();
     void setSoftness(float inValue);
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     Vector<BoneData*> _bones;
     BoneData* _target;
     int _bendDirection;

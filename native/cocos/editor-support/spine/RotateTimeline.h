@@ -56,8 +56,9 @@ public:
     void setBoneIndex(int inValue);
 
     Vector<float>& getFrames();
-
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     static const int PREV_TIME = -2;
     static const int PREV_ROTATION = -1;
     static const int ROTATION = 1;

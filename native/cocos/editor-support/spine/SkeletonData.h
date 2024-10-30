@@ -164,8 +164,9 @@ public:
     float getFps();
 
     void setFps(float inValue);
-
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     String _name;
     Vector<BoneData *> _bones; // Ordered parents first
     Vector<SlotData *> _slots; // Setup pose draw order.

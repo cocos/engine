@@ -186,29 +186,53 @@ public:
 
     Color &getColor();
 
-    float getTime();
+    inline float getTime() const {
+        return _time;
+    }
 
-    void setTime(float inValue);
+    inline void setTime(float inValue) {
+        _time = inValue;
+    }
 
-    void setPosition(float x, float y);
+    inline void setPosition(float x, float y) {
+        _x = x;
+        _y = y;
+    }
 
-    float getX();
+    inline float getX() const {
+        return _x;
+    }
 
-    void setX(float inValue);
+    inline void setX(float inValue) {
+        _x = inValue;
+    }
 
-    float getY();
+    inline float getY() const {
+        return _y;
+    }
 
-    void setY(float inValue);
+    inline void setY(float inValue) {
+        _y = inValue;
+    }
 
-    float getScaleX();
+    inline float getScaleX() const {
+        return _scaleX;
+    }
 
-    void setScaleX(float inValue);
+    inline void setScaleX(float inValue) {
+        _scaleX = inValue;
+    }
 
-    float getScaleY();
+    inline float getScaleY() const {
+        return _scaleY;
+    }
 
-    void setScaleY(float inValue);
-
+    inline void setScaleY(float inValue) {
+        _scaleY = inValue;
+    }
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     SkeletonData *_data;
     Vector<Bone *> _bones;
     Vector<Slot *> _slots;

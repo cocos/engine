@@ -53,7 +53,9 @@ public:
     bool isSkinRequired();
     void setSkinRequired(bool inValue);
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     const String _name;
     size_t _order;
     bool _skinRequired;

@@ -81,8 +81,9 @@ public:
     virtual bool isActive();
 
     virtual void setActive(bool inValue);;
-
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     static const float EPSILON;
     static const int NONE;
     static const int BEFORE;

@@ -74,6 +74,9 @@ public:
 
 private:
     const EventData &_data;
+#ifdef __EMSCRIPTEN__
+public:
+#endif
     const float _time;
     int _intValue;
     float _floatValue;
