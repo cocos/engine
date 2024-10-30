@@ -49,7 +49,7 @@ THE SOFTWARE.
 #endif
 
 #ifdef __EMSCRIPTEN__
-bool parseHex(const char *str, unsigned int *result_) {
+static bool parseHex(const char *str, unsigned int *result_) {
     auto &result = *result_;
     result = 0;
     for (int i = 0; i < 4; ++i) {

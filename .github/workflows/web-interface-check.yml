@@ -80,16 +80,11 @@ jobs:
 
       - name: Apply emscripten patches
         run: |
-          echo "Save bind.cpp ..."
+          echo "--------------------------------- Save bind.cpp ---------------------------------"
           cp $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp.bak
-          echo "Apply embind bind.cpp patches ..."
+          echo "--------------------------------- Apply embind bind.cpp patches ---------------------------------"
           cp -f ./engine-HEAD/.github/workflows/emscripten-patches/embind/bind.cpp $EMSDK/upstream/emscripten/system/lib/embind/
-          echo "Apply patches DONE!"
-          cat $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
-          echo "Restore patches ..."
-          rm $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
-          mv $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp.bak $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
-          echo "Restore patches DONE!"
+          echo "--------------------------------- Apply patches DONE! ---------------------------------"
           cat $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
 
       - name: Install ninja
@@ -147,6 +142,14 @@ jobs:
         run: |
           npm install
           node ./.github/workflows/package-size-check.js
+
+      - name: Restore patches
+        run: |
+          echo "-------------------------- Restore patches ---------------------------------"
+          rm $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+          mv $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp.bak $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+          echo "-------------------------- Restore patches DONE! ---------------------------------"
+          cat $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
 
       - uses: LouisBrunner/diff-action@v2.0.0
         with:
