@@ -67,6 +67,67 @@ jobs:
           ref: "${{ env.EXT_VERSION_HEAD }}"
           fetch-depth: 1
 
+      - name: Setup emsdk
+        uses: dumganhar/setup-emsdk@997d2cde2deabda085a11f98e86e842915b0e846
+        with:
+          version: 3.1.41
+          actions-cache-folder: 'emsdk-cache-3.1.41'
+
+      - name: Verify
+        run: |
+          which emcc
+          emcc -v
+
+      - name: Install ninja
+        run: |
+          if ! command -v ninja &> /dev/null; then
+              echo "Ninja not found, installing..."
+              # sudo apt update
+              sudo apt install ninja-build
+          else
+              echo "Ninja is already installed."
+          fi
+          which ninja
+
+      - name: Build Spine WASM
+        run: |
+          cd ./native/cocos/editor-support/spine-wasm
+          mkdir build-wasm
+          cd build-wasm
+          emcmake cmake .. -GNinja
+          ninja
+          ls -l
+
+      - name: Build Spine ASMJS
+        run: |
+          cd ./native/cocos/editor-support/spine-wasm
+          sed -i 's/set(BUILD_WASM 1)/set(BUILD_WASM 0)/g' CMakeLists.txt
+          mkdir build-asmjs
+          cd build-asmjs
+          emcmake cmake .. -GNinja
+          ninja
+          ls -l
+          
+      - name: Copy files to external directory
+        run: |
+          mkdir dist
+          cp ./native/cocos/editor-support/spine-wasm/build-wasm/spine.wasm ./dist/
+          cp ./native/cocos/editor-support/spine-wasm/build-wasm/spine.js ./dist/spine.wasm.js
+          cp ./native/cocos/editor-support/spine-wasm/build-asmjs/spine.js.mem ./dist/
+          cp ./native/cocos/editor-support/spine-wasm/build-asmjs/spine.js ./dist/spine.asm.js
+          echo "-------- Before replace spine wasm -----------"
+          ls -l ./native/external/emscripten/spine/
+          cp -f ./dist/* ./native/external/emscripten/spine/
+          echo "-------- After replace spine wasm ------------"
+          ls -l ./native/external/emscripten/spine/
+          echo "-----------------------------------------------"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: spine-emscripten
+          path: dist
+
       - name: Build Head Declarations
         working-directory: ./engine-HEAD
         run: |
