@@ -119,6 +119,7 @@ private:
 
     std::thread::id _callerThreadId;
     std::shared_ptr<bool> _isDestroyed;
+    std::mutex destoryMutex;
 
     friend class SLUrlAudioPlayerCallbackProxy;
     friend class AudioPlayerProvider;
