@@ -273,7 +273,7 @@ export class SkeletonData extends Asset {
 
     private mergedUUID (): string {
         return this._uuid + murmurhash2_32_gc(this._atlasText, 668).toString();
-    }   
+    }
 
     /**
      * @en Destroy skeleton data.
