@@ -208,8 +208,8 @@ export class SkeletonData extends Asset {
             return null;
         }
 
-        let uuid = this.mergedUUID();
-        let spData = spine.wasmUtil.querySpineSkeletonDataByUUID(uuid);
+        const uuid = this.mergedUUID();
+        const spData = spine.wasmUtil.querySpineSkeletonDataByUUID(uuid);
         if (spData) {
             this._skeletonCache = spData;
         } else if (this._skeletonJson) {
