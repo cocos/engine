@@ -486,6 +486,11 @@ EMSCRIPTEN_BINDINGS(spine) {
         .function("getNames", &TestBar::getNames)
         .property("names", &TestBar::getNames)
         ;
+
+    Json json(R"({"smile": "\uD83D\uDE0A🇨🇳  \uD83D\uDE00 \uD83D\uDE02  \uD83D\uDE21 "})");
+    const char *smileValue = Json::getString(&json, R"(smile)", "");
+    printf(">>> smile value: %s\n", smileValue);
+
 #endif // ENABLE_EMBIND_TEST
 
 	_embind_register_std_string(TypeID<spine::String>::get(), "std::string");
