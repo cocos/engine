@@ -75,7 +75,7 @@ public:
         return _size;
     }
 
-    inline void setSize(size_t newSize, const T &defaultValue) {
+    void setSize(size_t newSize, const T &defaultValue) {
         assert(newSize >= 0);
         size_t oldSize = _size;
         _size = newSize;
@@ -91,13 +91,13 @@ public:
         }
     }
 
-    inline void ensureCapacity(size_t newCapacity = 0) {
+    void ensureCapacity(size_t newCapacity = 0) {
         if (_capacity >= newCapacity) return;
         _capacity = newCapacity;
         _buffer = SpineExtension::realloc<T>(_buffer, newCapacity, __SPINE_FILE__, __SPINE_LINE__);
     }
 
-    inline void add(const T &inValue) {
+    void add(const T &inValue) {
         if (_size == _capacity) {
             // inValue might reference an element in this buffer
             // When we reallocate, the reference becomes invalid.
@@ -113,19 +113,19 @@ public:
         }
     }
 
-    inline void addAll(Vector<T> &inValue) {
+    void addAll(Vector<T> &inValue) {
         ensureCapacity(this->size() + inValue.size());
         for (size_t i = 0; i < inValue.size(); i++) {
             add(inValue[i]);
         }
     }
 
-    inline void clearAndAddAll(Vector<T> &inValue) {
+    void clearAndAddAll(Vector<T> &inValue) {
         this->clear();
         this->addAll(inValue);
     }
 
-    inline void removeAt(size_t inIndex) {
+    void removeAt(size_t inIndex) {
         assert(inIndex < _size);
 
         --_size;

@@ -75,14 +75,6 @@ Skeleton &Slot::getSkeleton() {
     return _skeleton;
 }
 
-Color &Slot::getColor() {
-    return _color;
-}
-
-Color &Slot::getDarkColor() {
-    return _darkColor;
-}
-
 bool Slot::hasDarkColor() {
     return _hasDarkColor;
 }

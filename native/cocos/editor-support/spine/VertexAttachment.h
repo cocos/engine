@@ -63,17 +63,17 @@ public:
     void computeWorldVertices(Slot& slot, size_t start, size_t count, Vector<float>& worldVertices, size_t offset, size_t stride = 2);
 
     /// Gets a unique ID for this attachment.
-    int getId();
+    inline int getId() const { return _id; }
 
-    Vector<size_t>& getBones();
+    inline Vector<size_t>& getBones() { return _bones; }
 
-    Vector<float>& getVertices();
+    inline Vector<float>& getVertices() { return _vertices; }
 
-    size_t getWorldVerticesLength();
-    void setWorldVerticesLength(size_t inValue);
+    inline size_t getWorldVerticesLength() const { return _worldVerticesLength; }
+    inline void setWorldVerticesLength(size_t inValue) { _worldVerticesLength = inValue; }
 
-    VertexAttachment* getDeformAttachment();
-    void setDeformAttachment(VertexAttachment* attachment);
+    inline VertexAttachment* getDeformAttachment() { return _deformAttachment; }
+    inline void setDeformAttachment(VertexAttachment* attachment) { _deformAttachment = attachment; }
 
     void copyTo(VertexAttachment* other);
 

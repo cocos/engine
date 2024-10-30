@@ -40,26 +40,6 @@ RTTI_IMPL(PathAttachment, VertexAttachment)
 PathAttachment::PathAttachment(const String& name) : VertexAttachment(name), _closed(false), _constantSpeed(false) {
 }
 
-Vector<float>& PathAttachment::getLengths() {
-    return _lengths;
-}
-
-bool PathAttachment::isClosed() {
-    return _closed;
-}
-
-void PathAttachment::setClosed(bool inValue) {
-    _closed = inValue;
-}
-
-bool PathAttachment::isConstantSpeed() {
-    return _constantSpeed;
-}
-
-void PathAttachment::setConstantSpeed(bool inValue) {
-    _constantSpeed = inValue;
-}
-
 Attachment* PathAttachment::copy() {
     PathAttachment* copy = spine_new PathAttachment(getName());
     copyTo(copy);

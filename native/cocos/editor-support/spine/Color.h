@@ -78,7 +78,7 @@ public:
         return *this;
     }
 
-    inline Color &clamp() {
+    Color &clamp() {
         r = MathUtil::clamp(this->r, 0, 1);
         g = MathUtil::clamp(this->g, 0, 1);
         b = MathUtil::clamp(this->b, 0, 1);

@@ -127,34 +127,6 @@ void VertexAttachment::computeWorldVertices(Slot &slot, size_t start, size_t cou
     }
 }
 
-int VertexAttachment::getId() {
-    return _id;
-}
-
-Vector<size_t> &VertexAttachment::getBones() {
-    return _bones;
-}
-
-Vector<float> &VertexAttachment::getVertices() {
-    return _vertices;
-}
-
-size_t VertexAttachment::getWorldVerticesLength() {
-    return _worldVerticesLength;
-}
-
-void VertexAttachment::setWorldVerticesLength(size_t inValue) {
-    _worldVerticesLength = inValue;
-}
-
-VertexAttachment *VertexAttachment::getDeformAttachment() {
-    return _deformAttachment;
-}
-
-void VertexAttachment::setDeformAttachment(VertexAttachment *attachment) {
-    _deformAttachment = attachment;
-}
-
 int VertexAttachment::getNextID() {
     static int nextID = 0;
 

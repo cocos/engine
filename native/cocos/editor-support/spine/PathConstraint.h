@@ -84,10 +84,10 @@ public:
 #ifndef __EMSCRIPTEN__
 private:
 #endif
-    static const float EPSILON;
-    static const int NONE;
-    static const int BEFORE;
-    static const int AFTER;
+    static constexpr float EPSILON = 0.00001f;
+    static constexpr int NONE = -1;
+    static constexpr int BEFORE = -2;
+    static constexpr int AFTER = -3;
 
     PathConstraintData& _data;
     Vector<Bone*> _bones;

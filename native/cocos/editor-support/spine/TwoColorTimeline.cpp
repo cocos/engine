@@ -78,24 +78,26 @@ void TwoColorTimeline::apply(Skeleton &skeleton, float lastTime, float time, Vec
     Slot &slot = *slotP;
     if (!slot._bone.isActive()) return;
 
+    Color &color = slot.getColor();
+    Color &darkColor = slot.getDarkColor();
+    const Color &dataColor = slot._data.getColor();
+    const Color &dataDarkColor = slot._data.getDarkColor();
     if (time < _frames[0]) {
         // Time is before first frame.
         switch (blend) {
             case MixBlend_Setup:
-                slot.getColor().set(slot.getData().getColor());
-                slot.getDarkColor().set(slot.getData().getDarkColor());
+                color.set(dataColor);
+                darkColor.set(dataDarkColor);
                 return;
             case MixBlend_First: {
-                Color &color = slot.getColor();
-                color.r += (color.r - slot._data.getColor().r) * alpha;
-                color.g += (color.g - slot._data.getColor().g) * alpha;
-                color.b += (color.b - slot._data.getColor().b) * alpha;
-                color.a += (color.a - slot._data.getColor().a) * alpha;
+                color.r += (color.r - dataColor.r) * alpha;
+                color.g += (color.g - dataColor.g) * alpha;
+                color.b += (color.b - dataColor.b) * alpha;
+                color.a += (color.a - dataColor.a) * alpha;
 
-                Color &darkColor = slot.getDarkColor();
-                darkColor.r += (darkColor.r - slot._data.getDarkColor().r) * alpha;
-                darkColor.g += (darkColor.g - slot._data.getDarkColor().g) * alpha;
-                darkColor.b += (darkColor.b - slot._data.getDarkColor().b) * alpha;
+                darkColor.r += (darkColor.r - dataDarkColor.r) * alpha;
+                darkColor.g += (darkColor.g - dataDarkColor.g) * alpha;
+                darkColor.b += (darkColor.b - dataDarkColor.b) * alpha;
                 return;
             }
             default:
@@ -138,17 +140,14 @@ void TwoColorTimeline::apply(Skeleton &skeleton, float lastTime, float time, Vec
     }
 
     if (alpha == 1) {
-        Color &color = slot.getColor();
         color.set(r, g, b, a);
-
-        Color &darkColor = slot.getDarkColor();
         darkColor.set(r2, g2, b2, 1);
     } else {
-        Color &light = slot._color;
-        Color &dark = slot._darkColor;
+        Color &light = color;
+        Color &dark = darkColor;
         if (blend == MixBlend_Setup) {
-            light.set(slot._data._color);
-            dark.set(slot._data._darkColor);
+            color.set(dataColor);
+            darkColor.set(dataDarkColor);
         }
         light.add((r - light.r) * alpha, (g - light.g) * alpha, (b - light.b) * alpha, (a - light.a) * alpha);
         dark.add((r2 - dark.r) * alpha, (g2 - dark.g) * alpha, (b2 - dark.b) * alpha, 0);
