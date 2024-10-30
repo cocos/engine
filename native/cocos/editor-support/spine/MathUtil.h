@@ -32,19 +32,19 @@
 
 #include <spine/SpineObject.h>
 #include <spine/RTTI.h>
-#include <string.h>
+#include <math.h>
 
 namespace spine {
 
-class SP_API MathUtil : public SpineObject {
+class SP_API MathUtil {
 private:
     MathUtil();
 
 public:
-    static const float Pi;
-    static const float Pi_2;
-    static const float Deg_Rad;
-    static const float Rad_Deg;
+    static constexpr float Pi = 3.1415926535897932385f;
+    static constexpr float Pi_2 = 3.1415926535897932385f * 2;
+    static constexpr float Deg_Rad = (3.1415926535897932385f / 180.0f);
+    static constexpr float Rad_Deg = (180.0f / 3.1415926535897932385f);
 
     template <typename T>
     static inline T min(T a, T b) { return a < b ? a : b; }
@@ -59,32 +59,52 @@ public:
     static float abs(float v);
 
     /// Returns the sine in radians from a lookup table.
-    static float sin(float radians);
+    static inline float sin(float radians) {
+        return ::sin(radians);
+    }
 
     /// Returns the cosine in radians from a lookup table.
-    static float cos(float radians);
+    static inline float cos(float radians) {
+        return ::cos(radians);
+    }
 
     /// Returns the sine in radians from a lookup table.
-    static float sinDeg(float degrees);
+    static inline float sinDeg(float degrees) {
+        return ::sin(degrees * MathUtil::Deg_Rad);
+    }
 
     /// Returns the cosine in radians from a lookup table.
-    static float cosDeg(float degrees);
+    static inline float cosDeg(float degrees) {
+        return ::cos(degrees * MathUtil::Deg_Rad);
+    }
 
     /// Returns atan2 in radians, faster but less accurate than Math.Atan2. Average error of 0.00231 radians (0.1323
     /// degrees), largest error of 0.00488 radians (0.2796 degrees).
-    static float atan2(float y, float x);
+    static inline float atan2(float y, float x) {
+        return ::atan2(y, x);
+    }
 
-    static float acos(float v);
+    static inline float acos(float v) {
+        return ::acos(v);
+    }
 
-    static float sqrt(float v);
+    static inline float sqrt(float v) {
+        return ::sqrt(v);
+    }
 
-    static float fmod(float a, float b);
+    static inline float fmod(float a, float b) {
+        return ::fmod(a, b);
+    }
 
     static bool isNan(float v);
 
-    static float random();
+    static inline float random() {
+        return ::rand() / static_cast<float>(RAND_MAX);
+    }
 
-    static float randomTriangular(float min, float max);
+    static inline float randomTriangular(float min, float max) {
+        return randomTriangular(min, max, (min + max) * 0.5f);
+    }
 
     static float randomTriangular(float min, float max, float mode);
 
