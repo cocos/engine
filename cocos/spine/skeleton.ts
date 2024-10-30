@@ -908,7 +908,8 @@ export class Skeleton extends UIRenderer {
             logID(7511);
             return null;
         }
-        const animation = this._skeleton?.data.findAnimation(name);
+        if (!this._skeleton) return null;
+        const animation = this._skeleton.data.findAnimation(name);
         if (!animation) {
             logID(7509, name);
             return null;
