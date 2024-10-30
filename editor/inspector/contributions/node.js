@@ -594,7 +594,7 @@ const Elements = {
                     },
                     set(val) {
                         panel._readyToUpdate = val;
-                        if (val) {
+                        if (val && panel.throttleUpdate) {
                             panel.throttleUpdate();
                         }
                     },
