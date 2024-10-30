@@ -821,6 +821,10 @@ export class Skeleton extends UIRenderer {
                 this._destroySkeletonInfo(this._skeletonCache);
                 this._skeletonInfo = this._skeletonCache!.createSkeletonInfo(this._skeletonData!);
                 this._skeleton = this._skeletonInfo.skeleton!;
+            } else {
+                if (!this._skeleton && this._skeletonInfo) {
+                    this._skeleton = this._skeletonInfo.skeleton!;
+                }
             }
         } else {
             this._skeleton = this._instance!.initSkeleton(skeletonData);
