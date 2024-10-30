@@ -25,7 +25,7 @@ project(${APP_NAME}_wasm)
 
 # --profiling
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0 -DENABLE_JSON_PARSER=${ENABLE_JSON_PARSER} -DENABLE_BINARY_PARSER=${ENABLE_BINARY_PARSER}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti \
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions -fno-rtti -Wno-inconsistent-missing-override \
     -DEMSCRIPTEN_HAS_UNBOUND_TYPE_NAMES=0 -DENABLE_JSON_PARSER=${ENABLE_JSON_PARSER} -DENABLE_BINARY_PARSER=${ENABLE_BINARY_PARSER}")
 
 message(">>> --------------------------------------------------------------")
