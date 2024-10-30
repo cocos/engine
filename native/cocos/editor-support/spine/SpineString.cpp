@@ -152,6 +152,7 @@ String &String::append(const String &other) {
     return *this;
 }
 
+#ifndef __EMSCRIPTEN__
 String &String::append(int other) {
     char str[100];
     sprintf(str, "%i", other);
@@ -165,6 +166,7 @@ String &String::append(float other) {
     append(str);
     return *this;
 }
+#endif
 
 bool operator==(const String &a, const String &b) {
     if (a._buffer == b._buffer) return true;

@@ -44,6 +44,34 @@ THE SOFTWARE.
 
 #include <assert.h>
 #include <math.h>
+#ifndef __EMSCRIPTEN__
+#include <stdio.h>
+#endif
+
+#ifdef __EMSCRIPTEN__
+bool parseHex(const char *str, unsigned int *result_) {
+    auto &result = *result_;
+    result = 0;
+    for (int i = 0; i < 4; ++i) {
+        char c = str[i];
+        if ((c < '0' || c > '9') && (c < 'A' || c > 'F') && (c < 'a' || c > 'f')) {
+            result = 0;
+            return false;
+        }
+
+        result <<= 4;
+        if (c >= '0' && c <= '9') {
+            result |= (c - '0');
+        } else if (c >= 'A' && c <= 'F') {
+            result |= (c - 'A' + 10);
+        } else if (c >= 'a' && c <= 'f') {
+            result |= (c - 'a' + 10);
+        }
+    }
+    return true;
+}
+
+#endif
 
 using namespace spine;
 
@@ -263,7 +291,11 @@ const char *Json::parseString(Json *item, const char *str) {
                     break;
                 case 'u': {
                     /* transcode utf16 to utf8. */
+#ifdef __EMSCRIPTEN__
+                    parseHex(ptr + 1, &uc);
+#else
                     sscanf(ptr + 1, "%4x", &uc);
+#endif
                     ptr += 4; /* get the unicode char. */
 
                     if ((uc >= 0xDC00 && uc <= 0xDFFF) || uc == 0) {
@@ -275,7 +307,11 @@ const char *Json::parseString(Json *item, const char *str) {
                         if (ptr[1] != '\\' || ptr[2] != 'u') {
                             break; /* missing second-half of surrogate.	*/
                         }
+#ifdef __EMSCRIPTEN__
+                        parseHex(ptr + 3, &uc2);                        
+#else
                         sscanf(ptr + 3, "%4x", &uc2);
+#endif
                         ptr += 6;
                         if (uc2 < 0xDC00 || uc2 > 0xDFFF) {
                             break; /* invalid second-half of surrogate.	*/

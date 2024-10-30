@@ -10,11 +10,11 @@ public:
     static uint32_t queryStoreMemory(uint32_t size);
     static void freeStoreMemory();
 
-    static spine::SkeletonData* querySpineSkeletonDataByUUID(const std::string& uuid);
-    static spine::SkeletonData* createSpineSkeletonDataWithJson(const std::string& jsonStr, const std::string& altasStr);
-    static spine::SkeletonData* createSpineSkeletonDataWithBinary(uint32_t byteSize, const std::string& altasStr);
-    static void registerSpineSkeletonDataWithUUID(spine::SkeletonData* data, const std::string& uuid);
-    static void destroySpineSkeletonDataWithUUID(const std::string& uuid);
+    static spine::SkeletonData* querySpineSkeletonDataByUUID(const spine::String& uuid);
+    static spine::SkeletonData* createSpineSkeletonDataWithJson(const spine::String& jsonStr, const spine::String& altasStr);
+    static spine::SkeletonData* createSpineSkeletonDataWithBinary(uint32_t byteSize, const spine::String& altasStr);
+    static void registerSpineSkeletonDataWithUUID(spine::SkeletonData* data, const spine::String& uuid);
+    static void destroySpineSkeletonDataWithUUID(const spine::String& uuid);
     static void destroySpineSkeleton(spine::Skeleton* skeleton);
 
     static uint32_t getCurrentListenerID();

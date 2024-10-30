@@ -55,6 +55,10 @@
 
 #include <float.h>
 
+#ifndef __EMSCRIPTEN__
+#include <stdio.h>
+#endif
+
 using namespace spine;
 
 Skeleton::Skeleton(SkeletonData *skeletonData) : _data(skeletonData),
@@ -197,6 +201,7 @@ continue_outer:
 }
 
 void Skeleton::printUpdateCache() {
+#ifndef __EMSCRIPTEN__
     for (size_t i = 0; i < _updateCache.size(); i++) {
         Updatable *updatable = _updateCache[i];
         if (updatable->getRTTI().isExactly(Bone::rtti)) {
@@ -209,6 +214,7 @@ void Skeleton::printUpdateCache() {
             printf("path constraint %s\n", ((PathConstraint *)updatable)->getData().getName().buffer());
         }
     }
+#endif
 }
 
 void Skeleton::updateWorldTransform() {
@@ -369,8 +375,9 @@ void Skeleton::setAttachment(const String &slotName, const String &attachmentNam
             return;
         }
     }
-
+#ifndef __EMSCRIPTEN__
     printf("Slot not found: %s", slotName.buffer());
+#endif
 
     assert(false);
 }

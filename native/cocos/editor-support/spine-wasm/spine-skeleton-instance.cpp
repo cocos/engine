@@ -1,10 +1,8 @@
 #include "spine-skeleton-instance.h"
 #include <spine/spine.h>
-#include <vector>
 #include "AtlasAttachmentLoaderExtension.h"
 #include "spine-mesh-data.h"
 #include "spine-wasm.h"
-#include "util-function.h"
 
 SlotMesh globalMesh(nullptr, nullptr, 0, 0);
 
@@ -66,9 +64,9 @@ Skeleton *SpineSkeletonInstance::initSkeleton(SkeletonData *data) {
     return _skeleton;
 }
 
-TrackEntry *SpineSkeletonInstance::setAnimation(float trackIndex, const std::string &name, bool loop) {
+TrackEntry *SpineSkeletonInstance::setAnimation(float trackIndex, const spine::String &name, bool loop) {
     if (!_skeleton) return nullptr;
-    spine::Animation *animation = _skeleton->getData()->findAnimation(name.c_str());
+    spine::Animation *animation = _skeleton->getData()->findAnimation(name);
     if (!animation) {
         _animState->clearTracks();
         _skeleton->setToSetupPose();
@@ -80,9 +78,9 @@ TrackEntry *SpineSkeletonInstance::setAnimation(float trackIndex, const std::str
     return trackEntry;
 }
 
-void SpineSkeletonInstance::setSkin(const std::string &name) {
+void SpineSkeletonInstance::setSkin(const spine::String &name) {
     if (!_skeleton) return;
-    _skeleton->setSkin(name.c_str());
+    _skeleton->setSkin(name);
     _skeleton->setSlotsToSetupPose();
 }
 
@@ -135,7 +133,7 @@ void SpineSkeletonInstance::collectMeshData() {
     for (uint32_t drawIdx = 0; drawIdx < slotCount; ++drawIdx) {
         auto slot = slotArray[drawIdx];
         auto& bone = slot->getBone();
-        if (bone.isActive() == false) {
+        if (!bone.isActive()) {
             continue;
         }
 
@@ -405,8 +403,8 @@ AnimationState *SpineSkeletonInstance::getAnimationState() {
     return _animState;
 }
 
-void SpineSkeletonInstance::setMix(const std::string &from, const std::string &to, float duration) {
-    _animStateData->setMix(from.c_str(), to.c_str(), duration);
+void SpineSkeletonInstance::setMix(const spine::String &from, const spine::String &to, float duration) {
+    _animStateData->setMix(from, to, duration);
 }
 
 void SpineSkeletonInstance::setTrackEntryListener(uint32_t trackId, TrackEntry *entry) {
@@ -448,9 +446,9 @@ Vector<SpineDebugShape> &SpineSkeletonInstance::getDebugShapes() {
     return this->_debugShapes;
 }
 
-void SpineSkeletonInstance::resizeSlotRegion(const std::string &slotName, uint32_t width, uint32_t height, bool createNew) {
+void SpineSkeletonInstance::resizeSlotRegion(const spine::String &slotName, uint32_t width, uint32_t height, bool createNew) {
     if (!_skeleton) return;
-    auto slot = _skeleton->findSlot(slotName.c_str());
+    auto slot = _skeleton->findSlot(slotName);
     if (!slot) return;
     auto attachment = slot->getAttachment();
     if (!attachment) return;
@@ -508,9 +506,9 @@ void SpineSkeletonInstance::resizeSlotRegion(const std::string &slotName, uint32
     }
 }
 
-void SpineSkeletonInstance::setSlotTexture(const std::string &slotName, uint32_t textureID) {
+void SpineSkeletonInstance::setSlotTexture(const spine::String &slotName, uint32_t textureID) {
     if (!_skeleton) return;
-    auto slot = _skeleton->findSlot(slotName.c_str());
+    auto slot = _skeleton->findSlot(slotName);
     if (!slot) return;
     _userData.useSlotTexture = true;
 

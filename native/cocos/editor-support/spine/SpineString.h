@@ -32,7 +32,6 @@
 
 #include <spine/Extension.h>
 #include <spine/SpineObject.h>
-#include <stdio.h>
 #include <string.h>
 
 namespace spine {
@@ -44,15 +43,15 @@ public:
     String(const String &other);
     ~String();
 
-    size_t length() const {
+    inline size_t length() const {
         return _length;
     }
 
-    bool isEmpty() const {
+    inline bool isEmpty() const {
         return _length == 0;
     }
 
-    const char *buffer() const {
+    inline const char *buffer() const {
         return _buffer;
     }
 
@@ -64,8 +63,11 @@ public:
 
     String &append(const char *chars);
     String &append(const String &other);
+
+#ifndef __EMSCRIPTEN__
     String &append(int other);
     String &append(float other);
+#endif
 
     friend bool operator==(const String &a, const String &b);
     friend bool operator!=(const String &a, const String &b);

@@ -108,6 +108,9 @@ void DefaultSpineExtension::_free(void *mem, const char *file, int line) {
 }
 
 char *DefaultSpineExtension::_readFile(const String &path, int *length) {
+#ifdef __EMSCRIPTEN__
+    return nullptr;
+#else
     char *data;
     FILE *file = fopen(path.buffer(), "rb");
     if (!file) return 0;
@@ -121,6 +124,7 @@ char *DefaultSpineExtension::_readFile(const String &path, int *length) {
     fclose(file);
 
     return data;
+#endif
 }
 
 DefaultSpineExtension::DefaultSpineExtension() : SpineExtension() {
