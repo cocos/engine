@@ -59,7 +59,7 @@ public:
         deallocate(_buffer);
     }
 
-    inline void clear() {
+    void clear() {
         for (size_t i = 0; i < _size; ++i) {
             destroy(_buffer + (_size - 1 - i));
         }
