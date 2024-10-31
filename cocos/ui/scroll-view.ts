@@ -336,10 +336,11 @@ export class ScrollView extends ViewGroup {
     @displayOrder(0)
     @tooltip('i18n:scrollview.horizontal_bar')
     get horizontalScrollBar (): ScrollBar | null {
-        if (this._horizontalScrollBar && !this._horizontalScrollBar.isValid) {
+        const horizontalScrollBar = this._horizontalScrollBar;
+        if (horizontalScrollBar && !horizontalScrollBar.isValid) {
             errorID(4303, 'horizontal', this.node.name);
         }
-        return this._horizontalScrollBar;
+        return horizontalScrollBar;
     }
 
     set horizontalScrollBar (value: ScrollBar | null) {
@@ -378,10 +379,11 @@ export class ScrollView extends ViewGroup {
     @displayOrder(1)
     @tooltip('i18n:scrollview.vertical_bar')
     get verticalScrollBar (): ScrollBar | null {
-        if (this._verticalScrollBar && !this._verticalScrollBar.isValid) {
+        const verticalScrollBar = this._verticalScrollBar;
+        if (verticalScrollBar && !verticalScrollBar.isValid) {
             errorID(4303, 'vertical', this.node.name);
         }
-        return this._verticalScrollBar;
+        return verticalScrollBar;
     }
 
     set verticalScrollBar (value: ScrollBar | null) {
@@ -502,7 +504,7 @@ export class ScrollView extends ViewGroup {
         const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
 
         if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated !== false);
+            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
         } else {
             this._moveContent(moveDelta, true);
         }
@@ -529,7 +531,7 @@ export class ScrollView extends ViewGroup {
         const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
 
         if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated !== false);
+            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
         } else {
             this._moveContent(moveDelta);
         }
@@ -556,7 +558,7 @@ export class ScrollView extends ViewGroup {
         const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
 
         if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated !== false);
+            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
         } else {
             this._moveContent(moveDelta);
         }
@@ -583,7 +585,7 @@ export class ScrollView extends ViewGroup {
         const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
 
         if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated !== false);
+            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
         } else {
             this._moveContent(moveDelta);
         }
@@ -610,7 +612,7 @@ export class ScrollView extends ViewGroup {
         const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
 
         if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated !== false);
+            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
         } else {
             this._moveContent(moveDelta);
         }
@@ -637,7 +639,7 @@ export class ScrollView extends ViewGroup {
         const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
 
         if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated !== false);
+            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
         } else {
             this._moveContent(moveDelta);
         }
@@ -664,7 +666,7 @@ export class ScrollView extends ViewGroup {
         const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
 
         if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated !== false);
+            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
         } else {
             this._moveContent(moveDelta);
         }
@@ -691,7 +693,7 @@ export class ScrollView extends ViewGroup {
         const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
 
         if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated !== false);
+            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
         } else {
             this._moveContent(moveDelta);
         }
@@ -720,7 +722,7 @@ export class ScrollView extends ViewGroup {
     public scrollToOffset (offset: Vec2, timeInSecond?: number, attenuated = true): void {
         const maxScrollOffset = this.getMaxScrollOffset();
 
-        const anchor = new Vec2(0, 0);
+        const anchor = v2();
         // if maxScrollOffset is 0, then always align the content's top left origin to the top left corner of its parent
         if (maxScrollOffset.x === 0) {
             anchor.x = 0;
@@ -798,7 +800,7 @@ export class ScrollView extends ViewGroup {
         const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
 
         if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated !== false);
+            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
         } else {
             this._moveContent(moveDelta);
         }
@@ -891,7 +893,7 @@ export class ScrollView extends ViewGroup {
         this._setContentPosition(position);
     }
 
-    private _setContentPosition (position: Vec3): void {
+    private _setContentPosition (position: Readonly<Vec3>): void {
         if (!this._content) {
             return;
         }
@@ -972,20 +974,26 @@ export class ScrollView extends ViewGroup {
     }
 
     public onEnable (): void {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const  self = this;
+
         if (!EDITOR_NOT_IN_PREVIEW) {
-            this._registerEvent();
-            if (this._content) {
-                this._content.on(NodeEventType.SIZE_CHANGED, this._calculateBoundary, this);
-                this._content.on(NodeEventType.TRANSFORM_CHANGED, this._scaleChanged, this);
-                if (this.view) {
-                    this.view.node.on(NodeEventType.TRANSFORM_CHANGED, this._scaleChanged, this);
-                    this.view.node.on(NodeEventType.SIZE_CHANGED, this._calculateBoundary, this);
+            self._registerEvent();
+            const content = this._content;
+            if (content) {
+                content.on(NodeEventType.SIZE_CHANGED, self._calculateBoundary, self);
+                content.on(NodeEventType.TRANSFORM_CHANGED, self._scaleChanged, self);
+
+                const view = self.view;
+                if (view) {
+                    view.node.on(NodeEventType.TRANSFORM_CHANGED, self._scaleChanged, self);
+                    view.node.on(NodeEventType.SIZE_CHANGED, self._calculateBoundary, self);
                 }
             }
 
-            this._calculateBoundary();
+            self._calculateBoundary();
         }
-        this._updateScrollBarState();
+        self._updateScrollBarState();
     }
 
     public update (dt: number): void {
@@ -1002,107 +1010,129 @@ export class ScrollView extends ViewGroup {
     }
 
     public onDisable (): void {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
         if (!EDITOR_NOT_IN_PREVIEW) {
-            this._unregisterEvent();
-            if (this._content) {
-                this._content.off(NodeEventType.SIZE_CHANGED, this._calculateBoundary, this);
-                this._content.off(NodeEventType.TRANSFORM_CHANGED, this._scaleChanged, this);
-                if (this.view) {
-                    this.view.node.off(NodeEventType.TRANSFORM_CHANGED, this._scaleChanged, this);
-                    this.view.node.off(NodeEventType.SIZE_CHANGED, this._calculateBoundary, this);
+            self._unregisterEvent();
+
+            const content = self.content;
+            if (content) {
+                content.off(NodeEventType.SIZE_CHANGED, this._calculateBoundary, self);
+                content.off(NodeEventType.TRANSFORM_CHANGED, this._scaleChanged, self);
+
+                const view = self.view;
+                if (view) {
+                    view.node.off(NodeEventType.TRANSFORM_CHANGED, this._scaleChanged, self);
+                    view.node.off(NodeEventType.SIZE_CHANGED, this._calculateBoundary, self);
                 }
             }
         }
-        this._deltaAmount.set(0, 0);
-        this._hideScrollBar();
-        this.stopAutoScroll();
+        self._deltaAmount.set(0, 0);
+        self._hideScrollBar();
+        self.stopAutoScroll();
     }
 
     // private methods
     protected _registerEvent (): void {
-        this.node.on(NodeEventType.TOUCH_START, this._onTouchBegan, this, true);
-        this.node.on(NodeEventType.TOUCH_MOVE, this._onTouchMoved, this, true);
-        this.node.on(NodeEventType.TOUCH_END, this._onTouchEnded, this, true);
-        this.node.on(NodeEventType.TOUCH_CANCEL, this._onTouchCancelled, this, true);
-        this.node.on(NodeEventType.MOUSE_WHEEL, this._onMouseWheel, this, true);
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+        const node = self.node;
+        node.on(NodeEventType.TOUCH_START, self._onTouchBegan, self, true);
+        node.on(NodeEventType.TOUCH_MOVE, self._onTouchMoved, self, true);
+        node.on(NodeEventType.TOUCH_END, self._onTouchEnded, self, true);
+        node.on(NodeEventType.TOUCH_CANCEL, self._onTouchCancelled, self, true);
+        node.on(NodeEventType.MOUSE_WHEEL, self._onMouseWheel, self, true);
 
-        this.node.on(XrUIPressEventType.XRUI_HOVER_ENTERED, this._xrHoverEnter, this);
-        this.node.on(XrUIPressEventType.XRUI_HOVER_EXITED, this._xrHoverExit, this);
+        node.on(XrUIPressEventType.XRUI_HOVER_ENTERED, self._xrHoverEnter, self);
+        node.on(XrUIPressEventType.XRUI_HOVER_EXITED, self._xrHoverExit, self);
 
-        input.on(InputEventType.HANDLE_INPUT, this._dispatchEventHandleInput, this);
-        input.on(InputEventType.GAMEPAD_INPUT, this._dispatchEventHandleInput, this);
+        input.on(InputEventType.HANDLE_INPUT, self._dispatchEventHandleInput, self);
+        input.on(InputEventType.GAMEPAD_INPUT, self._dispatchEventHandleInput, self);
     }
 
     protected _unregisterEvent (): void {
-        this.node.off(NodeEventType.TOUCH_START, this._onTouchBegan, this, true);
-        this.node.off(NodeEventType.TOUCH_MOVE, this._onTouchMoved, this, true);
-        this.node.off(NodeEventType.TOUCH_END, this._onTouchEnded, this, true);
-        this.node.off(NodeEventType.TOUCH_CANCEL, this._onTouchCancelled, this, true);
-        this.node.off(NodeEventType.MOUSE_WHEEL, this._onMouseWheel, this, true);
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+        const node = self.node;
+        node.off(NodeEventType.TOUCH_START, self._onTouchBegan, self, true);
+        node.off(NodeEventType.TOUCH_MOVE, self._onTouchMoved, self, true);
+        node.off(NodeEventType.TOUCH_END, self._onTouchEnded, self, true);
+        node.off(NodeEventType.TOUCH_CANCEL, self._onTouchCancelled, self, true);
+        node.off(NodeEventType.MOUSE_WHEEL, self._onMouseWheel, self, true);
 
-        this.node.off(XrUIPressEventType.XRUI_HOVER_ENTERED, this._xrHoverEnter, this);
-        this.node.off(XrUIPressEventType.XRUI_HOVER_EXITED, this._xrHoverExit, this);
-        input.off(InputEventType.HANDLE_INPUT, this._dispatchEventHandleInput, this);
-        input.off(InputEventType.GAMEPAD_INPUT, this._dispatchEventHandleInput, this);
+        node.off(XrUIPressEventType.XRUI_HOVER_ENTERED, self._xrHoverEnter, self);
+        node.off(XrUIPressEventType.XRUI_HOVER_EXITED, self._xrHoverExit, self);
+        input.off(InputEventType.HANDLE_INPUT, self._dispatchEventHandleInput, self);
+        input.off(InputEventType.GAMEPAD_INPUT, self._dispatchEventHandleInput, self);
     }
 
     protected _onMouseWheel (event: EventMouse, captureListeners?: Node[]): void {
-        if (!this.enabledInHierarchy) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
+        if (self.enabledInHierarchy) {
             return;
         }
 
-        if (this._hasNestedViewGroup(event, captureListeners)) {
+        if (self._hasNestedViewGroup(event, captureListeners)) {
             return;
         }
 
         const deltaMove = new Vec3();
         const wheelPrecision = -0.1;
         const scrollY = event.getScrollY();
-        if (this.vertical) {
+        if (self.vertical) {
             deltaMove.set(0, scrollY * wheelPrecision, 0);
-        } else if (this.horizontal) {
+        } else if (self.horizontal) {
             deltaMove.set(scrollY * wheelPrecision, 0, 0);
         }
 
-        this._mouseWheelEventElapsedTime = 0;
-        this._deltaAmount.add(deltaMove);
+        self._mouseWheelEventElapsedTime = 0;
+        self._deltaAmount.add(deltaMove);
 
-        if (!this._stopMouseWheel) {
-            this._handlePressLogic();
-            this.schedule(this._checkMouseWheel, 1.0 / 60);
-            this._stopMouseWheel = true;
+        if (!self._stopMouseWheel) {
+            self._handlePressLogic();
+            self.schedule(this._checkMouseWheel, 1.0 / 60);
+            self._stopMouseWheel = true;
         }
 
-        this._stopPropagationIfTargetIsMe(event);
+        self._stopPropagationIfTargetIsMe(event);
     }
 
     protected _onTouchBegan (event: EventTouch, captureListeners?: Node[]): void {
-        if (!this.enabledInHierarchy || !this._content) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
+        if (!self.enabledInHierarchy || !self._content) {
             return;
         }
-        if (this._hasNestedViewGroup(event, captureListeners)) {
+        if (self._hasNestedViewGroup(event, captureListeners)) {
             return;
         }
 
-        this._handlePressLogic();
+        self._handlePressLogic();
 
-        this._touchMoved = false;
-        this._stopPropagationIfTargetIsMe(event);
+        self._touchMoved = false;
+        self._stopPropagationIfTargetIsMe(event);
     }
 
     protected _onTouchMoved (event: EventTouch, captureListeners?: Node[]): void {
-        if (!this.enabledInHierarchy || !this._content) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
+        if (!self.enabledInHierarchy || !self._content) {
             return;
         }
-        if (this._hasNestedViewGroup(event, captureListeners)) {
+        if (self._hasNestedViewGroup(event, captureListeners)) {
             return;
         }
 
         const touch = event.touch!;
-        this._handleMoveLogic(touch);
+        self._handleMoveLogic(touch);
 
         // Do not prevent touch events in inner nodes
-        if (!this.cancelInnerEvents) {
+        if (!self.cancelInnerEvents) {
             return;
         }
 
@@ -1110,73 +1140,81 @@ export class ScrollView extends ViewGroup {
         deltaMove.subtract(touch.getUIStartLocation(_tempVec2_1));
         // FIXME: touch move delta should be calculated by DPI.
         if (deltaMove.length() > 7) {
-            if (!this._touchMoved && event.target !== this.node) {
+            if (!self._touchMoved && event.target !== self.node) {
                 // Simulate touch cancel for target node
                 const cancelEvent = new EventTouch(event.getTouches(), event.bubbles, SystemEventType.TOUCH_CANCEL);
                 cancelEvent.touch = event.touch;
                 cancelEvent.simulate = true;
                 (event.target as Node).dispatchEvent(cancelEvent);
-                this._touchMoved = true;
+                self._touchMoved = true;
             }
         }
-        this._stopPropagationIfTargetIsMe(event);
+        self._stopPropagationIfTargetIsMe(event);
     }
 
     protected _onTouchEnded (event: EventTouch, captureListeners?: Node[]): void {
-        if (!this.enabledInHierarchy || !this._content || !event) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
+        if (!self.enabledInHierarchy || !self._content || !event) {
             return;
         }
-        if (this._hasNestedViewGroup(event, captureListeners)) {
+        if (self._hasNestedViewGroup(event, captureListeners)) {
             return;
         }
 
-        this._dispatchEvent(ScrollViewEventType.TOUCH_UP);
+        self._dispatchEvent(ScrollViewEventType.TOUCH_UP);
 
         const touch = event.touch!;
-        this._handleReleaseLogic(touch);
+        self._handleReleaseLogic(touch);
 
-        if (this._touchMoved) {
+        if (self._touchMoved) {
             event.propagationStopped = true;
         } else {
-            this._stopPropagationIfTargetIsMe(event);
+            self._stopPropagationIfTargetIsMe(event);
         }
     }
 
     protected _onTouchCancelled (event: EventTouch, captureListeners?: Node[]): void {
-        if (!this.enabledInHierarchy || !this._content) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
+        if (!self.enabledInHierarchy || !self._content) {
             return;
         }
-        if (this._hasNestedViewGroup(event, captureListeners)) {
+        if (self._hasNestedViewGroup(event, captureListeners)) {
             return;
         }
 
         // Filter touch cancel event send from self
         if (event && !event.simulate) {
-            const touch = event.touch!;
-            this._handleReleaseLogic(touch);
+            self._handleReleaseLogic(event.touch!);
         }
-        this._stopPropagationIfTargetIsMe(event);
+        self._stopPropagationIfTargetIsMe(event);
     }
 
     protected _calculateBoundary (): void {
-        if (this._content && this.view) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
+        if (self._content && self.view) {
             // refresh content size
-            const layout = this._content.getComponent(Layout);
+            const layout = self._content.getComponent(Layout);
             if (layout && layout.enabledInHierarchy) {
                 layout.updateLayout();
             }
-            const viewTrans = this.view;
+            const viewTrans = self.view;
 
             const anchorX = viewTrans.width * viewTrans.anchorX;
             const anchorY = viewTrans.height * viewTrans.anchorY;
 
-            this._leftBoundary = -anchorX;
-            this._bottomBoundary = -anchorY;
+            self._leftBoundary = -anchorX;
+            self._bottomBoundary = -anchorY;
 
-            this._rightBoundary = this._leftBoundary + viewTrans.width;
-            this._topBoundary = this._bottomBoundary + viewTrans.height;
+            self._rightBoundary = self._leftBoundary + viewTrans.width;
+            self._topBoundary = self._bottomBoundary + viewTrans.height;
 
-            this._moveContentToTopLeft(viewTrans.contentSize);
+            self._moveContentToTopLeft(viewTrans.contentSize);
         }
     }
 
@@ -1188,16 +1226,14 @@ export class ScrollView extends ViewGroup {
         if (captureListeners) {
             // captureListeners are arranged from child to parent
             for (const listener of captureListeners) {
-                const item = listener;
-
-                if (this.node === item) {
+                if (this.node === listener) {
                     if (event.target && (event.target as Node).getComponent(ViewGroup)) {
                         return true;
                     }
                     return false;
                 }
 
-                if (item.getComponent(ViewGroup)) {
+                if (listener.getComponent(ViewGroup)) {
                     return true;
                 }
             }
@@ -1220,7 +1256,7 @@ export class ScrollView extends ViewGroup {
         return (1 - this.brake) * (1 / (1 + distance * 0.000014 + distance * distance * 0.000000008));
     }
 
-    protected _startAttenuatingAutoScroll (deltaMove: Vec3, initialVelocity: Vec3): void {
+    protected _startAttenuatingAutoScroll (deltaMove: Readonly<Vec3>, initialVelocity: Readonly<Vec3>): void {
         const targetDelta = deltaMove.clone();
         targetDelta.normalize();
         if (this._content && this.view) {
@@ -1244,9 +1280,7 @@ export class ScrollView extends ViewGroup {
 
         if (this.brake > 0 && factor > 7) {
             factor = Math.sqrt(factor);
-            const clonedDeltaMove = deltaMove.clone();
-            clonedDeltaMove.multiplyScalar(factor);
-            targetDelta.set(clonedDeltaMove);
+            targetDelta.multiplyScalar(factor);
             targetDelta.add(deltaMove);
         }
 
@@ -1268,19 +1302,22 @@ export class ScrollView extends ViewGroup {
     }
 
     protected _startAutoScroll (deltaMove: Vec3, timeInSecond: number, attenuated = false): void {
-        const adjustedDeltaMove = this._flattenVectorByDirection(deltaMove);
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
 
-        this._autoScrolling = true;
-        this._autoScrollTargetDelta = adjustedDeltaMove;
-        this._autoScrollAttenuate = attenuated;
-        Vec3.copy(this._autoScrollStartPosition, this._getContentPosition());
-        this._autoScrollTotalTime = timeInSecond;
-        this._autoScrollAccumulatedTime = 0;
-        this._autoScrollBraking = false;
-        this._isScrollEndedWithThresholdEventFired = false;
-        this._autoScrollBrakingStartPosition.set(0, 0, 0);
+        const adjustedDeltaMove = self._flattenVectorByDirection(deltaMove);
 
-        const currentOutOfBoundary = this._getHowMuchOutOfBoundary();
+        self._autoScrolling = true;
+        self._autoScrollTargetDelta = adjustedDeltaMove;
+        self._autoScrollAttenuate = attenuated;
+        Vec3.copy(self._autoScrollStartPosition, self._getContentPosition());
+        self._autoScrollTotalTime = timeInSecond;
+        self._autoScrollAccumulatedTime = 0;
+        self._autoScrollBraking = false;
+        self._isScrollEndedWithThresholdEventFired = false;
+        self._autoScrollBrakingStartPosition.set(0, 0, 0);
+
+        const currentOutOfBoundary = self._getHowMuchOutOfBoundary();
         if (!currentOutOfBoundary.equals(Vec3.ZERO, EPSILON)) {
             this._autoScrollCurrentlyOutOfBoundary = true;
         }
@@ -1310,10 +1347,9 @@ export class ScrollView extends ViewGroup {
     }
 
     protected _flattenVectorByDirection (vector: Vec3): Vec3 {
-        const result = vector;
-        result.x = this.horizontal ? result.x : 0;
-        result.y = this.vertical ? result.y : 0;
-        return result;
+        if (!this.horizontal) vector.x = 0;
+        if (!this.vertical) vector.y = 0;
+        return vector;
     }
 
     protected _moveContent (deltaMove: Vec3, canStartBounceBack?: boolean): void {
@@ -1473,24 +1509,30 @@ export class ScrollView extends ViewGroup {
     }
 
     protected _updateScrollBarState (): void {
-        if (!this._content || !this.view) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
+        if (!self._content || !self.view) {
             return;
         }
-        const viewTrans = this.view;
-        const uiTrans = this._content._uiProps.uiTransformComp!;
-        if (this._verticalScrollBar && this._verticalScrollBar.isValid) {
+        const viewTrans = self.view;
+        const uiTrans = self._content._uiProps.uiTransformComp!;
+
+        const verticalScrollBar = self._verticalScrollBar;
+        if (verticalScrollBar && verticalScrollBar.isValid) {
             if (uiTrans.height < viewTrans.height || approx(uiTrans.height, viewTrans.height)) {
-                this._verticalScrollBar.hide();
+                verticalScrollBar.hide();
             } else {
-                this._verticalScrollBar.show();
+                verticalScrollBar.show();
             }
         }
 
-        if (this._horizontalScrollBar && this._horizontalScrollBar.isValid) {
+        const horizontalScrollBar = self._horizontalScrollBar;
+        if (horizontalScrollBar && horizontalScrollBar.isValid) {
             if (uiTrans.width < viewTrans.width || approx(uiTrans.width, viewTrans.width)) {
-                this._horizontalScrollBar.hide();
+                horizontalScrollBar.hide();
             } else {
-                this._horizontalScrollBar.show();
+                horizontalScrollBar.show();
             }
         }
     }
@@ -1513,21 +1555,23 @@ export class ScrollView extends ViewGroup {
     }
 
     protected _handleReleaseLogic (touch: Touch): void {
-        this._getLocalAxisAlignDelta(this._deltaPos, touch);
-        this._gatherTouchMove(this._deltaPos);
-        this._processInertiaScroll();
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
 
-        if (this._scrolling) {
-            this._scrolling = false;
-            if (!this._autoScrolling) {
-                this._dispatchEvent(ScrollViewEventType.SCROLL_ENDED);
+        self._getLocalAxisAlignDelta(self._deltaPos, touch);
+        self._gatherTouchMove(self._deltaPos);
+        self._processInertiaScroll();
+
+        if (self._scrolling) {
+            self._scrolling = false;
+            if (!self._autoScrolling) {
+                self._dispatchEvent(ScrollViewEventType.SCROLL_ENDED);
             }
         }
     }
 
     protected _getLocalAxisAlignDelta (out: Vec3, touch: Touch): void {
         const uiTransformComp = this.node._uiProps.uiTransformComp;
-        const vec = new Vec3();
 
         if (uiTransformComp) {
             touch.getUILocation(_tempVec2);
@@ -1536,96 +1580,100 @@ export class ScrollView extends ViewGroup {
             _tempVec3_1.set(_tempVec2_1.x, _tempVec2_1.y, 0);
             uiTransformComp.convertToNodeSpaceAR(_tempVec3, _tempVec3);
             uiTransformComp.convertToNodeSpaceAR(_tempVec3_1, _tempVec3_1);
-            Vec3.subtract(vec, _tempVec3, _tempVec3_1);
+            Vec3.subtract(out, _tempVec3, _tempVec3_1);
         }
-
-        out.set(vec);
     }
 
     protected _scrollChildren (deltaMove: Vec3): void {
-        this._clampDelta(deltaMove);
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
+        self._clampDelta(deltaMove);
 
         const realMove = deltaMove;
         let outOfBoundary: Vec3;
-        if (this.elastic) {
-            outOfBoundary = this._getHowMuchOutOfBoundary();
+        if (self.elastic) {
+            outOfBoundary = self._getHowMuchOutOfBoundary();
             realMove.x *= outOfBoundary.x === 0 ? 1 : 0.5;
             realMove.y *= outOfBoundary.y === 0 ? 1 : 0.5;
         }
 
-        if (!this.elastic) {
-            outOfBoundary = this._getHowMuchOutOfBoundary(realMove);
+        if (!self.elastic) {
+            outOfBoundary = self._getHowMuchOutOfBoundary(realMove);
             realMove.add(outOfBoundary);
         }
 
         let verticalScrollEventType: ScrollViewEventType = ScrollViewEventType.NONE;
         let horizontalScrollEventType: ScrollViewEventType = ScrollViewEventType.NONE;
-        if (this._content) {
-            const { anchorX, anchorY, width, height } = this._content._uiProps.uiTransformComp!;
-            const pos = this._content.position || Vec3.ZERO;
+        if (self._content) {
+            const { anchorX, anchorY, width, height } = self._content._uiProps.uiTransformComp!;
+            const pos = self._content.position || Vec3.ZERO;
 
-            if (this.vertical) {
+            if (self.vertical) {
                 if (realMove.y > 0) { // up
                     const icBottomPos = pos.y - anchorY * height;
 
-                    if (icBottomPos + realMove.y >= this._bottomBoundary) {
+                    if (icBottomPos + realMove.y >= self._bottomBoundary) {
                         verticalScrollEventType = ScrollViewEventType.SCROLL_TO_BOTTOM;
                     }
                 } else if (realMove.y < 0) { // down
                     const icTopPos = pos.y - anchorY * height + height;
 
-                    if (icTopPos + realMove.y <= this._topBoundary) {
+                    if (icTopPos + realMove.y <= self._topBoundary) {
                         verticalScrollEventType = ScrollViewEventType.SCROLL_TO_TOP;
                     }
                 }
             }
 
-            if (this.horizontal) {
+            if (self.horizontal) {
                 if (realMove.x < 0) { // left
                     const icRightPos = pos.x - anchorX * width + width;
-                    if (icRightPos + realMove.x <= this._rightBoundary) {
+                    if (icRightPos + realMove.x <= self._rightBoundary) {
                         horizontalScrollEventType = ScrollViewEventType.SCROLL_TO_RIGHT;
                     }
                 } else if (realMove.x > 0) { // right
                     const icLeftPos = pos.x - anchorX * width;
-                    if (icLeftPos + realMove.x >= this._leftBoundary) {
+                    if (icLeftPos + realMove.x >= self._leftBoundary) {
                         horizontalScrollEventType = ScrollViewEventType.SCROLL_TO_LEFT;
                     }
                 }
             }
         }
 
-        this._moveContent(realMove, false);
+        self._moveContent(realMove, false);
 
-        if ((this.horizontal && realMove.x !== 0) || (this.vertical && realMove.y !== 0)) {
-            if (!this._scrolling) {
-                this._scrolling = true;
-                this._dispatchEvent(ScrollViewEventType.SCROLL_BEGAN);
+        if ((self.horizontal && realMove.x !== 0) || (self.vertical && realMove.y !== 0)) {
+            if (!self._scrolling) {
+                self._scrolling = true;
+                self._dispatchEvent(ScrollViewEventType.SCROLL_BEGAN);
             }
-            this._dispatchEvent(ScrollViewEventType.SCROLLING);
+            self._dispatchEvent(ScrollViewEventType.SCROLLING);
         }
 
         if (verticalScrollEventType !== ScrollViewEventType.NONE) {
-            this._dispatchEvent(verticalScrollEventType);
+            self._dispatchEvent(verticalScrollEventType);
         }
         if (horizontalScrollEventType !== ScrollViewEventType.NONE) {
-            this._dispatchEvent(horizontalScrollEventType);
+            self._dispatchEvent(horizontalScrollEventType);
         }
     }
 
     protected _handlePressLogic (): void {
-        if (this._autoScrolling) {
-            this._dispatchEvent(ScrollViewEventType.SCROLL_ENDED);
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
+        if (self._autoScrolling) {
+            self._dispatchEvent(ScrollViewEventType.SCROLL_ENDED);
         }
 
-        this._autoScrolling = false;
-        this._isBouncing = false;
+        self._autoScrolling = false;
+        self._isBouncing = false;
 
-        this._touchMovePreviousTimestamp = getTimeInMilliseconds();
-        this._touchMoveDisplacements.length = 0;
-        this._touchMoveTimeDeltas.length = 0;
+        self._touchMovePreviousTimestamp = getTimeInMilliseconds();
+        self._touchMoveDisplacements.length = 0;
+        self._touchMoveTimeDeltas.length = 0;
 
-        this._onScrollBarTouchBegan();
+        self._onScrollBarTouchBegan();
     }
 
     protected _clampDelta (out: Vec3): void {
@@ -1642,50 +1690,56 @@ export class ScrollView extends ViewGroup {
     }
 
     protected _gatherTouchMove (delta: Vec3): void {
-        const clampDt = delta.clone();
-        this._clampDelta(clampDt);
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
 
-        while (this._touchMoveDisplacements.length >= NUMBER_OF_GATHERED_TOUCHES_FOR_MOVE_SPEED) {
-            this._touchMoveDisplacements.shift();
-            this._touchMoveTimeDeltas.shift();
+        const clampDt = delta.clone();
+        self._clampDelta(clampDt);
+
+        while (self._touchMoveDisplacements.length >= NUMBER_OF_GATHERED_TOUCHES_FOR_MOVE_SPEED) {
+            self._touchMoveDisplacements.shift();
+            self._touchMoveTimeDeltas.shift();
         }
 
-        this._touchMoveDisplacements.push(clampDt);
+        self._touchMoveDisplacements.push(clampDt);
 
         const timeStamp = getTimeInMilliseconds();
-        this._touchMoveTimeDeltas.push((timeStamp - this._touchMovePreviousTimestamp) / 1000);
-        this._touchMovePreviousTimestamp = timeStamp;
+        self._touchMoveTimeDeltas.push((timeStamp - self._touchMovePreviousTimestamp) / 1000);
+        self._touchMovePreviousTimestamp = timeStamp;
     }
 
     protected _startBounceBackIfNeeded (): boolean {
-        if (!this.elastic) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
+        if (!self.elastic) {
             return false;
         }
 
-        const bounceBackAmount = this._getHowMuchOutOfBoundary();
-        this._clampDelta(bounceBackAmount);
+        const bounceBackAmount = self._getHowMuchOutOfBoundary();
+        self._clampDelta(bounceBackAmount);
 
         if (bounceBackAmount.equals(Vec3.ZERO, EPSILON)) {
             return false;
         }
 
-        const bounceBackTime = Math.max(this.bounceDuration, 0);
-        this._startAutoScroll(bounceBackAmount, bounceBackTime, true);
+        const bounceBackTime = Math.max(self.bounceDuration, 0);
+        self._startAutoScroll(bounceBackAmount, bounceBackTime, true);
 
-        if (!this._isBouncing) {
+        if (!self._isBouncing) {
             if (bounceBackAmount.y > 0) {
-                this._dispatchEvent(ScrollViewEventType.BOUNCE_TOP);
+                self._dispatchEvent(ScrollViewEventType.BOUNCE_TOP);
             }
             if (bounceBackAmount.y < 0) {
-                this._dispatchEvent(ScrollViewEventType.BOUNCE_BOTTOM);
+                self._dispatchEvent(ScrollViewEventType.BOUNCE_BOTTOM);
             }
             if (bounceBackAmount.x > 0) {
-                this._dispatchEvent(ScrollViewEventType.BOUNCE_RIGHT);
+                self._dispatchEvent(ScrollViewEventType.BOUNCE_RIGHT);
             }
             if (bounceBackAmount.x < 0) {
-                this._dispatchEvent(ScrollViewEventType.BOUNCE_LEFT);
+                self._dispatchEvent(ScrollViewEventType.BOUNCE_LEFT);
             }
-            this._isBouncing = true;
+            self._isBouncing = true;
         }
 
         return true;
@@ -1709,58 +1763,64 @@ export class ScrollView extends ViewGroup {
     }
 
     protected _isNecessaryAutoScrollBrake (): boolean {
-        if (this._autoScrollBraking) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
+        if (self._autoScrollBraking) {
             return true;
         }
 
-        if (this._isOutOfBoundary()) {
-            if (!this._autoScrollCurrentlyOutOfBoundary) {
-                this._autoScrollCurrentlyOutOfBoundary = true;
-                this._autoScrollBraking = true;
-                Vec3.copy(this._autoScrollBrakingStartPosition, this._getContentPosition());
+        if (self._isOutOfBoundary()) {
+            if (!self._autoScrollCurrentlyOutOfBoundary) {
+                self._autoScrollCurrentlyOutOfBoundary = true;
+                self._autoScrollBraking = true;
+                Vec3.copy(self._autoScrollBrakingStartPosition, self._getContentPosition());
                 return true;
             }
         } else {
-            this._autoScrollCurrentlyOutOfBoundary = false;
+            self._autoScrollCurrentlyOutOfBoundary = false;
         }
 
         return false;
     }
 
     protected _processAutoScrolling (dt): void {
-        const isAutoScrollBrake = this._isNecessaryAutoScrollBrake();
-        const brakingFactor = isAutoScrollBrake ? OUT_OF_BOUNDARY_BREAKING_FACTOR : 1;
-        this._autoScrollAccumulatedTime += dt * (1 / brakingFactor);
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
 
-        let percentage = Math.min(1, this._autoScrollAccumulatedTime / this._autoScrollTotalTime);
-        if (this._autoScrollAttenuate) {
+        const isAutoScrollBrake = self._isNecessaryAutoScrollBrake();
+        const brakingFactor = isAutoScrollBrake ? OUT_OF_BOUNDARY_BREAKING_FACTOR : 1;
+        self._autoScrollAccumulatedTime += dt * (1 / brakingFactor);
+
+        let percentage = Math.min(1, self._autoScrollAccumulatedTime / self._autoScrollTotalTime);
+        if (self._autoScrollAttenuate) {
             percentage = quintEaseOut(percentage);
         }
 
-        const clonedAutoScrollTargetDelta = this._autoScrollTargetDelta.clone();
+        const clonedAutoScrollTargetDelta = self._autoScrollTargetDelta.clone();
         clonedAutoScrollTargetDelta.multiplyScalar(percentage);
-        const clonedAutoScrollStartPosition = this._autoScrollStartPosition.clone();
+        const clonedAutoScrollStartPosition = self._autoScrollStartPosition.clone();
         clonedAutoScrollStartPosition.add(clonedAutoScrollTargetDelta);
         let reachedEnd = Math.abs(percentage - 1) <= EPSILON;
 
-        const fireEvent = Math.abs(percentage - 1) <= this.getScrollEndedEventTiming();
-        if (fireEvent && !this._isScrollEndedWithThresholdEventFired) {
-            this._dispatchEvent(ScrollViewEventType.SCROLL_ENG_WITH_THRESHOLD);
-            this._isScrollEndedWithThresholdEventFired = true;
+        const fireEvent = Math.abs(percentage - 1) <= self.getScrollEndedEventTiming();
+        if (fireEvent && !self._isScrollEndedWithThresholdEventFired) {
+            self._dispatchEvent(ScrollViewEventType.SCROLL_ENG_WITH_THRESHOLD);
+            self._isScrollEndedWithThresholdEventFired = true;
         }
 
-        if (this.elastic) {
+        if (self.elastic) {
             const brakeOffsetPosition = clonedAutoScrollStartPosition.clone();
-            brakeOffsetPosition.subtract(this._autoScrollBrakingStartPosition);
+            brakeOffsetPosition.subtract(self._autoScrollBrakingStartPosition);
             if (isAutoScrollBrake) {
                 brakeOffsetPosition.multiplyScalar(brakingFactor);
             }
-            clonedAutoScrollStartPosition.set(this._autoScrollBrakingStartPosition);
+            clonedAutoScrollStartPosition.set(self._autoScrollBrakingStartPosition);
             clonedAutoScrollStartPosition.add(brakeOffsetPosition);
         } else {
             const moveDelta = clonedAutoScrollStartPosition.clone();
-            moveDelta.subtract(this.getContentPosition());
-            const outOfBoundary = this._getHowMuchOutOfBoundary(moveDelta);
+            moveDelta.subtract(self.getContentPosition());
+            const outOfBoundary = self._getHowMuchOutOfBoundary(moveDelta);
             if (!outOfBoundary.equals(Vec3.ZERO, EPSILON)) {
                 clonedAutoScrollStartPosition.add(outOfBoundary);
                 reachedEnd = true;
@@ -1768,52 +1828,55 @@ export class ScrollView extends ViewGroup {
         }
 
         if (reachedEnd) {
-            this._autoScrolling = false;
+            self._autoScrolling = false;
         }
 
         const deltaMove = clonedAutoScrollStartPosition.clone();
-        deltaMove.subtract(this._getContentPosition());
-        this._clampDelta(deltaMove);
-        this._moveContent(deltaMove, reachedEnd);
-        this._dispatchEvent(ScrollViewEventType.SCROLLING);
+        deltaMove.subtract(self._getContentPosition());
+        self._clampDelta(deltaMove);
+        self._moveContent(deltaMove, reachedEnd);
+        self._dispatchEvent(ScrollViewEventType.SCROLLING);
 
-        if (!this._autoScrolling) {
-            this._isBouncing = false;
-            this._scrolling = false;
-            this._dispatchEvent(ScrollViewEventType.SCROLL_ENDED);
+        if (!self._autoScrolling) {
+            self._isBouncing = false;
+            self._scrolling = false;
+            self._dispatchEvent(ScrollViewEventType.SCROLL_ENDED);
         }
     }
 
     protected _checkMouseWheel (dt: number): void {
-        const currentOutOfBoundary = this._getHowMuchOutOfBoundary();
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
+        const currentOutOfBoundary = self._getHowMuchOutOfBoundary();
         const maxElapsedTime = 0.1;
 
         if (!currentOutOfBoundary.equals(Vec3.ZERO, EPSILON)) {
-            this._processInertiaScroll();
-            if (this._scrolling) {
-                this._scrolling = false;
-                if (!this._autoScrolling) {
-                    this._dispatchEvent(ScrollViewEventType.SCROLL_ENDED);
+            self._processInertiaScroll();
+            if (self._scrolling) {
+                self._scrolling = false;
+                if (!self._autoScrolling) {
+                    self._dispatchEvent(ScrollViewEventType.SCROLL_ENDED);
                 }
             }
-            this.unschedule(this._checkMouseWheel);
-            this._stopMouseWheel = false;
+            self.unschedule(self._checkMouseWheel);
+            self._stopMouseWheel = false;
             return;
         }
 
-        this._mouseWheelEventElapsedTime += dt;
+        self._mouseWheelEventElapsedTime += dt;
 
         // mouse wheel event is ended
-        if (this._mouseWheelEventElapsedTime > maxElapsedTime) {
-            this._onScrollBarTouchEnded();
-            if (this._scrolling) {
-                this._scrolling = false;
-                if (!this._autoScrolling) {
-                    this._dispatchEvent(ScrollViewEventType.SCROLL_ENDED);
+        if (self._mouseWheelEventElapsedTime > maxElapsedTime) {
+            self._onScrollBarTouchEnded();
+            if (self._scrolling) {
+                self._scrolling = false;
+                if (!self._autoScrolling) {
+                    self._dispatchEvent(ScrollViewEventType.SCROLL_ENDED);
                 }
             }
-            this.unschedule(this._checkMouseWheel);
-            this._stopMouseWheel = false;
+            self.unschedule(self._checkMouseWheel);
+            self._stopMouseWheel = false;
         }
     }
 
@@ -1821,22 +1884,24 @@ export class ScrollView extends ViewGroup {
         const anchor = options.anchor;
         const applyToHorizontal = options.applyToHorizontal;
         const applyToVertical = options.applyToVertical;
-        this._calculateBoundary();
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+        self._calculateBoundary();
 
         anchor.clampf(Vec2.ZERO, Vec2.ONE);
 
-        let bottomDelta = this._getContentBottomBoundary() - this._bottomBoundary;
+        let bottomDelta = self._getContentBottomBoundary() - self._bottomBoundary;
         bottomDelta = -bottomDelta;
 
-        let leftDelta = this._getContentLeftBoundary() - this._leftBoundary;
+        let leftDelta = self._getContentLeftBoundary() - self._leftBoundary;
         leftDelta = -leftDelta;
 
         const moveDelta = new Vec3();
-        if (this._content && this.view) {
+        if (self._content && self.view) {
             let totalScrollDelta = 0;
-            const uiTrans = this._content._uiProps.uiTransformComp!;
+            const uiTrans = self._content._uiProps.uiTransformComp!;
             const contentSize = uiTrans.contentSize;
-            const scrollSize = this.view.contentSize;
+            const scrollSize = self.view.contentSize;
             if (applyToHorizontal) {
                 totalScrollDelta = contentSize.width - scrollSize.width;
                 moveDelta.x = leftDelta - totalScrollDelta * anchor.x;
@@ -1851,17 +1916,20 @@ export class ScrollView extends ViewGroup {
     }
 
     protected _moveContentToTopLeft (scrollViewSize: Size): void {
-        let bottomDelta = this._getContentBottomBoundary() - this._bottomBoundary;
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
+        let bottomDelta = self._getContentBottomBoundary() - self._bottomBoundary;
         bottomDelta = -bottomDelta;
         const moveDelta = new Vec3();
         let totalScrollDelta = 0;
 
-        let leftDelta = this._getContentLeftBoundary() - this._leftBoundary;
+        let leftDelta = self._getContentLeftBoundary() - self._leftBoundary;
         leftDelta = -leftDelta;
 
         // 是否限制在上视区上边
-        if (this._content) {
-            const uiTrans = this._content._uiProps.uiTransformComp!;
+        if (self._content) {
+            const uiTrans = self._content._uiProps.uiTransformComp!;
             const contentSize = uiTrans.contentSize;
             if (contentSize.height < scrollViewSize.height) {
                 totalScrollDelta = contentSize.height - scrollViewSize.height;
@@ -1875,9 +1943,9 @@ export class ScrollView extends ViewGroup {
             }
         }
 
-        this._updateScrollBarState();
-        this._moveContent(moveDelta);
-        this._adjustContentOutOfBoundary();
+        self._updateScrollBarState();
+        self._moveContent(moveDelta);
+        self._adjustContentOutOfBoundary();
     }
 
     protected _scaleChanged (value: TransformBit): void {
@@ -1923,26 +1991,29 @@ export class ScrollView extends ViewGroup {
     }
 
     protected _xrThumbStickMove (event: Vec2): void {
-        if (!this.enabledInHierarchy) {
+        // eslint-disable-next-line @typescript-eslint/no-this-alias
+        const self = this;
+
+        if (!self.enabledInHierarchy) {
             return;
         }
 
         const deltaMove = new Vec3();
         const wheelPrecision = -62.5;
         const scrollY = event.y;
-        if (this.vertical) {
+        if (self.vertical) {
             deltaMove.set(0, scrollY * wheelPrecision, 0);
-        } else if (this.horizontal) {
+        } else if (self.horizontal) {
             deltaMove.set(scrollY * wheelPrecision, 0, 0);
         }
 
-        this._mouseWheelEventElapsedTime = 0;
-        this._deltaAmount.add(deltaMove);
+        self._mouseWheelEventElapsedTime = 0;
+        self._deltaAmount.add(deltaMove);
 
-        if (!this._stopMouseWheel) {
-            this._handlePressLogic();
-            this.schedule(this._checkMouseWheel, 1.0 / 60, NaN, 0);
-            this._stopMouseWheel = true;
+        if (!self._stopMouseWheel) {
+            self._handlePressLogic();
+            self.schedule(self._checkMouseWheel, 1.0 / 60, NaN, 0);
+            self._stopMouseWheel = true;
         }
     }
 }
