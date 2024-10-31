@@ -1256,7 +1256,7 @@ export class ScrollView extends ViewGroup {
         return (1 - this.brake) * (1 / (1 + distance * 0.000014 + distance * distance * 0.000000008));
     }
 
-    protected _startAttenuatingAutoScroll (deltaMove: Readonly<Vec3>, initialVelocity: Readonly<Vec3>): void {
+    protected _startAttenuatingAutoScroll (deltaMove: Vec3, initialVelocity: Vec3): void {
         const targetDelta = deltaMove.clone();
         targetDelta.normalize();
         if (this._content && this.view) {
