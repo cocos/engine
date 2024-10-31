@@ -448,16 +448,16 @@ Vector<SpineDebugShape> &SpineSkeletonInstance::getDebugShapes() {
 
 void SpineSkeletonInstance::resizeSlotRegion(const spine::String &slotName, uint32_t width, uint32_t height, bool createNew) {
     if (!_skeleton) return;
-    auto slot = _skeleton->findSlot(slotName);
+    auto* slot = _skeleton->findSlot(slotName);
     if (!slot) return;
-    auto attachment = slot->getAttachment();
+    auto*attachment = slot->getAttachment();
     if (!attachment) return;
     if (createNew) {
         attachment = attachment->copy();
         slot->setAttachment(attachment);
     }
     if (attachment->getRTTI().isExactly(spine::RegionAttachment::rtti)) {
-        auto region = static_cast<RegionAttachment *>(attachment);
+        auto *region = static_cast<RegionAttachment *>(attachment);
         region->setRegionWidth(width);
         region->setRegionHeight(height);
         region->setRegionOriginalWidth(width);
@@ -466,19 +466,19 @@ void SpineSkeletonInstance::resizeSlotRegion(const spine::String &slotName, uint
         region->setHeight(height);
         region->setUVs(0, 0, 1.0f, 1.0f, false);
         region->updateOffset();
-        auto attachmentVertices = static_cast<AttachmentVertices *>(region->getRendererObject());
+        auto *attachmentVertices = static_cast<AttachmentVertices *>(region->getRendererObject());
         if (createNew) {
             attachmentVertices = attachmentVertices->copy();
             region->setRendererObject(attachmentVertices);
         }
         V3F_T2F_C4B *vertices = attachmentVertices->_triangles->verts;
-        auto UVs = region->getUVs();
+        const auto &UVs = region->getUVs();
         for (int i = 0, ii = 0; i < 4; ++i, ii += 2) {
             vertices[i].texCoord.u = UVs[ii];
             vertices[i].texCoord.v = UVs[ii + 1];
         }
     } else if (attachment->getRTTI().isExactly(spine::MeshAttachment::rtti)) {
-        auto mesh = static_cast<MeshAttachment *>(attachment);
+        auto *mesh = static_cast<MeshAttachment *>(attachment);
         mesh->setRegionWidth(width);
         mesh->setRegionHeight(height);
         mesh->setRegionOriginalWidth(width);
@@ -492,13 +492,13 @@ void SpineSkeletonInstance::resizeSlotRegion(const spine::String &slotName, uint
         mesh->setRegionRotate(true);
         mesh->setRegionDegrees(0);
         mesh->updateUVs();
-        auto attachmentVertices = static_cast<AttachmentVertices *>(mesh->getRendererObject());
+        auto *attachmentVertices = static_cast<AttachmentVertices *>(mesh->getRendererObject());
         if (createNew) {
             attachmentVertices = attachmentVertices->copy();
             mesh->setRendererObject(attachmentVertices);
         }
         V3F_T2F_C4B *vertices = attachmentVertices->_triangles->verts;
-        auto UVs = mesh->getUVs();
+        const auto &UVs = mesh->getUVs();
         for (size_t i = 0, ii = 0, nn = mesh->getWorldVerticesLength(); ii < nn; ++i, ii += 2) {
             vertices[i].texCoord.u = UVs[ii];
             vertices[i].texCoord.v = UVs[ii + 1];
@@ -508,7 +508,7 @@ void SpineSkeletonInstance::resizeSlotRegion(const spine::String &slotName, uint
 
 void SpineSkeletonInstance::setSlotTexture(const spine::String &slotName, uint32_t textureID) {
     if (!_skeleton) return;
-    auto slot = _skeleton->findSlot(slotName);
+    auto* slot = _skeleton->findSlot(slotName);
     if (!slot) return;
     _userData.useSlotTexture = true;
 

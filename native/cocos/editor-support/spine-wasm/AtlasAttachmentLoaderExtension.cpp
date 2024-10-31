@@ -40,9 +40,10 @@ void AtlasAttachmentLoaderExtension::configureAttachment(Attachment *attachment)
         auto *region = static_cast<AtlasRegion *>(regionAttachment->getRendererObject());
         auto *attachmentVertices = new AttachmentVertices(4, quadTriangles, 6, pages.indexOf(region->page));
         V3F_T2F_C4B *vertices = attachmentVertices->_triangles->verts;
+        const auto &uvs = regionAttachment->getUVs();
         for (int i = 0, ii = 0; i < 4; ++i, ii += 2) {
-            vertices[i].texCoord.u = regionAttachment->getUVs()[ii];
-            vertices[i].texCoord.v = regionAttachment->getUVs()[ii + 1];
+            vertices[i].texCoord.u = uvs[ii];
+            vertices[i].texCoord.v = uvs[ii + 1];
         }
         regionAttachment->setRendererObject(attachmentVertices, deleteAttachmentVertices);
     } else if (attachment->getRTTI().isExactly(MeshAttachment::rtti)) {
@@ -52,9 +53,10 @@ void AtlasAttachmentLoaderExtension::configureAttachment(Attachment *attachment)
         auto *attachmentVertices = new AttachmentVertices(
             static_cast<int32_t>(meshAttachment->getWorldVerticesLength() >> 1), meshAttachment->getTriangles().buffer(), static_cast<int32_t>(meshAttachment->getTriangles().size()), pages.indexOf(region->page));
         V3F_T2F_C4B *vertices = attachmentVertices->_triangles->verts;
+        const auto &uvs = meshAttachment->getUVs();
         for (size_t i = 0, ii = 0, nn = meshAttachment->getWorldVerticesLength(); ii < nn; ++i, ii += 2) {
-            vertices[i].texCoord.u = meshAttachment->getUVs()[ii];
-            vertices[i].texCoord.v = meshAttachment->getUVs()[ii + 1];
+            vertices[i].texCoord.u = uvs[ii];
+            vertices[i].texCoord.v = uvs[ii + 1];
         }
         meshAttachment->setRendererObject(attachmentVertices, deleteAttachmentVertices);
     }

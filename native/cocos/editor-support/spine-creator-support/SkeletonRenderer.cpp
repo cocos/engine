@@ -1074,7 +1074,7 @@ void SkeletonRenderer::setSlotTexture(const std::string &slotName, cc::Texture2D
             region->setRendererObject(attachmentVertices);
         }
         V3F_T2F_C4B *vertices = attachmentVertices->_triangles->verts;
-        auto UVs = region->getUVs();
+        const auto &UVs = region->getUVs();
         for (int i = 0, ii = 0; i < 4; ++i, ii += 2) {
             vertices[i].texCoord.u = UVs[ii];
             vertices[i].texCoord.v = UVs[ii + 1];
@@ -1100,7 +1100,7 @@ void SkeletonRenderer::setSlotTexture(const std::string &slotName, cc::Texture2D
             mesh->setRendererObject(attachmentVertices);
         }
         V3F_T2F_C4B *vertices = attachmentVertices->_triangles->verts;
-        auto UVs = mesh->getUVs();
+        const auto &UVs = mesh->getUVs();
         for (size_t i = 0, ii = 0, nn = mesh->getWorldVerticesLength(); ii < nn; ++i, ii += 2) {
             vertices[i].texCoord.u = UVs[ii];
             vertices[i].texCoord.v = UVs[ii + 1];
