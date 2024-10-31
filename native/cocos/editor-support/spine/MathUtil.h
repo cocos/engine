@@ -56,7 +56,9 @@ public:
 
     static float clamp(float x, float lower, float upper);
 
-    static float abs(float v);
+    static inline float abs(float v) {
+        return ::abs(v);
+    }
 
     /// Returns the sine in radians from a lookup table.
     static inline float sin(float radians) {
@@ -108,7 +110,9 @@ public:
 
     static float randomTriangular(float min, float max, float mode);
 
-    static float pow(float a, float b);
+    static inline float pow(float a, float b) {
+        return (float)::pow(a, b);
+    }
 };
 
 struct SP_API Interpolation {

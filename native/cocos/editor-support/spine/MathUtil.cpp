@@ -46,10 +46,6 @@ RTTI_IMPL_NOPARENT(Interpolation)
 RTTI_IMPL(PowInterpolation, Interpolation)
 RTTI_IMPL(PowOutInterpolation, Interpolation)
 
-float MathUtil::abs(float v) {
-    return ((v) < 0 ? -(v) : (v));
-}
-
 float MathUtil::sign(float v) {
     return ((v) < 0 ? -1.0f : (v) > 0 ? 1.0f
                                       : 0.0f);
@@ -74,8 +70,4 @@ float MathUtil::randomTriangular(float min, float max, float mode) {
     float d = max - min;
     if (u <= (mode - min) / d) return min + sqrt(u * d * (mode - min));
     return max - sqrt((1 - u) * d * (max - mode));
-}
-
-float MathUtil::pow(float a, float b) {
-    return (float)::pow(a, b);
 }
