@@ -91,9 +91,9 @@ public:
 
     Skeleton &getSkeleton();
 
-    Color &getColor();
+    Color &getColor() { return _color; }
 
-    Color &getDarkColor();
+    inline Color &getDarkColor() { return _darkColor; }
 
     bool hasDarkColor();
 

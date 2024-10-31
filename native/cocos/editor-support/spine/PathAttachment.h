@@ -43,11 +43,11 @@ public:
     explicit PathAttachment(const String& name);
 
     /// The length in the setup pose from the start of the path to the end of each curve.
-    Vector<float>& getLengths();
-    bool isClosed();
-    void setClosed(bool inValue);
-    bool isConstantSpeed();
-    void setConstantSpeed(bool inValue);
+    inline Vector<float>& getLengths() { return _lengths; }
+    inline bool isClosed() const { return _closed; }
+    inline void setClosed(bool inValue) { _closed = inValue; }
+    inline bool isConstantSpeed() const { return _constantSpeed; }
+    inline void setConstantSpeed(bool inValue) { _constantSpeed = inValue; }
 
     virtual Attachment* copy();
 
