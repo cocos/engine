@@ -69,15 +69,17 @@ Skeleton::Skeleton(SkeletonData *skeletonData) : _data(skeletonData),
                                                  _scaleY(1),
                                                  _x(0),
                                                  _y(0) {
-    _bones.ensureCapacity(_data->getBones().size());
-    for (size_t i = 0; i < _data->getBones().size(); ++i) {
-        BoneData *data = _data->getBones()[i];
+    const auto &boneDatas = _data->getBones();
+    _bones.ensureCapacity(boneDatas.size());
+    for (size_t i = 0; i < boneDatas.size(); ++i) {
+        BoneData *data = boneDatas[i];
 
         Bone *bone;
-        if (data->getParent() == NULL) {
+        auto* dataParent = data->getParent();
+        if (dataParent == NULL) {
             bone = spine_new Bone(*data, *this, NULL);
         } else {
-            Bone *parent = _bones[data->getParent()->getIndex()];
+            Bone *parent = _bones[dataParent->getIndex()];
             bone = spine_new Bone(*data, *this, parent);
             parent->getChildren().add(bone);
         }
@@ -85,10 +87,11 @@ Skeleton::Skeleton(SkeletonData *skeletonData) : _data(skeletonData),
         _bones.add(bone);
     }
 
-    _slots.ensureCapacity(_data->getSlots().size());
-    _drawOrder.ensureCapacity(_data->getSlots().size());
-    for (size_t i = 0; i < _data->getSlots().size(); ++i) {
-        SlotData *data = _data->getSlots()[i];
+    const auto &dataSlots = _data->getSlots();
+    _slots.ensureCapacity(dataSlots.size());
+    _drawOrder.ensureCapacity(dataSlots.size());
+    for (size_t i = 0; i < dataSlots.size(); ++i) {
+        SlotData *data = dataSlots[i];
 
         Bone *bone = _bones[data->getBoneData().getIndex()];
         Slot *slot = spine_new Slot(*data, *bone);
@@ -97,27 +100,30 @@ Skeleton::Skeleton(SkeletonData *skeletonData) : _data(skeletonData),
         _drawOrder.add(slot);
     }
 
-    _ikConstraints.ensureCapacity(_data->getIkConstraints().size());
-    for (size_t i = 0; i < _data->getIkConstraints().size(); ++i) {
-        IkConstraintData *data = _data->getIkConstraints()[i];
+    const auto &dataIkConstraints = _data->getIkConstraints();
+    _ikConstraints.ensureCapacity(dataIkConstraints.size());
+    for (size_t i = 0; i < dataIkConstraints.size(); ++i) {
+        IkConstraintData *data = dataIkConstraints[i];
 
         IkConstraint *constraint = spine_new IkConstraint(*data, *this);
 
         _ikConstraints.add(constraint);
     }
 
-    _transformConstraints.ensureCapacity(_data->getTransformConstraints().size());
-    for (size_t i = 0; i < _data->getTransformConstraints().size(); ++i) {
-        TransformConstraintData *data = _data->getTransformConstraints()[i];
+    const auto &dataTransformConstraints = _data->getTransformConstraints();
+    _transformConstraints.ensureCapacity(dataTransformConstraints.size());
+    for (size_t i = 0; i < dataTransformConstraints.size(); ++i) {
+        TransformConstraintData *data = dataTransformConstraints[i];
 
         TransformConstraint *constraint = spine_new TransformConstraint(*data, *this);
 
         _transformConstraints.add(constraint);
     }
 
-    _pathConstraints.ensureCapacity(_data->getPathConstraints().size());
-    for (size_t i = 0; i < _data->getPathConstraints().size(); ++i) {
-        PathConstraintData *data = _data->getPathConstraints()[i];
+    const auto &dataPathConstraints = _data->getPathConstraints();
+    _pathConstraints.ensureCapacity(dataPathConstraints.size());
+    for (size_t i = 0; i < dataPathConstraints.size(); ++i) {
+        PathConstraintData *data = dataPathConstraints[i];
 
         PathConstraint *constraint = spine_new PathConstraint(*data, *this);
 
