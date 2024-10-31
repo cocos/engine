@@ -251,14 +251,6 @@ void RegionAttachment::setRegionOriginalHeight(float inValue) {
     _regionOriginalHeight = inValue;
 }
 
-Vector<float> &RegionAttachment::getOffset() {
-    return _vertexOffset;
-}
-
-Vector<float> &RegionAttachment::getUVs() {
-    return _uvs;
-}
-
 spine::Color &RegionAttachment::getColor() {
     return _color;
 }

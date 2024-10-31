@@ -54,12 +54,12 @@ public:
     int getHullLength();
     void setHullLength(int inValue);
 
-    Vector<float>& getRegionUVs();
+    inline Vector<float>& getRegionUVs() { return _regionUVs; }
 
     /// The UV pair for each vertex, normalized within the entire texture. See also MeshAttachment::updateUVs
-    Vector<float>& getUVs();
+    inline Vector<float>& getUVs() { return _uvs; }
 
-    Vector<unsigned short>& getTriangles();
+    inline Vector<unsigned short>& getTriangles() { return _triangles; }
 
     Color& getColor();
 

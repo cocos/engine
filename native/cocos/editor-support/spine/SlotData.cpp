@@ -57,10 +57,6 @@ const String &SlotData::getName() {
     return _name;
 }
 
-BoneData &SlotData::getBoneData() {
-    return _boneData;
-}
-
 Color &SlotData::getColor() {
     return _color;
 }

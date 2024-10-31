@@ -114,18 +114,6 @@ void MeshAttachment::setHullLength(int inValue) {
     _hullLength = inValue;
 }
 
-Vector<float> &MeshAttachment::getRegionUVs() {
-    return _regionUVs;
-}
-
-Vector<float> &MeshAttachment::getUVs() {
-    return _uvs;
-}
-
-Vector<unsigned short> &MeshAttachment::getTriangles() {
-    return _triangles;
-}
-
 const String &MeshAttachment::getPath() {
     return _path;
 }

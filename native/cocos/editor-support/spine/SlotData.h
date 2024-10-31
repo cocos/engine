@@ -78,7 +78,7 @@ public:
 
     const String &getName();
 
-    BoneData &getBoneData();
+    inline BoneData &getBoneData() { return _boneData; }
 
     Color &getColor();
 

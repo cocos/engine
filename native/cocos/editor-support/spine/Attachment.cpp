@@ -50,7 +50,7 @@ const String &Attachment::getName() const {
     return _name;
 }
 
-int Attachment::getRefCount() {
+int Attachment::getRefCount() const {
     return _refCount;
 }
 

@@ -102,8 +102,8 @@ public:
     float getRegionOriginalHeight();
     void setRegionOriginalHeight(float inValue);
 
-    Vector<float>& getOffset();
-    Vector<float>& getUVs();
+    inline Vector<float>& getOffset() { return _vertexOffset; }
+    inline Vector<float>& getUVs() { return _uvs; }
 
     virtual Attachment* copy();
 
