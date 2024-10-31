@@ -69,7 +69,7 @@ public:
 
     IkConstraintData &getData();
 
-    Vector<Bone *> &getBones();
+    inline Vector<Bone *> &getBones() { return _bones; }
 
     Bone *getTarget();
 

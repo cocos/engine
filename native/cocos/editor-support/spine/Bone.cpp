@@ -102,10 +102,11 @@ void Bone::updateWorldTransform(float x, float y, float rotation, float scaleX, 
     _ashearY = shearY;
     _appliedValid = true;
 
+    float sx = _skeleton.getScaleX();
+    float sy = _skeleton.getScaleY();
+
     if (!parent) { /* Root bone. */
         float rotationY = rotation + 90 + shearY;
-        float sx = _skeleton.getScaleX();
-        float sy = _skeleton.getScaleY();
         _a = MathUtil::cosDeg(rotation + shearX) * scaleX * sx;
         _b = MathUtil::cosDeg(rotationY) * scaleY * sx;
         _c = MathUtil::sinDeg(rotation + shearX) * scaleX * sy;
@@ -176,14 +177,14 @@ void Bone::updateWorldTransform(float x, float y, float rotation, float scaleX, 
             float r, zb, zd, la, lb, lc, ld;
             cosine = MathUtil::cosDeg(rotation);
             sine = MathUtil::sinDeg(rotation);
-            za = (pa * cosine + pb * sine) / _skeleton.getScaleX();
-            zc = (pc * cosine + pd * sine) / _skeleton.getScaleY();
+            za = (pa * cosine + pb * sine) / sx;
+            zc = (pc * cosine + pd * sine) / sy;
             s = MathUtil::sqrt(za * za + zc * zc);
             if (s > 0.00001f) s = 1 / s;
             za *= s;
             zc *= s;
             s = MathUtil::sqrt(za * za + zc * zc);
-            if (mode == TransformMode_NoScale && (pa * pd - pb * pc < 0) != (_skeleton.getScaleX() < 0 != _skeleton.getScaleY() < 0))
+            if (mode == TransformMode_NoScale && (pa * pd - pb * pc < 0) != (sx < 0 != sy < 0))
                 s = -s;
             r = MathUtil::Pi / 2 + MathUtil::atan2(zc, za);
             zb = MathUtil::cos(r) * s;
@@ -199,10 +200,10 @@ void Bone::updateWorldTransform(float x, float y, float rotation, float scaleX, 
             break;
         }
     }
-    _a *= _skeleton.getScaleX();
-    _b *= _skeleton.getScaleX();
-    _c *= _skeleton.getScaleY();
-    _d *= _skeleton.getScaleY();
+    _a *= sx;
+    _b *= sx;
+    _c *= sy;
+    _d *= sy;
 }
 
 void Bone::setToSetupPose() {
@@ -309,10 +310,6 @@ Skeleton &Bone::getSkeleton() {
 
 Bone *Bone::getParent() {
     return _parent;
-}
-
-Vector<Bone *> &Bone::getChildren() {
-    return _children;
 }
 
 float Bone::getWorldRotationX() const {

@@ -186,17 +186,17 @@ bool SkeletonClipping::isClipping() {
     return _clipAttachment != NULL;
 }
 
-Vector<float> &SkeletonClipping::getClippedVertices() {
-    return _clippedVertices;
-}
+// Vector<float> &SkeletonClipping::getClippedVertices() {
+//     return _clippedVertices;
+// }
 
-Vector<unsigned short> &SkeletonClipping::getClippedTriangles() {
-    return _clippedTriangles;
-}
+// Vector<unsigned short> &SkeletonClipping::getClippedTriangles() {
+//     return _clippedTriangles;
+// }
 
-Vector<float> &SkeletonClipping::getClippedUVs() {
-    return _clippedUVs;
-}
+// Vector<float> &SkeletonClipping::getClippedUVs() {
+//     return _clippedUVs;
+// }
 
 bool SkeletonClipping::clip(float x1, float y1, float x2, float y2, float x3, float y3, Vector<float> *clippingArea,
                             Vector<float> *output) {

@@ -58,7 +58,7 @@ public:
 
     void setSlotIndex(int inValue);
 
-    Vector<float> &getFrames();
+    inline Vector<float> &getFrames() { return _frames; }
 
 protected:
     static const int PREV_TIME;

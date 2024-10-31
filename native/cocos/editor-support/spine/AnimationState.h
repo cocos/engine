@@ -375,7 +375,7 @@ public:
     AnimationStateData* getData();
 
     /// A list of tracks that have animations, which may contain NULLs.
-    Vector<TrackEntry*>& getTracks();
+    inline Vector<TrackEntry*>& getTracks() { return _tracks; }
 
     float getTimeScale();
     void setTimeScale(float inValue);

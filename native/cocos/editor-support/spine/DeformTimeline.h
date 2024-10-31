@@ -53,8 +53,8 @@ public:
 
     int getSlotIndex();
     void setSlotIndex(int inValue);
-    Vector<float>& getFrames();
-    Vector<Vector<float> >& getVertices();
+    inline Vector<float>& getFrames() { return _frames; }
+    inline Vector<Vector<float> >& getVertices() { return _frameVertices; }
     VertexAttachment* getAttachment();
     void setAttachment(VertexAttachment* inValue);
 

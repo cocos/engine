@@ -168,19 +168,19 @@ public:
 
     SkeletonData *getData();
 
-    Vector<Bone *> &getBones();
+    inline Vector<Bone *> &getBones() { return _bones; }
 
-    Vector<Updatable *> &getUpdateCacheList();
+    inline Vector<Updatable *> &getUpdateCacheList() { return _updateCache; }
 
-    Vector<Slot *> &getSlots();
+    inline Vector<Slot *> &getSlots() { return _slots; }
 
-    Vector<Slot *> &getDrawOrder();
+    inline Vector<Slot *> &getDrawOrder() { return _drawOrder; }
 
-    Vector<IkConstraint *> &getIkConstraints();
+    inline Vector<IkConstraint *> &getIkConstraints() { return _ikConstraints; }
 
-    Vector<PathConstraint *> &getPathConstraints();
+    inline Vector<PathConstraint *> &getPathConstraints() { return _pathConstraints; }
 
-    Vector<TransformConstraint *> &getTransformConstraints();
+    inline Vector<TransformConstraint *> &getTransformConstraints() { return _transformConstraints; }
 
     Skin *getSkin();
 

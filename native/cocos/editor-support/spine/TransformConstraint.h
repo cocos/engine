@@ -56,7 +56,7 @@ public:
 
     TransformConstraintData& getData();
 
-    Vector<Bone*>& getBones();
+    inline Vector<Bone*>& getBones() { return _bones; }
 
     Bone* getTarget();
     void setTarget(Bone* inValue);

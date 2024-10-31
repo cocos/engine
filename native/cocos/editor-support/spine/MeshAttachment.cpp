@@ -237,10 +237,6 @@ void MeshAttachment::setParentMesh(MeshAttachment *inValue) {
     }
 }
 
-Vector<unsigned short> &MeshAttachment::getEdges() {
-    return _edges;
-}
-
 float MeshAttachment::getWidth() {
     return _width;
 }

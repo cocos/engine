@@ -189,11 +189,3 @@ void Skin::copySkin(Skin *other) {
             setAttachment(entry._slotIndex, entry._name, entry._attachment->copy());
     }
 }
-
-Vector<ConstraintData *> &Skin::getConstraints() {
-    return _constraints;
-}
-
-Vector<BoneData *> &Skin::getBones() {
-    return _bones;
-}

@@ -57,10 +57,6 @@ TransformConstraintData::TransformConstraintData(const String &name) : Constrain
                                                                        _local(false) {
 }
 
-Vector<BoneData *> &TransformConstraintData::getBones() {
-    return _bones;
-}
-
 BoneData *TransformConstraintData::getTarget() {
     return _target;
 }
@@ -105,10 +101,3 @@ float TransformConstraintData::getOffsetShearY() {
     return _offsetShearY;
 }
 
-bool TransformConstraintData::isRelative() {
-    return _relative;
-}
-
-bool TransformConstraintData::isLocal() {
-    return _local;
-}

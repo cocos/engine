@@ -298,10 +298,6 @@ IkConstraintData &IkConstraint::getData() {
     return _data;
 }
 
-Vector<Bone *> &IkConstraint::getBones() {
-    return _bones;
-}
-
 Bone *IkConstraint::getTarget() {
     return _target;
 }

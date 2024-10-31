@@ -132,7 +132,3 @@ int RotateTimeline::getBoneIndex() {
 void RotateTimeline::setBoneIndex(int inValue) {
     _boneIndex = inValue;
 }
-
-Vector<float> &RotateTimeline::getFrames() {
-    return _frames;
-}

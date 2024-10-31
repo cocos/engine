@@ -236,10 +236,6 @@ void PathConstraint::setTranslateMix(float inValue) {
     _translateMix = inValue;
 }
 
-Vector<Bone *> &PathConstraint::getBones() {
-    return _bones;
-}
-
 Slot *PathConstraint::getTarget() {
     return _target;
 }

@@ -49,10 +49,6 @@ IkConstraintData::IkConstraintData(const String &name) : ConstraintData(name),
                                                          _softness(0) {
 }
 
-Vector<BoneData *> &IkConstraintData::getBones() {
-    return _bones;
-}
-
 BoneData *IkConstraintData::getTarget() {
     return _target;
 }

@@ -55,7 +55,7 @@ public:
     int getBoneIndex();
     void setBoneIndex(int inValue);
 
-    Vector<float>& getFrames();
+    inline Vector<float>& getFrames() { return _frames; }
 #ifndef __EMSCRIPTEN__
 private:
 #endif

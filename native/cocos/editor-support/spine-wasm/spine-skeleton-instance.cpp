@@ -131,7 +131,7 @@ void SpineSkeletonInstance::collectMeshData() {
     }
     const Color& skeletonColor = _skeleton->getColor();
     for (uint32_t drawIdx = 0; drawIdx < slotCount; ++drawIdx) {
-        auto slot = slotArray[drawIdx];
+        auto* slot = slotArray[drawIdx];
         auto& bone = slot->getBone();
         if (!bone.isActive()) {
             continue;

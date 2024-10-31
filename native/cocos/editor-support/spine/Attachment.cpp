@@ -55,9 +55,9 @@ int Attachment::getRefCount() const {
 }
 
 void Attachment::reference() {
-    _refCount++;
+    ++_refCount;
 }
 
 void Attachment::dereference() {
-    _refCount--;
+    --_refCount;
 }

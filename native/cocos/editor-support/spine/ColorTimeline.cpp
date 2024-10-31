@@ -138,7 +138,3 @@ int ColorTimeline::getSlotIndex() {
 void ColorTimeline::setSlotIndex(int inValue) {
     _slotIndex = inValue;
 }
-
-Vector<float> &ColorTimeline::getFrames() {
-    return _frames;
-}

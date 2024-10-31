@@ -93,7 +93,7 @@ public:
 
     const String &getName();
 
-    Vector<Timeline *> &getTimelines();
+    inline Vector<Timeline *> &getTimelines() { return _timelines; }
 
     bool hasTimeline(int id);
 

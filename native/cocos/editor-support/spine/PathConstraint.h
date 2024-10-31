@@ -71,7 +71,7 @@ public:
     float getTranslateMix();
     void setTranslateMix(float inValue);
 
-    Vector<Bone*>& getBones();
+    inline Vector<Bone*>& getBones() { return _bones; }
 
     Slot* getTarget();
     void setTarget(Slot* inValue);

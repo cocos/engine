@@ -56,7 +56,7 @@ class SP_API PathConstraintData : public ConstraintData {
 public:
     explicit PathConstraintData(const String& name);
 
-    Vector<BoneData*>& getBones();
+    inline Vector<BoneData*>& getBones() { return _bones; }
 
     SlotData* getTarget();
     void setTarget(SlotData* inValue);

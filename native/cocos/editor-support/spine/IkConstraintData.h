@@ -50,7 +50,7 @@ public:
     explicit IkConstraintData(const String& name);
 
     /// The bones that are constrained by this IK Constraint.
-    Vector<BoneData*>& getBones();
+    inline Vector<BoneData*>& getBones() { return _bones; }
 
     /// The bone that is the IK target.
     BoneData* getTarget();

@@ -127,44 +127,12 @@ void SkeletonData::setName(const String &inValue) {
     _name = inValue;
 }
 
-Vector<BoneData *> &SkeletonData::getBones() {
-    return _bones;
-}
-
-Vector<SlotData *> &SkeletonData::getSlots() {
-    return _slots;
-}
-
-Vector<Skin *> &SkeletonData::getSkins() {
-    return _skins;
-}
-
 Skin *SkeletonData::getDefaultSkin() {
     return _defaultSkin;
 }
 
 void SkeletonData::setDefaultSkin(Skin *inValue) {
     _defaultSkin = inValue;
-}
-
-Vector<spine::EventData *> &SkeletonData::getEvents() {
-    return _events;
-}
-
-Vector<Animation *> &SkeletonData::getAnimations() {
-    return _animations;
-}
-
-Vector<IkConstraintData *> &SkeletonData::getIkConstraints() {
-    return _ikConstraints;
-}
-
-Vector<TransformConstraintData *> &SkeletonData::getTransformConstraints() {
-    return _transformConstraints;
-}
-
-Vector<PathConstraintData *> &SkeletonData::getPathConstraints() {
-    return _pathConstraints;
 }
 
 float SkeletonData::getX() {

@@ -145,9 +145,9 @@ public:
 
     AttachmentMap::Entries getAttachments();
 
-    Vector<BoneData *> &getBones();
+    inline Vector<BoneData *> &getBones() { return _bones; }
 
-    Vector<ConstraintData *> &getConstraints();
+    inline Vector<ConstraintData *> &getConstraints() { return _constraints; }
 
 private:
     const String _name;

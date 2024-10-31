@@ -111,14 +111,6 @@ void DrawOrderTimeline::setFrame(size_t frameIndex, float time, Vector<int> &dra
     _drawOrders[frameIndex].addAll(drawOrder);
 }
 
-Vector<float> &DrawOrderTimeline::getFrames() {
-    return _frames;
-}
-
-Vector<Vector<int> > &DrawOrderTimeline::getDrawOrders() {
-    return _drawOrders;
-}
-
 size_t DrawOrderTimeline::getFrameCount() {
     return _frames.size();
 }

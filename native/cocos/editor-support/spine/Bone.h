@@ -112,7 +112,7 @@ public:
 
     Bone *getParent();
 
-    Vector<Bone *> &getChildren();
+    inline Vector<Bone *> &getChildren() { return _children; }
 
     /// The local X translation.
     inline float getX() const {

@@ -89,10 +89,6 @@ TransformConstraintData &TransformConstraint::getData() {
     return _data;
 }
 
-Vector<Bone *> &TransformConstraint::getBones() {
-    return _bones;
-}
-
 Bone *TransformConstraint::getTarget() {
     return _target;
 }

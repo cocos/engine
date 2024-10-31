@@ -109,7 +109,7 @@ public:
     void setParentMesh(MeshAttachment* inValue);
 
     // Nonessential.
-    Vector<unsigned short>& getEdges();
+    inline Vector<unsigned short>& getEdges() { return _edges; }
     float getWidth();
     void setWidth(float inValue);
     float getHeight();

@@ -610,10 +610,6 @@ AnimationStateData *AnimationState::getData() {
     return _data;
 }
 
-Vector<TrackEntry *> &AnimationState::getTracks() {
-    return _tracks;
-}
-
 float AnimationState::getTimeScale() {
     return _timeScale;
 }

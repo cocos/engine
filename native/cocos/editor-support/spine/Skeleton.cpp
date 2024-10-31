@@ -486,34 +486,6 @@ SkeletonData *Skeleton::getData() {
     return _data;
 }
 
-Vector<Bone *> &Skeleton::getBones() {
-    return _bones;
-}
-
-Vector<Updatable *> &Skeleton::getUpdateCacheList() {
-    return _updateCache;
-}
-
-Vector<Slot *> &Skeleton::getSlots() {
-    return _slots;
-}
-
-Vector<Slot *> &Skeleton::getDrawOrder() {
-    return _drawOrder;
-}
-
-Vector<IkConstraint *> &Skeleton::getIkConstraints() {
-    return _ikConstraints;
-}
-
-Vector<PathConstraint *> &Skeleton::getPathConstraints() {
-    return _pathConstraints;
-}
-
-Vector<TransformConstraint *> &Skeleton::getTransformConstraints() {
-    return _transformConstraints;
-}
-
 Skin *Skeleton::getSkin() {
     return _skin;
 }

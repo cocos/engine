@@ -106,7 +106,7 @@ public:
 
     void setAttachmentTime(float inValue);
 
-    Vector<float> &getDeform();
+    inline Vector<float> &getDeform() { return _deform; }
 
 private:
     SlotData &_data;

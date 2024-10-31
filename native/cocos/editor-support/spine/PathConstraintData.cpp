@@ -54,10 +54,6 @@ PathConstraintData::PathConstraintData(const String &name) : ConstraintData(name
                                                              _translateMix(0) {
 }
 
-Vector<BoneData *> &PathConstraintData::getBones() {
-    return _bones;
-}
-
 SlotData *PathConstraintData::getTarget() {
     return _target;
 }
