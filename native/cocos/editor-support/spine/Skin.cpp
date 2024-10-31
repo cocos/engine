@@ -83,8 +83,9 @@ void Skin::AttachmentMap::remove(size_t slotIndex, const String &attachmentName)
 }
 
 int Skin::AttachmentMap::findInBucket(Vector<Entry> &bucket, const String &attachmentName) {
-    for (size_t i = 0; i < bucket.size(); i++)
-        if (bucket[i]._name == attachmentName) return i;
+    for (size_t i = 0; i < bucket.size(); i++) {
+        if (bucket[i]._name == attachmentName) return static_cast<int>(i);
+    }
     return -1;
 }
 
