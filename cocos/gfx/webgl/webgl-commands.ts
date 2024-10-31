@@ -670,13 +670,7 @@ export function WebGLCmdFuncUpdateBuffer (
         }
         }
 
-        if (systemInfo.os === OS.IOS  && (gpuBuffer.memUsage$ & MemoryUsageBit.HOST) && offset === 0 && size === buff.byteLength) {
-            // Fix performance issue on iOS.
-            // TODO(zhouzhenglong): glBufferSubData is faster than glBufferData in most cases.
-            // We should use multiple buffers to avoid stall (cpu write conflicts with gpu read).
-            // Before that, we will use glBufferData instead of glBufferSubData.
-            gl.bufferData(gpuBuffer.glTarget$, buff, gl.DYNAMIC_DRAW);
-        } else if (size === buff.byteLength) {
+        if (size === buff.byteLength) {
             gl.bufferSubData(gpuBuffer.glTarget$, offset, buff);
         } else {
             gl.bufferSubData(gpuBuffer.glTarget$, offset, buff.slice(0, size));
