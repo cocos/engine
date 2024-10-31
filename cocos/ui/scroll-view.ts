@@ -1018,13 +1018,13 @@ export class ScrollView extends ViewGroup {
 
             const content = self.content;
             if (content) {
-                content.off(NodeEventType.SIZE_CHANGED, this._calculateBoundary, self);
-                content.off(NodeEventType.TRANSFORM_CHANGED, this._scaleChanged, self);
+                content.off(NodeEventType.SIZE_CHANGED, self._calculateBoundary, self);
+                content.off(NodeEventType.TRANSFORM_CHANGED, self._scaleChanged, self);
 
                 const view = self.view;
                 if (view) {
-                    view.node.off(NodeEventType.TRANSFORM_CHANGED, this._scaleChanged, self);
-                    view.node.off(NodeEventType.SIZE_CHANGED, this._calculateBoundary, self);
+                    view.node.off(NodeEventType.TRANSFORM_CHANGED, self._scaleChanged, self);
+                    view.node.off(NodeEventType.SIZE_CHANGED, self._calculateBoundary, self);
                 }
             }
         }
@@ -1276,11 +1276,12 @@ export class ScrollView extends ViewGroup {
 
         const originalMoveLength = deltaMove.length();
         let factor = targetDelta.length() / originalMoveLength;
-        targetDelta.add(deltaMove);
 
         if (this.brake > 0 && factor > 7) {
             factor = Math.sqrt(factor);
-            targetDelta.multiplyScalar(factor);
+            targetDelta.set(deltaMove);
+            targetDelta.multiplyScalar(factor + 1);
+        } else {
             targetDelta.add(deltaMove);
         }
 
