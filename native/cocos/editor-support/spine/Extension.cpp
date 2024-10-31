@@ -47,7 +47,9 @@ void SpineExtension::setInstance(SpineExtension *inValue) {
 }
 
 SpineExtension *SpineExtension::getInstance() {
+#ifndef __EMSCRIPTEN__
     if (!_instance) _instance = spine::getDefaultExtension();
+#endif
     assert(_instance);
 
     return _instance;
@@ -58,6 +60,8 @@ SpineExtension::~SpineExtension() {
 
 SpineExtension::SpineExtension() {
 }
+
+#ifndef __EMSCRIPTEN__
 
 DefaultSpineExtension::~DefaultSpineExtension() {
 }
@@ -129,3 +133,4 @@ char *DefaultSpineExtension::_readFile(const String &path, int *length) {
 
 DefaultSpineExtension::DefaultSpineExtension() : SpineExtension() {
 }
+#endif

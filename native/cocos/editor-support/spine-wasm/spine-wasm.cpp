@@ -19,8 +19,8 @@ uint32_t SpineWasmUtil::s_memSize = 0;
 
 void SpineWasmUtil::spineWasmInit() {
     // LogUtil::Initialize();
-    SpineExtension* tension = new WasmSpineExtension();
-    SpineExtension::setInstance(tension);
+    SpineExtension* extension = new WasmSpineExtension();
+    SpineExtension::setInstance(extension);
 
     SpineMeshData::initMeshMemory();
 
@@ -44,7 +44,7 @@ SkeletonData* SpineWasmUtil::querySpineSkeletonDataByUUID(const String& uuid) {
 
 SkeletonData* SpineWasmUtil::createSpineSkeletonDataWithJson(const String& jsonStr, const String& altasStr) {
 #if ENABLE_JSON_PARSER
-        auto* atlas = new Atlas(altasStr.buffer(), altasStr.length(), "", nullptr, false);
+    auto* atlas = new Atlas(altasStr.buffer(), altasStr.length(), "", nullptr, false);
     if (!atlas) {
         return nullptr;
     }

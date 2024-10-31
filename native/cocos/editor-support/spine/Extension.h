@@ -89,6 +89,7 @@ private:
     static SpineExtension *_instance;
 };
 
+#ifndef __EMSCRIPTEN__
 class SP_API DefaultSpineExtension : public SpineExtension {
 public:
     DefaultSpineExtension();
@@ -107,11 +108,14 @@ protected:
     virtual char *_readFile(const String &path, int *length);
 };
 
+#endif
+
 // This function is to be implemented by engine specific runtimes to provide
 // the default extension for that engine. It is called the first time
 // SpineExtension::getInstance() is called, when no instance has been set
 // yet.
 extern SpineExtension *getDefaultExtension();
+
 } // namespace spine
 
 #endif /* Spine_Extension_h */

@@ -2,7 +2,7 @@
 #define __WASM_SPINE_EXTENSION_H__
 #include "spine/spine.h"
 
-class WasmSpineExtension : public spine::DefaultSpineExtension {
+class WasmSpineExtension : public spine::SpineExtension {
 public:
     WasmSpineExtension();
 

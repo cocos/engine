@@ -7,7 +7,7 @@ using namespace spine;
 // extern uint32_t jsReadFile(char* fileName, uint32_t length);
 // }
 
-WasmSpineExtension::WasmSpineExtension() : DefaultSpineExtension() {
+WasmSpineExtension::WasmSpineExtension() : SpineExtension() {
 }
 
 WasmSpineExtension::~WasmSpineExtension() {
@@ -49,8 +49,4 @@ void WasmSpineExtension::_free(void *mem, const char *file, int line) {
     SP_UNUSED(file);
     SP_UNUSED(line);
     ::free(mem);
-}
-
-SpineExtension *spine::getDefaultExtension() {
-    return new WasmSpineExtension();
 }
