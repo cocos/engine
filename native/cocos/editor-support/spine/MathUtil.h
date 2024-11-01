@@ -33,6 +33,7 @@
 #include <spine/SpineObject.h>
 #include <spine/RTTI.h>
 #include <math.h>
+#include <cstdint>
 
 namespace spine {
 
