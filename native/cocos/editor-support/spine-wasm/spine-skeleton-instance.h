@@ -52,7 +52,7 @@ public:
     void setTrackEntryListener(uint32_t trackId, spine::TrackEntry *entry);
     void onAnimationStateEvent(spine::TrackEntry *entry, spine::EventType type, spine::Event *event);
     void onTrackEntryEvent(spine::TrackEntry *entry, spine::EventType type, spine::Event *event);
-    spine::Vector<SpineDebugShape> &getDebugShapes();
+    inline spine::Vector<SpineDebugShape> &getDebugShapes() { return _debugShapes; }
     void resizeSlotRegion(const spine::String &slotName, uint32_t width, uint32_t height, bool createNew = false);
     void setSlotTexture(const spine::String &slotName, uint32_t index);
     void destroy();

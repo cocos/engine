@@ -353,13 +353,14 @@ void SpineSkeletonInstance::collectMeshData() {
         SpineMeshData::moveIB(currMesh.iCount);
         // record debug shape info
         if (_userData.debugMode) {
-            SpineDebugShape debugShape;
+            size_t currentShapesLen = _debugShapes.size();
+            _debugShapes.setSize(currentShapesLen + 1, {});
+            SpineDebugShape& debugShape = _debugShapes[currentShapesLen];
             debugShape.type = static_cast<uint32_t>(debugShapeType);
             debugShape.vOffset = _model->vCount;
             debugShape.vCount = currMesh.vCount;
             debugShape.iOffset = _model->iCount;
             debugShape.iCount = currMesh.iCount;
-            _debugShapes.add(debugShape);
         }
 
         currMesh.blendMode = static_cast<uint32_t>(slot->getData().getBlendMode());
@@ -440,10 +441,6 @@ void SpineSkeletonInstance::onAnimationStateEvent(TrackEntry *entry, EventType t
         SpineWasmUtil::s_listenerID = _eventListenerID;
         spineListenerCallBackFromJS();
     }
-}
-
-Vector<SpineDebugShape> &SpineSkeletonInstance::getDebugShapes() {
-    return this->_debugShapes;
 }
 
 void SpineSkeletonInstance::resizeSlotRegion(const spine::String &slotName, uint32_t width, uint32_t height, bool createNew) {
