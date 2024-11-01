@@ -768,6 +768,14 @@ export class Camera {
     }
 
     /**
+     * @en The inverse of the view matrix of the camera
+     * @zh 相机的逆视图矩阵
+     */
+    get matViewInv (): Mat4 {
+        return this._matViewInv$;
+    }
+
+    /**
      * @en The projection matrix of the camera
      * @zh 相机的投影矩阵
      */
@@ -835,6 +843,7 @@ export class Camera {
     private _curTransform$ = SurfaceTransform.IDENTITY;
     private _isProjDirty$ = true;
     private _matView$: Mat4 = mat4();
+    private _matViewInv$: Mat4 = mat4();
     private _matProj$: Mat4 = mat4();
     private _matProjInv$: Mat4 = mat4();
     private _matViewProj$: Mat4 = mat4();
@@ -1021,6 +1030,7 @@ export class Camera {
             this._forward$.z = -this._matView$.m10;
             // Remove scale
             Mat4.multiply(this._matView$, new Mat4().scale(this._node$.worldScale), this._matView$);
+            Mat4.invert(this._matViewInv$, this._matView$);
             this._node$.getWorldPosition(this._position$);
             viewProjDirty = true;
         }

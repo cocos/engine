@@ -28,7 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 /* eslint-disable max-len */
-import { Material, Texture2D, gfx } from 'cc';
+import { Material, Texture2D, gfx, Vec3 } from 'cc';
 
 const { SampleCount } = gfx;
 
@@ -99,9 +99,11 @@ export function fillRequiredHBAO(value: HBAO): void {
 export interface DepthOfField {
     enabled: boolean; /* false */
     /* refcount */ material: Material | null;
-    focusDistance: number; /* 0 */
-    focusRange: number; /* 0 */
-    bokehRadius: number; /* 1 */
+    minRange: number; /* 0 */
+    maxRange: number; /* 0 */
+    blurRadius: number; /* 1 */
+    intensity: number;
+    focusPos: Vec3;
     [name: string]: unknown;
 }
 
@@ -109,9 +111,11 @@ export function makeDepthOfField(): DepthOfField {
     return {
         enabled: false,
         material: null,
-        focusDistance: 0,
-        focusRange: 0,
-        bokehRadius: 1,
+        minRange: 0,
+        maxRange: 50,
+        blurRadius: 1,
+        intensity: 0.2,
+        focusPos: new Vec3(0, 0, 0),
     };
 }
 
@@ -122,14 +126,17 @@ export function fillRequiredDepthOfField(value: DepthOfField): void {
     if (value.material === undefined) {
         value.material = null;
     }
-    if (value.focusDistance === undefined) {
-        value.focusDistance = 0;
+    if (value.minRange === undefined) {
+        value.minRange = 0;
     }
-    if (value.focusRange === undefined) {
-        value.focusRange = 0;
+    if (value.maxRange === undefined) {
+        value.maxRange = 0;
     }
-    if (value.bokehRadius === undefined) {
-        value.bokehRadius = 1;
+    if (value.blurRadius === undefined) {
+        value.blurRadius = 1;
+    }
+    if (value.focusPos === undefined) {
+        value.focusPos = new Vec3();
     }
 }
 

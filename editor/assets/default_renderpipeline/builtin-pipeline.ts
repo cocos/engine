@@ -461,6 +461,7 @@ if (rendering) {
         private readonly _cameraConfigs = new CameraConfigs();
         // DepthOfField
         private readonly _cocParams = new Vec4(0, 0, 0, 0);
+        private readonly _focusPos = new Vec4(0, 0, 0, 1);
         private readonly _cocTexSize = new Vec4(0, 0, 0, 0);
         // Bloom
         private readonly _bloomParams = new Vec4(0, 0, 0, 0);
@@ -1031,77 +1032,44 @@ if (rendering) {
         ): void {
             // https://catlikecoding.com/unity/tutorials/advanced-rendering/depth-of-field/
 
-            this._cocParams.x = settings.depthOfField.focusDistance;
-            this._cocParams.y = settings.depthOfField.focusRange;
-            this._cocParams.z = settings.depthOfField.bokehRadius;
-            this._cocParams.w = 0.0;
+            this._cocParams.x = settings.depthOfField.minRange;
+            this._cocParams.y = settings.depthOfField.maxRange;// camera.farClip;// settings.depthOfField.focusRange;
+            this._cocParams.z = settings.depthOfField.blurRadius;
+            this._cocParams.w = settings.depthOfField.intensity;
+            this._focusPos.x = settings.depthOfField.focusPos.x;
+            this._focusPos.y = settings.depthOfField.focusPos.y;
+            this._focusPos.z = settings.depthOfField.focusPos.z;
             this._cocTexSize.x = 1.0 / width;
             this._cocTexSize.y = 1.0 / height;
             this._cocTexSize.z = width;
             this._cocTexSize.w = height;
+            const blurName = ldrColorName;
 
-            const halfWidth = Math.max(Math.floor(width / 2), 1);
-            const halfHeight = Math.max(Math.floor(height / 2), 1);
-
-            const cocName = ldrColorName;
-            const prefilterName = `DofPrefilter${id}`;
-            const bokehName = `DofBokeh${id}`;
-            const filterName = `DofFilter${id}`;
-
-            // CoC
-            const cocPass = ppl.addRenderPass(width, height, 'cc-dof-coc');
-            cocPass.addRenderTarget(cocName, LoadOp.CLEAR, StoreOp.STORE, this._clearColorTransparentBlack);
-            cocPass.addTexture(depthStencil, 'DepthTex');
-            cocPass.setVec4('g_platform', this._configs.platform);
-            cocPass.setMat4('proj', camera.matProj);
-            cocPass.setVec4('cocParams', this._cocParams);
-            cocPass
+            // Blur Pass
+            const blurPass = ppl.addRenderPass(width, height, 'cc-dof-blur');
+            blurPass.addRenderTarget(blurName, LoadOp.CLEAR, StoreOp.STORE, this._clearColorTransparentBlack);
+            blurPass.addTexture(dofRadianceName, 'screenTex');
+            blurPass.setVec4('g_platform', this._configs.platform);
+            blurPass.setVec4('blurParams', this._cocParams);
+            blurPass.setVec4('mainTexTexelSize', this._cocTexSize);
+            blurPass
                 .addQueue(QueueHint.OPAQUE)
                 .addCameraQuad(camera, dofMaterial, 0); // addCameraQuad will set camera related UBOs
-
-            // Downsample and Prefilter
-            const prefilterPass = ppl.addRenderPass(halfWidth, halfHeight, 'cc-dof-prefilter');
-            prefilterPass.addRenderTarget(prefilterName, LoadOp.CLEAR, StoreOp.STORE, this._clearColorTransparentBlack);
-            prefilterPass.addTexture(dofRadianceName, 'colorTex');
-            prefilterPass.addTexture(cocName, 'cocTex');
-            prefilterPass.setVec4('g_platform', this._configs.platform);
-            prefilterPass.setVec4('mainTexTexelSize', this._cocTexSize);
-            prefilterPass
+            // coc pass
+            const cocPass = ppl.addRenderPass(width, height, 'cc-dof-coc');
+            cocPass.addRenderTarget(radianceName, LoadOp.CLEAR, StoreOp.STORE, this._clearColorTransparentBlack);
+            cocPass.addTexture(blurName, 'colorTex');
+            cocPass.addTexture(depthStencil, "DepthTex");
+            cocPass.addTexture(dofRadianceName, "screenTex");
+            cocPass.setVec4('g_platform', this._configs.platform);
+            cocPass.setMat4('proj', camera.matProj);
+            cocPass.setMat4('invProj', camera.matProjInv);
+            cocPass.setMat4('viewMatInv', camera.matViewInv);
+            cocPass.setVec4('cocParams', this._cocParams);
+            cocPass.setVec4('focus', this._focusPos);
+            cocPass
                 .addQueue(QueueHint.OPAQUE)
-                .addFullscreenQuad(dofMaterial, 1);
-
-            // Bokeh blur
-            const bokehPass = ppl.addRenderPass(halfWidth, halfHeight, 'cc-dof-bokeh');
-            bokehPass.addRenderTarget(bokehName, LoadOp.CLEAR, StoreOp.STORE, this._clearColorTransparentBlack);
-            bokehPass.addTexture(prefilterName, 'prefilterTex');
-            bokehPass.setVec4('g_platform', this._configs.platform);
-            bokehPass.setVec4('mainTexTexelSize', this._cocTexSize);
-            bokehPass.setVec4('cocParams', this._cocParams);
-            bokehPass
-                .addQueue(QueueHint.OPAQUE)
-                .addFullscreenQuad(dofMaterial, 2);
-
-            // Filtering
-            const filterPass = ppl.addRenderPass(halfWidth, halfHeight, 'cc-dof-filter');
-            filterPass.addRenderTarget(filterName, LoadOp.CLEAR, StoreOp.STORE, this._clearColorTransparentBlack);
-            filterPass.addTexture(bokehName, 'bokehTex');
-            filterPass.setVec4('g_platform', this._configs.platform);
-            filterPass.setVec4('mainTexTexelSize', this._cocTexSize);
-            filterPass
-                .addQueue(QueueHint.OPAQUE)
-                .addFullscreenQuad(dofMaterial, 3);
-
-            // Combine
-            const combinePass = ppl.addRenderPass(width, height, 'cc-dof-combine');
-            combinePass.addRenderTarget(radianceName, LoadOp.CLEAR, StoreOp.STORE, this._clearColorTransparentBlack);
-            combinePass.addTexture(dofRadianceName, 'colorTex');
-            combinePass.addTexture(cocName, 'cocTex');
-            combinePass.addTexture(filterName, 'filterTex');
-            combinePass.setVec4('g_platform', this._configs.platform);
-            combinePass.setVec4('cocParams', this._cocParams);
-            combinePass
-                .addQueue(QueueHint.OPAQUE)
-                .addFullscreenQuad(dofMaterial, 4);
+                .addCameraQuad(camera, dofMaterial, 1);
         }
 
         private _addKawaseDualFilterBloomPasses(
