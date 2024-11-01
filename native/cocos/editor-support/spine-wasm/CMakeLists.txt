@@ -26,7 +26,7 @@ else()
     set(SPINE_EXTRA_FLAGS "-Oz")
 endif()
 
-if(BUILD_WASM EQUAL 1)
+if(BUILD_WASM EQUAL 1 AND NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(EVAL_CTOR_FLAG "-s EVAL_CTORS=1")
 else()
     set(EVAL_CTOR_FLAG "") # asmjs doesn't support EVAL_CTORS
