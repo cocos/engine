@@ -41,6 +41,7 @@ THE SOFTWARE.
 #include <spine/Extension.h>
 #include <spine/Json.h>
 #include <spine/SpineString.h>
+#include <spine/MathUtil.h>
 
 #include <assert.h>
 #include <math.h>
@@ -393,7 +394,7 @@ const char *Json::parseNumber(Json *item, const char *num) {
             ++ptr;
             ++n;
         }
-        result += fraction / pow(10.0, n);
+        result += fraction / MathUtil::ipow(10, n);
     }
 
     if (negative) {
@@ -401,7 +402,7 @@ const char *Json::parseNumber(Json *item, const char *num) {
     }
 
     if (*ptr == 'e' || *ptr == 'E') {
-        double exponent = 0;
+        uint32_t exponent = 0;
         int expNegative = 0;
         int n = 0;
         ++ptr;
@@ -414,15 +415,15 @@ const char *Json::parseNumber(Json *item, const char *num) {
         }
 
         while (*ptr >= '0' && *ptr <= '9') {
-            exponent = (exponent * 10.0) + (*ptr - '0');
+            exponent = (exponent * 10) + (*ptr - '0');
             ++ptr;
             ++n;
         }
 
         if (expNegative) {
-            result = result / pow(10, exponent);
+            result = result / MathUtil::ipow(10, exponent);
         } else {
-            result = result * pow(10, exponent);
+            result = result * MathUtil::ipow(10, exponent);
         }
     }
 

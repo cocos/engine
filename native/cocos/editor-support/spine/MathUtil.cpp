@@ -71,3 +71,17 @@ float MathUtil::randomTriangular(float min, float max, float mode) {
     if (u <= (mode - min) / d) return min + sqrt(u * d * (mode - min));
     return max - sqrt((1 - u) * d * (max - mode));
 }
+
+uint64_t MathUtil::ipow(uint64_t base, uint32_t exp) {
+	uint64_t result = 1;
+
+	while (exp) {
+		if (exp & 1) {
+			result *= base;
+        }
+		exp >>= 1;
+		base *= base;
+	}
+
+	return result;
+}

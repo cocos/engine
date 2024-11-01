@@ -113,6 +113,8 @@ public:
     static inline float pow(float a, float b) {
         return (float)::pow(a, b);
     }
+
+    static uint64_t ipow(uint64_t base, uint32_t exp);
 };
 
 struct SP_API Interpolation {
