@@ -12,17 +12,3 @@ float GetLinearDepthWithProj(vec2 uv, mat4 proj) {
   float depthHS = GetDepthFromTex(uv) * 2.0 - 1.0; // -1.0 ~ +1.0
   return -GetCameraDepthRH(depthHS, proj);
 }
-
-float LinearEyeDepth(float depth, float near, float far) {
-  float zc0 = (near-far)/near;
-  float zc1 = far/near;
-  vec4 bufferParams = vec4(zc0, zc1, zc0 / far, zc1 / far);
-  float linearDepth = 1.0/(bufferParams.z * depth + bufferParams.w);
-  return linearDepth;
-}
-
-float LinearizeDepth(vec2 uv, float far, float near)
-{
-    float z = GetDepthFromTex(uv);
-    return (2.0 * near) / (far + near - z * (far - near));   
-}
