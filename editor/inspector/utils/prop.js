@@ -559,7 +559,7 @@ exports.disconnectGroup = function(panel) {
 };
 
 /**
- * 根据配置创建 ui-radio-group
+ * Create ui-radio-group according to configuration
  * @param {object} options
  * @param {any[]} options.enumList
  * @param {string} options.tooltip
@@ -616,8 +616,8 @@ ui-prop[ui-section-config]:last-child {
 `;
 
 /**
- * 获取 api 文档路径，通过 i18n 配置的 cc.xxx.properties
- * 格式来获取 className 如果没有就不加入 ui-link 组件
+ * Obtain the api document path and obtain the className through the cc.xxx.properties configured by i18n.
+ * If it does not exist, the ui-link component will not be added.
  * @param dump
  */
 function getDocsURL(dump) {
