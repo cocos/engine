@@ -6,7 +6,7 @@ const Profile = require('@base/electron-profile');
 const { throttle } = require('lodash');
 const utils = require('./utils');
 const { trackEventWithTimer } = require('../utils/metrics');
-const { injectionStyle } = require('../utils/prop');
+const { injectionStyle, setLabel } = require('../utils/prop');
 
 // ipc messages protocol
 const messageProtocol = {
@@ -473,6 +473,7 @@ exports.$ = {
     nodeRotation: '.container > .body > .node > .rotation',
     nodeScale: '.container > .body > .node > .scale',
     nodeMobility: '.container > .body > .node > .mobility',
+    nodeLayer: '.container > .body > .node > .layer',
     nodeLayerSelect: '.container > .body > .node > .layer .layer-select',
     nodeLayerButton: '.container > .body > .node > .layer .layer-edit',
 
@@ -1178,6 +1179,7 @@ const Elements = {
             panel.$.nodeRotation.render(panel.dump.rotation);
             panel.$.nodeScale.render(panel.dump.scale);
             panel.$.nodeMobility.render(panel.dump.mobility);
+            setLabel(panel.dump.layer, panel.$.nodeLayer);
 
             // 查找需要渲染的 component 列表
             const componentList = [];
