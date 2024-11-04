@@ -23,18 +23,7 @@
  THE SOFTWARE.
 */
 
-import {
-    ccclass,
-    executeInEditMode,
-    executionOrder,
-    help,
-    menu,
-    multiline,
-    type,
-    displayOrder,
-    serializable,
-    editable,
-} from 'cc.decorator';
+import { ccclass, executeInEditMode, executionOrder, help, menu, multiline, type, displayOrder, serializable, editable } from 'cc.decorator';
 import { DEBUG, DEV, EDITOR } from 'internal:constants';
 import { Font, SpriteAtlas, TTFFont, SpriteFrame } from '../assets';
 import { EventTouch } from '../../input/types';
