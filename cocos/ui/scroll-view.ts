@@ -893,6 +893,7 @@ export class ScrollView extends ViewGroup {
         this._setContentPosition(position);
     }
 
+    // Should not use _tempVec3 and also can not invoke any functions that use _tempVec3 as invoker may pass _tempVec3.
     private _setContentPosition (position: Readonly<Vec3>): void {
         if (!this._content) {
             return;
@@ -1079,9 +1080,10 @@ export class ScrollView extends ViewGroup {
             return;
         }
 
-        const deltaMove = new Vec3();
         const wheelPrecision = -0.1;
         const scrollY = event.getScrollY();
+
+        const deltaMove = _tempVec3;
         if (self.vertical) {
             deltaMove.set(0, scrollY * wheelPrecision, 0);
         } else if (self.horizontal) {
@@ -1242,9 +1244,11 @@ export class ScrollView extends ViewGroup {
     }
 
     protected _startInertiaScroll (touchMoveVelocity: Vec3): void {
-        const inertiaTotalMovement = new Vec3(touchMoveVelocity);
-        inertiaTotalMovement.multiplyScalar(MOVEMENT_FACTOR);
-        this._startAttenuatingAutoScroll(inertiaTotalMovement, touchMoveVelocity);
+        _tempVec3.set(touchMoveVelocity);
+        _tempVec3.multiplyScalar(MOVEMENT_FACTOR);
+
+        // this._startAttenuatingAutoScroll will clone _tempVec3, so can pass _tempVec3.
+        this._startAttenuatingAutoScroll(_tempVec3, touchMoveVelocity);
     }
 
     protected _calculateAttenuatedFactor (distance: number): number {
@@ -1332,7 +1336,8 @@ export class ScrollView extends ViewGroup {
         if (totalTime <= 0 || totalTime >= 0.5) {
             out.set(Vec3.ZERO);
         } else {
-            let totalMovement = new Vec3();
+            let totalMovement = _tempVec3;
+            totalMovement.set(0, 0, 0);
             totalMovement = this._touchMoveDisplacements.reduce((a, b) => {
                 a.add(b);
                 return a;
@@ -1358,6 +1363,9 @@ export class ScrollView extends ViewGroup {
         _tempVec3.set(this._getContentPosition());
         _tempVec3.add(adjustedMove);
         _tempVec3.set(Math.round(_tempVec3.x * TOLERANCE) * EPSILON, Math.round(_tempVec3.y * TOLERANCE) * EPSILON, _tempVec3.z);
+
+        // Important: Pass a global variable _tempVec3 to other class member function is dangerous. As `this._setContentPosition`
+        // doesn't use _tempVec3 and it doesn't invoke any functions that use _tempVec3. So it is safe to pass _tempVec3 here.
         this._setContentPosition(_tempVec3);
         const outOfBoundary = this._getHowMuchOutOfBoundary();
         _tempVec2.set(outOfBoundary.x, outOfBoundary.y);
@@ -1403,7 +1411,9 @@ export class ScrollView extends ViewGroup {
     }
 
     protected _getHowMuchOutOfBoundary (addition?: Vec3): Vec3 {
-        addition = addition || new Vec3();
+        if (!addition) {
+            addition = Vec3.ZERO;
+        }
         if (addition.equals(Vec3.ZERO, EPSILON) && !this._outOfBoundaryAmountDirty) {
             return this._outOfBoundaryAmount;
         }
@@ -1494,6 +1504,9 @@ export class ScrollView extends ViewGroup {
         if (_isOutOfBoundary) {
             _tempVec3.set(this._getContentPosition());
             _tempVec3.add(outOfBoundary);
+
+            // Important: Pass a global variable _tempVec3 to other class member function is dangerous. As `this._setContentPosition`
+            // doesn't use _tempVec3 and it doesn't invoke any functions that use _tempVec3. So it is safe to pass _tempVec3 here.
             this._setContentPosition(_tempVec3);
             this._updateScrollBar(Vec2.ZERO);
         }
@@ -1750,7 +1763,7 @@ export class ScrollView extends ViewGroup {
         const bounceBackStarted = this._startBounceBackIfNeeded();
         if (!bounceBackStarted && this.inertia) {
             const touchMoveVelocity = this._calculateTouchMoveVelocity();
-            if (!touchMoveVelocity.equals(_tempVec3, EPSILON) && this.brake < 1) {
+            if (!touchMoveVelocity.equals(Vec3.ZERO, EPSILON) && this.brake < 1) {
                 this._startInertiaScroll(touchMoveVelocity);
             }
         }
@@ -1999,9 +2012,10 @@ export class ScrollView extends ViewGroup {
             return;
         }
 
-        const deltaMove = new Vec3();
         const wheelPrecision = -62.5;
         const scrollY = event.y;
+
+        const deltaMove = _tempVec3;
         if (self.vertical) {
             deltaMove.set(0, scrollY * wheelPrecision, 0);
         } else if (self.horizontal) {
