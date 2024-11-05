@@ -112,7 +112,7 @@ function checkCircularReference (asset: Asset): number {
     return refs[asset._uuid];
 }
 
-class ReleaseManager {
+export class ReleaseManager {
     private _persistNodeDeps$ = new Cache<string[]>();
     private _toDelete$ = new Cache<Asset>();
     private _eventListener$ = false;

@@ -31,6 +31,7 @@ import { RenderMode } from '../enum';
 import { cclegacy } from '../../core';
 import { Pass } from '../../render-scene';
 import type { ParticleSystem } from '../particle-system';
+import type { Root } from '../../root';
 
 export abstract class ParticleSystemRendererBase {
     protected _particleSystem: ParticleSystem | null = null;
@@ -83,7 +84,7 @@ export abstract class ParticleSystemRendererBase {
 
     public onDestroy (): void {
         if (this._model) {
-            cclegacy.director.root.destroyModel(this._model);
+            (cclegacy.director.root as Root).destroyModel(this._model);
             this._model = null;
         }
     }

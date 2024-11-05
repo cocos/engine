@@ -29,6 +29,7 @@ import { Asset } from './asset';
 import { Filter, PixelFormat, WrapMode } from './asset-enum';
 import { Sampler, Texture, Device, Format, SamplerInfo, Address, Filter as GFXFilter, deviceManager } from '../../gfx';
 import { errorID, murmurhash2_32_gc, ccenum, cclegacy, js } from '../../core';
+import type { Batcher2D } from '../../2d/renderer/batcher-2d';
 
 ccenum(Format);
 
@@ -259,7 +260,7 @@ export class TextureBase extends Asset {
     public destroy (): boolean {
         const destroyed = super.destroy();
         if (destroyed && cclegacy.director.root?.batcher2D) {
-            cclegacy.director.root.batcher2D._releaseDescriptorSetCache(this._textureHash$);
+            (cclegacy.director.root.batcher2D as Batcher2D)._releaseDescriptorSetCache(this._textureHash$);
         }
         return destroyed;
     }

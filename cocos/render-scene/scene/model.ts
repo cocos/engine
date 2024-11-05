@@ -47,6 +47,8 @@ import { TextureCube } from '../../asset/assets';
 import { ShadowType } from './shadows';
 import { ProbeType, ReflectionProbe } from './reflection-probe';
 import { ReflectionProbeType } from '../../3d/reflection-probe/reflection-probe-enum';
+import type { SH } from '../../gi/light-probe/sh';
+import type { PipelineSceneData } from '../../rendering';
 
 const m4_1 = new Mat4();
 
@@ -823,8 +825,8 @@ export class Model {
         }
 
         const coefficients: Vec3[] = [];
-        const weights = new Vec4(0.0, 0.0, 0.0, 0.0);
-        const lightProbes = (cclegacy.director.root as Root).pipeline.pipelineSceneData.lightProbes;
+        const weights = new Vec4();
+        const lightProbes = (cclegacy.director.root.pipeline.pipelineSceneData as PipelineSceneData).lightProbes;
 
         this._lastWorldBoundCenter$.set(center);
         this._tetrahedronIndex$ = lightProbes.data!.getInterpolationWeights(center, this._tetrahedronIndex$, weights);
@@ -837,8 +839,9 @@ export class Model {
             return;
         }
 
-        cclegacy.internal.SH.reduceRinging(coefficients, lightProbes.reduceRinging);
-        cclegacy.internal.SH.updateUBOData(this._localSHData, UBOSHEnum.SH_LINEAR_CONST_R_OFFSET, coefficients);
+        const SHCls: typeof SH = cclegacy.internal.SH;
+        SHCls.reduceRinging(coefficients, lightProbes.reduceRinging);
+        SHCls.updateUBOData(this._localSHData, UBOSHEnum.SH_LINEAR_CONST_R_OFFSET, coefficients);
         this.updateSHBuffer$();
     }
 

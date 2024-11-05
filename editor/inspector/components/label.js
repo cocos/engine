@@ -1,4 +1,4 @@
-const { getName, setHidden, isMultipleInvalid } = require('../utils/prop');
+const { setTooltip, setHidden, isMultipleInvalid, createRadioGroup, setLabel } = require('../utils/prop');
 const { template, $, update, close } = require('./base');
 const fontStyles = ['isBold', 'isItalic', 'isUnderline'];
 exports.template = template;
@@ -50,42 +50,6 @@ ui-tab {
 }
 `;
 
-/**
- *
- * @param {object} options
- * @param {any[]} options.enumList
- * @param {string} options.tooltip
- * @param {(elementName: string) => string}options.getIconName
- * @param {(event: CustomEvent) => {}} options.onChange
- * @returns
- */
-function createRadioGroup(options) {
-    const { enumList, getIconName, onChange, tooltip: rawTooltip } = options;
-    const $radioGroup = document.createElement('ui-radio-group');
-    $radioGroup.setAttribute('slot', 'content');
-    $radioGroup.addEventListener('change', (e) => {
-        onChange(e);
-    });
-
-    for (let index = 0; index < enumList.length; index++) {
-        const element = enumList[index];
-        const icon = document.createElement('ui-icon');
-        const button = document.createElement('ui-radio-button');
-
-        const iconName = getIconName(element.name);
-        const tooltip = `${rawTooltip}_${element.name.toLocaleLowerCase()}`;
-
-        icon.value = iconName;
-        button.appendChild(icon);
-        button.value = element.value;
-        button.setAttribute('tooltip', tooltip);
-
-        $radioGroup.appendChild(button);
-    }
-
-    return $radioGroup;
-}
-
 exports.ready = function() {
     this.elements = {
         horizontalAlign: {
@@ -94,8 +58,7 @@ exports.ready = function() {
                 prop.dump = dump;
                 const label = document.createElement('ui-label');
                 label.setAttribute('slot', 'label');
-                label.value = getName(dump);
-                label.setAttribute('tooltip', dump.tooltip);
+                setLabel(dump, label);
 
                 const content = createRadioGroup({
                     enumList: dump.enumList,
@@ -139,8 +102,7 @@ exports.ready = function() {
                 prop.dump = dump;
                 const label = document.createElement('ui-label');
                 label.setAttribute('slot', 'label');
-                label.value = getName(dump);
-                label.setAttribute('tooltip', dump.tooltip);
+                setLabel(dump, label);
 
                 const content = createRadioGroup({
                     enumList: dump.enumList,
@@ -197,7 +159,7 @@ exports.ready = function() {
                     const label = document.createElement('ui-label');
                     label.innerHTML = styleDisplayNames[index];
                     label.setAttribute('key', style);
-                    label.setAttribute('tooltip', this.dump.value[style].tooltip);
+                    setTooltip(this.dump.value[style], label);
                     label.classList.add('fontStyle', styleClassNames[index]);
                     label.addEventListener('click', () => {
                         prop.dump = this.dump.value[style];
@@ -242,6 +204,5 @@ exports.ready = function() {
                 setHidden(true, element);
             },
         },
-
     };
 };

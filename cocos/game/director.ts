@@ -40,6 +40,7 @@ import { uiRendererManager } from '../2d/framework/ui-renderer-manager';
 import { assetManager } from '../asset/asset-manager';
 import { deviceManager } from '../gfx';
 import { releaseManager } from '../asset/asset-manager/release-manager';
+import type { Game } from './game';
 
 // ----------------------------------------------------------------------------------------------------------------------
 
@@ -750,7 +751,7 @@ export class Director extends EventTarget {
         if (EDITOR_NOT_IN_PREVIEW || TEST) {
             dt = now;
         } else {
-            dt = cclegacy.game._calculateDT(now);
+            dt = (cclegacy.game as Game)._calculateDT(false);
         }
         this.tick(dt);
     }

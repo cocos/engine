@@ -46,7 +46,7 @@
             "description": "i18n:ENGINE.features.base_3d.description",
             "enginePlugin": true,
             "isNativeModule": true,
-            "readonly": true,
+            "readonly": false,
             "dependencies": [
                 "meshopt"
             ],
@@ -62,7 +62,7 @@
             "label": "i18n:ENGINE.features.base_2d.label",
             "description": "i18n:ENGINE.features.base_2d.description",
             "category": "2d",
-            "readonly": true,
+            "readonly": false,
             "enginePlugin": true
         },
         "xr": {
@@ -76,6 +76,9 @@
             "label": "i18n:ENGINE.features.ui.label",
             "description": "i18n:ENGINE.features.ui.description",
             "category": "2d",
+            "dependencies": [
+                "2d"
+            ],
             "enginePlugin": true
         },
         "particle": {
@@ -83,12 +86,18 @@
             "label": "i18n:ENGINE.features.particle.label",
             "description": "i18n:ENGINE.features.particle.description",
             "category": "3d",
+            "dependencies": [
+                "3d"
+            ],
             "enginePlugin": true
         },
         "physics": {
             "label": "i18n:ENGINE.features.physics.label",
             "description": "i18n:ENGINE.features.physics.description",
             "category": "3d",
+            "dependencies": [
+                "3d"
+            ],
             "options": {
                 "physics-ammo": {
                     "label": "i18n:ENGINE.features.physics_ammo.label",
@@ -116,6 +125,9 @@
             "label": "i18n:ENGINE.features.physics_2d.label",
             "description": "i18n:ENGINE.features.physics_2d.description",
             "category": "2d",
+            "dependencies": [
+                "2d"
+            ],
             "options": {
                 "physics-2d-box2d": {
                     "label": "i18n:ENGINE.features.physics_2d_box2d.label",
@@ -134,14 +146,20 @@
             "label": "i18n:ENGINE.features.intersection_2d.label",
             "description": "i18n:ENGINE.features.intersection_2d.description",
             "enginePlugin": true,
-            "category": "2d"
+            "category": "2d",
+            "dependencies": [
+                "2d"
+            ]
         },
         "primitive": {
             "default": true,
             "label": "i18n:ENGINE.features.primitives.label",
             "description": "i18n:ENGINE.features.primitives.description",
             "enginePlugin": true,
-            "category": "3d"
+            "category": "3d",
+            "dependencies": [
+                "3d"
+            ]
         },
         "profiler": {
             "default": true,
@@ -155,7 +173,10 @@
             "description": "i18n:ENGINE.features.occlusion_query.description",
             "cmakeConfig": "USE_OCCLUSION_QUERY",
             "enginePlugin": false,
-            "category": "3d"
+            "category": "3d",
+            "dependencies": [
+                "3d"
+            ]
         },
         "geometry-renderer": {
             "default": false,
@@ -163,7 +184,10 @@
             "description": "i18n:ENGINE.features.geometry_renderer.description",
             "cmakeConfig": "USE_GEOMETRY_RENDERER",
             "enginePlugin": true,
-            "category": "3d"
+            "category": "3d",
+            "dependencies": [
+                "3d"
+            ]
         },
         "debug-renderer": {
             "default": false,
@@ -171,14 +195,20 @@
             "description": "i18n:ENGINE.features.debug_renderer.description",
             "cmakeConfig": "USE_DEBUG_RENDERER",
             "enginePlugin": false,
-            "category": "3d"
+            "category": "3d",
+            "dependencies": [
+                "3d"
+            ]
         },
         "particle-2d": {
             "default": true,
             "label": "i18n:ENGINE.features.particle_2d.label",
             "description": "i18n:ENGINE.features.particle_2d.description",
             "enginePlugin": true,
-            "category": "2d"
+            "category": "2d",
+            "dependencies": [
+                "2d"
+            ]
         },
         "audio": {
             "default": true,
@@ -228,21 +258,30 @@
             "label": "i18n:ENGINE.features.terrain.label",
             "description": "i18n:ENGINE.features.terrain.description",
             "enginePlugin": true,
-            "category": "3d"
+            "category": "3d",
+            "dependencies": [
+                "3d"
+            ]
         },
         "light-probe": {
             "default": true,
             "label": "i18n:ENGINE.features.light_probe.label",
             "description": "i18n:ENGINE.features.light_probe.description",
             "enginePlugin": true,
-            "category": "3d"
+            "category": "3d",
+            "dependencies": [
+                "3d"
+            ]
         },
         "tiled-map": {
             "default": true,
             "label": "i18n:ENGINE.features.tiled_map.label",
             "description": "i18n:ENGINE.features.tiled_map.description",
             "enginePlugin": true,
-            "category": "2d"
+            "category": "2d",
+            "dependencies": [
+                "2d"
+            ]
         },
         "spine": {
             "default": true,
@@ -251,7 +290,10 @@
             "cmakeConfig": "USE_SPINE",
             "isNativeModule": true,
             "enginePlugin": true,
-            "category": "2d"
+            "category": "2d",
+            "dependencies": [
+                "2d"
+            ]
         },
         "dragon-bones": {
             "default": true,
@@ -259,7 +301,10 @@
             "description": "i18n:ENGINE.features.dragon_bones.description",
             "cmakeConfig": "USE_DRAGONBONES",
             "enginePlugin": true,
-            "category": "2d"
+            "category": "2d",
+            "dependencies": [
+                "2d"
+            ]
         },
         "marionette": {
             "default": true,
@@ -304,7 +349,8 @@
         "graphics": {
             "label": "i18n:ENGINE.features.graphics.label",
             "description": "i18n:ENGINE.features.graphics.description",
-            "checkable": true
+            "checkable": true,
+            "required": true
         },
         "2d": {
             "label": "i18n:ENGINE.features.categories.2d.label",

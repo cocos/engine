@@ -168,7 +168,6 @@ export class UIRenderer extends Renderer {
      */
     @type(Material)
     @displayOrder(0)
-    @displayName('CustomMaterial')
     @disallowAnimation
     get customMaterial (): Material | null {
         return this._customMaterial;

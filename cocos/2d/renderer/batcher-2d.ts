@@ -50,6 +50,7 @@ import { scene } from '../../render-scene';
 import { builtinResMgr } from '../../asset/asset-manager';
 import { RenderingSubMesh } from '../../asset/assets';
 import { IAssembler } from './base';
+import type { Director } from '../../game/director';
 
 const _dsInfo = new DescriptorSetInfo(null!);
 const m4_1 = new Mat4();
@@ -160,7 +161,7 @@ export class Batcher2D implements IBatcher {
         StencilManager.sharedManager!.destroy();
 
         if (this._maskClearModel && this._maskModelMesh) {
-            cclegacy.director.root.destroyModel(this._maskClearModel);
+            (cclegacy.director.root as Root).destroyModel(this._maskClearModel);
             this._maskModelMesh.destroy();
         }
         if (this._maskClearMtl) {
@@ -571,7 +572,7 @@ export class Batcher2D implements IBatcher {
             dssHash = StencilManager.sharedManager!.getStencilHash(comp.stencilStage);
         }
 
-        const stamp: number = cclegacy.director.getTotalFrames();
+        const stamp: number = (cclegacy.director as Director).getTotalFrames();
         if (model) {
             model.updateTransform(stamp);
             model.updateUBOs(stamp);
@@ -866,7 +867,10 @@ export class Batcher2D implements IBatcher {
     // TODO: Not a good way to do the job
     // Although it's a private method, it is invoked in text-processing.ts and texture-base.ts
     // by legacyCC.director.root.batcher2D._releaseDescriptorSetCache
-    private _releaseDescriptorSetCache (textureHash: number | Texture, sampler: Sampler | null = null): void {
+    /**
+     * @engineInternal
+     */
+    public _releaseDescriptorSetCache (textureHash: number | Texture | null, sampler: Sampler | null = null): void {
         if (JSB) {
             this._nativeObj.releaseDescriptorSetCache(textureHash as Texture, sampler as Sampler);
         } else {
@@ -879,7 +883,7 @@ export class Batcher2D implements IBatcher {
         if (!this._maskClearModel) {
             this._maskClearMtl = builtinResMgr.get<Material>('default-clear-stencil');
 
-            this._maskClearModel = cclegacy.director.root.createModel(scene.Model);
+            this._maskClearModel = (cclegacy.director.root as Root).createModel(scene.Model);
             const stride = getAttributeStride(vfmt);
             const gfxDevice: Device = deviceManager.gfxDevice;
             const vertexBuffer = gfxDevice.createBuffer(new BufferInfo(
@@ -903,7 +907,7 @@ export class Batcher2D implements IBatcher {
             this._maskModelMesh = new RenderingSubMesh([vertexBuffer], vfmt, PrimitiveMode.TRIANGLE_LIST, indexBuffer);
             this._maskModelMesh.subMeshIdx = 0;
 
-            this._maskClearModel!.initSubModel(0, this._maskModelMesh, this._maskClearMtl);
+            this._maskClearModel.initSubModel(0, this._maskModelMesh, this._maskClearMtl);
         }
     }
 
@@ -925,7 +929,7 @@ export class Batcher2D implements IBatcher {
         }
 
         const model = this._maskClearModel!;
-        const stamp: number = cclegacy.director.getTotalFrames();
+        const stamp: number = (cclegacy.director as Director).getTotalFrames();
         if (model) {
             model.updateTransform(stamp);
             model.updateUBOs(stamp);

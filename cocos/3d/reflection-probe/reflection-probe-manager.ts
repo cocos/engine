@@ -33,6 +33,7 @@ import { Texture } from '../../gfx';
 import { Camera, Model } from '../../render-scene/scene';
 import { ProbeType, ReflectionProbe } from '../../render-scene/scene/reflection-probe';
 import { Layers } from '../../scene-graph/layers';
+import type { Director } from '../../game/director';
 
 const REFLECTION_PROBE_DEFAULT_MASK = Layers.makeMaskExclude([Layers.BitMask.UI_2D, Layers.BitMask.UI_3D, Layers.BitMask.GIZMOS, Layers.BitMask.EDITOR,
     Layers.BitMask.SCENE_GIZMO, Layers.BitMask.PROFILER, Layers.Enum.IGNORE_RAYCAST]);
@@ -74,7 +75,7 @@ export class ReflectionProbeManager {
      */
     public registerEvent (): void {
         if (!this._registeredEvent) {
-            cclegacy.director.on(cclegacy.Director.EVENT_BEFORE_UPDATE, this.onUpdateProbes, this);
+            cclegacy.director.on(cclegacy.DirectorEvent.BEFORE_UPDATE, this.onUpdateProbes, this);
             this._registeredEvent = true;
         }
     }

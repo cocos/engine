@@ -31,6 +31,7 @@ import { releaseManager } from './release-manager';
 import RequestItem from './request-item';
 import { assets, bundles, RequestType } from './shared';
 import { parseLoadResArgs, parseParameters } from './utilities';
+import type { AssetManager } from './asset-manager';
 
 /**
  * @en
@@ -244,7 +245,7 @@ export default class Bundle {
     ): void {
         const { type: _type, onProgress: onProg, onComplete: onComp } = parseLoadResArgs(type, onProgress, onComplete);
         const options = { __requestType__: RequestType.PATH, type: _type, bundle: this.name, __outputAsArray__: Array.isArray(paths) };
-        cclegacy.assetManager.loadAny(paths, options, onProg, onComp);
+        (cclegacy.assetManager as AssetManager).loadAny(paths, options, onProg, onComp);
     }
 
     /**
@@ -307,7 +308,7 @@ export default class Bundle {
         onComplete?: ((err: Error | null, data: RequestItem[]) => void) | null,
     ): void {
         const { type: _type, onProgress: onProg, onComplete: onComp } = parseLoadResArgs(type, onProgress, onComplete);
-        cclegacy.assetManager.preloadAny(paths, { __requestType__: RequestType.PATH, type: _type, bundle: this.name }, onProg, onComp);
+        (cclegacy.assetManager as AssetManager).preloadAny(paths, { __requestType__: RequestType.PATH, type: _type, bundle: this.name }, onProg, onComp);
     }
 
     /**
@@ -363,7 +364,7 @@ export default class Bundle {
         onComplete?: ((err: Error | null, data: T[]) => void) | null,
     ): void {
         const { type: _type, onProgress: onProg, onComplete: onComp } = parseLoadResArgs(type, onProgress, onComplete);
-        cclegacy.assetManager.loadAny(dir, { __requestType__: RequestType.DIR, type: _type, bundle: this.name, __outputAsArray__: true }, onProg, onComp);
+        (cclegacy.assetManager as AssetManager).loadAny(dir, { __requestType__: RequestType.DIR, type: _type, bundle: this.name, __outputAsArray__: true }, onProg, onComp);
     }
 
     /**
@@ -420,7 +421,7 @@ export default class Bundle {
         onComplete?: ((err: Error | null, data: RequestItem[]) => void)| null,
     ): void {
         const { type: _type, onProgress: onProg, onComplete: onComp } = parseLoadResArgs(type, onProgress, onComplete);
-        cclegacy.assetManager.preloadAny(dir, { __requestType__: RequestType.DIR, type: _type, bundle: this.name }, onProg, onComp);
+        (cclegacy.assetManager as AssetManager).preloadAny(dir, { __requestType__: RequestType.DIR, type: _type, bundle: this.name }, onProg, onComp);
     }
 
     /**
@@ -464,12 +465,12 @@ export default class Bundle {
 
         opts.preset = opts.preset || 'scene';
         opts.bundle = this.name;
-        cclegacy.assetManager.loadAny({ scene: sceneName }, opts, onProg, (err, sceneAsset): void => {
+        (cclegacy.assetManager as AssetManager).loadAny({ scene: sceneName }, opts, onProg, (err, sceneAsset: SceneAsset): void => {
             if (err) {
                 error(err.message, err.stack);
             } else if (sceneAsset.scene) {
                 const scene = sceneAsset.scene;
-                scene._id = sceneAsset._uuid;
+                scene.id = sceneAsset._uuid;
                 scene.name = sceneAsset.name;
             } else {
                 err = new Error(`The asset ${sceneAsset._uuid} is not a scene`);
@@ -522,7 +523,7 @@ export default class Bundle {
         const { options: opts, onProgress: onProg, onComplete: onComp } = parseParameters<((err?: Error | null) => void)>(options, onProgress, onComplete);
 
         opts.bundle = this.name;
-        cclegacy.assetManager.preloadAny({ scene: sceneName }, opts, onProg, (err): void => {
+        (cclegacy.assetManager as AssetManager).preloadAny({ scene: sceneName }, opts, onProg, (err): void => {
             if (err) {
                 errorID(1210, sceneName, err.message);
             }

@@ -41,6 +41,8 @@ import { ClearFlagBit } from '../gfx';
 import { PostProcess } from '../rendering/post-process/components/post-process';
 import { property } from '../core/data/class-decorator';
 import type { Ray } from '../core/geometry';
+import type { View } from '../ui/view';
+import type { Root } from '../root';
 
 const _temp_vec3_1 = new Vec3();
 
@@ -495,7 +497,7 @@ export class Camera extends Component {
         this._updateTargetTexture();
 
         if (!value && this._camera) {
-            this._camera.changeTargetWindow(EDITOR ? cclegacy.director.root.tempWindow : null);
+            this._camera.changeTargetWindow(EDITOR ? (cclegacy.director.root as Root).tempWindow : null);
             this._camera.isWindowSize = true;
         }
         this.node.emit(CameraEvent.TARGET_TEXTURE_CHANGE, this);
@@ -549,8 +551,8 @@ export class Camera extends Component {
     set inEditorMode (value) {
         this._inEditorMode = value;
         if (this._camera) {
-            this._camera.changeTargetWindow(value ? cclegacy.director.root && cclegacy.director.root.mainWindow
-                : cclegacy.director.root && cclegacy.director.root.tempWindow);
+            const root = cclegacy.director.root as Root;
+            this._camera.changeTargetWindow(value ? root && root.mainWindow : root && root.tempWindow);
         }
     }
 
@@ -678,11 +680,12 @@ export class Camera extends Component {
 
         this.worldToScreen(wpos, _temp_vec3_1);
         const cmp = uiNode.getComponent('cc.UITransform') as UITransform;
-        const designSize = cclegacy.view.getVisibleSize();
+        const view = cclegacy.view as View;
+        const designSize = view.getVisibleSize();
         const xoffset = _temp_vec3_1.x - this._camera.width * 0.5;
         const yoffset = _temp_vec3_1.y - this._camera.height * 0.5;
-        _temp_vec3_1.x = xoffset / cclegacy.view.getScaleX() + designSize.width * 0.5;
-        _temp_vec3_1.y = yoffset / cclegacy.view.getScaleY() + designSize.height * 0.5;
+        _temp_vec3_1.x = xoffset / view.getScaleX() + designSize.width * 0.5;
+        _temp_vec3_1.y = yoffset / view.getScaleY() + designSize.height * 0.5;
 
         if (cmp) {
             cmp.convertToNodeSpaceAR(_temp_vec3_1, out);
@@ -696,8 +699,8 @@ export class Camera extends Component {
      */
     public _createCamera (): void {
         if (!this._camera) {
-            this._camera = (cclegacy.director.root).createCamera();
-            this._camera!.initialize({
+            this._camera = (cclegacy.director.root as Root).createCamera();
+            this._camera.initialize({
                 name: this.node.name,
                 node: this.node,
                 projection: this._projection,
@@ -708,22 +711,22 @@ export class Camera extends Component {
                 trackingType: this.trackingType,
             });
 
-            this._camera!.setViewportInOrientedSpace(this._rect);
-            this._camera!.fovAxis = this._fovAxis;
-            this._camera!.fov = toRadian(this._fov);
-            this._camera!.orthoHeight = this._orthoHeight;
-            this._camera!.nearClip = this._near;
-            this._camera!.farClip = this._far;
-            this._camera!.clearColor = this._color;
-            this._camera!.clearDepth = this._depth;
-            this._camera!.clearStencil = this._stencil;
-            this._camera!.clearFlag = this._clearFlags;
-            this._camera!.visibility = this._visibility;
-            this._camera!.aperture = this._aperture;
-            this._camera!.shutter = this._shutter;
-            this._camera!.iso = this._iso;
-            this._camera!.postProcess = this._postProcess;
-            this._camera!.usePostProcess = this._usePostProcess;
+            this._camera.setViewportInOrientedSpace(this._rect);
+            this._camera.fovAxis = this._fovAxis;
+            this._camera.fov = toRadian(this._fov);
+            this._camera.orthoHeight = this._orthoHeight;
+            this._camera.nearClip = this._near;
+            this._camera.farClip = this._far;
+            this._camera.clearColor = this._color;
+            this._camera.clearDepth = this._depth;
+            this._camera.clearStencil = this._stencil;
+            this._camera.clearFlag = this._clearFlags;
+            this._camera.visibility = this._visibility;
+            this._camera.aperture = this._aperture;
+            this._camera.shutter = this._shutter;
+            this._camera.iso = this._iso;
+            this._camera.postProcess = this._postProcess;
+            this._camera.usePostProcess = this._usePostProcess;
         }
 
         this._updateTargetTexture();

@@ -8,7 +8,12 @@ const version = pkg.version.replace(/(^\d+\.\d+)\..*$/, (str, a) => {
 const url = 'https://docs.cocos.com/creator';
 
 module.exports = link(mixin({
-
+    common: {
+        'attribute': {
+            'title': 'Attribute: ',
+            'description': 'Description: ',
+        },
+    },
     classes: {
         'cc': {
             'animation': {
@@ -315,14 +320,6 @@ module.exports = link(mixin({
         csmTransitionRange: 'CSM layers transition range(in NDC space: value range is 0 to 1)',
     },
     sprite: {
-        gray_scale: 'Whether turn on grayscale rendering mode',
-        sprite_frame: 'Sprite Frame image to use',
-        atlas: 'Atlas that the image belongs to',
-        type:
-            'Rendering mode:<br> - Simple: Modifying the size will stretch the image as a whole, which is suitable for sequence frame animation and normal images. <br>' +
-            '- Sliced: When changing the size, the four corners will not stretch, which is suitable for UI buttons and panel backgrounds. <br>' +
-            '- Tiled : When changing the size, the original size image will continue to be tiled. <br>' +
-            '- Filled : set a certain starting position and direction of filling, and the picture can be cropped and displayed at a certain ratio.',
         original_size: "Use the Image's original size as the Node size?",
         edit_button: 'Edit',
         select_button: 'Select In Atlas',
@@ -334,10 +331,6 @@ module.exports = link(mixin({
         fill_range: 'The normalizad value indicates how much of the sprite we want to show',
         src_blend_factor: 'The source image blend mode',
         dst_blend_factor: 'The destination image blend mode',
-        size_mode:
-            'Set the size of the node on which the Sprite component is on. <br>CUSTOM for setting width and height manually;<br>TRIMMED to use image size with transparent pixels trimmed; <br>RAW to use image size without trimming.',
-        trim:
-            "Whether to render transparent pixels around image in node's bounding box. <br>If you check this option the bounding box will not include transparent pixels around the image.",
     },
     UIOpacity: {
         opacity: 'The value between 0 to 255 showing the transparency of the object',
@@ -663,22 +656,6 @@ module.exports = link(mixin({
     webview: {
         url: 'A given URL to be loaded by the Webview, <br>it should have a http or https prefix.',
         webviewEvents: "The Webview's event callback , <br>it will be triggered when certain Webview event occurs.",
-    },
-    richtext: {
-        string: 'Text of the RichText, you could use BBcode in the string',
-        horizontal_align: 'Horizontal alignment',
-        vertical_align: 'Vertical alignment',
-        font_size: 'Font size, in points',
-        font: 'Custom TTF font of Rich Text',
-        font_family: 'Custom System font of Rich Text',
-        use_system_font: 'Using system font',
-        cache_mode: 'The cache mode of label. This mode only supports system fonts.',
-        max_width: 'The maximize width of RichText, pass 0 means not limit the maximize width.',
-        line_height: 'Line height, in points',
-        image_atlas:
-            'The image atlas for the img tag. For each src value in the img tag, <br>there should be a valid sprite frame in the image atlas.',
-        handleTouchEvent:
-            'Once checked, the Rich Text will block all input events (mouse and touch) within the bounding box of the node, <br>preventing the input from penetrating into the underlying node.',
     },
     UICoordinateTracker: {
         target: 'Target node',

@@ -104,4 +104,5 @@ export interface CategoryInfo {
     label?: string;
     description?: string;
     checkable?: boolean;
+    required?: boolean;
 }

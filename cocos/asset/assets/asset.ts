@@ -27,6 +27,7 @@ import { EDITOR, PREVIEW } from 'internal:constants';
 import { _decorator, Eventify, path, debug, getError, CCObject, cclegacy } from '../../core';
 import { getUrlWithUuid } from '../asset-manager/helper';
 import { Node } from '../../scene-graph';
+import type { AssetManager } from '../asset-manager';
 
 const { ccclass, serializable, property } = _decorator;
 
@@ -332,7 +333,7 @@ export class Asset extends Eventify(CCObject) {
             this._ref--;
         }
         if (autoRelease) {
-            cclegacy.assetManager._releaseManager.tryRelease(this);
+            (cclegacy.assetManager as AssetManager).getReleaseManager().tryRelease(this);
         }
         return this;
     }

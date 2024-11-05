@@ -55,6 +55,9 @@
                 },
                 "label": {
                     "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
                 }
             },
             "type": "object"
@@ -406,4 +409,3 @@
     },
     "type": "object"
 }
-

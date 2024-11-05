@@ -643,7 +643,6 @@ export class Skeleton extends UIRenderer {
     @override
     @type(Material)
     @displayOrder(0)
-    @displayName('CustomMaterial')
     get customMaterial (): Material | null {
         return this._customMaterial;
     }
@@ -820,6 +819,8 @@ export class Skeleton extends UIRenderer {
             if (this._skeletonInfo !== skeletonInfo) {
                 this._destroySkeletonInfo(this._skeletonCache);
                 this._skeletonInfo = this._skeletonCache!.createSkeletonInfo(this._skeletonData!);
+            }
+            if (this._skeletonInfo) {
                 this._skeleton = this._skeletonInfo.skeleton!;
             }
         } else {
@@ -908,7 +909,8 @@ export class Skeleton extends UIRenderer {
             logID(7511);
             return null;
         }
-        const animation = this._skeleton.data.findAnimation(name);
+        const skeleton = this._skeleton;
+        const animation = skeleton ? skeleton.data.findAnimation(name) : null;
         if (!animation) {
             logID(7509, name);
             return null;
@@ -1017,6 +1019,7 @@ export class Skeleton extends UIRenderer {
      * @param skinName @en The name of skin. @zh 皮肤名称。
      */
     public setSkin (name: string): void {
+        if (!name) return;
         if (this._skeleton) this._skeleton.setSkinByName(name);
         this._instance!.setSkin(name);
         if (this.isAnimationCached()) {

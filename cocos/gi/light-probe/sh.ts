@@ -79,8 +79,7 @@ export class LightProbeSampler {
 export class SH {
     private static LMAX = 2;
 
-    private static basisFunctions: { (v: Vec3): number }[] =
-    [
+    private static basisFunctions: { (v: Vec3): number }[] =    [
         (v: Vec3): number => 0.282095,                              // 0.5 * Math.sqrt(1.0 / Math.PI)
         (v: Vec3): number => 0.488603 * v.y,                        // 0.5 * Math.sqrt(3.0 / Math.PI) * v.y
         (v: Vec3): number => 0.488603 * v.z,                        // 0.5 * Math.sqrt(3.0 / Math.PI) * v.z
@@ -92,8 +91,7 @@ export class SH {
         (v: Vec3): number => 0.546274 * (v.x * v.x - v.y * v.y),    // 0.25 * Math.sqrt(15.0 / Math.PI) * (v.x * v.x - v.y * v.y)
     ];
 
-    private static basisOverPI: number[] =
-    [
+    private static basisOverPI: number[] =    [
         0.0897936,  // 0.282095 / Math.PI
         0.155527,   // 0.488603 / Math.PI
         0.155527,   // 0.488603 / Math.PI

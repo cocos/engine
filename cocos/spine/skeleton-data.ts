@@ -23,7 +23,7 @@
 */
 
 import { EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
-import { CCString, Enum, error } from '../core';
+import { CCString, Enum, error, murmurhash2_32_gc } from '../core';
 import SkeletonCache from './skeleton-cache';
 import { Skeleton } from './skeleton';
 import spine from './lib/spine-core';
@@ -207,12 +207,14 @@ export class SkeletonData extends Asset {
             }
             return null;
         }
-        const spData = spine.wasmUtil.querySpineSkeletonDataByUUID(this._uuid);
+
+        const uuid = this.mergedUUID();
+        const spData = spine.wasmUtil.querySpineSkeletonDataByUUID(uuid);
         if (spData) {
             this._skeletonCache = spData;
         } else if (this._skeletonJson) {
             this._skeletonCache = spine.wasmUtil.createSpineSkeletonDataWithJson(this.skeletonJsonStr, this._atlasText);
-            spine.wasmUtil.registerSpineSkeletonDataWithUUID(this._skeletonCache, this._uuid);
+            spine.wasmUtil.registerSpineSkeletonDataWithUUID(this._skeletonCache, uuid);
         } else {
             const rawData = new Uint8Array(this._nativeAsset);
             const byteSize = rawData.length;
@@ -220,7 +222,7 @@ export class SkeletonData extends Asset {
             const wasmMem = spine.wasmUtil.wasm.HEAPU8.subarray(ptr, ptr + byteSize);
             wasmMem.set(rawData);
             this._skeletonCache = spine.wasmUtil.createSpineSkeletonDataWithBinary(byteSize, this._atlasText);
-            spine.wasmUtil.registerSpineSkeletonDataWithUUID(this._skeletonCache, this._uuid);
+            spine.wasmUtil.registerSpineSkeletonDataWithUUID(this._skeletonCache, uuid);
         }
 
         return this._skeletonCache;
@@ -268,13 +270,18 @@ export class SkeletonData extends Asset {
         }
         return null;
     }
+
+    private mergedUUID (): string {
+        return this._uuid + murmurhash2_32_gc(this._atlasText, 668).toString();
+    }
+
     /**
      * @en Destroy skeleton data.
      * @zh 销毁 skeleton data。
      */
     public destroy (): boolean {
         SkeletonCache.sharedCache.destroyCachedAnimations(this._uuid);
-        spine.wasmUtil.destroySpineSkeletonDataWithUUID(this._uuid);
+        spine.wasmUtil.destroySpineSkeletonDataWithUUID(this.mergedUUID());
         return super.destroy();
     }
 }

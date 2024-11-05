@@ -39,7 +39,7 @@ import packManager from './pack-manager';
 import parser, { Parser } from './parser';
 import { Pipeline } from './pipeline';
 import preprocess from './preprocess';
-import { releaseManager } from './release-manager';
+import { ReleaseManager, releaseManager } from './release-manager';
 import RequestItem from './request-item';
 import {
     presets,
@@ -307,7 +307,7 @@ export class AssetManager {
      */
     public references = references;
 
-    private _releaseManager = releaseManager;
+    private _releaseManager$ = releaseManager;
     private _files$ = files;
     private _parsed$ = parsed;
     private _parsePipeline$ = BUILD ? null : new Pipeline('parse existing json', [this.loadPipe]);
@@ -330,6 +330,13 @@ export class AssetManager {
     }
 
     private constructor () {}
+
+    /**
+     * @engineInternal
+     */
+    public getReleaseManager (): ReleaseManager {
+        return this._releaseManager$;
+    }
 
     /**
      * @en
@@ -422,7 +429,7 @@ export class AssetManager {
 
         this._files$.clear();
         this._parsed$.clear();
-        this._releaseManager.init();
+        this._releaseManager$.init();
         this.assets.clear();
         this.bundles.clear();
         this.packManager.init();

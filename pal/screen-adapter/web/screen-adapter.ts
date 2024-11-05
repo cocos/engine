@@ -386,7 +386,7 @@ class ScreenAdapter extends EventTarget {
             // if (!this.handleResizeEvent) {
             //     return;
             // }
-            this._resizeFrame();
+            this._updateFrame();
         });
 
         const notifyOrientationChange = (orientation): void => {

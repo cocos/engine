@@ -152,6 +152,7 @@ module.exports = {
             isRGBE: '作为 RGBE 格式',
             isRGBETip: '作为 RGBE 格式',
             flipGreenChannel: '翻转绿色通道',
+            flipGreenChannelTip: '是否翻转绿色通道',
         },
         spriteFrame: {
             packable: 'Packable',

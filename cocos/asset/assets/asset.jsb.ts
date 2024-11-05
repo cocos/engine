@@ -26,6 +26,7 @@ import { cclegacy, js, _decorator, path, jsbUtils, CallbacksInvoker, applyMixins
 import { getUrlWithUuid } from '../asset-manager/helper';
 import { patch_cc_Asset } from '../../native-binding/decorators';
 import type { Asset as JsbAsset } from './asset';
+import type { AssetManager } from '../asset-manager';
 
 declare const jsb: any;
 
@@ -104,7 +105,7 @@ assetProto.decRef = function (autoRelease = true): Asset {
         this._ref--;
     }
     if (autoRelease) {
-        cclegacy.assetManager._releaseManager.tryRelease(this);
+        (cclegacy.assetManager as AssetManager).getReleaseManager().tryRelease(this);
     }
     return this;
 };

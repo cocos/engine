@@ -1,6 +1,7 @@
 import { Mat4, RecyclePool, IVec4Like, IMat4Like, IVec2Like,
     Color as CoreColor, assert, cclegacy, Quat, Vec4, Vec2, Vec3, toRadian } from '../../core';
-import { Color, CommandBuffer, DescriptorSet, Buffer, Device, PipelineState, RenderPass, Sampler, Texture, deviceManager } from '../../gfx';
+import { Color, CommandBuffer, DescriptorSet, Buffer, Device, PipelineState, RenderPass,
+    Sampler, Texture, deviceManager, Shader, InputAssembler } from '../../gfx';
 import { IMacroPatch, Pass, RenderScene } from '../../render-scene';
 import { Camera, CSMLevel, DirectionalLight, Light, LightType, Model, PCFType, PointLight,
     RangedDirectionalLight, Shadows, ShadowType, SphereLight, SpotLight, SubModel } from '../../render-scene/scene';
@@ -1006,6 +1007,34 @@ export class RenderQueueQuery {
         this.frustumCulledResultID = culledSourceIn;
         this.lightBoundsCulledResultID = lightBoundsCulledResultID;
         this.renderQueueTarget = renderQueueTargetIn;
+    }
+}
+
+export function recordCommand (
+    cmdBuffer: CommandBuffer,
+    _renderPass: RenderPass,
+    pass: Pass,
+    localDesc: DescriptorSet,
+    shader: Shader | null,
+    ia: InputAssembler | null,
+): void {
+    let pso!: PipelineState;
+    if (shader && ia) {
+        pso = PipelineStateManager.getOrCreatePipelineState(
+            deviceManager.gfxDevice,
+            pass,
+            shader,
+            _renderPass,
+            ia,
+        );
+    }
+    if (pso) {
+        const _ia = ia!;
+        cmdBuffer.bindPipelineState(pso);
+        cmdBuffer.bindDescriptorSet(SetIndex.MATERIAL, pass.descriptorSet);
+        cmdBuffer.bindDescriptorSet(SetIndex.LOCAL, localDesc);
+        cmdBuffer.bindInputAssembler(_ia);
+        cmdBuffer.draw(_ia);
     }
 }
 

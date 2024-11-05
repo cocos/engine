@@ -26,6 +26,7 @@
 import { Event } from './event';
 import { Vec2, cclegacy } from '../../../core';
 import { SystemEventTypeUnion } from '../event-enum';
+import type { View } from '../../../ui/view';
 
 /**
  * @en The mouse event
@@ -218,7 +219,7 @@ export class EventMouse extends Event {
             out = new Vec2();
         }
 
-        Vec2.set(out, this._x, cclegacy.view._designResolutionSize.height - this._y);
+        Vec2.set(out, this._x, (cclegacy.view as View)._designResolutionSize.height - this._y);
         return out;
     }
 
@@ -233,7 +234,7 @@ export class EventMouse extends Event {
         }
 
         Vec2.set(out, this._x, this._y);
-        cclegacy.view._convertToUISpace(out);
+        (cclegacy.view as View)._convertToUISpace(out);
         return out;
     }
 
@@ -262,7 +263,7 @@ export class EventMouse extends Event {
         }
 
         Vec2.set(out, this._prevX, this._prevY);
-        cclegacy.view._convertToUISpace(out);
+        (cclegacy.view as View)._convertToUISpace(out);
         return out;
     }
 
@@ -305,8 +306,8 @@ export class EventMouse extends Event {
         if (!out) {
             out = new Vec2();
         }
-
-        Vec2.set(out, (this._x - this._prevX) / cclegacy.view.getScaleX(), (this._y - this._prevY) / cclegacy.view.getScaleY());
+        const view = cclegacy.view as View;
+        Vec2.set(out, (this._x - this._prevX) / view.getScaleX(), (this._y - this._prevY) / view.getScaleY());
         return out;
     }
 
@@ -315,7 +316,7 @@ export class EventMouse extends Event {
      * @zh 获取鼠标距离上一次事件移动在 UI 坐标系下的 X 轴距离。
      */
     public getUIDeltaX (): number {
-        return (this._x - this._prevX) / cclegacy.view.getScaleX();
+        return (this._x - this._prevX) / (cclegacy.view as View).getScaleX();
     }
 
     /**
@@ -323,7 +324,7 @@ export class EventMouse extends Event {
      * @zh 获取鼠标距离上一次事件移动在 UI 坐标系下的 Y 轴距离。
      */
     public getUIDeltaY (): number {
-        return (this._y - this._prevY) / cclegacy.view.getScaleY();
+        return (this._y - this._prevY) / (cclegacy.view as View).getScaleY();
     }
 
     /**
@@ -364,8 +365,9 @@ export class EventMouse extends Event {
      * @zh 获取鼠标当前 X 轴位置。
      */
     public getUILocationX (): number {
-        const viewport = cclegacy.view.getViewportRect();
-        return (this._x - viewport.x) / cclegacy.view.getScaleX();
+        const view = cclegacy.view as View;
+        const viewport = view.getViewportRect();
+        return (this._x - viewport.x) / view.getScaleX();
     }
 
     /**
@@ -373,8 +375,9 @@ export class EventMouse extends Event {
      * @zh 获取鼠标当前 Y 轴位置。
      */
     public getUILocationY (): number {
-        const viewport = cclegacy.view.getViewportRect();
-        return (this._y - viewport.y) / cclegacy.view.getScaleY();
+        const view = cclegacy.view as View;
+        const viewport = view.getViewportRect();
+        return (this._y - viewport.y) / view.getScaleY();
     }
 }
 

@@ -24,6 +24,7 @@
 */
 
 import { Vec2, cclegacy } from '../../core';
+import type { View } from '../../ui/view';
 
 const _vec2 = new Vec2();
 /**
@@ -92,7 +93,7 @@ export class Touch {
         }
 
         out.set(this._point$.x, this._point$.y);
-        cclegacy.view._convertToUISpace(out);
+        (cclegacy.view as View)._convertToUISpace(out);
         return out;
     }
 
@@ -101,8 +102,9 @@ export class Touch {
      * @zh 获取当前触点在 UI 坐标系中 X 轴位置。
      */
     public getUILocationX (): number {
-        const viewport = cclegacy.view.getViewportRect();
-        return (this._point$.x - viewport.x) / cclegacy.view.getScaleX();
+        const view = cclegacy.view as View;
+        const viewport = view.getViewportRect();
+        return (this._point$.x - viewport.x) / view.getScaleX();
     }
 
     /**
@@ -110,8 +112,9 @@ export class Touch {
      * @zh 获取当前触点在 UI 坐标系中 Y 轴位置。
      */
     public getUILocationY (): number {
-        const viewport = cclegacy.view.getViewportRect();
-        return (this._point$.y - viewport.y) / cclegacy.view.getScaleY();
+        const view = cclegacy.view as View;
+        const viewport = view.getViewportRect();
+        return (this._point$.y - viewport.y) / view.getScaleY();
     }
 
     /**
@@ -139,7 +142,7 @@ export class Touch {
         }
 
         out.set(this._prevPoint$.x, this._prevPoint$.y);
-        cclegacy.view._convertToUISpace(out);
+        (cclegacy.view as View)._convertToUISpace(out);
         return out;
     }
 
@@ -168,7 +171,7 @@ export class Touch {
         }
 
         out.set(this._startPoint$.x, this._startPoint$.y);
-        cclegacy.view._convertToUISpace(out);
+        (cclegacy.view as View)._convertToUISpace(out);
         return out;
     }
 
@@ -199,7 +202,8 @@ export class Touch {
 
         _vec2.set(this._point$);
         _vec2.subtract(this._prevPoint$);
-        out.set(cclegacy.view.getScaleX() as number, cclegacy.view.getScaleY() as number);
+        const view = cclegacy.view as View;
+        out.set(view.getScaleX(), view.getScaleY());
         Vec2.divide(out, _vec2, out);
         return out;
     }
@@ -214,7 +218,7 @@ export class Touch {
             out = new Vec2();
         }
 
-        out.set(this._point$.x, cclegacy.view._designResolutionSize.height - this._point$.y);
+        out.set(this._point$.x, (cclegacy.view as View)._designResolutionSize.height - this._point$.y);
         return out;
     }
 
@@ -228,7 +232,7 @@ export class Touch {
             out = new Vec2();
         }
 
-        out.set(this._prevPoint$.x, cclegacy.view._designResolutionSize.height - this._prevPoint$.y);
+        out.set(this._prevPoint$.x, (cclegacy.view as View)._designResolutionSize.height - this._prevPoint$.y);
         return out;
     }
 
@@ -242,7 +246,7 @@ export class Touch {
             out = new Vec2();
         }
 
-        out.set(this._startPoint$.x, cclegacy.view._designResolutionSize.height - this._startPoint$.y);
+        out.set(this._startPoint$.x, (cclegacy.view as View)._designResolutionSize.height - this._startPoint$.y);
         return out;
     }
 
@@ -267,7 +271,6 @@ export class Touch {
         this._id = id;
         if (!this._startPointCaptured$) {
             this._startPoint$ = new Vec2(this._point$);
-            // cc.view._convertToUISpace(this._startPoint);
             this._startPointCaptured$ = true;
         }
     }

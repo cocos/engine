@@ -8,7 +8,12 @@ const version = pkg.version.replace(/(^\d+\.\d+)\..*$/, (str, a) => {
 const url = 'https://docs.cocos.com/creator';
 
 module.exports = link(mixin({
-
+    common: {
+        'attribute': {
+            'title': '属性：',
+            'description': '描述：',
+        },
+    },
     classes: {
         'cc': {
             'animation': {
@@ -305,14 +310,6 @@ module.exports = link(mixin({
         csmTransitionRange: '级联阴影层级过渡范围(NDC空间: 取值范围为 0 ~ 1)',
     },
     sprite: {
-        gray_scale: '是否开启灰度渲染模式',
-        atlas: '图片资源所属的 Atlas 图集资源',
-        sprite_frame: '渲染 Sprite 使用的 Sprite Frame 图片资源',
-        type:
-            '渲染模式：<br> - 普通(Simple)：修改尺寸会整体拉伸图像，适用于序列帧动画和普通图像 <br>' +
-            '- 九宫格 Sliced 修改尺寸时四个角的区域不会拉伸，适用于 UI 按钮和面板背景 <br>' +
-            '- 平铺 Tiled 修改尺寸时会不断平铺原始大小的图片 <br>' +
-            '- 填充 Filled 设置一定的填充起始位置和方向，能够以一定比率剪裁显示图片',
         original_size: '是否使用图片资源的原始尺寸作为 Sprite 节点的 size',
         edit_button: '编辑',
         select_button: '选择',
@@ -324,9 +321,6 @@ module.exports = link(mixin({
         fill_range: '填充总量，取值范围 0 ~ 1 指定显示图像范围的百分比',
         src_blend_factor: '混合显示两张图片时，源图片的取值模式',
         dst_blend_factor: '混合显示两张图片时，目标图片的取值模式',
-        size_mode:
-            '指定 Sprite 所在节点的尺寸<br>CUSTOM 表示自定义尺寸<br>TRIMMED 表示取原始图片剪裁透明像素后的尺寸<br>RAW 表示取原始图片未剪裁的尺寸',
-        trim: '节点约束框内是否包括透明像素区域，勾选此项会去除节点约束框内的透明区域',
     },
     UIOpacity: {
         opacity: '设置物体的不透明度，取值范围为 0 ~ 255',
@@ -647,20 +641,6 @@ module.exports = link(mixin({
     webview: {
         url: '指定一个 URL 地址，这个地址以 http 或者 https 开头，请填写一个有效的 URL 地址。',
         webviewEvents: 'Webview 的回调事件，当网页加载过程中，加载完成后或者加载出错时都会回调此函数',
-    },
-    richtext: {
-        string: '富文本的内容字符串, 你可以在里面使用 BBCode 来指定特定文本的样式',
-        horizontal_align: '水平对齐方式',
-        vertical_align: '竖直对齐方式',
-        font_size: '字体大小, 单位是 point',
-        font: '富文本定制字体',
-        font_family: '富文本定制系统字体',
-        use_system_font: '是否使用系统字体',
-        cache_mode: '文本缓存模式, 该模式只支持系统字体',
-        max_width: '富文本的最大宽度, 传 0 的话意味着必须手动换行.',
-        line_height: '字体行高, 单位是 point',
-        image_atlas: '对于 img 标签里面的 src 属性名称，都需要在 image atlas 里面找到一个有效的 sprite frame，否则 img tag 会判定为无效',
-        handleTouchEvent: '选中此选项后，rich text 将阻止节点边界框中的所有输入事件（鼠标和触摸），从而防止输入事件穿透到底层节点',
     },
     UICoordinateTracker: {
         target: '目标对象',

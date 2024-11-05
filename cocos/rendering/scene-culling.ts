@@ -23,7 +23,7 @@
 */
 import { Model } from '../render-scene/scene/model';
 import { Camera, CameraUsage, SkyBoxFlagValue } from '../render-scene/scene/camera';
-import { Vec3, Pool, geometry, cclegacy } from '../core';
+import { Vec3, Pool, geometry, cclegacy, warnID } from '../core';
 import { PipelineUBO } from './pipeline-ubo';
 import { IRenderObject, UBOShadowEnum } from './define';
 import { ShadowType, CSMOptimizationMode } from '../render-scene/scene/shadows';
@@ -175,7 +175,7 @@ export function sceneCulling (sceneData: PipelineSceneData, pipelineUBO: Pipelin
         if (skybox.enabled && skybox.model) {
             renderObjects.push(getRenderObject(skybox.model, camera));
         } else if (camera.cameraUsage !== CameraUsage.EDITOR && camera.cameraUsage !== CameraUsage.SCENE_VIEW) {
-            cclegacy.warnID(15100, camera.name);
+            warnID(15100, camera.name!);
         }
     }
 
