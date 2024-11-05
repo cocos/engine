@@ -49,6 +49,8 @@ void *WasmSpineExtension::_realloc(void *ptr, size_t size, const char *file, int
     SP_UNUSED(file);
     SP_UNUSED(line);
     if (size == 0) {
+        // Need to free the old memory before returning nullptr, otherwise the old memory block will be leaked.
+        ::free(ptr);
         return nullptr;
     }
     return ::realloc(ptr, sizeof(uint8_t) * size);
