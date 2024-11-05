@@ -30,18 +30,27 @@ char *WasmSpineExtension::_readFile(const String &path, int *length) {
 void *WasmSpineExtension::_alloc(size_t size, const char *file, int line) {
     SP_UNUSED(file);
     SP_UNUSED(line);
+    if (size == 0) {
+        return nullptr;
+    }
     return ::malloc(sizeof(uint8_t) * size);
 }
 
 void *WasmSpineExtension::_calloc(size_t size, const char *file, int line) {
     SP_UNUSED(file);
     SP_UNUSED(line);
+    if (size == 0) {
+        return nullptr;
+    }
     return ::calloc(1, size);
 }
 
 void *WasmSpineExtension::_realloc(void *ptr, size_t size, const char *file, int line) {
     SP_UNUSED(file);
     SP_UNUSED(line);
+    if (size == 0) {
+        return nullptr;
+    }
     return ::realloc(ptr, sizeof(uint8_t) * size);
 }
 
