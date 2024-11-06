@@ -192,9 +192,9 @@ public:
     }
 
     void set(ArrayBuffer *buffer, uint32_t offset) {
-        CC_ASSERT(buffer->byteLength() + offset <= _byteEndPos);
+        CC_ASSERT(buffer->byteLength() + _byteOffset + offset * BYTES_PER_ELEMENT <= _byteEndPos);
         CC_ASSERT(_buffer);
-        memcpy(_buffer->_data + offset, buffer->_data, buffer->byteLength());
+        memcpy(_buffer->_data + _byteOffset + offset * BYTES_PER_ELEMENT, buffer->_data, buffer->byteLength());
     }
 
     template <typename SrcType>
