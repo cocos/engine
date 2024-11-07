@@ -163,6 +163,16 @@ Object.defineProperty(cameraProto, 'matView', {
     }
 });
 
+Object.defineProperty(cameraProto, 'matViewInv', {
+    configurable: true,
+    enumerable: true,
+    get () {
+        this.getMatViewInv();
+        fillMat4WithTempFloatArray(this._matViewInv);
+        return this._matViewInv;
+    }
+});
+
 Object.defineProperty(cameraProto, 'matProj', {
     configurable: true,
     enumerable: true,

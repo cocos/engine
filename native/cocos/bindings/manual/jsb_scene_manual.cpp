@@ -523,6 +523,7 @@ FAST_GET_CONST_REF(cc, Node, getWorldMatrix, Mat4)
 FAST_GET_CONST_REF(cc, Node, getEulerAngles, Vec3)
 
 FAST_GET_CONST_REF(cc::scene, Camera, getMatView, Mat4)
+FAST_GET_CONST_REF(cc::scene, Camera, getMatViewInv, Mat4)
 FAST_GET_CONST_REF(cc::scene, Camera, getMatProj, Mat4)
 FAST_GET_CONST_REF(cc::scene, Camera, getMatProjInv, Mat4)
 FAST_GET_CONST_REF(cc::scene, Camera, getMatViewProj, Mat4)

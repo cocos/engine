@@ -265,6 +265,7 @@ public:
     inline uint32_t getHeight() const { return _height; }
     inline float getAspect() const { return _aspect; }
     inline const Mat4 &getMatView() const { return _matView; }
+    inline const Mat4 &getMatViewInv() const { return _matViewInv; }
     inline const Mat4 &getMatProj() const { return _matProj; }
     inline const Mat4 &getMatProjInv() const { return _matProjInv; }
     inline const Mat4 &getMatViewProj() const { return _matViewProj; }
@@ -396,6 +397,7 @@ private:
     gfx::SurfaceTransform _curTransform{gfx::SurfaceTransform::IDENTITY};
     bool _isProjDirty{true};
     Mat4 _matView;
+    Mat4 _matViewInv;
     Mat4 _matProj;
     Mat4 _matProjInv;
     Mat4 _matViewProj;

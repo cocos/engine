@@ -172,6 +172,7 @@ void Camera::update(bool forceUpdate /*false*/) {
         scaleMat.scale(_node->getWorldScale());
         // remove scale
         Mat4::multiply(scaleMat, _matView, &_matView);
+        _matViewInv = _matView.getInversed();
         _position.set(_node->getWorldPosition());
         viewProjDirty = true;
     }
