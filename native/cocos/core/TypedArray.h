@@ -291,7 +291,7 @@ template <typename T>
 template <typename SrcType>
 typename std::enable_if_t<std::is_same<T, SrcType>::value, void> TypedArrayTemp<T>::set(const TypedArrayTemp<SrcType> &array, uint32_t offset) {
     CC_ASSERT(_buffer);
-    uint32_t dstByteOffset = offset * BYTES_PER_ELEMENT;
+    uint32_t dstByteOffset = _byteOffset + offset * BYTES_PER_ELEMENT;
     uint32_t srcByteOffset = array.byteOffset();
     uint32_t srcCount = array.length();
     CC_ASSERT(dstByteOffset + srcCount * TypedArrayTemp<SrcType>::BYTES_PER_ELEMENT <= _byteEndPos);
@@ -302,7 +302,7 @@ template <typename T>
 template <typename SrcType>
 typename std::enable_if_t<!std::is_same<T, SrcType>::value, void> TypedArrayTemp<T>::set(const TypedArrayTemp<SrcType> &array, uint32_t offset) {
     CC_ASSERT(_buffer);
-    uint32_t dstByteOffset = offset * BYTES_PER_ELEMENT;
+    uint32_t dstByteOffset = _byteOffset + offset * BYTES_PER_ELEMENT;
     uint32_t srcByteOffset = array.byteOffset();
     uint32_t srcCount = array.length();
     uint32_t remainCount = (_byteEndPos - dstByteOffset) / BYTES_PER_ELEMENT;
