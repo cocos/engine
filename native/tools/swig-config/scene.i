@@ -176,7 +176,6 @@ using namespace cc;
 %ignore cc::scene::Camera::worldToScreen;
 %ignore cc::scene::Camera::worldMatrixToScreen;
 %ignore cc::scene::Camera::getMatView;
-%ignore cc::scene::Camera::getMatViewInv;
 %ignore cc::scene::Camera::getMatProj;
 %ignore cc::scene::Camera::getMatProjInv;
 %ignore cc::scene::Camera::getMatViewProj;

@@ -1787,8 +1787,8 @@ public:
      * @zh 渲染管线状态更新的回调
      */
     virtual void onGlobalPipelineStateChanged() = 0;
-    virtual void addPipelinePassBuilder(scene::Camera *camera, PipelinePassBuilder *passBuilder) = 0;
-    virtual void removePipelinePassBuilder(scene::Camera *camera, PipelinePassBuilder *passBuilder) = 0;
+    virtual void addPipelinePassBuilder(scene::Camera *camera, PipelinePassBuilder &passBuilder) = 0;
+    virtual void removePipelinePassBuilder(scene::Camera *camera, PipelinePassBuilder &passBuilder) = 0;
 };
 
 /**
