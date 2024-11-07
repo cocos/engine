@@ -28,7 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 /* eslint-disable max-len */
-import { Material, Texture2D, gfx, Vec3 } from 'cc';
+import { Material, Texture2D, Vec3, gfx } from 'cc';
 
 const { SampleCount } = gfx;
 
@@ -100,9 +100,9 @@ export interface DepthOfField {
     enabled: boolean; /* false */
     /* refcount */ material: Material | null;
     minRange: number; /* 0 */
-    maxRange: number; /* 0 */
+    maxRange: number; /* 50 */
     blurRadius: number; /* 1 */
-    intensity: number;
+    intensity: number; /* 1 */
     focusPos: Vec3;
     [name: string]: unknown;
 }
@@ -114,7 +114,7 @@ export function makeDepthOfField(): DepthOfField {
         minRange: 0,
         maxRange: 50,
         blurRadius: 1,
-        intensity: 0.2,
+        intensity: 1,
         focusPos: new Vec3(0, 0, 0),
     };
 }
@@ -130,13 +130,16 @@ export function fillRequiredDepthOfField(value: DepthOfField): void {
         value.minRange = 0;
     }
     if (value.maxRange === undefined) {
-        value.maxRange = 0;
+        value.maxRange = 50;
     }
     if (value.blurRadius === undefined) {
         value.blurRadius = 1;
     }
+    if (value.intensity === undefined) {
+        value.intensity = 1;
+    }
     if (value.focusPos === undefined) {
-        value.focusPos = new Vec3();
+        value.focusPos = new Vec3(0, 0, 0);
     }
 }
 

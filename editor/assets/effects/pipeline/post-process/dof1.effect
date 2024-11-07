@@ -61,7 +61,7 @@ void main() {
   outColor += blur(screenTex, v_uv + offsets.zy);
   outColor += blur(screenTex, v_uv + offsets.xw);
   outColor += blur(screenTex, v_uv + offsets.zw);
-  fragColor = outColor * blurParams.w;
+  fragColor = outColor * blurParams.w * 0.25;
 }
 }%
 
