@@ -1744,6 +1744,19 @@ public:
     }
 };
 
+class PipelinePassBuilder {
+public:
+    PipelinePassBuilder() noexcept = default;
+    PipelinePassBuilder(PipelinePassBuilder&& rhs) = delete;
+    PipelinePassBuilder(PipelinePassBuilder const& rhs) = delete;
+    PipelinePassBuilder& operator=(PipelinePassBuilder&& rhs) = delete;
+    PipelinePassBuilder& operator=(PipelinePassBuilder const& rhs) = delete;
+    virtual ~PipelinePassBuilder() noexcept = default;
+
+    virtual uint32_t getConfigOrder() const = 0;
+    virtual uint32_t getRenderOrder() const = 0;
+};
+
 /**
  * @en Pipeline builder.
  * User can implement this interface and setup render graph.
@@ -1774,6 +1787,8 @@ public:
      * @zh 渲染管线状态更新的回调
      */
     virtual void onGlobalPipelineStateChanged() = 0;
+    virtual void addPipelinePassBuilder(scene::Camera *camera, PipelinePassBuilder &passBuilder) = 0;
+    virtual void removePipelinePassBuilder(scene::Camera *camera, PipelinePassBuilder &passBuilder) = 0;
 };
 
 /**

@@ -58,6 +58,7 @@ class RenderPassBuilder;
 class MultisampleRenderPassBuilder;
 class ComputePassBuilder;
 class Pipeline;
+class PipelinePassBuilder;
 class PipelineBuilder;
 class RenderingModule;
 class Factory;
