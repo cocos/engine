@@ -27,7 +27,6 @@ import { Camera } from '../../render-scene/scene/camera';
 import { RenderWindow } from '../../render-scene/core/render-window';
 import { supportsR32FloatTexture } from '../define';
 import { Format } from '../../gfx/base/define';
-import { cclegacy, macro } from '../../core';
 
 export { packRGBE } from '../../core/math/color';
 
@@ -102,24 +101,4 @@ export function dispatchResizeEvents (cameras: Camera[], builder: PipelineBuilde
 
     // For editor preview
     forceResize = false;
-}
-
-let sBuilder: PipelineBuilder;
-
-export function addPipelinePassBuilder (camera: Camera, passBuilder: PipelinePassBuilder): void {
-    if (!sBuilder) {
-        sBuilder = cclegacy.rendering.getCustomPipeline(macro.CUSTOM_PIPELINE_NAME);
-    }
-    if (sBuilder.addPipelinePassBuilder) {
-        sBuilder.addPipelinePassBuilder(camera, passBuilder);
-    }
-}
-
-export function removePipelinePassBuilder (camera: Camera, passBuilder: PipelinePassBuilder): void {
-    if (!sBuilder) {
-        sBuilder = cclegacy.rendering.getCustomPipeline(macro.CUSTOM_PIPELINE_NAME);
-    }
-    if (sBuilder.removePipelinePassBuilder) {
-        sBuilder.removePipelinePassBuilder(camera, passBuilder);
-    }
 }

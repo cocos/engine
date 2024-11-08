@@ -1660,6 +1660,7 @@ export interface Pipeline extends BasicPipeline {
 export interface PipelinePassBuilder {
     getConfigOrder (): number;
     getRenderOrder (): number;
+    resetCamera? (cameraConfigs: { [name: string]: any }): void;
     configCamera? (
         camera: Readonly<Camera>,
         pplConfigs: { readonly [name: string]: any },
@@ -1708,8 +1709,6 @@ export interface PipelineBuilder {
      * @zh 渲染管线状态更新的回调
      */
     onGlobalPipelineStateChanged? (): void;
-    addPipelinePassBuilder? (camera: Camera, passBuilder: PipelinePassBuilder): void;
-    removePipelinePassBuilder? (camera: Camera, passBuilder: PipelinePassBuilder): void;
 }
 
 /**
