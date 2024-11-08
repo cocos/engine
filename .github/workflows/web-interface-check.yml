@@ -64,13 +64,19 @@ jobs:
       - name: Head merges base
         working-directory: ./engine-HEAD
         run: |
+          git config user.name "Cocos CI"
+          git config user.email "cocos-ci@cocos.com"
           echo "BASE_REF: ${{ env.BASE_REF }}"
+          HEAD_REF=$(git rev-parse HEAD)
           echo '--------------------------------------------------------'
           git --no-pager log -3
           echo '--------------------------------------------------------'
           git fetch origin ${{ env.BASE_REF }}
+          git checkout ${{ env.BASE_REF }}
           echo '--------------------------------------------------------'
-          git merge ${{ env.BASE_REF }} --allow-unrelated-histories
+          git --no-pager log -3
+          echo '--------------------------------------------------------'
+          git merge $HEAD_REF --allow-unrelated-histories
           echo '--------------------------------------------------------'
           git --no-pager log -10
           echo '--------------------------------------------------------'
