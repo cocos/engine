@@ -65,8 +65,18 @@ jobs:
         working-directory: ./engine-HEAD
         run: |
           echo "BASE_REF: ${{ env.BASE_REF }}"
-          git fetch origin
-          git merge ${{ env.BASE_REF }}
+          git remote -v
+          git checkout -b src-branch
+          echo '--------------------------------------------------------'
+          git --no-pager log -3
+          echo '--------------------------------------------------------'
+          git fetch origin ${{ env.BASE_REF }}
+          git checkout -b dst-branch ${{ env.BASE_REF }}
+          echo '--------------------------------------------------------'
+          git --no-pager log -3
+          echo '--------------------------------------------------------'
+          git checkout dst-branch
+          git merge src-branch
           echo '--------------------------------------------------------'
           git --no-pager log -10
           echo '--------------------------------------------------------'
