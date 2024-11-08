@@ -52,7 +52,7 @@ jobs:
       - uses: actions/checkout@v4
         name: Checkout Head Ref
         with:
-          ref: 'refs/pull/${{ github.event.pull_request.number }}/merge' # Don't check out the head commit, checkout the "merge commit" instead
+          ref: 'refs/pull/${{ github.event.pull_request.number }}/head'
           path: './engine-HEAD'
 
       - run: |
