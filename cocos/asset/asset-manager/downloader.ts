@@ -350,7 +350,7 @@ export class Downloader {
     /**
      * @engineInternal
      */
-    public get handlers() {
+    public get handlers (): Record<string, DownloadHandler> {
         return this._downloaders$;
     }
 
