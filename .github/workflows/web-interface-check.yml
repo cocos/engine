@@ -81,7 +81,7 @@ jobs:
           git --no-pager log -3
           echo "--------------------------------------------------------"
           CURRENT_REF=$(git rev-parse HEAD)
-          echo ">>> $CURRENT_REF merges $HEAD_REF"
+          echo "---- $CURRENT_REF merges $HEAD_REF ----"
           git merge $HEAD_REF
           echo "--------------------------------------------------------"
           echo "MERGED LOG:"
