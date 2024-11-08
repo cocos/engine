@@ -26,9 +26,15 @@ jobs:
           repository: ${{ github.event.pull_request.base.repo.full_name }}
           ref: ${{ github.base_ref }}
           path: './engine'
+
+      - name: Get Base Ref
+        working-directory: ./engine
+        run: |
+          echo "BASE_REF=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
       - run: |
-          "EXT_VERSION=$(node ./engine/.github/workflows/get-native-external-version.js)" >> $env:GITHUB_ENV
-        shell: pwsh
+          echo "EXT_VERSION=$(node ./engine/.github/workflows/get-native-external-version.js)" >> $GITHUB_ENV
+
       - uses: actions/checkout@v4
         name: Download external
         with:
@@ -52,12 +58,38 @@ jobs:
       - uses: actions/checkout@v4
         name: Checkout Head Ref
         with:
-          ref: 'refs/pull/${{ github.event.pull_request.number }}/merge' # Don't check out the head commit, checkout the "merge commit" instead
+          ref: 'refs/pull/${{ github.event.pull_request.number }}/head'
           path: './engine-HEAD'
+          fetch-depth: 0
+
+      - name: Head merges base
+        working-directory: ./engine-HEAD
+        run: |
+          git config user.name "Cocos CI"
+          git config user.email "cocos-ci@cocos.com"
+          echo "BASE_REF: ${{ env.BASE_REF }}"
+          HEAD_REF=$(git rev-parse HEAD)
+          echo "HEAD_REF: $HEAD_REF"
+          echo "--------------------------------------------------------"
+          echo "HEAD LOG:"
+          git --no-pager log -3
+          echo "--------------------------------------------------------"
+          git fetch origin ${{ env.BASE_REF }}
+          git reset --hard ${{ env.BASE_REF }}
+          echo "--------------------------------------------------------"
+          echo "BASE LOG:"
+          git --no-pager log -3
+          echo "--------------------------------------------------------"
+          CURRENT_REF=$(git rev-parse HEAD)
+          echo "---- $CURRENT_REF merges $HEAD_REF ----"
+          git merge $HEAD_REF
+          echo "--------------------------------------------------------"
+          echo "MERGED LOG:"
+          git --no-pager log -5
+          echo "--------------------------------------------------------"
 
       - run: |
-          "EXT_VERSION_HEAD=$(node ./engine-HEAD/.github/workflows/get-native-external-version.js)" >> $env:GITHUB_ENV
-        shell: pwsh
+          echo "EXT_VERSION_HEAD=$(node ./engine-HEAD/.github/workflows/get-native-external-version.js)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
         name: Download external
