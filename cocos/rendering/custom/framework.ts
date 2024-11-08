@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-import { BasicPipeline, PipelineBuilder, PipelinePassBuilder } from './pipeline';
+import { BasicPipeline, PipelineBuilder } from './pipeline';
 import { Camera } from '../../render-scene/scene/camera';
 import { RenderWindow } from '../../render-scene/core/render-window';
 import { supportsR32FloatTexture } from '../define';
