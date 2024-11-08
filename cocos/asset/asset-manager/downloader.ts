@@ -348,6 +348,13 @@ export class Downloader {
     }
 
     /**
+     * @engineInternal
+     */
+    public get handler() {
+        return this._downloaders$;
+    }
+
+    /**
      * @en
      * Register custom handler if you want to change default behavior or extend downloader to download other format file.
      *
