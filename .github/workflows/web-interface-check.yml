@@ -27,6 +27,7 @@ jobs:
           ref: ${{ github.base_ref }}
           path: './engine'
       - run: |
+          "BASE_REF=$(git rev-parse HEAD)" >> $env:GITHUB_ENV
           "EXT_VERSION=$(node ./engine/.github/workflows/get-native-external-version.js)" >> $env:GITHUB_ENV
         shell: pwsh
       - uses: actions/checkout@v4
@@ -58,7 +59,7 @@ jobs:
       - name: Head merges base
         working-directory: ./engine-HEAD
         run: |
-          git merge ${{ github.base_ref }}
+          git merge ${{ env.BASE_REF }}
           echo '--------------------------------------------------------'
           git --no-pager log -10
           echo '--------------------------------------------------------'
