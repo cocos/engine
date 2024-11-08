@@ -154,7 +154,18 @@ minigame.createInnerAudioContext = createInnerAudioContextPolyfill(wx, {
 // FIX_ME: wrong safe area when orientation is landscape left
 minigame.getSafeArea = function (): SafeArea {
     const locSystemInfo = wx.getSystemInfoSync() as SystemInfo;
-    return locSystemInfo.safeArea;
+    let safeArea = locSystemInfo.safeArea;
+    if (!safeArea) {
+        safeArea = {
+            left: 0,
+            top: 0,
+            bottom: systemInfo.screenHeight,
+            right: systemInfo.screenWidth,
+            width: systemInfo.screenWidth,
+            height: systemInfo.screenHeight,
+        };
+    }
+    return safeArea;
 };
 // #endregion SafeArea
 
