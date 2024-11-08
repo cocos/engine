@@ -65,6 +65,7 @@ jobs:
         working-directory: ./engine-HEAD
         run: |
           echo "BASE_REF: ${{ env.BASE_REF }}"
+          git fetch origin
           git merge ${{ env.BASE_REF }}
           echo '--------------------------------------------------------'
           git --no-pager log -10
