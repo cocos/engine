@@ -1,5 +1,5 @@
 const downloader = cc.assetManager.downloader;
-const originalDownloadTTF = downloader.handler['.ttf'];
+const originalDownloadTTF = downloader.handlers['.ttf'];
 
 function downloadTTF (url, options, onComplete) {
     // can't use cached ttf on Xiaomi platform
