@@ -500,14 +500,7 @@ export class ScrollView extends ViewGroup {
      * ```
      */
     public scrollToBottom (timeInSecond?: number, attenuated = true): void {
-        assignMoveDeltaOption(0, 0, false, true);
-        const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
-
-        if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
-        } else {
-            this._moveContent(moveDelta, true);
-        }
+        this._doScroll(0, 0, false, true, timeInSecond, attenuated);
     }
 
     /**
@@ -527,14 +520,7 @@ export class ScrollView extends ViewGroup {
      * ```
      */
     public scrollToTop (timeInSecond?: number, attenuated = true): void {
-        assignMoveDeltaOption(0, 1, false, true);
-        const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
-
-        if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
-        } else {
-            this._moveContent(moveDelta);
-        }
+        this._doScroll(0, 1, false, true, timeInSecond, attenuated);
     }
 
     /**
@@ -554,14 +540,7 @@ export class ScrollView extends ViewGroup {
      * ```
      */
     public scrollToLeft (timeInSecond?: number, attenuated = true): void {
-        assignMoveDeltaOption(0, 0, true, false);
-        const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
-
-        if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
-        } else {
-            this._moveContent(moveDelta);
-        }
+        this._doScroll(0, 0, true, false, timeInSecond, attenuated);
     }
 
     /**
@@ -581,14 +560,7 @@ export class ScrollView extends ViewGroup {
      * ```
      */
     public scrollToRight (timeInSecond?: number, attenuated = true): void {
-        assignMoveDeltaOption(1, 0, true, false);
-        const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
-
-        if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
-        } else {
-            this._moveContent(moveDelta);
-        }
+        this._doScroll(1, 0, true, false, timeInSecond, attenuated);
     }
 
     /**
@@ -608,14 +580,7 @@ export class ScrollView extends ViewGroup {
      * ```
      */
     public scrollToTopLeft (timeInSecond?: number, attenuated = true): void {
-        assignMoveDeltaOption(0, 1, true, true);
-        const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
-
-        if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
-        } else {
-            this._moveContent(moveDelta);
-        }
+        this._doScroll(0, 1, true, true, timeInSecond, attenuated);
     }
 
     /**
@@ -635,14 +600,7 @@ export class ScrollView extends ViewGroup {
      * ```
      */
     public scrollToTopRight (timeInSecond?: number, attenuated = true): void {
-        assignMoveDeltaOption(1, 1, true, true);
-        const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
-
-        if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
-        } else {
-            this._moveContent(moveDelta);
-        }
+        this._doScroll(1, 1, true, true, timeInSecond, attenuated);
     }
 
     /**
@@ -662,14 +620,7 @@ export class ScrollView extends ViewGroup {
      * ```
      */
     public scrollToBottomLeft (timeInSecond?: number, attenuated = true): void {
-        assignMoveDeltaOption(0, 0, true, true);
-        const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
-
-        if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
-        } else {
-            this._moveContent(moveDelta);
-        }
+        this._doScroll(0, 0, true, true, timeInSecond, attenuated);
     }
 
     /**
@@ -689,14 +640,7 @@ export class ScrollView extends ViewGroup {
      * ```
      */
     public scrollToBottomRight (timeInSecond?: number, attenuated = true): void {
-        assignMoveDeltaOption(1, 0, true, true);
-        const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
-
-        if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
-        } else {
-            this._moveContent(moveDelta);
-        }
+        this._doScroll(1, 0, true, true, timeInSecond, attenuated);
     }
 
     /**
@@ -796,14 +740,7 @@ export class ScrollView extends ViewGroup {
      * ```
      */
     public scrollToPercentHorizontal (percent: number, timeInSecond: number, attenuated: boolean): void {
-        assignMoveDeltaOption(percent, 0, true, false);
-        const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
-
-        if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
-        } else {
-            this._moveContent(moveDelta);
-        }
+        this._doScroll(percent, 0, true, false, timeInSecond, attenuated);
     }
 
     /**
@@ -829,14 +766,7 @@ export class ScrollView extends ViewGroup {
      * ```
      */
     public scrollTo (anchor: Vec2, timeInSecond?: number, attenuated?: boolean): void {
-        assignMoveDeltaOption(anchor.x, anchor.y, true, true);
-        const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
-
-        if (timeInSecond) {
-            this._startAutoScroll(moveDelta, timeInSecond, attenuated);
-        } else {
-            this._moveContent(moveDelta);
-        }
+        this._doScroll(anchor.x, anchor.y, true, true, timeInSecond, attenuated);
     }
 
     /**
@@ -857,7 +787,11 @@ export class ScrollView extends ViewGroup {
      * ```
      */
     public scrollToPercentVertical (percent: number, timeInSecond?: number, attenuated?: boolean): void {
-        assignMoveDeltaOption(0, percent, false, true);
+        this._doScroll(0, percent, false, true, timeInSecond, attenuated);
+    }
+
+    private _doScroll (x: number, y: number, applyToHorizontal: boolean, applyToVertical: boolean, timeInSecond?: number, attenuated = true): void {
+        assignMoveDeltaOption(x, y, applyToHorizontal, applyToVertical);
         const moveDelta = this._calculateMovePercentDelta(_moveDeltaOptions);
 
         if (timeInSecond) {

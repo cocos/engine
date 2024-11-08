@@ -99,8 +99,8 @@ export class RecyclePool<T = any> extends ScalableContainer {
     }
 
     /**
-     * @en Expand the array size to 2 times the original size, and fills with new created elements.
-     * @zh 扩充对象池容量，会自动扩充尺寸到原来的 2 倍，并填充新的元素。
+     * @en Adds a new element. If the capacity is insufficient, it will automatically expand to twice its original size.
+     * @zh 添加一个新元素，如果容量不足，会自动扩充尺寸到原来的 2 倍。
      */
     public add (): T {
         if (this._count$ >= this._data$.length) {

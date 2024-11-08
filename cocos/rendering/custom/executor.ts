@@ -368,7 +368,6 @@ class BlitDesc {
     constructor (blit: Blit) {
         this._blit = blit;
     }
-
     /**
      * @zh
      * 创建四边形输入汇集器。
@@ -426,7 +425,7 @@ class BlitDesc {
                 this._lightBufferData.set(_vec4Array, idx * elementLen + fieldLen * 2);
 
                 if (isSpot) {
-                    // cc_lightDir
+                // cc_lightDir
                     Vec3.toArray(_vec4Array, (light as SpotLight).direction);
                     this._lightBufferData.set(_vec4Array, idx * elementLen + fieldLen * 3);
                 }
@@ -496,6 +495,7 @@ class DeviceComputeQueue implements RecordingInterface {
     private _renderPhase: RenderPhaseData | null = null;
     private _descSetData: DescriptorSetData | null = null;
     private _layoutID = -1;
+    private _isUpdateUBO = false;
     private _isUploadInstance = false;
     private _isUploadBatched = false;
     private _queueId = -1;
@@ -521,12 +521,15 @@ class DeviceComputeQueue implements RecordingInterface {
     get renderPhase (): RenderPhaseData | null { return this._renderPhase; }
     set queueId (val) { this._queueId = val; }
     get queueId (): number { return this._queueId; }
+    set isUpdateUBO (update: boolean) { this._isUpdateUBO = update; }
+    get isUpdateUBO (): boolean { return this._isUpdateUBO; }
     set isUploadInstance (value: boolean) { this._isUploadInstance = value; }
     get isUploadInstance (): boolean { return this._isUploadInstance; }
     set isUploadBatched (value: boolean) { this._isUploadBatched = value; }
     get isUploadBatched (): boolean { return this._isUploadBatched; }
 
     reset (): void {
+        this._isUpdateUBO = false;
         this._isUploadInstance = false;
         this._isUploadBatched = false;
     }
@@ -553,6 +556,7 @@ class DeviceRenderQueue implements RecordingInterface {
     private _viewport: Viewport | null = null;
     private _scissor: Rect | null = null;
     private _layoutID = -1;
+    private _isUpdateUBO = false;
     private _isUploadInstance = false;
     private _isUploadBatched = false;
     get phaseID (): number { return this._phaseID; }
@@ -574,6 +578,8 @@ class DeviceRenderQueue implements RecordingInterface {
     private _queueId = -1;
     set queueId (val) { this._queueId = val; }
     get queueId (): number { return this._queueId; }
+    set isUpdateUBO (update: boolean) { this._isUpdateUBO = update; }
+    get isUpdateUBO (): boolean { return this._isUpdateUBO; }
     set isUploadInstance (value: boolean) { this._isUploadInstance = value; }
     get isUploadInstance (): boolean { return this._isUploadInstance; }
     set isUploadBatched (value: boolean) { this._isUploadBatched = value; }
@@ -606,6 +612,7 @@ class DeviceRenderQueue implements RecordingInterface {
     }
     reset (): void {
         this._renderScenes.length = 0;
+        this._isUpdateUBO = false;
         this._isUploadInstance = false;
         this._isUploadBatched = false;
         this._blitDesc?.reset();
@@ -665,7 +672,7 @@ class RenderPassLayoutInfo {
         const gfxBuf = deviceBuf?.buffer;
 
         if (!gfxTex && !gfxBuf) {
-            throw new Error(`Could not find texture with resource name ${this._inputName}`);
+            throw Error(`Could not find texture with resource name ${this._inputName}`);
         }
 
         this._resID = context.resourceGraph.vertex(this._inputName);
@@ -1211,6 +1218,7 @@ class DeviceRenderScene implements RecordingInterface {
     }
 
     protected _updateRenderData (): void {
+        if (this._currentQueue.isUpdateUBO) return;
         const devicePass = this._currentQueue.devicePass;
         const rasterId = devicePass.rasterID;
         const passRenderData = context.renderGraph.getData(rasterId);
@@ -1221,7 +1229,10 @@ class DeviceRenderScene implements RecordingInterface {
         const queueId = this._currentQueue.queueId;
         const queueRenderData = context.renderGraph.getData(queueId)!;
         this._updateGlobal(queueRenderData, sceneId);
+        const sceneRenderData = context.renderGraph.getData(sceneId)!;
+        if (sceneRenderData) this._updateGlobal(sceneRenderData, sceneId);
         context.passDescriptorSet?.update();
+        this._currentQueue.isUpdateUBO = true;
     }
 
     private _applyViewport (): void {
