@@ -55,6 +55,14 @@ jobs:
           ref: 'refs/pull/${{ github.event.pull_request.number }}/head'
           path: './engine-HEAD'
 
+      - name: Head merges base
+        working-directory: ./engine-HEAD
+        run: |
+          git merge ${{ github.base_ref }}
+          echo '--------------------------------------------------------'
+          git --no-pager log -10
+          echo '--------------------------------------------------------'
+
       - run: |
           "EXT_VERSION_HEAD=$(node ./engine-HEAD/.github/workflows/get-native-external-version.js)" >> $env:GITHUB_ENV
         shell: pwsh
