@@ -26,8 +26,13 @@ jobs:
           repository: ${{ github.event.pull_request.base.repo.full_name }}
           ref: ${{ github.base_ref }}
           path: './engine'
-      - run: |
+
+      - name: Get Base Ref
+        working-directory: ./engine
+        run: |
           echo "BASE_REF=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
+      - run: |
           echo "EXT_VERSION=$(node ./engine/.github/workflows/get-native-external-version.js)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
