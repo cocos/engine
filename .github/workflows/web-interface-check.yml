@@ -71,7 +71,7 @@ jobs:
           HEAD_REF=$(git rev-parse HEAD)
           echo "HEAD_REF: $HEAD_REF"
           echo "--------------------------------------------------------"
-          echo "HEAD LOG:""
+          echo "HEAD LOG:"
           git --no-pager log -3
           echo "--------------------------------------------------------"
           git fetch origin ${{ env.BASE_REF }}
