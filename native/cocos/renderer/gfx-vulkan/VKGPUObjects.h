@@ -30,6 +30,7 @@
 #include "base/std/container/unordered_set.h"
 #include "core/memop/CachedArray.h"
 #include "gfx-base/GFXDeviceObject.h"
+#include "vulkan/vulkan_core.h"
 
 #define TBB_USE_EXCEPTIONS 0 // no-rtti for now
 #include "tbb/concurrent_unordered_map.h"
@@ -53,6 +54,8 @@ public:
     VkPhysicalDeviceVulkan12Features physicalDeviceVulkan12Features{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_VULKAN_1_2_FEATURES};
     VkPhysicalDeviceFragmentShadingRateFeaturesKHR physicalDeviceFragmentShadingRateFeatures{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_FRAGMENT_SHADING_RATE_FEATURES_KHR};
     VkPhysicalDeviceDepthStencilResolveProperties physicalDeviceDepthStencilResolveProperties{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_DEPTH_STENCIL_RESOLVE_PROPERTIES};
+    VkPhysicalDeviceRayTracingPipelinePropertiesKHR physicalDeviceRaytracingPipelineProperties{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_RAY_TRACING_PIPELINE_PROPERTIES_KHR};
+    VkPhysicalDeviceAccelerationStructurePropertiesKHR physicalDeviceAccelerationStructureProperties{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_ACCELERATION_STRUCTURE_PROPERTIES_KHR};
     VkPhysicalDeviceProperties physicalDeviceProperties{};
     VkPhysicalDeviceProperties2 physicalDeviceProperties2{VK_STRUCTURE_TYPE_PHYSICAL_DEVICE_PROPERTIES_2};
     VkPhysicalDeviceMemoryProperties physicalDeviceMemoryProperties{};
@@ -329,12 +332,24 @@ struct CCVKGPUShaderStage {
     VkShaderModule vkShader = VK_NULL_HANDLE;
 };
 
+/*
+ * Use for ray tracing shaders
+ */
+struct CCVKGPUShaderGroup {
+    RayTracingShaderGroupType type{RayTracingShaderGroupType::GENERAL};
+    uint32_t generalShader{VK_SHADER_UNUSED_KHR};
+    uint32_t closestHitShader{VK_SHADER_UNUSED_KHR};
+    uint32_t anyHitShader{VK_SHADER_UNUSED_KHR};
+    uint32_t intersectionShader{VK_SHADER_UNUSED_KHR};
+};
+
 struct CCVKGPUShader : public CCVKGPUDeviceObject {
     void shutdown() override;
 
     ccstd::string name;
     AttributeList attributes;
     ccstd::vector<CCVKGPUShaderStage> gpuStages;
+    ccstd::vector<CCVKGPUShaderGroup> gpuGroups;
     bool initialized = false;
 };
 
@@ -350,10 +365,33 @@ struct CCVKGPUInputAssembler : public CCVKGPUDeviceObject {
     ccstd::vector<VkDeviceSize> vertexBufferOffsets;
 };
 
+struct CCVKGPUAccelerationStructure : public CCVKGPUDeviceObject {
+    void shutdown() override;
+
+    ASBuildFlags buildFlags = ASBuildFlagBits::PREFER_FAST_BUILD | ASBuildFlagBits::ALLOW_UPDATE;
+    VkAccelerationStructureBuildGeometryInfoKHR buildGeometryInfo{VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_GEOMETRY_INFO_KHR};
+    VkAccelerationStructureBuildSizesInfoKHR buildSizesInfo{VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_BUILD_SIZES_INFO_KHR};
+    ccstd::vector<VkAccelerationStructureBuildRangeInfoKHR> rangeInfos{};
+
+    std::variant<ccstd::vector<ASTriangleMesh>, ccstd::vector<ASAABB>, ccstd::vector<ASInstance>> geomtryInfos;
+    ccstd::vector<VkAccelerationStructureGeometryKHR> geometries;
+    
+    VkQueryPool vkCompactedSizeQueryPool = VK_NULL_HANDLE;
+    
+    IntrusivePtr<CCVKGPUBuffer> scratchBuffer;
+    IntrusivePtr<CCVKGPUBuffer> backingBuffer;
+    IntrusivePtr<CCVKGPUBuffer> instancesBuffer;
+    IntrusivePtr<CCVKGPUBuffer> aabbsBuffer;
+
+    VkAccelerationStructureKHR vkAccelerationStructure = VK_NULL_HANDLE;
+};
+
+
 union CCVKDescriptorInfo {
     VkDescriptorImageInfo image;
     VkDescriptorBufferInfo buffer;
     VkBufferView texelBufferView;
+    VkAccelerationStructureKHR accelerationStructure;
 };
 struct CCVKGPUDescriptor {
     DescriptorType type = DescriptorType::UNKNOWN;
@@ -361,6 +399,7 @@ struct CCVKGPUDescriptor {
     ConstPtr<CCVKGPUBufferView> gpuBufferView;
     ConstPtr<CCVKGPUTextureView> gpuTextureView;
     ConstPtr<CCVKGPUSampler> gpuSampler;
+    ConstPtr<CCVKGPUAccelerationStructure> gpuAccelerrationStructure;
 };
 
 struct CCVKGPUDescriptorSetLayout;
@@ -379,6 +418,7 @@ struct CCVKGPUDescriptorSet : public CCVKGPUDeviceObject {
         VkDescriptorSet vkDescriptorSet = VK_NULL_HANDLE;
         ccstd::vector<CCVKDescriptorInfo> descriptorInfos;
         ccstd::vector<VkWriteDescriptorSet> descriptorUpdateEntries;
+        VkWriteDescriptorSetAccelerationStructureKHR writeDesAS;
     };
     ccstd::vector<Instance> instances; // per swapchain image
 
@@ -411,6 +451,9 @@ struct CCVKGPUPipelineState : public CCVKGPUDeviceObject {
     DynamicStateList dynamicStates;
     ConstPtr<CCVKGPURenderPass> gpuRenderPass;
     uint32_t subpass = 0U;
+    //ray tracing only 
+    uint32_t maxRecursionDepth = 1U;
+    
     VkPipeline vkPipeline = VK_NULL_HANDLE;
 };
 
@@ -899,6 +942,14 @@ private:
     void update(const CCVKGPUDescriptorSet *gpuDescriptorSet) {
         const CCVKGPUDescriptorSet::Instance &instance = gpuDescriptorSet->instances[_device->curBackBufferIndex];
         if (gpuDescriptorSet->gpuLayout->vkDescriptorUpdateTemplate) {
+            /*
+            auto it = std::find_if(instance.descriptorInfos.cbegin(), instance.descriptorInfos.cend(), [](const CCVKDescriptorInfo &info) {
+                return info.accelerationStructure != VK_NULL_HANDLE;
+            });
+            if (it!=instance.descriptorInfos.cend()) {
+                CC_LOG_WARNING("wdwdw");
+            }*/
+
             _updateFn(_device->vkDevice, instance.vkDescriptorSet,
                       gpuDescriptorSet->gpuLayout->vkDescriptorUpdateTemplate, instance.descriptorInfos.data());
         } else {
@@ -934,6 +985,10 @@ public:
     }
     void connect(CCVKGPUSampler *sampler, VkDescriptorImageInfo *descriptor) {
         _samplers[sampler].push(descriptor);
+    }
+    void connect(CCVKGPUDescriptorSet *set, const CCVKGPUAccelerationStructure *accel, VkAccelerationStructureKHR *descriptor) {
+        _accels[accel].sets.insert(set);
+        _accels[accel].descriptors.push(descriptor);
     }
 
     void update(const CCVKGPUBufferView *buffer, VkDescriptorBufferInfo *descriptor) {
@@ -982,6 +1037,23 @@ public:
                 break;
             }
         }
+    }
+
+    void update(const CCVKGPUAccelerationStructure *accel, VkAccelerationStructureKHR *descriptor) {
+        /*
+        for (const auto &it : _accels) {
+            if (it.first->vkAccelerationStructure != accel->vkAccelerationStructure) continue;
+            const auto &info = it.second;
+            for (uint32_t i = 0U; i < info.descriptors.size(); i++) {
+                doUpdate(accel, info.descriptors[i]);
+            }
+            for (const auto *set : info.sets) {
+                _descriptorSetHub->record(set);
+            }
+        }*/
+        auto it = _accels.find(accel);
+        if (it == _accels.end()) return;
+        doUpdate(accel, descriptor);
     }
     // for resize events
     void update(const CCVKGPUBufferView *oldView, const CCVKGPUBufferView *newView) {
@@ -1046,6 +1118,13 @@ public:
         descriptors.fastRemove(descriptors.indexOf(descriptor));
     }
 
+    void disengage(const CCVKGPUAccelerationStructure *accel,VkAccelerationStructureKHR *descriptor) {
+        auto it = _accels.find(accel);
+        if (it == _accels.end()) return;
+        auto &descriptors = it->second.descriptors;
+        descriptors.fastRemove(descriptors.indexOf(descriptor));
+    }
+
 private:
     void doUpdate(const CCVKGPUBufferView *buffer, VkDescriptorBufferInfo *descriptor) {
         descriptor->buffer = buffer->gpuBuffer->vkBuffer;
@@ -1080,6 +1159,10 @@ private:
         descriptor->sampler = sampler->vkSampler;
     }
 
+    static void doUpdate(const CCVKGPUAccelerationStructure *accel, VkAccelerationStructureKHR *descriptor) {
+        *descriptor = accel->vkAccelerationStructure;
+    }
+
     template <typename T>
     struct DescriptorInfo {
         ccstd::unordered_set<CCVKGPUDescriptorSet *> sets;
@@ -1090,6 +1173,7 @@ private:
     ccstd::unordered_map<const CCVKGPUBufferView *, DescriptorInfo<VkDescriptorBufferInfo>> _gpuBufferViewSet;
     ccstd::unordered_map<const CCVKGPUTextureView *, DescriptorInfo<VkDescriptorImageInfo>> _gpuTextureViewSet;
     ccstd::unordered_map<const CCVKGPUSampler *, CachedArray<VkDescriptorImageInfo *>> _samplers;
+    ccstd::unordered_map<const CCVKGPUAccelerationStructure *, DescriptorInfo<VkAccelerationStructureKHR>> _accels;
 };
 
 /**
@@ -1121,6 +1205,7 @@ public:
     DEFINE_RECYCLE_BIN_COLLECT_FN(CCVKGPUSampler, RecycledType::SAMPLER, res.vkSampler = gpuRes->vkSampler)
     DEFINE_RECYCLE_BIN_COLLECT_FN(CCVKGPUQueryPool, RecycledType::QUERY_POOL, res.vkQueryPool = gpuRes->vkPool)
     DEFINE_RECYCLE_BIN_COLLECT_FN(CCVKGPUPipelineState, RecycledType::PIPELINE_STATE, res.vkPipeline = gpuRes->vkPipeline)
+    DEFINE_RECYCLE_BIN_COLLECT_FN(CCVKGPUAccelerationStructure,RecycledType::ACCELERATION_STRUCTURE,res.vkAccelerationStructure = gpuRes->vkAccelerationStructure)
 
     void clear();
 
@@ -1137,7 +1222,8 @@ private:
         SAMPLER,
         PIPELINE_STATE,
         DESCRIPTOR_SET,
-        EVENT
+        EVENT,
+        ACCELERATION_STRUCTURE
     };
     struct Buffer {
         VkBuffer vkBuffer;
@@ -1167,6 +1253,7 @@ private:
             VkSampler vkSampler;
             VkEvent vkEvent;
             VkPipeline vkPipeline;
+            VkAccelerationStructureKHR vkAccelerationStructure;
         };
     };
 

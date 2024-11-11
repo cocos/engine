@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "GFXAccelerationStructure.h"
 #include "GFXBuffer.h"
 #include "GFXCommandBuffer.h"
 #include "GFXDescriptorSet.h"
@@ -88,6 +89,7 @@ public:
     inline DescriptorSetLayout *createDescriptorSetLayout(const DescriptorSetLayoutInfo &info);
     inline PipelineLayout *createPipelineLayout(const PipelineLayoutInfo &info);
     inline PipelineState *createPipelineState(const PipelineStateInfo &info);
+    inline AccelerationStructure *createAccelerationStructure(const AccelerationStructureInfo &info);
 
     virtual Sampler *getSampler(const SamplerInfo &info);
     virtual GeneralBarrier *getGeneralBarrier(const GeneralBarrierInfo &info);
@@ -156,6 +158,7 @@ protected:
     virtual DescriptorSetLayout *createDescriptorSetLayout() = 0;
     virtual PipelineLayout *createPipelineLayout() = 0;
     virtual PipelineState *createPipelineState() = 0;
+    virtual AccelerationStructure *createAccelerationStructure() = 0;
 
     virtual Sampler *createSampler(const SamplerInfo &info) { return ccnew Sampler(info); }
     virtual GeneralBarrier *createGeneralBarrier(const GeneralBarrierInfo &info) { return ccnew GeneralBarrier(info); }
@@ -310,6 +313,12 @@ PipelineLayout *Device::createPipelineLayout(const PipelineLayoutInfo &info) {
 
 PipelineState *Device::createPipelineState(const PipelineStateInfo &info) {
     PipelineState *res = createPipelineState();
+    res->initialize(info);
+    return res;
+}
+
+AccelerationStructure* Device::createAccelerationStructure(const AccelerationStructureInfo& info) {
+    AccelerationStructure *res = createAccelerationStructure();
     res->initialize(info);
     return res;
 }

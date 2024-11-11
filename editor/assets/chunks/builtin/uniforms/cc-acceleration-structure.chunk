@@ -1,0 +1,6 @@
+
+#pragma extension([GL_EXT_ray_query, __VERSION__ >= 460, enable])
+
+#pragma builtin(global)
+layout(set = 0, binding = 8) uniform accelerationStructureEXT cc_topLevelAS;
+

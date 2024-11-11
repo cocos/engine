@@ -127,6 +127,8 @@ constexpr DescriptorType DESCRIPTOR_DYNAMIC_TYPE = static_cast<DescriptorType>(
     static_cast<uint32_t>(DescriptorType::DYNAMIC_STORAGE_BUFFER) |
     static_cast<uint32_t>(DescriptorType::DYNAMIC_UNIFORM_BUFFER));
 
+constexpr DescriptorType ACCELERATION_STRUCTURE_TYPE = static_cast<DescriptorType>(DescriptorType::ACCELERATION_STRUCTURE);
+
 extern const FormatInfo GFX_FORMAT_INFOS[];
 
 std::pair<uint32_t, uint32_t> formatAlignment(Format format);

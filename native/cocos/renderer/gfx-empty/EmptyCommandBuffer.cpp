@@ -125,5 +125,24 @@ void EmptyCommandBuffer::endQuery(QueryPool *queryPool, uint32_t id) {
 void EmptyCommandBuffer::resetQueryPool(QueryPool *queryPool) {
 }
 
+void EmptyCommandBuffer::buildAccelerationStructure(AccelerationStructure* accel) {
+}
+
+void EmptyCommandBuffer::buildAccelerationStructure(AccelerationStructure* accel, Buffer* scratchBuffer) {
+    
+}
+
+void EmptyCommandBuffer::updateAccelerationStructure(AccelerationStructure* accel) {
+    
+}
+
+void EmptyCommandBuffer::compactAccelerationStructure(AccelerationStructure *accel, AccelerationStructure *res) {
+    
+}
+
+void EmptyCommandBuffer::traceRays(const RayTracingInfo& info) {
+    
+}
+
 } // namespace gfx
 } // namespace cc

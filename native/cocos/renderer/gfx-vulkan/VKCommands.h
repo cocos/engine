@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include "VKDevice.h"
 #include "VKGPUObjects.h"
 
 namespace cc {
@@ -44,10 +45,16 @@ void cmdFuncCCVKCreateDescriptorSetLayout(CCVKDevice *device, CCVKGPUDescriptorS
 void cmdFuncCCVKCreatePipelineLayout(CCVKDevice *device, CCVKGPUPipelineLayout *gpuPipelineLayout);
 void cmdFuncCCVKCreateGraphicsPipelineState(CCVKDevice *device, CCVKGPUPipelineState *gpuPipelineState);
 void cmdFuncCCVKCreateComputePipelineState(CCVKDevice *device, CCVKGPUPipelineState *gpuPipelineState);
+void cmdFuncCCVKCreateRayTracingPipelineState(CCVKDevice *device, CCVKGPUPipelineState *gpuPipelineState);
 void cmdFuncCCVKCreateGeneralBarrier(CCVKDevice *device, CCVKGPUGeneralBarrier *gpuGeneralBarrier);
+void cmdFuncCCVKCreateAcclerationStructure(CCVKDevice *device, CCVKGPUAccelerationStructure *gpuAccelerationStructure);
 
 void cmdFuncCCVKUpdateBuffer(CCVKDevice *device, CCVKGPUBuffer *gpuBuffer, const void *buffer, uint32_t size, const CCVKGPUCommandBuffer *cmdBuffer = nullptr);
 void cmdFuncCCVKCopyBuffersToTexture(CCVKDevice *device, const uint8_t *const *buffers, CCVKGPUTexture *gpuTexture, const BufferTextureCopy *regions, uint32_t count, const CCVKGPUCommandBuffer *gpuCommandBuffer);
+void cmdFuncCCVKBuildAccelerationStructure(CCVKDevice *device, CCVKGPUAccelerationStructure *dstAccel, const CCVKGPUCommandBuffer *gpuCommandBuffer);
+void cmdFuncCCVKBuildAccelerationStructure(CCVKDevice *device, CCVKGPUAccelerationStructure *dstAccel, const CCVKGPUCommandBuffer *gpuCommandBuffer,const CCVKGPUBuffer* scratchBuffer);
+void cmdFuncCCVKUpdateAccelerationStructure(CCVKDevice *device, CCVKGPUAccelerationStructure *accel, const CCVKGPUCommandBuffer *gpuCommandBuffer);
+void cmdFuncCCVKCompactAccelerationStructure(CCVKDevice *device, CCVKGPUAccelerationStructure *accel,CCVKGPUAccelerationStructure *res, const CCVKGPUCommandBuffer *gpuCommandBuffer);
 void cmdFuncCCVKCopyTextureToBuffers(CCVKDevice *device, CCVKGPUTexture *srcTexture, CCVKGPUBufferView *destBuffer, const BufferTextureCopy *regions, uint32_t count, const CCVKGPUCommandBuffer *gpuCommandBuffer);
 
 void cmdFuncCCVKDestroyQueryPool(CCVKGPUDevice *device, CCVKGPUQueryPool *gpuQueryPool);
@@ -58,8 +65,10 @@ void cmdFuncCCVKDestroyFramebuffer(CCVKGPUDevice *device, CCVKGPUFramebuffer *gp
 void cmdFuncCCVKDestroyDescriptorSetLayout(CCVKGPUDevice *device, CCVKGPUDescriptorSetLayout *gpuDescriptorSetLayout);
 void cmdFuncCCVKDestroyPipelineLayout(CCVKGPUDevice *device, CCVKGPUPipelineLayout *gpuPipelineLayout);
 void cmdFuncCCVKDestroyPipelineState(CCVKGPUDevice *device, CCVKGPUPipelineState *gpuPipelineState);
+void cmdFuncCCVKDestroyAccelerationStructure(CCVKGPUDevice *device, CCVKGPUAccelerationStructure *gpuAccelerationStructure);
 
 void cmdFuncCCVKImageMemoryBarrier(const CCVKGPUCommandBuffer *gpuCommandBuffer, const ThsvsImageBarrier &imageBarrier);
+
 
 } // namespace gfx
 } // namespace cc

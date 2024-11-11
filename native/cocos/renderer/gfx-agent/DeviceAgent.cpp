@@ -275,6 +275,12 @@ PipelineState *DeviceAgent::createPipelineState() {
     return ccnew PipelineStateAgent(actor);
 }
 
+AccelerationStructure* DeviceAgent::createAccelerationStructure() {
+    AccelerationStructure *actor = _actor->createAccelerationStructure();
+    return nullptr;
+}
+
+
 Sampler *DeviceAgent::getSampler(const SamplerInfo &info) {
     return _actor->getSampler(info);
 }

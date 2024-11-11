@@ -46,6 +46,7 @@ protected:
     void doInit(const BufferViewInfo &info) override;
     void doDestroy() override;
     void doResize(uint32_t size, uint32_t count) override;
+    uint64_t doGetDeviceAddress() const override;
 
     void createBuffer(uint32_t size, uint32_t count);
     void createBufferView(uint32_t range);

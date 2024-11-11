@@ -61,8 +61,19 @@ void CCVKPipelineState::doInit(const PipelineStateInfo & /*info*/) {
 
     if (_bindPoint == PipelineBindPoint::GRAPHICS) {
         cmdFuncCCVKCreateGraphicsPipelineState(CCVKDevice::getInstance(), _gpuPipelineState);
-    } else {
+    } else if(_bindPoint == PipelineBindPoint::COMPUTE) {
         cmdFuncCCVKCreateComputePipelineState(CCVKDevice::getInstance(), _gpuPipelineState);
+    } else if (_bindPoint == PipelineBindPoint::RAY_TRACING) {
+        cmdFuncCCVKCreateRayTracingPipelineState(CCVKDevice::getInstance(), _gpuPipelineState);
+        /*
+        const uint32_t shaderGroupHandleSize = CCVKDevice::getInstance()->gpuContext()->physicalDeviceRaytracingPipelineProperties.shaderGroupHandleSize;
+        const uint32_t shaderGroupBaseAlignment = CCVKDevice::getInstance()->gpuContext()->physicalDeviceRaytracingPipelineProperties.shaderGroupBaseAlignment;
+        const uint32_t shaderGroupHandleAlignment = CCVKDevice::getInstance()->gpuContext()->physicalDeviceRaytracingPipelineProperties.shaderGroupHandleAlignment;
+        const uint32_t shaderGroupCount = static_cast<uint32_t>(_gpuPipelineState->gpuShader->gpuGroups.size());
+        const uint32_t shaderHandlesStorageSize = shaderGroupHandleSize * shaderGroupCount;
+        std::vector<uint8_t> shaderHandlesStorage(shaderHandlesStorageSize);
+        vkGetRayTracingShaderGroupHandlesKHR(CCVKDevice::getInstance()->gpuDevice()->vkDevice, _gpuPipelineState->vkPipeline, 0, shaderGroupCount, shaderHandlesStorageSize,shaderHandlesStorage.data());
+        */
     }
 }
 

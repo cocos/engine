@@ -60,7 +60,8 @@ void InputAssembler::initialize(const InputAssemblerInfo &info) {
     if (_indexBuffer) {
         _drawInfo.indexCount = _indexBuffer->getCount();
         _drawInfo.firstIndex = 0;
-    } else if (!_vertexBuffers.empty()) {
+    }
+    if (!_vertexBuffers.empty()) {
         _drawInfo.vertexCount = _vertexBuffers[0]->getCount();
         _drawInfo.firstVertex = 0;
         _drawInfo.vertexOffset = 0;

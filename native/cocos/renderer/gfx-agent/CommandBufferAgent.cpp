@@ -591,5 +591,25 @@ void CommandBufferAgent::customCommand(CustomCommand &&cmd) {
         });
 }
 
+void CommandBufferAgent::buildAccelerationStructure(AccelerationStructure* accel) {
+    //todo
+}
+
+void CommandBufferAgent::buildAccelerationStructure(AccelerationStructure* accel, Buffer* scratchBuffer) {
+    
+}
+
+void CommandBufferAgent::updateAccelerationStructure(AccelerationStructure* accel) {
+    //todo
+}
+
+void CommandBufferAgent::compactAccelerationStructure(AccelerationStructure *accel, AccelerationStructure *res) {
+    // todo
+}
+
+void CommandBufferAgent::traceRays(const RayTracingInfo& info) {
+    //todo
+}
+
 } // namespace gfx
 } // namespace cc

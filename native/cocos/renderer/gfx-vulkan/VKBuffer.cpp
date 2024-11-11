@@ -91,11 +91,17 @@ void CCVKBuffer::update(const void *buffer, uint32_t size) {
     cmdFuncCCVKUpdateBuffer(CCVKDevice::getInstance(), _gpuBuffer, buffer, size, nullptr);
 }
 
+uint64_t CCVKBuffer::doGetDeviceAddress() const {
+    const VkBufferDeviceAddressInfo addressInfo{VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO,nullptr,_gpuBuffer->vkBuffer};
+    return vkGetBufferDeviceAddressKHR(CCVKDevice::getInstance()->gpuDevice()->vkDevice, &addressInfo);
+}
+
+
 void CCVKGPUBuffer::shutdown() {
     CCVKDevice::getInstance()->gpuBarrierManager()->cancel(this);
     CCVKDevice::getInstance()->gpuRecycleBin()->collect(this);
     CCVKDevice::getInstance()->gpuBufferHub()->erase(this);
-
+    CC_ASSERT(CCVKDevice::getInstance()->getMemoryStatus().bufferSize >= size);
     CCVKDevice::getInstance()->getMemoryStatus().bufferSize -= size;
     CC_PROFILE_MEMORY_DEC(Buffer, size);
 }

@@ -48,6 +48,7 @@ private:
     void doInit(const BufferViewInfo &info) override;
     void doResize(uint32_t size, uint32_t count) override;
     void doDestroy() override;
+    uint64_t doGetDeviceAddress() const override;
 
     void flush(const uint8_t *buffer) override;
     uint8_t *getStagingAddress() const override;

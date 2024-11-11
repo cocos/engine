@@ -73,6 +73,11 @@ public:
     virtual void endQuery(QueryPool *queryPool, uint32_t id) = 0;
     virtual void resetQueryPool(QueryPool *queryPool) = 0;
     virtual void completeQueryPool(QueryPool *queryPool) {}
+    virtual void buildAccelerationStructure(AccelerationStructure *accel) = 0;
+    virtual void buildAccelerationStructure(AccelerationStructure *accel, Buffer *scratchBuffer) = 0;
+    virtual void updateAccelerationStructure(AccelerationStructure *accel) = 0;
+    virtual void compactAccelerationStructure(AccelerationStructure *accel, AccelerationStructure *res) = 0;
+    virtual void traceRays(const RayTracingInfo &info) = 0;
 
     using CustomCommand = std::function<void(void *)>;
     virtual void customCommand(CustomCommand &&cmd) {}

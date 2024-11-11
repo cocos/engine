@@ -1,0 +1,647 @@
+// Copyright (c) 2017-2020 Xiamen Yaji Software Co., Ltd.
+
+CCEffect %{
+  techniques:
+  - name: opaque
+    passes:
+    - vert: ray-query-vs
+      frag: ray-query-fs
+      properties: &props
+        tilingOffset:         { value: [1.0, 1.0, 0.0, 0.0] }
+        mainColor:            { value: [1.0, 1.0, 1.0, 1.0], target: albedo, linear: true, editor: { displayName: Albedo, type: color } }
+        albedoScale:          { value: [1.0, 1.0, 1.0], target: albedoScaleAndCutoff.xyz }
+        alphaThreshold:       { value: 0.5, target: albedoScaleAndCutoff.w, editor: { parent: USE_ALPHA_TEST, slide: true, range: [0, 1.0], step: 0.001 } }
+        occlusion:            { value: 1.0, target: pbrParams.x, editor: { slide: true, range: [0, 1.0], step: 0.001 } }
+        roughness:            { value: 0.8, target: pbrParams.y, editor: { slide: true, range: [0, 1.0], step: 0.001 } }
+        metallic:             { value: 0.6, target: pbrParams.z, editor: { slide: true, range: [0, 1.0], step: 0.001 } }
+        specularIntensity:    { value: 0.5, target: pbrParams.w, editor: { slide: true, range: [0.0, 1.0], step: 0.001 } }
+        emissive:             { value: [0.0, 0.0, 0.0, 1.0], linear: true, editor: { type: color } }
+        emissiveScale:        { value: [1.0, 1.0, 1.0], target: emissiveScaleParam.xyz }
+        normalStrength:       { value: 1.0, target: emissiveScaleParam.w, editor: { parent: USE_NORMAL_MAP, slide: true, range: [0, 5.0], step: 0.001 } }
+        mainTexture:          { value: grey, target: albedoMap, editor: { displayName: AlbedoMap } }
+        normalMap:            { value: normal }
+        pbrMap:               { value: grey }
+        metallicRoughnessMap: { value: grey }
+        occlusionMap:         { value: white }
+        emissiveMap:          { value: grey }
+    - &forward-add
+      vert: ray-query-vs
+      frag: ray-query-fs
+      phase: forward-add
+      propertyIndex: 0
+      embeddedMacros: { CC_FORWARD_ADD: true }
+      depthStencilState:
+        depthFunc: equal
+        depthTest: true
+        depthWrite: false
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: one
+          blendDst: one
+          blendSrcAlpha: zero
+          blendDstAlpha: one
+  - name: transparent
+    passes:
+    - vert: ray-query-vs
+      frag: ray-query-fs
+      embeddedMacros: { CC_FORCE_FORWARD_SHADING: true }
+      depthStencilState:
+        depthTest: true
+        depthWrite: false
+      blendState:
+        targets:
+        - blend: true
+          blendSrc: src_alpha
+          blendDst: one_minus_src_alpha
+          blendDstAlpha: one_minus_src_alpha
+      properties: *props
+    - *forward-add
+}%
+
+CCProgram shared-ubos %{
+  uniform Constants {
+    vec4 tilingOffset;
+    vec4 albedo;
+    vec4 albedoScaleAndCutoff;
+    vec4 pbrParams;
+    vec4 emissive;
+    vec4 emissiveScaleParam;
+  };
+}%
+
+CCProgram ray-query-vs %{
+  precision highp float;
+  #include <legacy/input-standard>
+  #include <builtin/uniforms/cc-global>
+  #include <legacy/decode-base>
+  #include <legacy/local-batch>
+  #include <shared-ubos>
+  #include <legacy/fog-vs>
+  #include <legacy/shadow-map-vs>
+
+  #if USE_VERTEX_COLOR
+    in vec4 a_color;
+    out lowp vec4 v_color;
+  #endif
+
+  out vec3 v_position;
+  out mediump vec3 v_normal;
+  out vec2 v_uv;
+  #if HAS_SECOND_UV
+    out mediump vec2 v_uv1;
+  #endif
+
+  #if CC_RECEIVE_SHADOW
+    out mediump vec2 v_shadowBias;
+  #endif
+
+  #if USE_NORMAL_MAP
+    out mediump vec4 v_tangent;
+  #else 
+    out mediump vec4 v_tangent;
+  #endif
+
+  #if HAS_SECOND_UV || CC_USE_LIGHTMAP
+    in vec2 a_texCoord1;
+  #endif
+
+  #if CC_USE_LIGHTMAP && !CC_FORWARD_ADD
+    #include <legacy/lightingmap-vs>
+  #endif
+
+  void main () {
+    StandardVertInput In;
+    CCVertInput(In);
+
+    mat4 matWorld, matWorldIT;
+    CCGetWorldMatrixFull(matWorld, matWorldIT);
+
+    vec4 pos = matWorld * In.position;
+
+    v_position = pos.xyz;
+    v_normal = normalize((matWorldIT * vec4(In.normal, 0.0)).xyz);
+
+    #if CC_RECEIVE_SHADOW
+      v_shadowBias = CCGetShadowBias();
+    #endif
+
+    #if USE_TWOSIDE
+      vec3 viewDirect = normalize(cc_cameraPos.xyz - v_position);
+      v_normal *= dot(v_normal, viewDirect) < 0.0 ? -1.0 : 1.0;
+    #endif
+
+    #if USE_NORMAL_MAP
+      v_tangent.xyz = normalize((matWorld * vec4(In.tangent.xyz, 0.0)).xyz);
+      v_tangent.w = In.tangent.w;
+    #else
+      v_tangent.xyz = normalize((matWorld * vec4(In.tangent.xyz, 0.0)).xyz);
+      v_tangent.w = In.tangent.w;
+    #endif
+
+    v_uv = a_texCoord * tilingOffset.xy + tilingOffset.zw;
+    #if SAMPLE_FROM_RT
+      CC_HANDLE_RT_SAMPLE_FLIP(v_uv);
+    #endif
+    #if HAS_SECOND_UV
+      v_uv1 = a_texCoord1 * tilingOffset.xy + tilingOffset.zw;
+      #if SAMPLE_FROM_RT
+        CC_HANDLE_RT_SAMPLE_FLIP(v_uv1);
+      #endif
+    #endif
+
+    #if USE_VERTEX_COLOR
+      v_color = a_color;
+    #endif
+
+    CC_TRANSFER_FOG(pos);
+    CC_TRANSFER_SHADOW(pos);
+
+    #if CC_USE_LIGHTMAP && !CC_FORWARD_ADD
+      CCLightingMapCaclUV();
+    #endif
+
+    gl_Position = cc_matProj * (cc_matView * matWorld) * In.position;
+  }
+}%
+
+CCProgram ray-query-fs %{
+  precision highp float;
+  #include <builtin/uniforms/cc-global>
+  #include <shared-ubos>
+  #include <legacy/fog-fs>
+  #include <legacy/standard-surface-entry>
+  #if CC_USE_LIGHTMAP && !CC_FORWARD_ADD
+    #include <legacy/lightingmap-fs>
+  #endif
+  
+  #if __VERSION__ >= 460
+    #include <builtin/uniforms/cc-acceleration-structure>
+    #include <builtin/uniforms/cc-scene-shading-data>
+  #endif
+
+  in vec3 v_position;
+  in vec2 v_uv;
+  #if HAS_SECOND_UV 
+    in mediump vec2 v_uv1;
+  #endif
+  in mediump vec3 v_normal;
+
+  #if CC_RECEIVE_SHADOW
+    in mediump vec2 v_shadowBias;
+  #endif
+
+  #if USE_VERTEX_COLOR
+    in lowp vec4 v_color;
+  #endif
+
+  #if USE_ALBEDO_MAP
+    uniform sampler2D albedoMap;
+    #pragma define-meta ALBEDO_UV options([v_uv, v_uv1])
+  #endif
+  #if USE_NORMAL_MAP
+    in mediump vec4 v_tangent;
+    uniform sampler2D normalMap;
+    #pragma define-meta NORMAL_UV options([v_uv, v_uv1])
+  # else 
+    in mediump vec4 v_tangent;
+  #endif
+  #pragma define-meta PBR_UV options([v_uv, v_uv1])
+  #if USE_PBR_MAP
+    uniform sampler2D pbrMap;
+  #endif
+  #if USE_METALLIC_ROUGHNESS_MAP
+    uniform sampler2D metallicRoughnessMap;
+  #endif
+  #if USE_OCCLUSION_MAP
+    uniform sampler2D occlusionMap;
+  #endif
+  #if USE_EMISSIVE_MAP
+    uniform sampler2D emissiveMap;
+    #pragma define-meta EMISSIVE_UV options([v_uv, v_uv1])
+  #endif
+
+  #pragma define OCCLUSION_CHANNEL          r
+  #pragma define ROUGHNESS_CHANNEL          g
+  #pragma define METALLIC_CHANNEL           b
+  #pragma define SPECULAR_INTENSITY_CHANNEL a
+
+  #if USE_ALPHA_TEST
+    #pragma define-meta ALPHA_TEST_CHANNEL options([a, r])
+  #endif
+
+  #if __VERSION__ >= 460
+  uint baseHash( uvec2 p )
+  {
+    p = 1103515245U*((p >> 1U)^(p.yx));
+    uint h32 = 1103515245U*((p.x)^(p.y>>3U));
+    return h32^(h32 >> 16);
+  }
+
+  float hash1(inout float seed)
+  {
+    uint n = baseHash(floatBitsToUint(vec2(seed+=.1,seed+=.1)));
+    return float(n)/float(0xffffffffU);
+  }
+
+  vec3 random_in_unit_hemisphere(float seed)
+  {
+    float u = hash1(seed);
+    float v = hash1(seed);
+    float theta = u*2.0*PI;
+    float sinTheta = sin(theta);
+    float cosTheta = cos(theta);
+    float cosPhi = v;
+    float sinPhi = sqrt(1.0 - cosPhi * cosPhi);
+    float x = sinPhi*cosTheta;
+    float y = sinPhi*sinTheta;
+    float z = cosPhi;
+    return vec3(x,y,z);
+  }
+
+  vec3 random_in_unit_hemisphere_cosine(float seed)
+  {
+    float u = hash1(seed);
+    float v = hash1(seed);
+    float sqrt_u = sqrt(u);
+    float x = sqrt_u*cos(2*PI*v);
+    float y = sqrt_u*sin(2*PI*v);
+    float z = sqrt(1.0-u);
+    return vec3(x,y,z);
+  }
+
+  // from https://www.shadertoy.com/view/XtGBDW
+  #define LEVEL 15U
+  #define WIDTH ( (1U << LEVEL) )
+  #define AREA ( WIDTH * WIDTH )
+
+  uint hilbertIndex( uvec2 Position )
+  {   
+      uvec2 Regions;
+      uint Index = 0U;
+      for( uint CurLevel = WIDTH/2U; CurLevel > 0U; CurLevel /= 2U )
+      {
+          uvec2 Region = uvec2(greaterThan((Position & uvec2(CurLevel)), uvec2(0U)));
+          Index += CurLevel * CurLevel * ( (3U * Region.x) ^ Region.y);
+          if( Region.y == 0U )
+          {
+              if( Region.x == 1U )
+              {
+                  Position = uvec2(WIDTH - 1U) - Position;
+              }
+              Position.xy = Position.yx;
+          }
+      }
+      
+      return Index;
+  }
+
+  //From https://www.shadertoy.com/view/3lycDK
+  float blue_noise2(vec2 p)
+  {
+    uint y = hilbertIndex(uvec2(p));
+    y += uint(cc_time.z);
+    uint x =  y % (1u << 17u);
+    const float phi = 2.0/(sqrt(5.0)+1.0);
+	  return fract(0.5+phi*float(x));
+  }
+
+  float calculate_ao(in int frame_id,in float seed,in mat3 TBN,in vec3 point,in float kernel_size){
+    float ao = .0;
+    const int AO_SAMPLES = 1;
+    const ivec2 tile_offset[4] = {ivec2(0,0),ivec2(0,1),ivec2(1,0),ivec2(1,1)};
+    bool should_trace = mod(vec2(ivec2(gl_FragCoord.xy+tile_offset[frame_id])),2)==vec2(0,0);
+    if(true){
+      rayQueryEXT rayQuery;
+      for(int i = 0;i<AO_SAMPLES;++i){
+        seed = hash1(seed);
+        //seed = blue_noise2(gl_FragCoord.xy);
+        vec3 direction = TBN*random_in_unit_hemisphere_cosine(seed);
+        rayQueryInitializeEXT(rayQuery, cc_topLevelAS,gl_RayFlagsTerminateOnFirstHitEXT, 0xFF, point, 0.2, direction, kernel_size);
+        while(rayQueryProceedEXT(rayQuery));
+        if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT)
+        {
+          ao += 1.0;
+        }
+      }
+    }
+    if(AO_SAMPLES > 0){
+      ao /= float(AO_SAMPLES);
+    }
+    return ao;
+  }
+
+  struct HitRecord{
+    vec3 position;
+    vec3 normal;
+    vec2 uv;
+    vec4 tangent;
+    vec3 barycentrics;
+    vec3 albedo;
+  };
+
+  const vec3 color_lut[10] = {vec3(0.0,1.0,0.0),vec3(1.0,0.0,0.0),vec3(0.0,0.0,1.0),vec3(0.0,1.0,0.0),vec3(1.0,0.0,0.0),vec3(0.0,0.0,1.0),vec3(0.0,1.0,0.0),vec3(1.0,0.0,0.0),vec3(0.0,0.0,1.0),vec3(0.0,1.0,0.0)};
+
+  HitRecord getHitRecordObjectSpace(rayQueryEXT rayQuery){
+    HitRecord hitRecord;
+    int hit_instance_id = rayQueryGetIntersectionInstanceCustomIndexEXT(rayQuery,true);
+    MeshDesc mesh = instanceDescs[hit_instance_id];
+    int hit_geom_id = rayQueryGetIntersectionGeometryIndexEXT(rayQuery,true);
+    GeomDesc geom = geomDescs[mesh.subMeshGeometryOffset+hit_geom_id];
+    int hit_prim_id = rayQueryGetIntersectionPrimitiveIndexEXT(rayQuery,true);
+    ivec3 index;
+
+    if(mesh.padding == 0){
+      //IndicesBuffer16  indices  = IndicesBuffer16(geom.indexAddress);
+      index = IndicesBuffer16(geom.indexAddress).i[hit_prim_id];
+    }else{
+      //IndicesBuffer32  indices  = IndicesBuffer32(geom.indexAddress);
+      index = IndicesBuffer32(geom.indexAddress).i[hit_prim_id];
+    }
+    
+    VertexAttributesBuffer vertexAttr = VertexAttributesBuffer(geom.vertexAddress);
+    VertexAttributes va0 = vertexAttr.v[index.x];
+    VertexAttributes va1 = vertexAttr.v[index.y];
+    VertexAttributes va2 = vertexAttr.v[index.z];
+    vec2 bary = rayQueryGetIntersectionBarycentricsEXT(rayQuery,true);
+    const vec3 barycentrics = vec3(1.0 - bary.x - bary.y, bary.x, bary.y);
+    hitRecord.barycentrics = barycentrics;
+    hitRecord.position = mat3(va0.position,va1.position,va2.position)*barycentrics;
+    vec3 tmpu = hitRecord.position - va0.position;
+    vec3 tmpv = hitRecord.position - va1.position;
+    vec3 tmpw = hitRecord.position - va2.position;
+    float dotu = min(0.0, dot(tmpu, va0.normal));
+    float dotv = min(0.0, dot(tmpv, va1.normal));
+    float dotw = min(0.0, dot(tmpw, va2.normal));
+    tmpu -= dotu * va0.normal;
+    tmpv -= dotv * va1.normal;
+    tmpw -= dotw * va2.normal;
+    hitRecord.position += mat3(tmpu,tmpv,tmpw)*barycentrics;
+    hitRecord.normal = mat3(va0.normal,va1.normal,va2.normal)*barycentrics;
+    hitRecord.uv = barycentrics.x * va0.texCoord + barycentrics.y * va1.texCoord + barycentrics.z * va2.texCoord;
+    hitRecord.tangent = barycentrics.x * va0.tangent + barycentrics.y * va1.tangent + barycentrics.z * va2.tangent;
+    hitRecord.albedo = vec3(1.0);
+    
+    return hitRecord;
+  }
+
+  HitRecord getHitRecordWorldSpace(rayQueryEXT rayQuery){
+    HitRecord hitRecord = getHitRecordObjectSpace(rayQuery);
+    mat4x3 objToWorld = rayQueryGetIntersectionObjectToWorldEXT(rayQuery,true);
+    mat4x3 worldToObj = rayQueryGetIntersectionWorldToObjectEXT(rayQuery,true);
+    hitRecord.position = (objToWorld*vec4(hitRecord.position,1.0)).xyz;
+    hitRecord.normal = normalize((objToWorld*vec4(hitRecord.normal,0.0)).xyz);
+    hitRecord.tangent = vec4((objToWorld*vec4(hitRecord.tangent.xyz,0.0)),1.0);
+    return hitRecord;
+  }
+
+  vec3 calculate_diffuse(in int frame_id,in float seed,in mat3 TBN,in vec3 point,in StandardSurface s){
+    vec3 result = vec3(0.0);
+    const int SAMPLES = 1;
+    const ivec2 tile_offset[4] = {ivec2(0,0),ivec2(0,1),ivec2(1,0),ivec2(1,1)};
+    bool should_trace = mod(vec2(ivec2(gl_FragCoord.xy+tile_offset[frame_id])),2)==vec2(0,0);
+    if(true){
+      rayQueryEXT rayQuery;
+      for(int i = 0;i<SAMPLES;++i){
+        seed = hash1(seed);
+        //seed = blue_noise2(gl_FragCoord.xy);
+        vec3 direction = TBN*random_in_unit_hemisphere_cosine(seed);
+        rayQueryInitializeEXT(rayQuery, cc_topLevelAS,gl_RayFlagsOpaqueEXT, 0xFF, point, 0.2, direction, 1000.0);
+        while(rayQueryProceedEXT(rayQuery));
+        if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT)
+        {
+          HitRecord hit = getHitRecordWorldSpace(rayQuery);
+          vec3 bitangent = cross(hit.normal, hit.tangent.xyz) * hit.tangent.w; 
+          float ao = calculate_ao(frame_id,seed,mat3(normalize(hit.tangent.xyz),normalize(bitangent), normalize(hit.normal)),hit.position,10.0);
+          result += hit.albedo*(1.0-ao)/PI;
+        }
+      }
+    }
+
+    if(SAMPLES > 0){
+      result /= float(SAMPLES);
+    }
+
+    return result;
+  }
+  /*
+  float sdfSphere(in vec3 p,vec3 center,float radius)
+  {
+    return length(p-center)-radius;
+  }*/
+
+  /*
+  float sdfPlane(in vec3 p,vec3 normal,float d)
+  {
+    return dot(p,normal)+d;
+  }*/
+
+  // float sdfSphereDisplace(vec3 p, vec3 center,float ra)
+  // {
+  //   float displacement = sin(5.0 * p.x) * sin(5.0 * p.y) * sin(5.0 * p.z) * 0.25;
+  //   return displacement + sdfSphere(p, center, ra);
+  // }
+
+  // float sdfSphereTwist(vec3 p, vec3 center,float ra)
+  // {
+  //   const float k = 1.0*abs(cos(0.05*cc_time.w)); // or some other amount
+  //   float c = cos(k*p.y);
+  //   float s = sin(k*p.y);
+  //   mat2  m = mat2(c,-s,s,c);
+  //   vec3  q = vec3(m*p.xz,p.y);
+  //   return sdfSphereDisplace(q,center,ra);
+  // }
+
+  // float sdfSmoothUnion(float d1, float d2, float k)
+  // {
+  //   float h = clamp(0.5+0.5*(d2-d1)/k, 0.0, 1.0);
+  //   return mix(d2, d1, h) - k*h*(1.0-h);
+  // }
+
+  // vec3 calculate_normal(vec3 p, vec3 center, float r)
+  // {
+  //   const float h = 1e-6;
+  //   const vec2 k = vec2(1,-1);
+  //   return normalize( k.xyy*sdfSphereTwist(p + k.xyy*h,center,r ) + 
+  //                     k.yyx*sdfSphereTwist(p + k.yyx*h,center,r ) + 
+  //                     k.yxy*sdfSphereTwist(p + k.yxy*h,center,r ) + 
+  //                     k.xxx*sdfSphereTwist(p + k.xxx*h,center,r ) );
+  // }
+
+  /*
+  bool raymarchingSphere(vec3 ro, vec3 rd,vec3 center,float r,float tMin,float tMax,out float t,out vec3 normal){
+    t = 0.001;
+    float tmax = 100.0;
+    const float MIN_HIT_DIST = 1e-5;
+
+    for(int i = 0; i < 64; i++){
+      vec3 cur_pos = ro + t*rd;
+      float dist = sdfSphereTwist(cur_pos,center,r);
+      if(dist < MIN_HIT_DIST){
+        normal = calculate_normal(cur_pos,center,r);
+        return true;
+      }
+      if(t > tmax){
+        return false;
+      }
+      t+= dist;
+    }
+    return false;
+  }*/
+
+  #endif
+
+  void surf (out StandardSurface s) {
+    vec4 baseColor = albedo;
+    #if USE_VERTEX_COLOR
+      baseColor.rgb *= SRGBToLinear(v_color.rgb); // use linear
+      baseColor.a *= v_color.a;
+    #endif
+    #if USE_ALBEDO_MAP
+      vec4 texColor = texture(albedoMap, ALBEDO_UV);
+      texColor.rgb = SRGBToLinear(texColor.rgb);
+      baseColor *= texColor;
+    #endif
+    s.albedo = baseColor;
+    s.albedo.rgb *= albedoScaleAndCutoff.xyz;
+
+    #if USE_ALPHA_TEST
+      if (s.albedo.ALPHA_TEST_CHANNEL < albedoScaleAndCutoff.w) discard;
+    #endif
+
+    #if CC_USE_LIGHTMAP && !CC_FORWARD_ADD
+      vec4 lightColor = texture(cc_lightingMap, v_luv.xy);
+      s.lightmap.a = lightColor.a;
+      s.lightmap.rgb = lightColor.xyz * v_luv.z;
+      s.lightmap_test = v_luv.z; /*lum*/
+    #endif
+
+    s.normal = v_normal;
+
+    #if CC_RECEIVE_SHADOW
+      s.shadowBias = v_shadowBias;
+    #endif
+
+    mat3 TBN;
+
+    #if USE_NORMAL_MAP
+      vec3 nmmp = texture(normalMap, NORMAL_UV).xyz - vec3(0.5);
+      vec3 bitangent = cross(v_normal, v_tangent.xyz) * v_tangent.w; // note the cross order
+      s.normal =
+        (nmmp.x * emissiveScaleParam.w) * normalize(v_tangent.xyz) +
+        (nmmp.y * emissiveScaleParam.w) * normalize(bitangent) +
+        nmmp.z * normalize(s.normal);
+      
+      TBN = mat3(normalize(v_tangent.xyz),normalize(bitangent), normalize(s.normal));
+    #else 
+      vec3 bitangent = cross(v_normal, v_tangent.xyz) * v_tangent.w; 
+      TBN = mat3(normalize(v_tangent.xyz),normalize(bitangent), normalize(s.normal));
+    #endif
+
+    HIGHP_VALUE_TO_STRUCT_DEFINED(v_position, s.position);
+    
+    #if __VERSION__ >= 460
+      float seed  = baseHash(uvec2(cc_time.w*gl_FragCoord.xy));
+      vec3 origin = s.position;
+      bool hitaabb = false;
+      float shadowFactor = .0;
+      int cc_time_int = int(cc_time.z);
+      int frame_id = int(mod(float(cc_time_int),4));
+
+      vec3 direction = normalize(s.position-cc_cameraPos.xyz);
+      rayQueryEXT rayQuery;
+      rayQueryInitializeEXT(rayQuery, cc_topLevelAS, gl_RayFlagsOpaqueEXT,0xFF,cc_cameraPos.xyz,0.01,direction,1000.0);
+
+      while(rayQueryProceedEXT(rayQuery));
+
+      if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT){
+        int hit_instance_id = rayQueryGetIntersectionInstanceCustomIndexEXT(rayQuery,true);
+        MeshDesc mesh = instanceDescs[hit_instance_id];
+        int hit_geom_id = rayQueryGetIntersectionGeometryIndexEXT(rayQuery,true);
+        HitRecord hitRecordWS = getHitRecordWorldSpace(rayQuery);
+        if(hit_geom_id >= 54 && hit_geom_id <= 61){
+          s.albedo.rgb = color_lut[hit_geom_id - 54];
+        }else if(hit_geom_id >= 63 && hit_geom_id <= 72){
+          s.albedo.rgb = color_lut[hit_geom_id - 63];
+        }else if(hit_geom_id == 99 || hit_geom_id == 96){
+          s.albedo.rgb = vec3(0.95, 0.1,0.1);
+        }else if(hit_geom_id == 98 || hit_geom_id == 97){
+          s.albedo.rgb = vec3(1.00, 0.71, 0.29);
+        }else if(hit_geom_id == 74 || hit_geom_id == 76|| hit_geom_id == 78|| hit_geom_id == 80){
+          s.albedo.rgb = vec3(0.01, 0.01, 0.01);
+        }else if(hit_geom_id == 53){
+          s.albedo.rgb = vec3(0.2, 0.4, 0.0);
+        }
+        /*
+        if(false){
+          vec3 hitNormal = hitRecordWS.normal;
+          direction = reflect(direction,hitNormal);
+          rayQueryInitializeEXT(rayQuery, cc_topLevelAS, gl_RayFlagsOpaqueEXT,0xFF,hitRecordWS.position,0.01,direction,1000.0);
+          while(rayQueryProceedEXT(rayQuery));
+          if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT){
+            hitRecordWS = getHitRecordWorldSpace(rayQuery);
+            hitNormal = hitRecordWS.normal;
+            vec4 hitTangent = hitRecordWS.tangent;
+            vec3 bitangent = cross(hitNormal, hitTangent.xyz) * hitTangent.w;
+            TBN = mat3(normalize(hitTangent.xyz),normalize(bitangent), normalize(hitNormal));
+            s.albedo.rgb = hitRecordWS.albedo+calculate_diffuse(frame_id,seed,TBN,origin,s);
+          }else{
+            s.albedo.rgb = vec3(0.0,0.0,0.0);
+          }
+          //s.albedo.rgb += calculate_diffuse(frame_id,seed,TBN,origin,s);
+        }else{
+          s.albedo.rgb += calculate_diffuse(frame_id,seed,TBN,origin,s);
+        }*/
+        s.albedo.rgb += calculate_diffuse(frame_id,seed,TBN,origin,s);
+      }
+    #endif
+  
+    vec4 pbr = pbrParams;
+    #if USE_PBR_MAP
+      vec4 res = texture(pbrMap, PBR_UV);
+      pbr.x *= res.OCCLUSION_CHANNEL;
+      pbr.y *= res.ROUGHNESS_CHANNEL;
+      pbr.z *= res.METALLIC_CHANNEL;
+      pbr.w *= res.SPECULAR_INTENSITY_CHANNEL;
+    #endif
+    #if USE_METALLIC_ROUGHNESS_MAP
+      vec4 metallicRoughness = texture(metallicRoughnessMap, PBR_UV);
+      pbr.z *= metallicRoughness.METALLIC_CHANNEL;
+      pbr.y *= metallicRoughness.ROUGHNESS_CHANNEL;
+    #endif
+    #if USE_OCCLUSION_MAP
+      pbr.x *= texture(occlusionMap, PBR_UV).OCCLUSION_CHANNEL;
+    #endif
+    s.occlusion = pbr.x;
+    s.roughness = pbr.y;
+    s.specularIntensity = 0.5;
+    s.metallic = pbr.z;
+
+    s.emissive = emissive.rgb * emissiveScaleParam.xyz;
+    #if USE_EMISSIVE_MAP
+      s.emissive *= SRGBToLinear(texture(emissiveMap, EMISSIVE_UV).rgb);
+    #endif
+  }
+
+  layout(location = 0) out vec4 fragColorX;
+
+  void main () {
+    StandardSurface s;
+    surf(s);
+    #if __VERSION__ >=460
+    vec4 color = CCFragOutput(CCStandardShadingBaseShadowRay(s,normalize(cc_cameraPos.xyz - s.position),cc_topLevelAS));
+      //vec4 color = vec4(vec3(blue_noise2(gl_FragCoord.xy)),1.0);
+    #else
+      vec4 color = CCFragOutput(CCStandardShadingBase(s,CC_SHADOW_POSITION));
+    #endif
+    #if CC_USE_FOG != 4
+      CC_APPLY_FOG(color, s.position.xyz);
+    #endif
+    #if CC_USE_RGBE_OUTPUT
+      color = packRGBE(color.rgb);
+    #endif
+    fragColorX = color;
+  }
+
+  //CC_STANDARD_SURFACE_ENTRY()
+}%

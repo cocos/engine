@@ -1170,6 +1170,15 @@ void CCMTLCommandBuffer::signalFence() {
 void CCMTLCommandBuffer::waitFence() {
     _inFlightSem->wait();
     _inFlightSem->signal();
+}
+
+void CCMTLCommandBuffer::buildAccelerationStructure(AccelerationStructure *accel){
+
+}
+void CCMTLCommandBuffer::updateAccelerationStructure(AccelerationStructure *accel){
+
+}
+void CCMTLCommandBuffer::compactAccelerationStructure(AccelerationStructure *accel, AccelerationStructure *res){
 
 }
 

@@ -48,6 +48,7 @@ protected:
     void doInit(const BufferViewInfo &info) override;
     void doDestroy() override;
     void doResize(uint32_t size, uint32_t count) override;
+    uint64_t doGetDeviceAddress() const override{return 0U;};
 
     GLES2GPUBuffer *_gpuBuffer = nullptr;
     GLES2GPUBufferView *_gpuBufferView = nullptr;

@@ -31,6 +31,7 @@
 #include "VKShader.h"
 #include "VKTexture.h"
 #include "states/VKSampler.h"
+#include "VKAccelerationStructure.h"
 
 namespace cc {
 namespace gfx {
@@ -144,6 +145,12 @@ void CCVKDescriptorSet::doInit(const DescriptorSetInfo & /*info*/) {
                         case VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER:
                             entries[j].pTexelBufferView = &instance.descriptorInfos[j].texelBufferView;
                             break;
+                        case VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR:
+                            instance.writeDesAS.sType = VK_STRUCTURE_TYPE_WRITE_DESCRIPTOR_SET_ACCELERATION_STRUCTURE_KHR;
+                            instance.writeDesAS.pAccelerationStructures = &(instance.descriptorInfos[j].accelerationStructure);
+                            instance.writeDesAS.accelerationStructureCount = 1;
+                            entries[j].pNext = &instance.writeDesAS;
+                            break;
                         default: break;
                     }
                 }
@@ -211,6 +218,22 @@ void CCVKDescriptorSet::update() {
                         }
                     }
                     binding.gpuSampler = sampler;
+                }
+            }
+            else if (hasFlag(ACCELERATION_STRUCTURE_TYPE, binding.type)) {
+                if (_accels[i].ptr) {
+                    CCVKGPUAccelerationStructure *accel = static_cast<CCVKAccelerationStructure *>(_accels[i].ptr)->gpuAccelerationStructure();
+                    for (auto &instance : _gpuDescriptorSet->instances) {
+                        CCVKDescriptorInfo &descriptorInfo = instance.descriptorInfos[i];
+                        if (binding.gpuAccelerrationStructure) {
+                            descriptorHub->disengage(binding.gpuAccelerrationStructure, &descriptorInfo.accelerationStructure);
+                        }
+                        if (accel) {
+                            descriptorHub->connect(_gpuDescriptorSet, accel, &descriptorInfo.accelerationStructure);
+                            descriptorHub->update(accel, &descriptorInfo.accelerationStructure);
+                        }
+                    }
+                    binding.gpuAccelerrationStructure = accel;
                 }
             }
         }

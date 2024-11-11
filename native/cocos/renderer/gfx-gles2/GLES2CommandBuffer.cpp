@@ -420,5 +420,16 @@ void GLES2CommandBuffer::bindStates() {
     _isStateInvalid = false;
 }
 
+void GLES2CommandBuffer::buildAccelerationStructure(AccelerationStructure *accel){
+
+}
+void GLES2CommandBuffer::updateAccelerationStructure(AccelerationStructure *accel){
+
+}
+void GLES2CommandBuffer::compactAccelerationStructure(AccelerationStructure *accel, AccelerationStructure *res){
+
+}
+
+
 } // namespace gfx
 } // namespace cc

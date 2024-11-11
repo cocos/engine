@@ -255,6 +255,12 @@ PipelineState *DeviceValidator::createPipelineState() {
     return result;
 }
 
+AccelerationStructure* DeviceValidator::createAccelerationStructure() {
+    //todo
+    return nullptr;
+}
+
+
 Sampler *DeviceValidator::getSampler(const SamplerInfo &info) {
     if (info.addressU != info.addressV || info.addressV != info.addressW) {
         CC_LOG_WARNING("Samplers with different wrapping modes may case reduced performance");

@@ -140,6 +140,11 @@ void CCVKGPURecycleBin::clear() {
                     CCVKDevice::getInstance()->gpuDevice()->getDescriptorSetPool(res.set.layoutId)->yield(res.set.vkSet);
                 }
                 break;
+            case RecycledType::ACCELERATION_STRUCTURE:
+                if (res.vkAccelerationStructure != VK_NULL_HANDLE) {
+                    vkDestroyAccelerationStructureKHR(_device->vkDevice, res.vkAccelerationStructure, nullptr);
+                }
+                break;
             default: break;
         }
         res.type = RecycledType::UNKNOWN;

@@ -1187,6 +1187,12 @@ bool nativevalue_to_se(const spine::Vector2 &from, se::Value &to, se::Object * /
 }
 #endif
 
+// NOLINTNEXTLINE(readability-identifier-naming)
+bool sevalue_to_native(const se::Value &v, cc::gfx::AccelerationStructure **ret, se::Object * /*unused*/) {
+    // todo
+    return true;
+}
+
 #if CC_USE_MIDDLEWARE
 // NOLINTNEXTLINE(readability-identifier-naming)
 bool seval_to_Map_string_key(const se::Value &v, cc::RefMap<ccstd::string, cc::middleware::Texture2D *> *ret) {

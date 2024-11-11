@@ -87,6 +87,9 @@ public:
     void completeQueryPool(QueryPool *queryPool) override;
     inline bool isCommandBufferBegan() const { return _commandBufferBegan; }
     inline CCMTLGPUCommandBufferObject *gpuCommandBufferObj() const { return _gpuCommandBufferObj; }
+    void buildAccelerationStructure(AccelerationStructure *accel) override;
+    void updateAccelerationStructure(AccelerationStructure *accel) override;
+    void compactAccelerationStructure(AccelerationStructure *accel, AccelerationStructure *res) override;
 
     void afterCommit();
 

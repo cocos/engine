@@ -34,7 +34,7 @@ namespace {
 constexpr uint32_t FORCE_MINOR_VERSION = 0; // 0 for default version, otherwise minorVersion = (FORCE_MINOR_VERSION - 1)
 
 #define FORCE_ENABLE_VALIDATION  0
-#define FORCE_DISABLE_VALIDATION 1
+#define FORCE_DISABLE_VALIDATION 0
 
 using ccstd::vector;
 
@@ -326,6 +326,9 @@ bool CCVKGPUContext::initialize() {
         physicalDeviceVulkan11Features.pNext = &physicalDeviceVulkan12Features;
         physicalDeviceVulkan12Features.pNext = &physicalDeviceFragmentShadingRateFeatures;
         physicalDeviceProperties2.pNext = &physicalDeviceDepthStencilResolveProperties;
+        physicalDeviceDepthStencilResolveProperties.pNext = &physicalDeviceAccelerationStructureProperties;
+        physicalDeviceAccelerationStructureProperties.pNext = &physicalDeviceRaytracingPipelineProperties;
+
         if (minorVersion >= 1) {
             vkGetPhysicalDeviceProperties2(physicalDevice, &physicalDeviceProperties2);
             vkGetPhysicalDeviceFeatures2(physicalDevice, &physicalDeviceFeatures2);

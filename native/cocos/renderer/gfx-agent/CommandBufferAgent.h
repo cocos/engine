@@ -73,6 +73,11 @@ public:
     void resetQueryPool(QueryPool *queryPool) override;
     void completeQueryPool(QueryPool *queryPool) override;
     void customCommand(CustomCommand &&cmd) override;
+    void buildAccelerationStructure(AccelerationStructure* accel) override;
+    void buildAccelerationStructure(AccelerationStructure* accel, Buffer* scratchBuffer) override;
+    void updateAccelerationStructure(AccelerationStructure* accel) override;
+    void compactAccelerationStructure(AccelerationStructure *accel, AccelerationStructure *res) override;
+    void traceRays(const RayTracingInfo& info) override;
 
     uint32_t getNumDrawCalls() const override { return _actor->getNumDrawCalls(); }
     uint32_t getNumInstances() const override { return _actor->getNumInstances(); }

@@ -31,6 +31,7 @@
 #include "base/Log.h"
 #include "core/Root.h"
 #include "core/scene-graph/Node.h"
+#include "RayTracingScene.h"
 #include "profiler/Profiler.h"
 #include "renderer/pipeline/PipelineSceneData.h"
 #include "renderer/pipeline/custom/RenderInterfaceTypes.h"
@@ -118,7 +119,7 @@ RenderScene::~RenderScene() = default;
 void RenderScene::activate() {
     const auto *sceneData = Root::getInstance()->getPipeline()->getPipelineSceneData();
     _octree = sceneData->getOctree();
-    _rayTracing->activate();
+    _sceneAccel = ccnew RayTracingScene;
 }
 
 bool RenderScene::initialize(const IRenderSceneInfo &info) {
@@ -188,6 +189,8 @@ void RenderScene::update(uint32_t stamp) {
         }
     }
 
+    _sceneAccel->update(this);
+
     CC_PROFILE_OBJECT_UPDATE(Models, _models.size());
     CC_PROFILE_OBJECT_UPDATE(Cameras, _cameras.size());
     CC_PROFILE_OBJECT_UPDATE(DrawBatch2D, _batches.size());
@@ -202,6 +205,7 @@ void RenderScene::destroy() {
     removePointLights();
     removeLODGroups();
     removeModels();
+    CC_SAFE_DELETE(_sceneAccel)
     _lodStateCache->clearCache();
 }
 
@@ -345,6 +349,7 @@ void RenderScene::removeRangedDirLights() {
 void RenderScene::addModel(Model *model) {
     model->attachToScene(this);
     _models.emplace_back(model);
+
     if (_octree && _octree->isEnabled()) {
         _octree->insert(model);
     }

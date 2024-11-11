@@ -44,6 +44,7 @@
 #import "MTLTexture.h"
 #import "base/Log.h"
 #import "profiler/Profiler.h"
+#import "MTLAccelerationStructure.h"
 #import <thread>
 
 namespace cc {
@@ -320,6 +321,10 @@ Sampler *CCMTLDevice::createSampler(const SamplerInfo &info) {
 
 Swapchain *CCMTLDevice::createSwapchain() {
     return ccnew CCMTLSwapchain;
+}
+
+AccelerationStructure *CCMTLDevice::createAccelerationStructure(){
+    return ccnew CCMTLAccelerationStructure;
 }
 
 void CCMTLDevice::copyBuffersToTexture(const uint8_t *const *buffers, Texture *texture, const BufferTextureCopy *regions, uint32_t count) {

@@ -30,7 +30,7 @@
 namespace cc {
 namespace gfx {
 
-class CC_DLL Buffer : public GFXObject, public RefCounted {
+class CC_DLL  Buffer : public GFXObject, public RefCounted {
 public:
     Buffer();
     ~Buffer() override;
@@ -62,12 +62,14 @@ public:
     inline uint32_t getSize() const { return _size; }
     inline BufferFlags getFlags() const { return _flags; }
     inline bool isBufferView() const { return _isBufferView; }
+    inline uint64_t getDeviceAddress() const { return doGetDeviceAddress(); }
 
 protected:
     virtual void doInit(const BufferInfo &info) = 0;
     virtual void doInit(const BufferViewInfo &info) = 0;
     virtual void doResize(uint32_t size, uint32_t count) = 0;
     virtual void doDestroy() = 0;
+    virtual uint64_t doGetDeviceAddress() const = 0;
 
     static uint8_t *getBufferStagingAddress(Buffer *buffer);
     static void flushBuffer(Buffer *buffer, const uint8_t *data);

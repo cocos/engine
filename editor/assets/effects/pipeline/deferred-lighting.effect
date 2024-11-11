@@ -44,6 +44,11 @@ CCProgram lighting-fs-tiled %{
   #include <common/math/coordinates>
   #include <common/common-define>
 
+  #if __VERSION__ >= 460
+    #include <builtin/uniforms/cc-acceleration-structure>
+  #endif
+
+  in vec2 v_uv;
   #pragma subpass
   #pragma subpassColor in albedoMap
   #pragma subpassColor in normalMap
@@ -67,6 +72,90 @@ CCProgram lighting-fs-tiled %{
     return GetWorldPosFromNDCPosRH(ndc, cc_matProj, cc_matViewProjInv);
   }
 
+  #if __VERSION__ >= 460
+  uint baseHash( uvec2 p )
+  {
+    p = 1103515245U*((p >> 1U)^(p.yx));
+    uint h32 = 1103515245U*((p.x)^(p.y>>3U));
+    return h32^(h32 >> 16);
+  }
+
+  float hash1(inout float seed)
+  {
+    uint n = baseHash(floatBitsToUint(vec2(seed+=.1,seed+=.1)));
+    return float(n)/float(0xffffffffU);
+  }
+
+  vec3 random_in_unit_hemisphere(float seed)
+  {
+    float u = hash1(seed);
+    float v = hash1(seed);
+    float theta = u*2.0*PI;
+    float sinTheta = sin(theta);
+    float cosTheta = cos(theta);
+    float cosPhi = v;
+    float sinPhi = sqrt(1.0 - cosPhi * cosPhi);
+    float x = sinPhi*cosTheta;
+    float y = sinPhi*sinTheta;
+    float z = cosPhi;
+    return vec3(x,y,z);
+  }
+
+const mat3 CubePositions[12] = {mat3(vec3(0.5,0.5,0.5),vec3(-0.5,0.5,0.5),vec3(0.5,-0.5,0.5)),
+                            mat3(vec3(0.5,-0.5,0.5),vec3(-0.5,0.5,0.5),vec3(-0.5,-0.5,0.5)),
+                            mat3(vec3(0.5,-0.5,0.5),vec3(0.5,-0.5,-0.5),vec3(0.5,0.5,0.5)),
+                            mat3(vec3(0.5,0.5,0.5),vec3(0.5,-0.5,-0.5),vec3(0.5,0.5,-0.5)),
+                            mat3(vec3(0.5,-0.5,-0.5),vec3(-0.5,-0.5,-0.5),vec3(0.5,0.5,-0.5)),
+                            mat3(vec3(0.5,0.5,-0.5), vec3(-0.5,-0.5,-0.5),vec3(-0.5,0.5,-0.5)),
+                            mat3(vec3(-0.5,-0.5,-0.5),  vec3(-0.5,-0.5,0.5),vec3(-0.5,0.5,-0.5)),
+                            mat3(vec3(-0.5,0.5,-0.5), vec3(-0.5,-0.5,0.5), vec3(-0.5,0.5,0.5)),
+                            mat3(vec3(0.5,-0.5,0.5), vec3(-0.5,-0.5,0.5), vec3(0.5,-0.5,-0.5)),
+                            mat3(vec3(0.5,-0.5,-0.5), vec3(-0.5,-0.5,0.5), vec3(-0.5,-0.5,-0.5)),
+                            mat3(vec3(0.5,0.5,-0.5), vec3(-0.5,0.5,-0.5), vec3(0.5,0.5,0.5)),
+                            mat3(vec3(0.5,0.5,0.5), vec3(-0.5,0.5,-0.5),vec3(-0.5,0.5,0.5))};
+
+const mat3 CubeNormals[12] = {mat3(vec3(0.0,0.0,1.0),vec3(0.0,0.0,1.0),vec3(0.0,0.0,1.0)),
+                            mat3(vec3(0.0,0.0,1.0),vec3(0.0,0.0,1.0),vec3(0.0,0.0,1.0)),
+                            mat3(vec3(1.0,0.0,0.0),vec3(1.0,0.0,0.0),vec3(1.0,0.0,0.0)),
+                            mat3(vec3(1.0,0.0,0.0),vec3(1.0,0.0,0.0),vec3(1.0,0.0,0.0)),
+                            mat3(vec3(0.0,0.0,-1.0),vec3(0.0,0.0,-1.0),vec3(0.0,0.0,-1.0)),
+                            mat3(vec3(0.0,0.0,-1.0),vec3(0.0,0.0,-1.0),vec3(0.0,0.0,-1.0)),
+                            mat3(vec3(-1.0,0.0,0.0),vec3(-1.0,0.0,0.0),vec3(-1.0,0.0,0.0)),
+                            mat3(vec3(-1.0,0.0,0.0),vec3(-1.0,0.0,0.0),vec3(-1.0,0.0,0.0)),
+                            mat3(vec3(0.0,-1.0,0.0),vec3(0.0,-1.0,0.0),vec3(0.0,-1.0,0.0)),
+                            mat3(vec3(0.0,-1.0,0.0),vec3(0.0,-1.0,0.0),vec3(0.0,-1.0,0.0)),
+                            mat3(vec3(0.0,1.0,0.0),vec3(0.0,1.0,0.0),vec3(0.0,1.0,0.0)),
+                            mat3(vec3(0.0,1.0,0.0),vec3(0.0,1.0,0.0),vec3(0.0,1.0,0.0))};
+
+  struct HitRecord
+  {
+    int instanceId;
+    int primitiveIdx; 
+    mat3 primitivePosition; 
+    mat3 primitiveNormal; 
+    vec3 barycentrics; 
+    mat4x3 objToWorld; 
+    mat4x3 worldToObj; 
+    vec3 hitWorldPos; 
+    vec3 hitWorldNormal; 
+  };
+
+  void getHitRecord(in rayQueryEXT rayQuery, out HitRecord hit)
+  {
+    hit.instanceId = rayQueryGetIntersectionInstanceCustomIndexEXT(rayQuery,true);
+    hit.primitiveIdx = rayQueryGetIntersectionPrimitiveIndexEXT(rayQuery,true);
+    hit.primitivePosition = CubePositions[hit.primitiveIdx]; 
+    hit.primitiveNormal = CubeNormals[hit.primitiveIdx];
+    vec2 bary = rayQueryGetIntersectionBarycentricsEXT(rayQuery,true);
+    hit.barycentrics = vec3(1.0 - bary.x - bary.y, bary.x, bary.y);
+    hit.objToWorld = rayQueryGetIntersectionObjectToWorldEXT(rayQuery,true);
+    hit.worldToObj = rayQueryGetIntersectionWorldToObjectEXT(rayQuery,true);
+    hit.hitWorldPos = (hit.objToWorld*vec4(hit.primitivePosition*hit.barycentrics,1.0)).xyz;
+    hit.hitWorldNormal = (transpose(hit.worldToObj) * (hit.primitiveNormal*hit.barycentrics)).xyz;
+  }
+
+ #endif
+
   void main () {
     StandardSurface s;
 
@@ -88,18 +177,114 @@ CCProgram lighting-fs-tiled %{
     s.shadowBias = vec2(0, 0);
 #endif
     // fixme: default value is 0, and give black result
+
+    if(depth < 1.0){
+      if(albedoMap.r < 0.01&&albedoMap.g < 0.01&&albedoMap.b < 0.01){
+        s.roughness = 0.0;
+        //s.specularIntensity = 1.0;
+        s.metallic = 0.0;
+      #if __VERSION__ >= 460
+      //vec3 light_points[4] = {vec3(1.995,5.443,3.199),vec3(1.179,10.125,0.022),vec3(1.726,11.071,3.873),vec3(7.3,5.89,-0.865)};
+      vec3 origin = s.position;
+      vec3 viewDirect = normalize(cc_cameraPos.xyz - s.position);
+      vec3 direction = reflect(-viewDirect,s.normal);
+      float tMin = 0.01f;
+      float tMax = 1000.0f;
+
+      rayQueryEXT rayQuery;
+      rayQueryInitializeEXT(rayQuery, cc_topLevelAS,gl_RayFlagsOpaqueEXT, 0xFF, origin, tMin, direction, tMax);
+
+      bool miss = true;
+      for(int i = 0;i<10;++i){
+          while(rayQueryProceedEXT(rayQuery));
+          if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT)
+          {
+              HitRecord hit;
+              getHitRecord(rayQuery,hit);
+              origin = hit.hitWorldPos;
+              tMin = 0.01f;
+              if(hit.instanceId != 0 && hit.instanceId != 7){
+                  StandardSurface hs;
+                  hs.position = hit.hitWorldPos;
+                  hs.roughness = s.roughness;
+                  hs.normal = hit.hitWorldNormal;
+                  hs.specularIntensity = s.specularIntensity;
+                  hs.metallic = s.metallic;
+                  hs.emissive = s.emissive;                    hs.occlusion = s.occlusion;
+                  if(hit.instanceId == 1){
+                      hs.albedo.rgb = vec3(0.0,0.0,1.0);
+                  }else if(hit.instanceId == 2){
+                      hs.albedo.rgb = vec3(1.0,0.0,0.0);
+                  }else if(hit.instanceId == 3){
+                      hs.albedo.rgb = vec3(0.0,1.0,0.0);
+                  }else if(hit.instanceId == 4){
+                      hs.albedo.rgb = vec3(1.0,1.0,0.0);
+                   }else if(hit.instanceId == 5){
+                      hs.albedo.rgb = vec3(1.0,1.0,1.0);
+                      tMin = 0.1f;
+                  }else if(hit.instanceId == 6){
+                      hs.albedo.rgb = vec3(1.0,1.0,1.0);
+                  }
+                    //shade hit point
+                    //s.albedo = CCStandardShadingBaseShadowRay(hs,-direction,cc_topLevelAS);
+                    #if CC_ENABLE_CLUSTERED_LIGHT_CULLING == 1
+                        s.albedo += CCClusterShadingAdditive(hs,vec4(0.0));
+                    #else
+                        s.albedo += CCStandardShadingAdditiveShadowRay(hs,-direction,cc_topLevelAS);
+                    #endif
+                    miss = false;
+                    break;
+                }else if(hit.instanceId == 7){
+                    float ior = 1.0;
+                    if(dot(direction,hit.hitWorldNormal)>=0){
+                      ior = 1.0/ior;
+                    }
+                    direction = direction;//refract(-direction,hitWorldNormal,ior);
+                    rayQueryInitializeEXT(rayQuery, cc_topLevelAS,gl_RayFlagsOpaqueEXT, 0xFF, origin, tMin, direction, tMax);
+                }else{//hit walls or floor
+                  direction = reflect(direction,hit.hitWorldNormal);
+                  rayQueryInitializeEXT(rayQuery, cc_topLevelAS,gl_RayFlagsOpaqueEXT, 0xFF, origin, tMin, direction, tMax);
+                }
+          }else{
+                //miss
+              s.albedo.rgb = vec3(0.1);//texture(cc_environment,direction).rgb;
+              break;
+          }
+      }
+        //if miss
+        if(miss)
+            s.albedo.rgb = vec3(0.1);//texture(cc_environment,direction).rgb;
+      #endif
+      }
+    }
+    
     float fogFactor;
     CC_TRANSFER_FOG_BASE(vec4(position, 1), fogFactor);
 
     vec4 shadowPos;
     CC_TRANSFER_SHADOW_BASE(vec4(position, 1), shadowPos);
-
+#if __VERSION__ < 460
     vec4 color = CCStandardShadingBase(s, shadowPos) +
-#if CC_ENABLE_CLUSTERED_LIGHT_CULLING == 1
-                 CCClusterShadingAdditive(s, shadowPos);
+    #if CC_ENABLE_CLUSTERED_LIGHT_CULLING == 1
+                    CCClusterShadingAdditive(s, shadowPos);
+    #else
+                    CCStandardShadingAdditive(s, shadowPos);
+    #endif
 #else
-                 CCStandardShadingAdditive(s, shadowPos);
+    vec4 color;
+    if(albedoMap.r < 0.01&&albedoMap.g < 0.01&&albedoMap.b < 0.01){
+      color = s.albedo;
+    }else{
+    color = CCStandardShadingBaseShadowRay(s,normalize(cc_cameraPos.xyz - s.position),cc_topLevelAS) +
+    //vec4 color = CCStandardShadingBase(s, shadowPos) +
+    #if CC_ENABLE_CLUSTERED_LIGHT_CULLING == 1
+                    CCClusterShadingAdditive(s, shadowPos);
+    #else
+                    CCStandardShadingAdditiveShadowRay(s,normalize(cc_cameraPos.xyz - s.position),cc_topLevelAS);
+    #endif
+    }
 #endif
+
     CC_APPLY_FOG_BASE(color, fogFactor);
     color = CCFragOutput(color);
 

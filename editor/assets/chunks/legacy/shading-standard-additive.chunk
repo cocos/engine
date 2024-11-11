@@ -68,3 +68,70 @@ vec4 CCStandardShadingAdditive (StandardSurface s, vec4 shadowPos) {
   return vec4(finalColor, 0.0);
 }
 #endif
+
+#if __VERSION__ >= 460
+
+#pragma extension([GL_EXT_ray_query, __VERSION__ >= 460, enable])
+
+vec4 CCStandardShadingAdditiveShadowRay(in StandardSurface s, in vec3 V,in accelerationStructureEXT as) {
+  vec3 position;
+  HIGHP_VALUE_FROM_STRUCT_DEFINED(position, s.position);
+  // Calculate diffuse & specular
+  vec3 diffuse = s.albedo.rgb * (1.0 - s.metallic);
+  vec3 specular = mix(vec3(0.04), s.albedo.rgb, s.metallic);
+  vec3 diffuseContrib = diffuse / PI;
+
+  vec3 N = normalize(s.normal);
+  float NV = max(abs(dot(N, V)), 0.0);
+  specular = BRDFApprox(specular, s.roughness, NV);
+  vec3 finalColor = vec3(0.0);
+
+  int numLights = CC_PIPELINE_TYPE == CC_PIPELINE_TYPE_FORWARD ? LIGHTS_PER_PASS : int(cc_lightDir[0].w);
+
+  for (int i = 0; i < LIGHTS_PER_PASS; i++) {
+    if (i >= numLights) break;
+    vec3 SLU = cc_lightPos[i].xyz - position;
+    vec3 SL = normalize(SLU);
+    vec3 SH = normalize(SL + V);
+    float SNL = max(dot(N, SL), 0.0);
+    float SNH = max(dot(N, SH), 0.0);
+
+    float distSqr = dot(SLU, SLU);
+    float litRadius = cc_lightSizeRangeAngle[i].x;
+    float litRadiusSqr = litRadius * litRadius;
+    float illum = litRadiusSqr / max(litRadiusSqr, distSqr);
+    float attRadiusSqrInv = 1.0 / max(cc_lightSizeRangeAngle[i].y, 0.01);
+    attRadiusSqrInv *= attRadiusSqrInv;
+    float att = GetDistAtt(distSqr, attRadiusSqrInv);
+    vec3 lspec = specular * CalcSpecular(s.roughness, SNH, SH, N);
+
+    if (cc_lightPos[i].w > 0.0) {
+      float cosInner = max(dot(-cc_lightDir[i].xyz, SL), 0.01);
+      float cosOuter = cc_lightSizeRangeAngle[i].z;
+      float litAngleScale = 1.0 / max(0.001, cosInner - cosOuter);
+      float litAngleOffset = -cosOuter * litAngleScale;
+      att *= GetAngleAtt(SL, -cc_lightDir[i].xyz, litAngleScale, litAngleOffset);
+    }
+
+    vec3 lightColor = cc_lightColor[i].rgb;
+
+    float shadow = 1.0;
+    rayQueryEXT rayQuery;
+    rayQueryInitializeEXT(rayQuery,as,gl_RayFlagsTerminateOnFirstHitEXT, 0xFF, position, 0.1f, SL, length(SLU));
+
+    while(rayQueryProceedEXT(rayQuery));
+      
+    if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT)
+    {
+      float t = rayQueryGetIntersectionTEXT(rayQuery, true);
+      shadow -= (length(SLU) - t) / length(SLU);
+    }
+
+    lightColor *= shadow;
+    finalColor += SNL * lightColor * cc_lightColor[i].w * illum * att * (diffuseContrib + lspec);
+  }
+
+  return vec4(finalColor, 0.0);
+}
+
+#endif

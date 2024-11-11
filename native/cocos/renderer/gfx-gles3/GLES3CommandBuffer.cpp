@@ -502,5 +502,15 @@ void GLES3CommandBuffer::getQueryPoolResults(QueryPool *queryPool) {
     _curCmdPackage->cmds.push(GLESCmdType::QUERY);
 }
 
+void GLES3CommandBuffer::buildAccelerationStructure(AccelerationStructure *accel){
+
+}
+void GLES3CommandBuffer::updateAccelerationStructure(AccelerationStructure *accel){
+
+}
+void GLES3CommandBuffer::compactAccelerationStructure(AccelerationStructure *accel, AccelerationStructure *res){
+
+}
+
 } // namespace gfx
 } // namespace cc

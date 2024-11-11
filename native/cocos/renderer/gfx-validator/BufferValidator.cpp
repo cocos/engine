@@ -165,6 +165,11 @@ void BufferValidator::update(const void *buffer, uint32_t size) {
     _actor->update(buffer, size);
 }
 
+uint64_t BufferValidator::doGetDeviceAddress() const {
+    return _actor->getDeviceAddress();
+}
+
+
 void BufferValidator::sanityCheck(const void *buffer, uint32_t size) {
     uint64_t cur = DeviceValidator::getInstance()->currentFrame();
 

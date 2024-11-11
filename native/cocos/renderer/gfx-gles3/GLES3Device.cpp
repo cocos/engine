@@ -48,6 +48,7 @@
 #include "profiler/Profiler.h"
 #include "states/GLES3GeneralBarrier.h"
 #include "states/GLES3Sampler.h"
+#include "GLES3AccelerationStructure.h"
 
 // when capturing GLES commands (RENDERDOC_HOOK_EGL=1, default value)
 // renderdoc doesn't support this extension during replay
@@ -591,6 +592,10 @@ PipelineLayout *GLES3Device::createPipelineLayout() {
 
 PipelineState *GLES3Device::createPipelineState() {
     return ccnew GLES3PipelineState;
+}
+
+AccelerationStructure *GLES3Device::createAccelerationStructure(){
+    return ccnew GLES3AccelerationStructure;
 }
 
 Sampler *GLES3Device::createSampler(const SamplerInfo &info) {

@@ -610,9 +610,32 @@ void CommandBufferValidator::completeQueryPool(QueryPool *queryPool) {
     QueryPool *actorQueryPool = static_cast<QueryPoolValidator *>(queryPool)->getActor();
     _actor->completeQueryPool(actorQueryPool);
 }
-
 void CommandBufferValidator::customCommand(CustomCommand &&cmd) {
     _actor->customCommand(std::move(cmd));
+}
+
+void CommandBufferValidator::buildAccelerationStructure(AccelerationStructure* accel) {
+    CC_ASSERT(isInited());
+    //todo
+}
+
+void CommandBufferValidator::buildAccelerationStructure(AccelerationStructure *accel,Buffer* scratchBuffer) {
+    CC_ASSERT(isInited());
+    // todo
+}
+
+void CommandBufferValidator::updateAccelerationStructure(AccelerationStructure *accel) {
+    CC_ASSERT(isInited());
+    // todo
+}
+
+void CommandBufferValidator::compactAccelerationStructure(AccelerationStructure *accel, AccelerationStructure *res) {
+    CC_ASSERT(isInited());
+    //todo
+}
+
+void CommandBufferValidator::traceRays(const RayTracingInfo& info) {
+    CC_ASSERT(isInited());
 }
 
 } // namespace gfx

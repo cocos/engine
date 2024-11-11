@@ -293,3 +293,102 @@ vec4 CCStandardShadingBase (StandardSurface s, vec4 shadowPos) {
 
   return vec4(finalColor, s.albedo.a);
 }
+
+#if __VERSION__ >=460
+
+#pragma extension([GL_EXT_ray_query, __VERSION__ >= 460, enable])
+
+vec4 CCStandardShadingBaseShadowRay (in StandardSurface s,in vec3 V,in accelerationStructureEXT as) {
+  // Calculate diffuse & specular
+  
+  vec3 diffuse = s.albedo.rgb * (1.0 - s.metallic);
+  vec3 specular = mix(vec3(0.08 * s.specularIntensity), s.albedo.rgb, s.metallic);
+  
+  vec3 position;
+  HIGHP_VALUE_FROM_STRUCT_DEFINED(position, s.position);
+
+  vec3 N = normalize(s.normal);
+  vec3 L = normalize(-cc_mainLitDir.xyz);
+  float NL = max(dot(N, L), 0.0);
+
+  float shadow = 1.0;
+  
+  rayQueryEXT rayQuery;
+  rayQueryInitializeEXT(rayQuery,as,gl_RayFlagsTerminateOnFirstHitEXT, 0xFF, position, 0.1f, normalize(vec3(L.x,L.y,L.z)), 10000.0);
+  while(rayQueryProceedEXT(rayQuery));
+
+  if(rayQueryGetIntersectionTypeEXT(rayQuery, true) != gl_RayQueryCommittedIntersectionNoneEXT)
+  {
+    shadow = 0.0;
+  }
+
+  #if CC_USE_LIGHTMAP && !CC_FORWARD_ADD
+    vec3 lightmap = s.lightmap.rgb;
+    #if CC_USE_HDR
+        // convert from standard camera exposure parameters to current exposure value
+        // baked in LDR scene still regarded as exposured with standard camera parameters
+        lightmap.rgb *= cc_exposure.w * cc_exposure.x;
+    #endif
+    vec3 finalColor = diffuse * lightmap.rgb * shadow;
+  #else
+    float NV = max(abs(dot(N, V)), 0.0);
+    specular = BRDFApprox(specular, s.roughness, NV);
+  
+    vec3 H = normalize(L + V);
+    float NH = max(dot(N, H), 0.0);
+    vec3 finalColor = NL * cc_mainLitColor.rgb * cc_mainLitColor.w;
+    vec3 diffuseContrib = diffuse / PI;
+  
+    // Cook-Torrance Microfacet Specular BRDF
+    vec3 specularContrib = specular * CalcSpecular(s.roughness, NH, H, N);
+    vec3 dirlightContrib = (diffuseContrib + specularContrib);
+  
+    dirlightContrib *= shadow;
+    finalColor *= dirlightContrib;
+  #endif
+
+  float fAmb = 0.5 - N.y * 0.5;
+  vec3 ambDiff = mix(cc_ambientSky.rgb, cc_ambientGround.rgb, fAmb);
+
+
+  #if CC_USE_IBL
+    #if CC_USE_DIFFUSEMAP && (!CC_LIGHT_PROBE_ENABLED || !CC_USE_LIGHT_PROBE)
+      // Diffuse reflection irradiance
+      vec4 diffuseMap = texture(cc_diffuseMap, N);
+      #if CC_USE_DIFFUSEMAP == IBL_RGBE
+        ambDiff = unpackRGBE(diffuseMap);
+      #else
+        ambDiff = SRGBToLinear(diffuseMap.rgb);
+      #endif
+    #endif
+
+    vec3 R = normalize(reflect(-V, N));
+
+    vec3 rotationDir = RotationVecFromAxisY(R.xyz, cc_surfaceTransform.z, cc_surfaceTransform.w);
+    #if USE_REFLECTION_DENOISE && !CC_IBL_CONVOLUTED
+      vec3 env = GetEnvReflectionWithMipFiltering(rotationDir, s.roughness, cc_ambientGround.w, 0.6);
+    #else
+      vec4 envmap = fragTextureLod(cc_environment, rotationDir, s.roughness * (cc_ambientGround.w - 1.0));
+
+      #if CC_USE_IBL == IBL_RGBE
+        vec3 env = unpackRGBE(envmap);
+      #else
+        vec3 env = SRGBToLinear(envmap.rgb);
+      #endif
+    #endif
+
+    finalColor += env * cc_ambientSky.w * specular * s.occlusion;
+  #endif
+
+#if CC_LIGHT_PROBE_ENABLED && CC_USE_LIGHT_PROBE
+  ambDiff = SHEvaluate(N);
+  finalColor += ambDiff.rgb * diffuse * s.occlusion;
+#else
+  finalColor += ambDiff.rgb * cc_ambientSky.w * diffuse * s.occlusion;
+#endif
+
+  finalColor += s.emissive;
+
+  return vec4(finalColor, s.albedo.a);
+}
+#endif

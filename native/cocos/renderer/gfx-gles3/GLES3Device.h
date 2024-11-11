@@ -120,6 +120,7 @@ protected:
     DescriptorSetLayout *createDescriptorSetLayout() override;
     PipelineLayout *createPipelineLayout() override;
     PipelineState *createPipelineState() override;
+    AccelerationStructure *createAccelerationStructure() override;
 
     Sampler *createSampler(const SamplerInfo &info) override;
     GeneralBarrier *createGeneralBarrier(const GeneralBarrierInfo &info) override;

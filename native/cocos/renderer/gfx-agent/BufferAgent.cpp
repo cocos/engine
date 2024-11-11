@@ -134,6 +134,11 @@ void BufferAgent::update(const void *buffer, uint32_t size) {
         });
 }
 
+uint64_t BufferAgent::doGetDeviceAddress() const {
+    return 0U;
+}
+
+
 void BufferAgent::flush(const uint8_t *buffer) {
     auto *mq = DeviceAgent::getInstance()->getMessageQueue();
     ENQUEUE_MESSAGE_3(

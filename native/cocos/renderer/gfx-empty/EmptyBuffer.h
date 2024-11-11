@@ -38,6 +38,7 @@ protected:
     void doInit(const BufferViewInfo &info) override;
     void doResize(uint32_t size, uint32_t count) override;
     void doDestroy() override;
+    uint64_t doGetDeviceAddress() const override{return 0U;}
 };
 
 } // namespace gfx

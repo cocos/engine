@@ -49,6 +49,7 @@ class SphereLight;
 class SpotLight;
 class PointLight;
 class RangedDirectionalLight;
+class RayTracingScene;
 class LodStateCache;
 
 struct IRaycastResult {
@@ -142,6 +143,7 @@ private:
     ccstd::vector<IntrusivePtr<RangedDirectionalLight>> _rangedDirLights;
     ccstd::vector<DrawBatch2D *> _batches;
     Octree *_octree{nullptr};
+    RayTracingScene *_sceneAccel;
 
     CC_DISALLOW_COPY_MOVE_ASSIGN(RenderScene);
 };

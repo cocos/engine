@@ -23,7 +23,13 @@
 ****************************************************************************/
 
 #include "VKUtils.h"
+
+#include "VKBuffer.h"
+#include "VKAccelerationStructure.h"
+
 #include "VKGPUObjects.h"
+#include "gfx-base/GFXBuffer.h"
+#include "vulkan/vulkan_core.h"
 
 namespace cc {
 namespace gfx {
@@ -33,6 +39,8 @@ VkQueryType mapVkQueryType(QueryType type) {
         case QueryType::OCCLUSION: return VK_QUERY_TYPE_OCCLUSION;
         case QueryType::PIPELINE_STATISTICS: return VK_QUERY_TYPE_PIPELINE_STATISTICS;
         case QueryType::TIMESTAMP: return VK_QUERY_TYPE_TIMESTAMP;
+        case QueryType::ACCELERATION_STRUCTURE_COMPACTED_SIZE: return VK_QUERY_TYPE_ACCELERATION_STRUCTURE_COMPACTED_SIZE_KHR;
+        case QueryType::ACCELERATION_STRUCTURE_SERIALIZATION_SIZE: return VK_QUERY_TYPE_ACCELERATION_STRUCTURE_SERIALIZATION_SIZE_KHR;
         default: {
             CC_ABORT();
             return VK_QUERY_TYPE_OCCLUSION;
@@ -200,6 +208,9 @@ VkBufferUsageFlagBits mapVkBufferUsageFlagBits(BufferUsage usage) {
     if (hasFlag(usage, BufferUsage::UNIFORM)) flags |= VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT;
     if (hasFlag(usage, BufferUsage::STORAGE)) flags |= VK_BUFFER_USAGE_STORAGE_BUFFER_BIT;
     if (hasFlag(usage, BufferUsage::INDIRECT)) flags |= VK_BUFFER_USAGE_INDIRECT_BUFFER_BIT;
+    if (hasFlag(usage, BufferUsageBit::SHADER_DEVICE_ADDRESS)) flags |= VK_BUFFER_USAGE_SHADER_DEVICE_ADDRESS_BIT;
+    if (hasFlag(usage, BufferUsageBit::ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY)) flags |= VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY_BIT_KHR;
+    if (hasFlag(usage, BufferUsageBit::ACCELERATION_STRUCTURE_STORAGE)) flags |= VK_BUFFER_USAGE_ACCELERATION_STRUCTURE_STORAGE_BIT_KHR;
     return static_cast<VkBufferUsageFlagBits>(flags);
 }
 
@@ -303,6 +314,7 @@ VkDescriptorType mapVkDescriptorType(DescriptorType type) {
         case DescriptorType::TEXTURE: return VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE;
         case DescriptorType::STORAGE_IMAGE: return VK_DESCRIPTOR_TYPE_STORAGE_IMAGE;
         case DescriptorType::INPUT_ATTACHMENT: return VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT;
+        case DescriptorType::ACCELERATION_STRUCTURE: return VK_DESCRIPTOR_TYPE_ACCELERATION_STRUCTURE_KHR;
         default: {
             CC_ABORT();
             return VK_DESCRIPTOR_TYPE_STORAGE_BUFFER;
@@ -327,6 +339,12 @@ VkShaderStageFlagBits mapVkShaderStageFlagBits(ShaderStageFlagBit stage) {
         case ShaderStageFlagBit::GEOMETRY: return VK_SHADER_STAGE_GEOMETRY_BIT;
         case ShaderStageFlagBit::FRAGMENT: return VK_SHADER_STAGE_FRAGMENT_BIT;
         case ShaderStageFlagBit::COMPUTE: return VK_SHADER_STAGE_COMPUTE_BIT;
+        case ShaderStageFlagBit::RAYGEN: return VK_SHADER_STAGE_RAYGEN_BIT_KHR;
+        case ShaderStageFlagBit::ANY_HIT: return VK_SHADER_STAGE_ANY_HIT_BIT_KHR;
+        case ShaderStageFlagBit::CLOSEST_HIT: return VK_SHADER_STAGE_CLOSEST_HIT_BIT_KHR;
+        case ShaderStageFlagBit::MISS: return VK_SHADER_STAGE_MISS_BIT_KHR;
+        case ShaderStageFlagBit::INTERSECTION: return VK_SHADER_STAGE_INTERSECTION_BIT_KHR;
+        case ShaderStageFlagBit::CALLABLE: return VK_SHADER_STAGE_CALLABLE_BIT_KHR;
         default: {
             CC_ABORT();
             return VK_SHADER_STAGE_VERTEX_BIT;
@@ -345,11 +363,48 @@ VkShaderStageFlags mapVkShaderStageFlags(ShaderStageFlagBit stages) {
     return static_cast<VkShaderStageFlags>(flags);
 }
 
+VkRayTracingShaderGroupTypeKHR mapVkRayTracingShaderGroupType(RayTracingShaderGroupType type) {
+    switch (type) {
+        case RayTracingShaderGroupType::GENERAL: return VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
+        case RayTracingShaderGroupType::TRIANGLES_HIT_GROUP: return VK_RAY_TRACING_SHADER_GROUP_TYPE_TRIANGLES_HIT_GROUP_KHR;
+        case RayTracingShaderGroupType::PROCEDURAL_HIT_GROUP: return VK_RAY_TRACING_SHADER_GROUP_TYPE_PROCEDURAL_HIT_GROUP_KHR;
+        default: {
+            CC_ASSERT(false);
+            return VK_RAY_TRACING_SHADER_GROUP_TYPE_GENERAL_KHR;
+        }
+    }
+}
+
 SurfaceTransform mapSurfaceTransform(VkSurfaceTransformFlagBitsKHR transform) {
     if (transform & VK_SURFACE_TRANSFORM_ROTATE_90_BIT_KHR) return SurfaceTransform::ROTATE_90;
     if (transform & VK_SURFACE_TRANSFORM_ROTATE_180_BIT_KHR) return SurfaceTransform::ROTATE_180;
     if (transform & VK_SURFACE_TRANSFORM_ROTATE_270_BIT_KHR) return SurfaceTransform::ROTATE_270;
     return SurfaceTransform::IDENTITY;
+}
+
+VkGeometryFlagsKHR mapVkGeometryFlags(ASGeometryFlagBit flags) {
+    VkGeometryFlagsKHR _flags = 0U;
+    if (hasFlag(flags, ASGeometryFlagBit::GEOMETRY_OPAQUE)) _flags |= VK_GEOMETRY_OPAQUE_BIT_KHR;
+    return static_cast<VkGeometryFlagsKHR>(_flags);
+}
+
+VkBuildAccelerationStructureFlagsKHR mapVkBuildAccelerationStructureFlags(ASBuildFlags flags) {
+    VkBuildAccelerationStructureFlagsKHR _flags = 0U;
+    if (hasFlag(flags, ASBuildFlagBits::ALLOW_COMPACTION)) _flags |= VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_COMPACTION_BIT_KHR;
+    if (hasFlag(flags, ASBuildFlagBits::ALLOW_UPDATE)) _flags |= VK_BUILD_ACCELERATION_STRUCTURE_ALLOW_UPDATE_BIT_KHR;
+    if (hasFlag(flags, ASBuildFlagBits::LOW_MEMORY)) _flags |= VK_BUILD_ACCELERATION_STRUCTURE_LOW_MEMORY_BIT_KHR;
+    if (hasFlag(flags, ASBuildFlagBits::PREFER_FAST_TRACE)) _flags |= VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_TRACE_BIT_KHR;
+    if (hasFlag(flags, ASBuildFlagBits::PREFER_FAST_BUILD)) _flags |= VK_BUILD_ACCELERATION_STRUCTURE_PREFER_FAST_BUILD_BIT_KHR;
+    return static_cast<VkBuildAccelerationStructureFlagsKHR>( _flags);
+}
+
+VkGeometryInstanceFlagsKHR mapVkGeomtryInstanceFlags(GeometryInstanceFlags flags) {
+    VkGeometryInstanceFlagsKHR _flags = 0U;
+    if (hasFlag(flags, GeometryInstanceFlags::FORCE_NO_OPAQUE)) _flags |= VK_GEOMETRY_INSTANCE_FORCE_NO_OPAQUE_BIT_KHR;
+    if (hasFlag(flags, GeometryInstanceFlags::FORCE_OPAQUE)) _flags |= VK_GEOMETRY_INSTANCE_FORCE_OPAQUE_BIT_KHR;
+    if (hasFlag(flags, GeometryInstanceFlags::TRIANGLE_FACING_CULL_DISABLE)) _flags |= VK_GEOMETRY_INSTANCE_TRIANGLE_CULL_DISABLE_BIT_NV;
+    if (hasFlag(flags, GeometryInstanceFlags::TRIANGLE_FRONT_COUNTERCLOCKWISE_BIT_KHR)) _flags |= VK_GEOMETRY_INSTANCE_TRIANGLE_FRONT_COUNTERCLOCKWISE_BIT_KHR;
+    return static_cast<VkGeometryInstanceFlagsKHR>(_flags);
 }
 
 ccstd::string mapVendorName(uint32_t vendorID) {
@@ -363,6 +418,65 @@ ccstd::string mapVendorName(uint32_t vendorID) {
         case 0x8086: return "Intel Corporation";
     }
     return StringUtil::format("Unknown VendorID %d", vendorID);
+}
+
+VkTransformMatrixKHR mapVkTransformMatrix(const Mat4& matrix) {
+    VkTransformMatrixKHR vkTransform{};
+    vkTransform.matrix[0][0] = matrix.m[0];
+    vkTransform.matrix[0][1] = matrix.m[4];
+    vkTransform.matrix[0][2] = matrix.m[8];
+    vkTransform.matrix[0][3] = matrix.m[12];
+
+    vkTransform.matrix[1][0] = matrix.m[1];
+    vkTransform.matrix[1][1] = matrix.m[5];
+    vkTransform.matrix[1][2] = matrix.m[9];
+    vkTransform.matrix[1][3] = matrix.m[13];
+
+    vkTransform.matrix[2][0] = matrix.m[2];
+    vkTransform.matrix[2][1] = matrix.m[6];
+    vkTransform.matrix[2][2] = matrix.m[10];
+    vkTransform.matrix[2][3] = matrix.m[14];
+    return vkTransform;
+}
+
+namespace {
+
+VkDeviceAddress getVkBufferDeviceAddr(VkDevice device, VkBuffer buffer) {
+    VkBufferDeviceAddressInfo bufferDeviceAddrInfo{VK_STRUCTURE_TYPE_BUFFER_DEVICE_ADDRESS_INFO};
+    bufferDeviceAddrInfo.buffer = buffer;
+    return vkGetBufferDeviceAddress(device, &bufferDeviceAddrInfo);
+}
+
+VkDeviceAddress getVkBufferDeviceAddr(const CCVKGPUDevice * device, const CCVKBuffer * buffer) {
+    if (!buffer->gpuBuffer() || !buffer->gpuBuffer()->vkBuffer) return VkDeviceAddress{};
+    return getVkBufferDeviceAddr(device->vkDevice,buffer->gpuBuffer()->vkBuffer);
+}
+}
+
+VkAccelerationStructureGeometryTrianglesDataKHR mapVkASGeomTrianglesData(const ASTriangleMesh &mesh, const CCVKGPUDevice *gpuDevice) {
+    VkAccelerationStructureGeometryTrianglesDataKHR trianglesData{
+        VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_GEOMETRY_TRIANGLES_DATA_KHR};
+    trianglesData.vertexFormat = mapVkFormat(mesh.vertexFormat, gpuDevice);
+    trianglesData.indexType = mesh.indexBuffer->getStride() == 2 ? VK_INDEX_TYPE_UINT16 : VK_INDEX_TYPE_UINT32;
+    trianglesData.vertexStride = mesh.vertexStride;
+    trianglesData.transformData = {};//todo 
+    trianglesData.maxVertex = mesh.vertexCount;
+    trianglesData.vertexData.deviceAddress = mesh.vertexBuffer->getDeviceAddress();//getVkBufferDeviceAddr(gpuDevice,static_cast<CCVKBuffer *const>(mesh.vertexBuffer));
+    trianglesData.indexData.deviceAddress = mesh.indexBuffer->getDeviceAddress();//getVkBufferDeviceAddr(gpuDevice, static_cast<CCVKBuffer *const>(mesh.indexBuffer));
+    return trianglesData;
+}
+
+VkAccelerationStructureInstanceKHR mapVkASInstance(const CCVKGPUDevice *gpuDevice,const ASInstance & instance) {
+    VkAccelerationStructureInstanceKHR inst{};
+    inst.transform = mapVkTransformMatrix(instance.transform);
+    inst.mask = instance.mask;
+    inst.instanceCustomIndex = instance.instanceCustomIdx;
+    inst.instanceShaderBindingTableRecordOffset = instance.shaderBindingTableRecordOffset;
+    inst.flags = mapVkGeomtryInstanceFlags(instance.flags);
+    VkAccelerationStructureDeviceAddressInfoKHR deviceAddressInfo{VK_STRUCTURE_TYPE_ACCELERATION_STRUCTURE_DEVICE_ADDRESS_INFO_KHR};
+    deviceAddressInfo.accelerationStructure = static_cast<CCVKAccelerationStructure *>(instance.accelerationStructureRef)->gpuAccelerationStructure()->vkAccelerationStructure;
+    inst.accelerationStructureReference = vkGetAccelerationStructureDeviceAddressKHR(gpuDevice->vkDevice, &deviceAddressInfo);
+    return inst;
 }
 
 const VkSurfaceTransformFlagsKHR TRANSFORMS_THAT_REQUIRE_FLIPPING =
@@ -579,6 +693,10 @@ void getAccessTypes(AccessFlags flag, ccstd::vector<ThsvsAccessType> &v) {
 
 VkDeviceSize roundUp(VkDeviceSize numToRound, uint32_t multiple) {
     return ((numToRound + multiple - 1) / multiple) * multiple;
+}
+
+bool isMultipleOf(VkDeviceSize numToCheck, uint32_t multiple) {
+    return numToCheck % multiple == 0;
 }
 
 bool isLayerSupported(const char *required, const ccstd::vector<VkLayerProperties> &available) {

@@ -24,11 +24,13 @@
 
 #pragma once
 
+#include "base/Ptr.h"
 #include "base/TypeDef.h"
 #include "base/memory/Memory.h"
 #include "base/std/container/string.h"
 #include "base/std/container/vector.h"
 #include "math/Math.h"
+#include "math/Mat4.h"
 
 #ifdef Status
     // Fix linux compile errors
@@ -86,6 +88,7 @@ class Queue;
 class QueryPool;
 class Window;
 class Context;
+class AccelerationStructure;
 
 using BufferBarrierList = ccstd::vector<BufferBarrier *>;
 using TextureBarrierList = ccstd::vector<TextureBarrier *>;
@@ -106,6 +109,7 @@ constexpr uint32_t DEFAULT_MAX_QUERY_OBJECTS = 32767;
 using BufferList = ccstd::vector<Buffer *>;
 using TextureList = ccstd::vector<Texture *>;
 using SamplerList = ccstd::vector<Sampler *>;
+using AccelerationStructureList = ccstd::vector<AccelerationStructure *>;
 using DescriptorSetLayoutList = ccstd::vector<DescriptorSetLayout *>;
 
 // make sure you have FILLED GRAPHs before enable this!
@@ -135,6 +139,7 @@ enum class ObjectType : uint32_t {
     GLOBAL_BARRIER,
     TEXTURE_BARRIER,
     BUFFER_BARRIER,
+    ACCELERATION_STRUCTURE,
     COUNT,
 };
 CC_ENUM_CONVERSION_OPERATOR(ObjectType);
@@ -184,7 +189,7 @@ enum class Feature : uint32_t {
 };
 CC_ENUM_CONVERSION_OPERATOR(Feature);
 
-enum class Format : uint32_t {
+enum class  Format : uint32_t {
 
     UNKNOWN,
 
@@ -402,6 +407,8 @@ enum class Type : uint32_t {
     IMAGE_CUBE,
     // input attachment
     SUBPASS_INPUT,
+    //acceleration structure
+    ACCELERATION_STRUCTURE,
     COUNT,
 };
 CC_ENUM_CONVERSION_OPERATOR(Type);
@@ -419,6 +426,10 @@ enum class BufferUsageBit : uint32_t {
     UNIFORM = 0x10,
     STORAGE = 0x20,
     INDIRECT = 0x40,
+    SHADER_DEVICE_ADDRESS = 0x80,
+    ACCELERATION_STRUCTURE_BUILD_INPUT_READ_ONLY = 0x100,
+    ACCELERATION_STRUCTURE_STORAGE = 0x200,
+    ACCELERATION_STRUCTURE_BUILD_SCRATCH = 0x400
 };
 using BufferUsage = BufferUsageBit;
 CC_ENUM_BITWISE_OPERATORS(BufferUsageBit);
@@ -618,10 +629,22 @@ enum class ShaderStageFlagBit : uint32_t {
     GEOMETRY = 0x8,
     FRAGMENT = 0x10,
     COMPUTE = 0x20,
-    ALL = 0x3f,
+    RAYGEN = 0x40,
+    MISS = 0x80,
+    CLOSEST_HIT = 0x100,
+    ANY_HIT = 0x200,
+    INTERSECTION = 0x400, 
+    CALLABLE = 0x800,
+    ALL = VERTEX | CONTROL | EVALUATION | GEOMETRY | FRAGMENT | COMPUTE | RAYGEN | MISS | CLOSEST_HIT | ANY_HIT | INTERSECTION | CALLABLE,
 };
 using ShaderStageFlags = ShaderStageFlagBit;
 CC_ENUM_BITWISE_OPERATORS(ShaderStageFlagBit);
+
+enum class RayTracingShaderGroupType : uint32_t {
+    GENERAL,
+    TRIANGLES_HIT_GROUP,
+    PROCEDURAL_HIT_GROUP,
+};
 
 enum class LoadOp : uint32_t {
     LOAD,    // Load the previous content from memory
@@ -762,6 +785,7 @@ enum class DescriptorType : uint32_t {
     TEXTURE = 0x40,
     STORAGE_IMAGE = 0x80,
     INPUT_ATTACHMENT = 0x100,
+    ACCELERATION_STRUCTURE = 0x200
 };
 CC_ENUM_BITWISE_OPERATORS(DescriptorType);
 
@@ -776,6 +800,8 @@ enum class QueryType : uint32_t {
     OCCLUSION,
     PIPELINE_STATISTICS,
     TIMESTAMP,
+    ACCELERATION_STRUCTURE_COMPACTED_SIZE,
+    ACCELERATION_STRUCTURE_SERIALIZATION_SIZE
 };
 CC_ENUM_CONVERSION_OPERATOR(QueryType);
 
@@ -1064,6 +1090,23 @@ struct DispatchInfo {
     EXPOSE_COPY_FN(DispatchInfo)
 };
 
+struct RayTracingInfo {
+    //Shader Binding Tables
+    Buffer* rayGenSBT;
+    Buffer* hitGroupSBT;
+    Buffer* missSBT;
+    Buffer* callableSBT; 
+    // Extent
+    uint32_t width{0};
+    uint32_t height{0};
+    uint32_t depth{1};
+    // Indirect
+    Buffer *indirectBuffer{nullptr}; // @ts-nullable
+    uint32_t indirectOffset{0};
+
+    EXPOSE_COPY_FN(RayTracingInfo)
+};
+
 using DispatchInfoList = ccstd::vector<DispatchInfo>;
 
 struct IndirectBuffer {
@@ -1182,6 +1225,16 @@ struct UniformTexture {
 
 using UniformTextureList = ccstd::vector<UniformTexture>;
 
+struct AccelerationStructureLayout {
+    uint32_t set{0};
+    uint32_t binding{0};
+    ccstd::string name;
+    Type type{Type::UNKNOWN};
+    uint32_t count{0};
+
+    EXPOSE_COPY_FN(AccelerationStructureLayout)
+};
+
 struct UniformStorageImage {
     uint32_t set{0};
     uint32_t binding{0};
@@ -1239,6 +1292,87 @@ struct Attribute {
     uint32_t location{0};
 
     EXPOSE_COPY_FN(Attribute)
+};
+
+enum class ASGeometryFlagBit : uint32_t {
+    GEOMETRY_OPAQUE = 0x1,
+    COUNT
+};
+
+CC_ENUM_BITWISE_OPERATORS(ASGeometryFlagBit);
+using ASGeometryFlags = ASGeometryFlagBit;
+
+enum class ASBuildFlagBits : uint32_t {
+    ALLOW_UPDATE = 0x1,
+    ALLOW_COMPACTION = 0x2,
+    PREFER_FAST_TRACE = 0x4,
+    PREFER_FAST_BUILD = 0x8,
+    LOW_MEMORY = 0x10,
+};
+
+CC_ENUM_BITWISE_OPERATORS(ASBuildFlagBits);
+using ASBuildFlags = ASBuildFlagBits;
+
+enum class GeometryInstanceFlagBits : uint32_t {
+    TRIANGLE_FACING_CULL_DISABLE = 0x1,
+    TRIANGLE_FLIP_FACING = 0x2,
+    FORCE_OPAQUE = 0x4,
+    FORCE_NO_OPAQUE = 0x8,
+    TRIANGLE_FRONT_COUNTERCLOCKWISE_BIT_KHR = TRIANGLE_FLIP_FACING,
+    COUNT
+};
+
+CC_ENUM_BITWISE_OPERATORS(GeometryInstanceFlagBits);
+using GeometryInstanceFlags = GeometryInstanceFlagBits;
+
+struct ASTriangleMesh {
+    ASGeometryFlags flag;
+    Format vertexFormat;
+    uint32_t vertexCount;
+    uint32_t vertexStride;
+    uint32_t indexCount;
+    Buffer* vertexBuffer;
+    Buffer* indexBuffer;
+
+    bool operator==(const ASTriangleMesh& other) const {
+        return flag == other.flag && vertexBuffer == other.vertexBuffer && indexBuffer == other.indexBuffer
+            && vertexFormat == other.vertexFormat && vertexCount == other.vertexCount && vertexStride == other.vertexStride;
+    }
+};
+
+struct ASAABB {
+    ASGeometryFlags flag;
+    float minX;
+    float minY;
+    float minZ;
+    float maxX;
+    float maxY;
+    float maxZ;
+
+    bool operator==(const ASAABB& other) const {
+        return minX == other.minX && minY == other.minY && minZ == other.minZ &&
+               maxX == other.maxX && maxY == other.maxY && maxZ == other.maxZ;
+    }
+};
+
+struct ASInstance {
+    Mat4 transform{};
+    uint32_t instanceCustomIdx;
+    uint32_t mask;
+    uint32_t shaderBindingTableRecordOffset;//The index of the first geometry of the instance in the Hit Group SBT.
+    GeometryInstanceFlags flags;
+    AccelerationStructure *accelerationStructureRef;
+};
+
+struct AccelerationStructureInfo{
+    ccstd::vector<ASTriangleMesh> triangleMeshes;
+    ccstd::vector<ASAABB> aabbs;
+    ccstd::vector<ASInstance> instances;
+    ASBuildFlags buildFlag;
+
+    bool operator==(const AccelerationStructureInfo& other) const {
+        return buildFlag == other.buildFlag && aabbs == other.aabbs && triangleMeshes == other.triangleMeshes;
+    }
 };
 
 using AttributeList = ccstd::vector<Attribute>;

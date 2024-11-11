@@ -461,7 +461,7 @@ void ClusterLightCulling::initResetStage() {
 
 void ClusterLightCulling::initCullingStage() {
     ShaderStrings sources;
-    sources.glsl4 = StringUtil::format(
+    sources.glsl4 = StringUtil::format( 
         R"(
 		layout(set=0, binding=0, std140) uniform CCConst {
 		  vec4 cc_nearFar;
