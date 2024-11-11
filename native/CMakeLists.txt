@@ -2551,7 +2551,7 @@ cocos_source_files(
             cocos/bindings/manual/jsb_pipeline_manual.h
             cocos/bindings/manual/jsb_pipeline_manual.cpp
             cocos/bindings/manual/jsb_adpf.cpp
-            cocos/bindings/manual/jsb_google_play_billing.cpp
+            cocos/bindings/manual/jsb_billing.cpp
 )
 if(USE_AUDIO)
     cocos_source_files(

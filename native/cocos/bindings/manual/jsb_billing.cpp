@@ -32,7 +32,7 @@
     #include "cocos/platform/android/modules/google_play/billing/billing.h"
 JSB_REGISTER_OBJECT_TYPE(cc::BillingResult);
 JSB_REGISTER_OBJECT_TYPE(cc::OneTimePurchaseOfferDetails);
-JSB_REGISTER_OBJECT_TYPE(cc::ProductDetailsInstallmentPlanDetails);
+JSB_REGISTER_OBJECT_TYPE(cc::InstallmentPlanDetails);
 JSB_REGISTER_OBJECT_TYPE(cc::PricingPhase);
 JSB_REGISTER_OBJECT_TYPE(cc::SubscriptionOfferDetails);
 JSB_REGISTER_OBJECT_TYPE(cc::ProductDetails);
@@ -45,8 +45,6 @@ JSB_REGISTER_OBJECT_TYPE(cc::Billing);
 #endif
 
 #if CC_PLATFORM == CC_PLATFORM_ANDROID
-se::Class* __jsb_cc_BillingResult_class = nullptr;
-se::Object* __jsb_cc_BillingResult_proto = nullptr;
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_BillingResult)
 static bool js_cc_BillingResult_debugMessage_get(se::State& s) {
     CC_UNUSED bool ok = true;
@@ -112,15 +110,10 @@ bool js_register_cc_BillingResult(se::Object* obj) {
 
     cls->install();
     JSBClassType::registerClass<cc::BillingResult>(cls);
-
-    __jsb_cc_BillingResult_proto = cls->getProto();
-    __jsb_cc_BillingResult_class = cls;
     se::ScriptEngine::getInstance()->clearException();
     return true;
 }
 
-se::Class* __jsb_cc_OneTimePurchaseOfferDetails_class = nullptr;
-se::Object* __jsb_cc_OneTimePurchaseOfferDetails_proto = nullptr;
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_OneTimePurchaseOfferDetails)
 
 static bool js_cc_OneTimePurchaseOfferDetails_formattedPrice_get(se::State& s) {
@@ -183,22 +176,17 @@ bool js_register_cc_OneTimePurchaseOfferDetails(se::Object* obj) {
 
     cls->install();
     JSBClassType::registerClass<cc::OneTimePurchaseOfferDetails>(cls);
-
-    __jsb_cc_OneTimePurchaseOfferDetails_proto = cls->getProto();
-    __jsb_cc_OneTimePurchaseOfferDetails_class = cls;
     se::ScriptEngine::getInstance()->clearException();
     return true;
 }
 
-se::Class* __jsb_cc_ProductDetailsInstallmentPlanDetails_class = nullptr;
-se::Object* __jsb_cc_ProductDetailsInstallmentPlanDetails_proto = nullptr;
-SE_DECLARE_FINALIZE_FUNC(js_delete_cc_ProductDetailsInstallmentPlanDetails)
-static bool js_cc_ProductDetailsInstallmentPlanDetails_installmentPlanCommitmentPaymentsCount_get(se::State& s) {
+SE_DECLARE_FINALIZE_FUNC(js_delete_cc_InstallmentPlanDetails)
+static bool js_cc_InstallmentPlanDetails_installmentPlanCommitmentPaymentsCount_get(se::State& s) {
     CC_UNUSED bool ok = true;
-    cc::ProductDetailsInstallmentPlanDetails* arg1 = (cc::ProductDetailsInstallmentPlanDetails*)NULL;
+    cc::InstallmentPlanDetails* arg1 = (cc::InstallmentPlanDetails*)NULL;
     int result;
 
-    arg1 = SE_THIS_OBJECT<cc::ProductDetailsInstallmentPlanDetails>(s);
+    arg1 = SE_THIS_OBJECT<cc::InstallmentPlanDetails>(s);
     if (nullptr == arg1) return true;
     result = arg1->installmentPlanCommitmentPaymentsCount;
 
@@ -206,14 +194,14 @@ static bool js_cc_ProductDetailsInstallmentPlanDetails_installmentPlanCommitment
 
     return true;
 }
-SE_BIND_PROP_GET(js_cc_ProductDetailsInstallmentPlanDetails_installmentPlanCommitmentPaymentsCount_get)
+SE_BIND_PROP_GET(js_cc_InstallmentPlanDetails_installmentPlanCommitmentPaymentsCount_get)
 
-static bool js_cc_ProductDetailsInstallmentPlanDetails_subsequentInstallmentPlanCommitmentPaymentsCount_get(se::State& s) {
+static bool js_cc_InstallmentPlanDetails_subsequentInstallmentPlanCommitmentPaymentsCount_get(se::State& s) {
     CC_UNUSED bool ok = true;
-    cc::ProductDetailsInstallmentPlanDetails* arg1 = (cc::ProductDetailsInstallmentPlanDetails*)NULL;
+    cc::InstallmentPlanDetails* arg1 = (cc::InstallmentPlanDetails*)NULL;
     int result;
 
-    arg1 = SE_THIS_OBJECT<cc::ProductDetailsInstallmentPlanDetails>(s);
+    arg1 = SE_THIS_OBJECT<cc::InstallmentPlanDetails>(s);
     if (nullptr == arg1) return true;
     result = arg1->subsequentInstallmentPlanCommitmentPaymentsCount;
 
@@ -221,33 +209,28 @@ static bool js_cc_ProductDetailsInstallmentPlanDetails_subsequentInstallmentPlan
 
     return true;
 }
-SE_BIND_PROP_GET(js_cc_ProductDetailsInstallmentPlanDetails_subsequentInstallmentPlanCommitmentPaymentsCount_get)
+SE_BIND_PROP_GET(js_cc_InstallmentPlanDetails_subsequentInstallmentPlanCommitmentPaymentsCount_get)
 
-static bool js_delete_cc_ProductDetailsInstallmentPlanDetails(se::State& s) {
+static bool js_delete_cc_InstallmentPlanDetails(se::State& s) {
     return true;
 }
-SE_BIND_FINALIZE_FUNC(js_delete_cc_ProductDetailsInstallmentPlanDetails)
+SE_BIND_FINALIZE_FUNC(js_delete_cc_InstallmentPlanDetails)
 
-bool js_register_cc_ProductDetailsInstallmentPlanDetails(se::Object* obj) {
-    auto* cls = se::Class::create("ProductDetailsInstallmentPlanDetails", obj, nullptr, nullptr);
+bool js_register_cc_InstallmentPlanDetails(se::Object* obj) {
+    auto* cls = se::Class::create("InstallmentPlanDetails", obj, nullptr, nullptr);
 
     cls->defineStaticProperty("__isJSB", se::Value(true), se::PropertyAttribute::READ_ONLY | se::PropertyAttribute::DONT_ENUM | se::PropertyAttribute::DONT_DELETE);
-    cls->defineProperty("installmentPlanCommitmentPaymentsCount", _SE(js_cc_ProductDetailsInstallmentPlanDetails_installmentPlanCommitmentPaymentsCount_get), nullptr);
-    cls->defineProperty("subsequentInstallmentPlanCommitmentPaymentsCount", _SE(js_cc_ProductDetailsInstallmentPlanDetails_subsequentInstallmentPlanCommitmentPaymentsCount_get), nullptr);
+    cls->defineProperty("installmentPlanCommitmentPaymentsCount", _SE(js_cc_InstallmentPlanDetails_installmentPlanCommitmentPaymentsCount_get), nullptr);
+    cls->defineProperty("subsequentInstallmentPlanCommitmentPaymentsCount", _SE(js_cc_InstallmentPlanDetails_subsequentInstallmentPlanCommitmentPaymentsCount_get), nullptr);
 
-    cls->defineFinalizeFunction(_SE(js_delete_cc_ProductDetailsInstallmentPlanDetails));
+    cls->defineFinalizeFunction(_SE(js_delete_cc_InstallmentPlanDetails));
 
     cls->install();
-    JSBClassType::registerClass<cc::ProductDetailsInstallmentPlanDetails>(cls);
+    JSBClassType::registerClass<cc::InstallmentPlanDetails>(cls);
 
-    __jsb_cc_ProductDetailsInstallmentPlanDetails_proto = cls->getProto();
-    __jsb_cc_ProductDetailsInstallmentPlanDetails_class = cls;
     se::ScriptEngine::getInstance()->clearException();
     return true;
 }
-
-se::Class* __jsb_cc_PricingPhase_class = nullptr;
-se::Object* __jsb_cc_PricingPhase_proto = nullptr;
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_PricingPhase)
 
 static bool js_cc_PricingPhase_billingCycleCount_get(se::State& s) {
@@ -366,14 +349,10 @@ bool js_register_cc_PricingPhase(se::Object* obj) {
     cls->install();
     JSBClassType::registerClass<cc::PricingPhase>(cls);
 
-    __jsb_cc_PricingPhase_proto = cls->getProto();
-    __jsb_cc_PricingPhase_class = cls;
     se::ScriptEngine::getInstance()->clearException();
     return true;
 }
 
-se::Class* __jsb_cc_SubscriptionOfferDetails_class = nullptr;
-se::Object* __jsb_cc_SubscriptionOfferDetails_proto = nullptr;
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_SubscriptionOfferDetails)
 
 static bool js_cc_SubscriptionOfferDetails_basePlanId_get(se::State& s) {
@@ -396,7 +375,7 @@ SE_BIND_PROP_GET(js_cc_SubscriptionOfferDetails_basePlanId_get)
 static bool js_cc_SubscriptionOfferDetails_installmentPlanDetails_get(se::State& s) {
     CC_UNUSED bool ok = true;
     cc::SubscriptionOfferDetails* arg1 = (cc::SubscriptionOfferDetails*)NULL;
-    cc::ProductDetailsInstallmentPlanDetails* result = 0;
+    cc::InstallmentPlanDetails* result = 0;
 
     arg1 = SE_THIS_OBJECT<cc::SubscriptionOfferDetails>(s);
     if (nullptr == arg1) return true;
@@ -498,14 +477,10 @@ bool js_register_cc_SubscriptionOfferDetails(se::Object* obj) {
     cls->install();
     JSBClassType::registerClass<cc::SubscriptionOfferDetails>(cls);
 
-    __jsb_cc_SubscriptionOfferDetails_proto = cls->getProto();
-    __jsb_cc_SubscriptionOfferDetails_class = cls;
     se::ScriptEngine::getInstance()->clearException();
     return true;
 }
 
-se::Class* __jsb_cc_ProductDetails_class = nullptr;
-se::Object* __jsb_cc_ProductDetails_proto = nullptr;
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_ProductDetails)
 
 static bool js_cc_ProductDetails_equals(se::State& s) {
@@ -710,14 +685,10 @@ bool js_register_cc_ProductDetails(se::Object* obj) {
     cls->install();
     JSBClassType::registerClass<cc::ProductDetails>(cls);
 
-    __jsb_cc_ProductDetails_proto = cls->getProto();
-    __jsb_cc_ProductDetails_class = cls;
     se::ScriptEngine::getInstance()->clearException();
     return true;
 }
 
-se::Class* __jsb_cc_AccountIdentifiers_class = nullptr;
-se::Object* __jsb_cc_AccountIdentifiers_proto = nullptr;
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_AccountIdentifiers)
 
 static bool js_cc_AccountIdentifiers_obfuscatedAccountId_get(se::State& s) {
@@ -771,14 +742,10 @@ bool js_register_cc_AccountIdentifiers(se::Object* obj) {
     cls->install();
     JSBClassType::registerClass<cc::AccountIdentifiers>(cls);
 
-    __jsb_cc_AccountIdentifiers_proto = cls->getProto();
-    __jsb_cc_AccountIdentifiers_class = cls;
     se::ScriptEngine::getInstance()->clearException();
     return true;
 }
 
-se::Class* __jsb_cc_PendingPurchaseUpdate_class = nullptr;
-se::Object* __jsb_cc_PendingPurchaseUpdate_proto = nullptr;
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_PendingPurchaseUpdate)
 
 static bool js_cc_PendingPurchaseUpdate_products_get(se::State& s) {
@@ -831,15 +798,10 @@ bool js_register_cc_PendingPurchaseUpdate(se::Object* obj) {
 
     cls->install();
     JSBClassType::registerClass<cc::PendingPurchaseUpdate>(cls);
-
-    __jsb_cc_PendingPurchaseUpdate_proto = cls->getProto();
-    __jsb_cc_PendingPurchaseUpdate_class = cls;
     se::ScriptEngine::getInstance()->clearException();
     return true;
 }
 
-se::Class* __jsb_cc_Purchase_class = nullptr;
-se::Object* __jsb_cc_Purchase_proto = nullptr;
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_Purchase)
 
 static bool js_cc_Purchase_equals(se::State& s) {
@@ -1130,28 +1092,13 @@ static bool js_cc_Purchase_toString_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_toString_get)
 
-static bool js_new_cc_Purchase(se::State& s) // NOLINT(readability-identifier-naming)
-{
-    CC_UNUSED bool ok = true;
-    const auto& args = s.args();
-    size_t argc = args.size();
-
-    cc::Purchase* result;
-    result = (cc::Purchase*)new cc::Purchase();
-
-    auto* ptr = JSB_MAKE_PRIVATE_OBJECT_WITH_INSTANCE(result);
-    s.thisObject()->setPrivateObject(ptr);
-    return true;
-}
-SE_BIND_CTOR(js_new_cc_Purchase, __jsb_cc_Purchase_class, js_delete_cc_Purchase)
-
 static bool js_delete_cc_Purchase(se::State& s) {
     return true;
 }
 SE_BIND_FINALIZE_FUNC(js_delete_cc_Purchase)
 
 bool js_register_cc_Purchase(se::Object* obj) {
-    auto* cls = se::Class::create("Purchase", obj, nullptr, _SE(js_new_cc_Purchase));
+    auto* cls = se::Class::create("Purchase", obj, nullptr, nullptr);
 
     cls->defineStaticProperty("__isJSB", se::Value(true), se::PropertyAttribute::READ_ONLY | se::PropertyAttribute::DONT_ENUM | se::PropertyAttribute::DONT_DELETE);
     cls->defineProperty("accountIdentifiers", _SE(js_cc_Purchase_accountIdentifiers_get), nullptr);
@@ -1178,8 +1125,6 @@ bool js_register_cc_Purchase(se::Object* obj) {
     cls->install();
     JSBClassType::registerClass<cc::Purchase>(cls);
 
-    __jsb_cc_Purchase_proto = cls->getProto();
-    __jsb_cc_Purchase_class = cls;
     se::ScriptEngine::getInstance()->clearException();
     return true;
 }
@@ -1206,8 +1151,6 @@ static bool js_delete_cc_BillingConfig(se::State& s) {
 }
 SE_BIND_FINALIZE_FUNC(js_delete_cc_BillingConfig)
 
-se::Class* __jsb_cc_BillingConfig_class = nullptr;
-se::Object* __jsb_cc_BillingConfig_proto = nullptr;
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_BillingConfig)
 
 bool js_register_cc_BillingConfig(se::Object* obj) {
@@ -1222,14 +1165,10 @@ bool js_register_cc_BillingConfig(se::Object* obj) {
     cls->install();
     JSBClassType::registerClass<cc::BillingConfig>(cls);
 
-    __jsb_cc_BillingConfig_proto = cls->getProto();
-    __jsb_cc_BillingConfig_class = cls;
     se::ScriptEngine::getInstance()->clearException();
     return true;
 }
 
-se::Class* __jsb_cc_Billing_class = nullptr;
-se::Object* __jsb_cc_Billing_proto = nullptr;
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_Billing)
 
 static bool js_cc_Billing_startConnection(se::State& s) {
@@ -1493,7 +1432,7 @@ bool js_register_cc_Billing(se::Object* obj) {
     return true;
 }
 
-bool jsb_register_google_play_billing(se::Object* obj) {
+bool jsb_register_all_billing(se::Object* obj) {
     se::Value nsVal;
     if (!obj->getProperty("jsb", &nsVal, true)) {
         se::HandleObject jsobj(se::Object::createPlainObject());
@@ -1504,7 +1443,7 @@ bool jsb_register_google_play_billing(se::Object* obj) {
     /* Register classes */
     js_register_cc_BillingResult(ns);
     js_register_cc_OneTimePurchaseOfferDetails(ns);
-    js_register_cc_ProductDetailsInstallmentPlanDetails(ns);
+    js_register_cc_InstallmentPlanDetails(ns);
     js_register_cc_PricingPhase(ns);
 
     js_register_cc_SubscriptionOfferDetails(ns);
@@ -1518,6 +1457,6 @@ bool jsb_register_google_play_billing(se::Object* obj) {
 }
 
 #else
-void jsb_register_google_play_billing(se::Object *ns) {} // NOLINT
+void jsb_register_all_billing(se::Object *ns) {} // NOLINT
 
 #endif // CC_PLATFORM_ANDROID

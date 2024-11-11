@@ -1521,7 +1521,7 @@ export declare namespace native {
      * @en Represents additional details of an installment subscription plan.
      * @zh 表示分期付款订阅计划的附加详细信息。
      */
-    export interface ProductDetailsInstallmentPlanDetails {
+    export interface InstallmentPlanDetails {
         /**
          * @en Committed payments count after a user signs up for this subscription plan.
          * @zh 用户注册此订阅计划后承诺的付款数量。
@@ -1605,7 +1605,7 @@ export declare namespace native {
         * @en The additional details of an installment plan.
         * @zh 分期付款计划的附加详细信息。
         */
-        readonly installmentPlanDetails: ProductDetailsInstallmentPlanDetails;
+        readonly installmentPlanDetails: InstallmentPlanDetails;
     }
     /**
      * @en Represents the details of a one time or subscription product.
