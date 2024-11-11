@@ -3,10 +3,10 @@ import Utils from "./utilis";
 import * as physics2d from "../../exports/physics-2d-framework";
 import { Node, Scene } from "../../cocos/scene-graph";
 
-import waitForBox2dWasmInstantiation from "../../exports/wait-for-box2d-instantiation";
 import "../../exports/physics-2d-box2d-wasm";
 import "../../exports/physics-2d-box2d";
 import "../../exports/physics-2d-builtin";
+import { waitForBox2dWasmInstantiation } from "../../cocos/physics-2d/box2d-wasm/instantiated";
 
 import RigidBodyTest from "./rigid-body";
 import ColliderTest from "./collider"; 
