@@ -1,3 +1,26 @@
+/****************************************************************************
+ Copyright (c) 2024 Xiamen Yaji Software Co., Ltd.
+
+ http://www.cocos.com
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights to
+ use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ of the Software, and to permit persons to whom the Software is furnished to do so,
+ subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+*****************************************************************************/
 import { JSB } from 'internal:constants';
 import { native } from '../../../native-binding';
 import { EventTarget } from '../../event';
@@ -6,7 +29,7 @@ import { ccenum } from '../../value-types/enum';
 declare const jsb: any;
 /**
  * @en Google play billing event type
- * @zh 输入事件类型
+ * @zh google play billing事件类型
  */
 export enum BillingEventType {
     /**
@@ -83,10 +106,10 @@ export enum BillingEventType {
     ALTERNATIVE_BILLING_ONLY_TOKEN_RESPONSE = 'alternative_billing_only_token_response',
     /**
      * @en
-     * Called to notify that query product details operation has finished.
+     * Called to receive the results from createExternalOfferReportingDetailsAsync when it is finished.
      *
      * @zh
-     * 当通知查询产品详细信息操作已完成时调用。
+     * 当调用createExternalOfferReportingDetailsAsync接口完成时触发，可以接收调用结果。
      */
     EXTERNAL_OFFER_REPORTING_DETAILS_RESPONSE = 'external_offer_reporting_details_response',
     /**
@@ -97,12 +120,12 @@ export enum BillingEventType {
      * 当调用BillingClient#isAlternativeBillingOnlyAvailableAsync接口完成时触发，可以接收调用结果。
      */
     ALTERNATIVE_BILLING_ONLY_AVAILABILITY_RESPONSE = 'alternative_billing_only_availability_response',
-        /**
+    /**
      * @en
-     * Called to notify that query product details operation has finished.
+     * Called to receive the results from BillingClient#isExternalOfferAvailableAsync when it is finished.
      *
      * @zh
-     * 当通知查询产品详细信息操作已完成时调用。
+     * 当调用BillingClient#isExternalOfferAvailableAsync接口完成时触发，可以接收调用结果。
      */
     EXTERNAL_OFFER_AVAILABILITY_RESPONSE = 'external_offer_availability_response',
     /**
@@ -113,12 +136,12 @@ export enum BillingEventType {
      * 当仅替代Billing对话流程已完成时触发。
      */
     ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG_RESPONSE = 'alternative_billing_only_information_dialog_response',
-        /**
+    /**
      * @en
-     * Called to notify that query product details operation has finished.
+     * Called to notify that the external offer information dialog flow is finished.
      *
      * @zh
-     * 当通知查询产品详细信息操作已完成时调用。
+     * 当外部报价信息对话流程已完成时触发。
      */
     EXTERNAL_OFFER_INFORMATION_DIALOG_RESPONSE = 'external_offer_information_dialog_response',
     /**
@@ -222,7 +245,7 @@ export enum BillingResponseCode {
      * A user billing error occurred during processing.
      *
      * @zh
-     * 处理过程中出现用户计费错误。
+     * 处理过程中出现用户billing错误。
      */
     BILLING_UNAVAILABLE = 3,
     /**
@@ -288,7 +311,7 @@ export enum RecurrenceMode {
      * The billing plan payment recurs for infinite billing periods unless cancelled.
      *
      * @zh
-     * 除非取消，否则计费计划付款将无限期地重复。
+     * 除非取消，否则billing计划付款将无限期地重复。
      */
     INFINITE_RECURRING = 1,
     /**
@@ -296,7 +319,7 @@ export enum RecurrenceMode {
      * The billing plan payment recurs for a fixed number of billing period set in billingCycleCount.
      *
      * @zh
-     * 计费计划付款将在 billingCycleCount 中设置的固定计费周期内重复发生。
+     * Billing计划付款将在 billingCycleCount 中设置的固定计费周期内重复发生。
      */
     FINITE_RECURRING = 2,
     /**
@@ -304,7 +327,7 @@ export enum RecurrenceMode {
      * The billing plan payment is a one time charge that does not repeat.
      *
      * @zh
-     * 计费计划付款是一次性费用，不会重复。
+     * Billing计划付款是一次性费用，不会重复。
      */
     NON_RECURRING = 3,
 }
@@ -314,7 +337,7 @@ export enum RecurrenceMode {
  * Connection state of billing client.
  *
  * @zh
- * BillingClient的连接状态
+ * Billing client的连接状态
  */
 export enum ConnectionState {
     /**
@@ -372,7 +395,7 @@ export enum FeatureType {
      * Get billing config.
      *
      * @zh
-     * 获取计费配置。。
+     * 获取计费配置。
      */
     BILLING_CONFIG = 'ggg',
     /**
@@ -603,14 +626,14 @@ export class GooglePlayBilling {
 
     /**
      * @en Get the current billing client connection state.
-     * @zh 获取当前计费客户端连接状态。
+     * @zh 获取当前billing客户端连接状态。
      */
     public getConnectionState (): number {
         if (jsb.billing) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return jsb.billing.getConnectionState();
         }
-        return 0;
+        return ConnectionState.DISCONNECTED;
     }
 
     /**
@@ -630,6 +653,9 @@ export class GooglePlayBilling {
     /**
      * @en Performs a network query the details of products available for sale in your app.
      * @zh 执行网络查询您的应用中可供销售的产品的详细信息。
+     * @param productId @zh 产品ID。 @en product id.
+     * @param productType @zh 产品类型。 @en product type.
+     *
      */
     public queryProductDetailsParams (productId: string[] | string, productType: ProductType): void {
         if (productId instanceof Array) {
@@ -644,6 +670,8 @@ export class GooglePlayBilling {
     /**
      * @en Initiates the billing flow for an in-app purchase or subscription.
      * @zh 启动应用内购买或订阅的计费流程。
+     * @param productDetails @zh 产品详情。 @en product details.
+     * @param selectedOfferToken @zh 选择提供的token。 @en selected offer token.
      */
     public launchBillingFlow (productDetails: native.ProductDetails[] | native.ProductDetails, selectedOfferToken: string | null): void {
         if (productDetails instanceof Array) {
@@ -658,6 +686,7 @@ export class GooglePlayBilling {
     /**
      * @en Consumes a given in-app product.
      * @zh 消费指定的应用内产品。
+     * @param purchase @zh 已经购买的产品。 @en Purchased Products.
      */
     public consumePurchases (purchase: native.Purchase[] | native.Purchase): void {
         if (purchase instanceof Array) {
@@ -672,6 +701,7 @@ export class GooglePlayBilling {
     /**
      * @en Acknowledges in-app purchases.
      * @zh 确认应用内购买。
+     * @param purchase @zh 已经购买的产品。 @en Purchased Products.
      */
     public acknowledgePurchase (purchase: native.Purchase[] | native.Purchase): void {
         if (purchase instanceof Array) {
@@ -686,6 +716,7 @@ export class GooglePlayBilling {
     /**
      * @en Returns purchases details for currently owned items bought within your app.
      * @zh 返回您应用内当前拥有的购买商品的购买详情。
+     * @param productType @zh 产品类型 @en Product type.
      */
     public queryPurchasesAsync (productType: ProductType): void {
         jsb.billing?.queryPurchasesAsync(productType);
@@ -734,6 +765,7 @@ export class GooglePlayBilling {
     /**
      * @en Checks if the specified feature or capability is supported by the Play Store.
      * @zh 检查 Play Store 是否支持指定的功能。
+     * @param feature @zh 功能特性 @en feature.
      */
     public isFeatureSupported (feature: string): native.BillingResult | null {
         if (jsb.billing) {

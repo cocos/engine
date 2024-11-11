@@ -357,9 +357,9 @@ cc::OneTimePurchaseOfferDetails* JniBillingHelper::toOneTimePurchaseOfferDetails
     return oneTimePurchaseOfferDetails;
 }
 
-cc::ProductDetailsInstallmentPlanDetails* JniBillingHelper::toProductDetailsInstallmentPlanDetails(JNIEnv* env, jobject obj) {
+cc::InstallmentPlanDetails* JniBillingHelper::toInstallmentPlanDetails(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
-    auto* installmentPlanDetails = new cc::ProductDetailsInstallmentPlanDetails;
+    auto* installmentPlanDetails = new cc::InstallmentPlanDetails;
     installmentPlanDetails->installmentPlanCommitmentPaymentsCount = callIntMethod(env, clazz, obj, "getInstallmentPlanCommitmentPaymentsCount");
     installmentPlanDetails->subsequentInstallmentPlanCommitmentPaymentsCount = callIntMethod(env, clazz, obj, "subsequentInstallmentPlanCommitmentPaymentsCount");
     return installmentPlanDetails;
@@ -401,9 +401,9 @@ cc::SubscriptionOfferDetails* JniBillingHelper::toSubscriptionOfferDetails(JNIEn
     details->basePlanId = callStringMethod(env, clazz, obj,
                                            "getBasePlanId");
 
-    jobject productDetailsInstallmentPlanDetailsObj = callObjectMethod(env, clazz, obj, "getInstallmentPlanDetails", "com/android/billingclient/api/ProductDetails$InstallmentPlanDetails;");
-    if (productDetailsInstallmentPlanDetailsObj != nullptr) {
-        details->installmentPlanDetails.reset(toProductDetailsInstallmentPlanDetails(env, productDetailsInstallmentPlanDetailsObj));
+    jobject installmentPlanDetailsObj = callObjectMethod(env, clazz, obj, "getInstallmentPlanDetails", "com/android/billingclient/api/ProductDetails$InstallmentPlanDetails;");
+    if (installmentPlanDetailsObj != nullptr) {
+        details->installmentPlanDetails.reset(toInstallmentPlanDetails(env, installmentPlanDetailsObj));
     }
     details->offerId = callStringMethod(env, clazz, obj, "getOfferId");
 

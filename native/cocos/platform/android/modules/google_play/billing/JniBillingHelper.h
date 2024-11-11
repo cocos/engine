@@ -35,7 +35,7 @@ class BillingResult;
 class ProductDetails;
 class Purchase;
 class OneTimePurchaseOfferDetails;
-class ProductDetailsInstallmentPlanDetails;
+class InstallmentPlanDetails;
 class PricingPhase;
 class PricingPhases;
 class SubscriptionOfferDetails;
@@ -101,7 +101,7 @@ private:
     static ProductDetails *toProductDetail(JNIEnv *env, jobject productObj);
     static Purchase *toPurchase(JNIEnv *env, jobject purchaseObj);
     static OneTimePurchaseOfferDetails *toOneTimePurchaseOfferDetails(JNIEnv *env, jobject obj);
-    static ProductDetailsInstallmentPlanDetails *toProductDetailsInstallmentPlanDetails(JNIEnv *env, jobject obj);
+    static InstallmentPlanDetails *toInstallmentPlanDetails(JNIEnv *env, jobject obj);
     static SubscriptionOfferDetails *toSubscriptionOfferDetails(JNIEnv *env, jobject obj);
     static AccountIdentifiers *toAccountIdentifiers(JNIEnv *env, jobject obj);
     static PendingPurchaseUpdate *toPendingPurchaseUpdate(JNIEnv *env, jobject obj);

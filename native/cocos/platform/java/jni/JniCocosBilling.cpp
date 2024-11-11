@@ -1,5 +1,5 @@
 /****************************************************************************
- Copyright (c) 2020-2023 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2024 Xiamen Yaji Software Co., Ltd.
 
  http://www.cocos.com
 
@@ -31,19 +31,7 @@
 #endif
 
 #include <jni.h>
-#include "cocos/base/UTF8.h"
-#include "engine/EngineEvents.h"
-#include "platform/java/jni/glue/JniNativeGlue.h"
-#include "platform/java/modules/SystemWindow.h"
-
-#include "base/memory/Memory.h"
-#include "base/std/container/string.h"
 #include "cocos/platform/android/modules/google_play/billing/JniBillingHelper.h"
-#include "cocos/platform/android/modules/google_play/billing/billing.h"
-
-namespace cc {
-
-}
 
 extern "C" {
 

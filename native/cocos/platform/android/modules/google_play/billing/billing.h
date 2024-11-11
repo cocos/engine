@@ -45,7 +45,7 @@ public:
     std::string priceCurrencyCode;
 };
 
-class CC_DLL ProductDetailsInstallmentPlanDetails {
+class CC_DLL InstallmentPlanDetails {
 public:
     int installmentPlanCommitmentPaymentsCount;
     int subsequentInstallmentPlanCommitmentPaymentsCount;
@@ -64,8 +64,8 @@ public:
 class CC_DLL PricingPhases {
 public:
     ~PricingPhases() {
-        for (auto* ptr : pricingPhaseList) {
-            delete ptr;
+        for (auto* pricingPhase : pricingPhaseList) {
+            delete pricingPhase;
         }
         pricingPhaseList.clear();
     }
@@ -79,7 +79,7 @@ public:
     std::string offerToken;
     std::vector<std::string> offerTags;
     std::unique_ptr<PricingPhases> pricingPhases;
-    std::unique_ptr<ProductDetailsInstallmentPlanDetails> installmentPlanDetails;
+    std::unique_ptr<InstallmentPlanDetails> installmentPlanDetails;
 };
 
 class CC_DLL ProductDetails : public cc::RefCounted {
@@ -176,7 +176,6 @@ public:
     void queryProductDetailsParams(const std::vector<std::string>& productIds, const std::string& type);
     void launchBillingFlow(const std::vector<ProductDetails*>& productDetails, const std::string& selectedOfferToken);
     void consumePurchases(const std::vector<Purchase*>& purchase);
-    void acknowledgePurchase(const Purchase* purchase);
     void acknowledgePurchase(const std::vector<Purchase*>& purchase);
     void queryPurchasesAsync(const std::string& productType);
     void getBillingConfigAsync();
@@ -186,7 +185,6 @@ public:
     void createExternalOfferReportingDetailsAsync();
     void isExternalOfferAvailableAsync();
     BillingResult* isFeatureSupported(const std::string& feature);
-
     BillingResult* showAlternativeBillingOnlyInformationDialog();
     BillingResult* showExternalOfferInformationDialog();
     BillingResult* showInAppMessages();
