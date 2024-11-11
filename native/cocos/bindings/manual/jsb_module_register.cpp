@@ -125,6 +125,8 @@
     #include "cocos/bindings/auto/jsb_physics_auto.h"
 #endif
 
+extern bool jsb_register_google_play_billing(se::Object *); // NOLINT
+
 bool jsb_register_all_modules() {
     se::ScriptEngine *se = se::ScriptEngine::getInstance();
 
@@ -188,6 +190,10 @@ bool jsb_register_all_modules() {
 #if CC_USE_SOCKET
     se->addRegisterCallback(register_all_websocket);
     se->addRegisterCallback(register_all_socketio);
+#endif
+
+#if CC_PLATFORM == CC_PLATFORM_ANDROID
+    se->addRegisterCallback(jsb_register_google_play_billing);
 #endif
 
 #if CC_USE_MIDDLEWARE

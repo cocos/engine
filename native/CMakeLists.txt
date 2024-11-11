@@ -761,6 +761,12 @@ if(ANDROID)
         cocos/platform/android/modules/System.cpp
         cocos/platform/android/modules/System.h
     )
+    cocos_source_files(
+        cocos/platform/android/modules/google_play/billing/billing.cpp
+        cocos/platform/android/modules/google_play/billing/billing.h
+        cocos/platform/android/modules/google_play/billing/JniBillingHelper.cpp
+        cocos/platform/android/modules/google_play/billing/JniBillingHelper.h
+    )
 elseif(OPENHARMONY)
     # Because there will be a definition of OHOS in harmonyos, it is necessary to define the macro of OPENHARMONY.
 elseif(OHOS)
@@ -1115,6 +1121,7 @@ elseif(ANDROID)
         ${CWD}/cocos/platform/java/jni/JniImp.h
         ${CWD}/cocos/platform/java/jni/glue/MessagePipe.cpp
         ${CWD}/cocos/platform/java/jni/glue/MessagePipe.h
+        ${CWD}/cocos/platform/java/jni/JniCocosBilling.cpp
     )
 
     cocos_source_files(MODULE ccfilesystem
@@ -2560,6 +2567,7 @@ cocos_source_files(
             cocos/bindings/manual/jsb_pipeline_manual.h
             cocos/bindings/manual/jsb_pipeline_manual.cpp
             cocos/bindings/manual/jsb_adpf.cpp
+            cocos/bindings/manual/jsb_google_play_billing.cpp
 )
 if(USE_AUDIO)
     cocos_source_files(

@@ -6,8 +6,8 @@ android {
     defaultConfig {
         minSdkVersion PROP_MIN_SDK_VERSION
         targetSdkVersion PROP_TARGET_SDK_VERSION
-        versionCode 1
-        versionName "1.0"
+        versionCode 7
+        versionName "7.0"
         consumerProguardFiles 'proguard-rules.pro'
     }
 
@@ -37,4 +37,7 @@ android {
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: '../java/libs')
+    api "com.pranavpandey.android:dynamic-utils:4.6.1"
+    api "com.android.billingclient:billing:7.0.0"
+    implementation "com.pranavpandey.android:dynamic-support:6.4.0"
 }
