@@ -46,7 +46,7 @@ JSB_REGISTER_OBJECT_TYPE(cc::Billing);
 
 #if CC_PLATFORM == CC_PLATFORM_ANDROID
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_BillingResult)
-static bool js_cc_BillingResult_debugMessage_get(se::State& s) {
+static bool js_cc_BillingResult_debugMessage_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::BillingResult* arg1 = (cc::BillingResult*)NULL;
     std::string result;
@@ -63,21 +63,21 @@ static bool js_cc_BillingResult_debugMessage_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_BillingResult_debugMessage_get)
 
-static bool js_cc_BillingResult_code_get(se::State& s) {
+static bool js_cc_BillingResult_responseCode_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::BillingResult* arg1 = (cc::BillingResult*)NULL;
     int result;
 
     arg1 = SE_THIS_OBJECT<cc::BillingResult>(s);
     if (nullptr == arg1) return true;
-    result = arg1->code;
+    result = arg1->responseCode;
 
     ok &= nativevalue_to_se(result, s.rval(), s.thisObject());
     return true;
 }
-SE_BIND_PROP_GET(js_cc_BillingResult_code_get)
+SE_BIND_PROP_GET(js_cc_BillingResult_responseCode_get)
 
-static bool js_cc_BillingResult_toString_get(se::State& s) {
+static bool js_cc_BillingResult_toString_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::BillingResult* arg1 = (cc::BillingResult*)NULL;
     std::string result;
@@ -93,17 +93,17 @@ static bool js_cc_BillingResult_toString_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_BillingResult_toString_get)
 
-static bool js_delete_cc_BillingResult(se::State& s) {
+static bool js_delete_cc_BillingResult(se::State& s) { // NOLINT
     return true;
 }
 SE_BIND_FINALIZE_FUNC(js_delete_cc_BillingResult)
 
-bool js_register_cc_BillingResult(se::Object* obj) {
+bool js_register_cc_BillingResult(se::Object* obj) { // NOLINT
     auto* cls = se::Class::create("BillingResult", obj, nullptr, nullptr);
 
     cls->defineStaticProperty("__isJSB", se::Value(true), se::PropertyAttribute::READ_ONLY | se::PropertyAttribute::DONT_ENUM | se::PropertyAttribute::DONT_DELETE);
     cls->defineProperty("debugMessage", _SE(js_cc_BillingResult_debugMessage_get), nullptr);
-    cls->defineProperty("code", _SE(js_cc_BillingResult_code_get), nullptr);
+    cls->defineProperty("responseCode", _SE(js_cc_BillingResult_responseCode_get), nullptr);
     cls->defineProperty("toStr", _SE(js_cc_BillingResult_toString_get), nullptr);
 
     cls->defineFinalizeFunction(_SE(js_delete_cc_BillingResult));
@@ -116,7 +116,7 @@ bool js_register_cc_BillingResult(se::Object* obj) {
 
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_OneTimePurchaseOfferDetails)
 
-static bool js_cc_OneTimePurchaseOfferDetails_formattedPrice_get(se::State& s) {
+static bool js_cc_OneTimePurchaseOfferDetails_formattedPrice_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::OneTimePurchaseOfferDetails* arg1 = (cc::OneTimePurchaseOfferDetails*)NULL;
 
@@ -131,7 +131,7 @@ static bool js_cc_OneTimePurchaseOfferDetails_formattedPrice_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_OneTimePurchaseOfferDetails_formattedPrice_get)
 
-static bool js_cc_OneTimePurchaseOfferDetails_priceAmountMicros_get(se::State& s) {
+static bool js_cc_OneTimePurchaseOfferDetails_priceAmountMicros_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::OneTimePurchaseOfferDetails* arg1 = (cc::OneTimePurchaseOfferDetails*)NULL;
 
@@ -144,7 +144,7 @@ static bool js_cc_OneTimePurchaseOfferDetails_priceAmountMicros_get(se::State& s
 }
 SE_BIND_PROP_GET(js_cc_OneTimePurchaseOfferDetails_priceAmountMicros_get)
 
-static bool js_cc_OneTimePurchaseOfferDetails_priceCurrencyCode_get(se::State& s) {
+static bool js_cc_OneTimePurchaseOfferDetails_priceCurrencyCode_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::OneTimePurchaseOfferDetails* arg1 = (cc::OneTimePurchaseOfferDetails*)NULL;
 
@@ -159,12 +159,12 @@ static bool js_cc_OneTimePurchaseOfferDetails_priceCurrencyCode_get(se::State& s
 }
 SE_BIND_PROP_GET(js_cc_OneTimePurchaseOfferDetails_priceCurrencyCode_get)
 
-static bool js_delete_cc_OneTimePurchaseOfferDetails(se::State& s) {
+static bool js_delete_cc_OneTimePurchaseOfferDetails(se::State& s) { // NOLINT
     return true;
 }
 SE_BIND_FINALIZE_FUNC(js_delete_cc_OneTimePurchaseOfferDetails)
 
-bool js_register_cc_OneTimePurchaseOfferDetails(se::Object* obj) {
+bool js_register_cc_OneTimePurchaseOfferDetails(se::Object* obj) { // NOLINT
     auto* cls = se::Class::create("OneTimePurchaseOfferDetails", obj, nullptr, nullptr);
 
     cls->defineStaticProperty("__isJSB", se::Value(true), se::PropertyAttribute::READ_ONLY | se::PropertyAttribute::DONT_ENUM | se::PropertyAttribute::DONT_DELETE);
@@ -181,7 +181,7 @@ bool js_register_cc_OneTimePurchaseOfferDetails(se::Object* obj) {
 }
 
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_InstallmentPlanDetails)
-static bool js_cc_InstallmentPlanDetails_installmentPlanCommitmentPaymentsCount_get(se::State& s) {
+static bool js_cc_InstallmentPlanDetails_installmentPlanCommitmentPaymentsCount_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::InstallmentPlanDetails* arg1 = (cc::InstallmentPlanDetails*)NULL;
     int result;
@@ -196,7 +196,7 @@ static bool js_cc_InstallmentPlanDetails_installmentPlanCommitmentPaymentsCount_
 }
 SE_BIND_PROP_GET(js_cc_InstallmentPlanDetails_installmentPlanCommitmentPaymentsCount_get)
 
-static bool js_cc_InstallmentPlanDetails_subsequentInstallmentPlanCommitmentPaymentsCount_get(se::State& s) {
+static bool js_cc_InstallmentPlanDetails_subsequentInstallmentPlanCommitmentPaymentsCount_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::InstallmentPlanDetails* arg1 = (cc::InstallmentPlanDetails*)NULL;
     int result;
@@ -211,12 +211,12 @@ static bool js_cc_InstallmentPlanDetails_subsequentInstallmentPlanCommitmentPaym
 }
 SE_BIND_PROP_GET(js_cc_InstallmentPlanDetails_subsequentInstallmentPlanCommitmentPaymentsCount_get)
 
-static bool js_delete_cc_InstallmentPlanDetails(se::State& s) {
+static bool js_delete_cc_InstallmentPlanDetails(se::State& s) { // NOLINT
     return true;
 }
 SE_BIND_FINALIZE_FUNC(js_delete_cc_InstallmentPlanDetails)
 
-bool js_register_cc_InstallmentPlanDetails(se::Object* obj) {
+bool js_register_cc_InstallmentPlanDetails(se::Object* obj) { // NOLINT
     auto* cls = se::Class::create("InstallmentPlanDetails", obj, nullptr, nullptr);
 
     cls->defineStaticProperty("__isJSB", se::Value(true), se::PropertyAttribute::READ_ONLY | se::PropertyAttribute::DONT_ENUM | se::PropertyAttribute::DONT_DELETE);
@@ -233,7 +233,7 @@ bool js_register_cc_InstallmentPlanDetails(se::Object* obj) {
 }
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_PricingPhase)
 
-static bool js_cc_PricingPhase_billingCycleCount_get(se::State& s) {
+static bool js_cc_PricingPhase_billingCycleCount_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::PricingPhase* arg1 = (cc::PricingPhase*)NULL;
     int result;
@@ -248,7 +248,7 @@ static bool js_cc_PricingPhase_billingCycleCount_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_PricingPhase_billingCycleCount_get)
 
-static bool js_cc_PricingPhase_priceAmountMicros_get(se::State& s) {
+static bool js_cc_PricingPhase_priceAmountMicros_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::PricingPhase* arg1 = (cc::PricingPhase*)NULL;
     long result;
@@ -263,7 +263,7 @@ static bool js_cc_PricingPhase_priceAmountMicros_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_PricingPhase_priceAmountMicros_get)
 
-static bool js_cc_PricingPhase_recurrenceMode_get(se::State& s) {
+static bool js_cc_PricingPhase_recurrenceMode_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::PricingPhase* arg1 = (cc::PricingPhase*)NULL;
     int result;
@@ -278,7 +278,7 @@ static bool js_cc_PricingPhase_recurrenceMode_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_PricingPhase_recurrenceMode_get)
 
-static bool js_cc_PricingPhase_billingPeriod_get(se::State& s) {
+static bool js_cc_PricingPhase_billingPeriod_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::PricingPhase* arg1 = (cc::PricingPhase*)NULL;
     std::string result;
@@ -295,7 +295,7 @@ static bool js_cc_PricingPhase_billingPeriod_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_PricingPhase_billingPeriod_get)
 
-static bool js_cc_PricingPhase_formattedPrice_get(se::State& s) {
+static bool js_cc_PricingPhase_formattedPrice_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::PricingPhase* arg1 = (cc::PricingPhase*)NULL;
     std::string result;
@@ -312,7 +312,7 @@ static bool js_cc_PricingPhase_formattedPrice_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_PricingPhase_formattedPrice_get)
 
-static bool js_cc_PricingPhase_priceCurrencyCode_get(se::State& s) {
+static bool js_cc_PricingPhase_priceCurrencyCode_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::PricingPhase* arg1 = (cc::PricingPhase*)NULL;
     std::string result;
@@ -329,12 +329,12 @@ static bool js_cc_PricingPhase_priceCurrencyCode_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_PricingPhase_priceCurrencyCode_get)
 
-static bool js_delete_cc_PricingPhase(se::State& s) {
+static bool js_delete_cc_PricingPhase(se::State& s) { // NOLINT
     return true;
 }
 SE_BIND_FINALIZE_FUNC(js_delete_cc_PricingPhase)
 
-bool js_register_cc_PricingPhase(se::Object* obj) {
+bool js_register_cc_PricingPhase(se::Object* obj) { // NOLINT
     auto* cls = se::Class::create("PricingPhase", obj, nullptr, nullptr);
 
     cls->defineStaticProperty("__isJSB", se::Value(true), se::PropertyAttribute::READ_ONLY | se::PropertyAttribute::DONT_ENUM | se::PropertyAttribute::DONT_DELETE);
@@ -355,7 +355,7 @@ bool js_register_cc_PricingPhase(se::Object* obj) {
 
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_SubscriptionOfferDetails)
 
-static bool js_cc_SubscriptionOfferDetails_basePlanId_get(se::State& s) {
+static bool js_cc_SubscriptionOfferDetails_basePlanId_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::SubscriptionOfferDetails* arg1 = (cc::SubscriptionOfferDetails*)NULL;
     std::string result;
@@ -372,7 +372,7 @@ static bool js_cc_SubscriptionOfferDetails_basePlanId_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_SubscriptionOfferDetails_basePlanId_get)
 
-static bool js_cc_SubscriptionOfferDetails_installmentPlanDetails_get(se::State& s) {
+static bool js_cc_SubscriptionOfferDetails_installmentPlanDetails_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::SubscriptionOfferDetails* arg1 = (cc::SubscriptionOfferDetails*)NULL;
     cc::InstallmentPlanDetails* result = 0;
@@ -389,7 +389,7 @@ static bool js_cc_SubscriptionOfferDetails_installmentPlanDetails_get(se::State&
 }
 SE_BIND_PROP_GET(js_cc_SubscriptionOfferDetails_installmentPlanDetails_get)
 
-static bool js_cc_SubscriptionOfferDetails_offerId_get(se::State& s) {
+static bool js_cc_SubscriptionOfferDetails_offerId_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::SubscriptionOfferDetails* arg1 = (cc::SubscriptionOfferDetails*)NULL;
     std::string result;
@@ -406,7 +406,7 @@ static bool js_cc_SubscriptionOfferDetails_offerId_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_SubscriptionOfferDetails_offerId_get)
 
-static bool js_cc_SubscriptionOfferDetails_offerTags_get(se::State& s) {
+static bool js_cc_SubscriptionOfferDetails_offerTags_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::SubscriptionOfferDetails* arg1 = (cc::SubscriptionOfferDetails*)NULL;
     std::vector<std::string> result;
@@ -423,7 +423,7 @@ static bool js_cc_SubscriptionOfferDetails_offerTags_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_SubscriptionOfferDetails_offerTags_get)
 
-static bool js_cc_SubscriptionOfferDetails_offerToken_get(se::State& s) {
+static bool js_cc_SubscriptionOfferDetails_offerToken_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::SubscriptionOfferDetails* arg1 = (cc::SubscriptionOfferDetails*)NULL;
     std::string result;
@@ -440,7 +440,7 @@ static bool js_cc_SubscriptionOfferDetails_offerToken_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_SubscriptionOfferDetails_offerToken_get)
 
-static bool js_cc_SubscriptionOfferDetails_pricingPhaseList_get(se::State& s) {
+static bool js_cc_SubscriptionOfferDetails_pricingPhaseList_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::SubscriptionOfferDetails* arg1 = (cc::SubscriptionOfferDetails*)NULL;
     std::vector<cc::PricingPhase*> result;
@@ -457,12 +457,12 @@ static bool js_cc_SubscriptionOfferDetails_pricingPhaseList_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_SubscriptionOfferDetails_pricingPhaseList_get)
 
-static bool js_delete_cc_SubscriptionOfferDetails(se::State& s) {
+static bool js_delete_cc_SubscriptionOfferDetails(se::State& s) { // NOLINT
     return true;
 }
 SE_BIND_FINALIZE_FUNC(js_delete_cc_SubscriptionOfferDetails)
 
-bool js_register_cc_SubscriptionOfferDetails(se::Object* obj) {
+bool js_register_cc_SubscriptionOfferDetails(se::Object* obj) { // NOLINT
     auto* cls = se::Class::create("SubscriptionOfferDetails", obj, nullptr, nullptr);
 
     cls->defineStaticProperty("__isJSB", se::Value(true), se::PropertyAttribute::READ_ONLY | se::PropertyAttribute::DONT_ENUM | se::PropertyAttribute::DONT_DELETE);
@@ -483,7 +483,7 @@ bool js_register_cc_SubscriptionOfferDetails(se::Object* obj) {
 
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_ProductDetails)
 
-static bool js_cc_ProductDetails_equals(se::State& s) {
+static bool js_cc_ProductDetails_equals(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     const auto& args = s.args();
     size_t argc = args.size();
@@ -506,7 +506,7 @@ static bool js_cc_ProductDetails_equals(se::State& s) {
 }
 SE_BIND_FUNC(js_cc_ProductDetails_equals)
 
-static bool js_cc_ProductDetails_hashCode_get(se::State& s) {
+static bool js_cc_ProductDetails_hashCode_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::ProductDetails* arg1 = (cc::ProductDetails*)NULL;
     int result;
@@ -523,7 +523,7 @@ static bool js_cc_ProductDetails_hashCode_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_ProductDetails_hashCode_get)
 
-static bool js_cc_ProductDetails_description_get(se::State& s) {
+static bool js_cc_ProductDetails_description_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::ProductDetails* arg1 = (cc::ProductDetails*)NULL;
     std::string result;
@@ -540,7 +540,7 @@ static bool js_cc_ProductDetails_description_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_ProductDetails_description_get)
 
-static bool js_cc_ProductDetails_name_get(se::State& s) {
+static bool js_cc_ProductDetails_name_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::ProductDetails* arg1 = (cc::ProductDetails*)NULL;
     std::string result;
@@ -557,7 +557,7 @@ static bool js_cc_ProductDetails_name_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_ProductDetails_name_get)
 
-static bool js_cc_ProductDetails_oneTimePurchaseOfferDetails_get(se::State& s) {
+static bool js_cc_ProductDetails_oneTimePurchaseOfferDetails_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::ProductDetails* arg1 = (cc::ProductDetails*)NULL;
     cc::OneTimePurchaseOfferDetails* result = 0;
@@ -574,7 +574,7 @@ static bool js_cc_ProductDetails_oneTimePurchaseOfferDetails_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_ProductDetails_oneTimePurchaseOfferDetails_get)
 
-static bool js_cc_ProductDetails_productId_get(se::State& s) {
+static bool js_cc_ProductDetails_productId_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::ProductDetails* arg1 = (cc::ProductDetails*)NULL;
     std::string result;
@@ -591,7 +591,7 @@ static bool js_cc_ProductDetails_productId_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_ProductDetails_productId_get)
 
-static bool js_cc_ProductDetails_productType_get(se::State& s) {
+static bool js_cc_ProductDetails_productType_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::ProductDetails* arg1 = (cc::ProductDetails*)NULL;
     std::string result;
@@ -608,7 +608,7 @@ static bool js_cc_ProductDetails_productType_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_ProductDetails_productType_get)
 
-static bool js_cc_ProductDetails_title_get(se::State& s) {
+static bool js_cc_ProductDetails_title_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::ProductDetails* arg1 = (cc::ProductDetails*)NULL;
     std::string result;
@@ -625,7 +625,7 @@ static bool js_cc_ProductDetails_title_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_ProductDetails_title_get)
 
-static bool js_cc_ProductDetails_toString_get(se::State& s) {
+static bool js_cc_ProductDetails_toString_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::ProductDetails* arg1 = (cc::ProductDetails*)NULL;
     std::string result;
@@ -642,7 +642,7 @@ static bool js_cc_ProductDetails_toString_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_ProductDetails_toString_get)
 
-static bool js_cc_ProductDetails_subscriptionOfferDetails_get(se::State& s) {
+static bool js_cc_ProductDetails_subscriptionOfferDetails_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::ProductDetails* arg1 = (cc::ProductDetails*)NULL;
     std::vector<cc::SubscriptionOfferDetails*> result;
@@ -659,12 +659,12 @@ static bool js_cc_ProductDetails_subscriptionOfferDetails_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_ProductDetails_subscriptionOfferDetails_get)
 
-static bool js_delete_cc_ProductDetails(se::State& s) {
+static bool js_delete_cc_ProductDetails(se::State& s) { // NOLINT
     return true;
 }
 SE_BIND_FINALIZE_FUNC(js_delete_cc_ProductDetails)
 
-bool js_register_cc_ProductDetails(se::Object* obj) {
+bool js_register_cc_ProductDetails(se::Object* obj) { // NOLINT
     auto* cls = se::Class::create("ProductDetails", obj, nullptr, nullptr);
 
     cls->defineStaticProperty("__isJSB", se::Value(true), se::PropertyAttribute::READ_ONLY | se::PropertyAttribute::DONT_ENUM | se::PropertyAttribute::DONT_DELETE);
@@ -691,7 +691,7 @@ bool js_register_cc_ProductDetails(se::Object* obj) {
 
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_AccountIdentifiers)
 
-static bool js_cc_AccountIdentifiers_obfuscatedAccountId_get(se::State& s) {
+static bool js_cc_AccountIdentifiers_obfuscatedAccountId_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::AccountIdentifiers* arg1 = (cc::AccountIdentifiers*)NULL;
     std::string result;
@@ -708,7 +708,7 @@ static bool js_cc_AccountIdentifiers_obfuscatedAccountId_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_AccountIdentifiers_obfuscatedAccountId_get)
 
-static bool js_cc_AccountIdentifiers_obfuscatedProfileId_get(se::State& s) {
+static bool js_cc_AccountIdentifiers_obfuscatedProfileId_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::AccountIdentifiers* arg1 = (cc::AccountIdentifiers*)NULL;
     std::string result;
@@ -725,12 +725,12 @@ static bool js_cc_AccountIdentifiers_obfuscatedProfileId_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_AccountIdentifiers_obfuscatedProfileId_get)
 
-static bool js_delete_cc_AccountIdentifiers(se::State& s) {
+static bool js_delete_cc_AccountIdentifiers(se::State& s) { // NOLINT
     return true;
 }
 SE_BIND_FINALIZE_FUNC(js_delete_cc_AccountIdentifiers)
 
-bool js_register_cc_AccountIdentifiers(se::Object* obj) {
+bool js_register_cc_AccountIdentifiers(se::Object* obj) { // NOLINT
     auto* cls = se::Class::create("AccountIdentifiers", obj, nullptr, nullptr);
 
     cls->defineStaticProperty("__isJSB", se::Value(true), se::PropertyAttribute::READ_ONLY | se::PropertyAttribute::DONT_ENUM | se::PropertyAttribute::DONT_DELETE);
@@ -748,7 +748,7 @@ bool js_register_cc_AccountIdentifiers(se::Object* obj) {
 
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_PendingPurchaseUpdate)
 
-static bool js_cc_PendingPurchaseUpdate_products_get(se::State& s) {
+static bool js_cc_PendingPurchaseUpdate_products_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::PendingPurchaseUpdate* arg1 = (cc::PendingPurchaseUpdate*)NULL;
     std::vector<std::string> result;
@@ -765,7 +765,7 @@ static bool js_cc_PendingPurchaseUpdate_products_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_PendingPurchaseUpdate_products_get)
 
-static bool js_cc_PendingPurchaseUpdate_purchaseToken_get(se::State& s) {
+static bool js_cc_PendingPurchaseUpdate_purchaseToken_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::PendingPurchaseUpdate* arg1 = (cc::PendingPurchaseUpdate*)NULL;
     std::string result;
@@ -782,12 +782,12 @@ static bool js_cc_PendingPurchaseUpdate_purchaseToken_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_PendingPurchaseUpdate_purchaseToken_get)
 
-static bool js_delete_cc_PendingPurchaseUpdate(se::State& s) {
+static bool js_delete_cc_PendingPurchaseUpdate(se::State& s) { // NOLINT
     return true;
 }
 SE_BIND_FINALIZE_FUNC(js_delete_cc_PendingPurchaseUpdate)
 
-bool js_register_cc_PendingPurchaseUpdate(se::Object* obj) {
+bool js_register_cc_PendingPurchaseUpdate(se::Object* obj) { // NOLINT
     auto* cls = se::Class::create("PendingPurchaseUpdate", obj, nullptr, nullptr);
 
     cls->defineStaticProperty("__isJSB", se::Value(true), se::PropertyAttribute::READ_ONLY | se::PropertyAttribute::DONT_ENUM | se::PropertyAttribute::DONT_DELETE);
@@ -804,7 +804,7 @@ bool js_register_cc_PendingPurchaseUpdate(se::Object* obj) {
 
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_Purchase)
 
-static bool js_cc_Purchase_equals(se::State& s) {
+static bool js_cc_Purchase_equals(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     const auto& args = s.args();
     size_t argc = args.size();
@@ -832,7 +832,7 @@ static bool js_cc_Purchase_equals(se::State& s) {
 }
 SE_BIND_FUNC(js_cc_Purchase_equals)
 
-static bool js_cc_Purchase_accountIdentifiers_get(se::State& s) {
+static bool js_cc_Purchase_accountIdentifiers_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     cc::AccountIdentifiers* result = 0;
@@ -849,14 +849,14 @@ static bool js_cc_Purchase_accountIdentifiers_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_accountIdentifiers_get)
 
-static bool js_cc_Purchase_deleloperPayload_get(se::State& s) {
+static bool js_cc_Purchase_developerPayload_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     std::string result;
 
     arg1 = SE_THIS_OBJECT<cc::Purchase>(s);
     if (nullptr == arg1) return true;
-    result = arg1->deleloperPayload;
+    result = arg1->developerPayload;
 
     ok &= nativevalue_to_se(result, s.rval(), s.thisObject() /*ctx*/);
     SE_PRECONDITION2(ok, false, "Error processing arguments");
@@ -864,9 +864,9 @@ static bool js_cc_Purchase_deleloperPayload_get(se::State& s) {
 
     return true;
 }
-SE_BIND_PROP_GET(js_cc_Purchase_deleloperPayload_get)
+SE_BIND_PROP_GET(js_cc_Purchase_developerPayload_get)
 
-static bool js_cc_Purchase_orderId_get(se::State& s) {
+static bool js_cc_Purchase_orderId_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     std::string result;
@@ -883,7 +883,7 @@ static bool js_cc_Purchase_orderId_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_orderId_get)
 
-static bool js_cc_Purchase_originalJson_get(se::State& s) {
+static bool js_cc_Purchase_originalJson_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     std::string result;
@@ -900,7 +900,7 @@ static bool js_cc_Purchase_originalJson_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_originalJson_get)
 
-static bool js_cc_Purchase_packageName_get(se::State& s) {
+static bool js_cc_Purchase_packageName_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     std::string result;
@@ -917,7 +917,7 @@ static bool js_cc_Purchase_packageName_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_packageName_get)
 
-static bool js_cc_Purchase_pendingPurchaseUpdate_get(se::State& s) {
+static bool js_cc_Purchase_pendingPurchaseUpdate_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     cc::PendingPurchaseUpdate* result = 0;
@@ -934,7 +934,7 @@ static bool js_cc_Purchase_pendingPurchaseUpdate_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_pendingPurchaseUpdate_get)
 
-static bool js_cc_Purchase_products_get(se::State& s) {
+static bool js_cc_Purchase_products_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     std::vector<std::string> result;
@@ -951,7 +951,7 @@ static bool js_cc_Purchase_products_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_products_get)
 
-static bool js_cc_Purchase_purchaseState_get(se::State& s) {
+static bool js_cc_Purchase_purchaseState_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     int result;
@@ -966,7 +966,7 @@ static bool js_cc_Purchase_purchaseState_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_purchaseState_get)
 
-static bool js_cc_Purchase_purchaseTime_get(se::State& s) {
+static bool js_cc_Purchase_purchaseTime_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     long result;
@@ -981,7 +981,7 @@ static bool js_cc_Purchase_purchaseTime_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_purchaseTime_get)
 
-static bool js_cc_Purchase_purchaseToken_get(se::State& s) {
+static bool js_cc_Purchase_purchaseToken_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     std::string result;
@@ -998,7 +998,7 @@ static bool js_cc_Purchase_purchaseToken_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_purchaseToken_get)
 
-static bool js_cc_Purchase_quantity_get(se::State& s) {
+static bool js_cc_Purchase_quantity_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     int result;
@@ -1013,7 +1013,7 @@ static bool js_cc_Purchase_quantity_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_quantity_get)
 
-static bool js_cc_Purchase_signature_get(se::State& s) {
+static bool js_cc_Purchase_signature_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     std::string result;
@@ -1030,7 +1030,7 @@ static bool js_cc_Purchase_signature_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_signature_get)
 
-static bool js_cc_Purchase_hashCode_get(se::State& s) {
+static bool js_cc_Purchase_hashCode_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     int result;
@@ -1045,7 +1045,7 @@ static bool js_cc_Purchase_hashCode_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_hashCode_get)
 
-static bool js_cc_Purchase_isAcknowledged_get(se::State& s) {
+static bool js_cc_Purchase_isAcknowledged_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     bool result;
@@ -1060,7 +1060,7 @@ static bool js_cc_Purchase_isAcknowledged_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_isAcknowledged_get)
 
-static bool js_cc_Purchase_isAutoRenewing_get(se::State& s) {
+static bool js_cc_Purchase_isAutoRenewing_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     bool result;
@@ -1075,7 +1075,7 @@ static bool js_cc_Purchase_isAutoRenewing_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_isAutoRenewing_get)
 
-static bool js_cc_Purchase_toString_get(se::State& s) {
+static bool js_cc_Purchase_toString_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::Purchase* arg1 = (cc::Purchase*)NULL;
     std::string result;
@@ -1092,17 +1092,17 @@ static bool js_cc_Purchase_toString_get(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_Purchase_toString_get)
 
-static bool js_delete_cc_Purchase(se::State& s) {
+static bool js_delete_cc_Purchase(se::State& s) { // NOLINT
     return true;
 }
 SE_BIND_FINALIZE_FUNC(js_delete_cc_Purchase)
 
-bool js_register_cc_Purchase(se::Object* obj) {
+bool js_register_cc_Purchase(se::Object* obj) { // NOLINT
     auto* cls = se::Class::create("Purchase", obj, nullptr, nullptr);
 
     cls->defineStaticProperty("__isJSB", se::Value(true), se::PropertyAttribute::READ_ONLY | se::PropertyAttribute::DONT_ENUM | se::PropertyAttribute::DONT_DELETE);
     cls->defineProperty("accountIdentifiers", _SE(js_cc_Purchase_accountIdentifiers_get), nullptr);
-    cls->defineProperty("deleloperPayload", _SE(js_cc_Purchase_deleloperPayload_get), nullptr);
+    cls->defineProperty("developerPayload", _SE(js_cc_Purchase_developerPayload_get), nullptr);
     cls->defineProperty("orderId", _SE(js_cc_Purchase_orderId_get), nullptr);
     cls->defineProperty("originalJson", _SE(js_cc_Purchase_originalJson_get), nullptr);
     cls->defineProperty("packageName", _SE(js_cc_Purchase_packageName_get), nullptr);
@@ -1129,7 +1129,7 @@ bool js_register_cc_Purchase(se::Object* obj) {
     return true;
 }
 
-static bool js_cc_BillingConfig_countryCode(se::State& s) {
+static bool js_cc_BillingConfig_countryCode(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::BillingConfig* arg1 = (cc::BillingConfig*)NULL;
     std::string result;
@@ -1146,14 +1146,14 @@ static bool js_cc_BillingConfig_countryCode(se::State& s) {
 }
 SE_BIND_PROP_GET(js_cc_BillingConfig_countryCode)
 
-static bool js_delete_cc_BillingConfig(se::State& s) {
+static bool js_delete_cc_BillingConfig(se::State& s) { // NOLINT
     return true;
 }
 SE_BIND_FINALIZE_FUNC(js_delete_cc_BillingConfig)
 
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_BillingConfig)
 
-bool js_register_cc_BillingConfig(se::Object* obj) {
+bool js_register_cc_BillingConfig(se::Object* obj) { // NOLINT
     auto* cls = se::Class::create("BillingConfig", obj, nullptr, nullptr);
 
     cls->defineStaticProperty("__isJSB", se::Value(true), se::PropertyAttribute::READ_ONLY | se::PropertyAttribute::DONT_ENUM | se::PropertyAttribute::DONT_DELETE);
@@ -1171,19 +1171,19 @@ bool js_register_cc_BillingConfig(se::Object* obj) {
 
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_Billing)
 
-static bool js_cc_Billing_startConnection(se::State& s) {
+static bool js_cc_Billing_startConnection(se::State& s) { // NOLINT
     cc::Billing::getInstance().startConnection();
     return true;
 }
 SE_BIND_FUNC(js_cc_Billing_startConnection)
 
-static bool js_cc_Billing_endConnection(se::State& s) {
+static bool js_cc_Billing_endConnection(se::State& s) { // NOLINT
     cc::Billing::getInstance().endConnection();
     return true;
 }
 SE_BIND_FUNC(js_cc_Billing_endConnection)
 
-static bool js_cc_Billing_getConnectionState(se::State& s) {
+static bool js_cc_Billing_getConnectionState(se::State& s) { // NOLINT
     int connectionState = cc::Billing::getInstance().getConnectionState();
     s.rval().setFloat(connectionState);
     return true;
@@ -1197,8 +1197,7 @@ static bool js_cc_Billing_isReady(se::State& s) {
 }
 SE_BIND_FUNC(js_cc_Billing_isReady)
 
-
-static bool js_cc_Billing_queryProductDetailsParams(se::State& s) {
+static bool js_cc_Billing_queryProductDetailsParams(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     const auto& args = s.args();
     size_t argc = args.size();
@@ -1221,7 +1220,7 @@ static bool js_cc_Billing_queryProductDetailsParams(se::State& s) {
 }
 SE_BIND_FUNC(js_cc_Billing_queryProductDetailsParams)
 
-static bool js_cc_Billing_launchBillingFlow(se::State& s) {
+static bool js_cc_Billing_launchBillingFlow(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     const auto& args = s.args();
     size_t argc = args.size();
@@ -1250,7 +1249,7 @@ static bool js_cc_Billing_launchBillingFlow(se::State& s) {
 }
 SE_BIND_FUNC(js_cc_Billing_launchBillingFlow)
 
-static bool js_cc_Billing_consumePurchases(se::State& s) {
+static bool js_cc_Billing_consumePurchases(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     const auto& args = s.args();
     size_t argc = args.size();
@@ -1272,7 +1271,7 @@ static bool js_cc_Billing_consumePurchases(se::State& s) {
 }
 SE_BIND_FUNC(js_cc_Billing_consumePurchases)
 
-static bool js_cc_Billing_acknowledgePurchase(se::State& s) {
+static bool js_cc_Billing_acknowledgePurchase(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     const auto& args = s.args();
     size_t argc = args.size();
@@ -1294,7 +1293,7 @@ static bool js_cc_Billing_acknowledgePurchase(se::State& s) {
 }
 SE_BIND_FUNC(js_cc_Billing_acknowledgePurchase)
 
-static bool js_cc_Billing_queryPurchasesAsync(se::State& s) {
+static bool js_cc_Billing_queryPurchasesAsync(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     const auto& args = s.args();
     size_t argc = args.size();
@@ -1316,37 +1315,37 @@ static bool js_cc_Billing_queryPurchasesAsync(se::State& s) {
 }
 SE_BIND_FUNC(js_cc_Billing_queryPurchasesAsync)
 
-static bool js_cc_Billing_getBillingConfigAsync(se::State& s) {
+static bool js_cc_Billing_getBillingConfigAsync(se::State& s) { // NOLINT
     cc::Billing::getInstance().getBillingConfigAsync();
     return true;
 }
 SE_BIND_FUNC(js_cc_Billing_getBillingConfigAsync)
 
-static bool js_cc_Billing_createAlternativeBillingOnlyReportingDetailsAsync(se::State& s) {
+static bool js_cc_Billing_createAlternativeBillingOnlyReportingDetailsAsync(se::State& s) { // NOLINT
     cc::Billing::getInstance().createAlternativeBillingOnlyReportingDetailsAsync();
     return true;
 }
 SE_BIND_FUNC(js_cc_Billing_createAlternativeBillingOnlyReportingDetailsAsync)
 
-static bool js_cc_Billing_isAlternativeBillingOnlyAvailableAsync(se::State& s) {
+static bool js_cc_Billing_isAlternativeBillingOnlyAvailableAsync(se::State& s) { // NOLINT
     cc::Billing::getInstance().isAlternativeBillingOnlyAvailableAsync();
     return true;
 }
 SE_BIND_FUNC(js_cc_Billing_isAlternativeBillingOnlyAvailableAsync)
 
-static bool js_cc_Billing_createExternalOfferReportingDetailsAsync(se::State& s) {
+static bool js_cc_Billing_createExternalOfferReportingDetailsAsync(se::State& s) { // NOLINT
     cc::Billing::getInstance().createExternalOfferReportingDetailsAsync();
     return true;
 }
 SE_BIND_FUNC(js_cc_Billing_createExternalOfferReportingDetailsAsync)
 
-static bool js_cc_Billing_isExternalOfferAvailableAsync(se::State& s) {
+static bool js_cc_Billing_isExternalOfferAvailableAsync(se::State& s) { // NOLINT
     cc::Billing::getInstance().isExternalOfferAvailableAsync();
     return true;
 }
 SE_BIND_FUNC(js_cc_Billing_isExternalOfferAvailableAsync)
 
-static bool js_cc_Billing_isFeatureSupported(se::State& s) {
+static bool js_cc_Billing_isFeatureSupported(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     const auto& args = s.args();
     size_t argc = args.size();
@@ -1368,7 +1367,7 @@ static bool js_cc_Billing_isFeatureSupported(se::State& s) {
 }
 SE_BIND_FUNC(js_cc_Billing_isFeatureSupported)
 
-static bool js_cc_Billing_showAlternativeBillingOnlyInformationDialog(se::State& s) {
+static bool js_cc_Billing_showAlternativeBillingOnlyInformationDialog(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::BillingResult* result = cc::Billing::getInstance().showAlternativeBillingOnlyInformationDialog();
     ok &= nativevalue_to_se(*result, s.rval(), s.thisObject());
@@ -1377,7 +1376,7 @@ static bool js_cc_Billing_showAlternativeBillingOnlyInformationDialog(se::State&
 }
 SE_BIND_FUNC(js_cc_Billing_showAlternativeBillingOnlyInformationDialog)
 
-static bool js_cc_Billing_showExternalOfferInformationDialog(se::State& s) {
+static bool js_cc_Billing_showExternalOfferInformationDialog(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::BillingResult* result = cc::Billing::getInstance().showExternalOfferInformationDialog();
     ok &= nativevalue_to_se(*result, s.rval(), s.thisObject());
@@ -1386,7 +1385,7 @@ static bool js_cc_Billing_showExternalOfferInformationDialog(se::State& s) {
 }
 SE_BIND_FUNC(js_cc_Billing_showExternalOfferInformationDialog)
 
-static bool js_cc_Billing_showInAppMessages(se::State& s) {
+static bool js_cc_Billing_showInAppMessages(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::BillingResult* result = cc::Billing::getInstance().showInAppMessages();
     ok &= nativevalue_to_se(*result, s.rval(), s.thisObject());
@@ -1395,12 +1394,12 @@ static bool js_cc_Billing_showInAppMessages(se::State& s) {
 }
 SE_BIND_FUNC(js_cc_Billing_showInAppMessages)
 
-static bool js_delete_cc_Billing(se::State& s) {
+static bool js_delete_cc_Billing(se::State& s) { // NOLINT
     return true;
 }
 SE_BIND_FINALIZE_FUNC(js_delete_cc_Billing)
 
-bool js_register_cc_Billing(se::Object* obj) {
+bool js_register_cc_Billing(se::Object* obj) { // NOLINT
     se::Value billingVal{se::Object::createPlainObject()};
     auto* cls = billingVal.toObject();
 
@@ -1432,7 +1431,7 @@ bool js_register_cc_Billing(se::Object* obj) {
     return true;
 }
 
-bool jsb_register_all_billing(se::Object* obj) {
+bool jsb_register_all_billing(se::Object* obj) { // NOLINT
     se::Value nsVal;
     if (!obj->getProperty("jsb", &nsVal, true)) {
         se::HandleObject jsobj(se::Object::createPlainObject());

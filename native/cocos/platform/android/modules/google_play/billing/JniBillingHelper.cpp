@@ -343,7 +343,7 @@ cc::BillingResult* JniBillingHelper::toBillingResult(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
     auto* billingResult = ccnew cc::BillingResult;
     billingResult->debugMessage = callStringMethod(env, clazz, obj, "getDebugMessage");
-    billingResult->code = callIntMethod(env, clazz, obj, "getResponseCode");
+    billingResult->responseCode = callIntMethod(env, clazz, obj, "getResponseCode");
     billingResult->toString = callStringMethod(env, clazz, obj, "toString");
     return billingResult;
 }
@@ -385,10 +385,10 @@ cc::PricingPhases* JniBillingHelper::toPricingPhases(JNIEnv* env, jobject obj) {
     jmethodID methodId = env->GetMethodID(clazz, "getPricingPhaseList", "()Ljava/util/List;");
     jobject listObj = env->CallObjectMethod(obj, methodId);
     jclass listClazz = env->GetObjectClass(listObj);
-    jmethodID alistGetMethod = env->GetMethodID(listClazz, "get", "(I)Ljava/lang/Object;");
+    jmethodID listGetMethod = env->GetMethodID(listClazz, "get", "(I)Ljava/lang/Object;");
     int size = callIntMethod(env, listClazz, listObj, "size");
     for (int i = 0; i < size; ++i) {
-        jobject pricingPhaseObj = env->CallObjectMethod(listObj, alistGetMethod, i);
+        jobject pricingPhaseObj = env->CallObjectMethod(listObj, listGetMethod, i);
         cc::PricingPhase* pricingPhase = toPricingPhase(env, pricingPhaseObj);
         pricingPhases->pricingPhaseList.push_back(pricingPhase);
     }
@@ -410,10 +410,10 @@ cc::SubscriptionOfferDetails* JniBillingHelper::toSubscriptionOfferDetails(JNIEn
     jmethodID methodId = env->GetMethodID(clazz, "getOfferTags", "()Ljava/util/List;");
     jobject listObj = env->CallObjectMethod(obj, methodId);
     jclass listClazz = env->GetObjectClass(listObj);
-    jmethodID alist_get_method = env->GetMethodID(listClazz, "get", "(I)Ljava/lang/Object;");
+    jmethodID listGetMethod = env->GetMethodID(listClazz, "get", "(I)Ljava/lang/Object;");
     int size = callIntMethod(env, listClazz, listObj, "size");
     for (int i = 0; i < size; ++i) {
-        jobject strObj = env->CallObjectMethod(listObj, alist_get_method, i);
+        jobject strObj = env->CallObjectMethod(listObj, listGetMethod, i);
         details->offerTags.push_back(cc::StringUtils::getStringUTFCharsJNI(env, static_cast<jstring>(strObj)));
     }
     details->offerToken = callStringMethod(env, clazz, obj, "getOfferToken");
@@ -425,11 +425,11 @@ cc::SubscriptionOfferDetails* JniBillingHelper::toSubscriptionOfferDetails(JNIEn
 
 std::vector<ProductDetails*> JniBillingHelper::toProductDetailList(JNIEnv* env, jobject productListObj) {
     jclass clazz = env->GetObjectClass(productListObj);
-    jmethodID alistGetMethod = env->GetMethodID(clazz, "get", "(I)Ljava/lang/Object;");
+    jmethodID listGetMethod = env->GetMethodID(clazz, "get", "(I)Ljava/lang/Object;");
     int size = callIntMethod(env, clazz, productListObj, "size");
     std::vector<cc::ProductDetails*> productDetailsList;
     for (int i = 0; i < size; ++i) {
-        jobject productDetailObj = env->CallObjectMethod(productListObj, alistGetMethod, i);
+        jobject productDetailObj = env->CallObjectMethod(productListObj, listGetMethod, i);
         cc::ProductDetails* productDetails = cc::JniBillingHelper::toProductDetail(env, productDetailObj);
         productDetailsList.push_back(productDetails);
     }
@@ -458,11 +458,11 @@ cc::ProductDetails* JniBillingHelper::toProductDetail(JNIEnv* env, jobject produ
     jobject listObj = env->CallObjectMethod(productObj, getSubscriptionOfferDetails);
     if (listObj != nullptr) {
         jclass listClazz = env->GetObjectClass(listObj);
-        jmethodID alistGetMethod = env->GetMethodID(listClazz, "get", "(I)Ljava/lang/Object;");
+        jmethodID listGetMethod = env->GetMethodID(listClazz, "get", "(I)Ljava/lang/Object;");
         int size = callIntMethod(env, listClazz, listObj, "size");
         std::vector<cc::SubscriptionOfferDetails*> details;
         for (int i = 0; i < size; ++i) {
-            jobject subscriptionOfferDetailsObj = env->CallObjectMethod(listObj, alistGetMethod, i);
+            jobject subscriptionOfferDetailsObj = env->CallObjectMethod(listObj, listGetMethod, i);
             cc::SubscriptionOfferDetails* detail = toSubscriptionOfferDetails(env, subscriptionOfferDetailsObj);
             productDetails->subscriptionOfferDetails.push_back(detail);
         }
@@ -485,10 +485,10 @@ cc::PendingPurchaseUpdate* JniBillingHelper::toPendingPurchaseUpdate(JNIEnv* env
     jmethodID methodId = env->GetMethodID(clazz, "getProducts", "()Ljava/util/ArrayList;");
     jobject listObj = env->CallObjectMethod(obj, methodId);
     jclass listClazz = env->GetObjectClass(listObj);
-    jmethodID alist_get_method = env->GetMethodID(listClazz, "get", "(I)Ljava/lang/String;");
+    jmethodID listGetMethod = env->GetMethodID(listClazz, "get", "(I)Ljava/lang/String;");
     int size = callIntMethod(env, listClazz, listObj, "size");
     for (int i = 0; i < size; ++i) {
-        jobject strObj = env->CallObjectMethod(listObj, alist_get_method, i);
+        jobject strObj = env->CallObjectMethod(listObj, listGetMethod, i);
         pendingPurchaseUpdate->products.push_back(cc::StringUtils::getStringUTFCharsJNI(env, static_cast<jstring>(strObj)));
     }
     pendingPurchaseUpdate->purchaseToken = callStringMethod(env, clazz, obj, "getPurchaseToken");
@@ -497,11 +497,11 @@ cc::PendingPurchaseUpdate* JniBillingHelper::toPendingPurchaseUpdate(JNIEnv* env
 
 std::vector<Purchase*> JniBillingHelper::toPurchaseList(JNIEnv* env, jobject productsListObj) {
     jclass clazz = env->GetObjectClass(productsListObj);
-    jmethodID alistGetMethod = env->GetMethodID(clazz, "get", "(I)Ljava/lang/Object;");
+    jmethodID listGetMethod = env->GetMethodID(clazz, "get", "(I)Ljava/lang/Object;");
     int size = callIntMethod(env, clazz, productsListObj, "size");
     std::vector<cc::Purchase*> purchases;
     for (int i = 0; i < size; ++i) {
-        jobject purchaseObj = env->CallObjectMethod(productsListObj, alistGetMethod, i);
+        jobject purchaseObj = env->CallObjectMethod(productsListObj, listGetMethod, i);
         cc::Purchase* purchase = cc::JniBillingHelper::toPurchase(env, purchaseObj);
         purchases.push_back(purchase);
     }
@@ -514,11 +514,11 @@ cc::Purchase* JniBillingHelper::toPurchase(JNIEnv* env, jobject purchaseObj) {
 
     jmethodID getAccountIdentifiers = env->GetMethodID(clazz, "getAccountIdentifiers", "()Lcom/android/billingclient/api/AccountIdentifiers;");
     jobject accountIdentifiersObj = env->CallObjectMethod(purchaseObj, getAccountIdentifiers);
-    if (getAccountIdentifiers) {
+    if (accountIdentifiersObj) {
         purchase->accountIdentifiers.reset(toAccountIdentifiers(env, accountIdentifiersObj));
     }
 
-    purchase->deleloperPayload = callStringMethod(env, clazz, purchaseObj, "getDeveloperPayload");
+    purchase->developerPayload = callStringMethod(env, clazz, purchaseObj, "getDeveloperPayload");
     purchase->orderId = callStringMethod(env, clazz, purchaseObj, "getOrderId");
     purchase->originalJson = callStringMethod(env, clazz, purchaseObj, "getOriginalJson");
     purchase->packageName = callStringMethod(env, clazz, purchaseObj, "getPackageName");
@@ -532,17 +532,17 @@ cc::Purchase* JniBillingHelper::toPurchase(JNIEnv* env, jobject purchaseObj) {
     jmethodID methodId = env->GetMethodID(clazz, "getProducts", "()Ljava/util/List;");
     jobject listObj = env->CallObjectMethod(purchaseObj, methodId);
     jclass listClazz = env->GetObjectClass(listObj);
-    jmethodID alist_get_method = env->GetMethodID(listClazz, "get", "(I)Ljava/lang/Object;");
+    jmethodID listGetMethod = env->GetMethodID(listClazz, "get", "(I)Ljava/lang/Object;");
     int size = callIntMethod(env, listClazz, listObj, "size");
     auto& products = purchase->products;
     for (int i = 0; i < size; ++i) {
-        jobject strObj = env->CallObjectMethod(listObj, alist_get_method, i);
+        jobject strObj = env->CallObjectMethod(listObj, listGetMethod, i);
         products.push_back(cc::StringUtils::getStringUTFCharsJNI(env, static_cast<jstring>(strObj)));
     }
     purchase->purchaseState = callIntMethod(env, clazz, purchaseObj, "getPurchaseState");
     purchase->purchaseTime = callLongMethod(env, clazz, purchaseObj, "getPurchaseTime");
     purchase->purchaseToken = callStringMethod(env, clazz, purchaseObj, "getPurchaseToken");
-    purchase->quantity = callIntMethod(env, clazz, purchaseObj, "getPurchaseState");
+    purchase->quantity = callIntMethod(env, clazz, purchaseObj, "getQuantity");
     purchase->signature = callStringMethod(env, clazz, purchaseObj, "getSignature");
     purchase->hashCode = callIntMethod(env, clazz, purchaseObj, "hashCode");
     purchase->isAcknowledged = callBooleanMethod(env, clazz, purchaseObj, "isAcknowledged");

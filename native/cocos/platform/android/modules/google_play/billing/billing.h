@@ -33,7 +33,7 @@ namespace cc {
 
 class CC_DLL BillingResult : public cc::RefCounted {
 public:
-    int code{0};
+    int responseCode{0};
     std::string debugMessage;
     std::string toString;
 };
@@ -129,7 +129,7 @@ public:
     int hashCode;
     int quantity;
     long purchaseTime;
-    std::string deleloperPayload;
+    std::string developerPayload;
     std::string orderId;
     std::string originalJson;
     std::string packageName;

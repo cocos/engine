@@ -23,13 +23,6 @@
 ****************************************************************************/
 
 #include "platform/java/jni/JniHelper.h"
-#if CC_PLATFORM == CC_PLATFORM_ANDROID
-    #include <android/keycodes.h>
-    #include <android/log.h>
-#elif CC_PLATFORM == CC_PLATFORM_OHOS
-    #include <hilog/log.h>
-#endif
-
 #include <jni.h>
 #include "cocos/platform/android/modules/google_play/billing/JniBillingHelper.h"
 
