@@ -86,7 +86,7 @@
             "dependentAssets": ["ba21476f-2866-4f81-9c4d-6e359316e448"]
         },
         "physics-ammo": {
-            "modules": ["physics-ammo", "physics-framework", "wait-for-ammo-instantiation"],
+            "modules": ["physics-ammo", "physics-framework"],
             "dependentAssets": ["ba21476f-2866-4f81-9c4d-6e359316e448"]
         },
         "physics-builtin": {

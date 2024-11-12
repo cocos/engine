@@ -3,10 +3,10 @@ import { physics, PhysicsMaterial, PhysicsSystem } from "../../exports/physics-f
 
 import "../../exports/physics-physx";
 import "../../exports/physics-builtin";
-import waitForAmmoInstantiation from "../../exports/wait-for-ammo-instantiation";
 import "../../exports/physics-ammo";
 import "../../exports/physics-cannon";
 import { InitPhysXLibs } from '../../cocos/physics/physx/physx-adapter';
+import { waitForAmmoInstantiation } from "../../cocos/physics/bullet/instantiated";
 import EventTest from "./event";
 import RaycastTest from "./raycast";
 import SweepTest from "./sweep";
