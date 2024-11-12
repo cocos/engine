@@ -154,7 +154,6 @@ export enum BillingEventType {
     IN_APP_MESSAGE_RESPONSE = 'in_app_message_response',
 
 }
-ccenum(BillingEventType);
 
 /**
  * @en
@@ -213,7 +212,7 @@ export enum BillingResponseCode {
      * The app is not connected to the Play Store service via the Google Play Billing Library.
      *
      * @zh
-     * 该应用未通过 Google Play 结算库连接到 Play Store 服务。
+     * 该应用未通过 Google Play Billing库连接到 Play Store 服务。
      */
     SERVICE_DISCONNECTED = -1,
     /**
@@ -511,17 +510,15 @@ export enum InAppMessageResponseCode {
 interface BillingEventMap {
     [BillingEventType.BILLING_SETUP_FINISHED]: (result: native.BillingResult) => void,
     [BillingEventType.BILLING_SERVICE_DISCONNECTED]: () => void,
-    [BillingEventType.PRODUCT_DETAILS_RESPONSE]: (result: native.BillingResult,
-        productDetailsList: native.ProductDetails[]) => void,
-    [BillingEventType.PURCHASES_UPDATED]: (result: native.BillingResult,
-        purchases: native.Purchase[]) => void,
-    [BillingEventType.CONSUME_RESPONSE]: (result: native.BillingResult,
-        purchaseToken: string) => void,
-    [BillingEventType.QUERY_PURCHASES_RESPONSE]: (result: native.BillingResult,
-        purchases: native.Purchase[]) => void,
+    [BillingEventType.PRODUCT_DETAILS_RESPONSE]: (result: native.BillingResult, productDetailsList: native.ProductDetails[]) => void,
+    [BillingEventType.PURCHASES_UPDATED]: (result: native.BillingResult, purchases: native.Purchase[]) => void,
+    [BillingEventType.CONSUME_RESPONSE]: (result: native.BillingResult, purchaseToken: string) => void,
+    [BillingEventType.QUERY_PURCHASES_RESPONSE]: (result: native.BillingResult, purchases: native.Purchase[]) => void,
     [BillingEventType.BILLING_CONFIG_RESPONSE]: (result: native.BillingResult, config: native.BillingConfig) => void
-    [BillingEventType.ALTERNATIVE_BILLING_ONLY_TOKEN_RESPONSE]: (result: native.BillingResult, alternativeBillingOnlyReportingDetails: native.AlternativeBillingOnlyReportingDetails) => void
-    [BillingEventType.EXTERNAL_OFFER_REPORTING_DETAILS_RESPONSE]: (result: native.BillingResult, externalOfferReportingDetails: native.ExternalOfferReportingDetails) => void
+    [BillingEventType.ALTERNATIVE_BILLING_ONLY_TOKEN_RESPONSE]:
+        (result: native.BillingResult, alternativeBillingOnlyReportingDetails: native.AlternativeBillingOnlyReportingDetails) => void
+    [BillingEventType.EXTERNAL_OFFER_REPORTING_DETAILS_RESPONSE]:
+        (result: native.BillingResult, externalOfferReportingDetails: native.ExternalOfferReportingDetails) => void
     [BillingEventType.ALTERNATIVE_BILLING_ONLY_AVAILABILITY_RESPONSE]: (result: native.BillingResult) => void
     [BillingEventType.EXTERNAL_OFFER_AVAILABILITY_RESPONSE]: (result: native.BillingResult) => void
     [BillingEventType.ALTERNATIVE_BILLING_ONLY_INFORMATION_DIALOG_RESPONSE]: (result: native.BillingResult) => void
@@ -579,12 +576,12 @@ export class GooglePlayBilling {
             this._eventTarget.emit(BillingEventType.BILLING_CONFIG_RESPONSE, result, config);
         };
 
-        jsb.onAlternativeBillingOnlyTokenResponse = (result: native.BillingResult, alternativeBillingOnlyReportingDetails: native.AlternativeBillingOnlyReportingDetails): void => {
-            this._eventTarget.emit(BillingEventType.ALTERNATIVE_BILLING_ONLY_TOKEN_RESPONSE, result, alternativeBillingOnlyReportingDetails);
+        jsb.onAlternativeBillingOnlyTokenResponse = (result: native.BillingResult, details: native.AlternativeBillingOnlyReportingDetails): void => {
+            this._eventTarget.emit(BillingEventType.ALTERNATIVE_BILLING_ONLY_TOKEN_RESPONSE, result, details);
         };
 
-        jsb.onExternalOfferReportingDetailsResponse = (result: native.BillingResult, externalOfferReportingDetails: native.ExternalOfferReportingDetails): void => {
-            this._eventTarget.emit(BillingEventType.EXTERNAL_OFFER_REPORTING_DETAILS_RESPONSE, result, externalOfferReportingDetails);
+        jsb.onExternalOfferReportingDetailsResponse = (result: native.BillingResult, details: native.ExternalOfferReportingDetails): void => {
+            this._eventTarget.emit(BillingEventType.EXTERNAL_OFFER_REPORTING_DETAILS_RESPONSE, result, details);
         };
 
         jsb.onAlternativeBillingOnlyAvailabilityResponse = (result: native.BillingResult): void => {
@@ -731,7 +728,8 @@ export class GooglePlayBilling {
     }
 
     /**
-     * @en Creates alternative billing only purchase details that can be used to report a transaction made via alternative billing without user choice to use Google Play billing.
+     * @en Creates alternative billing only purchase details that can be used to report a transaction made
+     *     via alternative billing without user choice to use Google Play billing.
      * @zh 创建仅限替代结算的购买详情，可用于报告通过替代结算进行的交易，而无需用户选择使用 Google Play 结算。
      */
     public createAlternativeBillingOnlyReportingDetailsAsync (): void {
@@ -826,10 +824,10 @@ export class GooglePlayBilling {
 
 /**
  * @en
- * The singleton of the Input class, this singleton manages all events of input. include: touch, mouse, accelerometer, gamepad, handle, hmd and keyboard.
+ * Interface for google play blling module.
  *
  * @zh
- * google play的blling支付模块的接口。
+ * google play blling模块的接口。
  *
  * @example
  */

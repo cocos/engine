@@ -1491,7 +1491,7 @@ export declare namespace native {
          * @en Code returned in In-app Billing API calls.
          * @zh 应用内结算 API 调用中返回的响应代码。
          */
-        readonly code: string;
+        readonly responseCode: string;
         readonly toStr: string;
     }
 
@@ -1692,7 +1692,7 @@ export declare namespace native {
 
     /**
      * @en Represents an in-app billing purchase.
-     * @zh 代表应用内付费购买。
+     * @zh 代表应用内billing购买。
      */
     export interface Purchase {
         /**
@@ -1727,7 +1727,7 @@ export declare namespace native {
          * @en The payload specified when the purchase was acknowledged or consumed.
          * @zh 确认或消费购买时指定的有效负载。
          */
-        readonly deleloperPayload: string;
+        readonly developerPayload: string;
         /**
          * @en Returns a unique order identifier for the transaction.
          * @zh 交易的唯一订单标识符。
@@ -1787,7 +1787,8 @@ export declare namespace native {
      */
     export interface AlternativeBillingOnlyReportingDetails {
         /**
-         * @en An external transaction token that can be used to report a transaction made via alternative billing without user choice to use Google Play billing.
+         * @en An external transaction token that can be used to report a transaction made via alternative billing
+         *     without user choice to use Google Play billing.
          * @zh 返回一个外部交易令牌，该令牌可用于报告通过替代付款方式进行的交易，而无需用户选择使用 Google Play 付款方式。
          */
         readonly externalTransactionToken: string;
