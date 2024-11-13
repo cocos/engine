@@ -86,7 +86,10 @@ uniform DofCocUBO {
 void main() {
   vec4 blurPixel = texture(colorTex, v_uv);
   vec4 screenPixel = texture(screenTex, v_uv);
-  float depth = GetDepthFromTex(v_uv) * 2.0 - 1.0;
+  float depth = GetDepthFromTex(v_uv);
+  #if __VERSION__ < 450
+    depth = 2.0 * depth - 1.0;
+  #endif
   vec4 screenPos = vec4(v_uv.x * 2.0 - 1.0, v_uv.y * 2.0 - 1.0, depth, 1.0);
   vec4 viewPos = invProj * screenPos;
   viewPos /= viewPos.w;
