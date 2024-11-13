@@ -22,8 +22,8 @@
  THE SOFTWARE.
 */
 
-import { EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
-import { Vec3, RecyclePool, Enum, System, cclegacy, settings, geometry, warn, IQuatLike, IVec3Like, SettingsCategory } from '../../core';
+import { BUILD, EDITOR, EDITOR_NOT_IN_PREVIEW, LOAD_BULLET_MANUALLY, LOAD_PHYSX_MANUALLY, PREVIEW } from 'internal:constants';
+import { Vec3, RecyclePool, Enum, System, cclegacy, settings, geometry, warn, IQuatLike, IVec3Like, SettingsCategory, errorID, warnID } from '../../core';
 import { IPhysicsWorld, IRaycastOptions } from '../spec/i-physics-world';
 import { director, Director, DirectorEvent, game } from '../../game';
 import { PhysicsMaterial } from './assets/physics-material';
@@ -223,11 +223,11 @@ export class PhysicsSystem extends System implements IWorldInitData {
 
         const builtinMaterial = builtinResMgr.get<PhysicsMaterial>('default-physics-material');
         if (!builtinMaterial) {
-            console.error('PhysicsSystem initDefaultMaterial() Failed to load builtinMaterial');
+            errorID(9642);
             return Promise.resolve();
         }
 
-        const userMaterial = settings.querySettings(SettingsCategory.PHYSICS, 'defaultMaterial');
+        const userMaterial: string | null = settings.querySettings(SettingsCategory.PHYSICS, 'defaultMaterial');
         if (!userMaterial) { //use built-in default physics material
             this.setDefaultPhysicsMaterial(builtinMaterial);
             return Promise.resolve();
@@ -240,7 +240,7 @@ export class PhysicsSystem extends System implements IWorldInitData {
                 this.setDefaultPhysicsMaterial(asset);
             }).catch((reason): void => {
                 warn(reason);
-                warn(`Failed to load user customized default physics material: ${userMaterial}, will fallback to built-in default physics material`);
+                warnID(9643, userMaterial);
                 this.setDefaultPhysicsMaterial(builtinMaterial);
             });
         }
@@ -866,8 +866,26 @@ export class PhysicsSystem extends System implements IWorldInitData {
      * 预先加载模块的情况下，会自动执行。
      */
     static constructAndRegister (): void {
+        if (BUILD && (LOAD_BULLET_MANUALLY || LOAD_PHYSX_MANUALLY)) return;
+        if (!PhysicsSystem._instance) {
+            const sys = this.doConstructAndRegister();
+            if (sys) game.onPostProjectInitDelegate.add(sys.initDefaultMaterial.bind(sys));
+        }
+    }
+
+    static constructAndRegisterManually (): Promise<void> {
+        if (BUILD && (LOAD_BULLET_MANUALLY || LOAD_PHYSX_MANUALLY)) {
+            if (!PhysicsSystem._instance) {
+                const sys = this.doConstructAndRegister();
+                if (sys) return sys.initDefaultMaterial();
+            }
+        }
+        return Promise.resolve();
+    }
+
+    private static doConstructAndRegister (): PhysicsSystem | null {
         const enabled = settings.querySettings(SettingsCategory.PHYSICS, 'enabled') ?? true;
-        if (!enabled) { return; }
+        if (!enabled) { return null; }
         if (!PhysicsSystem._instance) {
             // Construct physics world and physics system only once
             const sys = new PhysicsSystem();
@@ -875,9 +893,8 @@ export class PhysicsSystem extends System implements IWorldInitData {
             sys.resetConfiguration();
             constructDefaultWorld(sys);
             director.registerSystem(PhysicsSystem.ID, sys, sys.priority);
-
-            game.onPostProjectInitDelegate.add(sys.initDefaultMaterial.bind(sys));
         }
+        return PhysicsSystem._instance;
     }
 }
 

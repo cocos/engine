@@ -22,9 +22,10 @@
  THE SOFTWARE.
 */
 
+import { BUILD, LOAD_SPINE_MANUALLY } from 'internal:constants';
 import { ccenum } from '../core';
 import spine from './lib/spine-core';
-import './lib/instantiated';
+import { waitForSpineWasmInstantiation } from './lib/instantiated';
 
 /**
  * @en
@@ -119,3 +120,16 @@ export enum AnimationEventType {
     EVENT = 5
 }
 ccenum(AnimationEventType);
+
+let loadSpinePromise: Promise<void> | undefined;
+
+export function loadWasmModuleSpine (): Promise<void> {
+    if (BUILD && LOAD_SPINE_MANUALLY) {
+        if (loadSpinePromise) return loadSpinePromise;
+        loadSpinePromise = Promise.resolve()
+            .then(() => waitForSpineWasmInstantiation());
+        return loadSpinePromise;
+    } else {
+        return Promise.resolve();
+    }
+}

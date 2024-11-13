@@ -23,7 +23,7 @@
 */
 
 import { instantiateWasm, ensureWasmModuleReady } from 'pal/wasm';
-import { NATIVE_CODE_BUNDLE_MODE } from 'internal:constants';
+import { BUILD, LOAD_BOX2D_MANUALLY, NATIVE_CODE_BUNDLE_MODE } from 'internal:constants';
 
 import { game } from '../../game';
 import { error, sys, IVec2Like, log } from '../../core';
@@ -193,4 +193,6 @@ export function waitForBox2dWasmInstantiation (): Promise<void> {
     }).catch(errorReport);
 }
 
-game.onPostInfrastructureInitDelegate.add(waitForBox2dWasmInstantiation);
+if (!BUILD || !LOAD_BOX2D_MANUALLY) {
+    game.onPostInfrastructureInitDelegate.add(waitForBox2dWasmInstantiation);
+}

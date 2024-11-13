@@ -24,3 +24,5 @@
  */
 
 import '../cocos/physics-2d/box2d-wasm/instantiate';
+
+export { loadWasmModuleBox2D } from '../cocos/physics-2d/box2d-wasm/instantiate';
