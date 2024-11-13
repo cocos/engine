@@ -1064,7 +1064,7 @@ if (rendering) {
             cocPass.setVec4('g_platform', this._configs.platform);
             cocPass.setMat4('proj', camera.matProj);
             cocPass.setMat4('invProj', camera.matProjInv);
-            cocPass.setMat4('viewMatInv', camera.matViewInv);
+            cocPass.setMat4('viewMatInv', camera.node.worldMatrix);
             cocPass.setVec4('cocParams', this._cocParams);
             cocPass.setVec4('focus', this._focusPos);
             cocPass
