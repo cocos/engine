@@ -58,6 +58,8 @@ const TERRAIN_EFFECT_UUID = '1d08ef62-a503-4ce2-8b9a-46c90873f7d3';
  */
 @ccclass('cc.TerrainInfo')
 export class TerrainInfo {
+    constructor () {
+    }
     /**
      * @en tile size
      * @zh 栅格大小

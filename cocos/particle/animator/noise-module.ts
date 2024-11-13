@@ -37,6 +37,9 @@ const { ccclass, serializable, displayOrder, type, range, slide, visible } = _de
  */
 @ccclass('cc.NoiseModule')
 export class NoiseModule extends ParticleModuleBase {
+    constructor () {
+        super();
+    }
     @serializable
     _enable = false;
     /**

@@ -57,6 +57,10 @@ export class WebView extends Component {
      */
     public static EventType = WebViewEventType;
 
+    constructor () {
+        super();
+    }
+
     /**
      * @en
      * A given URL to be loaded by the WebView, it should have a http or https prefix.

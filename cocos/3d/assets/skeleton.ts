@@ -44,6 +44,10 @@ export class Skeleton extends Asset {
 
     private _invBindposes: Mat4[] | null = null;
 
+    constructor () {
+        super();
+    }
+
     /**
      * @en The path of all bones, the length always equals the length of [[bindposes]]
      * @zh 所有关节的路径。该数组的长度始终与 [[bindposes]] 的长度相同。

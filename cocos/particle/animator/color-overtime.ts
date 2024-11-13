@@ -39,6 +39,9 @@ const COLOR_OVERTIME_RAND_OFFSET = ModuleRandSeed.COLOR;
  */
 @ccclass('cc.ColorOvertimeModule')
 export default class ColorOvertimeModule extends ParticleModuleBase {
+    constructor () {
+        super();
+    }
     @serializable
     _enable = false;
     /**

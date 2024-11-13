@@ -105,6 +105,10 @@ export class ReflectionProbe extends Component {
 
     private _position = new Vec3(0, 0, 0);
 
+    constructor () {
+        super();
+    }
+
     /**
      * @en
      * Gets or sets the size of the box

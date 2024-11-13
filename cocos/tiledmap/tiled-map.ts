@@ -133,6 +133,10 @@ export class TiledMap extends Component {
     @serializable
     protected cleanupImageCache = true;
 
+    constructor () {
+        super();
+    }
+
     /**
      * @en Gets the map size.
      * @zh 获取地图大小。

@@ -44,6 +44,9 @@ const ROTATION_OVERTIME_RAND_OFFSET = ModuleRandSeed.ROTATION;
  */
 @ccclass('cc.RotationOvertimeModule')
 export default class RotationOvertimeModule extends ParticleModuleBase {
+    constructor () {
+        super();
+    }
     @serializable
     _enable = false;
     /**

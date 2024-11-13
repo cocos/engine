@@ -75,6 +75,9 @@ const Animation = Enum({
  */
 @ccclass('cc.TextureAnimationModule')
 export default class TextureAnimationModule extends ParticleModuleBase {
+    constructor () {
+        super();
+    }
     @serializable
     private _enable = false;
 
