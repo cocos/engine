@@ -3238,6 +3238,14 @@ Can't getGFXSampler with out device
 
 [Physics][cannon.js]: sweep functions are not supported in cannon.js
 
+### 9642
+
+[Physics] PhysicsSystem initDefaultMaterial() Failed to load builtinMaterial.
+
+### 9643
+
+[Physics] Failed to load user customized default physics material: %s, will fallback to built-in default physics material
+
 ### 10001
 
 The sub-mesh contains %d vertices, which beyonds the capability (%d vertices most) of renderer of your platform.

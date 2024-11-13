@@ -112,3 +112,6 @@ ccenum(AnimationEventType);
 
 legacyCC.internal.SpineAnimationEventType = AnimationEventType;
 
+export function loadWasmModuleSpine (): Promise<void> {
+    return Promise.resolve();
+}

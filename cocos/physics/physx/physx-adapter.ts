@@ -32,7 +32,7 @@
 
 import { NativeCodeBundleMode } from '../../misc/webassembly-support';
 import { ensureWasmModuleReady, instantiateWasm } from 'pal/wasm';
-import { EDITOR, TEST, NATIVE_CODE_BUNDLE_MODE } from 'internal:constants';
+import { EDITOR, TEST, NATIVE_CODE_BUNDLE_MODE, LOAD_PHYSX_MANUALLY, BUILD } from 'internal:constants';
 import { IQuatLike, IVec3Like, Quat, RecyclePool, Vec3, cclegacy, geometry, sys, Color, error, IVec3 } from '../../core';
 import { shrinkPositions } from '../utils/util';
 import { IRaycastOptions } from '../spec/i-physics-world';
@@ -49,10 +49,12 @@ const globalThis = cclegacy._global;
 // Use bytedance native or js physics if nativePhysX is not null.
 const USE_EXTERNAL_PHYSX = !!globalThis.PHYSX;
 
-// Init physx libs when engine init.
-game.onPostInfrastructureInitDelegate.add(InitPhysXLibs);
+if (!BUILD || !LOAD_PHYSX_MANUALLY) {
+    // Init physx libs when engine init.
+    game.onPostInfrastructureInitDelegate.add(initPhysXLibs);
+}
 
-export function InitPhysXLibs (): Promise<void> {
+export function initPhysXLibs (): Promise<void> {
     const errorReport = (msg: any): void => { error(msg); };
     return ensureWasmModuleReady().then(() => {
         if (shouldUseWasmModule()) {
@@ -71,7 +73,7 @@ export function InitPhysXLibs (): Promise<void> {
     }).catch(errorReport);
 }
 
-function initASM (physxAsmFactory): any {
+function initASM (physxAsmFactory): Promise<void> {
     globalThis.PhysX = globalThis.PHYSX ? globalThis.PHYSX : physxAsmFactory;
     if (globalThis.PhysX != null) {
         return globalThis.PhysX().then((Instance: any): void => {
@@ -88,7 +90,7 @@ function initASM (physxAsmFactory): any {
     }
 }
 
-function initWASM (physxWasmFactory, physxWasmUrl: string): any {
+function initWASM (physxWasmFactory, physxWasmUrl: string): Promise<void> {
     globalThis.PhysX = globalThis.PHYSX ? globalThis.PHYSX : physxWasmFactory;
     if (globalThis.PhysX != null) {
         return globalThis.PhysX({

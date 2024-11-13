@@ -696,6 +696,30 @@
             "type": "boolean",
             "value": true,
             "internal": true
+        },
+        "LOAD_SPINE_MANUALLY": {
+            "comment": "An internal constant to indicate whether we need to load spine wasm/asmjs module manually.",
+            "type": "boolean",
+            "value": false,
+            "internal": true
+        },
+        "LOAD_BOX2D_MANUALLY": {
+            "comment": "An internal constant to indicate whether we need to load box2d wasm/asmjs module manually.",
+            "type": "boolean",
+            "value": false,
+            "internal": true
+        },
+        "LOAD_BULLET_MANUALLY": {
+            "comment": "An internal constant to indicate whether we need to load bullet wasm/asmjs module manually.",
+            "type": "boolean",
+            "value": false,
+            "internal": true
+        },
+        "LOAD_PHYSX_MANUALLY": {
+            "comment": "An internal constant to indicate whether we need to load physx wasm/asmjs module manually.",
+            "type": "boolean",
+            "value": false,
+            "internal": true
         }
     },
 

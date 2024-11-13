@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-import { EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
+import { BUILD, EDITOR_NOT_IN_PREVIEW, LOAD_BOX2D_MANUALLY } from 'internal:constants';
 import { System, Vec2, IVec2Like, Rect, Eventify, Enum, Settings, settings, cclegacy, SettingsCategory } from '../../core';
 import { createPhysicsWorld, selector, IPhysicsSelector } from './physics-selector';
 
@@ -383,4 +383,6 @@ export class PhysicsSystem2D extends Eventify(System) {
     }
 }
 
-director.once(DirectorEvent.INIT, (): void => { PhysicsSystem2D.constructAndRegister(); });
+if (!BUILD || !LOAD_BOX2D_MANUALLY) {
+    director.once(DirectorEvent.INIT, (): void => { PhysicsSystem2D.constructAndRegister(); });
+}

@@ -22,6 +22,7 @@
  THE SOFTWARE.
 */
 
+import { BUILD, LOAD_BULLET_MANUALLY } from 'internal:constants';
 import { Game, game } from '../../game';
 import { selector } from '../framework/physics-selector';
 import { BulletRigidBody } from './bullet-rigid-body';
@@ -42,6 +43,8 @@ import { BulletConfigurableConstraint } from './constraints/bullet-configurable-
 
 import { BulletCapsuleCharacterController } from './character-controllers/bullet-capsule-character-controller';
 import { BulletBoxCharacterController } from './character-controllers/bullet-box-character-controller';
+import { waitForAmmoInstantiation } from './instantiated';
+import { PhysicsSystem } from '../framework';
 
 game.once(Game.EVENT_PRE_SUBSYSTEM_INIT, () => {
     selector.register('bullet', {
@@ -67,3 +70,17 @@ game.once(Game.EVENT_PRE_SUBSYSTEM_INIT, () => {
         CapsuleCharacterController: BulletCapsuleCharacterController,
     });
 });
+
+let loadBulletPromise: Promise<void> | undefined;
+
+export function loadWasmModuleBullet (): Promise<void> {
+    if (BUILD && LOAD_BULLET_MANUALLY) {
+        if (loadBulletPromise) return loadBulletPromise;
+        loadBulletPromise = Promise.resolve()
+            .then(() => waitForAmmoInstantiation())
+            .then(() => PhysicsSystem.constructAndRegisterManually());
+        return loadBulletPromise;
+    } else {
+        return Promise.resolve();
+    }
+}

@@ -23,7 +23,7 @@
 */
 
 import { ensureWasmModuleReady, instantiateWasm } from 'pal/wasm';
-import { NATIVE_CODE_BUNDLE_MODE } from 'internal:constants';
+import { BUILD, LOAD_BULLET_MANUALLY, NATIVE_CODE_BUNDLE_MODE } from 'internal:constants';
 import { game } from '../../game';
 import { error, log, sys } from '../../core';
 import { NativeCodeBundleMode } from '../../misc/webassembly-support';
@@ -155,4 +155,6 @@ export function waitForAmmoInstantiation (): Promise<void> {
     }).catch(errorReport);
 }
 
-game.onPostInfrastructureInitDelegate.add(waitForAmmoInstantiation);
+if (!BUILD || !LOAD_BULLET_MANUALLY) {
+    game.onPostInfrastructureInitDelegate.add(waitForAmmoInstantiation);
+}

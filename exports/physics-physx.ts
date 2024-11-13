@@ -24,3 +24,5 @@
  */
 
 import '../cocos/physics/physx/instantiate';
+
+export { loadWasmModulePhysX } from '../cocos/physics/physx/instantiate';
