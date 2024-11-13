@@ -334,6 +334,13 @@ export class AssetManager {
     /**
      * @engineInternal
      */
+    public get files() {
+        return this._files$;
+    }
+
+    /**
+     * @engineInternal
+     */
     public getReleaseManager (): ReleaseManager {
         return this._releaseManager$;
     }
