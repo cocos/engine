@@ -62,10 +62,10 @@ export class BulletBvhTriangleMeshShape {
 
     private destroy (): void {
         if (this.bulletBvhTriangleMeshShapePtr) {
-            bt._safe_delete(EBulletType.EBulletTypeCollisionShape, this.bulletBvhTriangleMeshShapePtr);
+            bt._safe_delete(this.bulletBvhTriangleMeshShapePtr, EBulletType.EBulletTypeCollisionShape);
         }
         if (this.btTriangleMeshPtr) {
-            bt._safe_delete(EBulletType.EBulletTypeTriangleMesh, this.btTriangleMeshPtr);
+            bt._safe_delete(this.btTriangleMeshPtr, EBulletType.EBulletTypeTriangleMesh);
         }
         BulletBvhTriangleMeshShape.BulletBvhTriangleMeshShapeMap.delete(this.key);
     }
