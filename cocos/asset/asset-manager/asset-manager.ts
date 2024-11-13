@@ -334,7 +334,7 @@ export class AssetManager {
     /**
      * @engineInternal
      */
-    public get files() {
+    public get files(): Cache {
         return this._files$;
     }
 
