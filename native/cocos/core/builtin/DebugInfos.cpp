@@ -439,6 +439,8 @@ ccstd::unordered_map<uint32_t, ccstd::string> debugInfos = {
 { 9630, "[Physics]: A dynamic rigid body can not have the following collider shapes: Terrain, Plane and Non-convex Mesh. Node name: %s" },
 { 9640, "[Physics][builtin]: sweep functions are not supported in builtin" },
 { 9641, "[Physics][cannon.js]: sweep functions are not supported in cannon.js" },
+{ 9642, "[Physics] PhysicsSystem initDefaultMaterial() Failed to load builtinMaterial." },
+{ 9643, "[Physics] Failed to load user customized default physics material: %s, will fallback to built-in default physics material" },
 { 10001, "The sub-mesh contains %d vertices, which beyonds the capability (%d vertices most) of renderer of your platform." },
 { 10002, "Sub-mesh may include at most %d morph targets, but you specified %d." },
 { 11000, "WebGL context lost." },
