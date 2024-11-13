@@ -100,6 +100,18 @@ interface InputEventMap {
 }
 
 /**
+ * @en Dispatch input event immediately.
+ * The input events are collocted to be dispatched in each main loop by default.
+ * If you need to recieve the input event immediately, please set this to true.
+ * NOTE: if set this to true, the input events are dispatched between each tick, the input event can't be optimized by engine.
+ *
+ * @zh 立即派发输入事件。
+ * 输入事件默认会被收集到每一帧主循环里派发，如果你需要立即接收到输入事件，请把该属性设为 true。
+ * 注意：如果设置为 true，则输入事件可能会在帧间触发，这样的输入事件是没办法被引擎优化的。
+ */
+const dispatchImmediately = !NATIVE;
+
+/**
  * @en
  * This Input class manages all events of input. include: touch, mouse, accelerometer, gamepad, handle, hmd and keyboard.
  * You can get the `Input` instance with `input`.
@@ -120,18 +132,6 @@ export class Input {
      * @zh 输入事件类型
      */
     public static EventType = InputEventType;
-
-    /**
-     * @en Dispatch input event immediately.
-     * The input events are collocted to be dispatched in each main loop by default.
-     * If you need to recieve the input event immediately, please set this to true.
-     * NOTE: if set this to true, the input events are dispatched between each tick, the input event can't be optimized by engine.
-     *
-     * @zh 立即派发输入事件。
-     * 输入事件默认会被收集到每一帧主循环里派发，如果你需要立即接收到输入事件，请把该属性设为 true。
-     * 注意：如果设置为 true，则输入事件可能会在帧间触发，这样的输入事件是没办法被引擎优化的。
-     */
-    private _dispatchImmediately$ = !NATIVE;
 
     private _eventTarget$: EventTarget = new EventTarget();
     private _touchInput$ = new TouchInputSource();
@@ -469,7 +469,7 @@ export class Input {
     }
 
     private _dispatchOrPushEvent$ (event: Event, eventList: Event[]): void {
-        if (this._dispatchImmediately$) {
+        if (dispatchImmediately) {
             this._emitEvent$(event);
         } else {
             eventList.push(event);
@@ -477,7 +477,7 @@ export class Input {
     }
 
     private _dispatchOrPushEventTouch$ (eventTouch: EventTouch, touchEventList: EventTouch[]): void {
-        if (this._dispatchImmediately$) {
+        if (dispatchImmediately) {
             const touches = eventTouch.getTouches();
             const touchesLength = touches.length;
             for (let i = 0; i < touchesLength; ++i) {
@@ -494,6 +494,7 @@ export class Input {
      * @engineInternal
      */
     public _frameDispatchEvents (): void {
+        if (dispatchImmediately) return;
         const eventHMDList = this._eventHMDList$;
         // TODO: culling event queue
         for (let i = 0, length = eventHMDList.length; i < length; ++i) {
