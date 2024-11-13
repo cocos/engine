@@ -71,6 +71,10 @@ class Point {
 export class MotionStreak extends UIRenderer {
     public static Point = Point;
 
+    constructor () {
+        super();
+    }
+
     /**
      * @en Preview the trailing effect in editor mode.
      * @zh 在编辑器模式下预览拖尾效果。

@@ -187,8 +187,8 @@ export class Asset extends Eventify(CCObject) {
         return this._file;
     }
 
-    constructor (...args: ConstructorParameters<typeof CCObject>) {
-        super(...args);
+    constructor (name = '') {
+        super(name);
 
         Object.defineProperty(this, '_uuid', {
             value: '',

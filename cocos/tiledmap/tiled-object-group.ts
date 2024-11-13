@@ -48,6 +48,10 @@ import { Node } from '../scene-graph/node';
 export class TiledObjectGroup extends Component {
     protected _premultiplyAlpha = false;
 
+    constructor () {
+        super();
+    }
+
     @type(CCBoolean)
     get premultiplyAlpha (): boolean {
         return this._premultiplyAlpha;

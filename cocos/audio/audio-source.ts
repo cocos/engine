@@ -88,6 +88,10 @@ export class AudioSource extends Component {
 
     private _lastSetClip: AudioClip | null = null;
 
+    constructor () {
+        super();
+    }
+
     private _resetPlayer (): void {
         if (this._player) {
             audioManager.removePlaying(this._player);
