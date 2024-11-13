@@ -103,7 +103,15 @@
                     "label": "i18n:ENGINE.features.physics_ammo.label",
                     "description": "i18n:ENGINE.features.physics_ammo.description",
                     "default": true,
-                    "isNativeModule": true
+                    "isNativeModule": true,
+                    "flags": {
+                        "LOAD_BULLET_MANUALLY": {
+                            "label": "i18n:ENGINE.features.flags.bullet.loadManual.label",
+                            "description": "i18n:ENGINE.features.flags.bullet.loadManual.description",
+                            "default": false,
+                            "ui-type": "checkbox"
+                        }
+                    }
                 },
                 "physics-cannon": {
                     "label": "i18n:ENGINE.features.physics_cannon.label",
@@ -113,7 +121,15 @@
                     "label": "i18n:ENGINE.features.physics_physx.label",
                     "cmakeConfig": "USE_PHYSICS_PHYSX",
                     "description": "i18n:ENGINE.features.physics_physx.description",
-                    "isNativeModule": true
+                    "isNativeModule": true,
+                    "flags": {
+                        "LOAD_PHYSX_MANUALLY": {
+                            "label": "i18n:ENGINE.features.flags.physx.loadManual.label",
+                            "description": "i18n:ENGINE.features.flags.physx.loadManual.description",
+                            "default": false,
+                            "ui-type": "checkbox"
+                        }
+                    }
                 },
                 "physics-builtin": {
                     "label": "i18n:ENGINE.features.physics_builtin.label",
@@ -293,7 +309,15 @@
             "category": "2d",
             "dependencies": [
                 "2d"
-            ]
+            ],
+            "flags": {
+                "LOAD_SPINE_MANUALLY": {
+                    "label": "i18n:ENGINE.features.flags.spine.loadManual.label",
+                    "description": "i18n:ENGINE.features.flags.spine.loadManual.description",
+                    "ui-type": "checkbox",
+                    "default": false
+                }
+            }
         },
         "dragon-bones": {
             "default": true,

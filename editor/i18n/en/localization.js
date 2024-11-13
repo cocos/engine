@@ -1101,6 +1101,32 @@ module.exports = link(mixin({
             label: "WebSocket Server",
             description: "Enable WebSocket Server for native. Note: WebSocket must also be enabled.",
         },
+        flags: {
+            spine: {
+                loadManual: {
+                    label: 'Load Manually',
+                    description: `Whether to load Spine Wasm/AsmJS moudle manually by 'loadWasmModuleSpine' API ?`,
+                },
+            },
+            box2d: {
+                loadManual: {
+                    label: 'Load Manually',
+                    description: `Whether to load Box2D Wasm/AsmJS moudle manually by 'loadWasmModuleBox2D' API ?`,
+                },
+            },
+            bullet: {
+                loadManual: {
+                    label: 'Load Manually',
+                    description: `Whether to load Bullet Wasm/AsmJS moudle manually by 'loadWasmModuleBullet' API ?`,
+                },
+            },
+            physx: {
+                loadManual: {
+                    label: 'Load Manually',
+                    description: `Whether to load PhysX Wasm/AsmJS moudle manually by 'loadWasmModulePhysX' API ?`,
+                },
+            },
+        },
     },
     renderable_2d: {
         srcBlendFactor: 'Specifies the source blend mode, <br>it will clone a new material object.',

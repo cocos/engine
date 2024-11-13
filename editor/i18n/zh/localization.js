@@ -1079,6 +1079,32 @@ module.exports = link(mixin({
             label: "WebSocket Server",
             description: "对原生启用 WebSocket Server。注意: 必须同时启用 WebSocket。",
         },
+        flags: {
+            spine: {
+                loadManual: {
+                    label: '手动加载',
+                    description: `是否通过 'loadWasmModuleSpine' API 手动加载 Spine Wasm/AsmJS 模块 ?`,
+                },
+            },
+            box2d: {
+                loadManual: {
+                    label: '手动加载',
+                    description: `是否通过 'loadWasmModuleBox2D' API 手动加载 Box2D Wasm/AsmJS 模块 ?`,
+                },
+            },
+            bullet: {
+                loadManual: {
+                    label: '手动加载',
+                    description: `是否通过 'loadWasmModuleBullet' API 手动加载 Bullet Wasm/AsmJS 模块 ?`,
+                },
+            },
+            physx: {
+                loadManual: {
+                    label: '手动加载',
+                    description: `是否通过 'loadWasmModulePhysX' API 手动加载 PhysX Wasm/AsmJS 模块 ?`,
+                },
+            },
+        },
     },
     renderable_2d: {
         srcBlendFactor: '指定源的混合模式，这会克隆一个新的材质对象，注意这带来的性能和内存损耗',

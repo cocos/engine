@@ -40,6 +40,9 @@
                 },
                 "required": {
                     "type": "boolean"
+                },
+                "flags": {
+                    "type": "object"
                 }
             },
             "type": "object"
@@ -241,6 +244,9 @@
                 },
                 "required": {
                     "type": "boolean"
+                },
+                "flags": {
+                    "type": "object"
                 }
             },
             "type": "object"
