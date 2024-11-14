@@ -1655,12 +1655,6 @@ if (rendering) {
 
             this._setupBuiltinCameraConfigs(camera, pipelineConfigs, cameraConfigs);
 
-            // Reset camera configs
-            for (const builder of this._passBuilders) {
-                if (builder.resetCamera) {
-                    builder.resetCamera(cameraConfigs);
-                }
-            }
             for (const builder of this._passBuilders) {
                 if (builder.configCamera) {
                     builder.configCamera(camera, pipelineConfigs, cameraConfigs);

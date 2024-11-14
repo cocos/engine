@@ -28,7 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 /* eslint-disable max-len */
-import { Material, Texture2D, Vec3, gfx } from 'cc';
+import { Material, Texture2D, gfx } from 'cc';
 
 const { SampleCount } = gfx;
 
