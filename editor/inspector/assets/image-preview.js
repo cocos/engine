@@ -1,22 +1,32 @@
 'use strict';
 
 exports.template = /* html */`
-<div class="image-preview">
-    <ui-asset-image class="image" size="origin"></ui-asset-image>
-    <div class="label">
-        <span class="size"></span>
+<ui-section header="i18n:ENGINE.inspector.preview.header" class="preview-section config no-padding" expand>
+    <div class="image-preview">
+        <div class="image-content">
+            <ui-asset-image class="image" size="origin"></ui-asset-image>
+        </div>
+        <div class="label">
+            <span class="size"></span>
+        </div>
     </div>
-</div>
+</ui-section>
 `;
 
 exports.style = /* css */`
+    .preview-section {
+        margin-top: 0px;
+    }
     .image-preview {
+        position: relative;
+        display: flex;
+    }
+    .image-preview > .image-content {
         height: var(--inspector-footer-preview-height, 200px);
         background: var(--color-normal-fill-emphasis);
-        display: flex;
-        position: relative;
         box-sizing: border-box;
     }
+    
     .image-preview > .image {
         width: 100%;
         height: 100%;
@@ -85,6 +95,7 @@ exports.update = function(assetList, metaList) {
     this.asset = assetList[0];
     this.meta = metaList[0];
 
+    // 如何多选就隐藏预览
     if (assetList.length > 1) {
         this.$.container.style.display = 'none';
     } else {

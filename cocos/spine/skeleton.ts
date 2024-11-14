@@ -1038,7 +1038,6 @@ export class Skeleton extends UIRenderer {
      */
     public updateAnimation (dt: number): void {
         this.markForUpdateRenderData();
-        if (EDITOR_NOT_IN_PREVIEW) return;
         if (this.paused) return;
         if (this.isAnimationCached()) {
             // On realTime mode, dt is multiplied at native side.

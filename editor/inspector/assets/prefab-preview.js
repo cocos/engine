@@ -3,9 +3,6 @@
 exports.template = /* html */`
 <ui-section header="i18n:ENGINE.inspector.preview.header" class="preview-section config no-padding" expand>
     <div class="preview">
-        <div class="info">
-            <ui-label value="JointCount:0" class="joint-count"></ui-label>
-        </div>
         <div class="image">
             <canvas class="canvas"></canvas>
         </div>
@@ -14,38 +11,30 @@ exports.template = /* html */`
 `;
 
 exports.style = /* css */`
-.preview-section {
-    margin-top: 0px;
-}
-.preview {
-    border-top: 1px solid var(--color-normal-border);
-}
-.preview > .info {
-    padding: 4px 4px 0 4px;
-}
-.preview > .info > ui-label {
-    margin-right: 6px;
-}
-.preview > .image {
-    height: var(--inspector-footer-preview-height, 200px);
-    overflow: hidden;
-    display: flex;
-    flex: 1;
-}
-.preview >.image > .canvas {
-    flex: 1;
-}
+    .preview-section {
+        margin-top: 0px;
+    }
+    .preview { }
+    .preview > .image {
+        height: var(--inspector-footer-preview-height, 200px);
+        overflow: hidden;
+        display: flex;
+        flex: 1;
+    }
+    .preview >.image > .canvas {
+        flex: 1;
+    }
 `;
+
 
 exports.$ = {
     container: '.preview',
-    jointCount: '.joint-count',
-    image: '.image',
     canvas: '.canvas',
+    image: '.image',
 };
 
-async function callSkeletonPreviewFunction(funcName, ...args) {
-    return await Editor.Message.request('scene', 'call-preview-function', 'scene:skeleton-preview', funcName, ...args);
+async function callFunction(funcName, ...args) {
+    return await Editor.Message.request('scene', 'call-preview-function', 'scene:prefab-preview', funcName, ...args);
 }
 
 const Elements = {
@@ -66,10 +55,10 @@ const Elements = {
                 },
             });
             panel.$.canvas.addEventListener('mousedown', async (event) => {
-                await callSkeletonPreviewFunction('onMouseDown', { x: event.x, y: event.y, button: event.button });
+                await callFunction('onMouseDown', { x: event.x, y: event.y, button: event.button });
 
                 async function mousemove(event) {
-                    await callSkeletonPreviewFunction('onMouseMove', {
+                    await callFunction('onMouseMove', {
                         movementX: event.movementX,
                         movementY: event.movementY,
                     });
@@ -78,7 +67,7 @@ const Elements = {
                 }
 
                 async function mouseup(event) {
-                    await callSkeletonPreviewFunction('onMouseUp', {
+                    await callFunction('onMouseUp', {
                         x: event.x,
                         y: event.y,
                     });
@@ -97,7 +86,7 @@ const Elements = {
             });
 
             panel.$.canvas.addEventListener('wheel', async (event) => {
-                await callSkeletonPreviewFunction('onMouseWheel', {
+                await callFunction('onMouseWheel', {
                     wheelDeltaY: event.wheelDeltaY,
                     wheelDeltaX: event.wheelDeltaX,
                 });
@@ -106,7 +95,7 @@ const Elements = {
 
 
             const GlPreview = Editor._Module.require('PreviewExtends').default;
-            panel.glPreview = new GlPreview('scene:skeleton-preview', 'query-skeleton-preview-data');
+            panel.glPreview = new GlPreview('scene:prefab-preview', 'query-prefab-preview-data');
 
             function observer() {
                 panel.isPreviewDataDirty = true;
@@ -124,35 +113,13 @@ const Elements = {
             }
 
             await panel.glPreview.init({ width: panel.$.canvas.clientWidth, height: panel.$.canvas.clientHeight });
-            const info = await callSkeletonPreviewFunction('setSkeleton', panel.asset.uuid);
-            panel.infoUpdate(info);
+            await callFunction('setPrefab', panel.asset.uuid);
             this.isPreviewDataDirty = true;
         },
         close() {
             const panel = this;
 
             panel.resizeObserver.unobserve(panel.$.image);
-        },
-    },
-    info: {
-        ready() {
-            const panel = this;
-
-            panel.infoUpdate = Elements.info.update.bind(panel);
-        },
-        update(info) {
-            if (!info) {
-                return;
-            }
-
-            const panel = this;
-
-            panel.$.jointCount.value = 'JointCount:' + info.jointCount;
-
-            panel.isPreviewDataDirty = true;
-        },
-        close() {
-            callSkeletonPreviewFunction('hide');
         },
     },
 };
