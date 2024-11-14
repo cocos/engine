@@ -353,6 +353,41 @@ bool js_register_cc_PricingPhase(se::Object* obj) { // NOLINT
     return true;
 }
 
+SE_DECLARE_FINALIZE_FUNC(js_delete_cc_PricingPhases)
+static bool js_cc_PricingPhases_pricingPhaseList_get(se::State& s) { // NOLINT
+    CC_UNUSED bool ok = true;
+    cc::SubscriptionOfferDetails* arg1 = (cc::SubscriptionOfferDetails*)NULL;
+    std::vector<cc::PricingPhase*> result;
+
+    arg1 = SE_THIS_OBJECT<cc::SubscriptionOfferDetails>(s);
+    if (nullptr == arg1) return true;
+    result = arg1->pricingPhaseList;
+
+    ok &= nativevalue_to_se(result, s.rval(), s.thisObject() /*ctx*/);
+    SE_PRECONDITION2(ok, false, "Error processing arguments");
+    SE_HOLD_RETURN_VALUE(result, s.thisObject(), s.rval());
+
+    return true;
+}
+SE_BIND_PROP_GET(js_cc_PricingPhases_pricingPhaseList_get)
+static bool js_delete_cc_PricingPhases(se::State& s) { // NOLINT
+    return true;
+}
+SE_BIND_FINALIZE_FUNC(js_delete_cc_PricingPhases)
+bool js_register_cc_PricingPhases(se::Object* obj) { // NOLINT
+    auto* cls = se::Class::create("PricingPhases", obj, nullptr, nullptr);
+
+    cls->defineStaticProperty("__isJSB", se::Value(true), se::PropertyAttribute::READ_ONLY | se::PropertyAttribute::DONT_ENUM | se::PropertyAttribute::DONT_DELETE);
+    cls->defineProperty("pricingPhaseList", _SE(js_cc_PricingPhases_pricingPhaseList_get), nullptr);
+    cls->defineFinalizeFunction(_SE(js_delete_cc_PricingPhases));
+
+    cls->install();
+    JSBClassType::registerClass<cc::PricingPhase>(cls);
+
+    se::ScriptEngine::getInstance()->clearException();
+    return true;
+}
+
 SE_DECLARE_FINALIZE_FUNC(js_delete_cc_SubscriptionOfferDetails)
 
 static bool js_cc_SubscriptionOfferDetails_basePlanId_get(se::State& s) { // NOLINT
@@ -440,14 +475,14 @@ static bool js_cc_SubscriptionOfferDetails_offerToken_get(se::State& s) { // NOL
 }
 SE_BIND_PROP_GET(js_cc_SubscriptionOfferDetails_offerToken_get)
 
-static bool js_cc_SubscriptionOfferDetails_pricingPhaseList_get(se::State& s) { // NOLINT
+static bool js_cc_SubscriptionOfferDetails_pricingPhases_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::SubscriptionOfferDetails* arg1 = (cc::SubscriptionOfferDetails*)NULL;
     std::vector<cc::PricingPhase*> result;
 
     arg1 = SE_THIS_OBJECT<cc::SubscriptionOfferDetails>(s);
     if (nullptr == arg1) return true;
-    result = arg1->pricingPhases->pricingPhaseList;
+    result = arg1->pricingPhases;
 
     ok &= nativevalue_to_se(result, s.rval(), s.thisObject() /*ctx*/);
     SE_PRECONDITION2(ok, false, "Error processing arguments");
@@ -455,7 +490,7 @@ static bool js_cc_SubscriptionOfferDetails_pricingPhaseList_get(se::State& s) { 
 
     return true;
 }
-SE_BIND_PROP_GET(js_cc_SubscriptionOfferDetails_pricingPhaseList_get)
+SE_BIND_PROP_GET(js_cc_SubscriptionOfferDetails_pricingPhases_get)
 
 static bool js_delete_cc_SubscriptionOfferDetails(se::State& s) { // NOLINT
     return true;
@@ -471,7 +506,7 @@ bool js_register_cc_SubscriptionOfferDetails(se::Object* obj) { // NOLINT
     cls->defineProperty("offerId", _SE(js_cc_SubscriptionOfferDetails_offerId_get), nullptr);
     cls->defineProperty("offerTags", _SE(js_cc_SubscriptionOfferDetails_offerTags_get), nullptr);
     cls->defineProperty("offerToken", _SE(js_cc_SubscriptionOfferDetails_offerToken_get), nullptr);
-    cls->defineProperty("pricingPhaseList", _SE(js_cc_SubscriptionOfferDetails_pricingPhaseList_get), nullptr);
+    cls->defineProperty("pricingPhases", _SE(js_cc_SubscriptionOfferDetails_pricingPhases_get), nullptr);
     cls->defineFinalizeFunction(_SE(js_delete_cc_SubscriptionOfferDetails));
 
     cls->install();
@@ -1443,6 +1478,7 @@ bool jsb_register_all_billing(se::Object* obj) { // NOLINT
     js_register_cc_BillingResult(ns);
     js_register_cc_OneTimePurchaseOfferDetails(ns);
     js_register_cc_InstallmentPlanDetails(ns);
+    js_register_cc_PricingPhases(ns);
     js_register_cc_PricingPhase(ns);
 
     js_register_cc_SubscriptionOfferDetails(ns);

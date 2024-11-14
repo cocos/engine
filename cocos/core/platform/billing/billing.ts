@@ -24,7 +24,6 @@
 import { JSB } from 'internal:constants';
 import { native } from '../../../native-binding';
 import { EventTarget } from '../../event';
-import { ccenum } from '../../value-types/enum';
 
 declare const jsb: any;
 /**
@@ -829,6 +828,5 @@ export class GooglePlayBilling {
  * @zh
  * google play blling模块的接口。
  *
- * @example
  */
 export const googlePlayBilling = new GooglePlayBilling();
