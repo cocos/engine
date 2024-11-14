@@ -707,9 +707,9 @@ void Model::updateReflectionProbeId() {
     _localDataUpdated = true;
 }
 
-void Model::setInstancedAttribute(const ccstd::string &name, const float *value, uint32_t byteLength) {
+void Model::setInstancedAttribute(const ccstd::string &name, const float *value, uint32_t byteCount) {
     for (const auto &subModel : _subModels) {
-        subModel->setInstancedAttribute(name, value, byteLength);
+        subModel->setInstancedAttribute(name, value, byteCount);
     }
 }
 void Model::setReflectionProbeType(UseReflectionProbeType val) {

@@ -135,7 +135,7 @@ public:
     void onMacroPatchesStateChanged();
     void onGeometryChanged();
     void setSubModelMesh(index_t idx, RenderingSubMesh *subMesh) const;
-    void setInstancedAttribute(const ccstd::string &name, const float *value, uint32_t byteLength);
+    void setInstancedAttribute(const ccstd::string &name, const float *value, uint32_t byteCount);
     void updateWorldBound();
     void updateWorldBoundsForJSSkinningModel(const Vec3 &min, const Vec3 &max);
     void updateWorldBoundsForJSBakedSkinningModel(geometry::AABB *aabb);

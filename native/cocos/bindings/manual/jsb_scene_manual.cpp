@@ -696,7 +696,7 @@ static bool js_Model_setInstancedAttribute(se::State &s) // NOLINT(readability-i
                     pData[i] = dataVal.toFloat();
                 }
 
-                cobj->setInstancedAttribute(name, pData, len * sizeof(float));
+                cobj->setInstancedAttribute(name, pData, len);
 
                 if (needFree) {
                     CC_FREE(pData);
@@ -709,9 +709,9 @@ static bool js_Model_setInstancedAttribute(se::State &s) // NOLINT(readability-i
                 switch (type) {
                     case se::Object::TypedArrayType::FLOAT32: {
                         uint8_t *data = nullptr;
-                        size_t byteLength = 0;
-                        if (val.toObject()->getTypedArrayData(&data, &byteLength) && data != nullptr && byteLength > 0) {
-                            cobj->setInstancedAttribute(name, reinterpret_cast<const float *>(data), static_cast<uint32_t>(byteLength));
+                        size_t byteCount = 0;
+                        if (val.toObject()->getTypedArrayData(&data, &byteCount) && data != nullptr && byteCount > 0) {
+                            cobj->setInstancedAttribute(name, reinterpret_cast<const float *>(data), static_cast<uint32_t>(byteCount));
                         }
                     } break;
 

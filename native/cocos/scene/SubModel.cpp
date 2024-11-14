@@ -362,7 +362,48 @@ void SubModel::setSubMesh(RenderingSubMesh *subMesh) {
     _subMesh = subMesh;
 }
 
-void SubModel::setInstancedAttribute(const ccstd::string &name, const float *value, uint32_t byteLength) {
+template<typename T>
+void copyInstancedData(const T& view, const float* value, uint32_t byteCount) {
+    auto* dstData = view.buffer()->getData() + view.byteOffset();
+    uint32_t bLength;
+    if constexpr (std::is_same_v<T, Float32Array>) {
+        bLength = byteCount * sizeof(float_t);
+    } else if constexpr (std::is_same_v<T, Uint16Array>) {
+        bLength = byteCount * sizeof(uint16_t);
+    } else if constexpr (std::is_same_v<T, Int16Array>) {
+        bLength = byteCount * sizeof(int16_t);
+    } else if constexpr (std::is_same_v<T, Uint32Array>) {
+        bLength = byteCount * sizeof(uint32_t);
+    } else if constexpr (std::is_same_v<T, Int32Array>) {
+        bLength = byteCount * sizeof(int32_t);
+    } else if constexpr (std::is_same_v<T, Uint8Array>) {
+        bLength = byteCount * sizeof(uint8_t);
+    } else if constexpr (std::is_same_v<T, Int8Array>) {
+        bLength = byteCount * sizeof(int8_t);
+    }
+    CC_ASSERT(bLength <= view.byteLength());
+    memcpy(dstData, value, bLength);
+}
+
+void handleTypedArray(const cc::TypedArray& view, const float* value, uint32_t byteCount) {
+    if (ccstd::holds_alternative<Float32Array>(view)) {
+        copyInstancedData(ccstd::get<Float32Array>(view), value, byteCount);
+    } else if (ccstd::holds_alternative<Uint16Array>(view)) {
+        copyInstancedData(ccstd::get<Uint16Array>(view), value, byteCount);
+    } else if (ccstd::holds_alternative<Int16Array>(view)) {
+        copyInstancedData(ccstd::get<Int16Array>(view), value, byteCount);
+    } else if (ccstd::holds_alternative<Uint32Array>(view)) {
+        copyInstancedData(ccstd::get<Uint32Array>(view), value, byteCount);
+    } else if (ccstd::holds_alternative<Int32Array>(view)) {
+        copyInstancedData(ccstd::get<Int32Array>(view), value, byteCount);
+    } else if (ccstd::holds_alternative<Uint8Array>(view)) {
+        copyInstancedData(ccstd::get<Uint8Array>(view), value, byteCount);
+    } else if (ccstd::holds_alternative<Int8Array>(view)) {
+        copyInstancedData(ccstd::get<Int8Array>(view), value, byteCount);
+    }
+}
+
+void SubModel::setInstancedAttribute(const ccstd::string &name, const float *value, uint32_t byteCount) {
     const auto &attributes = _instancedAttributeBlock.attributes;
     auto &views = _instancedAttributeBlock.views;
     for (size_t i = 0, len = attributes.size(); i < len; ++i) {
@@ -370,22 +411,17 @@ void SubModel::setInstancedAttribute(const ccstd::string &name, const float *val
         if (attribute.name == name) {
             const auto &info = gfx::GFX_FORMAT_INFOS[static_cast<uint32_t>(attribute.format)];
             switch (info.type) {
-                case gfx::FormatType::NONE:
                 case gfx::FormatType::UNORM:
                 case gfx::FormatType::SNORM:
                 case gfx::FormatType::UINT:
-                case gfx::FormatType::INT: {
-                    CC_ABORT();
-                } break;
+                case gfx::FormatType::INT:
                 case gfx::FormatType::FLOAT:
                 case gfx::FormatType::UFLOAT: {
-                    CC_ASSERT(ccstd::holds_alternative<Float32Array>(views[i]));
-                    auto &view = ccstd::get<Float32Array>(views[i]);
-                    auto *dstData = reinterpret_cast<float *>(view.buffer()->getData() + view.byteOffset());
-                    CC_ASSERT(byteLength <= view.byteLength());
-                    memcpy(dstData, value, byteLength);
+                    handleTypedArray(views[i], value, byteCount);
                 } break;
+                case gfx::FormatType::NONE:
                 default:
+                    CC_ABORT();
                     break;
             }
         }
