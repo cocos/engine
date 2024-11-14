@@ -571,10 +571,10 @@ export class BuiltinForwardPassBuilder implements rendering.PipelinePassBuilder 
         }
 
         if (cameraConfigs.remainingPasses === 0 && cameraConfigs.enableShadingScale) {
-            addCopyToScreenPass(ppl, pplConfigs, cameraConfigs, context.colorName);
+            return addCopyToScreenPass(ppl, pplConfigs, cameraConfigs, context.colorName);
+        } else {
+            return pass;
         }
-
-        return pass;
     }
     private _addCascadedShadowMapPass(
         ppl: rendering.BasicPipeline,
@@ -1529,6 +1529,7 @@ if (rendering) {
         private readonly _toneMappingPass = new BuiltinToneMappingPassBuilder();
         private readonly _fxaaPass = new BuiltinFXAAPassBuilder();
         private readonly _fsrPass = new BuiltinFsrPassBuilder();
+        private readonly _uiPass = new BuiltinUiPassBuilder();
         // Internal cached resources
         private readonly _clearColor = new Color(0, 0, 0, 1);
         private readonly _viewport = new Viewport();
@@ -1591,6 +1592,7 @@ if (rendering) {
             if (settings.fsr.enabled) {
                 passBuilders.push(this._fsrPass);
             }
+            passBuilders.push(this._uiPass);
         }
 
         private _setupBuiltinCameraConfigs(
