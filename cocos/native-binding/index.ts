@@ -1613,8 +1613,8 @@ export declare namespace native {
      */
     export interface ProductDetails {
         /**
-         * @en Represents the available purchase plans to buy a subscription product.
-         * @zh 代表一次性购买产品的报价详情。
+         * @en Hash code
+         * @zh hash值
          */
         readonly hashCode: number;
         /**
@@ -1642,7 +1642,10 @@ export declare namespace native {
          * @zh 所售产品的标题。
          */
         readonly title: string;
-
+        /**
+         * @en To string
+         * @zh 转换成字符串
+         */
         readonly toStr: string;
         /**
          * @en The offer details of an one-time purchase product.
@@ -1715,7 +1718,10 @@ export declare namespace native {
          * @zh 指示订阅是否自动续订。
          */
         readonly isAutoRenewing: number;
-
+        /**
+         * @en Hash code
+         * @zh hash值
+         */
         readonly hashCode: number;
 
         /**
@@ -1753,7 +1759,10 @@ export declare namespace native {
          * @zh 包含使用开发者私钥签名的购买数据签名的字符串。
          */
         readonly signature: string;
-
+        /**
+         * @en To string
+         * @zh 转换成字符串
+         */
         readonly toStr: string;
 
         /**

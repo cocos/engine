@@ -37,5 +37,5 @@ android {
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: '../java/libs')
-    api "com.android.billingclient:billing:7.1.0"
+    implementation "com.android.billingclient:billing:7.1.0"
 }
