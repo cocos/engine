@@ -395,4 +395,6 @@ T getTypedArrayElementValue(const TypedArrayElementType &element) {
     return 0;
 }
 
+void copyTypedArray(TypedArray &dst, uint32_t dstOffset, const TypedArray &src);
+
 } // namespace cc
