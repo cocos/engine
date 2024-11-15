@@ -212,10 +212,7 @@ export class BuiltinDepthOfFieldPass extends BuiltinPipelinePassBuilder
         ppl: rendering.BasicPipeline,
         pplConfigs: Readonly<PipelineConfigs>,
         cameraConfigs: Readonly<CameraConfigs & DofPassConfigs>,
-        window: renderer.RenderWindow,
-        camera: renderer.scene.Camera,
-        nativeWidth: number,
-        nativeHeight: number): void {
+        window: renderer.RenderWindow): void {
         const id = window.renderWindowId;
         if (cameraConfigs.enableDof) {
             ppl.addRenderTarget(`DofRadiance${id}`,
@@ -236,6 +233,7 @@ export class BuiltinDepthOfFieldPass extends BuiltinPipelinePassBuilder
         }
         --cameraConfigs.remainingPasses;
 
+        assert(!!this._material);
         if (cameraConfigs.remainingPasses === 0) {
             return this._addDepthOfFieldPasses(ppl, pplConfigs,
                 cameraConfigs, this._material,
