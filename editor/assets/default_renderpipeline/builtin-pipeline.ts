@@ -397,8 +397,8 @@ class ForwardLighting {
 export interface ForwardPassConfigs {
     enableMainLightShadowMap: boolean;
     enableMainLightPlanarShadowMap: boolean;
-    enableMSAA: boolean;
     enablePlanarReflectionProbe: boolean;
+    enableMSAA: boolean;
     enableSingleForwardPass: boolean;
 }
 
