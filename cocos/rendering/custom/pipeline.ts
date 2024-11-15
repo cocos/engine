@@ -1660,7 +1660,6 @@ export interface Pipeline extends BasicPipeline {
 export interface PipelinePassBuilder {
     getConfigOrder (): number;
     getRenderOrder (): number;
-    resetCamera? (cameraConfigs: { [name: string]: any }): void;
     configCamera? (
         camera: Readonly<Camera>,
         pplConfigs: { readonly [name: string]: any },

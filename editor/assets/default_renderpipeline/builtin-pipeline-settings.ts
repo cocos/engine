@@ -23,24 +23,14 @@
 */
 
 import {
-    _decorator,
-    Camera,
-    CCBoolean,
-    CCFloat,
-    CCInteger,
-    Component,
-    Material,
-    rendering,
-    Texture2D,
-    Vec3,
+    _decorator, Camera, CCBoolean, CCFloat, CCInteger, Component,
+    Material, rendering, Texture2D,
 } from 'cc';
 
 import { EDITOR } from 'cc/env';
 
 import {
-    PipelineSettings,
-    makePipelineSettings,
-    fillRequiredPipelineSettings,
+    fillRequiredPipelineSettings, makePipelineSettings, PipelineSettings,
 } from './builtin-pipeline-types';
 
 const { ccclass, disallowMultiple, executeInEditMode, menu, property, requireComponent, type } = _decorator;
@@ -53,6 +43,10 @@ const { ccclass, disallowMultiple, executeInEditMode, menu, property, requireCom
 export class BuiltinPipelineSettings extends Component {
     @property
     private readonly _settings: PipelineSettings = makePipelineSettings();
+
+    getPipelineSettings(): PipelineSettings {
+        return this._settings;
+    }
 
     // Enable/Disable
     onEnable(): void {
@@ -92,7 +86,7 @@ export class BuiltinPipelineSettings extends Component {
             this._tryEnableEditorPreview();
         }
     }
-    private _tryEnableEditorPreview(): void {
+    public _tryEnableEditorPreview(): void {
         if (rendering === undefined) {
             return;
         }
@@ -102,7 +96,7 @@ export class BuiltinPipelineSettings extends Component {
             this._disableEditorPreview();
         }
     }
-    private _disableEditorPreview(): void {
+    public _disableEditorPreview(): void {
         if (rendering === undefined) {
             return;
         }
@@ -174,109 +168,6 @@ export class BuiltinPipelineSettings extends Component {
     }
     get shadingScale(): number {
         return this._settings.shadingScale;
-    }
-
-    // DepthOfField
-    @property({
-        group: { id: 'DepthOfField', name: 'DepthOfField (PostProcessing)', style: 'section' },
-        type: CCBoolean,
-        visible: true,
-    })
-    set dofEnable(value: boolean) {
-        this._settings.depthOfField.enabled = value;
-        if (EDITOR) {
-            this._tryEnableEditorPreview();
-        }
-    }
-    get dofEnable(): boolean {
-        return this._settings.depthOfField.enabled;
-    }
-
-    @property({
-        group: { id: 'DepthOfField', name: 'DepthOfField (PostProcessing)', style: 'section' },
-        type: Material,
-        visible: true,
-    })
-    set dofMaterial(value: Material) {
-        if (this._settings.depthOfField.material === value) {
-            return;
-        }
-        this._settings.depthOfField.material = value;
-        if (EDITOR) {
-            this._tryEnableEditorPreview();
-        }
-    }
-    get dofMaterial(): Material {
-        return this._settings.depthOfField.material!;
-    }
-
-    @property({
-        group: { id: 'DepthOfField', name: 'DepthOfField (PostProcessing)', style: 'section' },
-        type: CCFloat,
-        min: 0,
-        visible: true,
-    })
-    set dofMinRange(value: number) {
-        this._settings.depthOfField.minRange = value;
-    }
-    get dofMinRange(): number {
-        return this._settings.depthOfField.minRange;
-    }
-
-    @property({
-        group: { id: 'DepthOfField', name: 'DepthOfField (PostProcessing)', style: 'section' },
-        type: CCFloat,
-        min: 0,
-        visible: true,
-    })
-    set dofMaxRange(value: number) {
-        this._settings.depthOfField.maxRange = value;
-    }
-    get dofMaxRange(): number {
-        return this._settings.depthOfField.maxRange;
-    }
-
-    @property({
-        group: { id: 'DepthOfField', name: 'DepthOfField (PostProcessing)', style: 'section' },
-        type: CCFloat,
-        min: 0,
-        max: 1,
-        visible: true,
-    })
-    set dofIntensity(value: number) {
-        this._settings.depthOfField.intensity = value;
-    }
-    get dofIntensity(): number {
-        return this._settings.depthOfField.intensity;
-    }
-
-
-    @type(CCFloat)
-    @property({
-        group: { id: 'DepthOfField', name: 'DepthOfField (PostProcessing)', style: 'section' },
-        type: CCFloat,
-        range: [0.01, 10, 0.01],
-        slide: true,
-        visible: true,
-    })
-    set dofBlurRadius(value: number) {
-        this._settings.depthOfField.blurRadius = value;
-    }
-    get dofBlurRadius(): number {
-        return this._settings.depthOfField.blurRadius;
-    }
-
-    @type(Vec3)
-    @property({
-        group: { id: 'DepthOfField', name: 'DepthOfField (PostProcessing)', style: 'section' },
-        type: Vec3,
-        visible: true,
-    })
-    set dofFocusPos(value: Vec3) {
-        this._settings.depthOfField.focusPos = value;
-    }
-    get dofFocusPos(): Vec3 {
-        return this._settings.depthOfField.focusPos;
     }
 
     // Bloom
