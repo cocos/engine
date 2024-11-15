@@ -75,7 +75,7 @@ var SafeArea = cc.Class({
      */
     updateArea () {
         // TODO Remove Widget dependencies in the future
-        let widget = this.node.getComponent(Widget);
+        let widget = this.node?.getComponent(Widget);
         if (!widget) {
             return;
         }
