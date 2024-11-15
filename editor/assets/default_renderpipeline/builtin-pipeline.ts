@@ -178,6 +178,7 @@ function addCopyToScreenPass(
     cameraConfigs: CameraConfigs,
     input: string,
 ): rendering.BasicRenderPassBuilder {
+    assert(!!cameraConfigs.copyAndTonemapMaterial);
     const pass = ppl.addRenderPass(
         cameraConfigs.nativeWidth,
         cameraConfigs.nativeHeight,
@@ -518,8 +519,7 @@ export class BuiltinForwardPassBuilder implements rendering.PipelinePassBuilder 
         pplConfigs: Readonly<PipelineConfigs>,
         cameraConfigs: CameraConfigs & ForwardPassConfigs,
         camera: renderer.scene.Camera,
-        context: PipelineContext,
-        prevRenderPass?: rendering.BasicRenderPassBuilder): rendering.BasicRenderPassBuilder | undefined {
+        context: PipelineContext): rendering.BasicRenderPassBuilder | undefined {
         const id = camera.window.renderWindowId;
 
         const scene = camera.scene!;
@@ -588,12 +588,14 @@ export class BuiltinForwardPassBuilder implements rendering.PipelinePassBuilder 
         // ----------------------------------------------------------------
         // Dynamic states
         // ----------------------------------------------------------------
-        const width = ppl.pipelineSceneData.shadows.size.x;
-        const height = ppl.pipelineSceneData.shadows.size.y;
-        this._viewport.left = 0;
-        this._viewport.top = 0;
-        this._viewport.width = width;
-        this._viewport.height = height;
+        const shadowSize = ppl.pipelineSceneData.shadows.size;
+        const width = shadowSize.x;
+        const height = shadowSize.y;
+
+        const viewport = this._viewport;
+        viewport.left = viewport.top = 0;
+        viewport.width = width;
+        viewport.height = height;
 
         // ----------------------------------------------------------------
         // CSM Shadow Map
@@ -1002,10 +1004,7 @@ export class BuiltinBloomPassBuilder implements rendering.PipelinePassBuilder {
         ppl: rendering.BasicPipeline,
         pplConfigs: Readonly<PipelineConfigs>,
         cameraConfigs: CameraConfigs & BloomPassConfigs,
-        window: renderer.RenderWindow,
-        camera: renderer.scene.Camera,
-        nativeWidth: number,
-        nativeHeight: number): void {
+        window: renderer.RenderWindow): void {
         if (cameraConfigs.enableBloom) {
             const id = window.renderWindowId;
             let bloomWidth = cameraConfigs.width;
@@ -1188,12 +1187,9 @@ export class BuiltinToneMappingPassBuilder implements rendering.PipelinePassBuil
     windowResize(
         ppl: rendering.BasicPipeline,
         pplConfigs: Readonly<PipelineConfigs>,
-        cameraConfigs: CameraConfigs & ToneMappingPassConfigs,
-        window: renderer.RenderWindow,
-        camera: renderer.scene.Camera,
-        nativeWidth: number,
-        nativeHeight: number): void {
+        cameraConfigs: CameraConfigs & ToneMappingPassConfigs): void {
         if (cameraConfigs.enableColorGrading) {
+            assert(!!cameraConfigs.settings.colorGrading.material);
             cameraConfigs.settings.colorGrading.material.setProperty(
                 'colorGradingMap',
                 cameraConfigs.settings.colorGrading.colorGradingMap);
@@ -1273,6 +1269,7 @@ export class BuiltinToneMappingPassBuilder implements rendering.PipelinePassBuil
                 pass.addQueue(rendering.QueueHint.OPAQUE)
                     .addFullscreenQuad(settings.toneMapping.material, 0);
             } else {
+                assert(!!cameraConfigs.copyAndTonemapMaterial);
                 pass.addQueue(rendering.QueueHint.OPAQUE)
                     .addFullscreenQuad(cameraConfigs.copyAndTonemapMaterial, 0);
             }
@@ -1324,6 +1321,7 @@ export class BuiltinFXAAPassBuilder implements rendering.PipelinePassBuilder {
             : `LdrColor`;
         const ldrColorName = getPingPongRenderTarget(context.colorName, ldrColorPrefix, id);
 
+        assert(!!cameraConfigs.settings.fxaa.material);
         if (cameraConfigs.remainingPasses === 0) {
             if (cameraConfigs.enableShadingScale) {
                 this._addFxaaPass(ppl, pplConfigs,
@@ -1427,6 +1425,7 @@ export class BuiltinFsrPassBuilder implements rendering.PipelinePassBuilder {
                 : getPingPongRenderTarget(context.colorName, 'UiColor', cameraConfigs.renderWindowId);
         context.colorName = outputColorName;
 
+        assert(!!cameraConfigs.settings.fsr.material);
         return this._addFsrPass(ppl, pplConfigs, cameraConfigs,
             cameraConfigs.settings,
             cameraConfigs.settings.fsr.material,
@@ -1679,7 +1678,6 @@ if (rendering) {
             this._setupCameraConfigs(camera, this._configs, this._cameraConfigs);
 
             // Render Window (UI)
-            const settings = this._cameraConfigs.settings;
             const id = window.renderWindowId;
 
             ppl.addRenderWindow(this._cameraConfigs.colorName,
