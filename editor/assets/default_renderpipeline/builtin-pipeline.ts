@@ -432,15 +432,15 @@ export class BuiltinForwardPassBuilder implements rendering.PipelinePassBuilder 
         cameraConfigs.enablePlanarReflectionProbe =
             cameraConfigs.isMainGameWindow || camera.cameraUsage === CameraUsage.SCENE_VIEW;
 
-        // Forward rendering (Depend on MSAA and TBR)
-        cameraConfigs.enableSingleForwardPass
-            = pipelineConfigs.isMobile || cameraConfigs.enableMSAA;
-
         // MSAA
         cameraConfigs.enableMSAA = cameraConfigs.settings.msaa.enabled
             && !cameraConfigs.enableStoreSceneDepth // Cannot store MS depth, resolve depth is also not cross-platform
             && !pipelineConfigs.isWeb // TODO(zhouzhenglong): remove this constraint
             && !pipelineConfigs.isWebGL1;
+
+        // Forward rendering (Depend on MSAA and TBR)
+        cameraConfigs.enableSingleForwardPass
+            = pipelineConfigs.isMobile || cameraConfigs.enableMSAA;
 
         ++cameraConfigs.remainingPasses;
     }
