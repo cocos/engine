@@ -272,7 +272,7 @@ export class BuiltinDepthOfFieldPass extends BuiltinPipelinePassBuilder
         outputRadianceName: string,
     ): rendering.BasicRenderPassBuilder {
         this._cocParams.x = this._minRange;
-        this._cocParams.y = this._maxRange;// camera.farClip;// this._focusRange;
+        this._cocParams.y = this._maxRange;
         this._cocParams.z = this._blurRadius;
         this._cocParams.w = this._intensity;
         this._focusPosVec4.x = this._focusPos.x;
