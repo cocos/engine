@@ -191,7 +191,7 @@ const cacheManager = {
         }
         for (let i = 0, l = caches.length; i < l; i++) {
             const cacheKey = `${cc.assetManager.utils.getUuidFromURL(caches[i].originUrl)}@native`;
-            cc.assetManager.files.remove(cacheKey);
+            cc.assetManager._files$.remove(cacheKey);
             this.cachedFiles.remove(caches[i].originUrl);
         }
 
