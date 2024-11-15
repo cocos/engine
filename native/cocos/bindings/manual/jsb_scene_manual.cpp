@@ -677,48 +677,26 @@ static bool js_Model_setInstancedAttribute(se::State &s) // NOLINT(readability-i
             if (val.toObject()->isArray()) {
                 uint32_t len = 0;
                 val.toObject()->getArrayLength(&len);
+                
+                cc::Float32Array value(len);
 
                 se::Value dataVal;
-                ccstd::array<float, 64> stackData;
-                float *pData = nullptr;
-                bool needFree = false;
-
-                if (len <= static_cast<uint32_t>(stackData.size())) {
-                    pData = stackData.data();
-                } else {
-                    pData = static_cast<float *>(CC_MALLOC(len));
-                    needFree = true;
-                }
-
                 for (uint32_t i = 0; i < len; ++i) {
                     ok = val.toObject()->getArrayElement(i, &dataVal);
                     CC_ASSERT(ok && dataVal.isNumber());
-                    pData[i] = dataVal.toFloat();
+                    value[i] = dataVal.toFloat();
                 }
 
-                cobj->setInstancedAttribute(name, pData, len);
-
-                if (needFree) {
-                    CC_FREE(pData);
-                }
+                cobj->setInstancedAttribute(name, value);
                 return true;
             }
 
             if (val.toObject()->isTypedArray()) {
-                se::Object::TypedArrayType type = val.toObject()->getTypedArrayType();
-                switch (type) {
-                    case se::Object::TypedArrayType::FLOAT32: {
-                        uint8_t *data = nullptr;
-                        size_t byteCount = 0;
-                        if (val.toObject()->getTypedArrayData(&data, &byteCount) && data != nullptr && byteCount > 0) {
-                            cobj->setInstancedAttribute(name, reinterpret_cast<const float *>(data), static_cast<uint32_t>(byteCount));
-                        }
-                    } break;
-
-                    default:
-                        // FIXME:
-                        CC_ABORT();
-                        break;
+                cc::TypedArray arr;
+                ok = sevalue_to_native(val, &arr);
+                SE_PRECONDITION2(ok, false, "Error processing arguments");
+                if (ok) {
+                    cobj->setInstancedAttribute(name, arr);
                 }
                 return true;
             }
