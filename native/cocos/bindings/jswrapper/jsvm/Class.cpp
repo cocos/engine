@@ -137,7 +137,6 @@ bool Class::install() {
     }
 
     NODE_API_CALL(status, env, OH_JSVM_CreateReference(env, cons, 1, &_constructor));
-        SE_LOGD("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq   install   %p     %p", this, _constructor);
     NODE_API_CALL(status, env, OH_JSVM_SetNamedProperty(env, _parent->_getJSObject(), _name.c_str(), cons));
 
     JSVM_Value proto;
@@ -201,7 +200,6 @@ Object *Class::getProto() const {
 }
 
 JSVM_Ref Class::_getCtorRef() const {
-    SE_LOGD("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq   _getCtorRef   %p     %p", this, _constructor);
     return _constructor;
 }
 
@@ -209,13 +207,11 @@ JSVM_Value Class::_getCtorFunc() const {
     assert(_constructor);
     JSVM_Value  result = nullptr;
     JSVM_Status status;
-    SE_LOGD("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq   _getCtorFunc   %p     %p", this, _constructor);
     NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_GetReferenceValue(ScriptEngine::getEnv(), _constructor, &result));
     return result;
 }
 
 void Class::_setCtor(Object *obj) {
-    SE_LOGD("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq   _setCtor   %p     %p", this, obj);
     assert(!_ctor.has_value());
     _ctor = obj;
     if (obj != nullptr) {
@@ -227,7 +223,6 @@ void Class::_setCtor(Object *obj) {
 void Class::destroy() {
     SAFE_DEC_REF(_parent);
     SAFE_DEC_REF(_proto);
-    SE_LOGD("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq   destroy   %p   ", this);
     SAFE_DEC_REF(_parentProto);
     if (_ctor.has_value()) {
         if (_ctor.value() != nullptr) {
