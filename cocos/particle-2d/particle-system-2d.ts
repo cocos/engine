@@ -740,9 +740,9 @@ export class ParticleSystem2D extends UIRenderer {
     private _positionType = PositionType.FREE;
 
     private _stopped = true;
-    private declare _previewTimer;
+    private declare _previewTimer: number | null;
     private declare _focused: boolean;
-    private declare _plistFile;
+    private declare _plistFile: string;
     private declare _tiffReader;
     private _useFile: boolean;
 
@@ -849,7 +849,7 @@ export class ParticleSystem2D extends UIRenderer {
         }
     }
 
-    protected lateUpdate (dt): void {
+    protected lateUpdate (dt: number): void {
         if (!this._simulator.finished) {
             this._simulator.step(dt);
         }
@@ -967,7 +967,7 @@ export class ParticleSystem2D extends UIRenderer {
                     }
                 });
             } else if (dict.textureImageData) {
-                const textureData = dict.textureImageData;
+                const textureData = dict.textureImageData as string;
 
                 if (textureData && textureData.length > 0) {
                     let imgPathName = imgPath;
