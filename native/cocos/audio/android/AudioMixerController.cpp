@@ -37,7 +37,7 @@ namespace cc {
 AudioMixerController::AudioMixerController(int bufferSizeInFrames, int sampleRate, int channelCount)
 : _bufferSizeInFrames(bufferSizeInFrames), _sampleRate(sampleRate), _channelCount(channelCount), _mixer(nullptr), _isPaused(false), _isMixingFrame(false) {
     ALOGV("In the constructor of AudioMixerController!");
-
+    // NOLINTNEXTLINE(bugprone-misplaced-widening-cast)
     _mixingBuffer.size = static_cast<size_t>(bufferSizeInFrames * 2 * channelCount);
     // Don't use posix_memalign since it was added from API 16, it will crash on Android 2.3
     // Therefore, for a workaround, we uses memalign here.

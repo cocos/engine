@@ -282,7 +282,7 @@ static void registerFunction(const Napi::CallbackInfo &info) {
     return;
 }
 
-std::unordered_map<std::string, JSFunction> JSFunction::FUNCTION_MAP;
+std::unordered_map<std::string, JSFunction> JSFunction::jsFunctionMap;
 
 static void napiASend(const Napi::CallbackInfo &info) {
     OpenHarmonyPlatform::getInstance()->triggerMessageSignal();

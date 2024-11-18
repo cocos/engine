@@ -59,7 +59,7 @@ public:
     char* name = nullptr;
 
 public:
-    static std::unordered_map<std::string, JSFunction> FUNCTION_MAP;
+    static std::unordered_map<std::string, JSFunction> jsFunctionMap;
 
     explicit JSFunction(char* name, napi_env env, napi_ref funcRef)
         : name(name), env(env), funcRef(funcRef){}
@@ -72,11 +72,11 @@ public:
 
     static JSFunction getFunction(std::string functionName)
     {
-        return FUNCTION_MAP.at(functionName);
+        return jsFunctionMap.at(functionName);
     }
 
     static void addFunction(std::string name, JSFunction* jsFunction) {
-        FUNCTION_MAP.emplace(name, *jsFunction);
+        jsFunctionMap.emplace(name, *jsFunction);
     }
 
     template<typename ReturnType, typename... Args>
