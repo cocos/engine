@@ -181,6 +181,7 @@ public:
     void syncCameraEditor(const Camera *camera);
     void update(bool forceUpdate = false); // for lazy eval situations like the in-editor preview
     void changeTargetWindow(RenderWindow *window);
+    uint32_t getCameraId() const noexcept { return _cameraId; }
 
     /**
      * transform a screen position (in oriented space) to a world space ray
@@ -419,6 +420,7 @@ private:
     CameraType _cameraType{CameraType::DEFAULT};
     TrackingType _trackingType{TrackingType::NO_TRACKING};
     CameraUsage _usage{CameraUsage::GAME};
+    uint32_t _cameraId{0};
 
 #if CC_USE_GEOMETRY_RENDERER
     IntrusivePtr<pipeline::GeometryRenderer> _geometryRenderer;

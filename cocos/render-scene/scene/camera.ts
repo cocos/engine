@@ -399,6 +399,8 @@ export const SKYBOX_FLAG = SkyBoxFlagValue.VALUE;
 
 const correctionMatrices: Mat4[] = [];
 
+let _cameraCount = 0;
+
 /**
  * @en The render camera representation in the render scene, it's managed by [[Camera]]
  * @zh 渲染场景中的相机对象，由项目层的 [[Camera]] 管理。
@@ -799,6 +801,11 @@ export class Camera {
         return this._matViewProjInv$;
     }
 
+    /** @engineInternal */
+    get cameraId (): number {
+        return this._cameraId$;
+    }
+
     /**
      * @en Whether the camera is fixed size or matching the window size.
      * @zh 相机是固定尺寸还是跟随屏幕尺寸
@@ -862,6 +869,7 @@ export class Camera {
     private _cameraType$: CameraType = CameraType.DEFAULT;
     private _trackingType$: TrackingType = TrackingType.NO_TRACKING;
     private _usage$: CameraUsage = CameraUsage.GAME;
+    private _cameraId$ = _cameraCount++;
 
     constructor (device: Device) {
         this._device$ = device;

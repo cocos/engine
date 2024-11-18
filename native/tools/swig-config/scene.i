@@ -452,6 +452,7 @@ using namespace cc;
 %attribute(cc::scene::Camera, cc::scene::CameraUsage, cameraUsage, getCameraUsage, setCameraUsage);
 %attribute(cc::scene::Camera, cc::scene::TrackingType, trackingType, getTrackingType, setTrackingType);
 %attribute(cc::scene::Camera, cc::scene::CameraType, cameraType, getCameraType, setCameraType);
+%attribute(cc::scene::Camera, uint32_t, cameraId, getCameraId);
 
 %attribute(cc::scene::RenderScene, ccstd::string&, name, getName);
 %attribute(cc::scene::RenderScene, ccstd::vector<cc::IntrusivePtr<cc::scene::Camera>>&, cameras, getCameras);
