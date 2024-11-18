@@ -151,6 +151,19 @@
                     "default": true,
                     "isNativeModule": true
                 },
+                "physics-2d-box2d-wasm": {
+                    "label": "i18n:ENGINE.features.physics_2d_box2d_wasm.label",
+                    "description": "i18n:ENGINE.features.physics_2d_box2d_wasm.description",
+                    "flags": {
+                        "LOAD_BOX2D_MANUALLY": {
+                            "label": "i18n:ENGINE.features.flags.box2d.loadManual.label",
+                            "description": "i18n:ENGINE.features.flags.box2d.loadManual.description",
+                            "ui-type": "checkbox",
+                            "default": false
+                        }
+                    }
+
+                },
                 "physics-2d-builtin": {
                     "label": "i18n:ENGINE.features.physics_2d_builtin.label",
                     "description": "i18n:ENGINE.features.physics_2d_builtin.description"
