@@ -313,16 +313,12 @@ bool AudioMixerController::hasPlayingTacks() {
         return false;
     }
 
-    std::any_of(_activeTracks.begin(), _activeTracks.end(), [](Track *track) {
+    bool result = std::any_of(_activeTracks.begin(), _activeTracks.end(), [](Track *track) {
         Track::State state = track->getState();
-        bool result = false;
-        if (state == Track::State::IDLE || state == Track::State::PLAYING || state == Track::State::RESUMED) {
-            result = true;
-        }
-        return result;
+        return state == Track::State::IDLE || state == Track::State::PLAYING || state == Track::State::RESUMED;
     });
 
-    return false;
+    return result;
 }
 
 } // namespace cc
