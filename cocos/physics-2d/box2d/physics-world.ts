@@ -326,6 +326,17 @@ export class b2PhysicsWorld implements IPhysicsWorld {
         }
     }
 
+    public _updateBodyType$ (body: b2RigidBody2D): void {
+        if (!this._animatedBodies.includes(body)) {
+            return;
+        }
+
+        const comp = body.rigidBody;
+        if (comp.type !== ERigidBody2DType.Animated) {
+            js.array.remove(this._animatedBodies, body);
+        }
+    }
+
     registerContactFixture (fixture: b2.Fixture): void {
         this._contactListener.registerContactFixture(fixture);
     }
