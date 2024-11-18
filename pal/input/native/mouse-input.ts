@@ -53,10 +53,10 @@ export class MouseInputSource {
         this._windowManager = jsb.ISystemWindowManager.getInstance();
     }
 
-    public dispatchMouseDownEvent (nativeMouseEvent: any): void { this._handleMouseDown(nativeMouseEvent); }
-    public dispatchMouseMoveEvent (nativeMouseEvent: any): void { this._handleMouseMove(nativeMouseEvent); }
-    public dispatchMouseUpEvent (nativeMouseEvent: any): void { this._handleMouseUp(nativeMouseEvent); }
-    public dispatchScrollEvent (nativeMouseEvent: any): void { this._boundedHandleMouseWheel(nativeMouseEvent); }
+    public dispatchMouseDownEvent (nativeMouseEvent: any): void { this._handleMouseDown(nativeMouseEvent as jsb.MouseEvent); }
+    public dispatchMouseMoveEvent (nativeMouseEvent: any): void { this._handleMouseMove(nativeMouseEvent as jsb.MouseEvent); }
+    public dispatchMouseUpEvent (nativeMouseEvent: any): void { this._handleMouseUp(nativeMouseEvent as jsb.MouseEvent); }
+    public dispatchScrollEvent (nativeMouseEvent: any): void { this._boundedHandleMouseWheel(nativeMouseEvent as jsb.MouseWheelEvent); }
 
     private _getLocation (event: jsb.MouseEvent): Vec2 {
         const window = this._windowManager.getWindow(event.windowId);
