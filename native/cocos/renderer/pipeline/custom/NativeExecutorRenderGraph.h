@@ -72,6 +72,7 @@ struct RenderGraphVisitorContext {
         RenderGraph::vertex_descriptor,
         gfx::DescriptorSet*>& perInstanceDescriptorSets;
     ProgramLibrary* programLib = nullptr;
+    ccstd::pmr::vector<ccstd::optional<gfx::Viewport>>& viewportStack;
     CustomRenderGraphContext customContext;
     boost::container::pmr::memory_resource* scratch = nullptr;
     gfx::RenderPass* currentPass = nullptr;
