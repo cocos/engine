@@ -362,7 +362,7 @@ void SubModel::setSubMesh(RenderingSubMesh *subMesh) {
     _subMesh = subMesh;
 }
 
-void SubModel::setInstancedAttribute(const ccstd::string &name, const float *value, uint32_t byteLength) {
+void SubModel::setInstancedAttribute(const ccstd::string &name, const TypedArray &value) {
     const auto &attributes = _instancedAttributeBlock.attributes;
     auto &views = _instancedAttributeBlock.views;
     for (size_t i = 0, len = attributes.size(); i < len; ++i) {
@@ -370,22 +370,17 @@ void SubModel::setInstancedAttribute(const ccstd::string &name, const float *val
         if (attribute.name == name) {
             const auto &info = gfx::GFX_FORMAT_INFOS[static_cast<uint32_t>(attribute.format)];
             switch (info.type) {
-                case gfx::FormatType::NONE:
                 case gfx::FormatType::UNORM:
                 case gfx::FormatType::SNORM:
                 case gfx::FormatType::UINT:
-                case gfx::FormatType::INT: {
-                    CC_ABORT();
-                } break;
+                case gfx::FormatType::INT:
                 case gfx::FormatType::FLOAT:
                 case gfx::FormatType::UFLOAT: {
-                    CC_ASSERT(ccstd::holds_alternative<Float32Array>(views[i]));
-                    auto &view = ccstd::get<Float32Array>(views[i]);
-                    auto *dstData = reinterpret_cast<float *>(view.buffer()->getData() + view.byteOffset());
-                    CC_ASSERT(byteLength <= view.byteLength());
-                    memcpy(dstData, value, byteLength);
+                    copyTypedArray(views[i], 0, value);
                 } break;
+                case gfx::FormatType::NONE:
                 default:
+                    CC_ABORT();
                     break;
             }
         }
