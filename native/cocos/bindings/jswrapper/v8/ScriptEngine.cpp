@@ -240,7 +240,7 @@ public:
         // https://github.com/cocos/cocos-engine/issues/13342
         flags.append(" --no-turbo-escape");
 
-        #if (CC_PLATFORM == CC_PLATFORM_IOS)
+        #if (CC_PLATFORM == CC_PLATFORM_IOS || CC_PLATFORM == CC_PLATFORM_OPENHARMONY)
         flags.append(" --jitless");
         #endif
         if (!flags.empty()) {

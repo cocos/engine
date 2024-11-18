@@ -24,12 +24,14 @@
 ****************************************************************************/
 
 import worker from '@ohos.worker';
-import nativerender from "libcocos.so";
-import { ContextType } from "../common/Constants"
+import cocos from 'libcocos.so';
+import hilog from '@ohos.hilog';
+
+import { ContextType } from '../common/Constants';
 <% if(!useV8) { %>
-import { launchEngine } from '../cocos/game'
+import { launchEngine } from '../cocos/game';
 <% } %>
-import {PortProxy} from '../common/PortProxy'
+import { PortProxy } from '../common/PortProxy';
 
 globalThis.oh = globalThis.oh || {};
 
@@ -41,37 +43,41 @@ if (!(console as any).assert) {
     };
 }
 
-const nativeContext = nativerender.getContext(ContextType.WORKER_INIT);
-nativeContext.workerInit()
+const nativeContext = cocos.getContext(ContextType.WORKER_INIT);
+nativeContext.workerInit();
 
-const nativeEditBox = nativerender.getContext(ContextType.EDITBOX_UTILS);
-const nativeWebView = nativerender.getContext(ContextType.WEBVIEW_UTILS);
-const nativeVideo = nativerender.getContext(ContextType.VIDEO_UTILS);
+const nativeEditBox = cocos.getContext(ContextType.EDITBOX_UTILS);
+const nativeWebView = cocos.getContext(ContextType.WEBVIEW_UTILS);
+const appLifecycle = cocos.getContext(ContextType.APP_LIFECYCLE);
+const nativeVideo = cocos.getContext(ContextType.VIDEO_UTILS);
 
-let uiPort = new PortProxy(worker.parentPort);
-nativeContext.postMessage = function(msgType: string, msgData:string) {
-    uiPort.postMessage(msgType, msgData);
+let uiPort = new PortProxy(worker.workerPort);
+
+nativeContext.postMessage = function (msgType: string, msgData: string): void {
+  uiPort.postMessage(msgType, msgData);
 }
 
-nativeContext.postSyncMessage = async function(msgType: string, msgData:string) {
-    const result = await uiPort.postSyncMessage(msgType, msgData);
-    return result;
+nativeContext.postSyncMessage = async function (msgType: string, msgData: string): Promise<boolean | string | number> {
+  const result = await uiPort.postSyncMessage(msgType, msgData) as boolean | string | number;
+  return result;
 }
 
 // The purpose of this is to avoid being GC
 nativeContext.setPostMessageFunction.call(nativeContext, nativeContext.postMessage)
 nativeContext.setPostSyncMessageFunction.call(nativeContext, nativeContext.postSyncMessage)
 
-var renderContext: any = undefined;
-uiPort._messageHandle = function(e) {
-    var data = e.data;
-    var msg = data.data;
-    switch(msg.name) {
+globalThis.terminateProcess = function () {
+  uiPort.postMessage("exitGame",0);
+}
+
+uiPort._messageHandle = function (e) {
+  var data = e.data;
+  var msg = data.data;
+
+  switch (msg.name) {
     case "onXCLoad":
-      const renderContext = nativerender.getContext(ContextType.NATIVE_RENDER_API);
+      const renderContext = cocos.getContext(ContextType.NATIVE_RENDER_API);
       renderContext.nativeEngineInit();
-
-
       <% if(!useV8) { %>
         launchEngine().then(() => {
           console.info('launch CC engine finished');
@@ -104,17 +110,13 @@ uiPort._messageHandle = function(e) {
       nativeWebView.failLoading(msg.param.viewTag, msg.param.url);
       break;
     case "onVideoEvent":
-      // @ts-ignore
-      if (globalThis.oh && typeof globalThis.oh.onVideoEvent === "function") {
-        // @ts-ignore
-        globalThis.oh.onVideoEvent(msg.param.videoTag, msg.param.videoEvent, msg.param.args);
-      } else {
-    	nativeVideo.onVideoEvent(msg.param.videoTag, msg.param.videoEvent, msg.param.args);
-      }
+      nativeVideo.onVideoEvent(JSON.stringify(msg.param));
+      break;
+    case "backPress":
+      appLifecycle.onBackPress();
       break;
     default:
       console.error("cocos worker: message type unknown");
       break;
   }
 }
-

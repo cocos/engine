@@ -208,6 +208,10 @@ Object* Object::createTypedArray(Object::TypedArrayType type, const void* data, 
         return nullptr;
     }
 
+    if (type == TypedArrayType::UINT8_CLAMPED) {
+        SE_LOGE("Doesn't support to create Uint8ClampedArray with Object::createTypedArray API!");
+        return nullptr;
+    }
     napi_typedarray_type napiType;
     napi_value outputBuffer;
     void* outputPtr = nullptr;
@@ -284,6 +288,11 @@ Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object* ob
 Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object* obj, size_t offset, size_t byteLength) {
     if (type == TypedArrayType::NONE) {
         SE_LOGE("Don't pass se::Object::TypedArrayType::NONE to createTypedArray API!");
+        return nullptr;
+    }
+
+    if (type == TypedArrayType::UINT8_CLAMPED) {
+        SE_LOGE("Doesn't support to create Uint8ClampedArray with Object::createTypedArray API!");
         return nullptr;
     }
 
@@ -660,16 +669,12 @@ void Object::weakCallback(napi_env env, void* nativeObject, void* finalizeHint /
             }
         }
 
-        // TODO: remove test code before releasing.
-        const char* clsName = seObj->_getClass()->getName();
-        CC_LOG_INFO("weakCallback class name:%s, ptr:%p", clsName, rawPtr);
-
         if (seObj->_finalizeCb != nullptr) {
-            seObj->_finalizeCb(env, nativeObject, finalizeHint);
+            seObj->_finalizeCb(env, rawPtr, rawPtr);
         } else {
             assert(seObj->_getClass() != nullptr);
             if (seObj->_getClass()->_getFinalizeFunction() != nullptr) {
-                seObj->_getClass()->_getFinalizeFunction()(env, nativeObject, finalizeHint);
+                seObj->_getClass()->_getFinalizeFunction()(env, rawPtr, rawPtr);
             }
         }
         seObj->decRef();

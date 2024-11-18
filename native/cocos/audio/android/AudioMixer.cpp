@@ -145,6 +145,10 @@ static inline audio_format_t selectMixerInFormat(audio_format_t inputFormat __un
     return kUseFloat && kUseNewMixer ? AUDIO_FORMAT_PCM_FLOAT : AUDIO_FORMAT_PCM_16_BIT;
 }
 
+void AudioMixer::setBufferSize(size_t size) {
+    mState.frameCount = size;
+}
+
 int AudioMixer::getTrackName(audio_channel_mask_t channelMask,
                              audio_format_t format, int sessionId) {
     if (!isValidPcmTrackFormat(format)) {

@@ -64,10 +64,6 @@ CanvasRenderingContext2DDelegate::~CanvasRenderingContext2DDelegate() {
         _typographyStyle = nullptr;
     }
 
-    if(_fontCollection) {
-        OH_Drawing_DestroyFontCollection(_fontCollection);
-    }
-
     if(_typographyCreate) {
         OH_Drawing_DestroyTypographyHandler(_typographyCreate);
         _typographyCreate = nullptr;
@@ -200,13 +196,30 @@ void CanvasRenderingContext2DDelegate::updateFont(const ccstd::string &fontName,
                                                   bool /* smallCaps */) {
     _fontName = fontName;
     _fontSize = static_cast<int>(fontSize);
-    ccstd::string fontPath;
-    if (!_fontName.empty()) {
-        const char* fontFamilies[1];
-        fontFamilies[0] = fontName.c_str();
-        OH_Drawing_SetTextStyleFontFamilies(_textStyle, 1, fontFamilies);
-        OH_Drawing_SetTextStyleLocale(_textStyle, "en");
+    if (_typographyCreate) {
+        OH_Drawing_DestroyTypographyHandler(_typographyCreate);
     }
+    if (_textStyle) {
+        OH_Drawing_DestroyTextStyle(_textStyle);
+    }
+
+    const auto &fontInfoMap = getFontFamilyCollectionMap();
+    auto it = fontInfoMap.find(_fontName);
+    if (it != fontInfoMap.end()) {
+        _fontCollection = it->second;
+    } else {
+        _fontCollection = fontInfoMap.at(defaultFontKey);
+    }
+    _typographyStyle = OH_Drawing_CreateTypographyStyle();
+    OH_Drawing_SetTypographyTextDirection(_typographyStyle, TEXT_DIRECTION_LTR);
+    OH_Drawing_SetTypographyTextAlign(_typographyStyle, TEXT_ALIGN_LEFT);
+    _typographyCreate = OH_Drawing_CreateTypographyHandler(_typographyStyle, _fontCollection);
+    _textStyle = OH_Drawing_CreateTextStyle();
+
+    const char *fontFamilies[1];
+    fontFamilies[0] = fontName.c_str();
+    OH_Drawing_SetTextStyleFontFamilies(_textStyle, 1, fontFamilies);
+        
     if (_fontSize)
         OH_Drawing_SetTextStyleFontSize(_textStyle, _fontSize);
     if (bold)

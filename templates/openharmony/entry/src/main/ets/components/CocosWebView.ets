@@ -21,9 +21,15 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
-****************************************************************************/
-import { WorkerManager } from '../cocos/WorkerManager'
-import { PortProxy } from '../common/PortProxy'
+ ****************************************************************************/
+import { PortProxy } from '../common/PortProxy';
+import web from '@ohos.web.webview';
+
+interface param {
+  viewTag: number,
+  url: string,
+}
+
 @Observed
 export class WebViewInfo {
   // position
@@ -33,47 +39,66 @@ export class WebViewInfo {
   public w: number = 0;
   public h: number = 0;
   // url
-  public url: string = ''
+  public url: string = '';
   // tag
-  public viewTag: string = ''
+  public viewTag: number = 0;
   // Whether to display
-  public visible: boolean = true
-  
+  public visible: boolean = true;
   /*
    * doc : https://gitee.com/openharmony/docs/blob/master/zh-cn/application-dev/reference/arkui-ts/ts-basic-components-web.md#webcontroller
    */
-  public controller: WebController = new WebController()
+  public controller: web.WebviewController = new web.WebviewController();
 
-  constructor(x: number, y: number, w: number, h: number, viewTag: string) {
+  constructor(x: number, y: number, w: number, h: number, viewTag: number) {
     this.x = x;
     this.y = y;
     this.w = w;
     this.h = h;
-    this.viewTag = viewTag
+    this.viewTag = viewTag;
+
+    web.once("webInited", () => {
+      if (this.url != '') {
+        this.controller.loadUrl(this.url);
+      }
+    });
   }
 }
 
 @Component
 export struct CocosWebView {
   @ObjectLink viewInfo: WebViewInfo;
-  public workPort: PortProxy;
+  public workPort: PortProxy | null = null;
+
   build() {
     Web({ src: this.viewInfo.url, controller: this.viewInfo.controller })
       .position({ x: this.viewInfo.x, y: this.viewInfo.y })
       .width(this.viewInfo.w)
       .height(this.viewInfo.h)
       .border({ width: 1 })
+      .onControllerAttached(() => {
+        if (this.viewInfo.url != '') {
+          this.viewInfo.controller.loadUrl(this.viewInfo.url);
+        }
+      })
       .onPageBegin((event) => {
-        this.workPort.postMessage("onPageBegin", {viewTag:this.viewInfo.viewTag, url:event.url});
+        this.workPort?.postMessage("onPageBegin", {
+          viewTag: this.viewInfo.viewTag as number,
+          url: event?.url as string
+        } as param);
       })
       .onPageEnd((event) => {
-        this.workPort.postMessage("onPageEnd", {viewTag:this.viewInfo.viewTag, url:event.url})
+        this.workPort?.postMessage("onPageEnd", { viewTag: this.viewInfo.viewTag as number, url: event?.url as string } as param)
       })
       .onErrorReceive((event) => {
-        this.workPort.postMessage("onErrorReceive", {viewTag:this.viewInfo.viewTag, url:this.viewInfo.url})
+        this.workPort?.postMessage("onErrorReceive", { viewTag: this.viewInfo.viewTag as number, url: this.viewInfo.url as string } as param)
       })
       .onHttpErrorReceive((event) => {
-        this.workPort.postMessage("onErrorReceive", {viewTag:this.viewInfo.viewTag, url:this.viewInfo.url})
+        this.workPort?.postMessage("onErrorReceive", { viewTag: this.viewInfo.viewTag as number, url: this.viewInfo.url as string } as param)
       })
+      .domStorageAccess(true)// enable DOM storage permissions
+      .databaseAccess(true)// enable database storage permissions
+      .imageAccess(true)// enable image loading permissions
+      .javaScriptAccess(true)// support JS code running
+      .visibility(this.viewInfo.visible ? Visibility.Visible : Visibility.None)
   }
 }

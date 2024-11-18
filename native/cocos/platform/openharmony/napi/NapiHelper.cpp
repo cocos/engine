@@ -29,6 +29,7 @@
 #include "platform/openharmony/OpenHarmonyPlatform.h"
 #include "platform/openharmony/modules/SystemWindow.h"
 #include "platform/openharmony/FileUtils-OpenHarmony.h"
+#include "platform/interfaces//modules/IScreen.h"
 #include "bindings/jswrapper/SeApi.h"
 
 #if CC_USE_EDITBOX
@@ -51,9 +52,12 @@ enum ContextType {
     ENGINE_UTILS,
     EDITBOX_UTILS,
     WEBVIEW_UTILS,
+    DISPLAY_UTILS,
     UV_ASYNC_SEND,
-    VIDEO_UTILS,
+    VIDEO_UTILS
 };
+
+#define KEYCODE_BACK_OH 6
 
 static Napi::Env gWorkerEnv(nullptr);
 static Napi::FunctionReference* gPostMessageToUIThreadFunc = nullptr;
@@ -109,6 +113,17 @@ Napi::Value NapiHelper::napiCallFunction(const char* functionName) {
     return funcVal.As<Napi::Function>().Call(env.Global(), {});
 }
 
+/* static */
+Napi::Value NapiHelper::napiCallFunction(const char *functionName, float duration) {
+    auto env = getWorkerEnv();
+    auto funcVal = env.Global().Get(functionName);
+    if (!funcVal.IsFunction()) {
+        return {};
+    }
+    const std::initializer_list<napi_value> args = { Napi::Number::New(env, duration) };
+    return funcVal.As<Napi::Function>().Call(env.Global(), args);
+}
+
 // NAPI Interface
 static bool exportFunctions(Napi::Object exports) {
     Napi::MaybeOrValue<Napi::Value> xcomponentObject = exports.Get(OH_NATIVE_XCOMPONENT_OBJ);
@@ -139,12 +154,21 @@ static void napiOnShow(const Napi::CallbackInfo &info) {
     CC_LOG_INFO("napiOnShow");
     cc::WorkerMessageData data{cc::MessageType::WM_APP_SHOW, nullptr, nullptr};
     OpenHarmonyPlatform::getInstance()->enqueue(data);
+
 }
 
 static void napiOnHide(const Napi::CallbackInfo &info) {
     CC_LOG_INFO("napiOnHide");
     cc::WorkerMessageData data{cc::MessageType::WM_APP_HIDE, nullptr, nullptr};
     OpenHarmonyPlatform::getInstance()->enqueue(data);
+}
+
+static void napiOnBackPress(const Napi::CallbackInfo &info) {
+    CC_LOG_INFO("NapiHelper::napiOnBackPress");
+    KeyboardEvent event;
+    event.key = KEYCODE_BACK_OH;
+    event.action = KeyboardEvent::Action::RELEASE;
+    events::Keyboard::broadcast(event);
 }
 
 static void napiOnDestroy(const Napi::CallbackInfo &info) {
@@ -187,6 +211,32 @@ static void napiWorkerInit(const Napi::CallbackInfo &info) {
     OpenHarmonyPlatform::getInstance()->workerInit(loop);
 }
 
+static void napiOnDisplayChange(const Napi::CallbackInfo &info) {
+    if (info.Length() != 1) {
+        Napi::Error::New(info.Env(), "1 argument expected").ThrowAsJavaScriptException();
+        return;
+    }
+
+     int32_t rotation = info[0].As<Napi::Number>().Int32Value();
+
+    int orientation = static_cast<int>(cc::IScreen::Orientation::PORTRAIT);
+    switch (rotation) {
+        case 0: // ROTATION_0
+            orientation = static_cast<int>(cc::IScreen::Orientation::PORTRAIT);
+        break;
+        case 1: // ROTATION_90
+            orientation = static_cast<int>(cc::IScreen::Orientation::LANDSCAPE_RIGHT);
+        break;
+        case 2: // ROTATION_180
+            orientation = static_cast<int>(cc::IScreen::Orientation::PORTRAIT_UPSIDE_DOWN);
+        break;
+        case 3: // ROTATION_270
+            orientation = static_cast<int>(cc::IScreen::Orientation::LANDSCAPE_LEFT);
+        break;
+    }
+    cc::events::Orientation::broadcast(orientation);
+}
+
 static void napiResourceManagerInit(const Napi::CallbackInfo &info) {
     if (info.Length() != 1) {
         Napi::Error::New(info.Env(), "1 argument expected").ThrowAsJavaScriptException();
@@ -210,27 +260,39 @@ static void napiWritablePathInit(const Napi::CallbackInfo &info) {
     FileUtilsOpenHarmony::_ohWritablePath = info[0].As<Napi::String>().Utf8Value();
 }
 
+static void registerFunction(const Napi::CallbackInfo &info) {
+    Napi::Env env = info.Env();
+    if(info.Length() != 2) {
+        Napi::Error::New(info.Env(), "2 argument expected").ThrowAsJavaScriptException();
+        return;
+    }
+    std::string functionName = info[0].As<Napi::String>().Utf8Value();
+    if(!info[1].IsFunction()) {
+        Napi::Error::New(info.Env(), "Function expected").ThrowAsJavaScriptException();
+        return;
+    }
+    Napi::Function jsFunction = info[1].As<Napi::Function>();
+    napi_ref fucRef;
+    napi_create_reference(env, jsFunction, 1, &fucRef);
+    char* name = new char[functionName.length() + 1];
+    strcpy(name, functionName.c_str());
+    JSFunction* jsFunctionPtr = new JSFunction(name, env, fucRef);
+    JSFunction::addFunction(name, jsFunctionPtr);
+    return;
+}
+
+std::unordered_map<std::string, JSFunction> JSFunction::FUNCTION_MAP;
+
 static void napiASend(const Napi::CallbackInfo &info) {
     OpenHarmonyPlatform::getInstance()->triggerMessageSignal();
 }
 
 static void napiOnVideoEvent(const Napi::CallbackInfo &info) {
-    if (info.Length() != 3) {
-        Napi::Error::New(info.Env(), "napiOnVideoEvent, 3 argument expected").ThrowAsJavaScriptException();
+    if (info.Length() != 1) {
+        Napi::Error::New(info.Env(), "napiOnVideoEvent, 1 argument expected").ThrowAsJavaScriptException();
         return;
     }
-
-    int32_t videoTag = info[0].As<Napi::Number>().Int32Value();
-    int32_t videoEvent = info[1].As<Napi::Number>().Int32Value();
-    bool hasArg = false;
-    double arg = 0.0;
-    if (info[2].IsNumber()) {
-        arg = info[2].As<Napi::Number>().DoubleValue();
-        hasArg = true;
-    }
-
     se::AutoHandleScope hs;
-
     auto *global = se::ScriptEngine::getInstance()->getGlobalObject();
     se::Value ohVal;
     bool ok = global->getProperty("oh", &ohVal);
@@ -238,23 +300,16 @@ static void napiOnVideoEvent(const Napi::CallbackInfo &info) {
         CC_LOG_ERROR("oh var not found");
         return;
     }
-
     se::Value onVideoEventVal;
     ok = ohVal.toObject()->getProperty("onVideoEvent", &onVideoEventVal);
     if (!ok || !onVideoEventVal.isObject() || !onVideoEventVal.toObject()->isFunction()) {
         CC_LOG_ERROR("onVideoEvent not found");
         return;
     }
-
     // Convert args to se::ValueArray
     se::ValueArray seArgs;
-    seArgs.reserve(3);
-    seArgs.emplace_back(se::Value(videoTag));
-    seArgs.emplace_back(se::Value(videoEvent));
-    if (hasArg) {
-        seArgs.emplace_back(se::Value(arg));
-    }
-
+    seArgs.reserve(1);
+    seArgs.emplace_back(se::Value(info[0].As<Napi::String>().Utf8Value()));
     ok = onVideoEventVal.toObject()->call(seArgs, ohVal.toObject());
     if (!ok) {
         CC_LOG_ERROR("Call oh.onEventEvent failed!");
@@ -284,6 +339,7 @@ static Napi::Value getContext(const Napi::CallbackInfo &info) {
             exports["onDestroy"] = Napi::Function::New(env, napiOnDestroy);
             exports["onShow"] = Napi::Function::New(env, napiOnShow);
             exports["onHide"] = Napi::Function::New(env, napiOnHide);
+            exports["onBackPress"] = Napi::Function::New(env, napiOnBackPress);
         } break;
         case JS_PAGE_LIFECYCLE: {
             exports["onPageShow"] = Napi::Function::New(env, napiOnPageShow);
@@ -310,6 +366,7 @@ static Napi::Value getContext(const Napi::CallbackInfo &info) {
         case ENGINE_UTILS: {
             exports["resourceManagerInit"] = Napi::Function::New(env, napiResourceManagerInit);
             exports["writablePathInit"] = Napi::Function::New(env, napiWritablePathInit);
+            exports["registerFunction"] = Napi::Function::New(env, registerFunction);
         } break;
         case EDITBOX_UTILS: {
         #if CC_USE_EDITBOX
@@ -325,6 +382,9 @@ static Napi::Value getContext(const Napi::CallbackInfo &info) {
             exports["failLoading"] = Napi::Function::New(env, OpenHarmonyWebView::napiFailLoading);
             exports["jsCallback"] = Napi::Function::New(env, OpenHarmonyWebView::napiJsCallback);
         #endif
+        } break;
+		case DISPLAY_UTILS: {
+            exports["onDisplayChange"] = Napi::Function::New(env, napiOnDisplayChange);
         } break;
         case UV_ASYNC_SEND: {
             exports["send"] = Napi::Function::New(env, napiASend);

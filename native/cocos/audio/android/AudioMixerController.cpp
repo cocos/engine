@@ -33,7 +33,7 @@
 #include "base/memory/Memory.h"
 
 namespace cc {
-
+#if CC_PLATFORM == CC_PLATFORM_ANDROID
 AudioMixerController::AudioMixerController(int bufferSizeInFrames, int sampleRate, int channelCount)
 : _bufferSizeInFrames(bufferSizeInFrames), _sampleRate(sampleRate), _channelCount(channelCount), _mixer(nullptr), _isPaused(false), _isMixingFrame(false) {
     ALOGV("In the constructor of AudioMixerController!");
@@ -44,6 +44,14 @@ AudioMixerController::AudioMixerController(int bufferSizeInFrames, int sampleRat
     _mixingBuffer.buf = memalign(32, _mixingBuffer.size);
     memset(_mixingBuffer.buf, 0, _mixingBuffer.size);
 }
+#elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
+AudioMixerController::AudioMixerController(int sampleRate, int channelCount)
+: _sampleRate(sampleRate), _channelCount(channelCount), _mixer(nullptr), _isPaused(false), _isMixingFrame(false) {
+    ALOGV("In the constructor of AudioMixerController!");
+    int32_t maxBufferLength = MAX_AUDIO_BUFFER_SIZE * channelCount * 2;
+    _mixingBuffer.buf = memalign(32, maxBufferLength);
+}
+#endif
 
 AudioMixerController::~AudioMixerController() {
     destroy();
@@ -56,11 +64,31 @@ AudioMixerController::~AudioMixerController() {
     free(_mixingBuffer.buf);
 }
 
+#if CC_PLATFORM == CC_PLATFORM_ANDROID
 bool AudioMixerController::init() {
     _mixer = ccnew AudioMixer(_bufferSizeInFrames, _sampleRate);
     return _mixer != nullptr;
 }
 
+#elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
+void AudioMixerController::updateBufferSize(int bufferSize) {
+    _mixer->setBufferSize(bufferSize / _channelCount / 2);
+    _mixingBuffer.size = bufferSize;
+
+    uint32_t channelMask = audio_channel_out_mask_from_count(_channelCount);
+    int32_t name = _mixer->getTrackName(channelMask, AUDIO_FORMAT_PCM_16_BIT, AUDIO_SESSION_OUTPUT_MIX);
+    _mixer->setParameter(name, AudioMixer::TRACK, AudioMixer::MAIN_BUFFER,
+                         _mixingBuffer.buf);
+}
+
+bool AudioMixerController::init(int bufferSizeInFrames) {
+    _mixingBuffer.size = (size_t)bufferSizeInFrames * 2 * _channelCount;
+    memset(_mixingBuffer.buf, 0, _mixingBuffer.size);
+    _bufferSizeInFrames = bufferSizeInFrames;
+    _mixer = ccnew AudioMixer(_bufferSizeInFrames, _sampleRate);
+    return _mixer != nullptr;
+}
+#endif
 bool AudioMixerController::addTrack(Track *track) {
     ALOG_ASSERT(track != nullptr, "Shouldn't pass nullptr to addTrack");
     bool ret = false;

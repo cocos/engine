@@ -36,8 +36,8 @@
 #if CC_PLATFORM == CC_PLATFORM_ANDROID
 #include <android/log.h>
 #elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
-// TODO(qgh):May be implemented in later versions
-// #include <Hilog/log.h>
+#include <hilog/log.h>
+#define LOG_VERBOSE LOG_INFO
 #endif
 
 #ifdef __cplusplus
@@ -90,7 +90,11 @@ extern "C" {
  * Simplified macro to send a verbose log message using the current LOG_TAG.
  */
     #ifndef ALOGV
-        #define __ALOGV(...) ((void)ALOG(LOG_VERBOSE, LOG_TAG, __VA_ARGS__))
+#if CC_PLATFORM == CC_PLATFORM_ANDROID
+    #define __ALOGV(...) ((void)ALOG(LOG_VERBOSE, LOG_TAG, __VA_ARGS__))
+#elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
+    #define __ALOGV(...) ((void)ALOG(LOG_INFO, LOG_TAG, __VA_ARGS__))
+#endif
         #if LOG_NDEBUG
             #define ALOGV(...)                \
                 do {                          \
@@ -415,7 +419,7 @@ extern "C" {
              ? ((void)android_printAssert(#cond, LOG_TAG, ##__VA_ARGS__)) \
              : (void)0)
 #elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
-    #define LOG_ALWAYS_FATAL_IF(cond, ...)
+    #define LOG_ALWAYS_FATAL_IF(cond, ...) ((void)0 )
 #endif
 #endif
 
@@ -424,7 +428,7 @@ extern "C" {
     #define LOG_ALWAYS_FATAL(...) \
         (((void)android_printAssert(NULL, LOG_TAG, ##__VA_ARGS__)))
 #elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
-    #define LOG_ALWAYS_FATAL(...)
+	#define LOG_ALWAYS_FATAL(...) ((void) OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_DOMAIN, "HMG_LOG", __VA_ARGS__))
 #endif
 #endif
 
@@ -472,9 +476,15 @@ extern "C" {
  * The second argument may be NULL or "" to indicate the "global" tag.
  */
 #ifndef ALOG
-    #define ALOG(priority, tag, ...) \
+#if CC_PLATFORM == CC_PLATFORM_ANDROID
+#define ALOG(priority, tag, ...) \
         LOG_PRI(ANDROID_##priority, tag, __VA_ARGS__)
+#elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
+#define ALOG(priority, tag, ...) \
+        LOG_PRI(priority, tag, __VA_ARGS__) 
 #endif
+#endif
+
 
 /*
  * Log macro that allows you to specify a number for the priority.
@@ -484,7 +494,7 @@ extern "C" {
     #define LOG_PRI(priority, tag, ...) \
         android_printLog(priority, tag, __VA_ARGS__)
 #elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
-    #define LOG_PRI(priority, tag, ...) ((void)0)
+    #define LOG_PRI(priority, tag, ...) ((void) OH_LOG_Print(LOG_APP, priority, LOG_DOMAIN, "HMG_LOG", __VA_ARGS__))
 #endif
 #endif
 

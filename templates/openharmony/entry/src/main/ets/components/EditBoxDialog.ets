@@ -21,7 +21,7 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
-****************************************************************************/
+ ****************************************************************************/
 @Observed
 export class EditboxShowInfo {
   public backgroundColor: number = 0xFFFFFFFF;
@@ -50,6 +50,8 @@ export struct EditBoxDialog {
     Column() {
       Row() {
         TextInput({ text: this.showInfo.defaultMessage })
+          .defaultFocus(true)
+          .backgroundColor('#ffffff')
           .backgroundColor(this.showInfo.backgroundColor)
           .type(this.showInfo.type)
           .maxLength(this.showInfo.maxLength)
@@ -67,18 +69,18 @@ export struct EditBoxDialog {
             if(this.confirm) {
               this.confirm(this.inputMessage);
             }
-            this.controller.close();
+            this.controller?.close();
           })
         Blank(8).width(16)
         Button('完成').onClick(() => {
           if (this.accept) {
             this.accept(this.inputMessage);
           }
-          this.controller.close();
+          this.controller?.close();
         })
       }.padding({ left: 8, right: 8, top: 8, bottom: 8 })
       .backgroundColor(Color.Gray)
-
+      .offset({ x : 0, y : 15 })
     }
     .width('100%')
 

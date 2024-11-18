@@ -26,10 +26,10 @@
 //clang-format off
 #include <cstdint>
 //clang-format on
+#include <napi/native_api.h>
 #include <rawfile/raw_dir.h>
 #include <rawfile/raw_file.h>
 #include <rawfile/raw_file_manager.h>
-#include <napi/native_api.h>
 
 #include "base/Macros.h"
 #include "platform/FileUtils.h"
@@ -39,7 +39,7 @@ namespace cc {
 class CC_DLL FileUtilsOpenHarmony : public FileUtils {
 public:
     FileUtilsOpenHarmony();
-     ~FileUtilsOpenHarmony() override;
+    ~FileUtilsOpenHarmony() override;
     static bool initResourceManager(napi_env env, napi_value info);
 
     bool init() override;
@@ -47,25 +47,26 @@ public:
     bool isAbsolutePath(const std::string &strPath) const override;
 
     std::string getWritablePath() const override;
-    
+
     long getFileSize(const std::string &filepath) override;
 
     std::string getSuitableFOpen(const std::string &filenameUtf8) const override;
 
     FileUtils::Status getContents(const std::string &filename, ResizableBuffer *buffer) override;
-    
-    FileUtils::Status getRawFileDescriptor(const std::string &filename,RawFileDescriptor& descriptor);
+
+    FileUtils::Status getRawFileDescriptor(const std::string &filename, RawFileDescriptor64 &descriptor);
 
     bool renameFile(const std::string &oldfullpath, const std::string &newfullpath) override;
     bool removeFile(const std::string &filepath) override;
     bool removeDirectory(const std::string &dirPath) override;
 
     static std::string _ohWritablePath;
+
 private:
     bool isFileExistInternal(const std::string &strFilePath) const override;
     bool isDirectoryExistInternal(const std::string &dirPath) const override;
 
-    static NativeResourceManager* _nativeResourceManager;
+    static NativeResourceManager *_nativeResourceManager;
 };
 
 } // namespace cc

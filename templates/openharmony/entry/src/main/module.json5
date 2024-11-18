@@ -3,26 +3,33 @@
     "name": "entry",
     "type": "entry",
     "description": "$string:entry_desc",
-    "mainElement": "MainAbility",
+    "mainElement": "EntryAbility",
     "deviceTypes": [
-      "default",
-      "tablet"
+      "default"
+    ],
+    "requestPermissions":[
+      {"name" : "ohos.permission.INTERNET"},
+      {"name" : "ohos.permission.VIBRATE"},
+      {"name" : "ohos.permission.GET_NETWORK_INFO"},
+      {"name" : "ohos.permission.ACCELEROMETER"},
+      {"name" : "ohos.permission.GYROSCOPE"}
     ],
     "deliveryWithInstall": true,
     "installationFree": false,
     "pages": "$profile:main_pages",
-    "uiSyntax": "ets",
     "abilities": [
       {
-        "name": "MainAbility",
-        "srcEntrance": "./ets/MainAbility/MainAbility.ts",
+        "name": "EntryAbility",
+        "srcEntry": "./ets/entryability/EntryAbility.ts",
         "description": "$string:MainAbility_desc",
         "orientation": "portrait",
         "icon": "$media:icon",
         "label": "$string:MainAbility_label",
         "startWindowIcon": "$media:icon",
-        "startWindowBackground": "$color:black",
-        "visible": true,
+        "removeMissionAfterTerminate": true,
+        "startWindowBackground": "$color:white",
+        "supportWindowMode": ["fullscreen"],
+        "exported": true,
         "skills": [
           {
             "entities": [
@@ -33,37 +40,6 @@
             ]
           }
         ]
-      }
-    ],
-    "requestPermissions": [
-      {
-        "name": 'ohos.permission.INTERNET'
-      },
-      {
-        "name": "ohos.permission.ACCELEROMETER",
-        "reason": "$string:permissions_label",
-        "usedScene": {
-          "abilities": [
-            "MainAbility"
-          ],
-          "when": "inuse"
-        }
-      },
-      {
-        "name": "ohos.permission.GYROSCOPE",
-        "reason": "$string:permissions_label",
-        "usedScene": {
-          "abilities": [
-            "MainAbility"
-          ],
-          "when": "inuse"
-        }
-      }
-    ],
-    "metadata": [
-      {
-        "name": "ArkTSPartialUpdate",
-        "value": "true"
       }
     ]
   }

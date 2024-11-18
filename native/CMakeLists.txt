@@ -16,6 +16,9 @@ cc_set_if_undefined(CC_DEBUG_FORCE           OFF)
 cc_set_if_undefined(USE_SE_V8                ON)
 cc_set_if_undefined(USE_SE_SM                OFF)
 cc_set_if_undefined(USE_SE_NAPI              OFF)
+if(OPENHARMONY)
+    cc_set_if_undefined(USE_SE_JSVM          OFF)
+endif()
 cc_set_if_undefined(USE_V8_DEBUGGER          ON)
 cc_set_if_undefined(USE_V8_DEBUGGER_FORCE    OFF)
 cc_set_if_undefined(USE_SOCKET               ON)
@@ -344,21 +347,32 @@ NO_WERROR   cocos/audio/common/utils/primitives.cpp
             cocos/audio/android/OpenSLHelper.h
             cocos/audio/android/PcmAudioPlayer.cpp
             cocos/audio/android/PcmAudioPlayer.h
-            cocos/audio/android/PcmAudioService.cpp
-            cocos/audio/android/PcmAudioService.h
             cocos/audio/android/PcmBufferProvider.cpp
             cocos/audio/android/PcmBufferProvider.h
             cocos/audio/android/PcmData.cpp
             cocos/audio/android/PcmData.h
             cocos/audio/android/Track.cpp
             cocos/audio/android/Track.h
-            cocos/audio/android/UrlAudioPlayer.cpp
-            cocos/audio/android/UrlAudioPlayer.h
             cocos/audio/android/utils/Compat.h
             cocos/audio/android/utils/Errors.h
             cocos/audio/android/utils/Utils.cpp
             cocos/audio/android/utils/Utils.h
         )
+        if(ANDROID) 
+            cocos_source_files(
+                cocos/audio/android/PcmAudioService.cpp
+                cocos/audio/android/PcmAudioService.h
+                cocos/audio/android/UrlAudioPlayer.cpp
+                cocos/audio/android/UrlAudioPlayer.h
+            )
+        elseif(OPENHARMONY)
+            cocos_source_files(                
+                cocos/audio/openharmony/PcmAudioService.cpp
+                cocos/audio/openharmony/PcmAudioService.h
+                cocos/audio/openharmony/UrlAudioPlayer.cpp
+                cocos/audio/openharmony/UrlAudioPlayer.h
+            )
+        endif()
      elseif(OHOS)
         cocos_source_files(
             cocos/audio/common/utils/tinysndfile.cpp
@@ -558,7 +572,9 @@ elseif(OPENHARMONY)
     cocos_source_files(
         cocos/platform/openharmony/napi/NapiHelper.cpp
         cocos/platform/openharmony/napi/NapiHelper.h
-
+        cocos/platform/openharmony/napi/NapiValueConverter.cpp
+        cocos/platform/openharmony/napi/NapiValueConverter.h
+        cocos/platform/openharmony/napi/native_common.h
         cocos/platform/openharmony/WorkerMessageQueue.cpp
         cocos/platform/openharmony/WorkerMessageQueue.h
         cocos/platform/openharmony/OpenHarmonyPlatform.cpp
@@ -2575,6 +2591,8 @@ if(ANDROID)
 elseif(OPENHARMONY)
     cocos_source_files(
         cocos/bindings/manual/jsb_platform_openharmony.cpp
+        cocos/bindings/manual/JavaScriptArkTsBridge.cpp
+        cocos/bindings/manual/JavaScriptArkTsBridge.h
     )
 elseif(OHOS)
     cocos_source_files(
@@ -2692,6 +2710,25 @@ if(USE_SE_NAPI)
                      cocos/bindings/jswrapper/napi/SeApi.h
         NO_WERROR    cocos/bindings/jswrapper/napi/Utils.cpp
                      cocos/bindings/jswrapper/napi/Utils.h
+    )
+endif()
+
+
+
+if(OPENHARMONY AND USE_SE_JSVM)
+    cocos_source_files(MODULE ccbindings
+        cocos/bindings/jswrapper/jsvm/Class.cpp
+        cocos/bindings/jswrapper/jsvm/Class.h
+        cocos/bindings/jswrapper/jsvm/HelperMacros.cpp
+        cocos/bindings/jswrapper/jsvm/HelperMacros.h
+        cocos/bindings/jswrapper/jsvm/Object.cpp
+        cocos/bindings/jswrapper/jsvm/Object.h
+        cocos/bindings/jswrapper/jsvm/ScriptEngine.cpp
+        cocos/bindings/jswrapper/jsvm/ScriptEngine.h
+        cocos/bindings/jswrapper/jsvm/SeApi.h
+        cocos/bindings/jswrapper/jsvm/Utils.cpp
+        cocos/bindings/jswrapper/jsvm/Utils.h
+        cocos/bindings/jswrapper/jsvm/CommonHeader.h
     )
 endif()
 
@@ -3074,6 +3111,7 @@ function(cc_apply_definations target)
         $<$<BOOL:${USE_SE_SM}>:SCRIPT_ENGINE_TYPE=1>
         $<$<BOOL:${USE_SE_V8}>:SCRIPT_ENGINE_TYPE=2>
         $<$<BOOL:${USE_SE_NAPI}>:SCRIPT_ENGINE_TYPE=5>
+        $<$<BOOL:${USE_SE_JSVM}>:SCRIPT_ENGINE_TYPE=6>
         $<$<OR:$<CONFIG:Debug>,$<BOOL:${CC_DEBUG_FORCE}>>:CC_DEBUG=1>
     )
 endfunction()
@@ -3267,14 +3305,55 @@ if(OPENHARMONY)
 
     find_library( hilog-lib
                 hilog_ndk.z )
-
-    find_library( libace-lib
-                libace_ndk.z )
-
-    target_link_libraries(${ENGINE_NAME} PUBLIC
-        ${EGL-lib} ${GLESv3-lib} ${hilog-lib} libace_napi.z.so libace_ndk.z.so libz.so libuv.so libnative_drawing.so librawfile.z.so libOpenSLES.so
+    
+    find_library( # Sets the name of the path variable.
+                libace-lib
+                # Specifies the name of the NDK library that
+                # you want CMake to locate.
+                ace_ndk.z )
+  find_library( # Sets the name of the path variable.
+                libnapi-lib
+                # Specifies the name of the NDK library that
+                # you want CMake to locate.
+                ace_napi.z )
+  find_library( # Sets the name of the path variable.
+                libuv-lib
+                # Specifies the name of the NDK library that
+                # you want CMake to locate.
+                uv )
+  find_library( # Sets the name of the path variable.
+                rawfile-lib
+                # Specifies the name of the NDK library that
+                # you want CMake to locate.
+                rawfile.z )
+    set(LIBS
+        ${EGL-lib}
+        ${GLESv3-lib}
+        ${hilog-lib}
+        ${libace-lib}
+        ${libnapi-lib}
+        ${libuv-lib}
+        ${rawfile-lib}
+        libnative_drawing.so
+        libc++.a
+        libOpenSLES.so
+        libohaudio.so
+        libavplayer.so
+        libnative_window.so
+        libnative_buffer.so
+        libbundle_ndk.z.so
+        libace_napi.z.so 
+        libace_ndk.z.so 
+        libz.so 
+        librawfile.z.so
         ${CC_EXTERNAL_LIBS}
     )
+    if(USE_SE_JSVM)
+        list(APPEND LIBS libjsvm.so)
+    endif()
+
+    target_link_libraries(${ENGINE_NAME} PUBLIC ${LIBS})
+
 endif()
 
 if(APPLE)

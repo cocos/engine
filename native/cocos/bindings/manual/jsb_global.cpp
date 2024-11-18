@@ -953,6 +953,7 @@ static bool JSB_showInputBox(se::State &s) { // NOLINT
             }
         }
         EditBox::show(showInfo);
+        SE_REPORT_ERROR("qqqqqqqqqqqqqqq   EditBox::show ");
         return true;
     }
 

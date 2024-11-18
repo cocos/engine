@@ -48,15 +48,18 @@ public:
     void onHideNative();
     void onDestroyNative();
 
+    void restartJSVM();
     void workerInit(uv_loop_t* loop);
 
     void setNativeXComponent(OH_NativeXComponent* component);
 
     int32_t run(int argc, const char** argv) override;
+    void resume();
+    void pause();
     int32_t loop() override;
 
     void requestVSync();
-    
+
     void enqueue(const WorkerMessageData& data);
     bool dequeue(WorkerMessageData* data);
 
@@ -67,7 +70,9 @@ public:
     void onSurfaceCreated(OH_NativeXComponent* component, void* window);
     void onSurfaceChanged(OH_NativeXComponent* component, void* window);
     void onSurfaceDestroyed(OH_NativeXComponent* component, void* window);
-    
+    void onSurfaceHide();
+    void onSurfaceShow(void* window);
+
     static void onMessageCallback(const uv_async_t* req);
     static void timerCb(uv_timer_t* handle);
 
@@ -76,6 +81,9 @@ public:
     uv_timer_t _timerHandle;
     uv_loop_t* _workerLoop{nullptr};
     uv_async_t _messageSignal{};
+    bool _timerInited{false};
     WorkerMessageQueue _messageQueue;
+    //game started
+    bool g_started = false;
 };
 } // namespace cc

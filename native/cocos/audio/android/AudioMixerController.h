@@ -32,6 +32,11 @@
 #include "audio/android/utils/Errors.h"
 #include "base/std/container/vector.h"
 
+#if CC_PLATFORM == CC_PLATFORM_OPENHARMONY
+// for openharmony platform, buffer size is 4458 in normal latency mode, 240 in fast latency mode
+#define MAX_AUDIO_BUFFER_SIZE 4458
+#endif
+
 namespace cc {
 
 class Track;
@@ -43,12 +48,16 @@ public:
         void *buf;
         size_t size;
     };
-
+#if CC_PLATFORM == CC_PLATFORM_ANDROID
     AudioMixerController(int bufferSizeInFrames, int sampleRate, int channelCount);
+    bool init();
+#elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
+    AudioMixerController(int sampleRate, int channelCount);
+    void updateBufferSize(int bufferSize);
+    bool init(int bufferSizeInFrames);
+#endif
 
     ~AudioMixerController();
-
-    bool init();
 
     bool addTrack(Track *track);
     bool hasPlayingTacks();

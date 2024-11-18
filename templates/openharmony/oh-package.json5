@@ -1,7 +1,8 @@
 {
-  "license": "",
+  "modelVersion": "5.0.0",
   "devDependencies": {
-    "@ohos/hypium": "1.0.6"
+    "@ohos/hypium": "1.0.18",
+    "@ohos/hamock": "1.0.0"
   },
   "author": "",
   "name": "test-cases",

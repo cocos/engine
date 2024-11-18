@@ -54,9 +54,9 @@ void getTextInputCallback() {
 }
 
 void callJSFunc(const ccstd::string &type, const ccstd::string &text) {
-    getTextInputCallback();
-
     se::AutoHandleScope scope;
+    getTextInputCallback();
+    
     se::ValueArray args;
     args.push_back(se::Value(type));
     args.push_back(se::Value(text));

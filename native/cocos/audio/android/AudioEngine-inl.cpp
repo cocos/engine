@@ -69,10 +69,6 @@ AudioEngineImpl *gAudioImpl = nullptr;
 int outputSampleRate = 44100;
 #if CC_PLATFORM == CC_PLATFORM_ANDROID
 int              bufferSizeInFrames = 192;
-#elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
-// TODO(hack) : There is currently a bug in the opensles module,
-// so openharmony must configure a fixed size, otherwise the callback will be suspended
-int              bufferSizeInFrames = 2048;
 #endif
 
 void getAudioInfo() {
@@ -129,7 +125,7 @@ static int fdGetter(const ccstd::string &url, off_t *start, off_t *length) {
 #elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
     FileUtilsOpenHarmony* fileUtils = dynamic_cast<FileUtilsOpenHarmony*>(FileUtils::getInstance());
     if(fileUtils) {
-        RawFileDescriptor descriptor;
+        RawFileDescriptor64 descriptor;
         fileUtils->getRawFileDescriptor(url, descriptor);
         fd = descriptor.fd;
     }
@@ -193,25 +189,27 @@ bool AudioEngineImpl::init() {
             CC_LOG_ERROR("get the engine interface fail");
             break;
         }
+		#if CC_PLATFORM == CC_PLATFORM_ANDROID
+	        // create output mix
+	        const SLInterfaceID outputMixIIDs[] = {};
+	        const SLboolean outputMixReqs[] = {};
+	        result = (*_engineEngine)->CreateOutputMix(_engineEngine, &_outputMixObject, 0, outputMixIIDs, outputMixReqs);
+	        if (SL_RESULT_SUCCESS != result) {
+	            CC_LOG_ERROR("create output mix fail");
+	            break;
+	        }
 
-        // create output mix
-        const SLInterfaceID outputMixIIDs[] = {};
-        const SLboolean outputMixReqs[] = {};
-        result = (*_engineEngine)->CreateOutputMix(_engineEngine, &_outputMixObject, 0, outputMixIIDs, outputMixReqs);
-        if (SL_RESULT_SUCCESS != result) {
-            CC_LOG_ERROR("create output mix fail");
-            break;
-        }
+	        // realize the output mix
+	        result = (*_outputMixObject)->Realize(_outputMixObject, SL_BOOLEAN_FALSE);
+	        if (SL_RESULT_SUCCESS != result) {
+	            CC_LOG_ERROR("realize the output mix fail");
+	            break;
+	        }
 
-        // realize the output mix
-        result = (*_outputMixObject)->Realize(_outputMixObject, SL_BOOLEAN_FALSE);
-        if (SL_RESULT_SUCCESS != result) {
-            CC_LOG_ERROR("realize the output mix fail");
-            break;
-        }
-
-        _audioPlayerProvider = ccnew AudioPlayerProvider(_engineEngine, _outputMixObject, outputSampleRate, bufferSizeInFrames, fdGetter, &gCallerThreadUtils);
-
+	        _audioPlayerProvider = ccnew AudioPlayerProvider(_engineEngine, _outputMixObject, outputSampleRate, bufferSizeInFrames, fdGetter, &gCallerThreadUtils);
+	    #elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
+	        _audioPlayerProvider = new AudioPlayerProvider(_engineEngine, outputSampleRate, fdGetter, &gCallerThreadUtils);
+	    #endif
         ret = true;
     } while (false);
 
@@ -229,9 +227,14 @@ int AudioEngineImpl::play2d(const ccstd::string &filePath, bool loop, float volu
     auto audioId = AudioEngine::INVALID_AUDIO_ID;
 
     do {
-        if (_engineEngine == nullptr || _audioPlayerProvider == nullptr) {
-            break;
-        }
+		#if CC_PLATFORM == CC_PLATFORM_ANDROID
+	        if (_engineEngine == nullptr || _audioPlayerProvider == nullptr) {
+	            break;
+	        }
+        #elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
+	        if (_audioPlayerProvider == nullptr)
+	            break;
+        #endif
 
         auto fullPath = FileUtils::getInstance()->fullPathForFilename(filePath);
 
@@ -434,9 +437,12 @@ PCMHeader AudioEngineImpl::getPCMHeader(const char *url) {
         CC_LOG_DEBUG("file %s pcm data already cached", url);
         return header;
     }
-
+    #if CC_PLATFORM == CC_PLATFORM_ANDROID
     AudioDecoder *decoder = AudioDecoderProvider::createAudioDecoder(_engineEngine, fileFullPath, bufferSizeInFrames, outputSampleRate, fdGetter);
-
+    #elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
+    AudioDecoder *decoder = AudioDecoderProvider::createAudioDecoder(
+        _engineEngine, fileFullPath, _audioPlayerProvider->getBufferSizeInFrames(), outputSampleRate, fdGetter);
+    #endif
     if (decoder == nullptr) {
         CC_LOG_DEBUG("decode %s failed, the file formate might not support", url);
         return header;
@@ -470,7 +476,12 @@ ccstd::vector<uint8_t> AudioEngineImpl::getOriginalPCMBuffer(const char *url, ui
     if (_audioPlayerProvider->getPcmData(url, data)) {
         CC_LOG_DEBUG("file %s pcm data already cached", url);
     } else {
+        #if CC_PLATFORM == CC_PLATFORM_ANDROID
         AudioDecoder *decoder = AudioDecoderProvider::createAudioDecoder(_engineEngine, fileFullPath, bufferSizeInFrames, outputSampleRate, fdGetter);
+        #else 
+        AudioDecoder *decoder = AudioDecoderProvider::createAudioDecoder(
+            _engineEngine, fileFullPath, _audioPlayerProvider->getBufferSizeInFrames(), outputSampleRate, fdGetter);
+        #endif
         if (decoder == nullptr) {
             CC_LOG_DEBUG("decode %s failed, the file formate might not support", url);
             return pcmData;
