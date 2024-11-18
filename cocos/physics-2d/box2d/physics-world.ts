@@ -327,13 +327,15 @@ export class b2PhysicsWorld implements IPhysicsWorld {
     }
 
     public _updateBodyType$ (body: b2RigidBody2D): void {
-        if (!this._animatedBodies.includes(body)) {
-            return;
-        }
-
+        const animatedBodies = this._animatedBodies;
         const comp = body.rigidBody;
         if (comp.type !== ERigidBody2DType.Animated) {
-            js.array.remove(this._animatedBodies, body);
+            js.array.remove(animatedBodies, body);
+        } else {
+            if (animatedBodies.includes(body)) {
+                return;
+            }
+            animatedBodies.push(body);
         }
     }
 
