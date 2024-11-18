@@ -315,10 +315,11 @@ bool AudioMixerController::hasPlayingTacks() {
 
     std::any_of(_activeTracks.begin(), _activeTracks.end(), [](Track *track) {
         Track::State state = track->getState();
+        bool result = false;
         if (state == Track::State::IDLE || state == Track::State::PLAYING || state == Track::State::RESUMED) {
-            return true;
+            result = true;
         }
-        return false;
+        return result;
     });
 
     return false;
