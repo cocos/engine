@@ -8,6 +8,14 @@ module.exports = {
     inspector: {
         cloneToEdit: '克隆出新资源，使用并编辑',
         cloneToDirectoryIllegal: '保存路径请限制在当前项目 /assets 路径内',
+        preview: {
+            header: '预览',
+        },
+        spine: {
+            skin: '皮肤',
+            animation: '动画',
+            loop: '循环',
+        },
     },
 
     assets: {
