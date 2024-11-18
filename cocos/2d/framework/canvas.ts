@@ -25,7 +25,7 @@
 
 import { ccclass, help, disallowMultiple, executeInEditMode,
     executionOrder, menu, tooltip, type, serializable } from 'cc.decorator';
-import { EDITOR } from 'internal:constants';
+import { EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
 import { Camera, CameraEvent } from '../../misc/camera-component';
 import { Widget } from '../../ui/widget';
 import { Vec3, screen, Enum, cclegacy, visibleRect } from '../../core';
@@ -132,7 +132,7 @@ export class Canvas extends RenderRoot2D {
         super();
         this._thisOnCameraResized = this._onResizeCamera.bind(this);
 
-        if (EDITOR) {
+        if (EDITOR_NOT_IN_PREVIEW) {
             this.fitDesignResolution_EDITOR = (): void => {
                 // TODO: support paddings of locked widget
                 this.node.getPosition(this._pos);
@@ -175,11 +175,11 @@ export class Canvas extends RenderRoot2D {
         const widget = this.getComponent('cc.Widget') as unknown as Widget;
         if (widget) {
             widget.updateAlignment();
-        } else if (EDITOR) {
+        } else if (EDITOR_NOT_IN_PREVIEW) {
             this.fitDesignResolution_EDITOR!();
         }
 
-        if (!EDITOR) {
+        if (!EDITOR_NOT_IN_PREVIEW) {
             if (this._cameraComponent) {
                 this._cameraComponent._createCamera();
                 this._cameraComponent.node.on(CameraEvent.TARGET_TEXTURE_CHANGE, this._thisOnCameraResized);
@@ -188,7 +188,7 @@ export class Canvas extends RenderRoot2D {
 
         this._onResizeCamera();
 
-        if (EDITOR) {
+        if (EDITOR_NOT_IN_PREVIEW) {
             // In Editor can not edit these attrs.
             // (Position in Node, contentSize in uiTransform)
             // (anchor in uiTransform, but it can edit, this is different from cocos creator)
@@ -202,7 +202,7 @@ export class Canvas extends RenderRoot2D {
 
     public onEnable (): void {
         super.onEnable();
-        if (!EDITOR && this._cameraComponent) {
+        if (!EDITOR_NOT_IN_PREVIEW && this._cameraComponent) {
             this._cameraComponent.node.on(CameraEvent.TARGET_TEXTURE_CHANGE, this._thisOnCameraResized);
         }
     }
