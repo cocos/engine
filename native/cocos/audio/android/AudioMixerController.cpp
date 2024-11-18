@@ -202,7 +202,6 @@ void AudioMixerController::mixOneFrame() {
 
     Track::State state;
     // set up the tracks.
-    // NOLINTNEXTLINE(readability-use-anyofallof)
     for (auto &&track : _activeTracks) {
         state = track->getState();
 
@@ -288,7 +287,7 @@ void AudioMixerController::mixOneFrame() {
 
     auto mixEnd = clockNow();
     float mixInterval = intervalInMS(mixStart, mixEnd);
-    ALOGV_IF(mixInterval > 1.0f, "Mix a frame waste: %Fms", mixInterval);
+    ALOGV_IF(mixInterval > 1.0F, "Mix a frame waste: %fms", mixInterval);
 
     _isMixingFrame = false;
 }
@@ -314,12 +313,13 @@ bool AudioMixerController::hasPlayingTacks() {
         return false;
     }
 
-    for (auto &&track : _activeTracks) {
+    std::any_of(_activeTracks.begin(), _activeTracks.end(), [](Track *track) {
         Track::State state = track->getState();
         if (state == Track::State::IDLE || state == Track::State::PLAYING || state == Track::State::RESUMED) {
             return true;
         }
-    }
+        return false;
+    });
 
     return false;
 }
