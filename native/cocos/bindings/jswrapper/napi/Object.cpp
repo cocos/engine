@@ -208,10 +208,6 @@ Object* Object::createTypedArray(Object::TypedArrayType type, const void* data, 
         return nullptr;
     }
 
-    if (type == TypedArrayType::UINT8_CLAMPED) {
-        SE_LOGE("Doesn't support to create Uint8ClampedArray with Object::createTypedArray API!");
-        return nullptr;
-    }
     napi_typedarray_type napiType;
     napi_value outputBuffer;
     void* outputPtr = nullptr;
@@ -291,10 +287,6 @@ Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object* ob
         return nullptr;
     }
 
-    if (type == TypedArrayType::UINT8_CLAMPED) {
-        SE_LOGE("Doesn't support to create Uint8ClampedArray with Object::createTypedArray API!");
-        return nullptr;
-    }
 
     CC_ASSERT(obj->isArrayBuffer());
     napi_status status;

@@ -428,7 +428,7 @@ extern "C" {
     #define LOG_ALWAYS_FATAL(...) \
         (((void)android_printAssert(NULL, LOG_TAG, ##__VA_ARGS__)))
 #elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
-	#define LOG_ALWAYS_FATAL(...) ((void) OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_DOMAIN, "HMG_LOG", __VA_ARGS__))
+    #define LOG_ALWAYS_FATAL(...) ((void) OH_LOG_Print(LOG_APP, LOG_ERROR, LOG_DOMAIN, "HMG_LOG", __VA_ARGS__))
 #endif
 #endif
 

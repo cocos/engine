@@ -113,8 +113,8 @@ AudioPlayerProvider::AudioPlayerProvider(SLEngineItf engineItf, int deviceSample
           _callerThreadUtils(callerThreadUtils), _pcmAudioService(nullptr), 
           _mixController(nullptr), _threadPool(LegacyThreadPool::newCachedThreadPool(1, 8, 5, 2, 2)) 
 {
-    _mixController = new AudioMixerController(_deviceSampleRate, 2);
-    _pcmAudioService = new PcmAudioService();
+    _mixController = ccnew AudioMixerController(_deviceSampleRate, 2);
+    _pcmAudioService = ccnew PcmAudioService();
     _pcmAudioService->init(_mixController, 2, deviceSampleRate, &_bufferSizeInFrames);
     _mixController->init(_bufferSizeInFrames);
     ALOG_ASSERT(callerThreadUtils != nullptr, "Caller thread utils parameter should not be nullptr!");

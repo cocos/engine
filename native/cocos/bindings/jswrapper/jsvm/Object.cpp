@@ -277,10 +277,6 @@ Object* Object::createTypedArray(Object::TypedArrayType type, const void* data, 
         return nullptr;
     }
 
-    if (type == TypedArrayType::UINT8_CLAMPED) {
-        SE_LOGE("Doesn't support to create Uint8ClampedArray with Object::createTypedArray API!");
-        return nullptr;
-    }
     JSVM_TypedarrayType  jsvmType;
     JSVM_Value           outputBuffer;
     void*                outputPtr = nullptr;
@@ -296,6 +292,10 @@ Object* Object::createTypedArray(Object::TypedArrayType type, const void* data, 
             break;
         case TypedArrayType::UINT8:
             jsvmType  = JSVM_UINT8_ARRAY;
+            sizeOfEle = 1;
+            break;
+        case TypedArrayType::UINT8_CLAMPED:
+            jsvmType = JSVM_UINT8_CLAMPED_ARRAY;
             sizeOfEle = 1;
             break;
         case TypedArrayType::INT16:
@@ -364,10 +364,6 @@ Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object *ob
         return nullptr;
     }
 
-    if (type == TypedArrayType::UINT8_CLAMPED) {
-        SE_LOGE("Doesn't support to create Uint8ClampedArray with Object::createTypedArray API!");
-        return nullptr;
-    }
 
     assert(obj->isArrayBuffer());
     JSVM_Status status;
@@ -425,30 +421,23 @@ Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object *ob
 }
 
 Object* Object::createExternalArrayBufferObject(void* contents, size_t byteLength, BufferContentsFreeFunc freeFunc, void* freeUserData) {
-    // JSVM_Status status;
-    // JSVM_Value result;
-    // if (freeFunc) {
-    //     struct ExternalArrayBufferCallbackParams* param = new (struct ExternalArrayBufferCallbackParams);
-    //     param->func = freeFunc;
-    //     param->contents = contents;
-    //     param->byteLength = byteLength;
-    //     param->userData = freeUserData;
-    //     NODE_API_CALL(status, ScriptEngine::getEnv(), napi_create_external_arraybuffer(
-    //                                                       ScriptEngine::getEnv(), contents, byteLength, [](napi_env env, void* finalize_data, void* finalize_hint) {
-    //                                                           if (finalize_hint) {
-    //                                                               struct ExternalArrayBufferCallbackParams* param = reinterpret_cast<struct ExternalArrayBufferCallbackParams*>(finalize_hint);
-    //                                                               param->func(param->contents, param->byteLength, param->userData);
-    //                                                               delete param;
-    //                                                           }
-    //                                                       },
-    //                                                       reinterpret_cast<void*>(param), &result));
-    // } else {
-    //     NODE_API_CALL(status, ScriptEngine::getEnv(), napi_create_external_arraybuffer(ScriptEngine::getEnv(), contents, byteLength, nullptr, freeUserData, &result));
-    // }
+    JSVM_Status status;
+    JSVM_Value result;
+    if (freeFunc) {
+        struct ExternalArrayBufferCallbackParams* param = new (struct ExternalArrayBufferCallbackParams);
+        param->func = freeFunc;
+        param->contents = contents;
+        param->byteLength = byteLength;
+        param->userData = freeUserData;
+        NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateArraybuffer(ScriptEngine::getEnv(), byteLength, &contents,  &result));
+        param->func(param->contents, param->byteLength, param->userData);
+        delete param;
+    } else {
+        NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateArraybuffer(ScriptEngine::getEnv(), byteLength, &contents,  &result));
+    }
 
-    // Object* obj = Object::_createJSObject(ScriptEngine::getEnv(), result, nullptr);
-    // return obj;
-    return nullptr;
+    Object* obj = Object::_createJSObject(ScriptEngine::getEnv(), result, nullptr);
+    return obj;
 }
 
 
@@ -718,8 +707,12 @@ void Object::weakCallback(JSVM_Env env, void* nativeObject, void* finalizeHint /
         if (nativeObject == nullptr) {
             return;
         }
-        void *rawPtr = reinterpret_cast<Object*>(nativeObject)->_privateData;
-        Object* seObj = reinterpret_cast<Object*>(nativeObject);
+        void *rawPtr = reinterpret_cast<Object*>(finalizeHint)->_privateData;
+        Object* seObj = reinterpret_cast<Object*>(finalizeHint);
+        Object* rawPtrObj = reinterpret_cast<Object*>(rawPtr);
+        if(rawPtrObj->getRefCount() == 0) {
+            return;
+        }
         if (seObj->_onCleaingPrivateData) { //called by cleanPrivateData, not release seObj;
             return;
         }

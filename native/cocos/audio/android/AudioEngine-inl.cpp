@@ -208,7 +208,7 @@ bool AudioEngineImpl::init() {
 
 	        _audioPlayerProvider = ccnew AudioPlayerProvider(_engineEngine, _outputMixObject, outputSampleRate, bufferSizeInFrames, fdGetter, &gCallerThreadUtils);
 	    #elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
-	        _audioPlayerProvider = new AudioPlayerProvider(_engineEngine, outputSampleRate, fdGetter, &gCallerThreadUtils);
+	        _audioPlayerProvider = ccnew AudioPlayerProvider(_engineEngine, outputSampleRate, fdGetter, &gCallerThreadUtils);
 	    #endif
         ret = true;
     } while (false);
