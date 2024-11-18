@@ -236,7 +236,7 @@ if (cc.internal.VideoPlayer) {
         }
 
         onUpdate (args = 0) {
-          if(this.video) {
+          if (this.video) {
             this.video._currentTime = args;
           }
         }
@@ -381,7 +381,7 @@ if (cc.internal.VideoPlayer) {
 
         stop () {
             if (this.video) {
-                this._ignorePause = true;
+                //this._ignorePause = true;
                 this.video.seekTo(0);
                 this._cachedCurrentTime = 0;
                 this.video.stop();

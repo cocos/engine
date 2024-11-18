@@ -202,6 +202,7 @@ void AudioMixerController::mixOneFrame() {
 
     Track::State state;
     // set up the tracks.
+    // NOLINTNEXTLINE(readability-use-anyofallof)
     for (auto &&track : _activeTracks) {
         state = track->getState();
 
@@ -287,7 +288,7 @@ void AudioMixerController::mixOneFrame() {
 
     auto mixEnd = clockNow();
     float mixInterval = intervalInMS(mixStart, mixEnd);
-    ALOGV_IF(mixInterval > 1.0f, "Mix a frame waste: %fms", mixInterval);
+    ALOGV_IF(mixInterval > 1.0f, "Mix a frame waste: %Fms", mixInterval);
 
     _isMixingFrame = false;
 }
@@ -309,8 +310,9 @@ void AudioMixerController::resume() {
 
 bool AudioMixerController::hasPlayingTacks() {
     std::lock_guard<std::mutex> lk(_activeTracksMutex);
-    if (_activeTracks.empty())
+    if (_activeTracks.empty()) {
         return false;
+    }
 
     for (auto &&track : _activeTracks) {
         Track::State state = track->getState();

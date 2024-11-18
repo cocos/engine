@@ -74,7 +74,6 @@ private:
     void destroy();
     void initTrack(Track *track, ccstd::vector<Track *> &tracksToRemove);
 
-private:
     int _bufferSizeInFrames;
     int _sampleRate;
     int _channelCount;
