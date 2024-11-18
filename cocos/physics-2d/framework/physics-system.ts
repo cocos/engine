@@ -23,7 +23,7 @@
 */
 
 import { BUILD, EDITOR_NOT_IN_PREVIEW, LOAD_BOX2D_MANUALLY } from 'internal:constants';
-import { System, Vec2, IVec2Like, Rect, Eventify, Enum, Settings, settings, cclegacy, SettingsCategory } from '../../core';
+import { System, Vec2, IVec2Like, Rect, Eventify, Enum, settings, cclegacy, SettingsCategory } from '../../core';
 import { createPhysicsWorld, selector, IPhysicsSelector } from './physics-selector';
 
 import { DelayEvent } from './physics-internal-types';

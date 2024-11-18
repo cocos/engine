@@ -33,6 +33,7 @@ import { PHYSICS_2D_PTM_RATIO, ERigidBody2DType } from '../framework/physics-typ
 
 import { Node } from '../../scene-graph/node';
 import { Collider2D } from '../framework';
+import { TransformBit } from '../../scene-graph/node-enum';
 
 const tempVec3 = new Vec3();
 
@@ -82,7 +83,7 @@ export class b2RigidBody2D implements IRigidBody2D {
         this.setActive(false);
     }
 
-    nodeTransformChanged (type): void {
+    nodeTransformChanged (type: TransformBit): void {
         if (PhysicsSystem2D.instance.stepping) {
             return;
         }
@@ -160,7 +161,7 @@ export class b2RigidBody2D implements IRigidBody2D {
 
         const pos = this._rigidBody.node.worldPosition;
 
-        let temp;
+        let temp: b2.Vec2;
         const bodyType = this._rigidBody.type;
         if (bodyType === ERigidBody2DType.Animated) {
             temp = b2body.GetLinearVelocity();
@@ -207,6 +208,7 @@ export class b2RigidBody2D implements IRigidBody2D {
     }
 
     setType (v: ERigidBody2DType): void {
+        (PhysicsSystem2D.instance.physicsWorld as b2PhysicsWorld)._updateBodyType$(this);
         this._body!.SetType(v as number);
     }
     setLinearDamping (v: number): void {
