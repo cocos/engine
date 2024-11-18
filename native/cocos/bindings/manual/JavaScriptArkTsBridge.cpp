@@ -112,7 +112,7 @@ bool JavaScriptArkTsBridge::CallInfo::execute(se::Value& rval) {
     napi_value result;
     char* module_info = __getModuleInfo(module_name);
     status = napi_load_module_with_info(env, _clsPath, module_info, &result);
-    delete module_info;
+    free(module_info);
     module_info = nullptr;
     if (status != napi_ok) {
         CC_LOG_WARNING("callNativeMethod napi_load_module_with_info fail, status=%{public}d", status);

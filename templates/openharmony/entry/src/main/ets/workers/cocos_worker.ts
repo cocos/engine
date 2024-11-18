@@ -33,7 +33,13 @@ import { launchEngine } from '../cocos/game';
 <% } %>
 import { PortProxy } from '../common/PortProxy';
 
-globalThis.oh = globalThis.oh || {};
+<% if(useV8) { %>
+  globalThis.importPolyfill = async function () {
+    await import('../cocos/oh-adapter/sys-ability-polyfill.js');
+  }
+  globalThis.importPolyfill();
+  globalThis.oh = {};
+<% } %>
 
 if (!(console as any).assert) {
     (console as any).assert = function(cond, msg) {

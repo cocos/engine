@@ -12,6 +12,7 @@ interface context {
   nativeEngineStart: () => void;
   onTextChange: (param: string) => void;
   onComplete: (param: string) => void;
+  onConfirm: (param: string) => void;
   shouldStartLoading: (viewTag: number, url: string) => void;
   finishLoading: (viewTag: number, url: string) => void;
   failLoading: (viewTag: number, url: string) => void;
