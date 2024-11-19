@@ -8,12 +8,6 @@ jobs:
     name: "Generate OH SDK cache"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-java@v4
-        id: setup-jdk
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-      
       - name: Get oh sdk cache directory path
         id: oh-sdk-cache-dir-path
         run: |
@@ -32,11 +26,6 @@ jobs:
         with:
           path: ${{ steps.oh-sdk-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-build-${{ env.cache-name }}
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 14
-          cache: 'npm'
 
       - if: ${{ steps.cache-oh-sdk.outputs.cache-hit != 'true' }}
         name: No Cache found, install oh sdk
