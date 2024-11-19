@@ -279,28 +279,11 @@ jobs:
           if [ ! -d "$HOME/openharmony" ]; then
             mkdir -p $HOME/openharmony
             echo "Download commandline-tools-linux.zip ..."
-            curl -o commandline-tools-linux.zip "https://contentcenter-vali-drcn.dbankcdn.cn/pvt_2/DeveloperAlliance_package_901_9/b1/v3/E6zhv5UFQ2-inIwNJhTN6Q/commandline-tools-linux-2.0.0.2.zip?HW-CC-KV=V1&HW-CC-Date=20230621T074401Z&HW-CC-Expire=315360000&HW-CC-Sign=621224257B02079B1E76C0A56FDF21483400B1E3556213F88DC79BC9BE7D595D"
+            curl -o commandline-tools-linux.zip "https://contentcenter-vali-drcn.dbankcdn.cn/pvt_2/DeveloperAlliance_package_901_9/b8/v3/D1h9RzdeTZ-7Ga_hPu95DA/commandline-tools-linux-x64-5.0.3.906.zip?HW-CC-KV=V1&HW-CC-Date=20241119T025229Z&HW-CC-Expire=7200&HW-CC-Sign=88A1ABE766E5F72E7D78BC405443250A08421906EBB6B57C967D1FB32C47004F"
             echo "Unzip commandline-tools-linux.zip ..."
             unzip commandline-tools-linux.zip -d $HOME/openharmony > /dev/null
             cd $HOME/openharmony
             ls -l
-            cd command-line-tools
-            echo "=============== PATCHING sdkmanager/bin/sdkmgr file ==============="
-            sed -i "s@-Dfile.encoding=UTF-8@-Dfile.encoding=UTF-8 -Duser.country=CN@g" ./sdkmanager/bin/sdkmgr
-            cd bin
-            ./sdkmgr list
-            echo "=============== INSTALL HOS toolchains:9 ==============="
-            ./sdkmgr install toolchains:9 --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK ets:9 ==============="
-            ./sdkmgr install OpenHarmony/ets:9 --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK js:9 ==============="
-            ./sdkmgr install OpenHarmony/js:9 --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK native:9 ==============="
-            ./sdkmgr install OpenHarmony/native:9 --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK toolchains:9 ==============="
-            ./sdkmgr install OpenHarmony/toolchains:9 --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK DONE ==============="
-            ./sdkmgr list
           fi
 
       - name: Compile for Openharmony
@@ -315,6 +298,9 @@ jobs:
           pushd $HOME/openharmony
           ls -l
           popd
+
+          export PATH=$PATH:$HOME/openharmony/bin
+          which hvigorw
 
           NATIVE_ROOT=$GITHUB_WORKSPACE/native
           echo "Compiling Openharmony ... "
@@ -333,8 +319,9 @@ jobs:
           echo "set(CMAKE_CXX_STANDARD_REQUIRED ON)" >> build-oh/proj/cfg.cmake
           echo "set(COCOS_X_PATH $NATIVE_ROOT)" >> build-oh/proj/cfg.cmake
           echo "set(CC_EXECUTABLE_NAME \"\")" >> build-oh/proj/cfg.cmake
-          echo "set(USE_SE_V8 OFF)" >> build-oh/proj/cfg.cmake
-          echo "set(USE_SE_NAPI ON)" >> build-oh/proj/cfg.cmake
+          echo "set(USE_SE_V8 ON)" >> build-oh/proj/cfg.cmake
+          echo "set(USE_SE_NAPI OFF)" >> build-oh/proj/cfg.cmake
+          echo "set(USE_SE_JSVM OFF)" >> build-oh/proj/cfg.cmake
 
           echo "=============== cat build-oh/proj/cfg.cmake ==============="
           cat build-oh/proj/cfg.cmake
@@ -352,28 +339,16 @@ jobs:
           echo "entry/build-profile.json5: "
           cat ./entry/build-profile.json5
 
-          echo "=============== HACK ./hvigor/hvigor-wrapper.js ==============="
-          sed -i "s@HVIGOR_WRAPPER_PNPM_SCRIPT_PATH,\[\"install\"\]@HVIGOR_WRAPPER_PNPM_SCRIPT_PATH,\[\"install\", \"--lockfile=false\"\]@g" ./hvigor/hvigor-wrapper.js
-
-          echo "=============== SET NPM OH REGISTRY ==============="
-          echo "@ohos:registry=https://repo.harmonyos.com/npm/" >> ~/.npmrc
-          npm config get @ohos:registry
-          npm config get registry
-
-          echo "=============== UPDATE local.properties ==============="
-          echo "nodejs.dir=/usr/bin" >> local.properties
-          echo "hwsdk.dir=$HOME/openharmony/hwsdk" >> local.properties
-
-          echo "=============== UPDATE ./hvigor/hvigor-config.json5 ==============="
-          echo "{\"hvigorVersion\":\"3.0.2\",\"dependencies\":{\"@ohos/hvigor-ohos-plugin\":\"3.0.2\"}}" > ./hvigor/hvigor-config.json5
+          # echo "=============== UPDATE ./hvigor/hvigor-config.json5 ==============="
+          # echo "{\"hvigorVersion\":\"3.0.2\",\"dependencies\":{\"@ohos/hvigor-ohos-plugin\":\"3.0.2\"}}" > ./hvigor/hvigor-config.json5
 
           echo "=============== Do not import game.ts for cocos_worker.ts ==============="
           sed -i '/<% if(!useV8) { %>/,/<% } %>/d' ./entry/src/main/ets/workers/cocos_worker.ts
 
           echo "=============== EXECUTE hvigorw ==============="
-          ./hvigorw clean -i
-          ./hvigorw --stop-daemon -i
-          ./hvigorw assembleHap -p debuggable=true --no-daemon -d
+          hvigorw clean -i
+          hvigorw --stop-daemon -i
+          hvigorw --mode module -p product=default assembleHap --parallel --incremental debuggable=true --no-daemon -d
           #./hvigorw default@ProcessLibs -p debuggable=true --no-daemon -d
           echo "=============== EXECUTE hvigorw DONE ==============="
 

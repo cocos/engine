@@ -55,26 +55,11 @@ jobs:
           if [ ! -d "$HOME/openharmony" ]; then
             mkdir -p $HOME/openharmony
             echo "Download commandline-tools-linux.zip ..."
-            curl -o commandline-tools-linux.zip "https://contentcenter-vali-drcn.dbankcdn.cn/pvt_2/DeveloperAlliance_package_901_9/b1/v3/E6zhv5UFQ2-inIwNJhTN6Q/commandline-tools-linux-2.0.0.2.zip?HW-CC-KV=V1&HW-CC-Date=20230621T074401Z&HW-CC-Expire=315360000&HW-CC-Sign=621224257B02079B1E76C0A56FDF21483400B1E3556213F88DC79BC9BE7D595D"
+            curl -o commandline-tools-linux.zip "https://contentcenter-vali-drcn.dbankcdn.cn/pvt_2/DeveloperAlliance_package_901_9/b8/v3/D1h9RzdeTZ-7Ga_hPu95DA/commandline-tools-linux-x64-5.0.3.906.zip?HW-CC-KV=V1&HW-CC-Date=20241119T025229Z&HW-CC-Expire=7200&HW-CC-Sign=88A1ABE766E5F72E7D78BC405443250A08421906EBB6B57C967D1FB32C47004F"
             echo "Unzip commandline-tools-linux.zip ..."
             unzip commandline-tools-linux.zip -d $HOME/openharmony > /dev/null
             cd $HOME/openharmony
             ls -l
             cd command-line-tools
-            echo "=============== PATCHING sdkmanager/bin/sdkmgr file ==============="
-            sed -i "s@-Dfile.encoding=UTF-8@-Dfile.encoding=UTF-8 -Duser.country=CN@g" ./sdkmanager/bin/sdkmgr
-            cd bin
-            ./sdkmgr list
-            echo "=============== INSTALL HOS toolchains:${{ github.event.inputs.oh_sdk_version }} ==============="
-            ./sdkmgr install toolchains:${{ github.event.inputs.oh_sdk_version }} --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK ets:${{ github.event.inputs.oh_sdk_version }} ==============="
-            ./sdkmgr install OpenHarmony/ets:${{ github.event.inputs.oh_sdk_version }} --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK js:${{ github.event.inputs.oh_sdk_version }} ==============="
-            ./sdkmgr install OpenHarmony/js:${{ github.event.inputs.oh_sdk_version }} --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK native:${{ github.event.inputs.oh_sdk_version }} ==============="
-            ./sdkmgr install OpenHarmony/native:${{ github.event.inputs.oh_sdk_version }} --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK toolchains:${{ github.event.inputs.oh_sdk_version }} ==============="
-            ./sdkmgr install OpenHarmony/toolchains:${{ github.event.inputs.oh_sdk_version }} --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK DONE ==============="
-            ./sdkmgr list
+            ls -l
           fi
