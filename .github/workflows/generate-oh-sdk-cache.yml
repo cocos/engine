@@ -2,12 +2,6 @@ name: <Native> Generate OH SDK Cache
 
 on:
   workflow_dispatch:
-    inputs:
-      oh_sdk_version:
-        description: 'Openharmony SDK version'
-        type: string
-        default: '9'
-        required: true
 
 jobs:
   generate_oh_sdk_cache:
@@ -34,15 +28,11 @@ jobs:
         id: cache-oh-sdk
         uses: actions/cache@v4
         env:
-          cache-name: cache-oh-sdk-${{ github.event.inputs.oh_sdk_version }}
+          cache-name: cache-oh-sdk-12
         with:
           path: ${{ steps.oh-sdk-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-build-${{ env.cache-name }}
 
-      - name: Add package.json
-        run: |
-          echo "{}" > package.json
-          echo "{\"name\": \"tests\",\"lockfileVersion\": 3,\"requires\": true,\"packages\": {}}" > package-lock.json
       - uses: actions/setup-node@v4
         with:
           node-version: 14

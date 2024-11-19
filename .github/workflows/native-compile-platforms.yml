@@ -263,10 +263,10 @@ jobs:
           path: ${{ steps.oh-sdk-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-build-${{ env.cache-name }}
 
-      - name: Add package.json
-        run: |
-          echo "{}" > package.json
-          echo "{\"name\": \"tests\",\"lockfileVersion\": 3,\"requires\": true,\"packages\": {}}" > package-lock.json
+      # - name: Add package.json
+      #   run: |
+      #     echo "{}" > package.json
+      #     echo "{\"name\": \"tests\",\"lockfileVersion\": 3,\"requires\": true,\"packages\": {}}" > package-lock.json
       - uses: actions/setup-node@v4
         with:
           node-version: 14
@@ -344,6 +344,8 @@ jobs:
 
           echo "=============== Do not import game.ts for cocos_worker.ts ==============="
           sed -i '/<% if(!useV8) { %>/,/<% } %>/d' ./entry/src/main/ets/workers/cocos_worker.ts
+          sed -i '/<% if(useV8) { %>/,/<% } %>/d' ./entry/src/main/ets/workers/cocos_worker.ts
+          ls -l ./entry/src/main/ets/workers/cocos_worker.ts
 
           echo "=============== EXECUTE hvigorw ==============="
           hvigorw clean -i
