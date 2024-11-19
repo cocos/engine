@@ -69,6 +69,42 @@ void onSurfaceCreatedCB(OH_NativeXComponent* component, void* window) {
     windowMgr->createWindow(info);
 }
 
+void onSurfaceHideCB(OH_NativeXComponent* component, void* window) {
+    int32_t ret;
+    char idStr[OH_XCOMPONENT_ID_LEN_MAX + 1] = {};
+    uint64_t idSize = OH_XCOMPONENT_ID_LEN_MAX + 1;
+    ret = OH_NativeXComponent_GetXComponentId(component, idStr, &idSize);
+    if(ret != OH_NATIVEXCOMPONENT_RESULT_SUCCESS) {
+        return;
+    }
+    sendMsgToWorker(cc::MessageType::WM_XCOMPONENT_SURFACE_HIDE, component, window);
+}
+
+void onSurfaceShowCB(OH_NativeXComponent* component, void* window) {
+    int32_t ret;
+    char idStr[OH_XCOMPONENT_ID_LEN_MAX + 1] = {};
+    uint64_t idSize = OH_XCOMPONENT_ID_LEN_MAX + 1;
+    ret = OH_NativeXComponent_GetXComponentId(component, idStr, &idSize);
+    if(ret != OH_NATIVEXCOMPONENT_RESULT_SUCCESS) {
+        return;
+    }
+    sendMsgToWorker(cc::MessageType::WM_XCOMPONENT_SURFACE_SHOW, component, window);
+}
+
+
+cc::TouchEvent::Type touchTypeTransform(OH_NativeXComponent_TouchEventType touchType) {
+    if (touchType == OH_NATIVEXCOMPONENT_DOWN) {
+        return cc::TouchEvent::Type::BEGAN;
+    } else if (touchType == OH_NATIVEXCOMPONENT_MOVE) {
+        return cc::TouchEvent::Type::MOVED;
+    } else if (touchType == OH_NATIVEXCOMPONENT_UP) {
+        return cc::TouchEvent::Type::ENDED;
+    } else if (touchType == OH_NATIVEXCOMPONENT_CANCEL) {
+        return cc::TouchEvent::Type::CANCELLED;
+    }
+    return cc::TouchEvent::Type::UNKNOWN;
+}
+
 void dispatchTouchEventCB(OH_NativeXComponent* component, void* window) {
     OH_NativeXComponent_TouchEvent touchEvent;
     int32_t ret = OH_NativeXComponent_GetTouchEvent(component, window, &touchEvent);
@@ -153,6 +189,8 @@ int32_t OpenHarmonyPlatform::run(int argc, const char** argv) {
 void OpenHarmonyPlatform::setNativeXComponent(OH_NativeXComponent* component) {
     _component = component;
     OH_NativeXComponent_RegisterCallback(_component, &_callback);
+    OH_NativeXComponent_RegisterSurfaceHideCallback(_component, onSurfaceHideCB);
+    OH_NativeXComponent_RegisterSurfaceShowCallback(_component, onSurfaceShowCB);
 }
 
 void OpenHarmonyPlatform::enqueue(const WorkerMessageData& msg) {
@@ -200,6 +238,14 @@ void OpenHarmonyPlatform::onMessageCallback(const uv_async_t* /* req */) {
                 OH_NativeXComponent* nativexcomponet = reinterpret_cast<OH_NativeXComponent*>(msgData.data);
                 CC_ASSERT(nativexcomponet != nullptr);
                 platform->onSurfaceChanged(nativexcomponet, msgData.window);
+            } else if (msgData.type == MessageType::WM_XCOMPONENT_SURFACE_SHOW) {
+                OH_NativeXComponent* nativexcomponet = reinterpret_cast<OH_NativeXComponent*>(msgData.data);
+                CC_ASSERT(nativexcomponet != nullptr);        
+                platform->onSurfaceShow(msgData.window);
+            } else if (msgData.type == MessageType::WM_XCOMPONENT_SURFACE_HIDE) {
+                OH_NativeXComponent* nativexcomponet = reinterpret_cast<OH_NativeXComponent*>(msgData.data);
+                CC_ASSERT(nativexcomponet != nullptr);        
+                platform->onSurfaceHide();
             } else if (msgData.type == MessageType::WM_XCOMPONENT_SURFACE_DESTROY) {
                 CC_LOG_INFO("onMessageCallback WM_XCOMPONENT_SURFACE_DESTROY ...");
                 OH_NativeXComponent* nativexcomponet = reinterpret_cast<OH_NativeXComponent*>(msgData.data);
@@ -221,8 +267,6 @@ void OpenHarmonyPlatform::onMessageCallback(const uv_async_t* /* req */) {
         if (msgData.type == MessageType::WM_VSYNC) {
             platform->runTask();
         }
-        //    CC_ASSERT(false);
-        //}
     }
 }
 
@@ -234,6 +278,10 @@ void OpenHarmonyPlatform::onShowNative() {
     ev.type = WindowEvent::Type::SHOW;
     ev.windowId = cc::ISystemWindow::mainWindowId;
     events::WindowEvent::broadcast(ev);
+    onResume();
+    if (_timerInited) {
+        uv_timer_start(&_timerHandle, &OpenHarmonyPlatform::timerCb, 0, 1);
+    }
 }
 
 void OpenHarmonyPlatform::onHideNative() {
@@ -241,33 +289,40 @@ void OpenHarmonyPlatform::onHideNative() {
     ev.type = WindowEvent::Type::HIDDEN;
     ev.windowId = cc::ISystemWindow::mainWindowId;
     events::WindowEvent::broadcast(ev);
+    onPause();
+    if (_timerInited) {
+        uv_timer_stop(&_timerHandle);
+    }
 }
 
 void OpenHarmonyPlatform::onDestroyNative() {
     onDestroy();
+     if (_timerInited) {
+        uv_timer_stop(&_timerHandle);
+    }
 }
 
 void OpenHarmonyPlatform::timerCb(uv_timer_t* handle) {
     OpenHarmonyPlatform::getInstance()->runTask();
 }
 
+void OpenHarmonyPlatform::restartJSVM() {
+    g_started = false;
+}
+
 void OpenHarmonyPlatform::workerInit(uv_loop_t* loop) {
     _workerLoop = loop;
     if (_workerLoop) {
+        uv_timer_init(_workerLoop, &_timerHandle);
+        _timerInited = true;
         uv_async_init(_workerLoop, &_messageSignal, reinterpret_cast<uv_async_cb>(OpenHarmonyPlatform::onMessageCallback));
-    }
+        if (!_messageQueue.empty()) {
+            triggerMessageSignal(); // trigger the signal to handle the pending message
+        }
+	}
 }
 
 void OpenHarmonyPlatform::requestVSync() {
-    //CC_LOG_ERROR("OpenHarmonyPlatform::requestVSync1");
-    //OH_NativeVSync_RequestFrame(OpenHarmonyPlatform::getInstance()->_nativeVSync, OnVSync, nullptr);
-    if (_workerLoop) {
-        //     // Todo: Starting the timer in this way is inaccurate and will be fixed later.
-        uv_timer_init(_workerLoop, &_timerHandle);
-        // The tick function needs to be called as quickly as possible because it is controlling the frame rate inside the engine.
-        uv_timer_start(&_timerHandle, &OpenHarmonyPlatform::timerCb, 0, 1);
-    }
-    //CC_LOG_ERROR("OpenHarmonyPlatform::requestVSync2");
 }
 
 int32_t OpenHarmonyPlatform::loop() {
@@ -295,6 +350,15 @@ void OpenHarmonyPlatform::onSurfaceDestroyed(OH_NativeXComponent* component, voi
     CC_ASSERT_NOT_NULL(windowMgr);
     windowMgr->removeWindow(window);
 }
+
+void OpenHarmonyPlatform::onSurfaceHide() {
+
+}
+
+void OpenHarmonyPlatform::onSurfaceShow(void* window) {
+
+}
+
 
 ISystemWindow* OpenHarmonyPlatform::createNativeWindow(uint32_t windowId, void* externalHandle) {
     SystemWindow* window = ccnew SystemWindow(windowId, externalHandle);

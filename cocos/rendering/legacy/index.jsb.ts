@@ -53,7 +53,9 @@ import { RenderTexture } from '../../asset/assets/render-texture';
 
 export function createDefaultPipeline (): ForwardPipeline {
     const rppl = new ForwardPipeline();
-    rppl.initialize({ flows: [] });
+    if (!window.oh) {
+        rppl.initialize({ flows: [] });
+    }
     return rppl;
 }
 export const ForwardPipeline: typeof NrForwardPipeline = nr.ForwardPipeline;

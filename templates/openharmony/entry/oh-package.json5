@@ -3,8 +3,10 @@
   "devDependencies": {},
   "author": "",
   "name": "entry",
-  "description": "example description",
+  "description": "Please describe the basic information.",
   "main": "",
   "version": "1.0.0",
-  "dependencies": {}
+  "dependencies": {
+    "libcocos.so": "file:./src/main/cpp/types/libcocos"
+  }
 }

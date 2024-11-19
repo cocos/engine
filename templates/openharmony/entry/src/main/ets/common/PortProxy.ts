@@ -21,57 +21,56 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
-****************************************************************************/
-import worker from '@ohos.worker';
-import {DedicatedWorkerGlobalScope} from '@ohos.worker';
-// NOTE: don't use this import all statement, because this has compile issue.
-// import * as wk from '@ohos.worker';
+ ****************************************************************************/
+import { ThreadWorkerGlobalScope } from '@ohos.worker';
 import { MessageEvent } from '@ohos.worker';
 
 export class PortProxy {
-    private autoId: number = 0;
-    public actionHandleMap = {}
-    private port :DedicatedWorkerGlobalScope = null;
+  private autoId: number = 0;
+  public actionHandleMap = {}
+  private port: ThreadWorkerGlobalScope = null;
 
-    public _messageHandle?:(e: MessageEvent<any>) => void;
+  public _messageHandle?: (e: MessageEvent<any>) => void;
 
-    constructor (port) {
-        this.port = port;
-        this.port.onmessage = this.onMessage.bind(this);
-    }
+  constructor(worker) {
+    this.port = worker;
+    this.port.onmessage = this.onMessage.bind(this);
+  }
 
-    public onMessage(e) {
-        let data = e['data'];
-        if(data.type != "syncResult" && this._messageHandle) {
-            this._messageHandle(e);
-        } else if(data.type == "syncResult") {
-            const {id, response} = data.data;
-            if (!this.actionHandleMap[id]) {
-                return;
-            }
-            this.actionHandleMap[id].call(this, response)
-            delete this.actionHandleMap[id];
-        }
+  public onMessage(e) {
+    let data = e['data'];
+    if (data.type != "syncResult" && this._messageHandle) {
+      this._messageHandle(e);
+    } else if (data.type == "syncResult") {
+      const { id, response } = data.data;
+      if (!this.actionHandleMap[id]) {
+        return;
+      }
+      this.actionHandleMap[id].call(this, response);
+      delete this.actionHandleMap[id];
     }
-    public postReturnMessage(e:any, res: any) {
-        if(e.type == "sync" && res != null && res != undefined) {
-            this.port.postMessage({type:"syncResult", data:{id:e.data.cbId, response:res}});
-        }
-    }
-    public postMessage(msgName: string, msgData:any) {
-        this.port.postMessage({type:"async", data:{name:msgName, param:msgData}});
-    }
+  }
 
-    public postSyncMessage(msgName: string, msgData:any) {
-        const id = this.autoId++;
-        return new Promise((resolve, reject) => {
-            const message = {
-                type:"sync", data:{cbId:id, name:msgName, param:msgData}
-            }
-            this.port.postMessage(message);
-            this.actionHandleMap[id] = (response) => {
-                resolve(response)
-            }
-        })
+  public postReturnMessage(e: any, res: any) {
+    if (e.type == "sync" && res != null && res != undefined) {
+      this.port.postMessage({ type: "syncResult", data: { id: e.data.cbId, response: res } });
     }
+  }
+
+  public postMessage(msgName: string, msgData: any) {
+    this.port.postMessage({ type: "async", data: { name: msgName, param: msgData } });
+  }
+
+  public postSyncMessage(msgName: string, msgData: any) {
+    const id = this.autoId++;
+    return new Promise((resolve, reject) => {
+      const message = {
+        type: "sync", data: { cbId: id, name: msgName, param: msgData }
+      }
+      this.port.postMessage(message);
+      this.actionHandleMap[id] = (response) => {
+        resolve(response)
+      }
+    })
+  }
 }

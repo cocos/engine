@@ -56,11 +56,11 @@ Screen::Orientation Screen::getDeviceOrientation() const {
     if(value == 0) {
         return Orientation::PORTRAIT;
     } else if(value == 1) {
-        return Orientation::LANDSCAPE_LEFT;
+        return Orientation::LANDSCAPE_RIGHT;
     } else if(value == 2) {
         return Orientation::PORTRAIT_UPSIDE_DOWN;
     } else if(value == 3) {
-        return Orientation::LANDSCAPE_RIGHT;
+        return Orientation::LANDSCAPE_LEFT;
     }
     CC_ASSERT(false);
     return Orientation::PORTRAIT;

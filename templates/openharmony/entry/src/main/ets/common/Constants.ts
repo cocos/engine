@@ -32,8 +32,10 @@ export enum ContextType {
     ENGINE_UTILS,
     EDITBOX_UTILS,
     WEBVIEW_UTILS,
+    SYSTEM_UTILS,
+    DISPLAY_UTILS,
     UV_ASYNC_SEND,
-    VIDEO_UTILS,
+    VIDEO_UTILS
 }
 
 export class Constants {

@@ -21,22 +21,43 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
-****************************************************************************/
+ ****************************************************************************/
+@Observed
+export class EditboxShowInfo {
+  public backgroundColor: number = 0xFFFFFFFF;
+  public enterKeyType: EnterKeyType = EnterKeyType.Done;
+  public type:InputType = InputType.Normal;
+  public maxLength: number = 65536;
+  public defaultMessage: string = '';
+  public textAlign: TextAlign = TextAlign.Start;
+  public showUnderline: boolean = false;
+  public multiLines: boolean = false;
+  // API12
+  public underLineColor: number = 0xFFFFFFFF;
+}
+
 @CustomDialog
 export struct EditBoxDialog {
-  private showMessage: string = ''
   private inputMessage: string = ''
-  onTextChange: (msg: string) => void
-  accept: (msg: string) => void
-  controller: CustomDialogController
-  cancel: () => void
-  confirm: () => void
+  @ObjectLink showInfo: EditboxShowInfo;
+  onTextChange?: (msg: string) => void;
+  accept?: (msg: string) => void;
+  controller?: CustomDialogController;
+  cancel?: () => void;
+  confirm?: (msg: string) => void;
 
   build() {
     Column() {
       Row() {
-        TextInput({ text: this.showMessage })
+        TextInput({ text: this.showInfo.defaultMessage })
+          .defaultFocus(true)
           .backgroundColor('#ffffff')
+          .backgroundColor(this.showInfo.backgroundColor)
+          .type(this.showInfo.type)
+          .maxLength(this.showInfo.maxLength)
+          .textAlign(this.showInfo.textAlign)
+          .showUnderline(this.showInfo.showUnderline)
+          .enterKeyType(this.showInfo.enterKeyType)
           .layoutWeight(1)
           .onChange((value) => {
             if (this.onTextChange) {
@@ -45,21 +66,21 @@ export struct EditBoxDialog {
             this.inputMessage = value;
           })
           .onSubmit((value) => {
-            if (this.accept) {
-              this.accept(this.inputMessage);
+            if(this.confirm) {
+              this.confirm(this.inputMessage);
             }
-            this.controller.close();
+            this.controller?.close();
           })
         Blank(8).width(16)
         Button('完成').onClick(() => {
           if (this.accept) {
             this.accept(this.inputMessage);
           }
-          this.controller.close();
+          this.controller?.close();
         })
       }.padding({ left: 8, right: 8, top: 8, bottom: 8 })
       .backgroundColor(Color.Gray)
-
+      .offset({ x : 0, y : 15 })
     }
     .width('100%')
 

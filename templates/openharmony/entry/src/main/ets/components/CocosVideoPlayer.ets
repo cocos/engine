@@ -21,9 +21,8 @@
  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
-****************************************************************************/
-import { WorkerManager } from '../cocos/WorkerManager'
-import { PortProxy } from '../common/PortProxy'
+ ****************************************************************************/
+import { PortProxy } from '../common/PortProxy';
 
 enum EventType {
   PLAYING = 0,
@@ -35,7 +34,13 @@ enum EventType {
   READY_TO_PLAY,
   UPDATE,
   QUIT_FULLSCREEN = 1000
-};
+}
+
+interface param {
+  videoTag?: number,
+  videoEvent?: EventType,
+  args?: number
+}
 
 @Observed
 export class VideoInfo {
@@ -44,22 +49,22 @@ export class VideoInfo {
   public w: number = 0;
   public h: number = 0;
   // url
-  public url: string = ""
-  public viewTag: string = ''
-  public visible: boolean = true
-
+  public url: string | Resource = "";
+  public viewTag: number = 0;
+  public visible: boolean = true;
   public duration: number = 0;
   public currentTime: number = 0;
   public isFullScreen: boolean = false;
-  public currentProgressRate:number | string | PlaybackSpeed;
-
+  public currentProgressRate?: number | string | PlaybackSpeed;
+  public resourceType: number = 0;
+  public isPreparedStart: boolean = false;
   /**
    * https://gitee.com/openharmony/docs/blob/master/zh-cn/application-dev/reference/arkui-ts/ts-media-components-video.md#videocontroller
    *
    */
   public controller: VideoController = new VideoController()
 
-  constructor(x: number, y: number, w: number, h: number, viewTag: string) {
+  constructor(x: number, y: number, w: number, h: number, viewTag: number) {
     this.x = x;
     this.y = y;
     this.w = w;
@@ -68,46 +73,73 @@ export class VideoInfo {
   }
 }
 
-
 @Component
 export struct CocosVideoPlayer {
   @ObjectLink videoInfo: VideoInfo;
-  public workPort: PortProxy;
+  public workPort: PortProxy | null = null;
+
   build() {
-    Video({ src: this.videoInfo.url, controller: this.videoInfo.controller, currentProgressRate:this.videoInfo.currentProgressRate })
+    Video({
+      src: this.videoInfo.url,
+      controller: this.videoInfo.controller,
+      currentProgressRate: this.videoInfo.currentProgressRate as number | string | PlaybackSpeed
+    })
       .position({ x: this.videoInfo.x, y: this.videoInfo.y })
       .width(this.videoInfo.w)
       .height(this.videoInfo.h)
       .controls(false)
-      .autoPlay(true)
+      .autoPlay(false)
       .onStart(() => {
-        this.workPort.postMessage("onVideoEvent",{videoTag:this.videoInfo.viewTag, videoEvent:EventType.PLAYING});
+        this.workPort?.postMessage("onVideoEvent", {
+          videoTag: this.videoInfo.viewTag as number,
+          videoEvent: EventType.PLAYING as EventType
+        } as param);
       })
       .onPause(() => {
-        this.workPort.postMessage("onVideoEvent",{videoTag:this.videoInfo.viewTag, videoEvent:EventType.PAUSED});
+        this.workPort?.postMessage("onVideoEvent", {
+          videoTag: this.videoInfo.viewTag as number,
+          videoEvent: EventType.PAUSED as EventType
+        } as param);
       })
       .onFinish(() => {
-        this.workPort.postMessage("onVideoEvent",{videoTag:this.videoInfo.viewTag, videoEvent:EventType.COMPLETED});
+        this.workPort?.postMessage("onVideoEvent", {
+          videoTag: this.videoInfo.viewTag,
+          videoEvent: EventType.COMPLETED
+        } as param);
       })
-      .onPrepared((event: {
-        duration: number;
-      }) => {
-        this.videoInfo.duration = event.duration;
-        this.workPort.postMessage("onVideoEvent",{videoTag:this.videoInfo.viewTag, videoEvent:EventType.READY_TO_PLAY, args:event.duration});
+      .onPrepared((event): void => {
+        this.videoInfo.isPreparedStart && this.videoInfo.controller.start();
+        
+        this.videoInfo.duration = event?.duration as number;
+        this.workPort?.postMessage("onVideoEvent", {
+          videoTag: this.videoInfo.viewTag,
+          videoEvent: EventType.READY_TO_PLAY,
+          args: event?.duration
+        } as param);
       })
-      .onUpdate((event?: {
-        time: number;
-      }) => {
-        this.videoInfo.currentTime = event.time
-        this.workPort.postMessage("onVideoEvent",{videoTag:this.videoInfo.viewTag, videoEvent:EventType.UPDATE, args:event.time});
+      .onClick((event): void => {
+        this.workPort?.postMessage("onVideoEvent", {
+          videoTag: this.videoInfo.viewTag,
+          videoEvent: EventType.CLICKED
+        } as param);
       })
-      .onFullscreenChange((event?: {
-        fullscreen: boolean;
-      }) => {
-        if (!event.fullscreen) {
-          this.workPort.postMessage("onVideoEvent",{videoTag:this.videoInfo.viewTag, videoEvent:EventType.QUIT_FULLSCREEN});
+      .onUpdate((event) => {
+        this.videoInfo.currentTime = event?.time as number;
+        this.workPort?.postMessage("onVideoEvent", {
+          videoTag: this.videoInfo.viewTag,
+          videoEvent: EventType.UPDATE,
+          args: event?.time
+        } as param);
+      })
+      .onFullscreenChange((event) => {
+        if (!event?.fullscreen) {
+          this.workPort?.postMessage("onVideoEvent", {
+            videoTag: this.videoInfo.viewTag,
+            videoEvent: EventType.QUIT_FULLSCREEN
+          } as param);
         }
-        this.videoInfo.isFullScreen = event.fullscreen
+        this.videoInfo.isFullScreen = event?.fullscreen as boolean;
       })
+      .visibility(this.videoInfo.visible ? Visibility.Visible : Visibility.None)
   }
 }

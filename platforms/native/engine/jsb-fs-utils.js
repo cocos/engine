@@ -176,13 +176,28 @@ const fsUtils = {
     },
 
     readJson (filePath, onComplete) {
-        fs.readJsonFile(filePath, (err, jsonObj) => {
-            if (err) {
-                cc.warn(`Read json failed: path: ${filePath} message: ${err}`);
-                err = new Error(err);
-            }
-            onComplete && onComplete(err, jsonObj);
-        });
+        if (window.oh && window.scriptEngineType === 'napi') {
+            fsUtils.readFile(filePath, 'utf8', (err, text) => {
+                let out = null;
+                if (!err) {
+                    try {
+                        out = JSON.parse(text);
+                    } catch (e) {
+                        cc.warn(`Read json failed: path: ${filePath} message: ${e.message}`);
+                        err = new Error(e.message);
+                    }
+                }
+                onComplete && onComplete(err, out);
+            });
+        } else {
+            fs.readJsonFile(filePath, (err, jsonObj) => {
+                if (err) {
+                    cc.warn(`Read json failed: path: ${filePath} message: ${err}`);
+                    err = new Error(err);
+                }
+                onComplete && onComplete(err, jsonObj);
+            });
+        }
     },
 
     readJsonSync (path) {

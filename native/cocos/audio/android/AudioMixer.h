@@ -119,6 +119,7 @@ public:
     void setParameter(int name, int target, int param, void *value);
 
     void setBufferProvider(int name, AudioBufferProvider *bufferProvider);
+    void setBufferSize(size_t size);
     void process(int64_t pts);
 
     uint32_t trackNames() const { return mTrackNames; }
