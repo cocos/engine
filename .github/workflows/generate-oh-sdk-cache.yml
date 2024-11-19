@@ -45,11 +45,12 @@ jobs:
           if [ ! -d "$HOME/openharmony" ]; then
             mkdir -p $HOME/openharmony
             echo "Download commandline-tools-linux.zip ..."
-            curl -o commandline-tools-linux.zip "https://contentcenter-vali-drcn.dbankcdn.cn/pvt_2/DeveloperAlliance_package_901_9/b8/v3/D1h9RzdeTZ-7Ga_hPu95DA/commandline-tools-linux-x64-5.0.3.906.zip?HW-CC-KV=V1&HW-CC-Date=20241119T025229Z&HW-CC-Expire=7200&HW-CC-Sign=88A1ABE766E5F72E7D78BC405443250A08421906EBB6B57C967D1FB32C47004F"
+            wget https://github.com/dumganhar/oh-sdk-for-ci/releases/download/api-12/commandline-tools-linux-x64-5.0.3.906.zip.001
+            wget https://github.com/dumganhar/oh-sdk-for-ci/releases/download/api-12/commandline-tools-linux-x64-5.0.3.906.zip.002
             echo "Unzip commandline-tools-linux.zip ..."
-            unzip commandline-tools-linux.zip -d $HOME/openharmony > /dev/null
+            7z x commandline-tools-linux-x64-5.0.3.906.zip.001 -o$HOME/openharmony > /dev/null
             cd $HOME/openharmony
             ls -l
-            cd command-line-tools
+            cd commandline-tools-linux-x64-5.0.3.906
             ls -l
           fi
