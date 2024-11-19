@@ -149,4 +149,4 @@ void PcmAudioService::resume() {
         OH_AudioRenderer_Start(_audioRenderer);
     }
 }
-} // namespace cocos2d
+} // namespace cc
