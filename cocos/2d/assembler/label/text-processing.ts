@@ -416,6 +416,8 @@ export class TextProcessing {
             right = Math.max(right, offsetX + shadowWidth);
             top = Math.max(top, offsetY + shadowWidth);
             bottom = Math.max(bottom, -offsetY + shadowWidth);
+            outputLayoutData.contentSizeExtend.width = left + right;
+            outputLayoutData.contentSizeExtend.height = top + bottom;
         }
         if (style.isItalic) {
             // 0.0174532925 = 3.141592653 / 180
@@ -447,11 +449,12 @@ export class TextProcessing {
     }
 
     private _calculateFillTextStartPosition (style: TextStyle, layout: TextLayout, outputLayoutData: TextOutputLayoutData): void {
+        const fs = this._fontScale;
         let labelX = 0;
         if (layout.horizontalAlign === HorizontalTextAlignment.RIGHT as number) {
-            labelX = outputLayoutData.canvasSize.width - outputLayoutData.canvasPadding.width;
+            labelX = outputLayoutData.canvasSize.width - outputLayoutData.canvasPadding.width * fs;
         } else if (layout.horizontalAlign === HorizontalTextAlignment.CENTER as number) {
-            labelX = (outputLayoutData.canvasSize.width - outputLayoutData.canvasPadding.width) / 2;
+            labelX = (outputLayoutData.canvasSize.width - outputLayoutData.canvasPadding.width * fs) / 2;
         }
 
         const lineHeight = this._getLineHeight(layout.lineHeight, style.actualFontSize, style.fontSize);
@@ -460,7 +463,7 @@ export class TextProcessing {
         let firstLinelabelY = style.actualFontSize * (1 - BASELINE_RATIO / 2);
         if (layout.verticalAlign !== VerticalTextAlignment.TOP as number) {
             // free space in vertical direction
-            let blank = drawStartY + outputLayoutData.canvasPadding.height + style.actualFontSize - outputLayoutData.canvasSize.height;
+            let blank = drawStartY + outputLayoutData.canvasPadding.height * fs + style.actualFontSize - outputLayoutData.canvasSize.height;
             if (layout.verticalAlign === VerticalTextAlignment.BOTTOM as number) {
                 // Unlike BMFont, needs to reserve space below.
                 blank += BASELINE_RATIO / 2 * style.actualFontSize;
@@ -474,7 +477,7 @@ export class TextProcessing {
 
         firstLinelabelY += _BASELINE_OFFSET * style.actualFontSize;
 
-        outputLayoutData.startPosition.set(labelX + outputLayoutData.canvasPadding.x, firstLinelabelY + outputLayoutData.canvasPadding.y);
+        outputLayoutData.startPosition.set(labelX + outputLayoutData.canvasPadding.x * fs, firstLinelabelY + outputLayoutData.canvasPadding.y * fs);
     }
 
     private _updateTexture (
