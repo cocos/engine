@@ -279,8 +279,8 @@ jobs:
           if [ ! -d "$HOME/openharmony" ]; then
             mkdir -p $HOME/openharmony
             echo "Download commandline-tools-linux.zip ..."
-            wget https://github.com/dumganhar/oh-sdk-for-ci/releases/download/api-12/commandline-tools-linux-x64-5.0.3.906.zip.001
-            wget https://github.com/dumganhar/oh-sdk-for-ci/releases/download/api-12/commandline-tools-linux-x64-5.0.3.906.zip.002
+            wget -q https://github.com/dumganhar/oh-sdk-for-ci/releases/download/api-12/commandline-tools-linux-x64-5.0.3.906.zip.001
+            wget -q https://github.com/dumganhar/oh-sdk-for-ci/releases/download/api-12/commandline-tools-linux-x64-5.0.3.906.zip.002
             echo "Unzip commandline-tools-linux.zip ..."
             7z x commandline-tools-linux-x64-5.0.3.906.zip.001 -o$HOME/openharmony > /dev/null
             cd $HOME/openharmony
