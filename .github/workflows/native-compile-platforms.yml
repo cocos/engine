@@ -233,6 +233,25 @@ jobs:
       (! contains(github.event.pull_request.body, '[X] does not change any runtime related code or build configuration'))
     runs-on: ubuntu-latest
     steps:
+      - name: Before free space
+          run: |
+            df -h
+
+      - name: Free Disk Space (Ubuntu)
+        uses: jlumbroso/free-disk-space@d5af243ce7bacb67384aa6c5b1fc5f169e30903e
+        with:
+          tool-cache: true
+          android: true
+          dotnet: true
+          haskell: true
+          large-packages: true
+          docker-images: true
+          swap-storage: true
+
+      - name: After free space
+        run: |
+          df -h
+
       - uses: actions/checkout@v4
       - name: Download external libraries
         shell: bash
