@@ -23,11 +23,15 @@ THE SOFTWARE.
 ****************************************************************************/
 #pragma once
 
-#define COCOS_MAJOR_VERSION     3
-#define COCOS_MINJOR_VERSION    8
-#define COCOS_PATCH_VERSION     5
-#define COCOS_VERSION_STRING    "3.8.5"
-#define COCOS_VERSION_DEFINED   1
-#define COCOS_VERSION           30805
+enum {
+    COCOS_MAJOR_VERSION = 3,
+    COCOS_MINJOR_VERSION = 8,
+    COCOS_PATCH_VERSION = 6
+};
+#define COCOS_VERSION_STRING "3.8.6"
+enum {
+    COCOS_VERSION_DEFINED = 1,
+    COCOS_VERSION = 30806
+};
 
 // #define COCOS_PRE_RELEASE       "release"
