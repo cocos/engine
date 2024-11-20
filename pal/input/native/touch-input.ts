@@ -40,8 +40,8 @@ class TouchEventElement {
 }
 
 class TouchEventCache {
-    public _events: TouchEventElement[] = [];
-    public _length = 0;
+    private _events: TouchEventElement[] = [];
+    private _length = 0;
 
     push (eventType: InputEventType, changedTouches: Touch[], windowId: number): void {
         const events = this._events;
