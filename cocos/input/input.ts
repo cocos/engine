@@ -369,27 +369,27 @@ export class Input {
             this._mouseInput$.on(InputEventType.MOUSE_DOWN, (event): void => {
                 this._needSimulateTouchMoveEvent$ = true;
                 this._simulateEventTouch$(event);
-                this._dispatchMouseEvent$(event);
+                this._dispatchEventMouse$(event);
             });
             this._mouseInput$.on(InputEventType.MOUSE_MOVE, (event): void => {
                 if (this._needSimulateTouchMoveEvent$) {
                     this._simulateEventTouch$(event);
                 }
-                this._dispatchMouseEvent$(event);
+                this._dispatchEventMouse$(event);
             });
             this._mouseInput$.on(InputEventType.MOUSE_UP, (event): void => {
                 this._needSimulateTouchMoveEvent$ = false;
                 this._simulateEventTouch$(event);
-                this._dispatchMouseEvent$(event);
+                this._dispatchEventMouse$(event);
             });
             this._mouseInput$.on(InputEventType.MOUSE_WHEEL, (event): void => {
-                this._dispatchMouseEvent$(event);
+                this._dispatchEventMouse$(event);
             });
             this._mouseInput$.on(InputEventType.MOUSE_LEAVE, (event): void => {
-                this._dispatchMouseEvent$(event);
+                this._dispatchEventMouse$(event);
             });
             this._mouseInput$.on(InputEventType.MOUSE_ENTER, (event): void => {
-                this._dispatchMouseEvent$(event);
+                this._dispatchEventMouse$(event);
             });
         }
 
@@ -470,7 +470,7 @@ export class Input {
         }
     }
 
-    private _dispatchMouseEvent$ (event: Event): void {
+    private _dispatchEventMouse$ (event: Event): void {
         this._emitEvent$(event);
     }
 
