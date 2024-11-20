@@ -110,4 +110,8 @@ export class MouseInputSource {
     public on (eventType: InputEventType, callback: MouseCallback, target?: any): void {
         this._eventTarget$.on(eventType, callback, target);
     }
+
+    public dispatchEventsInCache (): void {
+        // Do nothing
+    }
 }

@@ -92,4 +92,8 @@ export class TouchInputSource {
     public on (eventType: InputEventType, callback: TouchCallback, target?: any): void {
         this._eventTarget$.on(eventType, callback, target);
     }
+
+    public dispatchEventsInCache (): void {
+        // Do nothing
+    }
 }
