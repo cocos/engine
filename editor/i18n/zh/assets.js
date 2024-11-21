@@ -15,6 +15,7 @@ module.exports = {
             skin: '皮肤',
             animation: '动画',
             loop: '循环',
+            timeScale: '速率',
         },
     },
 

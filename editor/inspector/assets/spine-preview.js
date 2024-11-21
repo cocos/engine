@@ -16,6 +16,10 @@ exports.template = /* html */`
                 <ui-label slot="label" value="i18n:ENGINE.inspector.spine.loop"></ui-label>
                 <ui-checkbox slot="content" class="loop-check-box"></ui-checkbox>
             </ui-prop>
+            <ui-prop class="timeScale">
+                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.timeScale"></ui-label>
+                <ui-slider slot="content" class="time-scale-slider" value="1"></ui-slider>
+            </ui-prop>
         </div>
         <div class="image">
             <canvas class="canvas"></canvas>
@@ -46,16 +50,14 @@ exports.style = /* css */`
 .preview > .control {
     padding-top: 8px;
     padding-bottom: 8px;
+    padding-right: 8px;
     display: flex;
-    width: 100%;
     flex-direction: column;
-    align-items: flex-start;
 }
 .preview > .control[hidden] {
     display: none;
 }
 .preview > .control > ui-prop {
-    min-width: 250px;
 }
 .preview > .image {
     height: var(--inspector-footer-preview-height, 200px);
@@ -102,6 +104,7 @@ exports.$ = {
     stop: '.stop',
     duration: '.duration',
     loop: '.loop-check-box',
+    timeScale: '.time-scale-slider',
     animationCtrl: '.anim-control',
 };
 
@@ -191,6 +194,7 @@ const Elements = {
         close() {
             const panel = this;
 
+            callFunction('stop');
             panel.resizeObserver.unobserve(panel.$.image);
         },
     },
@@ -216,11 +220,11 @@ const Elements = {
 
             panel.animationIndex = 0;
             panel.$.skinSelectPro.addEventListener('confirm', (event) => {
-                callFunction('setSkinIndex', Number(event.detail)).then(() => {});
+                callFunction('setSkinIndex', Number(event.detail));
             });
             panel.$.animationSelectPro.addEventListener('confirm', (event) => {
                 panel.animationIndex = Number(event.detail);
-                callFunction('play', panel.animationIndex).then(() => {});
+                callFunction('play', panel.animationIndex);
             });
             panel.spinUpdate = Elements.spine.update.bind(panel);
         },
@@ -229,6 +233,7 @@ const Elements = {
 
             if (!info) {
                 panel.$.loop.setAttribute('disabled', '');
+                panel.$.timeScale.setAttribute('disabled', '');
                 panel.$.play.setAttribute('disabled', '');
                 panel.$.stop.setAttribute('disabled', '');
                 panel.$.skinSelectPro.setAttribute('disabled', '');
@@ -237,6 +242,7 @@ const Elements = {
             }
 
             panel.$.loop.removeAttribute('disabled');
+            panel.$.timeScale.removeAttribute('disabled');
             panel.$.play.removeAttribute('disabled');
             panel.$.stop.removeAttribute('disabled');
             panel.$.skinSelectPro.removeAttribute('disabled');
@@ -246,7 +252,7 @@ const Elements = {
             Elements.spine.updateEnum.call(panel, panel.$.animationSelectPro, info.animation);
             Elements.spine.updateDuration.call(panel, 0, info.animation.durations[panel.animationIndex]);
             Elements.control.update.call(panel, false);
-            Elements.control.updateLoop.call(panel, info.loop);
+            Elements.control.updateInfo.call(panel, info);
             panel.isPreviewDataDirty = true;
         },
         updateDuration(delay, duration) {
@@ -259,23 +265,27 @@ const Elements = {
         ready() {
             const panel = this;
 
+            panel.$.timeScale.addEventListener('change', (event) => {
+                callFunction('setTimeScale', Number(event.target.value));
+            });
             panel.$.loop.addEventListener('confirm', (event) => {
-                callFunction('setLoop', Boolean(event.target.value)).then(() => {});
+                callFunction('setLoop', Boolean(event.target.value));
             });
             panel.$.play.addEventListener('click', () => {
-                callFunction('play', panel.animationIndex).then(() => {});
+                callFunction('play', panel.animationIndex);
             });
             panel.$.pause.addEventListener('confirm', (event) => {
-                callFunction('pause').then(() => {});
+                callFunction('pause');
             });
             panel.$.stop.addEventListener('confirm', (event) => {
-                callFunction('stop').then(() => {});
+                callFunction('stop');
             });
         },
-        updateLoop(loop) {
+        updateInfo(info) {
             const panel = this;
 
-            panel.$.loop.setAttribute('value', Boolean(loop));
+            panel.$.loop.setAttribute('value', Boolean(info.loop));
+            panel.$.timeScale.setAttribute('value', Number(info.timeScale));
         },
         update(playing) {
             const panel = this;
@@ -334,7 +344,6 @@ exports.methods = {
 
     onAnimationUpdate(playing, delay, duration) {
         const panel = this;
-        // this.$.playState.setAttribute('');
         Elements.spine.updateDuration.call(panel, delay, duration);
         Elements.control.update.call(panel, playing);
         panel.isPreviewDataDirty = true;
