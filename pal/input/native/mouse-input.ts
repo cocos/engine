@@ -60,14 +60,7 @@ class MouseEventCache {
         e.type = eventType;
         const cachedEvent = e.mouseEvent;
         if (mouseEvent) {
-            cachedEvent.x = mouseEvent.x;
-            cachedEvent.y = mouseEvent.y;
-            cachedEvent.xDelta = mouseEvent.xDelta;
-            cachedEvent.yDelta = mouseEvent.yDelta;
-            cachedEvent.button = mouseEvent.button;
-            cachedEvent.windowId = mouseEvent.windowId;
-            cachedEvent.wheelDeltaX = mouseEvent.wheelDeltaX;
-            cachedEvent.wheelDeltaY = mouseEvent.wheelDeltaY;
+            Object.assign(cachedEvent, mouseEvent);
         } else {
             cachedEvent.x = cachedEvent.y = cachedEvent.xDelta = cachedEvent.yDelta = 0;
             cachedEvent.button = cachedEvent.windowId = cachedEvent.wheelDeltaX = cachedEvent.wheelDeltaY = 0;

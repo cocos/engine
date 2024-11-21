@@ -59,19 +59,9 @@ class TouchEventCache {
             const src = changedTouches[i];
             let dst = cachedTouches[i] as any;
             if (!dst) {
-                (cachedTouches[i] as any) = dst = {
-                    identifier: 0,
-                    clientX: 0,
-                    clientY: 0,
-                    pageX: 0,
-                    pageY: 0,
-                };
+                (cachedTouches[i] as any) = dst = {};
             }
-            dst.identifier = src.identifier;
-            dst.clientX = src.clientX;
-            dst.clientY = src.clientY;
-            dst.pageX = src.pageX;
-            dst.pageY = src.pageY;
+            Object.assign(dst, src);
         }
 
         ++this._length;
