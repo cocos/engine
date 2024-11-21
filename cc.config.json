@@ -478,13 +478,6 @@
             "value": false,
             "internal": false
         },
-        "BAIDU": {
-            "comment": "Running in the baidu's mini game.",
-            "type": "boolean",
-            "value": false,
-            "ccGlobal": true,
-            "internal": false
-        },
         "XIAOMI": {
             "comment": "Running in the xiaomi's quick game.",
             "type": "boolean",
@@ -539,27 +532,6 @@
             "ccGlobal": true,
             "internal": false
         },
-        "COCOSPLAY": {
-            "comment": "Running in the cocosplay.",
-            "type": "boolean",
-            "value": false,
-            "ccGlobal": true,
-            "internal": false
-        },
-        "QTT": {
-            "comment": "Running in the qtt's quick game.",
-            "type": "boolean",
-            "value": false,
-            "ccGlobal": true,
-            "internal": false
-        },
-        "LINKSURE": {
-            "comment": "Running in the linksure's quick game.",
-            "type": "boolean",
-            "value": false,
-            "ccGlobal": true,
-            "internal": false
-        },
         "MIGU": {
             "comment": "Running in the migu's quick game.",
             "type": "boolean",
@@ -567,7 +539,6 @@
             "ccGlobal": true,
             "internal": false
         },
-
         "EDITOR": {
             "comment": "Running in the editor.",
             "type": "boolean",
@@ -622,8 +593,6 @@
             "value": false,
             "internal": true
         },
-
-
         "DEV": {
             "comment": "Running in the editor or preview.",
             "type": "boolean",
@@ -635,14 +604,14 @@
         "MINIGAME": {
             "comment": "Running in mini game.",
             "type": "boolean",
-            "value": "$WECHAT || $WECHAT_MINI_PROGRAM || $BAIDU || $XIAOMI || $ALIPAY || $TAOBAO || $TAOBAO_MINIGAME || $BYTEDANCE",
+            "value": "$WECHAT || $WECHAT_MINI_PROGRAM || $XIAOMI || $ALIPAY || $TAOBAO || $TAOBAO_MINIGAME || $BYTEDANCE",
             "ccGlobal": true,
             "internal": false
         },
         "RUNTIME_BASED": {
             "comment": "Running in runtime based environment.",
             "type": "boolean",
-            "value": "$OPPO || $VIVO || $HUAWEI || $COCOSPLAY || $QTT || $LINKSURE || $MIGU",
+            "value": "$OPPO || $VIVO || $HUAWEI || $MIGU",
             "ccGlobal": true,
             "internal": false
         },

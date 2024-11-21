@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-import { ALIPAY, RUNTIME_BASED, BYTEDANCE, WECHAT, LINKSURE, QTT, COCOSPLAY, HUAWEI, EDITOR, VIVO, TAOBAO, TAOBAO_MINIGAME, WECHAT_MINI_PROGRAM } from 'internal:constants';
+import { ALIPAY, RUNTIME_BASED, BYTEDANCE, WECHAT, HUAWEI, EDITOR, TAOBAO, TAOBAO_MINIGAME, WECHAT_MINI_PROGRAM } from 'internal:constants';
 import { systemInfo } from 'pal/system-info';
 import { WebGLStateCache } from './webgl-state-cache';
 import { WebGLTexture } from './webgl-texture';
@@ -149,7 +149,7 @@ export function getExtensions (gl: WebGLRenderingContext): IWebGLExtensions {
 
         if (RUNTIME_BASED) {
             // VAO implementations doesn't work well on some runtime platforms
-            if (LINKSURE || QTT || COCOSPLAY || HUAWEI) {
+            if (HUAWEI) {
                 res.OES_vertex_array_object$ = null;
             }
         }

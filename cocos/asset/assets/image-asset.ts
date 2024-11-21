@@ -24,7 +24,7 @@
 
 // @ts-check
 import { ccclass, override } from 'cc.decorator';
-import { EDITOR, ALIPAY, XIAOMI, JSB, TEST, BAIDU, TAOBAO, TAOBAO_MINIGAME, WECHAT_MINI_PROGRAM, BYTEDANCE } from 'internal:constants';
+import { EDITOR, ALIPAY, XIAOMI, JSB, TEST, TAOBAO, TAOBAO_MINIGAME, WECHAT_MINI_PROGRAM, BYTEDANCE } from 'internal:constants';
 import { Device, Format, FormatFeatureBit, deviceManager } from '../../gfx';
 import { Asset } from './asset';
 import { PixelFormat } from './asset-enum';
@@ -163,7 +163,7 @@ function fetchImageSource (imageSource: ImageSource): HTMLCanvasElement | HTMLIm
 
 // 返回该图像源是否是平台提供的图像对象。
 function isNativeImage (imageSource: ImageSource): imageSource is (HTMLImageElement | HTMLCanvasElement | ImageBitmap) {
-    if (ALIPAY || TAOBAO || TAOBAO_MINIGAME || XIAOMI || BAIDU || WECHAT_MINI_PROGRAM || BYTEDANCE) {
+    if (ALIPAY || TAOBAO || TAOBAO_MINIGAME || XIAOMI || WECHAT_MINI_PROGRAM || BYTEDANCE) {
         // We're unable to grab the constructors of Alipay native image or canvas object.
         return !('_data' in imageSource);
     }

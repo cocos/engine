@@ -43,7 +43,9 @@ markAsWarning(sys, 'sys', [
 ]);
 
 // deprecate languageCode field
-replaceProperty(sys, 'sys',
+replaceProperty(
+    sys,
+    'sys',
     ['UNKNOWN', 'ENGLISH', 'CHINESE', 'FRENCH', 'ITALIAN',
         'GERMAN', 'SPANISH', 'DUTCH', 'RUSSIAN', 'KOREAN',
         'JAPANESE', 'HUNGARIAN', 'PORTUGUESE', 'ARABIC', 'NORWEGIAN',
@@ -52,19 +54,25 @@ replaceProperty(sys, 'sys',
         newName: item,
         target: sys.Language,
         targetName: 'sys.Language',
-    })));
+    })),
+);
 
 // deprecate os field
-replaceProperty(sys, 'sys',
+replaceProperty(
+    sys,
+    'sys',
     ['UNKNOWN', 'IOS', 'ANDROID', 'WINDOWS', 'LINUX', 'OSX'].map((item) => ({
         name: `OS_${item}`,
         newName: item,
         target: sys.OS,
         targetName: 'sys.OS',
-    })));
+    })),
+);
 
 // deprecate browserType field
-replaceProperty(sys, 'sys',
+replaceProperty(
+    sys,
+    'sys',
     ['UNKNOWN', 'WECHAT', 'ANDROID', 'IE', 'EDGE', 'QQ', 'MOBILE_QQ',
         'UC', 'UCBS', 'BAIDU_APP', 'BAIDU', 'MAXTHON', 'OPERA',
         'OUPENG', 'MIUI', 'FIREFOX', 'SAFARI', 'CHROME', 'LIEBAO',
@@ -73,7 +81,8 @@ replaceProperty(sys, 'sys',
         newName: item,
         target: sys.BrowserType,
         targetName: 'sys.BrowserType',
-    })));
+    })),
+);
 replaceProperty(sys, 'sys', [
     {
         name: 'BROWSER_TYPE_360',
@@ -84,14 +93,17 @@ replaceProperty(sys, 'sys', [
 ]);
 
 // deprecate platform field
-replaceProperty(sys, 'sys',
+replaceProperty(
+    sys,
+    'sys',
     ['UNKNOWN', 'EDITOR_PAGE', 'EDITOR_CORE', 'MOBILE_BROWSER', 'DESKTOP_BROWSER', 'WIN32', 'MACOS', 'IOS', 'ANDROID', 'OHOS',
-        'WECHAT_GAME', 'BAIDU_MINI_GAME', 'XIAOMI_QUICK_GAME', 'ALIPAY_MINI_GAME', 'BYTEDANCE_MINI_GAME',
-        'OPPO_MINI_GAME', 'VIVO_MINI_GAME', 'HUAWEI_QUICK_GAME', 'COCOSPLAY',  'LINKSURE_MINI_GAME', 'QTT_MINI_GAME'].map((item) => ({
+        'WECHAT_GAME', 'XIAOMI_QUICK_GAME', 'ALIPAY_MINI_GAME', 'BYTEDANCE_MINI_GAME',
+        'OPPO_MINI_GAME', 'VIVO_MINI_GAME', 'HUAWEI_QUICK_GAME'].map((item) => ({
         name: item,
         target: sys.Platform,
         targetName: 'sys.Platform',
-    })));
+    })),
+);
 
 // remove platform field
 replaceProperty(sys, 'sys', [
@@ -108,11 +120,14 @@ replaceProperty(sys, 'sys', [
         targetName: 'sys.Platform',
     },
 ]);
-removeProperty(sys, 'sys',
+removeProperty(
+    sys,
+    'sys',
     ['LINUX', 'BLACKBERRY', 'NACL', 'EMSCRIPTEN', 'TIZEN',
         'WINRT', 'WP8', 'QQ_PLAY', 'FB_PLAYABLE_ADS'].map((item) => ({
         name: item,
-    })));
+    })),
+);
 replaceProperty(sys, 'sys', [
     {
         name: 'windowPixelResolution',

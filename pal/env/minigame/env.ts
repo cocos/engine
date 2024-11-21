@@ -40,9 +40,6 @@ export function loadJsFile (path: string): any {
     if (XIAOMI) {
         return require(`../../${path}`);
     }
-    if (BAIDU) {
-        return __baiduRequire(`./${path}`);
-    }
     if (WECHAT || WECHAT_MINI_PROGRAM) {
         return __wxRequire(path);
     }
