@@ -194,7 +194,7 @@ const Elements = {
         close() {
             const panel = this;
 
-            callFunction('stop').then(() => {});
+            callFunction('stop');
             panel.resizeObserver.unobserve(panel.$.image);
         },
     },
@@ -220,11 +220,11 @@ const Elements = {
 
             panel.animationIndex = 0;
             panel.$.skinSelectPro.addEventListener('confirm', (event) => {
-                callFunction('setSkinIndex', Number(event.detail)).then(() => {});
+                callFunction('setSkinIndex', Number(event.detail));
             });
             panel.$.animationSelectPro.addEventListener('confirm', (event) => {
                 panel.animationIndex = Number(event.detail);
-                callFunction('play', panel.animationIndex).then(() => {});
+                callFunction('play', panel.animationIndex);
             });
             panel.spinUpdate = Elements.spine.update.bind(panel);
         },
@@ -266,19 +266,19 @@ const Elements = {
             const panel = this;
 
             panel.$.timeScale.addEventListener('change', (event) => {
-                callFunction('setTimeScale', Number(event.target.value)).then(() => {});
+                callFunction('setTimeScale', Number(event.target.value));
             });
             panel.$.loop.addEventListener('confirm', (event) => {
-                callFunction('setLoop', Boolean(event.target.value)).then(() => {});
+                callFunction('setLoop', Boolean(event.target.value));
             });
             panel.$.play.addEventListener('click', () => {
-                callFunction('play', panel.animationIndex).then(() => {});
+                callFunction('play', panel.animationIndex);
             });
             panel.$.pause.addEventListener('confirm', (event) => {
-                callFunction('pause').then(() => {});
+                callFunction('pause');
             });
             panel.$.stop.addEventListener('confirm', (event) => {
-                callFunction('stop').then(() => {});
+                callFunction('stop');
             });
         },
         updateInfo(info) {
