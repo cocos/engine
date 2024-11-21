@@ -14,7 +14,8 @@ module.exports = {
         spine: {
             skin: 'Skin',
             animation: 'Animation',
-            loop: 'loop',
+            loop: 'Loop',
+            timeScale: 'Rate',
         },
     },
 
