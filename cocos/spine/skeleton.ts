@@ -353,7 +353,6 @@ export class Skeleton extends UIRenderer {
      */
     @editable
     @type(SkeletonData)
-    @displayName('SkeletonData')
     get skeletonData (): SkeletonData | null {
         return this._skeletonData;
     }
@@ -374,9 +373,7 @@ export class Skeleton extends UIRenderer {
     /**
      * @engineInternal
      */
-    @displayName('Default Skin')
     @type(DefaultSkinsEnum)
-    @tooltip('i18n:COMPONENT.skeleton.default_skin')
     get _defaultSkinIndex (): number {
         if (this.skeletonData) {
             const skinsEnum = this.skeletonData.getSkinsEnum();
@@ -425,9 +422,7 @@ export class Skeleton extends UIRenderer {
     /**
      * @engineInternal
      */
-    @displayName('Animation')
     @type(SpineDefaultAnimsEnum)
-    @tooltip('i18n:COMPONENT.skeleton.animation')
     get _animationIndex (): number {
         const animationName = EDITOR_NOT_IN_PREVIEW ? this.defaultAnimation : this.animation;
         if (this.skeletonData) {
@@ -475,8 +470,6 @@ export class Skeleton extends UIRenderer {
      * @en Animation mode, with options for real-time mode, private cached, or public cached mode.
      * @zh 动画模式，可选实时模式，私有 cached 或公共 cached 模式。
      */
-    @displayName('Animation Cache Mode')
-    @tooltip('i18n:COMPONENT.skeleton.animation_cache_mode')
     @editable
     @type(SpineAnimationCacheMode)
     get defaultCacheMode (): SpineAnimationCacheMode {
@@ -492,7 +485,6 @@ export class Skeleton extends UIRenderer {
      * @zh 是否启用 alpha 预乘。
      */
     @editable
-    @tooltip('i18n:COMPONENT.skeleton.premultipliedAlpha')
     get premultipliedAlpha (): boolean { return this._premultipliedAlpha; }
     set premultipliedAlpha (v: boolean) {
         if (v !== this._premultipliedAlpha) {
@@ -507,14 +499,12 @@ export class Skeleton extends UIRenderer {
      * @zh 是否循环播放当前骨骼动画。
      */
     @serializable
-    @tooltip('i18n:COMPONENT.skeleton.loop')
     public loop = true;
 
     /**
      * @en The time scale of this skeleton.
      * @zh 当前骨骼中所有动画的时间缩放率。
      */
-    @tooltip('i18n:COMPONENT.skeleton.time_scale')
     @editable
     get timeScale (): number { return this._timeScale; }
     set timeScale (value) {
@@ -530,7 +520,6 @@ export class Skeleton extends UIRenderer {
      * @zh 是否启用染色效果。
      */
     @editable
-    @tooltip('i18n:COMPONENT.skeleton.use_tint')
     get useTint (): boolean { return this._useTint; }
     set useTint (value) {
         if (value !== this._useTint) {
@@ -545,7 +534,6 @@ export class Skeleton extends UIRenderer {
      * @zh 如果渲染大量相同纹理，且结构简单的骨骼动画，开启合批可以降低 draw call 数量提升渲染性能。
      */
     @editable
-    @tooltip('i18n:COMPONENT.skeleton.enabled_batch')
     get enableBatch (): boolean { return this._enableBatch; }
     set enableBatch (value) {
         if (value !== this._enableBatch) {
@@ -561,7 +549,6 @@ export class Skeleton extends UIRenderer {
      * 当前动画组件维护的挂点数组。一个挂点组件包括动画节点路径和目标节点。
      */
     @type([SpineSocket])
-    @tooltip('i18n:animation.sockets')
     get sockets (): SpineSocket[] {
         return this._sockets;
     }
@@ -579,7 +566,6 @@ export class Skeleton extends UIRenderer {
      * @zh 是否显示 slot 的 debug 信息。
      */
     @editable
-    @tooltip('i18n:COMPONENT.skeleton.debug_slots')
     get debugSlots (): boolean { return this._debugSlots; }
     set debugSlots (v: boolean) {
         if (v !== this._debugSlots) {
@@ -594,7 +580,6 @@ export class Skeleton extends UIRenderer {
      * @zh 是否显示 bone 的 debug 信息。
      */
     @editable
-    @tooltip('i18n:COMPONENT.skeleton.debug_bones')
     get debugBones (): boolean { return this._debugBones; }
     set debugBones (v: boolean) {
         if (v !== this._debugBones) {
@@ -609,7 +594,6 @@ export class Skeleton extends UIRenderer {
      * @zh 是否显示 mesh 的 debug 信息。
      */
     @editable
-    @tooltip('i18n:COMPONENT.skeleton.debug_mesh')
     get debugMesh (): boolean { return this._debugMesh; }
     set debugMesh (value) {
         if (value !== this._debugMesh) {

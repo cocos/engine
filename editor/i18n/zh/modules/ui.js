@@ -224,5 +224,64 @@ module.exports = {
                 },
             },
         },
+        'sp': {
+            'Skeleton': {
+                properties: {
+                    __extends__: 'classes.cc.UIRenderer.properties',
+                    'skeletonData': {
+                        displayName: 'SkeletonData',
+                        tooltip: '骨骼信息数据，拖拽 Spine 导出的骨骼动画信息 json 资源到这里来开始使用',
+                    },
+                    '_defaultSkinIndex': {
+                        displayName: 'Default skin',
+                        tooltip: '选择默认的皮肤',
+                    },
+                    '_animationIndex': {
+                        displayName: 'Animation',
+                        tooltip: '正在播放的动画名称',
+                    },
+                    'defaultCacheMode': {
+                        displayName: 'Animation Cache Mode',
+                        tooltip: '动画模式，可选实时模式，私有 cached 或公共 cached 模式',
+                    },
+                    'loop': {
+                        displayName: 'Loop',
+                        tooltip: '是否循环播放当前动画',
+                    },
+                    'timeScale': {
+                        displayName: 'Time Scale',
+                        tooltip: '当前骨骼中所有动画的时间缩放率',
+                    },
+                    'debugSlots': {
+                        displayName: 'Debug Slots',
+                        tooltip: '是否显示 slot 的 debug 信息',
+                    },
+                    'debugBones': {
+                        displayName: 'Debug Bones',
+                        tooltip: '是否显示 bone 的 debug 信息',
+                    },
+                    'debugMesh': {
+                        displayName: 'Debug Mesh',
+                        tooltip: '是否显示 mesh 的 debug 信息',
+                    },
+                    'useTint': {
+                        displayName: 'Use Tint',
+                        tooltip: '是否启用染色效果',
+                    },
+                    'premultipliedAlpha': {
+                        displayName: 'Premultiplied Alpha',
+                        tooltip: '是否启用贴图预乘',
+                    },
+                    'enableBatch': {
+                        displayName: 'Enable Batch',
+                        tooltip: '如果渲染大量相同纹理，且结构简单的骨骼动画，开启合批可以降低 draw call 数量提升渲染性能',
+                    },
+                    'sockets': {
+                        displayName: 'Sockets',
+                        tooltip: '当前动画组件维护的挂点数组。一个挂点组件包括动画节点路径和目标节点',
+                    },
+                },
+            },
+        },
     },
 };

@@ -653,16 +653,6 @@ module.exports = link(mixin({
         design_size: '开放数据域的设计分辨率，禁止在运行时动态更新',
         fps: '主域更新开放数据域贴图的频率',
     },
-    skeleton: {
-        skeleton_data: '骨骼信息数据，拖拽 Spine 导出的骨骼动画信息 json 资源到这里来开始使用',
-        default_skin: '选择默认的皮肤',
-        animation: '正在播放的动画名称',
-        loop: '是否循环播放当前动画',
-        time_scale: '当前骨骼中所有动画的时间缩放率',
-        debug_slots: '是否显示 slot 的 debug 信息',
-        debug_bones: '是否显示 bone 的 debug 信息',
-        premultipliedAlpha: '是否启用贴图预乘',
-    },
     dragon_bones: {
         dragon_bones_asset: '骨骼信息数据，拖拽 Dragon Bones 导出的骨骼动画信息 json 资源到这里来开始使用',
         dragon_bones_atlas_asset: 'Texture 信息数据，拖拽 Dragon Bones 导出的 Texture 信息 json 资源到这里来开始使用',

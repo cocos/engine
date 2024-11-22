@@ -236,5 +236,66 @@ module.exports = {
                 },
             },
         },
+        'sp': {
+            'Skeleton': {
+                properties: {
+                    __extends__: 'classes.cc.UIRenderer.properties',
+                    'skeletonData': {
+                        displayName: 'SkeletonData',
+                        tooltip: 'The skeleton data contains the skeleton information, <br>drag the json file exported from Spine to get started.',
+                    },
+                    '_defaultSkinIndex': {
+                        displayName: 'Default skin',
+                        tooltip: 'Choose the default skin.',
+                    },
+                    '_animationIndex': {
+                        displayName: 'Animation',
+                        tooltip: 'The name of current playing animation.',
+                    },
+                    'defaultCacheMode': {
+                        displayName: 'Animation Cache Mode',
+                        tooltip: 'Animation mode, with options for real-time mode, <br>private cached, or public cached mode.',
+                    },
+                    'loop': {
+                        displayName: 'Loop',
+                        tooltip: 'Whether loop current animation',
+                    },
+                    'timeScale': {
+                        displayName: 'Time Scale',
+                        tooltip: 'The time scale of animations of this skeleton',
+                    },
+                    'debugSlots': {
+                        displayName: 'Debug Slots',
+                        tooltip: 'Indicates whether show debug slots.',
+                    },
+                    'debugBones': {
+                        displayName: 'Debug Bones',
+                        tooltip: 'Indicates whether show debug bones.',
+                    },
+                    'debugMesh': {
+                        displayName: 'Debug Mesh',
+                        tooltip: 'Indicates whether open debug mesh.',
+                    },
+                    'useTint': {
+                        displayName: 'Use Tint',
+                        tooltip: 'Enabled two color tint.',
+                    },
+                    'premultipliedAlpha': {
+                        displayName: 'Premultiplied Alpha',
+                        tooltip: 'Indicates whether to enable premultiplied alpha.',
+                    },
+                    'enableBatch': {
+                        displayName: 'Enable Batch',
+                        tooltip: 'If rendering a large number of identical textures and simple skeletal animations,<br>' +
+                            'enabling batching can reduce the number of draw calls and improve rendering performance.',
+                    },
+                    'sockets': {
+                        displayName: 'Sockets',
+                        tooltip: 'The bone sockets this animation component maintains.<br>' +
+                            'A SpineSocket object contains a path reference to bone, and a target node.',
+                    },
+                },
+            },
+        },
     },
 };
