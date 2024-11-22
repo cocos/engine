@@ -44,6 +44,8 @@ enum MeshBufferSharedBufferView {
 
 const IA_POOL_USED_SCALE = 1 / 2;
 
+const NUM_GFX_BUFFERS = 2;
+
 /**
  * @en Mesh buffer used for 2d rendering, used internally and not of concern to the user.
  * @zh 2d 渲染使用的网格缓冲数据，内部使用，用户不须关心。
@@ -179,8 +181,8 @@ export class MeshBuffer {
     private _attributes: Attribute[] = null!;
 
     // InputAssembler pools for each mesh buffer, array offset correspondent
-    private _iaPool: IIARef[] = [];
-    private _iaInfo: InputAssemblerInfo = null!;
+    private _iaPool: IIARef[][] = [];
+    private _iaPoolIdx = 0;
     private _nextFreeIAHandle = 0;
 
     //nativeObj
@@ -258,7 +260,9 @@ export class MeshBuffer {
             this.iData = new Uint16Array(this._initIDataCount);
         }
         // Initialize the first ia
-        this._iaPool.push(this.createNewIA(device));
+        for (let i = 0; i < NUM_GFX_BUFFERS; ++i) {
+            this._iaPool.push([this.createNewIA(device)]);
+        }
         if (JSB) {
             this._nativeObj.initialize(attrs);
         }
@@ -277,20 +281,23 @@ export class MeshBuffer {
     public destroy (): void {
         this.reset();
         this._attributes = null!;
-        this._iaInfo = null!;
         this.vData = null!;
         this.iData = null!;
 
         // Destroy InputAssemblers
-        for (let i = 0; i < this._iaPool.length; ++i) {
-            const iaRef = this._iaPool[i];
-            if (iaRef.vertexBuffers[0]) {
-                iaRef.vertexBuffers[0].destroy();
+        for (let k = 0; k < NUM_GFX_BUFFERS; ++k) {
+            const iaPool = this._iaPool[k];
+            for (let i = 0; i < iaPool.length; ++i) {
+                const iaRef = iaPool[i];
+                if (iaRef.vertexBuffers[0]) {
+                    iaRef.vertexBuffers[0].destroy();
+                }
+                if (iaRef.indexBuffer) {
+                    iaRef.indexBuffer.destroy();
+                }
+                iaRef.ia.destroy();
             }
-            if (iaRef.indexBuffer) {
-                iaRef.indexBuffer.destroy();
-            }
-            iaRef.ia.destroy();
+            iaPool.length = 0;
         }
         this._iaPool.length = 0;
     }
@@ -319,10 +326,11 @@ export class MeshBuffer {
      * @deprecated since v3.7.0, this is an engine private interface that will be removed in the future.
      */
     public requireFreeIA (device: Device): InputAssembler {
-        if (this._iaPool.length <= this._nextFreeIAHandle) {
-            this._iaPool.push(this.createNewIA(device));
+        const iaPool = this._iaPool[this._iaPoolIdx];
+        if (iaPool.length <= this._nextFreeIAHandle) {
+            iaPool.push(this.createNewIA(device));
         }
-        const ia = this._iaPool[this._nextFreeIAHandle++].ia;
+        const ia = iaPool[this._nextFreeIAHandle++].ia;
         return ia;
     }
 
@@ -332,7 +340,7 @@ export class MeshBuffer {
      * @deprecated since v3.7.0, this is an engine private interface that will be removed in the future.
      */
     public recycleIA (ia: InputAssembler): void {
-        const pool = this._iaPool;
+        const pool = this._iaPool[this._iaPoolIdx];
         for (let i = 0; i < this._nextFreeIAHandle; ++i) {
             if (ia === pool[i].ia) {
                 // Swap to recycle the ia
@@ -368,15 +376,18 @@ export class MeshBuffer {
             return;
         }
 
+        const iaPool = this._iaPool[this._iaPoolIdx];
+
         // On iOS14, different IAs can not share same GPU buffer, so must submit the same date to different buffers
-        const iOS14 = sys.__isWebIOS14OrIPadOS14Env;
-        const submitCount = iOS14 ? this._nextFreeIAHandle : 1;
-        if (iOS14 && (submitCount / this._iaPool.length < IA_POOL_USED_SCALE)) {
+        // const iOS14 = sys.__isWebIOS14OrIPadOS14Env;
+        // const submitCount = iOS14 ? this._nextFreeIAHandle : 1;
+        const submitCount = this._nextFreeIAHandle;
+        if (submitCount / iaPool.length < IA_POOL_USED_SCALE) {
             const count = submitCount / IA_POOL_USED_SCALE;
-            const length = this._iaPool.length;
+            const length = iaPool.length;
             // Destroy InputAssemblers
             for (let i = length - 1; i >= count; i--) {
-                const iaRef = this._iaPool[i];
+                const iaRef = iaPool[i];
                 if (iaRef.vertexBuffers[0]) {
                     iaRef.vertexBuffers[0].destroy();
                 }
@@ -385,12 +396,12 @@ export class MeshBuffer {
                 }
                 iaRef.ia.destroy();
             }
-            this._iaPool.length = count;
+            iaPool.length = count;
         }
         const byteCount = this.byteOffset;
         const indexCount = this.indexOffset;
         for (let i = 0; i < submitCount; ++i) {
-            const iaRef = this._iaPool[i];
+            const iaRef = iaPool[i];
 
             const verticesData = new Float32Array(this.vData.buffer, 0, byteCount >> 2);
             const indicesData = new Uint16Array(this.iData.buffer, 0, indexCount);
@@ -406,6 +417,7 @@ export class MeshBuffer {
             }
             iaRef.indexBuffer.update(indicesData);
         }
+        this._iaPoolIdx = (this._iaPoolIdx + 1) % NUM_GFX_BUFFERS;
         this.dirty = false;
     }
 
@@ -415,7 +427,8 @@ export class MeshBuffer {
         let indexBuffer: Buffer;
         // HACK: After sharing buffer between drawcalls, the performance degradation a lots on iOS 14 or iPad OS 14 device
         // TODO: Maybe it can be removed after Apple fixes it?
-        if (sys.__isWebIOS14OrIPadOS14Env || !this._iaPool[0]) {
+        // if (sys.__isWebIOS14OrIPadOS14Env || !this._iaInfo)
+        {
             const vbStride = this._vertexFormatBytes = this._floatsPerVertex * Float32Array.BYTES_PER_ELEMENT;
             const ibStride = Uint16Array.BYTES_PER_ELEMENT;
             const vertexBuffer = device.createBuffer(new BufferInfo(
@@ -433,13 +446,14 @@ export class MeshBuffer {
 
             vertexBuffers = [vertexBuffer];
             // Reuse purpose for new IAs
-            this._iaInfo = new InputAssemblerInfo(this._attributes, vertexBuffers, indexBuffer);
-            ia = device.createInputAssembler(this._iaInfo);
-        } else {
-            ia = device.createInputAssembler(this._iaInfo);
-            vertexBuffers = this._iaInfo.vertexBuffers;
-            indexBuffer = this._iaInfo.indexBuffer!;
+            const iaInfo = new InputAssemblerInfo(this._attributes, vertexBuffers, indexBuffer);
+            ia = device.createInputAssembler(iaInfo);
         }
+        // else {
+        //     ia = device.createInputAssembler(this._iaInfo);
+        //     vertexBuffers = this._iaInfo.vertexBuffers;
+        //     indexBuffer = this._iaInfo.indexBuffer!;
+        // }
         return {
             ia,
             vertexBuffers,
