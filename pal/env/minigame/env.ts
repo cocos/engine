@@ -23,7 +23,7 @@
 */
 
 /* eslint-disable import/no-dynamic-require */
-import { BAIDU, TAOBAO, TAOBAO_MINIGAME, WECHAT, WECHAT_MINI_PROGRAM, XIAOMI } from 'internal:constants';
+import { TAOBAO, TAOBAO_MINIGAME, WECHAT, WECHAT_MINI_PROGRAM, XIAOMI } from 'internal:constants';
 import { checkPalIntegrity, withImpl } from '../../integrity-check';
 
 declare const require: (path: string) => any;
