@@ -707,11 +707,11 @@ export class Camera {
      * @zh 相机的视角大小。
      */
     set fov (fov) {
-        this._fov$ = fov;
+        this._fov = fov;
         this._isProjDirty = true;
     }
     get fov (): number {
-        return this._fov$;
+        return this._fov;
     }
 
     /**
@@ -1047,7 +1047,7 @@ export class Camera {
                 } else {
                     Mat4.perspective(
                         this._matProj,
-                        this._fov$,
+                        this._fov,
                         this._aspect,
                         this._nearClip,
                         this._farClip,

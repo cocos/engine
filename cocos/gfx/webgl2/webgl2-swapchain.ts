@@ -93,7 +93,7 @@ export function getExtensions (gl: WebGL2RenderingContext): IWebGL2Extensions {
         EXT_color_buffer_half_float: getExtension(gl, 'EXT_color_buffer_half_float'),
         EXT_color_buffer_float: getExtension(gl, 'EXT_color_buffer_float'),
         WEBGL_compressed_texture_etc1: getExtension(gl, 'WEBGL_compressed_texture_etc1'),
-        WEBGL_compressed_texture_etc$: getExtension(gl, 'WEBGL_compressed_texture_etc'),
+        WEBGL_compressed_texture_etc: getExtension(gl, 'WEBGL_compressed_texture_etc'),
         WEBGL_compressed_texture_pvrtc: getExtension(gl, 'WEBGL_compressed_texture_pvrtc'),
         WEBGL_compressed_texture_astc: getExtension(gl, 'WEBGL_compressed_texture_astc'),
         WEBGL_compressed_texture_s3tc: getExtension(gl, 'WEBGL_compressed_texture_s3tc'),
