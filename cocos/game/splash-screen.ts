@@ -68,50 +68,50 @@ interface SplashLogo {
 }
 
 export class SplashScreen {
-    private settings$!: ISplashSetting;
+    private settings!: ISplashSetting;
     private _curTime = 0;
 
-    private device$!: Device;
-    private swapchain$!: Swapchain;
-    private shader$!: Shader;
-    private sampler$!: Sampler;
-    private cmdBuff$!: CommandBuffer;
-    private quadAssmebler$!: InputAssembler;
-    private vertexBuffers$!: Buffer;
-    private indicesBuffers$!: Buffer;
-    private renderArea$!: Rect;
-    private clearColors$!: Color[];
-    private projection$!: Mat4;
-    private isMobile$ = false;
+    private device!: Device;
+    private swapchain!: Swapchain;
+    private shader!: Shader;
+    private sampler!: Sampler;
+    private cmdBuff!: CommandBuffer;
+    private quadAssmebler!: InputAssembler;
+    private vertexBuffers!: Buffer;
+    private indicesBuffers!: Buffer;
+    private renderArea!: Rect;
+    private clearColors!: Color[];
+    private projection!: Mat4;
+    private isMobile = false;
 
-    private bgMat$!: Material;
-    private bgImage$!: HTMLImageElement;
-    private bgTexture$!: Texture;
+    private bgMat!: Material;
+    private bgImage!: HTMLImageElement;
+    private bgTexture!: Texture;
 
-    private logoMat$!: Material;
-    private logoImage$!: HTMLImageElement;
-    private logoTexture$!: Texture;
+    private logoMat!: Material;
+    private logoImage!: HTMLImageElement;
+    private logoTexture!: Texture;
 
-    private watermarkMat$!: Material;
-    private watermarkTexture$!: Texture;
+    private watermarkMat!: Material;
+    private watermarkTexture!: Texture;
 
     // layout
-    private bgWidth$ = 1920;
-    private bgHeight$ = 1080;
-    private logoWidthTemp$ = 140;
-    private logoHeightTemp$ = 200;
-    private logoWidth$ = 0;
-    private logoHeight$ = 0;
-    private logoXTrans$ = 1 / 2;// Percent
-    private logoYTrans$ = 1 / 6 + 2.5 / 6;// Percent
+    private bgWidth = 1920;
+    private bgHeight = 1080;
+    private logoWidthTemp = 140;
+    private logoHeightTemp = 200;
+    private logoWidth = 0;
+    private logoHeight = 0;
+    private logoXTrans = 1 / 2;// Percent
+    private logoYTrans = 1 / 6 + 2.5 / 6;// Percent
 
-    private textSize$ = 24; // font size
-    private textHeight$ = 24; // line height
-    private textXTrans$ = 1 / 2;// Percent
-    private textYExtraTrans$ = 32;// px
-    private textExpandSize$ = 4;// px
+    private textSize = 24; // font size
+    private textHeight = 24; // line height
+    private textXTrans = 1 / 2;// Percent
+    private textYExtraTrans = 32;// px
+    private textExpandSize = 4;// px
 
-    private scaleSize$ = 1;
+    private scaleSize = 1;
 
     public get isFinished (): boolean {
         return this._curTime >= this.settings.totalTime;
