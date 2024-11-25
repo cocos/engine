@@ -330,10 +330,6 @@ export class VideoPlayerImplWeb extends VideoPlayerImpl {
             return;
         }
 
-        if (screen.fullScreen()) {
-            return;
-        }
-
         // use stayOnBottom
         if (this._dirty) {
             this._dirty = false;
