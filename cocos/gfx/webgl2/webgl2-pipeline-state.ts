@@ -97,7 +97,7 @@ export class WebGL2PipelineState extends PipelineState {
             dss: info.depthStencilState,
             bs: info.blendState,
             gpuRenderPass: (info.renderPass as WebGL2RenderPass).getGpuRenderPass(),
-            dynamicStates: dynamicStates,
+            dynamicStates,
         };
     }
 

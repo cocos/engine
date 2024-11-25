@@ -98,12 +98,12 @@ export class WebGL2InputAssembler extends InputAssembler {
 
         this._gpuInputAssembler = {
             attributes: info.attributes,
-            gpuVertexBuffers: gpuVertexBuffers,
-            gpuIndexBuffer: gpuIndexBuffer,
-            gpuIndirectBuffer: gpuIndirectBuffer,
+            gpuVertexBuffers,
+            gpuIndexBuffer,
+            gpuIndirectBuffer,
 
             glAttribs: [],
-            glIndexType: glIndexType,
+            glIndexType,
             glVAOs: new Map<WebGLProgram, WebGLVertexArrayObject>(),
         };
 

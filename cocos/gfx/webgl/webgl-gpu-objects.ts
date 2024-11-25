@@ -219,7 +219,7 @@ export interface IWebGLGPUUniform {
 }
 
 export interface IWebGLGPUUniformBlock {
-    set$: number;
+    set: number;
     binding: number;
     name: string;
     size: number;
@@ -228,7 +228,7 @@ export interface IWebGLGPUUniformBlock {
 }
 
 export interface IWebGLGPUUniformSamplerTexture {
-    set$: number;
+    set: number;
     binding: number;
     name: string;
     type: Type;

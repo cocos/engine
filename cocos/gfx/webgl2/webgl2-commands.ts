@@ -1602,7 +1602,7 @@ export function WebGL2CmdFuncCreateShader (device: WebGL2Device, gpuShader: IWeb
                 gl.uniformBlockBinding(gpuShader.glProgram, blockIdx, glBinding);
 
                 gpuShader.glBlocks[b] = {
-                    set$: block.set,
+                    set: block.set,
                     binding: block.binding,
                     idx$: blockIdx,
                     name: blockName,
@@ -1628,7 +1628,7 @@ export function WebGL2CmdFuncCreateShader (device: WebGL2Device, gpuShader: IWeb
         for (let i = 0; i < gpuShader.samplerTextures.length; ++i) {
             const sampler = gpuShader.samplerTextures[i];
             gpuShader.glSamplerTextures[i] = {
-                set$: sampler.set,
+                set: sampler.set,
                 binding: sampler.binding,
                 name: sampler.name,
                 type: sampler.type,
@@ -2255,7 +2255,7 @@ export function WebGL2CmdFuncBindStates (
 
         for (let j = 0; j < blockLen; j++) {
             const glBlock = gpuShader.glBlocks[j];
-            const gpuDescriptorSet = gpuDescriptorSets[glBlock.set$];
+            const gpuDescriptorSet = gpuDescriptorSets[glBlock.set];
             const descriptorIndex = gpuDescriptorSet && gpuDescriptorSet.descriptorIndices[glBlock.binding];
             const gpuDescriptor = descriptorIndex >= 0 && gpuDescriptorSet.gpuDescriptors[descriptorIndex];
 
@@ -2264,7 +2264,7 @@ export function WebGL2CmdFuncBindStates (
                 continue;
             }
 
-            const dynamicOffsetIndexSet = dynamicOffsetIndices[glBlock.set$];
+            const dynamicOffsetIndexSet = dynamicOffsetIndices[glBlock.set];
             const dynamicOffsetIndex = dynamicOffsetIndexSet && dynamicOffsetIndexSet[glBlock.binding];
             let offset = gpuDescriptor.gpuBuffer.glOffset;
             if (dynamicOffsetIndex >= 0) { offset += dynamicOffsets[dynamicOffsetIndex]; }
@@ -2290,7 +2290,7 @@ export function WebGL2CmdFuncBindStates (
         const samplerLen = gpuShader.glSamplerTextures.length;
         for (let i = 0; i < samplerLen; i++) {
             const glSampler = gpuShader.glSamplerTextures[i];
-            const gpuDescriptorSet = gpuDescriptorSets[glSampler.set$];
+            const gpuDescriptorSet = gpuDescriptorSets[glSampler.set];
             let descriptorIndex = gpuDescriptorSet && gpuDescriptorSet.descriptorIndices[glSampler.binding];
             let gpuDescriptor = descriptorIndex >= 0 && gpuDescriptorSet.gpuDescriptors[descriptorIndex];
 

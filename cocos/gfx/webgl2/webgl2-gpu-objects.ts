@@ -220,7 +220,7 @@ export interface IWebGL2GPUUniform {
 }
 
 export interface IWebGL2GPUUniformBlock {
-    set$: number;
+    set: number;
     binding: number;
     idx$: number;
     name: string;
@@ -229,7 +229,7 @@ export interface IWebGL2GPUUniformBlock {
 }
 
 export interface IWebGL2GPUUniformSamplerTexture {
-    set$: number;
+    set: number;
     binding: number;
     name: string;
     type: Type;

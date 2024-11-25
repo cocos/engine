@@ -61,10 +61,10 @@ export class WebGL2PipelineLayout extends PipelineLayout {
         }
 
         this._gpuPipelineLayout = {
-            gpuSetLayouts: gpuSetLayouts,
-            dynamicOffsetIndices: dynamicOffsetIndices,
-            dynamicOffsetCount: dynamicOffsetCount,
-            dynamicOffsetOffsets: dynamicOffsetOffsets,
+            gpuSetLayouts,
+            dynamicOffsetIndices,
+            dynamicOffsetCount,
+            dynamicOffsetOffsets,
         };
     }
 
