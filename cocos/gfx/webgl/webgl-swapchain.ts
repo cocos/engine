@@ -91,37 +91,37 @@ function getExtension (gl: WebGLRenderingContext, ext: string): any {
 
 export function getExtensions (gl: WebGLRenderingContext): IWebGLExtensions {
     const res: IWebGLExtensions = {
-        EXT_texture_filter_anisotropic$: getExtension(gl, 'EXT_texture_filter_anisotropic'),
-        EXT_blend_minmax$: getExtension(gl, 'EXT_blend_minmax'),
-        EXT_frag_depth$: getExtension(gl, 'EXT_frag_depth'),
-        EXT_shader_texture_lod$: getExtension(gl, 'EXT_shader_texture_lod'),
-        EXT_sRGB$: getExtension(gl, 'EXT_sRGB'),
-        OES_vertex_array_object$: getExtension(gl, 'OES_vertex_array_object'),
+        EXT_texture_filter_anisotropic: getExtension(gl, 'EXT_texture_filter_anisotropic'),
+        EXT_blend_minmax: getExtension(gl, 'EXT_blend_minmax'),
+        EXT_frag_depth: getExtension(gl, 'EXT_frag_depth'),
+        EXT_shader_texture_lod: getExtension(gl, 'EXT_shader_texture_lod'),
+        EXT_sRGB: getExtension(gl, 'EXT_sRGB'),
+        OES_vertex_array_object: getExtension(gl, 'OES_vertex_array_object'),
         EXT_color_buffer_half_float$: getExtension(gl, 'EXT_color_buffer_half_float'),
-        WEBGL_color_buffer_float$: getExtension(gl, 'WEBGL_color_buffer_float'),
-        WEBGL_compressed_texture_etc1$: getExtension(gl, 'WEBGL_compressed_texture_etc1'),
-        WEBGL_compressed_texture_etc$: getExtension(gl, 'WEBGL_compressed_texture_etc'),
-        WEBGL_compressed_texture_pvrtc$: getExtension(gl, 'WEBGL_compressed_texture_pvrtc'),
-        WEBGL_compressed_texture_s3tc$: getExtension(gl, 'WEBGL_compressed_texture_s3tc'),
-        WEBGL_compressed_texture_s3tc_srgb$: getExtension(gl, 'WEBGL_compressed_texture_s3tc_srgb'),
-        WEBGL_debug_shaders$: getExtension(gl, 'WEBGL_debug_shaders'),
-        WEBGL_draw_buffers$: getExtension(gl, 'WEBGL_draw_buffers'),
-        WEBGL_lose_context$: getExtension(gl, 'WEBGL_lose_context'),
-        WEBGL_depth_texture$: getExtension(gl, 'WEBGL_depth_texture'),
-        OES_texture_half_float$: getExtension(gl, 'OES_texture_half_float'),
-        OES_texture_half_float_linear$: getExtension(gl, 'OES_texture_half_float_linear'),
-        OES_texture_float$: getExtension(gl, 'OES_texture_float'),
-        OES_texture_float_linear$: getExtension(gl, 'OES_texture_float_linear'),
-        OES_standard_derivatives$: getExtension(gl, 'OES_standard_derivatives'),
-        OES_element_index_uint$: getExtension(gl, 'OES_element_index_uint'),
-        ANGLE_instanced_arrays$: getExtension(gl, 'ANGLE_instanced_arrays'),
-        WEBGL_debug_renderer_info$: getExtension(gl, 'WEBGL_debug_renderer_info'),
-        WEBGL_multi_draw$: null,
-        WEBGL_compressed_texture_astc$: null,
-        destroyShadersImmediately$: true,
-        noCompressedTexSubImage2D$: false,
-        isLocationActive$: (glLoc: unknown): glLoc is WebGLUniformLocation => !!glLoc,
-        useVAO$: false,
+        WEBGL_color_buffer_float: getExtension(gl, 'WEBGL_color_buffer_float'),
+        WEBGL_compressed_texture_etc1: getExtension(gl, 'WEBGL_compressed_texture_etc1'),
+        WEBGL_compressed_texture_etc: getExtension(gl, 'WEBGL_compressed_texture_etc'),
+        WEBGL_compressed_texture_pvrtc: getExtension(gl, 'WEBGL_compressed_texture_pvrtc'),
+        WEBGL_compressed_texture_s3tc: getExtension(gl, 'WEBGL_compressed_texture_s3tc'),
+        WEBGL_compressed_texture_s3tc_srgb: getExtension(gl, 'WEBGL_compressed_texture_s3tc_srgb'),
+        WEBGL_debug_shaders: getExtension(gl, 'WEBGL_debug_shaders'),
+        WEBGL_draw_buffers: getExtension(gl, 'WEBGL_draw_buffers'),
+        WEBGL_lose_context: getExtension(gl, 'WEBGL_lose_context'),
+        WEBGL_depth_texture: getExtension(gl, 'WEBGL_depth_texture'),
+        OES_texture_half_float: getExtension(gl, 'OES_texture_half_float'),
+        OES_texture_half_float_linear: getExtension(gl, 'OES_texture_half_float_linear'),
+        OES_texture_float: getExtension(gl, 'OES_texture_float'),
+        OES_texture_float_linear: getExtension(gl, 'OES_texture_float_linear'),
+        OES_standard_derivatives: getExtension(gl, 'OES_standard_derivatives'),
+        OES_element_index_uint: getExtension(gl, 'OES_element_index_uint'),
+        ANGLE_instanced_arrays: getExtension(gl, 'ANGLE_instanced_arrays'),
+        WEBGL_debug_renderer_info: getExtension(gl, 'WEBGL_debug_renderer_info'),
+        WEBGL_multi_draw: null,
+        WEBGL_compressed_texture_astc: null,
+        destroyShadersImmediately: true,
+        noCompressedTexSubImage2D: false,
+        isLocationActive: (glLoc: unknown): glLoc is WebGLUniformLocation => !!glLoc,
+        useVAO: false,
     };
 
     // platform-specific extension hacks
@@ -129,65 +129,65 @@ export function getExtensions (gl: WebGLRenderingContext): IWebGLExtensions {
     {
         // iOS 14 browsers crash on getExtension('WEBGL_compressed_texture_astc')
         if (systemInfo.os !== OS.IOS || systemInfo.osMainVersion !== 14 || !systemInfo.isBrowser) {
-            res.WEBGL_compressed_texture_astc$ = getExtension(gl, 'WEBGL_compressed_texture_astc');
+            res.WEBGL_compressed_texture_astc = getExtension(gl, 'WEBGL_compressed_texture_astc');
         }
 
         // Mobile implementation seems to have performance issues
         if (systemInfo.os !== OS.ANDROID && systemInfo.os !== OS.IOS) {
-            res.WEBGL_multi_draw$ = getExtension(gl, 'WEBGL_multi_draw');
+            res.WEBGL_multi_draw = getExtension(gl, 'WEBGL_multi_draw');
         }
 
         // UC browser instancing implementation doesn't work
         if (systemInfo.browserType === BrowserType.UC) {
-            res.ANGLE_instanced_arrays$ = null;
+            res.ANGLE_instanced_arrays = null;
         }
 
         // bytedance ios depth texture implementation doesn't work
         if (BYTEDANCE && systemInfo.os === OS.IOS) {
-            res.WEBGL_depth_texture$ = null;
+            res.WEBGL_depth_texture = null;
         }
 
         if (RUNTIME_BASED) {
             // VAO implementations doesn't work well on some runtime platforms
             if (LINKSURE || QTT || COCOSPLAY || HUAWEI) {
-                res.OES_vertex_array_object$ = null;
+                res.OES_vertex_array_object = null;
             }
         }
 
         // some earlier version of iOS and android wechat implement gl.detachShader incorrectly
         if ((systemInfo.os === OS.IOS && systemInfo.osMainVersion <= 10)
             || ((WECHAT || WECHAT_MINI_PROGRAM) && systemInfo.os === OS.ANDROID)) {
-            res.destroyShadersImmediately$ = false;
+            res.destroyShadersImmediately = false;
         }
 
         // getUniformLocation has always been problematic because the
         // paradigm differs from GLES, and many platforms get it wrong [eyerolling]
         if (WECHAT || WECHAT_MINI_PROGRAM) {
             // wEcHaT just returns { id: -1 } for inactive names
-            res.isLocationActive$ = (glLoc: unknown): glLoc is WebGLUniformLocation => !!glLoc && (glLoc as { id: number }).id !== -1;
+            res.isLocationActive = (glLoc: unknown): glLoc is WebGLUniformLocation => !!glLoc && (glLoc as { id: number }).id !== -1;
         }
         if (ALIPAY) {
             // aLiPaY just returns the location number directly on actual devices, and WebGLUniformLocation objects in simulators
-            res.isLocationActive$ = (glLoc: unknown): glLoc is WebGLUniformLocation => !!glLoc && glLoc !== -1 || glLoc === 0;
+            res.isLocationActive = (glLoc: unknown): glLoc is WebGLUniformLocation => !!glLoc && glLoc !== -1 || glLoc === 0;
         }
 
         // compressedTexSubImage2D too
         if (WECHAT || WECHAT_MINI_PROGRAM) {
-            res.noCompressedTexSubImage2D$ = true;
+            res.noCompressedTexSubImage2D = true;
         }
 
         // HACK: on Taobao Android, some devices can't query texture float extension correctly, especially Huawei devices
         // the query interface returns null.
         if ((TAOBAO || TAOBAO_MINIGAME) && systemInfo.os === OS.ANDROID) {
-            res.OES_texture_half_float$ = { HALF_FLOAT_OES: 36193 };
-            res.OES_texture_half_float_linear$ = {};
-            res.OES_texture_float$ = {};
-            res.OES_texture_float_linear$ = {};
+            res.OES_texture_half_float = { HALF_FLOAT_OES: 36193 };
+            res.OES_texture_half_float_linear = {};
+            res.OES_texture_float = {};
+            res.OES_texture_float_linear = {};
         }
     }
 
-    if (res.OES_vertex_array_object$) {
-        res.useVAO$ = true;
+    if (res.OES_vertex_array_object) {
+        res.useVAO = true;
     }
 
     return res;

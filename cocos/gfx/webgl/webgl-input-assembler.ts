@@ -111,7 +111,7 @@ export class WebGLInputAssembler extends InputAssembler {
 
     public destroy (): void {
         const device = WebGLDeviceManager.instance;
-        if (this._gpuInputAssembler && device.extensions.useVAO$) {
+        if (this._gpuInputAssembler && device.extensions.useVAO) {
             WebGLCmdFuncDestroyInputAssembler(device, this._gpuInputAssembler);
         }
         this._gpuInputAssembler = null;

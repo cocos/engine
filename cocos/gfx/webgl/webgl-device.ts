@@ -175,9 +175,9 @@ export class WebGLDevice extends Device {
 
         const exts = getExtensions(gl);
 
-        if (exts.WEBGL_debug_renderer_info$) {
-            this._renderer = glGetParameter(exts.WEBGL_debug_renderer_info$.UNMASKED_RENDERER_WEBGL);
-            this._vendor = glGetParameter(exts.WEBGL_debug_renderer_info$.UNMASKED_VENDOR_WEBGL);
+        if (exts.WEBGL_debug_renderer_info) {
+            this._renderer = glGetParameter(exts.WEBGL_debug_renderer_info.UNMASKED_RENDERER_WEBGL);
+            this._vendor = glGetParameter(exts.WEBGL_debug_renderer_info.UNMASKED_VENDOR_WEBGL);
         } else {
             this._renderer = glGetParameter(WebGLConstants.RENDERER);
             this._vendor = glGetParameter(WebGLConstants.VENDOR);
@@ -189,19 +189,19 @@ export class WebGLDevice extends Device {
 
         this.initFormatFeatures(exts);
 
-        if (exts.EXT_blend_minmax$) {
+        if (exts.EXT_blend_minmax) {
             this._features[Feature.BLEND_MINMAX] = true;
         }
 
-        if (exts.OES_element_index_uint$) {
+        if (exts.OES_element_index_uint) {
             this._features[Feature.ELEMENT_INDEX_UINT] = true;
         }
 
-        if (exts.ANGLE_instanced_arrays$) {
+        if (exts.ANGLE_instanced_arrays) {
             this._features[Feature.INSTANCED_ARRAYS] = true;
         }
 
-        if (exts.WEBGL_draw_buffers$) {
+        if (exts.WEBGL_draw_buffers) {
             this._features[Feature.MULTIPLE_RENDER_TARGETS] = true;
         }
 
@@ -318,19 +318,19 @@ export class WebGLDevice extends Device {
         formatFeatures[Format.RGB32F] |= FormatFeatureBit.VERTEX_ATTRIBUTE;
         formatFeatures[Format.RGBA32F] |= FormatFeatureBit.VERTEX_ATTRIBUTE;
 
-        if (exts.EXT_sRGB$) {
+        if (exts.EXT_sRGB) {
             formatFeatures[Format.SRGB8] = tempFeature;
             formatFeatures[Format.SRGB8_A8] = tempFeature;
 
             textureExclusive[Format.SRGB8_A8] = false;
         }
 
-        if (exts.WEBGL_depth_texture$) {
+        if (exts.WEBGL_depth_texture) {
             formatFeatures[Format.DEPTH] |= tempFeature;
             formatFeatures[Format.DEPTH_STENCIL] |= tempFeature;
         }
 
-        if (exts.WEBGL_color_buffer_float$) {
+        if (exts.WEBGL_color_buffer_float) {
             formatFeatures[Format.RGB32F] |= FormatFeatureBit.RENDER_TARGET;
             formatFeatures[Format.RGBA32F] |= FormatFeatureBit.RENDER_TARGET;
             textureExclusive[Format.RGB32F] = false;
@@ -344,33 +344,33 @@ export class WebGLDevice extends Device {
             textureExclusive[Format.RGBA16F] = false;
         }
 
-        if (exts.OES_texture_float$) {
+        if (exts.OES_texture_float) {
             formatFeatures[Format.RGB32F] |= FormatFeatureBit.RENDER_TARGET | FormatFeatureBit.SAMPLED_TEXTURE;
             formatFeatures[Format.RGBA32F] |= FormatFeatureBit.RENDER_TARGET | FormatFeatureBit.SAMPLED_TEXTURE;
         }
 
-        if (exts.OES_texture_half_float$) {
+        if (exts.OES_texture_half_float) {
             formatFeatures[Format.RGB16F] |= FormatFeatureBit.RENDER_TARGET | FormatFeatureBit.SAMPLED_TEXTURE;
             formatFeatures[Format.RGBA16F] |= FormatFeatureBit.RENDER_TARGET | FormatFeatureBit.SAMPLED_TEXTURE;
         }
 
-        if (exts.OES_texture_float_linear$) {
+        if (exts.OES_texture_float_linear) {
             formatFeatures[Format.RGB32F] |= FormatFeatureBit.LINEAR_FILTER;
             formatFeatures[Format.RGBA32F] |= FormatFeatureBit.LINEAR_FILTER;
         }
 
-        if (exts.OES_texture_half_float_linear$) {
+        if (exts.OES_texture_half_float_linear) {
             formatFeatures[Format.RGB16F] |= FormatFeatureBit.LINEAR_FILTER;
             formatFeatures[Format.RGBA16F] |= FormatFeatureBit.LINEAR_FILTER;
         }
 
         const compressedFeature: FormatFeature = FormatFeatureBit.SAMPLED_TEXTURE | FormatFeatureBit.LINEAR_FILTER;
 
-        if (exts.WEBGL_compressed_texture_etc1$) {
+        if (exts.WEBGL_compressed_texture_etc1) {
             formatFeatures[Format.ETC_RGB8] = compressedFeature;
         }
 
-        if (exts.WEBGL_compressed_texture_etc$) {
+        if (exts.WEBGL_compressed_texture_etc) {
             formatFeatures[Format.ETC2_RGB8] = compressedFeature;
             formatFeatures[Format.ETC2_RGBA8] = compressedFeature;
             formatFeatures[Format.ETC2_SRGB8] = compressedFeature;
@@ -379,7 +379,7 @@ export class WebGLDevice extends Device {
             formatFeatures[Format.ETC2_SRGB8_A1] = compressedFeature;
         }
 
-        if (exts.WEBGL_compressed_texture_s3tc$) {
+        if (exts.WEBGL_compressed_texture_s3tc) {
             formatFeatures[Format.BC1] = compressedFeature;
             formatFeatures[Format.BC1_ALPHA] = compressedFeature;
             formatFeatures[Format.BC1_SRGB] = compressedFeature;
@@ -390,14 +390,14 @@ export class WebGLDevice extends Device {
             formatFeatures[Format.BC3_SRGB] = compressedFeature;
         }
 
-        if (exts.WEBGL_compressed_texture_pvrtc$) {
+        if (exts.WEBGL_compressed_texture_pvrtc) {
             formatFeatures[Format.PVRTC_RGB2] |= compressedFeature;
             formatFeatures[Format.PVRTC_RGBA2] |= compressedFeature;
             formatFeatures[Format.PVRTC_RGB4] |= compressedFeature;
             formatFeatures[Format.PVRTC_RGBA4] |= compressedFeature;
         }
 
-        if (exts.WEBGL_compressed_texture_astc$) {
+        if (exts.WEBGL_compressed_texture_astc) {
             formatFeatures[Format.ASTC_RGBA_4X4] |= compressedFeature;
             formatFeatures[Format.ASTC_RGBA_5X4] |= compressedFeature;
             formatFeatures[Format.ASTC_RGBA_5X5] |= compressedFeature;

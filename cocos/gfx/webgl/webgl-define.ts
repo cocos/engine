@@ -98,37 +98,37 @@ export enum WebGLEXT {
 }
 
 export interface IWebGLExtensions {
-    EXT_texture_filter_anisotropic$: EXT_texture_filter_anisotropic | null;
-    EXT_blend_minmax$: EXT_blend_minmax | null;
-    EXT_frag_depth$: EXT_frag_depth | null;
-    EXT_shader_texture_lod$: EXT_shader_texture_lod | null;
-    EXT_sRGB$: EXT_sRGB | null;
-    OES_vertex_array_object$: OES_vertex_array_object | null;
+    EXT_texture_filter_anisotropic: EXT_texture_filter_anisotropic | null;
+    EXT_blend_minmax: EXT_blend_minmax | null;
+    EXT_frag_depth: EXT_frag_depth | null;
+    EXT_shader_texture_lod: EXT_shader_texture_lod | null;
+    EXT_sRGB: EXT_sRGB | null;
+    OES_vertex_array_object: OES_vertex_array_object | null;
     EXT_color_buffer_half_float$: EXT_color_buffer_half_float | null;
-    WEBGL_multi_draw$: WEBGL_multi_draw | null;
-    WEBGL_color_buffer_float$: WEBGL_color_buffer_float | null;
-    WEBGL_compressed_texture_etc1$: WEBGL_compressed_texture_etc1 | null;
-    WEBGL_compressed_texture_etc$: WEBGL_compressed_texture_etc | null;
-    WEBGL_compressed_texture_pvrtc$: WEBGL_compressed_texture_pvrtc | null;
-    WEBGL_compressed_texture_astc$: WEBGL_compressed_texture_astc | null;
-    WEBGL_compressed_texture_s3tc$: WEBGL_compressed_texture_s3tc | null;
-    WEBGL_compressed_texture_s3tc_srgb$: WEBGL_compressed_texture_s3tc_srgb | null;
-    WEBGL_debug_shaders$: WEBGL_debug_shaders | null;
-    WEBGL_draw_buffers$: WEBGL_draw_buffers | null;
-    WEBGL_lose_context$: WEBGL_lose_context | null;
-    WEBGL_depth_texture$: WEBGL_depth_texture | null;
-    WEBGL_debug_renderer_info$: WEBGL_debug_renderer_info | null;
-    OES_texture_half_float$: OES_texture_half_float | null;
-    OES_texture_half_float_linear$: OES_texture_half_float_linear | null;
-    OES_texture_float$: OES_texture_float | null;
-    OES_texture_float_linear$: OES_texture_float_linear | null;
-    OES_standard_derivatives$: OES_standard_derivatives | null;
-    OES_element_index_uint$: OES_element_index_uint | null;
-    ANGLE_instanced_arrays$: ANGLE_instanced_arrays | null;
-    destroyShadersImmediately$: boolean;
-    noCompressedTexSubImage2D$: boolean;
-    isLocationActive$: (glLoc: unknown) => glLoc is WebGLUniformLocation;
-    useVAO$: boolean;
+    WEBGL_multi_draw: WEBGL_multi_draw | null;
+    WEBGL_color_buffer_float: WEBGL_color_buffer_float | null;
+    WEBGL_compressed_texture_etc1: WEBGL_compressed_texture_etc1 | null;
+    WEBGL_compressed_texture_etc: WEBGL_compressed_texture_etc | null;
+    WEBGL_compressed_texture_pvrtc: WEBGL_compressed_texture_pvrtc | null;
+    WEBGL_compressed_texture_astc: WEBGL_compressed_texture_astc | null;
+    WEBGL_compressed_texture_s3tc: WEBGL_compressed_texture_s3tc | null;
+    WEBGL_compressed_texture_s3tc_srgb: WEBGL_compressed_texture_s3tc_srgb | null;
+    WEBGL_debug_shaders: WEBGL_debug_shaders | null;
+    WEBGL_draw_buffers: WEBGL_draw_buffers | null;
+    WEBGL_lose_context: WEBGL_lose_context | null;
+    WEBGL_depth_texture: WEBGL_depth_texture | null;
+    WEBGL_debug_renderer_info: WEBGL_debug_renderer_info | null;
+    OES_texture_half_float: OES_texture_half_float | null;
+    OES_texture_half_float_linear: OES_texture_half_float_linear | null;
+    OES_texture_float: OES_texture_float | null;
+    OES_texture_float_linear: OES_texture_float_linear | null;
+    OES_standard_derivatives: OES_standard_derivatives | null;
+    OES_element_index_uint: OES_element_index_uint | null;
+    ANGLE_instanced_arrays: ANGLE_instanced_arrays | null;
+    destroyShadersImmediately: boolean;
+    noCompressedTexSubImage2D: boolean;
+    isLocationActive: (glLoc: unknown) => glLoc is WebGLUniformLocation;
+    useVAO: boolean;
 }
 
 // put the global instance here so that we won't have circular dependencies
