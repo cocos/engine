@@ -33,12 +33,12 @@ import { ScalableContainer } from './scalable-container';
  * @see [[RecyclePool]]
  */
 export class Pool<T> extends ScalableContainer {
-    private declare _ctor$: () => T;
-    private declare _elementsPerBatch$: number;
-    private declare _shrinkThreshold$: number;
-    private declare _nextAvail$: number;
+    private declare _ctor: () => T;
+    private declare _elementsPerBatch: number;
+    private declare _shrinkThreshold: number;
+    private declare _nextAvail: number;
     private _freePool: T[] = [];
-    private declare _dtor$: ((obj: T) => void) | null;
+    private declare _dtor: ((obj: T) => void) | null;
 
     /**
      * @en Constructor with the allocator of elements and initial pool size.

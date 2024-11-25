@@ -90,8 +90,8 @@ const _v3 = new Vec3();
  */
 
 export class Spline {
-    private readonly _type$: number;
-    private declare _mode$: SplineMode;
+    private readonly _type: number;
+    private declare _mode: SplineMode;
     private _knots: Vec3[] = [];
 
     // The private properties '_mode' and '_knots' are used in 'jsb_conversions_spec.cpp' for native platforms.

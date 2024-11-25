@@ -385,17 +385,17 @@ class _Deserializer {
     public declare customEnv: unknown;
     public deserializedList: Array<Record<PropertyKey, unknown> | undefined> = [];
     public deserializedData: any = null;
-    private declare _classFinder$: ClassFinder;
-    private declare _reportMissingClass$: ReportMissingClass;
-    private declare _onDereferenced$: ClassFinder['onDereferenced'];
+    private declare _classFinder: ClassFinder;
+    private declare _reportMissingClass: ReportMissingClass;
+    private declare _onDereferenced: ClassFinder['onDereferenced'];
     /**
      * @engineInternal
      */
     public get ignoreEditorOnly (): unknown { return this._ignoreEditorOnly; }
-    private declare _ignoreEditorOnly$: unknown;
-    private declare _mainBinChunk$: Uint8Array;
-    private declare _serializedData$: SerializedObject | SerializedObject[];
-    private declare _context$: DeserializationContext;
+    private declare _ignoreEditorOnly: unknown;
+    private declare _mainBinChunk: Uint8Array;
+    private declare _serializedData: SerializedObject | SerializedObject[];
+    private declare _context: DeserializationContext;
 
     constructor (result: Details, classFinder: ClassFinder, reportMissingClass: ReportMissingClass, customEnv: unknown, ignoreEditorOnly: unknown) {
         this.result = result;

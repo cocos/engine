@@ -34,7 +34,7 @@ class TouchManager {
      * A map from touch ID to touch object.
      */
     private _touchMap: Map<number, Touch> = new Map();
-    private readonly _maxTouches$ = 8;
+    private readonly _maxTouches = 8;
 
     constructor () {
     }

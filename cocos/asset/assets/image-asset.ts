@@ -778,7 +778,7 @@ export class ImageAsset extends Asset {
         }
     }
 
-    private static _sharedPlaceHolderCanvas$: HTMLCanvasElement | null = null;
+    private static _sharedPlaceHolderCanvas: HTMLCanvasElement | null = null;
 
     public initDefault (uuid?: string): void {
         super.initDefault(uuid);

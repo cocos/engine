@@ -65,22 +65,22 @@ class BufferPool<P extends PoolType, E extends BufferManifest> implements IMemor
     // naming convension:
     // this._bufferViews[chunk][entry][element]
 
-    private declare _dataType$: BufferDataTypeManifest<E>;
-    private declare _dataMembers$: BufferDataMembersManifest<E>;
-    private declare _elementCount$: number;
-    private declare _entryBits$: number;
-    private declare _stride$: number;
-    private declare _entriesPerChunk$: number;
-    private declare _entryMask$: number;
-    private declare _chunkMask$: number;
-    private declare _poolFlag$: number;
+    private declare _dataType: BufferDataTypeManifest<E>;
+    private declare _dataMembers: BufferDataMembersManifest<E>;
+    private declare _elementCount: number;
+    private declare _entryBits: number;
+    private declare _stride: number;
+    private declare _entriesPerChunk: number;
+    private declare _entryMask: number;
+    private declare _chunkMask: number;
+    private declare _poolFlag: number;
     private _arrayBuffers: ArrayBuffer[] = [];
     private _freeLists: number[][] = [];
     private _uint32BufferViews: Uint32Array[][] = [];
     private _float32BufferViews: Float32Array[][] = [];
     private _hasUint32 = false;
     private _hasFloat32 = false;
-    private declare _nativePool$: NativeBufferPool;
+    private declare _nativePool: NativeBufferPool;
 
     constructor (poolType: P, dataType: BufferDataTypeManifest<E>, dataMembers: BufferDataMembersManifest<E>, enumType: E, entryBits = 8) {
         this._elementCount = enumType.COUNT;

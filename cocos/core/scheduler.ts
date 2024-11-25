@@ -66,7 +66,7 @@ class ListEntry {
         }
     }
 
-    private static _listEntries$: ListEntry[] = [];
+    private static _listEntries: ListEntry[] = [];
 
     public target$: ISchedulable | null;
     public priority$: number;
@@ -175,7 +175,7 @@ class HashTimerEntry {
         }
     }
 
-    private static _hashTimerEntries$: HashTimerEntry[] = [];
+    private static _hashTimerEntries: HashTimerEntry[] = [];
 
     public timers$: CallbackTimer[] | null;
     public target$: ISchedulable | null;
@@ -200,7 +200,7 @@ type CallbackType = (dt?: number) => void;
  * Light weight timer
  */
 class CallbackTimer {
-    public static _timers$: CallbackTimer[] = [];
+    public static _timers: CallbackTimer[] = [];
     public static get (): CallbackTimer { return CallbackTimer._timers.pop() || new CallbackTimer(); }
     public static put (timer: CallbackTimer): void {
         if (CallbackTimer._timers.length < MAX_POOL_SIZE && !timer._lock) {

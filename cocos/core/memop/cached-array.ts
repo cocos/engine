@@ -49,7 +49,7 @@ export class CachedArray<T> extends ScalableContainer {
      */
     public length = 0;
 
-    private declare _compareFn$?: (a: T, b: T) => number;
+    private declare _compareFn?: (a: T, b: T) => number;
     private _initSize = 0;
 
     /**

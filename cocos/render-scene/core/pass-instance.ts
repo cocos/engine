@@ -38,9 +38,9 @@ export class PassInstance extends Pass {
      */
     get parent (): Pass { return this._parent; }
 
-    private declare _parent$: Pass;
+    private declare _parent: Pass;
 
-    private declare _owner$: MaterialInstance;
+    private declare _owner: MaterialInstance;
 
     private _dontNotify = false;
 

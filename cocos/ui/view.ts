@@ -75,13 +75,13 @@ export class View extends Eventify(System) {
     private _autoFullScreen: boolean = false; // Auto full screen disabled by default
     private _retinaEnabled: boolean = false; // Retina disabled by default
     private _resizeCallback: (() => void) | null = null; // Custom callback for resize event
-    private declare _resolutionPolicy$: ResolutionPolicy;
+    private declare _resolutionPolicy: ResolutionPolicy;
 
-    private declare _rpExactFit$: ResolutionPolicy;
-    private declare _rpShowAll$: ResolutionPolicy;
-    private declare _rpNoBorder$: ResolutionPolicy;
-    private declare _rpFixedHeight$: ResolutionPolicy;
-    private declare _rpFixedWidth$: ResolutionPolicy;
+    private declare _rpExactFit: ResolutionPolicy;
+    private declare _rpShowAll: ResolutionPolicy;
+    private declare _rpNoBorder: ResolutionPolicy;
+    private declare _rpFixedHeight: ResolutionPolicy;
+    private declare _rpFixedWidth: ResolutionPolicy;
 
     constructor () {
         super();
@@ -994,8 +994,8 @@ export class ResolutionPolicy {
 
     public name = 'ResolutionPolicy';
 
-    private declare _containerStrategy$: ContainerStrategy;
-    private declare _contentStrategy$: ContentStrategy;
+    private declare _containerStrategy: ContainerStrategy;
+    private declare _contentStrategy: ContentStrategy;
 
     /**
      * Constructor of ResolutionPolicy

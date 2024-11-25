@@ -116,17 +116,17 @@ export class RenderingSubMesh {
 
     private _vertexBuffers: Buffer[];
 
-    private declare _attributes$: Attribute[];
+    private declare _attributes: Attribute[];
 
-    private declare _indexBuffer$: Buffer | null;
+    private declare _indexBuffer: Buffer | null;
 
-    private declare _indirectBuffer$: Buffer | null;
+    private declare _indirectBuffer: Buffer | null;
 
-    private declare _primitiveMode$: PrimitiveMode;
+    private declare _primitiveMode: PrimitiveMode;
 
-    private declare _iaInfo$: InputAssemblerInfo;
+    private declare _iaInfo: InputAssemblerInfo;
 
-    private declare _isOwnerOfIndexBuffer$: boolean;
+    private declare _isOwnerOfIndexBuffer: boolean;
 
     private _drawInfo?: DrawInfo | null = null;
 

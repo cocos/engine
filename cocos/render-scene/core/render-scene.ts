@@ -152,7 +152,7 @@ export class RenderScene {
      */
     get lodGroups (): readonly LODGroup[] { return this._lodGroups; }
 
-    private declare _root$: Root;
+    private declare _root: Root;
     private _name = '';
     private _cameras: Camera[] = [];
     private _models: Model[] = [];

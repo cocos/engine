@@ -139,5 +139,5 @@ export class WebGLDeviceManager {
     static setInstance$ (instance: WebGLDevice): void {
         WebGLDeviceManager._instance = instance;
     }
-    private static _instance$: WebGLDevice | null = null;
+    private static _instance: WebGLDevice | null = null;
 }

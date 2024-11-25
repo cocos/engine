@@ -113,7 +113,7 @@ class SystemInfo extends EventTarget {
     public declare readonly browserType: BrowserType;
     public declare readonly browserVersion: string;
     public declare readonly isXR: boolean;
-    private declare _featureMap$: IFeatureMap;
+    private declare _featureMap: IFeatureMap;
     private _initPromise: Promise<void>[] = [];
 
     constructor () {

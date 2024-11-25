@@ -98,8 +98,8 @@ export class Pool<T> {
         return this._get();
     }
 
-    private declare _pool$: Array<T | null>;
-    private declare _cleanup$: CleanUpFunction<T> | null;
+    private declare _pool: Array<T | null>;
+    private declare _cleanup: CleanUpFunction<T> | null;
 
     /**
      * @en Constructor. @zh 构造函数。

@@ -74,11 +74,11 @@ export class EventTouch extends Event {
      */
     public preventSwallow = false;
 
-    private declare _eventCode$: SystemEventTypeUnion;  // deprecated since v3.3
+    private declare _eventCode: SystemEventTypeUnion;  // deprecated since v3.3
 
-    private declare _touches$: Touch[];
+    private declare _touches: Touch[];
 
-    private declare _allTouches$: Touch[];
+    private declare _allTouches: Touch[];
 
     /**
      * @param touches - An array of current touches

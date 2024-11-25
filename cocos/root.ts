@@ -242,7 +242,7 @@ export class Root {
      */
     public _createWindowFun: (root: Root) => RenderWindow = null!;
 
-    private declare _device$: Device;
+    private declare _device: Device;
     private _windows: RenderWindow[] = [];
     private _mainWindow: RenderWindow | null = null;
     private _curWindow: RenderWindow | null = null;
@@ -253,7 +253,7 @@ export class Root {
     private _classicPipeline: (PipelineRuntime & IPipelineEvent) | null = null;
     private _customPipeline: BasicPipeline | null = null;
     private _batcher: Batcher2D | null = null;
-    private declare _dataPoolMgr$: DataPoolManager;
+    private declare _dataPoolMgr: DataPoolManager;
     private _scenes: RenderScene[] = [];
     private _modelPools = new Map<Constructor<Model>, Pool<Model>>();
     private _cameraPool: Pool<Camera> | null = null;

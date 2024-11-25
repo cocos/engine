@@ -54,7 +54,7 @@ export class EventKeyboard extends Event {
      */
     public rawEvent?: KeyboardEvent;
 
-    private declare _isPressed$: boolean;
+    private declare _isPressed: boolean;
     /**
      * @en Indicates whether the current key is being pressed
      * @zh 表示当前按键是否正在被按下

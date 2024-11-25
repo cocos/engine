@@ -39,8 +39,8 @@ export class RecyclePool<T = any> extends ScalableContainer {
     private declare _fn: () => T;
     private declare _dtor: ((obj: T) => void) | null;
     private _count = 0;
-    private declare _data$: T[];
-    private declare _initSize$: number;
+    private declare _data: T[];
+    private declare _initSize: number;
 
     /**
      * @en Constructor with the allocator of elements and initial pool size, all elements will be pre-allocated.

@@ -63,7 +63,7 @@ function roundUp (n: number, alignment: number): number {
 }
 
 export class TextureBufferPool {
-    private declare _device$: Device;
+    private declare _device: Device;
     private _format = Format.UNKNOWN;
     private _formatSize = 0;
     private _chunks: ITextureBuffer[] = [];

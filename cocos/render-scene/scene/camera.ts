@@ -824,7 +824,7 @@ export class Camera {
     public pipeline = '';
     public pipelineSettings: object | null = null;
 
-    private declare _device$: Device;
+    private declare _device: Device;
     private _scene: RenderScene | null = null;
     private _node: Node | null = null;
     private _name: string | null = null;
@@ -851,7 +851,7 @@ export class Camera {
     private _position: Vec3 = v3();
     private _priority = 0;
     private _aperture: CameraAperture = CameraAperture.F16_0;
-    private declare _apertureValue$: number;
+    private declare _apertureValue: number;
     private _shutter: CameraShutter = CameraShutter.D125;
     private _shutterValue = 0.0;
     private _iso: CameraISO = CameraISO.ISO100;

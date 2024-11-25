@@ -90,7 +90,7 @@ export class NodeUIProperties {
 
     public colorDirty = true;
     protected _uiTransformComp: UITransform | null = null;
-    private declare _node$: Node;
+    private declare _node: Node;
 
     constructor (node: Node) {
         this._node = node;
