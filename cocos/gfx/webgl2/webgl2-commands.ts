@@ -2530,7 +2530,7 @@ export function WebGL2CmdFuncBindStates (
 export function WebGL2CmdFuncDraw (device: WebGL2Device, drawInfo: Readonly<DrawInfo>): void {
     const { gl } = device;
     const { gpuInputAssembler, glPrimitive } = gfxStateCache;
-    const md = device.extensions.WEBGL_multi_draw$;
+    const md = device.extensions.WEBGL_multi_draw;
 
     if (gpuInputAssembler) {
         const indexBuffer = gpuInputAssembler.gpuIndexBuffer;

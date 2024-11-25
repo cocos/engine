@@ -91,7 +91,7 @@ export interface IWebGL2Extensions {
     EXT_color_buffer_float: EXT_color_buffer_float | null;
     WEBGL_multi_draw: WEBGL_multi_draw | null;
     WEBGL_compressed_texture_etc1: WEBGL_compressed_texture_etc1 | null;
-    WEBGL_compressed_texture_etc$: WEBGL_compressed_texture_etc | null;
+    WEBGL_compressed_texture_etc: WEBGL_compressed_texture_etc | null;
     WEBGL_compressed_texture_pvrtc: WEBGL_compressed_texture_pvrtc | null;
     WEBGL_compressed_texture_astc: WEBGL_compressed_texture_astc | null;
     WEBGL_compressed_texture_s3tc: WEBGL_compressed_texture_s3tc | null;

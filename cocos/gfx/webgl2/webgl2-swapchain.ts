@@ -112,7 +112,7 @@ export function getExtensions (gl: WebGL2RenderingContext): IWebGL2Extensions {
     {
         // Mobile implementation seems to have performance issues
         if (systemInfo.os !== OS.ANDROID && systemInfo.os !== OS.IOS) {
-            res.WEBGL_multi_draw$ = getExtension(gl, 'WEBGL_multi_draw');
+            res.WEBGL_multi_draw = getExtension(gl, 'WEBGL_multi_draw');
         }
     }
 

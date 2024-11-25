@@ -337,7 +337,7 @@ export class WebGLDevice extends Device {
             textureExclusive[Format.RGBA32F] = false;
         }
 
-        if (exts.EXT_color_buffer_half_float$) {
+        if (exts.EXT_color_buffer_half_float) {
             formatFeatures[Format.RGB16F] |= FormatFeatureBit.RENDER_TARGET;
             formatFeatures[Format.RGBA16F] |= FormatFeatureBit.RENDER_TARGET;
             textureExclusive[Format.RGB16F] = false;

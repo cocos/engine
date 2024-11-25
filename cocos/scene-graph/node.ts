@@ -1495,8 +1495,8 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
      * @en Counter to clear node array
      * @zh 清除节点数组计时器
      */
-    private static ClearFrame$ = 0;
-    private static ClearRound$ = 1000;
+    private static ClearFrame = 0;
+    private static ClearRound = 1000;
 
     /**
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
@@ -2666,10 +2666,10 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
      * 清除节点数组
      */
     public static clearNodeArray (): void {
-        if (Node.ClearFrame$ < Node.ClearRound$ && !EDITOR) {
-            Node.ClearFrame$++;
+        if (Node.ClearFrame < Node.ClearRound && !EDITOR) {
+            Node.ClearFrame++;
         } else {
-            Node.ClearFrame$ = 0;
+            Node.ClearFrame = 0;
             dirtyNodes.length = 0;
         }
     }

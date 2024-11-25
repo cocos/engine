@@ -89,7 +89,7 @@ export class TextureBufferPool {
         this._bufferViewCtor = getTypedArrayConstructor(formatInfo);
         this._roundUpFn = info.roundUpFn || null;
         this._alignment = info.alignment || 1;
-        if (info.inOrderFree) { this.alloc = this._McDonaldAlloc$; }
+        if (info.inOrderFree) { this.alloc = this._McDonaldAlloc; }
     }
 
     public destroy (): void {
