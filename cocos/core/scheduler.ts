@@ -49,10 +49,10 @@ class ListEntry {
     public static get (target: ISchedulable, priority: number, paused: boolean, markedForDeletion: boolean): ListEntry {
         let result = ListEntry._listEntries.pop();
         if (result) {
-            result.target$ = target;
-            result.priority$ = priority;
-            result.paused$ = paused;
-            result.markedForDeletion$ = markedForDeletion;
+            result.target = target;
+            result.priority = priority;
+            result.paused = paused;
+            result.markedForDeletion = markedForDeletion;
         } else {
             result = new ListEntry(target, priority, paused, markedForDeletion);
         }
@@ -61,7 +61,7 @@ class ListEntry {
 
     public static put (entry: ListEntry): void {
         if (ListEntry._listEntries.length < MAX_POOL_SIZE) {
-            entry.target$ = null;
+            entry.target = null;
             ListEntry._listEntries.push(entry);
         }
     }
@@ -90,10 +90,10 @@ class ListEntry {
      * @zh 删除标记, 当为true时, selector 将不再被调用，并且entry将在下一个tick结束时被删除。
      */
     constructor (target: ISchedulable, priority: number, paused: boolean, markedForDeletion: boolean) {
-        this.target$ = target;
-        this.priority$ = priority;
-        this.paused$ = paused;
-        this.markedForDeletion$ = markedForDeletion;
+        this.target = target;
+        this.priority = priority;
+        this.paused = paused;
+        this.markedForDeletion = markedForDeletion;
     }
 }
 
@@ -110,10 +110,10 @@ class HashUpdateEntry {
     public static get (list: ListEntry[], entry: ListEntry, target: ISchedulable, callback: AnyFunction | null): HashUpdateEntry {
         let result = HashUpdateEntry._hashUpdateEntries.pop();
         if (result) {
-            result.list$ = list;
-            result.entry$ = entry;
-            result.target$ = target;
-            result.callback$ = callback;
+            result.list = list;
+            result.entry = entry;
+            result.target = target;
+            result.callback = callback;
         } else {
             result = new HashUpdateEntry(list, entry, target, callback);
         }
@@ -122,7 +122,7 @@ class HashUpdateEntry {
 
     public static put (entry: HashUpdateEntry): void {
         if (HashUpdateEntry._hashUpdateEntries.length < MAX_POOL_SIZE) {
-            entry.list$ = entry.entry$ = entry.target$ = entry.callback$ = null;
+            entry.list = entry.entry = entry.target = entry.callback = null;
             HashUpdateEntry._hashUpdateEntries.push(entry);
         }
     }
@@ -135,10 +135,10 @@ class HashUpdateEntry {
     public callback: AnyFunction | null;
 
     constructor (list: ListEntry[], entry: ListEntry, target: ISchedulable, callback: AnyFunction | null) {
-        this.list$ = list;
-        this.entry$ = entry;
-        this.target$ = target;
-        this.callback$ = callback;
+        this.list = list;
+        this.entry = entry;
+        this.target = target;
+        this.callback = callback;
     }
 }
 
@@ -156,12 +156,12 @@ class HashTimerEntry {
     public static get (timers: CallbackTimer[] | null, target: ISchedulable, timerIndex: number, currentTimer: CallbackTimer | null, currentTimerSalvaged: boolean, paused: boolean): HashTimerEntry {
         let result = HashTimerEntry._hashTimerEntries.pop();
         if (result) {
-            result.timers$ = timers;
-            result.target$ = target;
-            result.timerIndex$ = timerIndex;
-            result.currentTimer$ = currentTimer;
-            result.currentTimerSalvaged$ = currentTimerSalvaged;
-            result.paused$ = paused;
+            result.timers = timers;
+            result.target = target;
+            result.timerIndex = timerIndex;
+            result.currentTimer = currentTimer;
+            result.currentTimerSalvaged = currentTimerSalvaged;
+            result.paused = paused;
         } else {
             result = new HashTimerEntry(timers, target, timerIndex, currentTimer, currentTimerSalvaged, paused);
         }
@@ -170,7 +170,7 @@ class HashTimerEntry {
 
     public static put (entry: HashTimerEntry): void {
         if (HashTimerEntry._hashTimerEntries.length < MAX_POOL_SIZE) {
-            entry.timers$ = entry.target$ = entry.currentTimer$ = null;
+            entry.timers = entry.target = entry.currentTimer = null;
             HashTimerEntry._hashTimerEntries.push(entry);
         }
     }
@@ -185,12 +185,12 @@ class HashTimerEntry {
     public paused: boolean;
 
     constructor (timers: CallbackTimer[] | null, target: ISchedulable, timerIndex: number, currentTimer: CallbackTimer | null, currentTimerSalvaged: boolean, paused: boolean) {
-        this.timers$ = timers;
-        this.target$ = target;
-        this.timerIndex$ = timerIndex;
-        this.currentTimer$ = currentTimer;
-        this.currentTimerSalvaged$ = currentTimerSalvaged;
-        this.paused$ = paused;
+        this.timers = timers;
+        this.target = target;
+        this.timerIndex = timerIndex;
+        this.currentTimer = currentTimer;
+        this.currentTimerSalvaged = currentTimerSalvaged;
+        this.paused = paused;
     }
 }
 
@@ -447,22 +447,22 @@ export class Scheduler extends System {
 
         for (i = 0, list = this._updatesNegList, len = list.length; i < len; i++) {
             entry = list[i];
-            if (!entry.paused$ && !entry.markedForDeletion$ && entry.target$) {
-                entry.target$.update?.(dt);
+            if (!entry.paused && !entry.markedForDeletion && entry.target) {
+                entry.target.update?.(dt);
             }
         }
 
         for (i = 0, list = this._updates0List, len = list.length; i < len; i++) {
             entry = list[i];
-            if (!entry.paused$ && !entry.markedForDeletion$ && entry.target$) {
-                entry.target$.update?.(dt);
+            if (!entry.paused && !entry.markedForDeletion && entry.target) {
+                entry.target.update?.(dt);
             }
         }
 
         for (i = 0, list = this._updatesPosList, len = list.length; i < len; i++) {
             entry = list[i];
-            if (!entry.paused$ && !entry.markedForDeletion$ && entry.target$) {
-                entry.target$.update?.(dt);
+            if (!entry.paused && !entry.markedForDeletion && entry.target) {
+                entry.target.update?.(dt);
             }
         }
 
@@ -474,19 +474,19 @@ export class Scheduler extends System {
             this._currentTarget = elt;
             this._currentTargetSalvaged = false;
 
-            if (!elt.paused$ && elt.timers$) {
+            if (!elt.paused && elt.timers) {
                 // The 'timers' array may change while inside this loop
-                for (elt.timerIndex$ = 0; elt.timerIndex$ < elt.timers$.length; ++(elt.timerIndex$)) {
-                    elt.currentTimer$ = elt.timers$[elt.timerIndex$];
-                    elt.currentTimerSalvaged$ = false;
+                for (elt.timerIndex = 0; elt.timerIndex < elt.timers.length; ++(elt.timerIndex)) {
+                    elt.currentTimer = elt.timers[elt.timerIndex];
+                    elt.currentTimerSalvaged = false;
 
-                    elt.currentTimer$.update(dt);
-                    elt.currentTimer$ = null;
+                    elt.currentTimer.update(dt);
+                    elt.currentTimer = null;
                 }
             }
 
             // only delete currentTarget if no actions were scheduled during the cycle (issue #481)
-            if (this._currentTargetSalvaged && this._currentTarget.timers$?.length === 0) {
+            if (this._currentTargetSalvaged && this._currentTarget.timers?.length === 0) {
                 this._removeHashElement(this._currentTarget);
                 --i;
             }
@@ -496,7 +496,7 @@ export class Scheduler extends System {
         // updates with priority < 0
         for (i = 0, list = this._updatesNegList; i < list.length;) {
             entry = list[i];
-            if (entry.markedForDeletion$) {
+            if (entry.markedForDeletion) {
                 this._removeUpdateFromHash(entry);
             } else {
                 i++;
@@ -505,7 +505,7 @@ export class Scheduler extends System {
 
         for (i = 0, list = this._updates0List; i < list.length;) {
             entry = list[i];
-            if (entry.markedForDeletion$) {
+            if (entry.markedForDeletion) {
                 this._removeUpdateFromHash(entry);
             } else {
                 i++;
@@ -514,7 +514,7 @@ export class Scheduler extends System {
 
         for (i = 0, list = this._updatesPosList; i < list.length;) {
             entry = list[i];
-            if (entry.markedForDeletion$) {
+            if (entry.markedForDeletion) {
                 this._removeUpdateFromHash(entry);
             } else {
                 i++;
@@ -609,17 +609,17 @@ export class Scheduler extends System {
             element = HashTimerEntry.get(null, target, 0, null, false, Boolean(paused));
             this._arrayForTimers.push(element);
             this._hashForTimers[targetId] = element;
-        } else if (element.paused$ !== paused) {
+        } else if (element.paused !== paused) {
             warnID(1511);
         }
 
         let timer: CallbackTimer;
         let i;
-        if (element.timers$ == null) {
-            element.timers$ = [];
+        if (element.timers == null) {
+            element.timers = [];
         } else {
-            for (i = 0; i < element.timers$.length; ++i) {
-                timer = element.timers$[i];
+            for (i = 0; i < element.timers.length; ++i) {
+                timer = element.timers[i];
                 if (timer && callback === timer.getCallback()) {
                     logID(1507, timer.getInterval(), interval);
                     timer.setInterval(interval);
@@ -630,7 +630,7 @@ export class Scheduler extends System {
 
         timer = CallbackTimer.get();
         timer.initWithCallback(this, callback, target, interval, repeat ?? 0, delay ?? 0);
-        element.timers$.push(timer);
+        element.timers.push(timer);
 
         if (this._currentTarget === element && this._currentTargetSalvaged) {
             this._currentTargetSalvaged = false;
@@ -659,21 +659,21 @@ export class Scheduler extends System {
             return;
         }
         const hashElement = this._hashForUpdates[targetId];
-        if (hashElement && hashElement.entry$) {
+        if (hashElement && hashElement.entry) {
             // check if priority has changed
-            if (hashElement.entry$.priority$ !== priority) {
+            if (hashElement.entry.priority !== priority) {
                 if (this._updateHashLocked) {
                     logID(1506);
-                    hashElement.entry$.markedForDeletion$ = false;
-                    hashElement.entry$.paused$ = paused;
+                    hashElement.entry.markedForDeletion = false;
+                    hashElement.entry.paused = paused;
                     return;
                 } else {
                     // will be added again outside if (hashElement).
                     this.unscheduleUpdate(target);
                 }
             } else {
-                hashElement.entry$.markedForDeletion$ = false;
-                hashElement.entry$.paused$ = paused;
+                hashElement.entry.markedForDeletion = false;
+                hashElement.entry.paused = paused;
                 return;
             }
         }
@@ -720,21 +720,21 @@ export class Scheduler extends System {
 
         const element = this._hashForTimers[targetId];
         if (element) {
-            const timers = element.timers$;
+            const timers = element.timers;
             if (!timers) {
                 return;
             }
             for (let i = 0, li = timers.length; i < li; i++) {
                 const timer = timers[i];
                 if (callback === timer.getCallback()) {
-                    if ((timer === element.currentTimer$) && (!element.currentTimerSalvaged$)) {
-                        element.currentTimerSalvaged$ = true;
+                    if ((timer === element.currentTimer) && (!element.currentTimerSalvaged)) {
+                        element.currentTimerSalvaged = true;
                     }
                     timers.splice(i, 1);
                     CallbackTimer.put(timer);
                     // update timerIndex in case we are in tick;, looping over the actions
-                    if (element.timerIndex$ >= i) {
-                        element.timerIndex$--;
+                    if (element.timerIndex >= i) {
+                        element.timerIndex--;
                     }
 
                     if (timers.length === 0) {
@@ -759,7 +759,7 @@ export class Scheduler extends System {
     public unscheduleForTimer (timerToUnschedule: CallbackTimer, target: ISchedulable): void {
         const targetId = (target.uuid || target.id) as string;
         const element = this._hashForTimers[targetId];
-        const timers = element.timers$;
+        const timers = element.timers;
         if (!timers || timers.length === 0) {
             return;
         }
@@ -771,8 +771,8 @@ export class Scheduler extends System {
                 CallbackTimer.put(timer);
 
                 // update timerIndex in case we are in tick;, looping over the actions
-                if (element.timerIndex$ >= i) {
-                    element.timerIndex$--;
+                if (element.timerIndex >= i) {
+                    element.timerIndex--;
                 }
 
                 if (timers.length === 0) {
@@ -799,11 +799,11 @@ export class Scheduler extends System {
         }
 
         const element = this._hashForUpdates[targetId];
-        if (element?.entry$) {
+        if (element?.entry) {
             if (this._updateHashLocked) {
-                element.entry$.markedForDeletion$ = true;
+                element.entry.markedForDeletion = true;
             } else {
-                this._removeUpdateFromHash(element.entry$);
+                this._removeUpdateFromHash(element.entry);
             }
         }
     }
@@ -828,11 +828,11 @@ export class Scheduler extends System {
 
         // Custom Selectors
         const element = this._hashForTimers[targetId];
-        if (element?.timers$) {
-            const timers = element.timers$;
-            if (element.currentTimer$ && timers.indexOf(element.currentTimer$) > -1
-                && (!element.currentTimerSalvaged$)) {
-                element.currentTimerSalvaged$ = true;
+        if (element?.timers) {
+            const timers = element.timers;
+            if (element.currentTimer && timers.indexOf(element.currentTimer) > -1
+                && (!element.currentTimerSalvaged)) {
+                element.currentTimerSalvaged = true;
             }
             for (let i = 0, l = timers.length; i < l; i++) {
                 CallbackTimer.put(timers[i]);
@@ -882,8 +882,8 @@ export class Scheduler extends System {
         const arr = this._arrayForTimers;
         for (i = arr.length - 1; i >= 0; i--) {
             element = arr[i];
-            if (element.target$) {
-                this.unscheduleAllForTarget(element.target$);
+            if (element.target) {
+                this.unscheduleAllForTarget(element.target);
             }
         }
 
@@ -894,8 +894,8 @@ export class Scheduler extends System {
             for (i = 0; i < this._updatesNegList.length;) {
                 temp_length = this._updatesNegList.length;
                 entry = this._updatesNegList[i];
-                if (entry?.target$ && entry.priority$ >= minPriority) {
-                    this.unscheduleUpdate(entry.target$);
+                if (entry?.target && entry.priority >= minPriority) {
+                    this.unscheduleUpdate(entry.target);
                 }
                 if (temp_length === this._updatesNegList.length) {
                     i++;
@@ -907,8 +907,8 @@ export class Scheduler extends System {
             for (i = 0; i < this._updates0List.length;) {
                 temp_length = this._updates0List.length;
                 entry = this._updates0List[i];
-                if (entry?.target$) {
-                    this.unscheduleUpdate(entry.target$);
+                if (entry?.target) {
+                    this.unscheduleUpdate(entry.target);
                 }
                 if (temp_length === this._updates0List.length) {
                     i++;
@@ -919,8 +919,8 @@ export class Scheduler extends System {
         for (i = 0; i < this._updatesPosList.length;) {
             temp_length = this._updatesPosList.length;
             entry = this._updatesPosList[i];
-            if (entry?.target$ && entry.priority$ >= minPriority) {
-                this.unscheduleUpdate(entry.target$);
+            if (entry?.target && entry.priority >= minPriority) {
+                this.unscheduleUpdate(entry.target);
             }
             if (temp_length === this._updatesPosList.length) {
                 i++;
@@ -952,10 +952,10 @@ export class Scheduler extends System {
             return false;
         }
 
-        if (element.timers$ == null) {
+        if (element.timers == null) {
             return false;
         } else {
-            const timers = element.timers$;
+            const timers = element.timers;
 
             for (let i = 0; i < timers.length; ++i) {
                 const timer =  timers[i];
@@ -998,9 +998,9 @@ export class Scheduler extends System {
         // Custom Selectors
         for (i = 0, li = locArrayForTimers.length; i < li; i++) {
             element = locArrayForTimers[i];
-            if (element?.target$) {
-                element.paused$ = true;
-                idsWithSelectors.push(element.target$);
+            if (element?.target) {
+                element.paused = true;
+                idsWithSelectors.push(element.target);
             }
         }
 
@@ -1008,10 +1008,10 @@ export class Scheduler extends System {
         if (minPriority < 0) {
             for (i = 0; i < this._updatesNegList.length; i++) {
                 entry = this._updatesNegList[i];
-                if (entry?.target$) {
-                    if (entry.priority$ >= minPriority) {
-                        entry.paused$ = true;
-                        idsWithSelectors.push(entry.target$);
+                if (entry?.target) {
+                    if (entry.priority >= minPriority) {
+                        entry.paused = true;
+                        idsWithSelectors.push(entry.target);
                     }
                 }
             }
@@ -1020,19 +1020,19 @@ export class Scheduler extends System {
         if (minPriority <= 0) {
             for (i = 0; i < this._updates0List.length; i++) {
                 entry = this._updates0List[i];
-                if (entry?.target$) {
-                    entry.paused$ = true;
-                    idsWithSelectors.push(entry.target$);
+                if (entry?.target) {
+                    entry.paused = true;
+                    idsWithSelectors.push(entry.target);
                 }
             }
         }
 
         for (i = 0; i < this._updatesPosList.length; i++) {
             entry = this._updatesPosList[i];
-            if (entry?.target$) {
-                if (entry.priority$ >= minPriority) {
-                    entry.paused$ = true;
-                    idsWithSelectors.push(entry.target$);
+            if (entry?.target) {
+                if (entry.priority >= minPriority) {
+                    entry.paused = true;
+                    idsWithSelectors.push(entry.target);
                 }
             }
         }
@@ -1081,13 +1081,13 @@ export class Scheduler extends System {
         // customer selectors
         const element = this._hashForTimers[targetId];
         if (element) {
-            element.paused$ = true;
+            element.paused = true;
         }
 
         // update callback
         const elementUpdate = this._hashForUpdates[targetId];
-        if (elementUpdate?.entry$) {
-            elementUpdate.entry$.paused$ = true;
+        if (elementUpdate?.entry) {
+            elementUpdate.entry.paused = true;
         }
     }
 
@@ -1113,13 +1113,13 @@ export class Scheduler extends System {
         // custom selectors
         const element = this._hashForTimers[targetId];
         if (element) {
-            element.paused$ = false;
+            element.paused = false;
         }
 
         // update callback
         const elementUpdate = this._hashForUpdates[targetId];
-        if (elementUpdate?.entry$) {
-            elementUpdate.entry$.paused$ = false;
+        if (elementUpdate?.entry) {
+            elementUpdate.entry.paused = false;
         }
     }
 
@@ -1139,21 +1139,21 @@ export class Scheduler extends System {
         // Custom selectors
         const element = this._hashForTimers[targetId];
         if (element) {
-            return element.paused$;
+            return element.paused;
         }
         const elementUpdate = this._hashForUpdates[targetId];
-        if (elementUpdate?.entry$) {
-            return elementUpdate.entry$.paused$;
+        if (elementUpdate?.entry) {
+            return elementUpdate.entry.paused;
         }
         return false;
     }
 
     // -----------------------private method----------------------
     private _removeHashElement (element: HashTimerEntry): void {
-        if (!element.target$) {
+        if (!element.target) {
             return;
         }
-        const targetId = element.target$.uuid || element.target$.id;
+        const targetId = element.target.uuid || element.target.id;
         if (typeof targetId === 'undefined') {
             return;
         }
@@ -1169,18 +1169,18 @@ export class Scheduler extends System {
     }
 
     private _removeUpdateFromHash (entry: ListEntry): void {
-        if (!entry.target$) {
+        if (!entry.target) {
             return;
         }
-        const targetId = entry.target$.uuid || entry.target$.id;
+        const targetId = entry.target.uuid || entry.target.id;
         if (typeof targetId === 'undefined') {
             return;
         }
         const element = this._hashForUpdates[targetId];
         if (element) {
             // Remove list entry from list
-            const list = element.list$;
-            const listEntry = element.entry$;
+            const list = element.list;
+            const listEntry = element.entry;
             if (list) {
                 for (let i = 0, l = list.length; i < l; i++) {
                     if (list[i] === listEntry) {
@@ -1200,7 +1200,7 @@ export class Scheduler extends System {
 
     private _priorityIn (ppList: ListEntry[], listElement: ListEntry, priority: number): void {
         for (let i = 0; i < ppList.length; i++) {
-            if (priority < ppList[i].priority$) {
+            if (priority < ppList[i].priority) {
                 ppList.splice(i, 0, listElement);
                 return;
             }

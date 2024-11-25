@@ -752,7 +752,7 @@ export class Model {
     }
 
     public showTetrahedron (): boolean {
-        return this.isLightProbeAvailable$();
+        return this.isLightProbeAvailable();
     }
 
     private isLightProbeAvailable$ (): boolean {
@@ -807,7 +807,7 @@ export class Model {
             this._localSHData[i] = 0.0;
         }
 
-        this.updateSHBuffer$();
+        this.updateSHBuffer();
     }
 
     /**
@@ -815,7 +815,7 @@ export class Model {
      * @zh 更新模型的球谐 ubo
      */
     public updateSHUBOs (): void {
-        if (!this.isLightProbeAvailable$()) {
+        if (!this.isLightProbeAvailable()) {
             return;
         }
 
@@ -842,7 +842,7 @@ export class Model {
         const SHCls: typeof SH = cclegacy.internal.SH;
         SHCls.reduceRinging(coefficients, lightProbes.reduceRinging);
         SHCls.updateUBOData(this._localSHData, UBOSHEnum.SH_LINEAR_CONST_R_OFFSET, coefficients);
-        this.updateSHBuffer$();
+        this.updateSHBuffer();
     }
 
     /**

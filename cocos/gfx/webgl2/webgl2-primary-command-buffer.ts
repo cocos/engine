@@ -55,8 +55,8 @@ export class WebGL2PrimaryCommandBuffer extends WebGL2CommandBuffer {
     ): void {
         WebGL2CmdFuncBeginRenderPass(
             WebGL2DeviceManager.instance,
-            (renderPass as WebGL2RenderPass).getGpuRenderPass$(),
-            (framebuffer as WebGL2Framebuffer).getGpuFramebuffer$(),
+            (renderPass as WebGL2RenderPass).getGpuRenderPass(),
+            (framebuffer as WebGL2Framebuffer).getGpuFramebuffer(),
             renderArea,
             clearColors,
             clearDepth,
@@ -79,7 +79,7 @@ export class WebGL2PrimaryCommandBuffer extends WebGL2CommandBuffer {
             this._numInstances += info.instanceCount;
             const indexCount = info.indexCount || info.vertexCount;
             if (this._curGPUPipelineState) {
-                const glPrimitive = this._curGPUPipelineState.glPrimitive$;
+                const glPrimitive = this._curGPUPipelineState.glPrimitive;
                 switch (glPrimitive) {
                 case 0x0004: { // WebGLRenderingContext.TRIANGLES
                     this._numTris += indexCount / 3 * Math.max(info.instanceCount, 1);
@@ -100,41 +100,41 @@ export class WebGL2PrimaryCommandBuffer extends WebGL2CommandBuffer {
 
     public setViewport (viewport: Readonly<Viewport>): void {
         const { gl } = WebGL2DeviceManager.instance;
-        const cache = WebGL2DeviceManager.instance.getStateCache$();
+        const cache = WebGL2DeviceManager.instance.getStateCache();
 
-        if (cache.viewport$.left !== viewport.left
-            || cache.viewport$.top !== viewport.top
-            || cache.viewport$.width !== viewport.width
-            || cache.viewport$.height !== viewport.height) {
+        if (cache.viewport.left !== viewport.left
+            || cache.viewport.top !== viewport.top
+            || cache.viewport.width !== viewport.width
+            || cache.viewport.height !== viewport.height) {
             gl.viewport(viewport.left, viewport.top, viewport.width, viewport.height);
 
-            cache.viewport$.left = viewport.left;
-            cache.viewport$.top = viewport.top;
-            cache.viewport$.width = viewport.width;
-            cache.viewport$.height = viewport.height;
+            cache.viewport.left = viewport.left;
+            cache.viewport.top = viewport.top;
+            cache.viewport.width = viewport.width;
+            cache.viewport.height = viewport.height;
         }
     }
 
     public setScissor (scissor: Readonly<Rect>): void {
         const { gl } = WebGL2DeviceManager.instance;
-        const cache = WebGL2DeviceManager.instance.getStateCache$();
+        const cache = WebGL2DeviceManager.instance.getStateCache();
 
-        if (cache.scissorRect$.x !== scissor.x
-            || cache.scissorRect$.y !== scissor.y
-            || cache.scissorRect$.width !== scissor.width
-            || cache.scissorRect$.height !== scissor.height) {
+        if (cache.scissorRect.x !== scissor.x
+            || cache.scissorRect.y !== scissor.y
+            || cache.scissorRect.width !== scissor.width
+            || cache.scissorRect.height !== scissor.height) {
             gl.scissor(scissor.x, scissor.y, scissor.width, scissor.height);
 
-            cache.scissorRect$.x = scissor.x;
-            cache.scissorRect$.y = scissor.y;
-            cache.scissorRect$.width = scissor.width;
-            cache.scissorRect$.height = scissor.height;
+            cache.scissorRect.x = scissor.x;
+            cache.scissorRect.y = scissor.y;
+            cache.scissorRect.width = scissor.width;
+            cache.scissorRect.height = scissor.height;
         }
     }
 
     public updateBuffer (buffer: Buffer, data: Readonly<BufferSource>, size?: number): void {
         if (!this._isInRenderPass) {
-            const gpuBuffer = (buffer as WebGL2Buffer).getGpuBuffer$();
+            const gpuBuffer = (buffer as WebGL2Buffer).getGpuBuffer();
             if (gpuBuffer) {
                 let buffSize: number;
                 if (size !== undefined) {

@@ -94,8 +94,8 @@ export class SortingLayers {
      */
     public static getLayerName (layer = 0): string {
         let name = '';
-        if (this.nameMap$.has(layer)) {
-            name = this.nameMap$.get(layer)!;
+        if (this.nameMap.has(layer)) {
+            name = this.nameMap.get(layer)!;
         } else {
             errorID(2105);
         }
@@ -107,12 +107,12 @@ export class SortingLayers {
      * @en Get Layer id by name
      */
     public static getLayerByName (name: string): number {
-        const count = this.nameMap$.size;
-        const keyIterator = this.nameMap$.keys();
+        const count = this.nameMap.size;
+        const keyIterator = this.nameMap.keys();
         let key = 0;
         for (let i = 0; i < count; i++) {
             key = keyIterator.next().value;
-            if (this.nameMap$.get(key) === name) return key;
+            if (this.nameMap.get(key) === name) return key;
         }
         errorID(2106);
         return 0;
@@ -179,7 +179,7 @@ export class SortingLayers {
      * @engineInternal
      */
     public static setLayer (layer: number, layerName: string, layerIndex: number): void {
-        this.nameMap$.set(layer, layerName);
+        this.nameMap.set(layer, layerName);
         this.indexMap.set(layer, layerIndex);
     }
 
@@ -193,6 +193,6 @@ export class SortingLayers {
             delete SortingLayers.Enum[oldItem[i]];
         }
         SortingLayers.indexMap.clear();
-        SortingLayers.nameMap$.clear();
+        SortingLayers.nameMap.clear();
     }
 }

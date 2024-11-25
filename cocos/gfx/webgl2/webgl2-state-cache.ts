@@ -56,21 +56,21 @@ export class WebGL2StateCache {
     }
 
     initialize (texUnit: number, bufferBindings: number, vertexAttributes: number): void {
-        for (let i = 0; i < texUnit; ++i) this.glTexUnits$.push({ glTexture$: null });
+        for (let i = 0; i < texUnit; ++i) this.glTexUnits.push({ glTexture$: null });
 
-        this.glSamplerUnits$.length = texUnit;
-        this.glSamplerUnits$.fill(null);
+        this.glSamplerUnits.length = texUnit;
+        this.glSamplerUnits.fill(null);
 
-        this.glBindUBOs$.length = bufferBindings;
-        this.glBindUBOs$.fill(null);
+        this.glBindUBOs.length = bufferBindings;
+        this.glBindUBOs.fill(null);
 
-        this.glBindUBOOffsets$.length = bufferBindings;
-        this.glBindUBOOffsets$.fill(0);
+        this.glBindUBOOffsets.length = bufferBindings;
+        this.glBindUBOOffsets.fill(0);
 
-        this.glEnabledAttribLocs$.length = vertexAttributes;
-        this.glEnabledAttribLocs$.fill(false);
+        this.glEnabledAttribLocs.length = vertexAttributes;
+        this.glEnabledAttribLocs.fill(false);
 
-        this.glCurrentAttribLocs$.length = vertexAttributes;
-        this.glCurrentAttribLocs$.fill(false);
+        this.glCurrentAttribLocs.length = vertexAttributes;
+        this.glCurrentAttribLocs.fill(false);
     }
 }

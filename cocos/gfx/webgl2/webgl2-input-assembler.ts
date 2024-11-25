@@ -49,7 +49,7 @@ export class WebGL2InputAssembler extends InputAssembler {
         }
 
         this._attributes = info.attributes;
-        this._attributesHash = this.computeAttributesHash$();
+        this._attributesHash = this.computeAttributesHash();
         this._vertexBuffers = info.vertexBuffers;
 
         if (info.indexBuffer) {
@@ -70,17 +70,17 @@ export class WebGL2InputAssembler extends InputAssembler {
         const gpuVertexBuffers: IWebGL2GPUBuffer[] = new Array<IWebGL2GPUBuffer>(info.vertexBuffers.length);
         for (let i = 0; i < info.vertexBuffers.length; ++i) {
             const vb = info.vertexBuffers[i] as WebGL2Buffer;
-            if (vb.getGpuBuffer$()) {
-                gpuVertexBuffers[i] = vb.getGpuBuffer$();
+            if (vb.getGpuBuffer()) {
+                gpuVertexBuffers[i] = vb.getGpuBuffer();
             }
         }
 
         let gpuIndexBuffer: IWebGL2GPUBuffer | null = null;
         let glIndexType = 0;
         if (info.indexBuffer) {
-            gpuIndexBuffer = (info.indexBuffer as WebGL2Buffer).getGpuBuffer$();
+            gpuIndexBuffer = (info.indexBuffer as WebGL2Buffer).getGpuBuffer();
             if (gpuIndexBuffer) {
-                switch (gpuIndexBuffer.stride$) {
+                switch (gpuIndexBuffer.stride) {
                 case 1: glIndexType = WebGLConstants.UNSIGNED_BYTE; break;
                 case 2: glIndexType = WebGLConstants.UNSIGNED_SHORT; break;
                 case 4: glIndexType = WebGLConstants.UNSIGNED_INT; break;
@@ -93,7 +93,7 @@ export class WebGL2InputAssembler extends InputAssembler {
 
         let gpuIndirectBuffer: IWebGL2GPUBuffer | null = null;
         if (info.indirectBuffer) {
-            gpuIndirectBuffer = (info.indirectBuffer as WebGL2Buffer).getGpuBuffer$();
+            gpuIndirectBuffer = (info.indirectBuffer as WebGL2Buffer).getGpuBuffer();
         }
 
         this._gpuInputAssembler = {
@@ -112,7 +112,7 @@ export class WebGL2InputAssembler extends InputAssembler {
 
     public destroy (): void {
         const device = WebGL2DeviceManager.instance;
-        if (this._gpuInputAssembler && device.extensions.useVAO$) {
+        if (this._gpuInputAssembler && device.extensions.useVAO) {
             WebGL2CmdFuncDestroyInputAssembler(device, this._gpuInputAssembler);
         }
         this._gpuInputAssembler = null;

@@ -82,15 +82,15 @@ export class WebGLDevice extends Device {
     }
 
     get stateCache (): WebGLStateCache {
-        return this._swapchain!.stateCache$;
+        return this._swapchain!.stateCache;
     }
 
     get nullTex2D (): WebGLTexture {
-        return this._swapchain!.nullTex2D$;
+        return this._swapchain!.nullTex2D;
     }
 
     get nullTexCube (): WebGLTexture {
-        return this._swapchain!.nullTexCube$;
+        return this._swapchain!.nullTexCube;
     }
 
     get textureExclusive (): boolean[] {
@@ -112,7 +112,7 @@ export class WebGLDevice extends Device {
     protected _textureExclusive = new Array<boolean>(Format.COUNT);
 
     public initialize (info: Readonly<DeviceInfo>): boolean {
-        WebGLDeviceManager.setInstance$(this);
+        WebGLDeviceManager.setInstance(this);
         this._gfxAPI = API.WEBGL;
 
         const mapping = this._bindingMappingInfo = info.bindingMappingInfo;
@@ -261,9 +261,9 @@ export class WebGLDevice extends Device {
 
     public present (): void {
         const queue = (this._queue as WebGLQueue);
-        this._numDrawCalls = queue.numDrawCalls$;
-        this._numInstances = queue.numInstances$;
-        this._numTris = queue.numTris$;
+        this._numDrawCalls = queue.numDrawCalls;
+        this._numInstances = queue.numInstances;
+        this._numTris = queue.numTris;
         queue.clear();
     }
 

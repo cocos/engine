@@ -72,19 +72,19 @@ export class WebGLDescriptorSet extends DescriptorSet {
 
     public update (): void {
         if (this._isDirty && this._gpuDescriptorSet) {
-            const descriptors = this._gpuDescriptorSet.gpuDescriptors$;
+            const descriptors = this._gpuDescriptorSet.gpuDescriptors;
             for (let i = 0; i < descriptors.length; ++i) {
-                if (descriptors[i].type$ & DESCRIPTOR_BUFFER_TYPE) {
+                if (descriptors[i].type & DESCRIPTOR_BUFFER_TYPE) {
                     const buffer = this._buffers[i] as WebGLBuffer | null;
                     if (buffer) {
-                        descriptors[i].gpuBuffer$ = buffer.gpuBuffer || buffer.gpuBufferView;
+                        descriptors[i].gpuBuffer = buffer.gpuBuffer || buffer.gpuBufferView;
                     }
-                } else if (descriptors[i].type$ & DESCRIPTOR_SAMPLER_TYPE) {
+                } else if (descriptors[i].type & DESCRIPTOR_SAMPLER_TYPE) {
                     if (this._textures[i]) {
-                        descriptors[i].gpuTexture$ = (this._textures[i] as WebGLTexture).gpuTexture;
+                        descriptors[i].gpuTexture = (this._textures[i] as WebGLTexture).gpuTexture;
                     }
                     if (this._samplers[i]) {
-                        descriptors[i].gpuSampler$ = (this._samplers[i] as WebGLSampler).gpuSampler;
+                        descriptors[i].gpuSampler = (this._samplers[i] as WebGLSampler).gpuSampler;
                     }
                 }
             }

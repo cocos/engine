@@ -48,7 +48,7 @@ export class WebGLInputAssembler extends InputAssembler {
         }
 
         this._attributes = info.attributes;
-        this._attributesHash = this.computeAttributesHash$();
+        this._attributesHash = this.computeAttributesHash();
         this._vertexBuffers = info.vertexBuffers;
 
         if (info.indexBuffer) {
@@ -79,7 +79,7 @@ export class WebGLInputAssembler extends InputAssembler {
         if (info.indexBuffer) {
             gpuIndexBuffer = (info.indexBuffer as WebGLBuffer).gpuBuffer;
             if (gpuIndexBuffer) {
-                switch (gpuIndexBuffer.stride$) {
+                switch (gpuIndexBuffer.stride) {
                 case 1: glIndexType = 0x1401; break; // WebGLRenderingContext.UNSIGNED_BYTE
                 case 2: glIndexType = 0x1403; break; // WebGLRenderingContext.UNSIGNED_SHORT
                 case 4: glIndexType = 0x1405; break; // WebGLRenderingContext.UNSIGNED_INT

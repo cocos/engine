@@ -44,14 +44,14 @@ export class WebGL2Framebuffer extends Framebuffer {
     private _gpuDepthStencilView: WebGLTexture | null | undefined;
 
     get needRebuild (): boolean {
-        const gpuFramebuffer = this.getGpuFramebuffer$();
+        const gpuFramebuffer = this.getGpuFramebuffer();
         if (gpuFramebuffer) {
-            for (let i = 0; i < gpuFramebuffer.gpuColorViews$.length; i++) {
-                if (gpuFramebuffer.gpuColorViews$[i].gpuTexture$.glTexture$ !== this._gpuColorViews[i]) {
+            for (let i = 0; i < gpuFramebuffer.gpuColorViews.length; i++) {
+                if (gpuFramebuffer.gpuColorViews[i].gpuTexture.glTexture !== this._gpuColorViews[i]) {
                     return true;
                 }
             }
-            if (gpuFramebuffer.gpuDepthStencilView$?.gpuTexture$.glTexture$ !== this._gpuDepthStencilView) {
+            if (gpuFramebuffer.gpuDepthStencilView?.gpuTexture.glTexture !== this._gpuDepthStencilView) {
                 return true;
             }
         }
@@ -80,16 +80,16 @@ export class WebGL2Framebuffer extends Framebuffer {
         let width = Number.MAX_SAFE_INTEGER;
         let height = Number.MAX_SAFE_INTEGER;
         this._gpuFramebuffer = {
-            gpuRenderPass$: (info.renderPass as WebGL2RenderPass).getGpuRenderPass$(),
+            gpuRenderPass$: (info.renderPass as WebGL2RenderPass).getGpuRenderPass(),
             gpuColorViews$: gpuColorViews,
             gpuDepthStencilView$: gpuDepthStencilView,
             glFramebuffer$: null,
             isOffscreen$: true,
             get width (): number {
-                if (this.gpuColorViews$.length > 0) {
-                    return this.gpuColorViews$[0].gpuTexture$.width$;
-                } else if (this.gpuDepthStencilView$) {
-                    return this.gpuDepthStencilView$.gpuTexture$.width$;
+                if (this.gpuColorViews.length > 0) {
+                    return this.gpuColorViews[0].gpuTexture.width;
+                } else if (this.gpuDepthStencilView) {
+                    return this.gpuDepthStencilView.gpuTexture.width;
                 }
                 return width;
             },
@@ -97,10 +97,10 @@ export class WebGL2Framebuffer extends Framebuffer {
                 width = val;
             },
             get height (): number {
-                if (this.gpuColorViews$.length > 0) {
-                    return this.gpuColorViews$[0].gpuTexture$.height$;
-                } else if (this.gpuDepthStencilView$) {
-                    return this.gpuDepthStencilView$.gpuTexture$.height$;
+                if (this.gpuColorViews.length > 0) {
+                    return this.gpuColorViews[0].gpuTexture.height;
+                } else if (this.gpuDepthStencilView) {
+                    return this.gpuDepthStencilView.gpuTexture.height;
                 }
                 return height;
             },
@@ -110,8 +110,8 @@ export class WebGL2Framebuffer extends Framebuffer {
         };
 
         WebGL2CmdFuncCreateFramebuffer(WebGL2DeviceManager.instance, this._gpuFramebuffer);
-        this._gpuFramebuffer.gpuColorViews$.forEach((tex) => this._gpuColorViews.push(tex.gpuTexture$.glTexture$));
-        this._gpuDepthStencilView = this._gpuFramebuffer.gpuDepthStencilView$?.gpuTexture$.glTexture$;
+        this._gpuFramebuffer.gpuColorViews.forEach((tex) => this._gpuColorViews.push(tex.gpuTexture.glTexture));
+        this._gpuDepthStencilView = this._gpuFramebuffer.gpuDepthStencilView?.gpuTexture.glTexture;
         this._width = this._gpuFramebuffer.width;
         this._height = this._gpuFramebuffer.height;
     }

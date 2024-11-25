@@ -57,32 +57,32 @@ export class WebGLIndirectDrawInfos {
     private _capacity = 4;
 
     constructor () {
-        this.counts$ = createInt32Array(this._capacity);
-        this.offsets$ = createInt32Array(this._capacity);
-        this.instances$  = createInt32Array(this._capacity);
-        this.byteOffsets$ = createInt32Array(this._capacity);
+        this.counts = createInt32Array(this._capacity);
+        this.offsets = createInt32Array(this._capacity);
+        this.instances  = createInt32Array(this._capacity);
+        this.byteOffsets = createInt32Array(this._capacity);
     }
 
     public clearDraws (): void {
-        this.drawCount$ = 0;
-        this.drawByIndex$ = false;
-        this.instancedDraw$ = false;
+        this.drawCount = 0;
+        this.drawByIndex = false;
+        this.instancedDraw = false;
     }
 
     public setDrawInfo (idx: number, info: Readonly<DrawInfo>): void {
         this._ensureCapacity(idx);
-        this.drawByIndex$ = info.indexCount > 0;
-        this.instancedDraw$ = !!info.instanceCount;
-        this.drawCount$ = Math.max(idx + 1, this.drawCount$);
+        this.drawByIndex = info.indexCount > 0;
+        this.instancedDraw = !!info.instanceCount;
+        this.drawCount = Math.max(idx + 1, this.drawCount);
 
-        if (this.drawByIndex$) {
-            this.counts$[idx] = info.indexCount;
-            this.offsets$[idx] = info.firstIndex;
+        if (this.drawByIndex) {
+            this.counts[idx] = info.indexCount;
+            this.offsets[idx] = info.firstIndex;
         } else {
-            this.counts$[idx] = info.vertexCount;
-            this.offsets$[idx] = info.firstVertex;
+            this.counts[idx] = info.vertexCount;
+            this.offsets[idx] = info.firstVertex;
         }
-        this.instances$[idx] = Math.max(1, info.instanceCount);
+        this.instances[idx] = Math.max(1, info.instanceCount);
     }
 
     private _ensureCapacity (target: number): void {
@@ -92,15 +92,15 @@ export class WebGLIndirectDrawInfos {
         const counts = createInt32Array(this._capacity);
         const offsets = createInt32Array(this._capacity);
         const instances = createInt32Array(this._capacity);
-        this.byteOffsets$ = createInt32Array(this._capacity);
+        this.byteOffsets = createInt32Array(this._capacity);
 
-        counts.set(this.counts$);
-        offsets.set(this.offsets$);
-        instances.set(this.instances$);
+        counts.set(this.counts);
+        offsets.set(this.offsets);
+        instances.set(this.instances);
 
-        this.counts$ = counts;
-        this.offsets$ = offsets;
-        this.instances$ = instances;
+        this.counts = counts;
+        this.offsets = offsets;
+        this.instances = instances;
     }
 }
 
@@ -403,9 +403,9 @@ void main() {
             descriptorCount$: samplerOffset + 1,
         };
         for (let i = 0; i < samplerOffset; i++) {
-            this._gpuDescriptorSetLayout.descriptorIndices$[i] = 0;
+            this._gpuDescriptorSetLayout.descriptorIndices[i] = 0;
         }
-        this._gpuDescriptorSetLayout.descriptorIndices$.push(1);
+        this._gpuDescriptorSetLayout.descriptorIndices.push(1);
 
         this._gpuPipelineLayout = {
             gpuSetLayouts$: [this._gpuDescriptorSetLayout],
@@ -437,7 +437,7 @@ void main() {
             glBuffer$: null,
         };
         WebGLCmdFuncCreateBuffer(WebGLDeviceManager.instance, this._gpuVertexBuffer);
-        WebGLDeviceManager.instance.memoryStatus.bufferSize += this._gpuVertexBuffer.size$;
+        WebGLDeviceManager.instance.memoryStatus.bufferSize += this._gpuVertexBuffer.size;
         const data  = new Float32Array(
             [-1.0, -1.0, 0.0, 0.0,
                 1.0, -1.0, 1.0, 0.0,
@@ -487,13 +487,13 @@ void main() {
             glBuffer$: null,
         };
         WebGLCmdFuncCreateBuffer(WebGLDeviceManager.instance, this._gpuUniformBuffer);
-        WebGLDeviceManager.instance.memoryStatus.bufferSize += this._gpuUniformBuffer.size$;
+        WebGLDeviceManager.instance.memoryStatus.bufferSize += this._gpuUniformBuffer.size;
 
         this._gpuDescriptorSet = {
             gpuDescriptors$: [
                 { type$: DescriptorType.UNIFORM_BUFFER, gpuBuffer$: this._gpuUniformBuffer, gpuTexture$: null, gpuSampler$: null },
                 { type$: DescriptorType.SAMPLER_TEXTURE, gpuBuffer$: null, gpuTexture$: null, gpuSampler$: null }],
-            descriptorIndices$: this._gpuDescriptorSetLayout.descriptorIndices$,
+            descriptorIndices$: this._gpuDescriptorSetLayout.descriptorIndices,
         };
 
         this._drawInfo = new DrawInfo(4, 0, 0, 0, 0, 0, 0);
@@ -506,11 +506,11 @@ void main() {
             this._glFramebuffer = null;
         }
         if (this._gpuVertexBuffer) {
-            WebGLDeviceManager.instance.memoryStatus.bufferSize -= this._gpuVertexBuffer.size$;
+            WebGLDeviceManager.instance.memoryStatus.bufferSize -= this._gpuVertexBuffer.size;
             WebGLCmdFuncDestroyBuffer(WebGLDeviceManager.instance, this._gpuVertexBuffer);
         }
         if (this._gpuUniformBuffer) {
-            WebGLDeviceManager.instance.memoryStatus.bufferSize -= this._gpuUniformBuffer.size$;
+            WebGLDeviceManager.instance.memoryStatus.bufferSize -= this._gpuUniformBuffer.size;
             WebGLCmdFuncDestroyBuffer(WebGLDeviceManager.instance, this._gpuUniformBuffer);
         }
         if (this._gpuShader) {
@@ -525,21 +525,21 @@ void main() {
         const device = WebGLDeviceManager.instance;
         const { gl } = device;
         const stateCache = device.stateCache;
-        const origFramebuffer = stateCache.glFramebuffer$;
+        const origFramebuffer = stateCache.glFramebuffer;
 
-        gl.viewport(0, 0, gpuTextureDst.width$, gpuTextureDst.height$);
-        gl.scissor(0, 0, gpuTextureDst.width$, gpuTextureDst.height$);
+        gl.viewport(0, 0, gpuTextureDst.width, gpuTextureDst.height);
+        gl.scissor(0, 0, gpuTextureDst.width, gpuTextureDst.height);
 
         if (!this._uniformBuffer || !this._gpuUniformBuffer || !this._gpuPipelineState
             || !this._gpuInputAssembler || !this._gpuDescriptorSet || !this._drawInfo) {
             return;
         }
 
-        const descriptor = this._gpuDescriptorSet.gpuDescriptors$[1];
-        descriptor.gpuTexture$ = gpuTextureSrc;
-        descriptor.gpuSampler$ = filter === Filter.POINT ? this._gpuPointSampler : this._gpuLinearSampler;
+        const descriptor = this._gpuDescriptorSet.gpuDescriptors[1];
+        descriptor.gpuTexture = gpuTextureSrc;
+        descriptor.gpuSampler = filter === Filter.POINT ? this._gpuPointSampler : this._gpuLinearSampler;
 
-        const formatInfo = FormatInfos[gpuTextureDst.format$];
+        const formatInfo = FormatInfos[gpuTextureDst.format];
         let attachment: number = WebGLConstants.COLOR_ATTACHMENT0;
         if (formatInfo.hasStencil) {
             attachment = WebGLConstants.DEPTH_STENCIL_ATTACHMENT;
@@ -550,30 +550,30 @@ void main() {
         const regionIndices = regions.map((_, i): number => i);
         regionIndices.sort((a, b): number => regions[a].srcSubres.mipLevel - regions[b].srcSubres.mipLevel);
 
-        if (stateCache.glFramebuffer$ !== this._glFramebuffer) {
+        if (stateCache.glFramebuffer !== this._glFramebuffer) {
             gl.bindFramebuffer(WebGLConstants.FRAMEBUFFER, this._glFramebuffer);
-            stateCache.glFramebuffer$ = this._glFramebuffer;
+            stateCache.glFramebuffer = this._glFramebuffer;
         }
 
         let mipLevel = regions[0].dstSubres.mipLevel;
-        if (gpuTextureDst.glTexture$) {
-            gl.framebufferTexture2D(WebGLConstants.FRAMEBUFFER, attachment, gpuTextureDst.glTarget$, gpuTextureDst.glTexture$, mipLevel);
+        if (gpuTextureDst.glTexture) {
+            gl.framebufferTexture2D(WebGLConstants.FRAMEBUFFER, attachment, gpuTextureDst.glTarget, gpuTextureDst.glTexture, mipLevel);
         } else {
-            gl.framebufferRenderbuffer(WebGLConstants.FRAMEBUFFER, attachment, WebGLConstants.RENDERBUFFER, gpuTextureDst.glRenderbuffer$);
+            gl.framebufferRenderbuffer(WebGLConstants.FRAMEBUFFER, attachment, WebGLConstants.RENDERBUFFER, gpuTextureDst.glRenderbuffer);
         }
 
         for (let i = 0; i < regionIndices.length; ++i) {
             const region = regions[regionIndices[i]];
 
-            if (gpuTextureSrc.glTexture$ && mipLevel !== region.srcSubres.mipLevel) {
+            if (gpuTextureSrc.glTexture && mipLevel !== region.srcSubres.mipLevel) {
                 mipLevel = region.srcSubres.mipLevel;
-                gl.framebufferTexture2D(WebGLConstants.FRAMEBUFFER, attachment, gpuTextureDst.glTarget$, gpuTextureDst.glTexture$, mipLevel);
+                gl.framebufferTexture2D(WebGLConstants.FRAMEBUFFER, attachment, gpuTextureDst.glTarget, gpuTextureDst.glTexture, mipLevel);
             }
 
-            const srcWidth = gpuTextureSrc.width$;
-            const srcHeight = gpuTextureSrc.height$;
-            const dstWidth = gpuTextureDst.width$;
-            const dstHeight = gpuTextureDst.height$;
+            const srcWidth = gpuTextureSrc.width;
+            const srcHeight = gpuTextureSrc.height;
+            const dstWidth = gpuTextureDst.width;
+            const dstHeight = gpuTextureDst.height;
 
             this._uniformBuffer[0] = region.srcExtent.width / srcWidth;
             this._uniformBuffer[1] = region.srcExtent.height / srcHeight;
@@ -596,15 +596,15 @@ void main() {
         }
 
         // restore fbo
-        if (stateCache.glFramebuffer$ !== origFramebuffer) {
+        if (stateCache.glFramebuffer !== origFramebuffer) {
             gl.bindFramebuffer(WebGLConstants.FRAMEBUFFER, origFramebuffer);
-            stateCache.glFramebuffer$ = origFramebuffer;
+            stateCache.glFramebuffer = origFramebuffer;
         }
         // restore viewport
-        const origViewport = stateCache.viewport$;
+        const origViewport = stateCache.viewport;
         gl.viewport(origViewport.left, origViewport.top, origViewport.width, origViewport.height);
         // restore scissor
-        const origScissor = stateCache.scissorRect$;
+        const origScissor = stateCache.scissorRect;
         gl.scissor(origScissor.x, origScissor.y, origScissor.width, origScissor.height);
     }
 }

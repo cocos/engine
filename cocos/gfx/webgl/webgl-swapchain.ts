@@ -246,7 +246,7 @@ export class WebGLSwapchain extends Swapchain {
         const { instance } = WebGLDeviceManager;
         const { gl, capabilities } = instance;
 
-        this.stateCache$.initialize(capabilities.maxTextureUnits, capabilities.maxVertexAttributes);
+        this.stateCache.initialize(capabilities.maxTextureUnits, capabilities.maxVertexAttributes);
 
         this._extensions = getExtensions(gl);
 
@@ -283,7 +283,7 @@ export class WebGLSwapchain extends Swapchain {
         });
 
         // create default null texture
-        this.nullTex2D$ = instance.createTexture(new TextureInfo(
+        this.nullTex2D = instance.createTexture(new TextureInfo(
             TextureType.TEX2D,
             TextureUsageBit.SAMPLED,
             Format.RGBA8,
@@ -292,7 +292,7 @@ export class WebGLSwapchain extends Swapchain {
             TextureFlagBit.GEN_MIPMAP,
         )) as WebGLTexture;
 
-        this.nullTexCube$ = instance.createTexture(new TextureInfo(
+        this.nullTexCube = instance.createTexture(new TextureInfo(
             TextureType.CUBE,
             TextureUsageBit.SAMPLED,
             Format.RGBA8,
@@ -306,14 +306,14 @@ export class WebGLSwapchain extends Swapchain {
         nullTexRegion.texExtent.width = 2;
         nullTexRegion.texExtent.height = 2;
 
-        const nullTexBuff = new Uint8Array(this.nullTex2D$.size);
+        const nullTexBuff = new Uint8Array(this.nullTex2D.size);
         nullTexBuff.fill(0);
-        instance.copyBuffersToTexture([nullTexBuff], this.nullTex2D$, [nullTexRegion]);
+        instance.copyBuffersToTexture([nullTexBuff], this.nullTex2D, [nullTexRegion]);
 
         nullTexRegion.texSubres.layerCount = 6;
         instance.copyBuffersToTexture(
             [nullTexBuff, nullTexBuff, nullTexBuff, nullTexBuff, nullTexBuff, nullTexBuff],
-            this.nullTexCube$,
+            this.nullTexCube,
             [nullTexRegion],
         );
         this._blitManager = new IWebGLBlitManager();
@@ -325,14 +325,14 @@ export class WebGLSwapchain extends Swapchain {
             this._webGLContextLostHandler = null;
         }
 
-        if (this.nullTex2D$) {
-            this.nullTex2D$.destroy();
-            this.nullTex2D$ = null!;
+        if (this.nullTex2D) {
+            this.nullTex2D.destroy();
+            this.nullTex2D = null!;
         }
 
-        if (this.nullTexCube$) {
-            this.nullTexCube$.destroy();
-            this.nullTexCube$ = null!;
+        if (this.nullTexCube) {
+            this.nullTexCube.destroy();
+            this.nullTexCube = null!;
         }
 
         if (this._blitManager) {

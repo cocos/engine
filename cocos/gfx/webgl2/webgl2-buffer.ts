@@ -63,9 +63,9 @@ export class WebGL2Buffer extends Buffer {
                 size$: this._size,
                 stride$: this._stride,
                 buffer$: null,
-                indirects$: buffer.getGpuBuffer$().indirects$,
-                glTarget$: buffer.getGpuBuffer$().glTarget$,
-                glBuffer$: buffer.getGpuBuffer$().glBuffer$,
+                indirects$: buffer.getGpuBuffer().indirects,
+                glTarget$: buffer.getGpuBuffer().glTarget,
+                glBuffer$: buffer.getGpuBuffer().glBuffer,
                 glOffset$: info.offset,
             };
         } else { // native buffer
@@ -117,7 +117,7 @@ export class WebGL2Buffer extends Buffer {
         this._count = this._size / this._stride;
 
         if (this._gpuBuffer) {
-            this._gpuBuffer.size$ = size;
+            this._gpuBuffer.size = size;
             if (size > 0) {
                 WebGL2CmdFuncResizeBuffer(WebGL2DeviceManager.instance, this._gpuBuffer);
                 WebGL2DeviceManager.instance.memoryStatus.bufferSize -= oldSize;

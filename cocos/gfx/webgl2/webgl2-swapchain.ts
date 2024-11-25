@@ -187,7 +187,7 @@ export class WebGL2Swapchain extends Swapchain {
 
         const gl = WebGL2DeviceManager.instance.gl;
 
-        this.stateCache$.initialize(
+        this.stateCache.initialize(
             WebGL2DeviceManager.instance.capabilities.maxTextureUnits,
             WebGL2DeviceManager.instance.capabilities.maxUniformBufferBindings,
             WebGL2DeviceManager.instance.capabilities.maxVertexAttributes,
@@ -224,7 +224,7 @@ export class WebGL2Swapchain extends Swapchain {
         });
 
         // create default null texture
-        this.nullTex2D$ = WebGL2DeviceManager.instance.createTexture(new TextureInfo(
+        this.nullTex2D = WebGL2DeviceManager.instance.createTexture(new TextureInfo(
             TextureType.TEX2D,
             TextureUsageBit.SAMPLED,
             Format.RGBA8,
@@ -233,7 +233,7 @@ export class WebGL2Swapchain extends Swapchain {
             TextureFlagBit.NONE,
         )) as WebGL2Texture;
 
-        this.nullTexCube$ = WebGL2DeviceManager.instance.createTexture(new TextureInfo(
+        this.nullTexCube = WebGL2DeviceManager.instance.createTexture(new TextureInfo(
             TextureType.CUBE,
             TextureUsageBit.SAMPLED,
             Format.RGBA8,
@@ -247,14 +247,14 @@ export class WebGL2Swapchain extends Swapchain {
         nullTexRegion.texExtent.width = 2;
         nullTexRegion.texExtent.height = 2;
 
-        const nullTexBuff = new Uint8Array(this.nullTex2D$.size);
+        const nullTexBuff = new Uint8Array(this.nullTex2D.size);
         nullTexBuff.fill(0);
-        WebGL2DeviceManager.instance.copyBuffersToTexture([nullTexBuff], this.nullTex2D$, [nullTexRegion]);
+        WebGL2DeviceManager.instance.copyBuffersToTexture([nullTexBuff], this.nullTex2D, [nullTexRegion]);
 
         nullTexRegion.texSubres.layerCount = 6;
         WebGL2DeviceManager.instance.copyBuffersToTexture(
             [nullTexBuff, nullTexBuff, nullTexBuff, nullTexBuff, nullTexBuff, nullTexBuff],
-            this.nullTexCube$,
+            this.nullTexCube,
             [nullTexRegion],
         );
 
@@ -267,18 +267,18 @@ export class WebGL2Swapchain extends Swapchain {
             this._webGL2ContextLostHandler = null;
         }
 
-        if (this.nullTex2D$) {
-            this.nullTex2D$.destroy();
-            this.nullTex2D$ = null!;
+        if (this.nullTex2D) {
+            this.nullTex2D.destroy();
+            this.nullTex2D = null!;
         }
 
-        if (this.nullTexCube$) {
-            this.nullTexCube$.destroy();
-            this.nullTexCube$ = null!;
+        if (this.nullTexCube) {
+            this.nullTexCube.destroy();
+            this.nullTexCube = null!;
         }
 
         if (this._blitManager) {
-            this._blitManager.destroy$();
+            this._blitManager.destroy();
             this._blitManager = null;
         }
 

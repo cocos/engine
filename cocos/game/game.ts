@@ -662,7 +662,7 @@ export class Game extends EventTarget {
      */
     public on (type: string, callback: () => void, target?: any, once?: boolean): any {
         // Make sure EVENT_ENGINE_INITED callbacks to be invoked
-        if (this.canRegisterEvent$(type)) {
+        if (this.canRegisterEvent(type)) {
             callback.call(target);
         }
         return this.eventTargetOn(type, callback, target, once);
@@ -682,7 +682,7 @@ export class Game extends EventTarget {
      */
     public once (type: string, callback: () => void, target?: any): any {
         // Make sure EVENT_ENGINE_INITED callbacks to be invoked
-        if (this.canRegisterEvent$(type)) {
+        if (this.canRegisterEvent(type)) {
             return callback.call(target);
         }
         return this.eventTargetOnce(type, callback, target);
@@ -803,7 +803,7 @@ export class Game extends EventTarget {
                 assetManager.init();
                 builtinResMgr.init();
                 Layers.init();
-                this.initPacer$();
+                this.initPacer();
                 if (DEBUG) {
                     // eslint-disable-next-line no-console
                     console.timeEnd('Init Infrastructure');
@@ -1097,12 +1097,12 @@ export class Game extends EventTarget {
 
     private _onHide (): void {
         this.emit(Game.EVENT_HIDE);
-        this.pauseByEngine$();
+        this.pauseByEngine();
     }
 
     private _onShow (): void {
         this.emit(Game.EVENT_SHOW);
-        this.resumeByEngine$();
+        this.resumeByEngine();
     }
 
     private _onClose (): void {

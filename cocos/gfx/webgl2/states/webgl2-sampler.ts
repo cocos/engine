@@ -58,22 +58,22 @@ export class WebGL2Sampler extends Sampler {
             getGLSampler$ (device: WebGL2Device, minLod: number, maxLod: number): WebGLSampler {
                 const { gl } = device;
                 const samplerHash = minLod << 16 | maxLod;
-                if (!this.glSamplers$.has(samplerHash)) {
+                if (!this.glSamplers.has(samplerHash)) {
                     const glSampler = gl.createSampler();
                     if (glSampler) {
-                        this.glSamplers$.set(samplerHash, glSampler);
+                        this.glSamplers.set(samplerHash, glSampler);
                         const glSamplerParameteri = gl.samplerParameteri.bind(gl);
                         const glSamplerParameterf = gl.samplerParameterf.bind(gl);
-                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_MIN_FILTER, this.glMinFilter$);
-                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_MAG_FILTER, this.glMagFilter$);
-                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_WRAP_S, this.glWrapS$);
-                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_WRAP_T, this.glWrapT$);
-                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_WRAP_R, this.glWrapR$);
+                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_MIN_FILTER, this.glMinFilter);
+                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_MAG_FILTER, this.glMagFilter);
+                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_WRAP_S, this.glWrapS);
+                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_WRAP_T, this.glWrapT);
+                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_WRAP_R, this.glWrapR);
                         glSamplerParameterf(glSampler, WebGLConstants.TEXTURE_MIN_LOD, minLod);
                         glSamplerParameterf(glSampler, WebGLConstants.TEXTURE_MAX_LOD, maxLod);
                     }
                 }
-                const sampler = this.glSamplers$.get(samplerHash)!;
+                const sampler = this.glSamplers.get(samplerHash)!;
                 return sampler;
             },
         };

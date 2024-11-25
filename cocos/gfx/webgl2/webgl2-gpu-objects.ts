@@ -46,32 +46,32 @@ export class WebGL2IndirectDrawInfos {
     private _capacity = 4;
 
     constructor () {
-        this.counts$ = new Int32Array(this._capacity);
-        this.offsets$ = new Int32Array(this._capacity);
-        this.instances$  = new Int32Array(this._capacity);
-        this.byteOffsets$ = new Int32Array(this._capacity);
+        this.counts = new Int32Array(this._capacity);
+        this.offsets = new Int32Array(this._capacity);
+        this.instances  = new Int32Array(this._capacity);
+        this.byteOffsets = new Int32Array(this._capacity);
     }
 
     public clearDraws (): void {
-        this.drawCount$ = 0;
-        this.drawByIndex$ = false;
-        this.instancedDraw$ = false;
+        this.drawCount = 0;
+        this.drawByIndex = false;
+        this.instancedDraw = false;
     }
 
     public setDrawInfo (idx: number, info: Readonly<DrawInfo>): void {
         this._ensureCapacity(idx);
-        this.drawByIndex$ = info.indexCount > 0;
-        this.instancedDraw$ = !!info.instanceCount;
-        this.drawCount$ = Math.max(idx + 1, this.drawCount$);
+        this.drawByIndex = info.indexCount > 0;
+        this.instancedDraw = !!info.instanceCount;
+        this.drawCount = Math.max(idx + 1, this.drawCount);
 
-        if (this.drawByIndex$) {
-            this.counts$[idx] = info.indexCount;
-            this.offsets$[idx] = info.firstIndex;
+        if (this.drawByIndex) {
+            this.counts[idx] = info.indexCount;
+            this.offsets[idx] = info.firstIndex;
         } else {
-            this.counts$[idx] = info.vertexCount;
-            this.offsets$[idx] = info.firstVertex;
+            this.counts[idx] = info.vertexCount;
+            this.offsets[idx] = info.firstVertex;
         }
-        this.instances$[idx] = Math.max(1, info.instanceCount);
+        this.instances[idx] = Math.max(1, info.instanceCount);
     }
 
     private _ensureCapacity (target: number): void {
@@ -81,15 +81,15 @@ export class WebGL2IndirectDrawInfos {
         const counts = new Int32Array(this._capacity);
         const offsets = new Int32Array(this._capacity);
         const instances = new Int32Array(this._capacity);
-        this.byteOffsets$ = new Int32Array(this._capacity);
+        this.byteOffsets = new Int32Array(this._capacity);
 
-        counts.set(this.counts$);
-        offsets.set(this.offsets$);
-        instances.set(this.instances$);
+        counts.set(this.counts);
+        offsets.set(this.offsets);
+        instances.set(this.instances);
 
-        this.counts$ = counts;
-        this.offsets$ = offsets;
-        this.instances$ = instances;
+        this.counts = counts;
+        this.offsets = offsets;
+        this.instances = instances;
     }
 }
 

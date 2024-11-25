@@ -47,15 +47,15 @@ export class WebGLQueue extends Queue {
         for (let i = 0; i < len; i++) {
             const cmdBuff = cmdBuffs[i];
             // WebGLCmdFuncExecuteCmds( this._device as WebGLDevice, (cmdBuff as WebGLCommandBuffer).cmdPackage); // opted out
-            this.numDrawCalls$ += cmdBuff.numDrawCalls;
-            this.numInstances$ += cmdBuff.numInstances;
-            this.numTris$ += cmdBuff.numTris;
+            this.numDrawCalls += cmdBuff.numDrawCalls;
+            this.numInstances += cmdBuff.numInstances;
+            this.numTris += cmdBuff.numTris;
         }
     }
 
     public clear (): void {
-        this.numDrawCalls$ = 0;
-        this.numInstances$ = 0;
-        this.numTris$ = 0;
+        this.numDrawCalls = 0;
+        this.numInstances = 0;
+        this.numTris = 0;
     }
 }

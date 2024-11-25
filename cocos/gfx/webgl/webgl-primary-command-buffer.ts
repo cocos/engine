@@ -76,7 +76,7 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
             this._numInstances += info.instanceCount;
             const indexCount = info.indexCount || info.vertexCount;
             if (this._curGPUPipelineState) {
-                const glPrimitive = this._curGPUPipelineState.glPrimitive$;
+                const glPrimitive = this._curGPUPipelineState.glPrimitive;
                 switch (glPrimitive) {
                 case WebGLConstants.TRIANGLES: {
                     this._numTris += indexCount / 3 * Math.max(info.instanceCount, 1);
@@ -98,32 +98,32 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
     public setViewport (viewport: Readonly<Viewport>): void {
         const { stateCache: cache, gl } = WebGLDeviceManager.instance;
 
-        if (cache.viewport$.left !== viewport.left
-            || cache.viewport$.top !== viewport.top
-            || cache.viewport$.width !== viewport.width
-            || cache.viewport$.height !== viewport.height) {
+        if (cache.viewport.left !== viewport.left
+            || cache.viewport.top !== viewport.top
+            || cache.viewport.width !== viewport.width
+            || cache.viewport.height !== viewport.height) {
             gl.viewport(viewport.left, viewport.top, viewport.width, viewport.height);
 
-            cache.viewport$.left = viewport.left;
-            cache.viewport$.top = viewport.top;
-            cache.viewport$.width = viewport.width;
-            cache.viewport$.height = viewport.height;
+            cache.viewport.left = viewport.left;
+            cache.viewport.top = viewport.top;
+            cache.viewport.width = viewport.width;
+            cache.viewport.height = viewport.height;
         }
     }
 
     public setScissor (scissor: Readonly<Rect>): void {
         const { stateCache: cache, gl } = WebGLDeviceManager.instance;
 
-        if (cache.scissorRect$.x !== scissor.x
-            || cache.scissorRect$.y !== scissor.y
-            || cache.scissorRect$.width !== scissor.width
-            || cache.scissorRect$.height !== scissor.height) {
+        if (cache.scissorRect.x !== scissor.x
+            || cache.scissorRect.y !== scissor.y
+            || cache.scissorRect.width !== scissor.width
+            || cache.scissorRect.height !== scissor.height) {
             gl.scissor(scissor.x, scissor.y, scissor.width, scissor.height);
 
-            cache.scissorRect$.x = scissor.x;
-            cache.scissorRect$.y = scissor.y;
-            cache.scissorRect$.width = scissor.width;
-            cache.scissorRect$.height = scissor.height;
+            cache.scissorRect.x = scissor.x;
+            cache.scissorRect.y = scissor.y;
+            cache.scissorRect.width = scissor.width;
+            cache.scissorRect.height = scissor.height;
         }
     }
 

@@ -47,7 +47,7 @@ export class WebGL2DescriptorSet extends DescriptorSet {
             bindings$: bindings,
             descriptorIndices$: descriptorIndices,
             descriptorCount$: descriptorCount,
-        } = (info.layout as WebGL2DescriptorSetLayout).getGpuDescriptorSetLayout$();
+        } = (info.layout as WebGL2DescriptorSetLayout).getGpuDescriptorSetLayout();
 
         this._buffers = Array(descriptorCount).fill(null);
         this._textures = Array(descriptorCount).fill(null);
@@ -76,18 +76,18 @@ export class WebGL2DescriptorSet extends DescriptorSet {
 
     public update (): void {
         if (this._isDirty && this._gpuDescriptorSet) {
-            const descriptors = this._gpuDescriptorSet.gpuDescriptors$;
+            const descriptors = this._gpuDescriptorSet.gpuDescriptors;
             for (let i = 0; i < descriptors.length; ++i) {
-                if (descriptors[i].type$ & DESCRIPTOR_BUFFER_TYPE) {
+                if (descriptors[i].type & DESCRIPTOR_BUFFER_TYPE) {
                     if (this._buffers[i]) {
-                        descriptors[i].gpuBuffer$ = (this._buffers[i] as WebGL2Buffer).getGpuBuffer$();
+                        descriptors[i].gpuBuffer = (this._buffers[i] as WebGL2Buffer).getGpuBuffer();
                     }
-                } else if (descriptors[i].type$ & DESCRIPTOR_SAMPLER_TYPE) {
+                } else if (descriptors[i].type & DESCRIPTOR_SAMPLER_TYPE) {
                     if (this._textures[i]) {
-                        descriptors[i].gpuTextureView$ = (this._textures[i] as WebGL2Texture).gpuTextureView;
+                        descriptors[i].gpuTextureView = (this._textures[i] as WebGL2Texture).gpuTextureView;
                     }
                     if (this._samplers[i]) {
-                        descriptors[i].gpuSampler$ = (this._samplers[i] as WebGL2Sampler).gpuSampler;
+                        descriptors[i].gpuSampler = (this._samplers[i] as WebGL2Sampler).gpuSampler;
                     }
                 }
             }

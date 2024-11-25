@@ -189,7 +189,7 @@ export class LODGroup {
             distance =  Vec3.len(this.localBoundaryCenter.transformMat4(this.node.worldMatrix).subtract(camera.node.worldPosition));
         }
 
-        return this.distanceToScreenUsagePercentage$(camera, distance, this.getWorldSpaceSize$());
+        return this.distanceToScreenUsagePercentage(camera, distance, this.getWorldSpaceSize());
     }
 
     private distanceToScreenUsagePercentage$ (camera: Camera, distance: number | undefined, size: number): number {

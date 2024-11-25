@@ -85,15 +85,15 @@ export class WebGL2Device extends Device {
     }
 
     getStateCache$ (): WebGL2StateCache {
-        return this._swapchain!.stateCache$;
+        return this._swapchain!.stateCache;
     }
 
     get nullTex2D (): WebGL2Texture {
-        return this._swapchain!.nullTex2D$;
+        return this._swapchain!.nullTex2D;
     }
 
     get nullTexCube (): WebGL2Texture {
-        return this._swapchain!.nullTexCube$;
+        return this._swapchain!.nullTexCube;
     }
 
     get textureExclusive (): boolean[] {
@@ -272,9 +272,9 @@ export class WebGL2Device extends Device {
 
     public present (): void {
         const queue = (this._queue as WebGL2Queue);
-        this._numDrawCalls = queue.numDrawCalls$;
-        this._numInstances = queue.numInstances$;
-        this._numTris = queue.numTris$;
+        this._numDrawCalls = queue.numDrawCalls;
+        this._numInstances = queue.numInstances;
+        this._numTris = queue.numTris;
         queue.clear();
     }
 

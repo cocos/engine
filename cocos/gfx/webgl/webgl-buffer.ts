@@ -94,7 +94,7 @@ export class WebGLBuffer extends Buffer {
             };
 
             if (this._usage & BufferUsageBit.UNIFORM) {
-                this._gpuBuffer.buffer$ = this._uniformBuffer;
+                this._gpuBuffer.buffer = this._uniformBuffer;
             }
 
             WebGLCmdFuncCreateBuffer(WebGLDeviceManager.instance, this._gpuBuffer);
@@ -133,10 +133,10 @@ export class WebGLBuffer extends Buffer {
 
         if (this._gpuBuffer) {
             if (this._uniformBuffer) {
-                this._gpuBuffer.buffer$ = this._uniformBuffer;
+                this._gpuBuffer.buffer = this._uniformBuffer;
             }
 
-            this._gpuBuffer.size$ = size;
+            this._gpuBuffer.size = size;
             if (size > 0) {
                 WebGLCmdFuncResizeBuffer(WebGLDeviceManager.instance, this._gpuBuffer);
                 WebGLDeviceManager.instance.memoryStatus.bufferSize -= oldSize;

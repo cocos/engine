@@ -30,7 +30,7 @@ import { IWebGLGPUShader, IWebGLGPUShaderStage } from './webgl-gpu-objects';
 
 export class WebGLShader extends Shader {
     get gpuShader (): IWebGLGPUShader {
-        if (this._gpuShader!.glProgram$ === null) {
+        if (this._gpuShader!.glProgram === null) {
             WebGLCmdFuncCreateShader(WebGLDeviceManager.instance, this._gpuShader!);
         }
         return this._gpuShader!;
@@ -65,7 +65,7 @@ export class WebGLShader extends Shader {
 
         for (let i = 0; i < info.stages.length; ++i) {
             const stage = info.stages[i];
-            this._gpuShader.gpuStages$[i] = {
+            this._gpuShader.gpuStages[i] = {
                 type$: stage.stage,
                 source$: stage.source,
                 glShader$: null,

@@ -332,15 +332,15 @@ export class Spline {
 
         switch (this._mode) {
         case SplineMode.LINEAR:
-            return Spline.calcLinear$(knots[index], knots[index + 1], t);
+            return Spline.calcLinear(knots[index], knots[index + 1], t);
         case SplineMode.BEZIER: {
             const start = index * 4;
-            return Spline.calcBezier$(knots[start], knots[start + 1], knots[start + 2], knots[start + 3], t);
+            return Spline.calcBezier(knots[start], knots[start + 1], knots[start + 2], knots[start + 3], t);
         }
         case SplineMode.CATMULL_ROM: {
             const v0 = index > 0 ? knots[index - 1] : knots[index];
             const v3 = index + 2 < knots.length ? knots[index + 2] : knots[index + 1];
-            return Spline.calcCatmullRom$(v0, knots[index], knots[index + 1], v3, t);
+            return Spline.calcCatmullRom(v0, knots[index], knots[index + 1], v3, t);
         }
         default:
             return new Vec3();

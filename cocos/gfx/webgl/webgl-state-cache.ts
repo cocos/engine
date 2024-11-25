@@ -48,12 +48,12 @@ export class WebGLStateCache {
     public texUnitCacheMap: Record<string, number> = {};
 
     initialize (texUnit: number, vertexAttributes: number): void {
-        for (let i = 0; i < texUnit; ++i) this.glTexUnits$.push({ glTexture$: null });
+        for (let i = 0; i < texUnit; ++i) this.glTexUnits.push({ glTexture$: null });
 
-        this.glEnabledAttribLocs$.length = vertexAttributes;
-        this.glEnabledAttribLocs$.fill(false);
+        this.glEnabledAttribLocs.length = vertexAttributes;
+        this.glEnabledAttribLocs.fill(false);
 
-        this.glCurrentAttribLocs$.length = vertexAttributes;
-        this.glCurrentAttribLocs$.fill(false);
+        this.glCurrentAttribLocs.length = vertexAttributes;
+        this.glCurrentAttribLocs.fill(false);
     }
 }

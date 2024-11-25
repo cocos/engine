@@ -1017,7 +1017,7 @@ export class ResolutionPolicy {
      * @param _view The target view
      */
     public preApply (_view: View): void {
-        this._contentStrategy.preApply$(_view);
+        this._contentStrategy.preApply(_view);
     }
 
     /**
@@ -1030,8 +1030,8 @@ export class ResolutionPolicy {
      * @return An object contains the scale X/Y values and the viewport rect
      */
     public apply (_view: View, designedResolution: Size): AdaptResult {
-        this._containerStrategy.apply$(_view, designedResolution);
-        return this._contentStrategy.apply$(_view, designedResolution);
+        this._containerStrategy.apply(_view, designedResolution);
+        return this._contentStrategy.apply(_view, designedResolution);
     }
 
     /**
@@ -1040,7 +1040,7 @@ export class ResolutionPolicy {
      * @param _view - The target view
      */
     public postApply (_view: View): void {
-        this._contentStrategy.postApply$(_view);
+        this._contentStrategy.postApply(_view);
     }
 
     /**

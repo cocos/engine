@@ -59,7 +59,7 @@ export class WebGLCommandBuffer extends CommandBuffer {
         this._type = info.type;
         this._queue = info.queue;
 
-        const setCount = WebGLDeviceManager.instance.bindingMappings.blockOffsets$.length;
+        const setCount = WebGLDeviceManager.instance.bindingMappings.blockOffsets.length;
         for (let i = 0; i < setCount; i++) {
             this._curGPUDescriptorSets.push(null!);
         }
@@ -116,10 +116,10 @@ export class WebGLCommandBuffer extends CommandBuffer {
             this._isStateInvalied = true;
         }
         if (dynamicOffsets) {
-            const gpuPipelineLayout = this._curGPUPipelineState?.gpuPipelineLayout$;
+            const gpuPipelineLayout = this._curGPUPipelineState?.gpuPipelineLayout;
             if (gpuPipelineLayout) {
                 const offsets = this._curDynamicOffsets;
-                const idx = gpuPipelineLayout.dynamicOffsetOffsets$[set];
+                const idx = gpuPipelineLayout.dynamicOffsetOffsets[set];
                 for (let i = 0; i < dynamicOffsets.length; i++) offsets[idx + i] = dynamicOffsets[i];
                 this._isStateInvalied = true;
             }

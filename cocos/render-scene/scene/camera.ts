@@ -547,7 +547,7 @@ export class Camera {
     set aperture (val: CameraAperture) {
         this._aperture = val;
         this._apertureValue = FSTOPS[this._aperture];
-        this.updateExposure$();
+        this.updateExposure();
     }
     get aperture (): CameraAperture {
         return this._aperture;
@@ -568,7 +568,7 @@ export class Camera {
     set shutter (val: CameraShutter) {
         this._shutter = val;
         this._shutterValue = SHUTTERS[this._shutter];
-        this.updateExposure$();
+        this.updateExposure();
     }
     get shutter (): CameraShutter {
         return this._shutter;
@@ -589,7 +589,7 @@ export class Camera {
     set iso (val: CameraISO) {
         this._iso = val;
         this._isoValue = ISOS[this._iso];
-        this.updateExposure$();
+        this.updateExposure();
     }
     get iso (): CameraISO {
         return this._iso;
@@ -907,7 +907,7 @@ export class Camera {
         if (info.usage !== undefined) {
             this._usage = info.usage;
         } else {
-            this.setDefaultUsage$();
+            this.setDefaultUsage();
         }
         if (info.trackingType !== undefined) {
             this._trackingType = info.trackingType;
@@ -925,7 +925,7 @@ export class Camera {
         this._proj = info.projection;
         this._priority = info.priority || 0;
         this._aspect = this.screenScale = 1;
-        this.updateExposure$();
+        this.updateExposure();
         this.changeTargetWindow(info.window);
     }
 

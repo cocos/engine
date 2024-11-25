@@ -98,7 +98,7 @@ export class WebGL2Texture extends Texture {
                 isSwapchainTexture$: isSwapchainTexture || false,
             };
 
-            if (!this._gpuTexture.isSwapchainTexture$ && this._gpuTexture) {
+            if (!this._gpuTexture.isSwapchainTexture && this._gpuTexture) {
                 WebGL2CmdFuncCreateTexture(WebGL2DeviceManager.instance, this._gpuTexture);
                 WebGL2DeviceManager.instance.memoryStatus.textureSize += this._size;
             }
@@ -122,7 +122,7 @@ export class WebGL2Texture extends Texture {
             this._viewInfo.copy(viewInfo);
             this._gpuTexture = (viewInfo.texture as WebGL2Texture)._gpuTexture;
 
-            if (this._gpuTexture?.format$ !== texInfo.format) {
+            if (this._gpuTexture?.format !== texInfo.format) {
                 logID(16403);
                 return;
             }
@@ -151,10 +151,10 @@ export class WebGL2Texture extends Texture {
             return 0;
         }
 
-        if (gpuTexture.glTexture$) {
-            return gpuTexture.glTexture$ as number;
-        } else if (gpuTexture.glRenderbuffer$) {
-            return gpuTexture.glRenderbuffer$ as number;
+        if (gpuTexture.glTexture) {
+            return gpuTexture.glTexture as number;
+        } else if (gpuTexture.glRenderbuffer) {
+            return gpuTexture.glRenderbuffer as number;
         }
 
         return 0;
@@ -183,10 +183,10 @@ export class WebGL2Texture extends Texture {
         ) * this._info.layerCount;
 
         if (!this._isTextureView && this._gpuTexture) {
-            this._gpuTexture.width$ = width;
-            this._gpuTexture.height$ = height;
-            this._gpuTexture.size$ = this._size;
-            if (!this._gpuTexture.isSwapchainTexture$) {
+            this._gpuTexture.width = width;
+            this._gpuTexture.height = height;
+            this._gpuTexture.size = this._size;
+            if (!this._gpuTexture.isSwapchainTexture) {
                 WebGL2CmdFuncResizeTexture(WebGL2DeviceManager.instance, this._gpuTexture);
                 WebGL2DeviceManager.instance.memoryStatus.textureSize -= oldSize;
                 WebGL2DeviceManager.instance.memoryStatus.textureSize += this._size;
