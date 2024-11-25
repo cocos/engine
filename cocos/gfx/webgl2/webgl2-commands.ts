@@ -1604,7 +1604,7 @@ export function WebGL2CmdFuncCreateShader (device: WebGL2Device, gpuShader: IWeb
                 gpuShader.glBlocks[b] = {
                     set: block.set,
                     binding: block.binding,
-                    idx$: blockIdx,
+                    idx: blockIdx,
                     name: blockName,
                     size: blockSize,
                     glBinding: glBinding,

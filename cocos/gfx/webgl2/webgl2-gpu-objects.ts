@@ -222,7 +222,7 @@ export interface IWebGL2GPUUniform {
 export interface IWebGL2GPUUniformBlock {
     set: number;
     binding: number;
-    idx$: number;
+    idx: number;
     name: string;
     size: number;
     glBinding: number;

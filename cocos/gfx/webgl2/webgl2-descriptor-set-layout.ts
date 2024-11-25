@@ -67,9 +67,9 @@ export class WebGL2DescriptorSetLayout extends DescriptorSetLayout {
 
         this._gpuDescriptorSetLayout = {
             bindings: this._bindings,
-            dynamicBindings: dynamicBindings,
-            descriptorIndices: descriptorIndices,
-            descriptorCount: descriptorCount,
+            dynamicBindings,
+            descriptorIndices,
+            descriptorCount,
         };
     }
 

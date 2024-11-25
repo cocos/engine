@@ -197,7 +197,7 @@ export class Root {
      * @zh 当前每秒帧率
      */
     public get fps (): number {
-        return this._fps$;
+        return this._fps;
     }
 
     /**
@@ -470,7 +470,7 @@ export class Root {
         this._cumulativeTime += deltaTime;
         this._fpsTime += deltaTime;
         if (this._fpsTime > 1.0) {
-            this._fps$ = this._frameCount;
+            this._fps = this._frameCount;
             this._frameCount = 0;
             this._fpsTime = 0.0;
         }
