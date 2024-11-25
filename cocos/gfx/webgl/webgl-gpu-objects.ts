@@ -47,9 +47,9 @@ export class WebGLIndirectDrawInfos {
     public declare counts$: Int32Array;
     public declare offsets$: Int32Array;
     public declare instances$: Int32Array;
-    public drawCount$ = 0;
-    public drawByIndex$ = false;
-    public instancedDraw$ = false;
+    public drawCount = 0;
+    public drawByIndex = false;
+    public instancedDraw = false;
 
     // staging buffer
     public declare byteOffsets$: Int32Array;
@@ -63,13 +63,13 @@ export class WebGLIndirectDrawInfos {
         this.byteOffsets$ = createInt32Array(this._capacity);
     }
 
-    public clearDraws$ (): void {
+    public clearDraws (): void {
         this.drawCount$ = 0;
         this.drawByIndex$ = false;
         this.instancedDraw$ = false;
     }
 
-    public setDrawInfo$ (idx: number, info: Readonly<DrawInfo>): void {
+    public setDrawInfo (idx: number, info: Readonly<DrawInfo>): void {
         this._ensureCapacity(idx);
         this.drawByIndex$ = info.indexCount > 0;
         this.instancedDraw$ = !!info.instanceCount;

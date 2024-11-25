@@ -68,10 +68,10 @@ class ListEntry {
 
     private static _listEntries: ListEntry[] = [];
 
-    public target$: ISchedulable | null;
-    public priority$: number;
-    public paused$: boolean;
-    public markedForDeletion$: boolean;
+    public target: ISchedulable | null;
+    public priority: number;
+    public paused: boolean;
+    public markedForDeletion: boolean;
 
     /**
      * @en The constructor of ListEntry.
@@ -129,10 +129,10 @@ class HashUpdateEntry {
 
     private static _hashUpdateEntries: HashUpdateEntry[] = [];
 
-    public list$: ListEntry[] | null;
-    public entry$: ListEntry | null;
-    public target$: ISchedulable | null;
-    public callback$: AnyFunction | null;
+    public list: ListEntry[] | null;
+    public entry: ListEntry | null;
+    public target: ISchedulable | null;
+    public callback: AnyFunction | null;
 
     constructor (list: ListEntry[], entry: ListEntry, target: ISchedulable, callback: AnyFunction | null) {
         this.list$ = list;
@@ -177,12 +177,12 @@ class HashTimerEntry {
 
     private static _hashTimerEntries: HashTimerEntry[] = [];
 
-    public timers$: CallbackTimer[] | null;
-    public target$: ISchedulable | null;
-    public timerIndex$: number;
-    public currentTimer$: CallbackTimer | null;
-    public currentTimerSalvaged$: boolean;
-    public paused$: boolean;
+    public timers: CallbackTimer[] | null;
+    public target: ISchedulable | null;
+    public timerIndex: number;
+    public currentTimer: CallbackTimer | null;
+    public currentTimerSalvaged: boolean;
+    public paused: boolean;
 
     constructor (timers: CallbackTimer[] | null, target: ISchedulable, timerIndex: number, currentTimer: CallbackTimer | null, currentTimerSalvaged: boolean, paused: boolean) {
         this.timers$ = timers;

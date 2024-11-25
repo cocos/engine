@@ -31,7 +31,7 @@ export class WebGL2RenderPass extends RenderPass {
         super();
     }
 
-    public getGpuRenderPass$ (): IWebGL2GPURenderPass {
+    public getGpuRenderPass (): IWebGL2GPURenderPass {
         return  this._gpuRenderPass!;
     }
 

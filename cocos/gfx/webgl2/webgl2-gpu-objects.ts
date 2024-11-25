@@ -33,15 +33,15 @@ import { WebGL2DeviceManager } from './webgl2-define';
 import { WebGL2Device } from './webgl2-device';
 
 export class WebGL2IndirectDrawInfos {
-    public counts$: Int32Array;
-    public offsets$: Int32Array;
-    public instances$: Int32Array;
-    public drawCount$ = 0;
-    public drawByIndex$ = false;
-    public instancedDraw$ = false;
+    public counts: Int32Array;
+    public offsets: Int32Array;
+    public instances: Int32Array;
+    public drawCount = 0;
+    public drawByIndex = false;
+    public instancedDraw = false;
 
     // staging buffer
-    public byteOffsets$: Int32Array;
+    public byteOffsets: Int32Array;
 
     private _capacity = 4;
 
@@ -52,13 +52,13 @@ export class WebGL2IndirectDrawInfos {
         this.byteOffsets$ = new Int32Array(this._capacity);
     }
 
-    public clearDraws$ (): void {
+    public clearDraws (): void {
         this.drawCount$ = 0;
         this.drawByIndex$ = false;
         this.instancedDraw$ = false;
     }
 
-    public setDrawInfo$ (idx: number, info: Readonly<DrawInfo>): void {
+    public setDrawInfo (idx: number, info: Readonly<DrawInfo>): void {
         this._ensureCapacity(idx);
         this.drawByIndex$ = info.indexCount > 0;
         this.instancedDraw$ = !!info.instanceCount;

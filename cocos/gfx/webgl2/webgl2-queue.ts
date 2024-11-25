@@ -28,9 +28,9 @@ import { Queue } from '../base/queue';
 import { WebGL2CommandBuffer } from './webgl2-command-buffer';
 
 export class WebGL2Queue extends Queue {
-    public numDrawCalls$ = 0;
-    public numInstances$ = 0;
-    public numTris$ = 0;
+    public numDrawCalls = 0;
+    public numInstances = 0;
+    public numTris = 0;
 
     constructor () {
         super();

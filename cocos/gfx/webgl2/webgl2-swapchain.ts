@@ -170,9 +170,9 @@ export class WebGL2Swapchain extends Swapchain {
         return this._blitManager;
     }
 
-    public stateCache$: WebGL2StateCache = new WebGL2StateCache();
-    public nullTex2D$: WebGL2Texture = null!;
-    public nullTexCube$: WebGL2Texture = null!;
+    public stateCache: WebGL2StateCache = new WebGL2StateCache();
+    public nullTex2D: WebGL2Texture = null!;
+    public nullTexCube: WebGL2Texture = null!;
 
     private _canvas: HTMLCanvasElement | null = null;
     private _webGL2ContextLostHandler: ((event: Event) => void) | null = null;

@@ -30,27 +30,27 @@ export interface IWebGL2TexUnit {
 }
 
 export class WebGL2StateCache {
-    public glArrayBuffer$: WebGLBuffer | null = null;
-    public glElementArrayBuffer$: WebGLBuffer | null = null;
-    public glUniformBuffer$: WebGLBuffer | null = null;
-    public glBindUBOs$: (WebGLBuffer | null)[] = [];
-    public glBindUBOOffsets$: number[] = [];
-    public glVAO$: WebGLVertexArrayObject | null = null;
-    public texUnit$ = 0;
-    public glTexUnits$: IWebGL2TexUnit[] = [];
-    public glSamplerUnits$: (WebGLSampler | null)[] = [];
-    public glRenderbuffer$: WebGLRenderbuffer | null = null;
-    public glFramebuffer$: WebGLFramebuffer | null = null;
-    public glReadFramebuffer$: WebGLFramebuffer | null = null;
-    public viewport$ = new Viewport();
-    public scissorRect$ = new Rect(0, 0, 0, 0);
+    public glArrayBuffer: WebGLBuffer | null = null;
+    public glElementArrayBuffer: WebGLBuffer | null = null;
+    public glUniformBuffer: WebGLBuffer | null = null;
+    public glBindUBOs: (WebGLBuffer | null)[] = [];
+    public glBindUBOOffsets: number[] = [];
+    public glVAO: WebGLVertexArrayObject | null = null;
+    public texUnit = 0;
+    public glTexUnits: IWebGL2TexUnit[] = [];
+    public glSamplerUnits: (WebGLSampler | null)[] = [];
+    public glRenderbuffer: WebGLRenderbuffer | null = null;
+    public glFramebuffer: WebGLFramebuffer | null = null;
+    public glReadFramebuffer: WebGLFramebuffer | null = null;
+    public viewport = new Viewport();
+    public scissorRect = new Rect(0, 0, 0, 0);
     public rs$ = new RasterizerState();
     public dss$ = new DepthStencilState();
     public bs$ = new BlendState();
-    public glProgram$: WebGLProgram | null = null;
-    public glEnabledAttribLocs$: boolean[] = [];
-    public glCurrentAttribLocs$: boolean[] = [];
-    public texUnitCacheMap$: Record<string, number> = {};
+    public glProgram: WebGLProgram | null = null;
+    public glEnabledAttribLocs: boolean[] = [];
+    public glCurrentAttribLocs: boolean[] = [];
+    public texUnitCacheMap: Record<string, number> = {};
 
     constructor () {
     }

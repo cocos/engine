@@ -643,7 +643,7 @@ class ContainerStrategy {
      * @param view
      * @param designedResolution
      */
-    public apply$ (_view: View, designedResolution: Size): void {
+    public apply (_view: View, designedResolution: Size): void {
         // do nothing
     }
 
@@ -713,7 +713,7 @@ class ContentStrategy {
      * @zh 策略应用前的操作
      * @param view - The target view
      */
-    public preApply$ (_view: View): void {
+    public preApply (_view: View): void {
         // do nothing
     }
 
@@ -724,7 +724,7 @@ class ContentStrategy {
      * @zh 调用策略方法
      * @return The result scale and viewport rect
      */
-    public apply$ (_view: View, designedResolution: Size): AdaptResult {
+    public apply (_view: View, designedResolution: Size): AdaptResult {
         return { scale: [1, 1] };
     }
 
@@ -733,7 +733,7 @@ class ContentStrategy {
      * @zh 策略调用之后的操作
      * @param view - The target view
      */
-    public postApply$ (_view: View): void {
+    public postApply (_view: View): void {
         // do nothing
     }
 
@@ -775,7 +775,7 @@ class EqualToFrame extends ContainerStrategy {
         super();
     }
 
-    public apply$ (_view, designedResolution): void {
+    public apply (_view, designedResolution): void {
         screenAdapter.isProportionalToFrame = false;
         this._setupCanvas();
     }
@@ -791,7 +791,7 @@ class ProportionalToFrame extends ContainerStrategy {
         super();
     }
 
-    public apply$ (_view, designedResolution): void {
+    public apply (_view, designedResolution): void {
         screenAdapter.isProportionalToFrame = true;
         this._setupCanvas();
     }
@@ -811,7 +811,7 @@ class ExactFit extends ContentStrategy {
         this._strategy = ResolutionPolicy.EXACT_FIT;
     }
 
-    public apply$ (_view: View, designedResolution: Size): AdaptResult {
+    public apply (_view: View, designedResolution: Size): AdaptResult {
         const windowSize = screen.windowSize;
         const containerW = windowSize.width;
         const containerH = windowSize.height;
@@ -830,7 +830,7 @@ class ShowAll extends ContentStrategy {
         this._strategy = ResolutionPolicy.SHOW_ALL;
     }
 
-    public apply$ (_view, designedResolution): AdaptResult {
+    public apply (_view, designedResolution): AdaptResult {
         const windowSize = screen.windowSize;
         const containerW = windowSize.width;
         const containerH = windowSize.height;
@@ -864,7 +864,7 @@ class NoBorder extends ContentStrategy {
         this._strategy = ResolutionPolicy.NO_BORDER;
     }
 
-    public apply$ (_view, designedResolution): AdaptResult {
+    public apply (_view, designedResolution): AdaptResult {
         const windowSize = screen.windowSize;
         const containerW = windowSize.width;
         const containerH = windowSize.height;
@@ -898,7 +898,7 @@ class FixedHeight extends ContentStrategy {
         this._strategy = ResolutionPolicy.FIXED_HEIGHT;
     }
 
-    public apply$ (_view, designedResolution): AdaptResult {
+    public apply (_view, designedResolution): AdaptResult {
         const windowSize = screen.windowSize;
         const containerW = windowSize.width;
         const containerH = windowSize.height;
@@ -919,7 +919,7 @@ class FixedWidth extends ContentStrategy {
         this._strategy = ResolutionPolicy.FIXED_WIDTH;
     }
 
-    public apply$ (_view, designedResolution): AdaptResult {
+    public apply (_view, designedResolution): AdaptResult {
         const windowSize = screen.windowSize;
         const containerW = windowSize.width;
         const containerH = windowSize.height;
