@@ -75,7 +75,7 @@ test('to/by ITweenOption no type', function () {
 
 test('different targets in parallel', function () {
     // @ts-expect-error
-    director.root!._batcher$ = new Batcher2D(director.root!);
+    director.root!._batcher = new Batcher2D(director.root!);
 
     const sys = new TweenSystem();
     (TweenSystem.instance as any) = sys;
@@ -145,7 +145,7 @@ test('different targets in parallel', function () {
 
 test('Test different target in sequence', function() {
     // @ts-expect-error
-    director.root!._batcher$ = new Batcher2D(director.root!);
+    director.root!._batcher = new Batcher2D(director.root!);
 
     const sys = new TweenSystem();
     (TweenSystem.instance as any) = sys;
@@ -241,7 +241,7 @@ test('Test different target in sequence', function() {
 
 test('Test different target in then', function() {
     // @ts-expect-error
-    director.root!._batcher$ = new Batcher2D(director.root!);
+    director.root!._batcher = new Batcher2D(director.root!);
 
     const sys = new TweenSystem();
     (TweenSystem.instance as any) = sys;
@@ -331,7 +331,7 @@ test('Test different target in then', function() {
 
 test('Test different target in clone/then', function() {
     // @ts-expect-error
-    director.root!._batcher$ = new Batcher2D(director.root!);
+    director.root!._batcher = new Batcher2D(director.root!);
 
     const sys = new TweenSystem();
     (TweenSystem.instance as any) = sys;
@@ -457,7 +457,7 @@ test('Test different target in clone/then', function() {
 
 test('Test different target in clone2', function() {
     // @ts-expect-error
-    director.root!._batcher$ = new Batcher2D(director.root!);
+    director.root!._batcher = new Batcher2D(director.root!);
 
     const sys = new TweenSystem();
     (TweenSystem.instance as any) = sys;
@@ -523,7 +523,7 @@ test('Test different target in clone2', function() {
 
 test('Test different target in re-target', function() {
     // @ts-expect-error
-    director.root!._batcher$ = new Batcher2D(director.root!);
+    director.root!._batcher = new Batcher2D(director.root!);
 
     const sys = new TweenSystem();
     (TweenSystem.instance as any) = sys;
@@ -583,7 +583,7 @@ test('Test different target in re-target', function() {
 
 test('Test different target in nest sequence 1', function() {
     // @ts-expect-error
-    director.root!._batcher$ = new Batcher2D(director.root!);
+    director.root!._batcher = new Batcher2D(director.root!);
 
     const sys = new TweenSystem();
     (TweenSystem.instance as any) = sys;
@@ -813,7 +813,7 @@ test('Test different target, union, repeat with embed tween', function() {
 
 test('Test different target in nest sequence 2', function() {
     // @ts-expect-error
-    director.root!._batcher$ = new Batcher2D(director.root!);
+    director.root!._batcher = new Batcher2D(director.root!);
 
     const sys = new TweenSystem();
     (TweenSystem.instance as any) = sys;

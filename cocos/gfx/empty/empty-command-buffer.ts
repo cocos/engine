@@ -39,8 +39,8 @@ import { StencilFace, BufferSource, CommandBufferInfo, BufferTextureCopy, Color,
 
 export class EmptyCommandBuffer extends CommandBuffer {
     public initialize (info: Readonly<CommandBufferInfo>): void {
-        this._type$ = info.type;
-        this._queue$ = info.queue;
+        this._type = info.type;
+        this._queue = info.queue;
     }
     public destroy (): void {}
     public begin (renderPass?: RenderPass, subpass?: number, frameBuffer?: Framebuffer): void {}

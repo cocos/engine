@@ -30,16 +30,16 @@ import { GFXObject, ObjectType, BufferBarrierInfo } from '../define';
  * @zh GFX buffer内存屏障。
  */
 export class BufferBarrier extends GFXObject {
-    get info (): Readonly<BufferBarrierInfo> { return this._info$; }
-    get hash (): number { return this._hash$; }
+    get info (): Readonly<BufferBarrierInfo> { return this._info; }
+    get hash (): number { return this._hash; }
 
     protected _info$: BufferBarrierInfo = new BufferBarrierInfo();
     protected _hash$ = 0;
 
     constructor (info: Readonly<BufferBarrierInfo>, hash: number) {
         super(ObjectType.BUFFER_BARRIER);
-        this._info$.copy(info);
-        this._hash$ = hash;
+        this._info.copy(info);
+        this._hash = hash;
     }
 
     static computeHash (info: Readonly<BufferBarrierInfo>): number {

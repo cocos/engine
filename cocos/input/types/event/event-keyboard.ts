@@ -60,7 +60,7 @@ export class EventKeyboard extends Event {
      * @zh 表示当前按键是否正在被按下
      */
     public get isPressed (): boolean {
-        return this._isPressed$;
+        return this._isPressed;
     }
 
     /**
@@ -81,7 +81,7 @@ export class EventKeyboard extends Event {
             eventType = isPressed ? SystemEventType.KEY_DOWN : SystemEventType.KEY_UP;
         }
         super(eventType, bubbles);
-        this._isPressed$ = eventType !== SystemEventType.KEY_UP;
+        this._isPressed = eventType !== SystemEventType.KEY_UP;
 
         if (typeof keyCode === 'number') {
             this.keyCode = keyCode;

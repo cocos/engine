@@ -149,52 +149,52 @@ export class RenderingSubMesh {
         indirectBuffer: Buffer | null = null,
         isOwnerOfIndexBuffer = true,
     ) {
-        this._attributes$ = attributes;
-        this._vertexBuffers$ = vertexBuffers;
-        this._indexBuffer$ = indexBuffer;
-        this._indirectBuffer$ = indirectBuffer;
-        this._primitiveMode$ = primitiveMode;
-        this._iaInfo$ = new InputAssemblerInfo(attributes, vertexBuffers, indexBuffer, indirectBuffer);
-        this._isOwnerOfIndexBuffer$ = isOwnerOfIndexBuffer;
+        this._attributes = attributes;
+        this._vertexBuffers = vertexBuffers;
+        this._indexBuffer = indexBuffer;
+        this._indirectBuffer = indirectBuffer;
+        this._primitiveMode = primitiveMode;
+        this._iaInfo = new InputAssemblerInfo(attributes, vertexBuffers, indexBuffer, indirectBuffer);
+        this._isOwnerOfIndexBuffer = isOwnerOfIndexBuffer;
     }
 
     /**
      * @en All vertex attributes used by the sub mesh.
      * @zh 所有顶点属性。
      */
-    get attributes (): Attribute[] { return this._attributes$; }
+    get attributes (): Attribute[] { return this._attributes; }
 
     /**
      * @en All vertex buffers used by the sub mesh.
      * @zh 使用的所有顶点缓冲区。
      */
-    get vertexBuffers (): Buffer[] { return this._vertexBuffers$; }
+    get vertexBuffers (): Buffer[] { return this._vertexBuffers; }
 
     /**
      * @en Index buffer used by the sub mesh.
      * @zh 使用的索引缓冲区，若未使用则无需指定。
      */
-    get indexBuffer (): Buffer | null { return this._indexBuffer$; }
+    get indexBuffer (): Buffer | null { return this._indexBuffer; }
 
     /**
      * @en Indirect buffer used by the sub mesh.
      * @zh 间接绘制缓冲区。
      */
-    get indirectBuffer (): Buffer | null { return this._indirectBuffer$; }
+    get indirectBuffer (): Buffer | null { return this._indirectBuffer; }
 
     /**
      * @en Primitive mode used by the sub mesh.
      * @zh 图元类型。
      */
-    get primitiveMode (): PrimitiveMode { return this._primitiveMode$; }
+    get primitiveMode (): PrimitiveMode { return this._primitiveMode; }
 
     /**
      * @en The geometric info of the sub mesh, used for raycast.
      * @zh （用于射线检测的）几何信息。
      */
     get geometricInfo (): IGeometricInfo {
-        if (this._geometricInfo$) {
-            return this._geometricInfo$;
+        if (this._geometricInfo) {
+            return this._geometricInfo;
         }
         if (this.mesh === undefined) {
             return EMPTY_GEOMETRIC_INFO;
@@ -298,40 +298,40 @@ export class RenderingSubMesh {
                 min.z = positions[i + 2] < min.z ? positions[i + 2] : min.z;
             }
         }
-        this._geometricInfo$ = { positions, indices, boundingBox: { max, min } };
-        return this._geometricInfo$;
+        this._geometricInfo = { positions, indices, boundingBox: { max, min } };
+        return this._geometricInfo;
     }
 
     /**
      * @en Invalidate the geometric info of the sub mesh after geometry changed.
      * @zh 网格更新后，设置（用于射线检测的）几何信息为无效，需要重新计算。
      */
-    public invalidateGeometricInfo (): void { this._geometricInfo$ = undefined; }
+    public invalidateGeometricInfo (): void { this._geometricInfo = undefined; }
 
     /**
      * @en the draw range.
      * @zh 渲染范围。
      */
     set drawInfo (info: DrawInfo | null | undefined) {
-        this._drawInfo$ = info;
+        this._drawInfo = info;
     }
 
     get drawInfo (): DrawInfo | null | undefined {
-        return this._drawInfo$;
+        return this._drawInfo;
     }
 
     /**
      * @en Flatted vertex buffers.
      * @zh 扁平化的顶点缓冲区。
      */
-    get flatBuffers (): IFlatBuffer[] { return this._flatBuffers$; }
+    get flatBuffers (): IFlatBuffer[] { return this._flatBuffers; }
 
     /**
      * @en generate flatted vertex buffers.
      * @zh 生成扁平化的顶点缓冲区。
      */
     public genFlatBuffers (): void {
-        if (this._flatBuffers$.length || !this.mesh || this.subMeshIdx === undefined) { return; }
+        if (this._flatBuffers.length || !this.mesh || this.subMeshIdx === undefined) { return; }
 
         const { mesh } = this;
         let idxCount = 0;
@@ -348,7 +348,7 @@ export class RenderingSubMesh {
 
             if (!prim.indexView) {
                 sharedView.set(mesh.data.subarray(vertexBundle.view.offset, vertexBundle.view.offset + vertexBundle.view.length));
-                this._flatBuffers$.push({ stride: vbStride, count: vbCount, buffer: sharedView });
+                this._flatBuffers.push({ stride: vbStride, count: vbCount, buffer: sharedView });
                 continue;
             }
 
@@ -362,7 +362,7 @@ export class RenderingSubMesh {
                     sharedView[offset + m] = view[srcOffset + m];
                 }
             }
-            this._flatBuffers$.push({ stride: vbStride, count: vbCount, buffer: sharedView });
+            this._flatBuffers.push({ stride: vbStride, count: vbCount, buffer: sharedView });
         }
     }
 
@@ -371,14 +371,14 @@ export class RenderingSubMesh {
      * @zh 骨骼索引按映射表处理后的顶点缓冲。
      */
     get jointMappedBuffers (): Buffer[] {
-        if (this._jointMappedBuffers$) { return this._jointMappedBuffers$; }
-        const buffers: Buffer[] = this._jointMappedBuffers$ = [];
-        const indices: number[] = this._jointMappedBufferIndices$ = [];
-        if (!this.mesh || this.subMeshIdx === undefined) { return this._jointMappedBuffers$ = this.vertexBuffers; }
+        if (this._jointMappedBuffers) { return this._jointMappedBuffers; }
+        const buffers: Buffer[] = this._jointMappedBuffers = [];
+        const indices: number[] = this._jointMappedBufferIndices = [];
+        if (!this.mesh || this.subMeshIdx === undefined) { return this._jointMappedBuffers = this.vertexBuffers; }
         const { struct } = this.mesh;
         const prim = struct.primitives[this.subMeshIdx];
         if (!struct.jointMaps || prim.jointMapIndex === undefined || !struct.jointMaps[prim.jointMapIndex]) {
-            return this._jointMappedBuffers$ = this.vertexBuffers;
+            return this._jointMappedBuffers = this.vertexBuffers;
         }
         let jointFormat: Format;
         let jointOffset: number;
@@ -419,7 +419,7 @@ export class RenderingSubMesh {
                 buffers.push(this.vertexBuffers[prim.vertexBundelIndices[i]]);
             }
         }
-        if (this._vertexIdChannel$) {
+        if (this._vertexIdChannel) {
             buffers.push(this._allocVertexIdBuffer(device));
         }
         return buffers;
@@ -429,7 +429,7 @@ export class RenderingSubMesh {
      * @en The input assembler info.
      * @zh 输入汇集器信息。
      */
-    get iaInfo (): InputAssemblerInfo { return this._iaInfo$; }
+    get iaInfo (): InputAssemblerInfo { return this._iaInfo; }
 
     /**
      * @en Destroys sub mesh.
@@ -440,22 +440,22 @@ export class RenderingSubMesh {
             this.vertexBuffers[i].destroy();
         }
         this.vertexBuffers.length = 0;
-        if (this._indexBuffer$) {
-            if (this._isOwnerOfIndexBuffer$) {
-                this._indexBuffer$.destroy();
+        if (this._indexBuffer) {
+            if (this._isOwnerOfIndexBuffer) {
+                this._indexBuffer.destroy();
             }
-            this._indexBuffer$ = null;
+            this._indexBuffer = null;
         }
-        if (this._jointMappedBuffers$ && this._jointMappedBufferIndices$) {
-            for (let i = 0; i < this._jointMappedBufferIndices$.length; i++) {
-                this._jointMappedBuffers$[this._jointMappedBufferIndices$[i]].destroy();
+        if (this._jointMappedBuffers && this._jointMappedBufferIndices) {
+            for (let i = 0; i < this._jointMappedBufferIndices.length; i++) {
+                this._jointMappedBuffers[this._jointMappedBufferIndices[i]].destroy();
             }
-            this._jointMappedBuffers$ = undefined;
-            this._jointMappedBufferIndices$ = undefined;
+            this._jointMappedBuffers = undefined;
+            this._jointMappedBufferIndices = undefined;
         }
-        if (this._indirectBuffer$) {
-            this._indirectBuffer$.destroy();
-            this._indirectBuffer$ = null;
+        if (this._indirectBuffer) {
+            this._indirectBuffer.destroy();
+            this._indirectBuffer = null;
         }
     }
 
@@ -469,7 +469,7 @@ export class RenderingSubMesh {
      * @param device @en Device used to create related rendering resources @zh 用于创建相关渲染资源的设备对象
      */
     public enableVertexIdChannel (device: Device): void {
-        if (this._vertexIdChannel$) {
+        if (this._vertexIdChannel) {
             return;
         }
 
@@ -477,13 +477,13 @@ export class RenderingSubMesh {
         const attributeIndex = this.attributes.length;
 
         const vertexIdBuffer = this._allocVertexIdBuffer(device);
-        this._vertexBuffers$.push(vertexIdBuffer);
-        this._attributes$.push(new Attribute('a_vertexId', Format.R32F, false, streamIndex));
+        this._vertexBuffers.push(vertexIdBuffer);
+        this._attributes.push(new Attribute('a_vertexId', Format.R32F, false, streamIndex));
 
-        this._iaInfo$.attributes = this._attributes$;
-        this._iaInfo$.vertexBuffers = this._vertexBuffers$;
+        this._iaInfo.attributes = this._attributes;
+        this._iaInfo.vertexBuffers = this._vertexBuffers;
 
-        this._vertexIdChannel$ = {
+        this._vertexIdChannel = {
             stream: streamIndex,
             index: attributeIndex,
         };

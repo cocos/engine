@@ -136,7 +136,7 @@ export class Prefab extends Asset {
      */
     public compileCreateFunction (): void {
         if (SUPPORT_JIT) {
-            this._createFunction$ = compile(this.data);
+            this._createFunction = compile(this.data);
         }
     }
 
@@ -151,10 +151,10 @@ export class Prefab extends Asset {
             // temp guard code
             warnID(3700);
         }
-        if (!this._createFunction$) {
+        if (!this._createFunction) {
             this.compileCreateFunction();
         }
-        return this._createFunction$!(rootToRedirect);  // this.data._instantiate();
+        return this._createFunction!(rootToRedirect);  // this.data._instantiate();
     }
 
     private _instantiate (): Node {
@@ -167,7 +167,7 @@ export class Prefab extends Asset {
                 useJit = true;
             } else {
                 // auto
-                useJit = (this._instantiatedTimes$ + 1) >= Prefab.OptimizationPolicyThreshold;
+                useJit = (this._instantiatedTimes + 1) >= Prefab.OptimizationPolicyThreshold;
             }
         }
         if (useJit) {
@@ -179,7 +179,7 @@ export class Prefab extends Asset {
             // instantiate node
             node = this.data._instantiate();
         }
-        ++this._instantiatedTimes$;
+        ++this._instantiatedTimes;
 
         return node;
     }

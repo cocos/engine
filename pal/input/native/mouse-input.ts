@@ -96,13 +96,13 @@ export class MouseInputSource {
     private _handleMouseWheel: (mouseEvent: jsb.MouseWheelEvent) => void;
 
     constructor () {
-        this._handleMouseDown = this._createEventCacheCallback$(InputEventType.MOUSE_DOWN);
-        this._handleMouseMove = this._createEventCacheCallback$(InputEventType.MOUSE_MOVE);
-        this._handleMouseUp =  this._createEventCacheCallback$(InputEventType.MOUSE_UP);
-        this._handleWindowLeave = this._createEventCacheCallback$(InputEventType.MOUSE_LEAVE);
-        this._handleWindowEnter = this._createEventCacheCallback$(InputEventType.MOUSE_ENTER);
-        this._handleMouseWheel = this._createEventCacheCallback$(InputEventType.MOUSE_WHEEL);
-        this._registerEvent$();
+        this._handleMouseDown = this._createEventCacheCallback(InputEventType.MOUSE_DOWN);
+        this._handleMouseMove = this._createEventCacheCallback(InputEventType.MOUSE_MOVE);
+        this._handleMouseUp =  this._createEventCacheCallback(InputEventType.MOUSE_UP);
+        this._handleWindowLeave = this._createEventCacheCallback(InputEventType.MOUSE_LEAVE);
+        this._handleWindowEnter = this._createEventCacheCallback(InputEventType.MOUSE_ENTER);
+        this._handleMouseWheel = this._createEventCacheCallback(InputEventType.MOUSE_WHEEL);
+        this._registerEvent();
         this._windowManager = jsb.ISystemWindowManager.getInstance();
     }
 
@@ -146,16 +146,16 @@ export class MouseInputSource {
         cache.forEach((e: MouseEventElement) => {
             switch (e.type) {
             case InputEventType.MOUSE_LEAVE:
-                this._dispatchWindowLeave$();
+                this._dispatchWindowLeave();
                 break;
             case InputEventType.MOUSE_ENTER:
-                this._dispatchWindowEnter$();
+                this._dispatchWindowEnter();
                 break;
             case InputEventType.MOUSE_WHEEL:
-                this._dispatchMouseWheel$(e.mouseEvent as jsb.MouseWheelEvent);
+                this._dispatchMouseWheel(e.mouseEvent as jsb.MouseWheelEvent);
                 break;
             default:
-                this._dispatchEvent$(e.type!, e.mouseEvent);
+                this._dispatchEvent(e.type!, e.mouseEvent);
                 break;
             }
         });

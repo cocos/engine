@@ -101,7 +101,7 @@ export class SubContextView extends Component {
             return;
         }
         this._fps = value;
-        this._updateInterval$ = 1000 / value;
+        this._updateInterval = 1000 / value;
     }
 
     @serializable
@@ -118,34 +118,34 @@ export class SubContextView extends Component {
 
     constructor () {
         super();
-        this._content$.hideFlags |= CCObject.Flags.DontSave | CCObject.Flags.HideInHierarchy;
-        this._updatedTime$ = performance.now();
+        this._content.hideFlags |= CCObject.Flags.DontSave | CCObject.Flags.HideInHierarchy;
+        this._updatedTime = performance.now();
     }
 
     public onLoad (): void {
         if (minigame.getOpenDataContext) {
-            this._updateInterval$ = 1000 / this._fps;
-            this._openDataContext$ = minigame.getOpenDataContext();
-            this._initSharedCanvas$();
-            this._initContentNode$();
-            this._updateSubContextView$();
-            this._updateContentLayer$();
+            this._updateInterval = 1000 / this._fps;
+            this._openDataContext = minigame.getOpenDataContext();
+            this._initSharedCanvas();
+            this._initContentNode();
+            this._updateSubContextView();
+            this._updateContentLayer();
         } else {
             this.enabled = false;
         }
     }
 
     public onEnable (): void {
-        this._registerNodeEvent$();
+        this._registerNodeEvent();
     }
 
     public onDisable (): void {
-        this._unregisterNodeEvent$();
+        this._unregisterNodeEvent();
     }
 
     private _initSharedCanvas (): void {
-        if (this._openDataContext$) {
-            const sharedCanvas = this._openDataContext$.canvas;
+        if (this._openDataContext) {
+            const sharedCanvas = this._openDataContext.canvas;
             let designWidth = this._designResolutionSize.width;
             let designHeight = this._designResolutionSize.height;
             if (WECHAT || WECHAT_MINI_PROGRAM) {
@@ -166,40 +166,40 @@ export class SubContextView extends Component {
     }
 
     private _initContentNode (): void {
-        if (this._openDataContext$) {
-            const sharedCanvas = this._openDataContext$.canvas;
+        if (this._openDataContext) {
+            const sharedCanvas = this._openDataContext.canvas;
 
-            const image = this._imageAsset$;
+            const image = this._imageAsset;
             image.reset(sharedCanvas);
-            this._texture$.image = image;
-            this._texture$.create(sharedCanvas.width, sharedCanvas.height);
+            this._texture.image = image;
+            this._texture.create(sharedCanvas.width, sharedCanvas.height);
 
-            this._sprite$ = this._content$.getComponent(Sprite);
-            if (!this._sprite$) {
-                this._sprite$ = this._content$.addComponent(Sprite);
+            this._sprite = this._content.getComponent(Sprite);
+            if (!this._sprite) {
+                this._sprite = this._content.addComponent(Sprite);
             }
 
-            if (this._sprite$.spriteFrame) {
-                this._sprite$.spriteFrame.texture = this._texture$;
+            if (this._sprite.spriteFrame) {
+                this._sprite.spriteFrame.texture = this._texture;
             } else {
                 const sp = new SpriteFrame();
-                sp.texture = this._texture$;
-                this._sprite$.spriteFrame = sp;
+                sp.texture = this._texture;
+                this._sprite.spriteFrame = sp;
             }
 
-            this._content$.parent = this.node;
+            this._content.parent = this.node;
         }
     }
 
     private _updateSubContextView (): void {
-        if (!this._openDataContext$) {
+        if (!this._openDataContext) {
             return;
         }
 
         // update subContextView size
         // use SHOW_ALL policy to adapt subContextView
         const nodeTrans = this.node.getComponent(UITransform) as UITransform;
-        const contentTrans = this._content$.getComponent(UITransform) as UITransform;
+        const contentTrans = this._content.getComponent(UITransform) as UITransform;
 
         const scaleX = nodeTrans.width / contentTrans.width;
         const scaleY = nodeTrans.height / contentTrans.height;
@@ -219,7 +219,7 @@ export class SubContextView extends Component {
         const width = viewportRect.width * (box.width / visibleSize.width) / dpr;
         const height = viewportRect.height * (box.height / visibleSize.height) / dpr;
 
-        this._openDataContext$.postMessage({
+        this._openDataContext.postMessage({
             fromEngine: true,  // compatible deprecated property
             type: 'engine',
             event: 'viewport',
@@ -231,8 +231,8 @@ export class SubContextView extends Component {
     }
 
     private _updateSubContextTexture (): void {
-        const img = this._imageAsset$;
-        if (!img || !this._openDataContext$) {
+        const img = this._imageAsset;
+        if (!img || !this._openDataContext) {
             return;
         }
 
@@ -240,51 +240,51 @@ export class SubContextView extends Component {
             return;
         }
 
-        const sharedCanvas = this._openDataContext$.canvas;
+        const sharedCanvas = this._openDataContext.canvas;
         img.reset(sharedCanvas);
         if (sharedCanvas.width > img.width || sharedCanvas.height > img.height) {
-            this._texture$.create(sharedCanvas.width, sharedCanvas.height);
+            this._texture.create(sharedCanvas.width, sharedCanvas.height);
         }
 
-        this._texture$.uploadData(sharedCanvas);
+        this._texture.uploadData(sharedCanvas);
     }
 
     private _registerNodeEvent (): void {
-        this.node.on(NodeEventType.TRANSFORM_CHANGED, this._updateSubContextView$, this);
-        this.node.on(NodeEventType.SIZE_CHANGED, this._updateSubContextView$, this);
-        this.node.on(NodeEventType.LAYER_CHANGED, this._updateContentLayer$, this);
+        this.node.on(NodeEventType.TRANSFORM_CHANGED, this._updateSubContextView, this);
+        this.node.on(NodeEventType.SIZE_CHANGED, this._updateSubContextView, this);
+        this.node.on(NodeEventType.LAYER_CHANGED, this._updateContentLayer, this);
     }
 
     private _unregisterNodeEvent (): void {
-        this.node.off(NodeEventType.TRANSFORM_CHANGED, this._updateSubContextView$, this);
-        this.node.off(NodeEventType.SIZE_CHANGED, this._updateSubContextView$, this);
-        this.node.off(NodeEventType.LAYER_CHANGED, this._updateContentLayer$, this);
+        this.node.off(NodeEventType.TRANSFORM_CHANGED, this._updateSubContextView, this);
+        this.node.off(NodeEventType.SIZE_CHANGED, this._updateSubContextView, this);
+        this.node.off(NodeEventType.LAYER_CHANGED, this._updateContentLayer, this);
     }
 
     private _updateContentLayer (): void {
-        this._content$.layer = this.node.layer;
+        this._content.layer = this.node.layer;
     }
 
     public update (dt?: number): void {
         const calledUpdateManually = (dt === undefined);
         if (calledUpdateManually) {
-            this._updateSubContextTexture$();
+            this._updateSubContextTexture();
             return;
         }
         const now = performance.now();
-        const deltaTime = (now - this._updatedTime$);
-        if (deltaTime >= this._updateInterval$) {
-            this._updatedTime$ += this._updateInterval$;
-            this._updateSubContextTexture$();
+        const deltaTime = (now - this._updatedTime);
+        if (deltaTime >= this._updateInterval) {
+            this._updatedTime += this._updateInterval;
+            this._updateSubContextTexture();
         }
     }
 
     public onDestroy (): void {
-        this._content$.destroy();
-        this._texture$.destroy();
-        if (this._sprite$) { this._sprite$.destroy(); }
-        this._imageAsset$.destroy();
-        this._openDataContext$ = null;
+        this._content.destroy();
+        this._texture.destroy();
+        if (this._sprite) { this._sprite.destroy(); }
+        this._imageAsset.destroy();
+        this._openDataContext = null;
     }
 }
 

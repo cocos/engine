@@ -57,8 +57,8 @@ class ScalableContainerManager {
      */
     addContainer (pool: ScalableContainer): void {
         if (pool._poolHandle !== -1) return;
-        pool._poolHandle = this._pools$.length;
-        this._pools$.push(pool);
+        pool._poolHandle = this._pools.length;
+        this._pools.push(pool);
     }
 
     /**
@@ -67,8 +67,8 @@ class ScalableContainerManager {
      */
     removeContainer (pool: ScalableContainer): void {
         if (pool._poolHandle === -1) return;
-        this._pools$[this._pools$.length - 1]._poolHandle = pool._poolHandle;
-        fastRemoveAt(this._pools$, pool._poolHandle);
+        this._pools[this._pools.length - 1]._poolHandle = pool._poolHandle;
+        fastRemoveAt(this._pools, pool._poolHandle);
         pool._poolHandle = -1;
     }
 
@@ -76,8 +76,8 @@ class ScalableContainerManager {
      * @en Try to shrink all managed ScalableContainers.
      */
     tryShrink (): void {
-        for (let i = 0; i < this._pools$.length; i++) {
-            this._pools$[i].tryShrink();
+        for (let i = 0; i < this._pools.length; i++) {
+            this._pools[i].tryShrink();
         }
     }
 
@@ -86,10 +86,10 @@ class ScalableContainerManager {
      * @param dt @en Delta time of frame interval in secondes.
      */
     update (dt: number): void {
-        this._lastShrinkPassed$ += dt;
-        if (this._lastShrinkPassed$ > this.shrinkTimeSpan) {
+        this._lastShrinkPassed += dt;
+        if (this._lastShrinkPassed > this.shrinkTimeSpan) {
             this.tryShrink();
-            this._lastShrinkPassed$ -= this.shrinkTimeSpan;
+            this._lastShrinkPassed -= this.shrinkTimeSpan;
         }
     }
 }

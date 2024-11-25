@@ -40,11 +40,11 @@ export interface IMaterialInstanceInfo {
  */
 export class MaterialInstance extends Material {
     get parent (): Material {
-        return this._parent$;
+        return this._parent;
     }
 
     get owner (): Renderer | null {
-        return this._owner$;
+        return this._owner;
     }
 
     protected _passes: PassInstance[] = [];
@@ -55,10 +55,10 @@ export class MaterialInstance extends Material {
 
     constructor (info: IMaterialInstanceInfo) {
         super();
-        this._parent$ = info.parent;
-        this._owner$ = info.owner || null;
-        this._subModelIdx$ = info.subModelIdx || 0;
-        this.copy(this._parent$);
+        this._parent = info.parent;
+        this._owner = info.owner || null;
+        this._subModelIdx = info.subModelIdx || 0;
+        this.copy(this._parent);
     }
 
     public recompileShaders (overrides: MacroRecord, passIdx?: number): void {
@@ -96,14 +96,14 @@ export class MaterialInstance extends Material {
 
     public onPassStateChange (dontNotify: boolean): void {
         this._hash = Material.getHash(this);
-        if (!dontNotify && this._owner$) {
-            this._owner$._onRebuildPSO(this._subModelIdx$, this);
+        if (!dontNotify && this._owner) {
+            this._owner._onRebuildPSO(this._subModelIdx, this);
         }
     }
 
     protected _createPasses (): PassInstance[] {
         const passes: PassInstance[] = [];
-        const parentPasses = this._parent$.passes;
+        const parentPasses = this._parent.passes;
         if (!parentPasses) { return passes; }
         for (let k = 0; k < parentPasses.length; ++k) {
             passes.push(new PassInstance(parentPasses[k], this));

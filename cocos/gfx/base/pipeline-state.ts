@@ -65,7 +65,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 着色器。
      */
     get shader (): Shader {
-        return this._shader$!;
+        return this._shader!;
     }
 
     /**
@@ -73,7 +73,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 管线布局。
      */
     get pipelineLayout (): PipelineLayout {
-        return this._pipelineLayout$!;
+        return this._pipelineLayout!;
     }
 
     /**
@@ -81,7 +81,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 图元模式。
      */
     get primitive (): PrimitiveMode {
-        return this._primitive$;
+        return this._primitive;
     }
 
     /**
@@ -121,7 +121,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 动态状态数组。
      */
     get dynamicStates (): DynamicStateFlags {
-        return this._dynamicStates$;
+        return this._dynamicStates;
     }
 
     /**
@@ -129,7 +129,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 渲染过程。
      */
     get renderPass (): RenderPass {
-        return this._renderPass$ as RenderPass;
+        return this._renderPass as RenderPass;
     }
 
     protected _shader$: Shader | null = null;

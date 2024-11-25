@@ -58,14 +58,14 @@ export class Pool<T> extends ScalableContainer {
      */
     constructor (ctor: () => T, elementsPerBatch: number, dtor?: (obj: T) => void, shrinkThreshold?: number) {
         super();
-        this._ctor$ = ctor;
-        this._dtor$ = dtor || null;
-        this._elementsPerBatch$ = Math.max(elementsPerBatch, 1);
-        this._shrinkThreshold$ = shrinkThreshold ? max(shrinkThreshold, 1) : this._elementsPerBatch$;
-        this._nextAvail$ = this._elementsPerBatch$ - 1;
+        this._ctor = ctor;
+        this._dtor = dtor || null;
+        this._elementsPerBatch = Math.max(elementsPerBatch, 1);
+        this._shrinkThreshold = shrinkThreshold ? max(shrinkThreshold, 1) : this._elementsPerBatch;
+        this._nextAvail = this._elementsPerBatch - 1;
 
-        for (let i = 0; i < this._elementsPerBatch$; ++i) {
-            this._freePool$.push(ctor());
+        for (let i = 0; i < this._elementsPerBatch; ++i) {
+            this._freePool.push(ctor());
         }
     }
 
@@ -76,15 +76,15 @@ export class Pool<T> extends ScalableContainer {
      * @zh 该函数总是返回一个可用的对象。
      */
     public alloc (): T {
-        if (this._nextAvail$ < 0) {
-            this._freePool$.length = this._elementsPerBatch$;
-            for (let i = 0; i < this._elementsPerBatch$; i++) {
-                this._freePool$[i] = this._ctor$();
+        if (this._nextAvail < 0) {
+            this._freePool.length = this._elementsPerBatch;
+            for (let i = 0; i < this._elementsPerBatch; i++) {
+                this._freePool[i] = this._ctor();
             }
-            this._nextAvail$ = this._elementsPerBatch$ - 1;
+            this._nextAvail = this._elementsPerBatch - 1;
         }
 
-        return this._freePool$[this._nextAvail$--];
+        return this._freePool[this._nextAvail--];
     }
 
     /**
@@ -94,7 +94,7 @@ export class Pool<T> extends ScalableContainer {
      * @zh 放回对象池中的对象。
      */
     public free (obj: T): void {
-        this._freePool$[++this._nextAvail$] = obj;
+        this._freePool[++this._nextAvail] = obj;
     }
 
     /**
@@ -104,9 +104,9 @@ export class Pool<T> extends ScalableContainer {
      * @zh 放回对象池中的一组对象。
      */
     public freeArray (objs: T[]): void {
-        this._freePool$.length = this._nextAvail$ + 1;
-        Array.prototype.push.apply(this._freePool$, objs);
-        this._nextAvail$ += objs.length;
+        this._freePool.length = this._nextAvail + 1;
+        Array.prototype.push.apply(this._freePool, objs);
+        this._nextAvail += objs.length;
     }
 
     /**
@@ -114,25 +114,25 @@ export class Pool<T> extends ScalableContainer {
      * @zh 尝试缩容对象池，以释放内存。
      */
     public tryShrink (): void {
-        const freeObjectNumber = this._nextAvail$ + 1;
-        if (freeObjectNumber <= this._shrinkThreshold$) {
+        const freeObjectNumber = this._nextAvail + 1;
+        if (freeObjectNumber <= this._shrinkThreshold) {
             return;
         }
 
         let objectNumberToShrink = 0;
-        if (freeObjectNumber >> 1 >= this._shrinkThreshold$) {
+        if (freeObjectNumber >> 1 >= this._shrinkThreshold) {
             objectNumberToShrink = freeObjectNumber >> 1;
         } else {
-            objectNumberToShrink = Math.floor((freeObjectNumber - this._shrinkThreshold$ + 1) / 2);
+            objectNumberToShrink = Math.floor((freeObjectNumber - this._shrinkThreshold + 1) / 2);
         }
 
-        if (this._dtor$) {
-            for (let i = this._nextAvail$ - objectNumberToShrink + 1;  i <=  this._nextAvail$; ++i) {
-                this._dtor$(this._freePool$[i]);
+        if (this._dtor) {
+            for (let i = this._nextAvail - objectNumberToShrink + 1;  i <=  this._nextAvail; ++i) {
+                this._dtor(this._freePool[i]);
             }
         }
-        this._nextAvail$ -= objectNumberToShrink;
-        this._freePool$.length = this._nextAvail$ + 1;
+        this._nextAvail -= objectNumberToShrink;
+        this._freePool.length = this._nextAvail + 1;
     }
 
     /**
@@ -142,14 +142,14 @@ export class Pool<T> extends ScalableContainer {
     public destroy (): void {
         const dtor = arguments.length > 0 ? arguments[0] : null;
         if (dtor) { warnID(14100); }
-        const readDtor = dtor || this._dtor$;
+        const readDtor = dtor || this._dtor;
         if (readDtor) {
-            for (let i = 0; i <= this._nextAvail$; i++) {
-                readDtor(this._freePool$[i]);
+            for (let i = 0; i <= this._nextAvail; i++) {
+                readDtor(this._freePool[i]);
             }
         }
-        this._freePool$.length = 0;
-        this._nextAvail$ = -1;
+        this._freePool.length = 0;
+        this._nextAvail = -1;
         super.destroy();
     }
 }

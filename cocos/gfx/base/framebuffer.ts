@@ -36,7 +36,7 @@ export abstract class Framebuffer extends GFXObject {
      * @zh GFX 渲染过程。
      */
     public get renderPass (): RenderPass {
-        return this._renderPass$!;
+        return this._renderPass!;
     }
 
     /**
@@ -44,7 +44,7 @@ export abstract class Framebuffer extends GFXObject {
      * @zh 颜色纹理视图数组。
      */
     public get colorTextures (): (Texture | null)[] {
-        return this._colorTextures$;
+        return this._colorTextures;
     }
 
     /**
@@ -52,25 +52,25 @@ export abstract class Framebuffer extends GFXObject {
      * @zh 深度模板纹理视图。
      */
     public get depthStencilTexture (): Texture | null {
-        return this._depthStencilTexture$;
+        return this._depthStencilTexture;
     }
 
     public get width (): number {
         if (this.colorTextures.length > 0) {
-            return this.colorTextures[0]?.width ?? this._width$;
+            return this.colorTextures[0]?.width ?? this._width;
         } else if (this.depthStencilTexture) {
             return this.depthStencilTexture.width;
         }
-        return this._width$;
+        return this._width;
     }
 
     public get height (): number {
         if (this.colorTextures.length > 0) {
-            return this.colorTextures[0]?.height ?? this._height$;
+            return this.colorTextures[0]?.height ?? this._height;
         } else if (this.depthStencilTexture) {
             return this.depthStencilTexture.height;
         }
-        return this._height$;
+        return this._height;
     }
 
     public get needRebuild (): boolean {

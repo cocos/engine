@@ -125,8 +125,8 @@ export class Pool<T> {
     constructor (_0: CleanUpFunction<T> | number, _1?: number) {
         const size = (_1 === undefined) ? (_0 as number) : _1;
         const cleanupFunc = (_1 === undefined) ? null : (_0 as CleanUpFunction<T>);
-        this._pool$ = new Array(size);
-        this._cleanup$ = cleanupFunc;
+        this._pool = new Array(size);
+        this._cleanup = cleanupFunc;
     }
 
     /**
@@ -140,8 +140,8 @@ export class Pool<T> {
     public _get (): T | null {
         if (this.count > 0) {
             --this.count;
-            const cache = this._pool$[this.count];
-            this._pool$[this.count] = null;
+            const cache = this._pool[this.count];
+            this._pool[this.count] = null;
             return cache;
         }
         return null;
@@ -152,9 +152,9 @@ export class Pool<T> {
      * @zh 向对象池返还一个不再需要的对象。
      */
     public put (obj: T): void {
-        const pool = this._pool$;
+        const pool = this._pool;
         if (this.count < pool.length) {
-            if (this._cleanup$ && this._cleanup$(obj) === false) {
+            if (this._cleanup && this._cleanup(obj) === false) {
                 return;
             }
             pool[this.count] = obj;
@@ -170,7 +170,7 @@ export class Pool<T> {
      */
     public resize (length: number): void {
         if (length >= 0) {
-            this._pool$.length = length;
+            this._pool.length = length;
             if (this.count > length) {
                 this.count = length;
             }

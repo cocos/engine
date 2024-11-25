@@ -46,10 +46,10 @@ export class WebGL2IndirectDrawInfos {
     private _capacity = 4;
 
     constructor () {
-        this.counts$ = new Int32Array(this._capacity$);
-        this.offsets$ = new Int32Array(this._capacity$);
-        this.instances$  = new Int32Array(this._capacity$);
-        this.byteOffsets$ = new Int32Array(this._capacity$);
+        this.counts$ = new Int32Array(this._capacity);
+        this.offsets$ = new Int32Array(this._capacity);
+        this.instances$  = new Int32Array(this._capacity);
+        this.byteOffsets$ = new Int32Array(this._capacity);
     }
 
     public clearDraws$ (): void {
@@ -59,7 +59,7 @@ export class WebGL2IndirectDrawInfos {
     }
 
     public setDrawInfo$ (idx: number, info: Readonly<DrawInfo>): void {
-        this._ensureCapacity$(idx);
+        this._ensureCapacity(idx);
         this.drawByIndex$ = info.indexCount > 0;
         this.instancedDraw$ = !!info.instanceCount;
         this.drawCount$ = Math.max(idx + 1, this.drawCount$);
@@ -75,13 +75,13 @@ export class WebGL2IndirectDrawInfos {
     }
 
     private _ensureCapacity (target: number): void {
-        if (this._capacity$ > target) return;
-        this._capacity$ = nextPow2(target);
+        if (this._capacity > target) return;
+        this._capacity = nextPow2(target);
 
-        const counts = new Int32Array(this._capacity$);
-        const offsets = new Int32Array(this._capacity$);
-        const instances = new Int32Array(this._capacity$);
-        this.byteOffsets$ = new Int32Array(this._capacity$);
+        const counts = new Int32Array(this._capacity);
+        const offsets = new Int32Array(this._capacity);
+        const instances = new Int32Array(this._capacity);
+        this.byteOffsets$ = new Int32Array(this._capacity);
 
         counts.set(this.counts$);
         offsets.set(this.offsets$);
@@ -327,22 +327,22 @@ export class IWebGL2BlitManager {
     private _dstFramebuffer: WebGLFramebuffer | null;
 
     get srcFramebuffer (): WebGLFramebuffer | null {
-        return this._srcFramebuffer$;
+        return this._srcFramebuffer;
     }
 
     get dstFramebuffer (): WebGLFramebuffer | null {
-        return this._dstFramebuffer$;
+        return this._dstFramebuffer;
     }
 
     constructor () {
         const { gl } = WebGL2DeviceManager.instance;
-        this._srcFramebuffer$ = gl.createFramebuffer();
-        this._dstFramebuffer$ = gl.createFramebuffer();
+        this._srcFramebuffer = gl.createFramebuffer();
+        this._dstFramebuffer = gl.createFramebuffer();
     }
 
     destroy$ (): void {
         const { gl } = WebGL2DeviceManager.instance;
-        gl.deleteFramebuffer(this._srcFramebuffer$);
-        gl.deleteFramebuffer(this._dstFramebuffer$);
+        gl.deleteFramebuffer(this._srcFramebuffer);
+        gl.deleteFramebuffer(this._dstFramebuffer);
     }
 }

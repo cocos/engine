@@ -335,14 +335,14 @@ export class AssetManager {
      * @engineInternal
      */
     public get files(): Cache {
-        return this._files$;
+        return this._files;
     }
 
     /**
      * @engineInternal
      */
     public getReleaseManager (): ReleaseManager {
-        return this._releaseManager$;
+        return this._releaseManager;
     }
 
     /**
@@ -381,7 +381,7 @@ export class AssetManager {
      * @engineInternal
      */
     public onAssetMissing (func: (parentAsset: Asset, owner: any, propName: string, uuid: string) => void, target?: any): void {
-        this._eventTarget$.on(EVENT_ASSET_MISSING, func, target);
+        this._eventTarget.on(EVENT_ASSET_MISSING, func, target);
     }
 
     /**
@@ -395,7 +395,7 @@ export class AssetManager {
      * @engineInternal
      */
     public offAssetMissing (func: (parentAsset: Asset, owner: any, propName: string, uuid: string) => void, target?: any): void {
-        this._eventTarget$.off(EVENT_ASSET_MISSING, func, target);
+        this._eventTarget.off(EVENT_ASSET_MISSING, func, target);
     }
 
     /**
@@ -411,7 +411,7 @@ export class AssetManager {
      * @engineInternal
      */
     public dispatchAssetMissing (parentAsset: Asset, owner: any, propName: string, uuid: string): void {
-        this._eventTarget$.emit(EVENT_ASSET_MISSING, parentAsset, owner, propName, uuid);
+        this._eventTarget.emit(EVENT_ASSET_MISSING, parentAsset, owner, propName, uuid);
     }
 
     /**
@@ -434,9 +434,9 @@ export class AssetManager {
             this.downloader.maxConcurrency = downloadMaxConcurrency;
         }
 
-        this._files$.clear();
-        this._parsed$.clear();
-        this._releaseManager$.init();
+        this._files.clear();
+        this._parsed.clear();
+        this._releaseManager.init();
         this.assets.clear();
         this.bundles.clear();
         this.packManager.init();
@@ -453,7 +453,7 @@ export class AssetManager {
         }
         this.generalImportBase = importBase;
         this.generalNativeBase = nativeBase;
-        this._projectBundles$ = settings.querySettings(SettingsCategory.ASSETS, 'projectBundles') || [];
+        this._projectBundles = settings.querySettings(SettingsCategory.ASSETS, 'projectBundles') || [];
         const assetsOverride = settings.querySettings(SettingsCategory.ASSETS, 'assetsOverrides') || {};
         for (const key in assetsOverride) {
             this.assetsOverrideMap.set(key, assetsOverride[key] as string);
@@ -827,7 +827,7 @@ export class AssetManager {
                 if (onComp) { onComp(err, data); }
             }),
         });
-        this._parsePipeline$!.async(task);
+        this._parsePipeline!.async(task);
     }
 }
 

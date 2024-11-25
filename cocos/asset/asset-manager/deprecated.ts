@@ -307,7 +307,7 @@ export class CCLoader {
         progressCallback?: LoadProgressCallback | LoadCompleteCallback<T>,
         completeCallback?: LoadCompleteCallback<T>,
     ): any {
-        const { type: _type, onProgress, onComplete } = this._parseLoadResArgs$(
+        const { type: _type, onProgress, onComplete } = this._parseLoadResArgs(
 type as any,
             progressCallback as LoadProgressCallback,
             completeCallback as LoadCompleteCallback<T>,
@@ -358,7 +358,7 @@ type as any,
         progressCallback?: LoadProgressCallback,
         completeCallback?: LoadCompleteCallback<T[]>,
     ): void {
-        const { type: _type, onProgress, onComplete } = this._parseLoadResArgs$<LoadCompleteCallback<Asset[]>>(
+        const { type: _type, onProgress, onComplete } = this._parseLoadResArgs<LoadCompleteCallback<Asset[]>>(
 type as any,
             progressCallback as LoadProgressCallback,
             completeCallback as LoadCompleteCallback<Asset[]>,
@@ -447,7 +447,7 @@ type as any,
         progressCallback?: LoadProgressCallback | LoadDirCompleteCallback<T>,
         completeCallback?: LoadDirCompleteCallback<T>,
     ): any {
-        const { type: _type, onProgress, onComplete } = this._parseLoadResArgs$<LoadDirCompleteCallback<Asset>>(
+        const { type: _type, onProgress, onComplete } = this._parseLoadResArgs<LoadDirCompleteCallback<Asset>>(
 type as any,
             progressCallback as LoadProgressCallback,
             completeCallback as LoadDirCompleteCallback<Asset>,

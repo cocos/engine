@@ -181,7 +181,7 @@ export class ReflectionProbe {
     }
     set visibility (val) {
         this._visibility = val;
-        this._camera$!.visibility = this._visibility;
+        this._camera!.visibility = this._visibility;
     }
 
     /**
@@ -192,7 +192,7 @@ export class ReflectionProbe {
         this._size.set(value);
 
         const pos = this.node.getWorldPosition();
-        geometry.AABB.set(this._boundingBox$!, pos.x, pos.y, pos.z, this._size.x, this._size.y, this._size.z);
+        geometry.AABB.set(this._boundingBox!, pos.x, pos.y, pos.z, this._size.x, this._size.y, this._size.z);
     }
     get size (): Vec3 {
         return this._size;
@@ -211,11 +211,11 @@ export class ReflectionProbe {
      * @zh probe绑定的节点
      */
     get node (): Node {
-        return this._node$!;
+        return this._node!;
     }
 
     get camera (): Camera {
-        return this._camera$!;
+        return this._camera!;
     }
 
     /**
@@ -223,29 +223,29 @@ export class ReflectionProbe {
      * @zh 刷新使用该probe的物体
      */
     set needRefresh (value: boolean) {
-        this._needRefresh$ = value;
+        this._needRefresh = value;
     }
 
     get needRefresh (): boolean {
-        return this._needRefresh$;
+        return this._needRefresh;
     }
 
     set needRender (value: boolean) {
-        this._needRender$ = value;
+        this._needRender = value;
     }
     get needRender (): boolean {
-        return this._needRender$;
+        return this._needRender;
     }
 
     get boundingBox (): geometry.AABB | null {
-        return this._boundingBox$;
+        return this._boundingBox;
     }
 
     set cameraNode (node: Node) {
-        this._cameraNode$ = node;
+        this._cameraNode = node;
     }
     get cameraNode (): Node {
-        return this._cameraNode$!;
+        return this._cameraNode!;
     }
 
     /**
@@ -274,21 +274,21 @@ export class ReflectionProbe {
     }
 
     constructor (id: number) {
-        this._probeId$ = id;
+        this._probeId = id;
     }
 
     public initialize (node: Node, cameraNode: Node): void {
-        this._node$ = node;
-        this._cameraNode$ = cameraNode;
+        this._node = node;
+        this._cameraNode = cameraNode;
         const pos = this.node.getWorldPosition();
-        this._boundingBox$ = geometry.AABB.create(pos.x, pos.y, pos.z, this._size.x, this._size.y, this._size.z);
-        this._createCamera$(cameraNode);
+        this._boundingBox = geometry.AABB.create(pos.x, pos.y, pos.z, this._size.x, this._size.y, this._size.z);
+        this._createCamera(cameraNode);
     }
 
     public initBakedTextures (): void {
         if (this.bakedCubeTextures.length === 0) {
             for (let i = 0; i < 6; i++) {
-                const renderTexture = this._createTargetTexture$(this._resolution, this._resolution);
+                const renderTexture = this._createTargetTexture(this._resolution, this._resolution);
                 this.bakedCubeTextures.push(renderTexture);
             }
         }
@@ -296,8 +296,8 @@ export class ReflectionProbe {
 
     public captureCubemap (): void {
         this.initBakedTextures();
-        this._resetCameraParams$();
-        this._needRender$ = true;
+        this._resetCameraParams();
+        this._needRender = true;
     }
 
     /**
@@ -309,28 +309,28 @@ export class ReflectionProbe {
         if (!sourceCamera) return;
         if (!this.realtimePlanarTexture) {
             const canvasSize = cclegacy.view.getDesignResolutionSize() as Size;
-            this.realtimePlanarTexture = this._createTargetTexture$(canvasSize.width, canvasSize.height);
+            this.realtimePlanarTexture = this._createTargetTexture(canvasSize.width, canvasSize.height);
             cclegacy.internal.reflectionProbeManager.updatePlanarMap(this, this.realtimePlanarTexture.getGFXTexture());
         }
-        this._syncCameraParams$(sourceCamera);
-        this._transformReflectionCamera$(sourceCamera);
-        this._needRender$ = true;
+        this._syncCameraParams(sourceCamera);
+        this._transformReflectionCamera(sourceCamera);
+        this._needRender = true;
     }
 
     public switchProbeType (type: ProbeType, sourceCamera: Camera | null): void {
         if (type === ProbeType.CUBE) {
-            this._needRender$ = false;
+            this._needRender = false;
         } else if (sourceCamera !== null) {
             this.renderPlanarReflection(sourceCamera);
         }
     }
 
     public getProbeId (): number {
-        return this._probeId$;
+        return this._probeId;
     }
 
     public updateProbeId (id): void {
-        this._probeId$ = id;
+        this._probeId = id;
     }
 
     public renderArea (): Vec2 {
@@ -350,9 +350,9 @@ export class ReflectionProbe {
     }
 
     public destroy (): void {
-        if (this._camera$) {
-            this._camera$.destroy();
-            this._camera$ = null;
+        if (this._camera) {
+            this._camera.destroy();
+            this._camera = null;
         }
         for (let i = 0; i < this.bakedCubeTextures.length; i++) {
             this.bakedCubeTextures[i].destroy();
@@ -379,7 +379,7 @@ export class ReflectionProbe {
     public updateBoundingBox (): void {
         if (this.node) {
             const pos = this.node.getWorldPosition();
-            geometry.AABB.set(this._boundingBox$!, pos.x, pos.y, pos.z, this._size.x, this._size.y, this._size.z);
+            geometry.AABB.set(this._boundingBox!, pos.x, pos.y, pos.z, this._size.x, this._size.y, this._size.z);
         }
     }
 
@@ -420,10 +420,10 @@ export class ReflectionProbe {
 
     private _createCamera (cameraNode: Node): Camera | null {
         const root = cclegacy.director.root;
-        if (!this._camera$) {
-            this._camera$ = root.createCamera();
-            if (!this._camera$) return null;
-            this._camera$.initialize({
+        if (!this._camera) {
+            this._camera = root.createCamera();
+            if (!this._camera) return null;
+            this._camera.initialize({
                 name: cameraNode.name,
                 node: cameraNode,
                 projection: CameraProjection.PERSPECTIVE,
@@ -433,21 +433,21 @@ export class ReflectionProbe {
                 trackingType: TrackingType.NO_TRACKING,
             });
         }
-        this._camera$.setViewportInOrientedSpace(new Rect(0, 0, 1, 1));
-        this._camera$.fovAxis = CameraFOVAxis.VERTICAL;
-        this._camera$.fov = toRadian(90);
-        this._camera$.orthoHeight = 10;
-        this._camera$.nearClip = 1;
-        this._camera$.farClip = 1000;
-        this._camera$.clearColor = this._backgroundColor;
-        this._camera$.clearDepth = 1.0;
-        this._camera$.clearStencil = 0.0;
-        this._camera$.clearFlag = this._clearFlag;
-        this._camera$.visibility = this._visibility;
-        this._camera$.aperture = CameraAperture.F16_0;
-        this._camera$.shutter = CameraShutter.D125;
-        this._camera$.iso = CameraISO.ISO100;
-        return this._camera$;
+        this._camera.setViewportInOrientedSpace(new Rect(0, 0, 1, 1));
+        this._camera.fovAxis = CameraFOVAxis.VERTICAL;
+        this._camera.fov = toRadian(90);
+        this._camera.orthoHeight = 10;
+        this._camera.nearClip = 1;
+        this._camera.farClip = 1000;
+        this._camera.clearColor = this._backgroundColor;
+        this._camera.clearDepth = 1.0;
+        this._camera.clearStencil = 0.0;
+        this._camera.clearFlag = this._clearFlag;
+        this._camera.visibility = this._visibility;
+        this._camera.aperture = CameraAperture.F16_0;
+        this._camera.shutter = CameraShutter.D125;
+        this._camera.iso = CameraISO.ISO100;
+        return this._camera;
     }
 
     private _resetCameraParams (): void {
@@ -476,21 +476,21 @@ export class ReflectionProbe {
 
     private _transformReflectionCamera (sourceCamera: Camera): void {
         const offset = Vec3.dot(this.node.worldPosition, this.node.up);
-        this._reflect$(this._cameraWorldPos$, sourceCamera.node.worldPosition, this.node.up, offset);
-        this.cameraNode.worldPosition = this._cameraWorldPos$;
+        this._reflect(this._cameraWorldPos, sourceCamera.node.worldPosition, this.node.up, offset);
+        this.cameraNode.worldPosition = this._cameraWorldPos;
 
-        Vec3.transformQuat(this._forward$, Vec3.FORWARD, sourceCamera.node.worldRotation);
-        this._reflect$(this._forward$, this._forward$, this.node.up, 0);
-        this._forward$.normalize();
-        this._forward$.negative();
+        Vec3.transformQuat(this._forward, Vec3.FORWARD, sourceCamera.node.worldRotation);
+        this._reflect(this._forward, this._forward, this.node.up, 0);
+        this._forward.normalize();
+        this._forward.negative();
 
         Vec3.transformQuat(this._up, Vec3.UP, sourceCamera.node.worldRotation);
-        this._reflect$(this._up, this._up, this.node.up, 0);
+        this._reflect(this._up, this._up, this.node.up, 0);
         this._up.normalize();
 
-        Quat.fromViewUp(this._cameraWorldRotation$, this._forward$, this._up);
+        Quat.fromViewUp(this._cameraWorldRotation, this._forward, this._up);
 
-        this.cameraNode.worldRotation = this._cameraWorldRotation$;
+        this.cameraNode.worldRotation = this._cameraWorldRotation;
 
         this.camera.update(true);
 

@@ -26,9 +26,9 @@ import { PipelineState, PipelineStateInfo } from '../base/pipeline-state';
 
 export class EmptyPipelineState extends PipelineState {
     public initialize (info: Readonly<PipelineStateInfo>): void {
-        this._primitive$ = info.primitive;
-        this._shader$ = info.shader;
-        this._pipelineLayout$ = info.pipelineLayout;
+        this._primitive = info.primitive;
+        this._shader = info.shader;
+        this._pipelineLayout = info.pipelineLayout;
         const bs = this._bs$;
         if (info.blendState) {
             const bsInfo = info.blendState;
@@ -46,8 +46,8 @@ export class EmptyPipelineState extends PipelineState {
         Object.assign(this._rs$, info.rasterizerState);
         Object.assign(this._dss$, info.depthStencilState);
         this._is$ = info.inputState;
-        this._renderPass$ = info.renderPass;
-        this._dynamicStates$ = info.dynamicStates;
+        this._renderPass = info.renderPass;
+        this._dynamicStates = info.dynamicStates;
     }
     public destroy (): void {}
 }

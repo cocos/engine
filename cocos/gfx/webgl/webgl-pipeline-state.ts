@@ -48,7 +48,7 @@ const WebGLPrimitives: GLenum[] = [
 
 export class WebGLPipelineState extends PipelineState {
     get gpuPipelineState (): IWebGLGPUPipelineState {
-        return  this._gpuPipelineState$!;
+        return  this._gpuPipelineState!;
     }
 
     private _gpuPipelineState: IWebGLGPUPipelineState | null = null;
@@ -58,9 +58,9 @@ export class WebGLPipelineState extends PipelineState {
     }
 
     public initialize (info: Readonly<PipelineStateInfo>): void {
-        this._primitive$ = info.primitive;
-        this._shader$ = info.shader;
-        this._pipelineLayout$ = info.pipelineLayout;
+        this._primitive = info.primitive;
+        this._shader = info.shader;
+        this._pipelineLayout = info.pipelineLayout;
         const bs = this._bs$;
         if (info.blendState) {
             const bsInfo = info.blendState;
@@ -78,17 +78,17 @@ export class WebGLPipelineState extends PipelineState {
         Object.assign(this._rs$, info.rasterizerState);
         Object.assign(this._dss$, info.depthStencilState);
         this._is$ = info.inputState;
-        this._renderPass$ = info.renderPass;
-        this._dynamicStates$ = info.dynamicStates;
+        this._renderPass = info.renderPass;
+        this._dynamicStates = info.dynamicStates;
 
         const dynamicStates: DynamicStateFlagBit[] = [];
         for (let i = 0; i < 31; i++) {
-            if (this._dynamicStates$ & (1 << i)) {
+            if (this._dynamicStates & (1 << i)) {
                 dynamicStates.push(1 << i);
             }
         }
 
-        this._gpuPipelineState$ = {
+        this._gpuPipelineState = {
             glPrimitive$: WebGLPrimitives[info.primitive],
             gpuShader$: (info.shader as WebGLShader).gpuShader,
             gpuPipelineLayout$: (info.pipelineLayout as WebGLPipelineLayout).gpuPipelineLayout,
@@ -101,6 +101,6 @@ export class WebGLPipelineState extends PipelineState {
     }
 
     public destroy (): void {
-        this._gpuPipelineState$ = null;
+        this._gpuPipelineState = null;
     }
 }

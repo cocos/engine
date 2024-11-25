@@ -36,7 +36,7 @@ export class WebGPUSampler extends Sampler {
     }
 
     public get samplerInfo (): SamplerInfo {
-        return this._info$;
+        return this._info;
     }
 
     private _gpuSampler: IWebGPUGPUSampler | null = null;

@@ -8,7 +8,7 @@ import { Batcher2D } from "../../cocos/2d/renderer/batcher-2d";
 test('sprite.updateWorldMatrix', () => {
 
     // @ts-expect-error
-    director.root!._batcher$ = new Batcher2D(director.root!);
+    director.root!._batcher = new Batcher2D(director.root!);
 
     const scene = new Scene('test');
     director.runSceneImmediate(scene);

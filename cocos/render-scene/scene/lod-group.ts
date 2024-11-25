@@ -38,22 +38,22 @@ export class LODData {
     private _models: Model[] = [];
 
     get models (): readonly Model[] {
-        return this._models$;
+        return this._models;
     }
 
     public addModel (model: Model): void {
-        this._models$.splice(0, 0, model);
+        this._models.splice(0, 0, model);
     }
 
     public eraseModel (model: Model): void {
-        const removeIndex = this._models$.indexOf(model);
+        const removeIndex = this._models.indexOf(model);
         if (removeIndex >= 0) {
-            this._models$.splice(removeIndex, 1);
+            this._models.splice(removeIndex, 1);
         }
     }
 
     public clearModels (): void {
-        this._models$.length = 0;
+        this._models.length = 0;
     }
 }
 
@@ -92,9 +92,9 @@ export class LODGroup {
         this._device = deviceManager.gfxDevice;
     }
 
-    set localBoundaryCenter (val: Readonly<Vec3>) {  this._localBoundaryCenter$.set(val); }
+    set localBoundaryCenter (val: Readonly<Vec3>) {  this._localBoundaryCenter.set(val); }
 
-    get localBoundaryCenter (): Readonly<Vec3> { return this._localBoundaryCenter$.clone(); }
+    get localBoundaryCenter (): Readonly<Vec3> { return this._localBoundaryCenter.clone(); }
 
     get lodCount (): number { return this._lodDataArray.length; }
 
@@ -115,13 +115,13 @@ export class LODGroup {
 
     lockLODLevels (lockLev: number[]): void {
         if (lockLev.length !== this._lockedLODLevelVec.length) {
-            this._isLockLevelChanged$ = true;
+            this._isLockLevelChanged = true;
         } else {
             const size = lockLev.length;
             let index = 0;
             for (; index < size; index++) {
                 if (lockLev[index] !== this._lockedLODLevelVec[index]) {
-                    this._isLockLevelChanged$ = true;
+                    this._isLockLevelChanged = true;
                     break;
                 }
             }
@@ -130,11 +130,11 @@ export class LODGroup {
     }
 
     isLockLevelChanged (): boolean {
-        return this._isLockLevelChanged$;
+        return this._isLockLevelChanged;
     }
 
     resetLockChangeFlag (): void {
-        this._isLockLevelChanged$ = false;
+        this._isLockLevelChanged = false;
     }
 
     getLockedLODLevels (): readonly number[] {

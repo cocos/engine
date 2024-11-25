@@ -46,7 +46,7 @@ export abstract class Texture extends GFXObject {
      * @zh 纹理类型。
      */
     get type (): TextureType {
-        return this._info$.type;
+        return this._info.type;
     }
 
     /**
@@ -54,7 +54,7 @@ export abstract class Texture extends GFXObject {
      * @zh 纹理使用方式。
      */
     get usage (): TextureUsage {
-        return this._info$.usage;
+        return this._info.usage;
     }
 
     /**
@@ -62,7 +62,7 @@ export abstract class Texture extends GFXObject {
      * @zh 纹理格式。
      */
     get format (): Format {
-        return this._info$.format;
+        return this._info.format;
     }
 
     /**
@@ -70,7 +70,7 @@ export abstract class Texture extends GFXObject {
      * @zh 纹理宽度。
      */
     get width (): number {
-        return this._info$.width;
+        return this._info.width;
     }
 
     /**
@@ -78,7 +78,7 @@ export abstract class Texture extends GFXObject {
      * @zh 纹理高度。
      */
     get height (): number {
-        return this._info$.height;
+        return this._info.height;
     }
 
     /**
@@ -86,7 +86,7 @@ export abstract class Texture extends GFXObject {
      * @zh 纹理深度。
      */
     get depth (): number {
-        return this._info$.depth;
+        return this._info.depth;
     }
 
     /**
@@ -94,7 +94,7 @@ export abstract class Texture extends GFXObject {
      * @zh 纹理数组层数。
      */
     get layerCount (): number {
-        return this._info$.layerCount;
+        return this._info.layerCount;
     }
 
     /**
@@ -102,7 +102,7 @@ export abstract class Texture extends GFXObject {
      * @zh 纹理 mip 层级数。
      */
     get levelCount (): number {
-        return this._info$.levelCount;
+        return this._info.levelCount;
     }
 
     /**
@@ -110,7 +110,7 @@ export abstract class Texture extends GFXObject {
      * @zh 纹理采样数。
      */
     get samples (): SampleCount {
-        return this._info$.samples;
+        return this._info.samples;
     }
 
     /**
@@ -118,7 +118,7 @@ export abstract class Texture extends GFXObject {
      * @zh 纹理标识位。
      */
     get flags (): TextureFlags {
-        return this._info$.flags;
+        return this._info.flags;
     }
 
     /**
@@ -126,7 +126,7 @@ export abstract class Texture extends GFXObject {
      * @zh 纹理大小。
      */
     get size (): number {
-        return this._size$;
+        return this._size;
     }
 
     /**
@@ -134,7 +134,7 @@ export abstract class Texture extends GFXObject {
      * @zh 纹理信息。
      */
     get info (): Readonly<TextureInfo> {
-        return this._info$;
+        return this._info;
     }
 
     /**
@@ -142,7 +142,7 @@ export abstract class Texture extends GFXObject {
      * @zh 纹理视图信息。
      */
     get viewInfo (): Readonly<TextureViewInfo> {
-        return this._viewInfo$;
+        return this._viewInfo;
     }
 
     /**
@@ -150,7 +150,7 @@ export abstract class Texture extends GFXObject {
      * @zh 是否为纹理视图。
      */
     get isTextureView (): boolean {
-        return this._isTextureView$;
+        return this._isTextureView;
     }
 
     protected _info$: TextureInfo = new TextureInfo();

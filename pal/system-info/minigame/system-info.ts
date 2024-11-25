@@ -198,7 +198,7 @@ class SystemInfo extends EventTarget {
             return false;
         })();
 
-        this._featureMap$ = {
+        this._featureMap = {
             [Feature.WEBP]: false,      // Initialize in Promise,
             [Feature.IMAGE_BITMAP]: false,
             [Feature.WEB_VIEW]: false,
@@ -218,15 +218,15 @@ class SystemInfo extends EventTarget {
             [Feature.WASM]: supportWasm,
         };
 
-        this._initPromise$.push(this._supportsWebpPromise$());
+        this._initPromise.push(this._supportsWebpPromise());
 
-        this._registerEvent$();
+        this._registerEvent();
     }
 
     private _supportsWebpPromise (): Promise<void> {
         if (!TEST) {
-            return this._supportsWebp$().then((isSupport) => {
-                this._setFeature$(Feature.WEBP, isSupport);
+            return this._supportsWebp().then((isSupport) => {
+                this._setFeature(Feature.WEBP, isSupport);
             });
         }
         return Promise.resolve();
@@ -278,15 +278,15 @@ class SystemInfo extends EventTarget {
     }
 
     private _setFeature (feature: Feature, value: boolean): boolean {
-        return this._featureMap$[feature] = value;
+        return this._featureMap[feature] = value;
     }
 
     public init (): Promise<void[]> {
-        return Promise.all(this._initPromise$);
+        return Promise.all(this._initPromise);
     }
 
     public hasFeature (feature: Feature): boolean {
-        return this._featureMap$[feature];
+        return this._featureMap[feature];
     }
 
     public getBatteryLevel (): number {

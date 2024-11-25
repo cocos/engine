@@ -114,15 +114,15 @@ export class SplashScreen {
     private scaleSize$ = 1;
 
     public get isFinished (): boolean {
-        return this._curTime$ >= this.settings$.totalTime;
+        return this._curTime >= this.settings$.totalTime;
     }
 
     set curTime (val) {
-        this._curTime$ = val;
+        this._curTime = val;
     }
 
     get curTime (): number {
-        return this._curTime$;
+        return this._curTime;
     }
 
     public init (): Promise<void[]> {
@@ -142,7 +142,7 @@ export class SplashScreen {
             logo: settings.querySettings<SplashLogo>(SettingsCategory.SPLASH_SCREEN, 'logo') ?? undefined,
             background: settings.querySettings<SplashBackground>(SettingsCategory.SPLASH_SCREEN, 'background') ?? undefined,
         };
-        this._curTime$ = 0;
+        this._curTime = 0;
 
         if (EDITOR || this.settings$.totalTime <= 0 || this.settings$.logo === undefined || this.settings$.background === undefined) {
             this.settings$.totalTime = 0;
@@ -308,8 +308,8 @@ export class SplashScreen {
         const dw = swapchain.width; const dh = swapchain.height;
         this.initScale$();
 
-        this._curTime$ += deltaTime * 1000;
-        const percent = clamp01(this._curTime$ / settings.totalTime);
+        this._curTime += deltaTime * 1000;
+        const percent = clamp01(this._curTime / settings.totalTime);
         const u_p = easing.cubicOut(percent);
 
         let scaleX = 1;

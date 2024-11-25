@@ -400,7 +400,7 @@ export class Game extends EventTarget {
      * @zh 引擎和渲染器是否以完成初始化
      */
     public get inited (): boolean {
-        return this._inited$;
+        return this._inited;
     }
 
     /**
@@ -408,7 +408,7 @@ export class Game extends EventTarget {
      * @zh 游戏的设定帧率。
      */
     public get frameRate (): string | number {
-        return this._frameRate$;
+        return this._frameRate;
     }
     public set frameRate (frameRate: number | string) {
         if (typeof frameRate !== 'number') {
@@ -417,9 +417,9 @@ export class Game extends EventTarget {
                 frameRate = 60;
             }
         }
-        this._frameRate$ = frameRate;
+        this._frameRate = frameRate;
         this.frameTime = 1000 / frameRate;
-        if (this._pacer$) this._pacer$.targetFrameRate = this._frameRate$;
+        if (this._pacer) this._pacer.targetFrameRate = this._frameRate;
     }
 
     /**
@@ -427,7 +427,7 @@ export class Game extends EventTarget {
      * @zh 获取上一帧的增量时间，以秒为单位。
      */
     public get deltaTime (): number {
-        return this._useFixedDeltaTime$ ? this.frameTime / 1000 : this._deltaTime$;
+        return this._useFixedDeltaTime ? this.frameTime / 1000 : this._deltaTime;
     }
 
     /**
@@ -435,7 +435,7 @@ export class Game extends EventTarget {
      * @zh 获取从游戏开始到现在总共经过的时间，以毫秒为单位
      */
     public get totalTime (): number {
-        return performance.now() - this._initTime$;
+        return performance.now() - this._initTime;
     }
 
     /**
@@ -443,7 +443,7 @@ export class Game extends EventTarget {
      * @zh 获取当前帧开始的时间（以 ms 为单位）。
      */
     public get frameStartTime (): number {
-        return this._startTime$;
+        return this._startTime;
     }
 
     /**
@@ -554,8 +554,8 @@ export class Game extends EventTarget {
      * @zh 提供给引擎调用暂停游戏接口。
      */
     private pauseByEngine$ (): void {
-        if (this._paused$) { return; }
-        this._pausedByEngine$ = true;
+        if (this._paused) { return; }
+        this._pausedByEngine = true;
         this.pause();
     }
 
@@ -564,9 +564,9 @@ export class Game extends EventTarget {
      * @zh 提供给引擎调用恢复暂停游戏接口。
      */
     private resumeByEngine$ (): void {
-        if (this._pausedByEngine$) {
+        if (this._pausedByEngine) {
             this.resume();
-            this._pausedByEngine$ = false;
+            this._pausedByEngine = false;
         }
     }
 
@@ -586,9 +586,9 @@ export class Game extends EventTarget {
      * 这点和只暂停游戏逻辑的 `director.pause()` 不同。
      */
     public pause (): void {
-        if (this._paused$) { return; }
-        this._paused$ = true;
-        this._pacer$?.stop();
+        if (this._paused) { return; }
+        this._paused = true;
+        this._pacer?.stop();
         this.emit(Game.EVENT_PAUSE);
     }
 
@@ -598,10 +598,10 @@ export class Game extends EventTarget {
      * @zh 恢复游戏主循环。包含：游戏逻辑，渲染，事件处理，背景音乐和所有音效。
      */
     public resume (): void {
-        if (!this._paused$) { return; }
+        if (!this._paused) { return; }
         input._clearEvents();
-        this._paused$ = false;
-        this._pacer$?.start();
+        this._paused = false;
+        this._pacer?.start();
         this.emit(Game.EVENT_RESUME);
     }
 
@@ -610,7 +610,7 @@ export class Game extends EventTarget {
      * @zh 判断游戏是否暂停。
      */
     public isPaused (): boolean {
-        return this._paused$;
+        return this._paused;
     }
 
     /**
@@ -626,7 +626,7 @@ export class Game extends EventTarget {
             cclegacy.Object._deferredDestroy();
             this.pause();
             this.resume();
-            this._shouldLoadLaunchScene$ = true;
+            this._shouldLoadLaunchScene = true;
         }).then((): Promise<void[]> => {
             if (WECHAT) {
                 return Promise.resolve([]);
@@ -634,7 +634,7 @@ export class Game extends EventTarget {
                 return SplashScreen.createInstance().init();
             }
         }).then((): void => {
-            this._safeEmit$(Game.EVENT_RESTART);
+            this._safeEmit(Game.EVENT_RESTART);
         });
     }
 
@@ -689,9 +689,9 @@ export class Game extends EventTarget {
     }
 
     private canRegisterEvent$ (type: string): boolean {
-        return this._engineInited$ && type === Game.EVENT_ENGINE_INITED
-            || this._inited$ && type === Game.EVENT_GAME_INITED
-            || this._rendererInitialized$ && type === Game.EVENT_RENDERER_INITED;
+        return this._engineInited && type === Game.EVENT_ENGINE_INITED
+            || this._inited && type === Game.EVENT_GAME_INITED
+            || this._rendererInitialized && type === Game.EVENT_RENDERER_INITED;
     }
 
     /**
@@ -729,7 +729,7 @@ export class Game extends EventTarget {
      * @param config - Pass configuration object
      */
     public init (config: IGameConfig): Promise<void> {
-        this._compatibleWithOldParams$(config);
+        this._compatibleWithOldParams(config);
         // DONT change the order unless you know what's you doing
         return Promise.resolve()
             // #region Base
@@ -747,7 +747,7 @@ export class Game extends EventTarget {
             })
             .then((): Promise<void> => sys.init())
             .then((): void => {
-                this._initEvents$();
+                this._initEvents();
             })
             .then((): Promise<void> => settings.init(config.settingsPath, config.overrideSettings))
             .then((): Promise<void[]> => {
@@ -771,7 +771,7 @@ export class Game extends EventTarget {
                     console.time('Init Infrastructure');
                 }
                 macro.init();
-                this._initXR$();
+                this._initXR();
                 const adapter = findCanvas();
                 if (adapter) {
                     this.canvas = adapter.canvas;
@@ -863,7 +863,7 @@ export class Game extends EventTarget {
             .then((): void => {
                 log(`Cocos Creator v${VERSION}`);
                 this.emit(Game.EVENT_ENGINE_INITED);
-                this._engineInited$ = true;
+                this._engineInited = true;
             })
             // #endregion Subsystem
             // #region Project
@@ -886,9 +886,9 @@ export class Game extends EventTarget {
                 return promise;
             })
             .then((): Promise<any[]> => this._loadProjectBundles())
-            .then((): Promise<void> => this._loadCCEScripts$())
-            .then((): void | Promise<void> => this._setupRenderPipeline$())
-            .then((): Promise<any[]> => this._loadPreloadAssets$())
+            .then((): Promise<void> => this._loadCCEScripts())
+            .then((): void | Promise<void> => this._setupRenderPipeline())
+            .then((): Promise<any[]> => this._loadPreloadAssets())
             .then((): Promise<void[]> => {
                 builtinResMgr.compileBuiltinMaterial();
                 if (WECHAT) {
@@ -906,8 +906,8 @@ export class Game extends EventTarget {
             })
             // #endregion Project
             .then((): void => {
-                this._inited$ = true;
-                this._safeEmit$(Game.EVENT_GAME_INITED);
+                this._inited = true;
+                this._safeEmit(Game.EVENT_GAME_INITED);
             });
     }
 
@@ -1026,7 +1026,7 @@ export class Game extends EventTarget {
         if (onStart) {
             this.onStart = onStart;
         }
-        if (!this._inited$ || EDITOR_NOT_IN_PREVIEW) {
+        if (!this._inited || EDITOR_NOT_IN_PREVIEW) {
             return;
         }
         this.resume();
@@ -1037,42 +1037,42 @@ export class Game extends EventTarget {
      * @engineInternal
      */
     public _calculateDT (useFixedDeltaTime: boolean): number {
-        this._useFixedDeltaTime$ = useFixedDeltaTime;
+        this._useFixedDeltaTime = useFixedDeltaTime;
 
         if (useFixedDeltaTime) {
-            this._startTime$ = performance.now();
+            this._startTime = performance.now();
             return this.frameTime / 1000;
         }
 
         const now = performance.now();
-        this._deltaTime$ = now > this._startTime$ ? (now - this._startTime$) / 1000 : 0;
-        if (this._deltaTime$ > Game.DEBUG_DT_THRESHOLD) {
-            this._deltaTime$ = this.frameTime / 1000;
+        this._deltaTime = now > this._startTime ? (now - this._startTime) / 1000 : 0;
+        if (this._deltaTime > Game.DEBUG_DT_THRESHOLD) {
+            this._deltaTime = this.frameTime / 1000;
         }
-        this._startTime$ = now;
-        return this._deltaTime$;
+        this._startTime = now;
+        return this._deltaTime;
     }
 
     private _updateCallback (): void {
-        if (!this._inited$) return;
+        if (!this._inited) return;
         if (!WECHAT && SplashScreen.instance && !SplashScreen.instance.isFinished) {
             SplashScreen.instance.update(this._calculateDT(false));
-        } else if (this._shouldLoadLaunchScene$) {
+        } else if (this._shouldLoadLaunchScene) {
             if (!WECHAT) {
                 SplashScreen.releaseInstance();
             }
-            this._shouldLoadLaunchScene$ = false;
+            this._shouldLoadLaunchScene = false;
             const launchScene = settings.querySettings(SettingsCategory.LAUNCH, 'launchScene') as string;
             if (launchScene) {
                 // load scene
                 director.loadScene(launchScene, (): void => {
                     logID(1103, launchScene);
-                    this._initTime$ = performance.now();
+                    this._initTime = performance.now();
                     director.startAnimation();
                     this.onStart?.();
                 });
             } else {
-                this._initTime$ = performance.now();
+                this._initTime = performance.now();
                 director.startAnimation();
                 this.onStart?.();
             }
@@ -1084,15 +1084,15 @@ export class Game extends EventTarget {
     private initPacer$ (): void {
         const frameRate = settings.querySettings(SettingsCategory.SCREEN, 'frameRate') ?? 60;
         assert(typeof frameRate === 'number');
-        this._pacer$ = new Pacer();
-        this._pacer$.onTick = this._updateCallback$.bind(this);
+        this._pacer = new Pacer();
+        this._pacer.onTick = this._updateCallback.bind(this);
         this.frameRate = frameRate;
     }
 
     private _initEvents (): void {
-        systemInfo.on('show', this._onShow$, this);
-        systemInfo.on('hide', this._onHide$, this);
-        systemInfo.on('close', this._onClose$, this);
+        systemInfo.on('show', this._onShow, this);
+        systemInfo.on('hide', this._onHide, this);
+        systemInfo.on('close', this._onClose, this);
     }
 
     private _onHide (): void {
@@ -1152,7 +1152,7 @@ export class Game extends EventTarget {
             'customPipeline',
         );
 
-        return this._setRenderPipeline$(!!usesCustomPipeline);
+        return this._setRenderPipeline(!!usesCustomPipeline);
     }
 
     private _setRenderPipeline (customPipeline: boolean): void {
@@ -1161,8 +1161,8 @@ export class Game extends EventTarget {
             return;
         }
 
-        this._rendererInitialized$ = true;
-        this._safeEmit$(Game.EVENT_RENDERER_INITED);
+        this._rendererInitialized = true;
+        this._safeEmit(Game.EVENT_RENDERER_INITED);
     }
 
     private _safeEmit (event: string | number): void {

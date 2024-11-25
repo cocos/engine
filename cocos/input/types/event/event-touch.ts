@@ -87,9 +87,9 @@ export class EventTouch extends Event {
      */
     constructor (changedTouches: Touch[], bubbles: boolean, eventType: SystemEventTypeUnion, touches: Touch[] = []) {
         super(eventType, bubbles);
-        this._eventCode$ = eventType;
-        this._touches$ = changedTouches || [];
-        this._allTouches$ = touches;
+        this._eventCode = eventType;
+        this._touches = changedTouches || [];
+        this._allTouches = touches;
     }
 
     /**
@@ -99,7 +99,7 @@ export class EventTouch extends Event {
      * @deprecated since v3.3, please use EventTouch.prototype.type instead.
      */
     public getEventCode (): string {
-        return this._eventCode$;
+        return this._eventCode;
     }
 
     /**
@@ -109,7 +109,7 @@ export class EventTouch extends Event {
      * 如果需要获取全部手指的信息，请使用 `getAllTouches`。
      */
     public getTouches (): Touch[] {
-        return this._touches$;
+        return this._touches;
     }
 
     /**
@@ -118,7 +118,7 @@ export class EventTouch extends Event {
      * 注意：如果手指行为是 touch end，这个时候列表是没有该手指信息的。如需知道该手指信息，可通过 `getTouches` 获取识别。
      */
     public getAllTouches (): Touch[] {
-        return this._allTouches$;
+        return this._allTouches;
     }
 
     /**

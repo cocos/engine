@@ -269,7 +269,7 @@ export class Pass {
         const binding = Pass.getBindingFromHandle(handle);
         const type = Pass.getTypeFromHandle(handle);
         const ofs = Pass.getOffsetFromHandle(handle);
-        const block = this._getBlockView$(type, binding);
+        const block = this._getBlockView(type, binding);
         if (DEBUG) {
             const validator = type2validator[type];
             assertID(Boolean(validator && validator(value)), 12011, binding, Type[type]);
@@ -288,7 +288,7 @@ export class Pass {
         const binding = Pass.getBindingFromHandle(handle);
         const type = Pass.getTypeFromHandle(handle);
         const ofs = Pass.getOffsetFromHandle(handle);
-        const block = this._getBlockView$(type, binding);
+        const block = this._getBlockView(type, binding);
         return type2reader[type](block, out, ofs) as T;
     }
 
@@ -302,7 +302,7 @@ export class Pass {
         const binding = Pass.getBindingFromHandle(handle);
         const type = Pass.getTypeFromHandle(handle);
         const stride = GetTypeSize(type) >> 2;
-        const block = this._getBlockView$(type, binding);
+        const block = this._getBlockView(type, binding);
         let ofs = Pass.getOffsetFromHandle(handle);
         for (let i = 0; i < value.length; i++, ofs += stride) {
             if (value[i] === null) { continue; }
@@ -412,7 +412,7 @@ export class Pass {
         const binding = Pass.getBindingFromHandle(handle);
         const ofs = Pass.getOffsetFromHandle(handle);
         const count = Pass.getCountFromHandle(handle);
-        const block = this._getBlockView$(type, binding);
+        const block = this._getBlockView(type, binding);
         const info = this._properties[name];
         const givenDefault = info && info.value;
         const value = (givenDefault || getDefaultFromType(type)) as number[];
@@ -456,7 +456,7 @@ export class Pass {
             let ofs = 0;
             for (let j = 0; j < u.members.length; j++) {
                 const cur = u.members[j];
-                const block = this._getBlockView$(cur.type, u.binding);
+                const block = this._getBlockView(cur.type, u.binding);
                 const info = this._properties[cur.name];
                 const givenDefault = info && info.value;
                 const value = (givenDefault || getDefaultFromType(cur.type)) as number[];
@@ -693,9 +693,9 @@ export class Pass {
         if (cclegacy.rendering && cclegacy.rendering.enableEffectImport) {
             const programLib = (cclegacy.rendering.programLib as ProgramLibrary);
             const shaderInfo = programLib.getShaderInfo(this._phaseID, this.program);
-            this._buildMaterialUniformBlocks$(device, shaderInfo.blocks, blockSizes);
+            this._buildMaterialUniformBlocks(device, shaderInfo.blocks, blockSizes);
         } else {
-            this._buildUniformBlocks$(device, blocks, blockSizes);
+            this._buildUniformBlocks(device, blocks, blockSizes);
         }
 
         // store handles

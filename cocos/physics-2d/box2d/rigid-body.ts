@@ -208,7 +208,7 @@ export class b2RigidBody2D implements IRigidBody2D {
     }
 
     setType (v: ERigidBody2DType): void {
-        (PhysicsSystem2D.instance.physicsWorld as b2PhysicsWorld)._updateBodyType$(this);
+        (PhysicsSystem2D.instance.physicsWorld as b2PhysicsWorld)._updateBodyType(this);
         this._body!.SetType(v as number);
     }
     setLinearDamping (v: number): void {

@@ -37,7 +37,7 @@ export class WebGL2Queue extends Queue {
     }
 
     public initialize (info: Readonly<QueueInfo>): void {
-        this._type$ = info.type;
+        this._type = info.type;
     }
 
     public destroy (): void {

@@ -64,7 +64,7 @@ export class WebGPUSwapchain extends Swapchain {
         );
 
         this._createTexture(width, height);
-        this._depthStencilTexture$ = this._createDepthStencilTexture(width, height);
+        this._depthStencilTexture = this._createDepthStencilTexture(width, height);
         this.nullTex2D = device.createTexture(new TextureInfo(
             TextureType.TEX2D,
             TextureUsageBit.SAMPLED,
@@ -107,12 +107,12 @@ export class WebGPUSwapchain extends Swapchain {
         width = Math.max(1, Math.min(width, device.limits.maxTextureDimension2D));
         height = Math.max(1, Math.min(height, device.limits.maxTextureDimension2D));
 
-        if (this._colorTexture$.width !== width || this._colorTexture$.height !== height) {
+        if (this._colorTexture.width !== width || this._colorTexture.height !== height) {
             debug(`Resizing swapchain: ${width}x${height}`);
             this._canvas!.width = width;
             this._canvas!.height = height;
-            this._colorTexture$.resize(width, height);
-            this._depthStencilTexture$.resize(width, height);
+            this._colorTexture.resize(width, height);
+            this._depthStencilTexture.resize(width, height);
         }
     }
 
@@ -139,37 +139,37 @@ export class WebGPUSwapchain extends Swapchain {
     }
 
     public get colorTexture (): Texture {
-        (this._colorTexture$ as WebGPUTexture).gpuTexture.gpuTexture = WebGPUDeviceManager.instance.context.getCurrentTexture();
-        return this._colorTexture$;
+        (this._colorTexture as WebGPUTexture).gpuTexture.gpuTexture = WebGPUDeviceManager.instance.context.getCurrentTexture();
+        return this._colorTexture;
     }
 
     public get colorGPUTexture (): GPUTexture {
-        (this._colorTexture$ as WebGPUTexture).gpuTexture.gpuTexture = WebGPUDeviceManager.instance.context.getCurrentTexture();
-        return (this._colorTexture$ as WebGPUTexture).gpuTexture.gpuTexture!;
+        (this._colorTexture as WebGPUTexture).gpuTexture.gpuTexture = WebGPUDeviceManager.instance.context.getCurrentTexture();
+        return (this._colorTexture as WebGPUTexture).gpuTexture.gpuTexture!;
     }
 
     public get colorGPUTextureView (): GPUTextureView {
-        (this._colorTexture$ as WebGPUTexture).gpuTexture.gpuTexture = WebGPUDeviceManager.instance.context.getCurrentTexture();
-        return (this._colorTexture$ as WebGPUTexture).gpuTexture.gpuTexture!.createView();
+        (this._colorTexture as WebGPUTexture).gpuTexture.gpuTexture = WebGPUDeviceManager.instance.context.getCurrentTexture();
+        return (this._colorTexture as WebGPUTexture).gpuTexture.gpuTexture!.createView();
     }
 
     public get depthStencilTexture (): Texture {
-        return this._depthStencilTexture$;
+        return this._depthStencilTexture;
     }
 
     public get gpuDepthStencilTexture (): GPUTexture {
-        return (this._depthStencilTexture$  as WebGPUTexture).gpuTexture.gpuTexture!;
+        return (this._depthStencilTexture  as WebGPUTexture).gpuTexture.gpuTexture!;
     }
 
     public get gpuDepthStencilTextureView (): GPUTextureView {
-        return (this._depthStencilTexture$  as WebGPUTexture).gpuTexture.gpuTexture!.createView();
+        return (this._depthStencilTexture  as WebGPUTexture).gpuTexture.gpuTexture!.createView();
     }
 
     private _createTexture (width: number, height: number): WebGPUTexture {
         const device = WebGPUDeviceManager.instance;
         const gfxSwapchainFormat = device.swapchainFormat;
         const swapchainFormat = GFXFormatToWGPUFormat(gfxSwapchainFormat);// navigator.gpu.getPreferredCanvasFormat();
-        if (!this._colorTexture$) {
+        if (!this._colorTexture) {
             const nativeDevice = device.nativeDevice as GPUDevice;
             const gpuConfig: GPUCanvasConfiguration = {
                 device: nativeDevice,
@@ -179,15 +179,15 @@ export class WebGPUSwapchain extends Swapchain {
             device.gpuConfig = gpuConfig;
             device.context.configure(gpuConfig);
         }
-        this._colorTexture$ = new WebGPUTexture();
-        this._colorTexture$.initAsSwapchainTexture({
+        this._colorTexture = new WebGPUTexture();
+        this._colorTexture.initAsSwapchainTexture({
             swapchain: this,
             format: gfxSwapchainFormat,
             width,
             height,
         });
-        (this._colorTexture$ as WebGPUTexture).gpuTexture.gpuTexture = device.context.getCurrentTexture();
-        return (this._colorTexture$ as WebGPUTexture);
+        (this._colorTexture as WebGPUTexture).gpuTexture.gpuTexture = device.context.getCurrentTexture();
+        return (this._colorTexture as WebGPUTexture);
     }
 
     private _createDepthStencilTexture (width: number, height: number): WebGPUTexture {

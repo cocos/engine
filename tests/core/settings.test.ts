@@ -12,7 +12,7 @@ describe('Settings', () => {
     test('base', () => {
         const settings = new Settings();
         // @ts-expect-error access private property
-        settings._settings$ = {
+        settings._settings = {
             assets: {
                 preloadBundles: [{ bundle: 'asddda' }, { bundle: 'internal' }],
                 preloadAssets: ['sdd1ssq', 'hjiepoqd'],

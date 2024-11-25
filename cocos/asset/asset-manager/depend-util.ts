@@ -143,7 +143,7 @@ export class DependUtil {
     public getDepsRecursively (uuid: string): string[] {
         const exclude = Object.create(null);
         const depends = [];
-        this._descend$(uuid, exclude, depends);
+        this._descend(uuid, exclude, depends);
         return depends;
     }
 
@@ -184,12 +184,12 @@ export class DependUtil {
             // issue: https://github.com/cocos/cocos-engine/issues/14642
             if (Array.isArray(json) && (!(BUILD || isCompiledJson(json)) || !hasNativeDep(json as any))) {
                 out = {
-                    deps: this._parseDepsFromJson$(json),
+                    deps: this._parseDepsFromJson(json),
                 };
             } else {
                 try {
                     const asset = deserialize(json, { __uuid__: uuid });
-                    out = this._parseDepsFromAsset$(asset);
+                    out = this._parseDepsFromAsset(asset);
                     if (out.nativeDep) {
                         out.nativeDep.uuid = uuid;
                     }
@@ -206,7 +206,7 @@ export class DependUtil {
                     return out;
                 }
             }
-            out = this._parseDepsFromAsset$(json);
+            out = this._parseDepsFromAsset(json);
         }
         // cache dependency list
         this._depends.add(uuid, out);
@@ -245,7 +245,7 @@ export class DependUtil {
             if (!exclude[depend]) {
                 exclude[depend] = true;
                 depends.push(depend);
-                this._descend$(depend, exclude, depends);
+                this._descend(depend, exclude, depends);
             }
         }
     }

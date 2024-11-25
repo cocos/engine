@@ -64,25 +64,25 @@ export class WebGPUPipelineState extends PipelineState {
     private _gpuPipelineState: IWebGPUGPUPipelineState | null = null;
     private _locations: Map<string, number> = new Map<string, number>();
     public initialize (info: Readonly<PipelineStateInfo>): void {
-        this._primitive$ = info.primitive;
-        this._shader$ = info.shader;
-        this._pipelineLayout$ = info.pipelineLayout;
+        this._primitive = info.primitive;
+        this._shader = info.shader;
+        this._pipelineLayout = info.pipelineLayout;
         this._rs$ = info.rasterizerState;
         this._dss$ = info.depthStencilState;
         this._bs$ = info.blendState;
         this._is$ = info.inputState;
-        this._renderPass$ = info.renderPass;
-        this._dynamicStates$ = info.dynamicStates;
+        this._renderPass = info.renderPass;
+        this._dynamicStates = info.dynamicStates;
 
         const dynamicStates: DynamicStateFlagBit[] = [];
         for (let i = 0; i < 31; i++) {
-            if (this._dynamicStates$ & (1 << i)) {
+            if (this._dynamicStates & (1 << i)) {
                 dynamicStates.push(1 << i);
             }
         }
 
         // colorstates
-        const colorAttachments = this._renderPass$.colorAttachments;
+        const colorAttachments = this._renderPass.colorAttachments;
         const colorDescs: GPUColorTargetState[] = [];
         const colAttachmentSize = colorAttachments.length;
         for (let i = 0; i < colAttachmentSize; i++) {
@@ -109,7 +109,7 @@ export class WebGPUPipelineState extends PipelineState {
 
         let vertexStage: GPUProgrammableStage;
         let fragmentStage: GPUProgrammableStage;
-        const shaderStages = (this._shader$ as WebGPUShader).gpuShader.gpuStages;
+        const shaderStages = (this._shader as WebGPUShader).gpuShader.gpuStages;
         const stageSize = shaderStages.length;
         for (let i = 0; i < stageSize; i++) {
             if (shaderStages[i].type === ShaderStageFlagBit.VERTEX) { vertexStage = shaderStages[i].gpuShader!; }
@@ -147,9 +147,9 @@ export class WebGPUPipelineState extends PipelineState {
 
         // depthstencil states
         let stencilRef = 0;
-        if (this._renderPass$.depthStencilAttachment) {
+        if (this._renderPass.depthStencilAttachment) {
             const dssDesc = {} as GPUDepthStencilState;
-            dssDesc.format = GFXFormatToWGPUFormat(this._renderPass$.depthStencilAttachment.format);
+            dssDesc.format = GFXFormatToWGPUFormat(this._renderPass.depthStencilAttachment.format);
             dssDesc.depthWriteEnabled = this._dss$.depthWrite;
             dssDesc.depthCompare = this._dss$.depthTest ? WebGPUCompereFunc[this._dss$.depthFunc] : 'always';
             let stencilReadMask = 0;
@@ -206,7 +206,7 @@ export class WebGPUPipelineState extends PipelineState {
 
     public updatePipelineLayout (): void {
         if (this._gpuPipelineState && this._gpuPipelineState.pipelineState) {
-            this._gpuPipelineState.pipelineState.layout = (this._pipelineLayout$ as WebGPUPipelineLayout).gpuPipelineLayout!.nativePipelineLayout;
+            this._gpuPipelineState.pipelineState.layout = (this._pipelineLayout as WebGPUPipelineLayout).gpuPipelineLayout!.nativePipelineLayout;
         }
     }
 

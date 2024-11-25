@@ -193,7 +193,7 @@ export class Parser {
      * @engineInternal
      */
     public init (): void {
-        this._parsing$.clear();
+        this._parsing.clear();
     }
 
     /**
@@ -234,9 +234,9 @@ export class Parser {
         ) => void,
     ): void {
         if (typeof type === 'object') {
-            js.mixin(this._parsers$, type);
+            js.mixin(this._parsers, type);
         } else {
-            this._parsers$[type] = handler as ParseHandler;
+            this._parsers[type] = handler as ParseHandler;
         }
     }
 
@@ -273,26 +273,26 @@ export class Parser {
             onComplete(null, parsedAsset);
             return;
         }
-        const parsing = this._parsing$.get(id);
+        const parsing = this._parsing.get(id);
         if (parsing) {
             parsing.push(onComplete);
             return;
         }
 
-        const parseHandler = this._parsers$[type];
+        const parseHandler = this._parsers[type];
         if (!parseHandler) {
             onComplete(null, file);
             return;
         }
 
-        this._parsing$.add(id, [onComplete]);
+        this._parsing.add(id, [onComplete]);
         parseHandler(file, options, (err, data): void => {
             if (err) {
                 files.remove(id);
             } else if (!isScene(data)) {
                 parsed.add(id, data);
             }
-            const callbacks = this._parsing$.remove(id);
+            const callbacks = this._parsing.remove(id);
             for (let i = 0, l = callbacks!.length; i < l; i++) {
                 callbacks![i](err, data);
             }

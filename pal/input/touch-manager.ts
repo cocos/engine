@@ -51,18 +51,18 @@ class TouchManager {
      * @return The Touch instance or undefined.
      */
     private _createTouch (touchID: number, x: number, y: number): Touch | undefined {
-        if (this._touchMap$.has(touchID)) {
+        if (this._touchMap.has(touchID)) {
             logID(2301);
             return undefined;
         }
-        const checkResult = this._checkTouchMapSizeMoreThanMax$(touchID);
+        const checkResult = this._checkTouchMapSizeMoreThanMax(touchID);
         if (checkResult) {
             logID(2300);
             return undefined;
         }
         const touch = new Touch(x, y, touchID);
-        this._touchMap$.set(touchID, touch);
-        this._updateTouch$(touch, x, y);
+        this._touchMap.set(touchID, touch);
+        this._updateTouch(touch, x, y);
         return touch;
     }
 
@@ -72,10 +72,10 @@ class TouchManager {
      * @returns
      */
     public releaseTouch (touchID: number): void {
-        if (!this._touchMap$.has(touchID)) {
+        if (!this._touchMap.has(touchID)) {
             return;
         }
-        this._touchMap$.delete(touchID);
+        this._touchMap.delete(touchID);
     }
 
     /**
@@ -84,7 +84,7 @@ class TouchManager {
      * @returns
      */
     public getTouch (touchID: number): Touch | undefined {
-        return this._touchMap$.get(touchID);
+        return this._touchMap.get(touchID);
     }
 
     /**
@@ -95,9 +95,9 @@ class TouchManager {
     public getOrCreateTouch (touchID: number, x: number, y: number): Touch | undefined {
         let touch = this.getTouch(touchID);
         if (!touch) {
-            touch = this._createTouch$(touchID, x, y);
+            touch = this._createTouch(touchID, x, y);
         } else {
-            this._updateTouch$(touch, x, y);
+            this._updateTouch(touch, x, y);
         }
         return touch;
     }
@@ -108,7 +108,7 @@ class TouchManager {
      */
     public getAllTouches (): Touch[] {
         const touches: Touch[] = [];
-        this._touchMap$.forEach((touch) => {
+        this._touchMap.forEach((touch) => {
             if (touch) {
                 touches.push(touch);
             }
@@ -120,7 +120,7 @@ class TouchManager {
      * Get the number of touches.
      */
     public getTouchCount (): number {
-        return this._touchMap$.size;
+        return this._touchMap.size;
     }
 
     /**
@@ -136,23 +136,23 @@ class TouchManager {
     }
 
     private _checkTouchMapSizeMoreThanMax (touchID: number): boolean {
-        if (this._touchMap$.has(touchID)) {
+        if (this._touchMap.has(touchID)) {
             return false;
         }
-        const maxSize = macro.ENABLE_MULTI_TOUCH ? this._maxTouches$ : 1;
-        if (this._touchMap$.size < maxSize) {
+        const maxSize = macro.ENABLE_MULTI_TOUCH ? this._maxTouches : 1;
+        if (this._touchMap.size < maxSize) {
             return false;
         }
         // Handle when exceed the max number of touches
         const now = performance.now();
-        this._touchMap$.forEach((touch) => {
+        this._touchMap.forEach((touch) => {
             if (now - touch.lastModified > macro.TOUCH_TIMEOUT) {
                 logID(2302, touch.getID());
                 // TODO: need to handle touch cancel event when exceed the max number of touches ?
                 this.releaseTouch(touch.getID());
             }
         });
-        return maxSize >= this._touchMap$.size;
+        return maxSize >= this._touchMap.size;
     }
 }
 

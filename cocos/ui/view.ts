@@ -90,12 +90,12 @@ export class View extends Eventify(System) {
         const _strategy = ContentStrategy;
 
         // Setup system default resolution policies
-        this._rpExactFit$ = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.EXACT_FIT);
-        this._rpShowAll$ = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.SHOW_ALL);
-        this._rpNoBorder$ = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.NO_BORDER);
-        this._rpFixedHeight$ = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_HEIGHT);
-        this._rpFixedWidth$ = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_WIDTH);
-        this._resolutionPolicy$ = this._rpShowAll$;
+        this._rpExactFit = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.EXACT_FIT);
+        this._rpShowAll = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.SHOW_ALL);
+        this._rpNoBorder = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.NO_BORDER);
+        this._rpFixedHeight = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_HEIGHT);
+        this._rpFixedWidth = new ResolutionPolicy(_strategyer.EQUAL_TO_FRAME, _strategy.FIXED_WIDTH);
+        this._resolutionPolicy = this._rpShowAll;
     }
 
     // Call init at the time Game.EVENT_ENGINE_INITED
@@ -105,15 +105,15 @@ export class View extends Eventify(System) {
         const h = windowSize.height;
         this._designResolutionSize.width = w;
         this._designResolutionSize.height = h;
-        this._viewportRect$.width = w;
-        this._viewportRect$.height = h;
-        this._visibleRect$.width = w;
-        this._visibleRect$.height = h;
+        this._viewportRect.width = w;
+        this._viewportRect.height = h;
+        this._visibleRect.width = w;
+        this._visibleRect.height = h;
 
-        localWinSize.width = this._visibleRect$.width;
-        localWinSize.height = this._visibleRect$.height;
+        localWinSize.width = this._visibleRect.width;
+        localWinSize.height = this._visibleRect.height;
         if (visibleRect) {
-            visibleRect.init(this._visibleRect$);
+            visibleRect.init(this._visibleRect);
         }
 
         if (!EDITOR) {
@@ -129,8 +129,8 @@ export class View extends Eventify(System) {
         }
 
         // For now, the engine UI is adapted to resolution size, instead of window size.
-        screen.on('window-resize', this._updateAdaptResult$, this);
-        screen.on('fullscreen-change', this._updateAdaptResult$, this);
+        screen.on('window-resize', this._updateAdaptResult, this);
+        screen.on('fullscreen-change', this._updateAdaptResult, this);
     }
 
     /**
@@ -161,7 +161,7 @@ export class View extends Eventify(System) {
      */
     public setResizeCallback (callback: (() => void) | null): void {
         if (typeof callback === 'function' || callback == null) {
-            this._resizeCallback$ = callback;
+            this._resizeCallback = callback;
         }
     }
 
@@ -212,7 +212,7 @@ export class View extends Eventify(System) {
      * @deprecated since v3.4.0
      */
     public enableRetina (enabled: boolean): void {
-        this._retinaEnabled$ = !!enabled;
+        this._retinaEnabled = !!enabled;
     }
 
     /**
@@ -225,7 +225,7 @@ export class View extends Eventify(System) {
      * @deprecated since v3.4.0
      */
     public isRetinaEnabled (): boolean {
-        return this._retinaEnabled$;
+        return this._retinaEnabled;
     }
 
     /**
@@ -240,10 +240,10 @@ export class View extends Eventify(System) {
      * @deprecated since v3.3, please use screen.requestFullScreen() instead.
      */
     public enableAutoFullScreen (enabled: boolean): void {
-        if (enabled === this._autoFullScreen$) {
+        if (enabled === this._autoFullScreen) {
             return;
         }
-        this._autoFullScreen$ = enabled;
+        this._autoFullScreen = enabled;
         if (enabled) {
             screen.requestFullScreen().catch((e) => {
                 // do nothing
@@ -262,7 +262,7 @@ export class View extends Eventify(System) {
      * @deprecated since v3.3
      */
     public isAutoFullScreenEnabled (): boolean {
-        return this._autoFullScreen$;
+        return this._autoFullScreen;
     }
 
     /**
@@ -342,7 +342,7 @@ export class View extends Eventify(System) {
      * @zh 返回视图窗口可见区域尺寸。
      */
     public getVisibleSize (): Size {
-        return new Size(this._visibleRect$.width, this._visibleRect$.height);
+        return new Size(this._visibleRect.width, this._visibleRect.height);
     }
 
     /**
@@ -351,8 +351,8 @@ export class View extends Eventify(System) {
      */
     public getVisibleSizeInPixel (): Size {
         return new Size(
-            this._visibleRect$.width * this._scaleX$,
-            this._visibleRect$.height * this._scaleY$,
+            this._visibleRect.width * this._scaleX,
+            this._visibleRect.height * this._scaleY,
         );
     }
 
@@ -361,7 +361,7 @@ export class View extends Eventify(System) {
      * @zh 返回视图窗口可见区域原点。
      */
     public getVisibleOrigin (): Vec2 {
-        return new Vec2(this._visibleRect$.x, this._visibleRect$.y);
+        return new Vec2(this._visibleRect.x, this._visibleRect.y);
     }
 
     /**
@@ -370,8 +370,8 @@ export class View extends Eventify(System) {
      */
     public getVisibleOriginInPixel (): Vec2 {
         return new Vec2(
-            this._visibleRect$.x * this._scaleX$,
-            this._visibleRect$.y * this._scaleY$,
+            this._visibleRect.x * this._scaleX,
+            this._visibleRect.y * this._scaleY,
         );
     }
 
@@ -381,29 +381,29 @@ export class View extends Eventify(System) {
      * @see [[ResolutionPolicy]]
      */
     public getResolutionPolicy (): ResolutionPolicy {
-        return this._resolutionPolicy$;
+        return this._resolutionPolicy;
     }
 
     private _updateResolutionPolicy (resolutionPolicy: ResolutionPolicy|number): void {
         if (resolutionPolicy instanceof ResolutionPolicy) {
-            this._resolutionPolicy$ = resolutionPolicy;
+            this._resolutionPolicy = resolutionPolicy;
         } else {
             // Ensure compatibility with JSB
             const _locPolicy = ResolutionPolicy;
             if (resolutionPolicy === _locPolicy.EXACT_FIT) {
-                this._resolutionPolicy$ = this._rpExactFit$;
+                this._resolutionPolicy = this._rpExactFit;
             }
             if (resolutionPolicy === _locPolicy.SHOW_ALL) {
-                this._resolutionPolicy$ = this._rpShowAll$;
+                this._resolutionPolicy = this._rpShowAll;
             }
             if (resolutionPolicy === _locPolicy.NO_BORDER) {
-                this._resolutionPolicy$ = this._rpNoBorder$;
+                this._resolutionPolicy = this._rpNoBorder;
             }
             if (resolutionPolicy === _locPolicy.FIXED_HEIGHT) {
-                this._resolutionPolicy$ = this._rpFixedHeight$;
+                this._resolutionPolicy = this._rpFixedHeight;
             }
             if (resolutionPolicy === _locPolicy.FIXED_WIDTH) {
-                this._resolutionPolicy$ = this._rpFixedWidth$;
+                this._resolutionPolicy = this._rpFixedWidth;
             }
         }
     }
@@ -440,7 +440,7 @@ export class View extends Eventify(System) {
         }
 
         this._updateResolutionPolicy(resolutionPolicy);
-        const policy = this._resolutionPolicy$;
+        const policy = this._resolutionPolicy;
         if (policy) {
             policy.preApply(this);
         }
@@ -451,13 +451,13 @@ export class View extends Eventify(System) {
         const result = policy.apply(this, this._designResolutionSize);
 
         if (result.scale && result.scale.length === 2) {
-            this._scaleX$ = result.scale[0];
-            this._scaleY$ = result.scale[1];
+            this._scaleX = result.scale[0];
+            this._scaleY = result.scale[1];
         }
 
         if (result.viewport) {
-            const vp = this._viewportRect$;
-            const vb = this._visibleRect$;
+            const vp = this._viewportRect;
+            const vb = this._visibleRect;
             const rv = result.viewport;
 
             vp.x = rv.x;
@@ -467,16 +467,16 @@ export class View extends Eventify(System) {
 
             vb.x = 0;
             vb.y = 0;
-            vb.width = rv.width / this._scaleX$;
-            vb.height = rv.height / this._scaleY$;
+            vb.width = rv.width / this._scaleX;
+            vb.height = rv.height / this._scaleY;
         }
 
         policy.postApply(this);
-        localWinSize.width = this._visibleRect$.width;
-        localWinSize.height = this._visibleRect$.height;
+        localWinSize.width = this._visibleRect.width;
+        localWinSize.height = this._visibleRect.height;
 
         if (visibleRect) {
-            visibleRect.init(this._visibleRect$);
+            visibleRect.init(this._visibleRect);
         }
 
         this.emit('design-resolution-changed');
@@ -525,7 +525,7 @@ export class View extends Eventify(System) {
      * @zh 返回视窗剪裁区域。
      */
     public getViewportRect (): Rect {
-        return this._viewportRect$;
+        return this._viewportRect;
     }
 
     /**
@@ -533,7 +533,7 @@ export class View extends Eventify(System) {
      * @zh 返回横轴的缩放比，这个缩放比是将画布像素分辨率放到设计分辨率的比例。
      */
     public getScaleX (): number {
-        return this._scaleX$;
+        return this._scaleX;
     }
 
     /**
@@ -541,7 +541,7 @@ export class View extends Eventify(System) {
      * @zh 返回纵轴的缩放比，这个缩放比是将画布像素分辨率缩放到设计分辨率的比例。
      */
     public getScaleY (): number {
-        return this._scaleY$;
+        return this._scaleY;
     }
 
     /**
@@ -582,9 +582,9 @@ export class View extends Eventify(System) {
      * @engineInternal
      */
     public _convertToUISpace (point: Vec2): void {
-        const viewport = this._viewportRect$;
-        point.x = (point.x - viewport.x) / this._scaleX$;
-        point.y = (point.y - viewport.y) / this._scaleY$;
+        const viewport = this._viewportRect;
+        point.x = (point.x - viewport.x) / this._scaleX;
+        point.y = (point.y - viewport.y) / this._scaleY;
     }
 
     private _updateAdaptResult (width: number, height: number, windowId?: number): void {
@@ -595,13 +595,13 @@ export class View extends Eventify(System) {
         const h = this._designResolutionSize.height;
 
         if (width > 0 && height > 0) {
-            this.setDesignResolutionSize(w, h, this._resolutionPolicy$);
+            this.setDesignResolutionSize(w, h, this._resolutionPolicy);
         } else {
             assert(false, '_updateAdaptResult Invalid size.');
         }
 
         this.emit('canvas-resize');
-        this._resizeCallback$?.();
+        this._resizeCallback?.();
     }
 }
 
@@ -818,7 +818,7 @@ class ExactFit extends ContentStrategy {
         const scaleX = containerW / designedResolution.width;
         const scaleY = containerH / designedResolution.height;
 
-        return this._buildResult$(containerW, containerH, containerW, containerH, scaleX, scaleY);
+        return this._buildResult(containerW, containerH, containerW, containerH, scaleX, scaleY);
     }
 }
 
@@ -852,7 +852,7 @@ class ShowAll extends ContentStrategy {
             contentH = containerH;
         }
 
-        return this._buildResult$(containerW, containerH, contentW, contentH, scale, scale);
+        return this._buildResult(containerW, containerH, contentW, contentH, scale, scale);
     }
 }
 
@@ -886,7 +886,7 @@ class NoBorder extends ContentStrategy {
             contentH = designH * scale;
         }
 
-        return this._buildResult$(containerW, containerH, contentW, contentH, scale, scale);
+        return this._buildResult(containerW, containerH, contentW, contentH, scale, scale);
     }
 }
 
@@ -907,7 +907,7 @@ class FixedHeight extends ContentStrategy {
         const contentW = containerW;
         const contentH = containerH;
 
-        return this._buildResult$(containerW, containerH, contentW, contentH, scale, scale);
+        return this._buildResult(containerW, containerH, contentW, contentH, scale, scale);
     }
 }
 
@@ -928,7 +928,7 @@ class FixedWidth extends ContentStrategy {
         const contentW = containerW;
         const contentH = containerH;
 
-        return this._buildResult$(containerW, containerH, contentW, contentH, scale, scale);
+        return this._buildResult(containerW, containerH, contentW, contentH, scale, scale);
     }
 }
 
@@ -1003,8 +1003,8 @@ export class ResolutionPolicy {
      * @param contentStg
      */
     constructor (containerStg: ContainerStrategy, contentStg: ContentStrategy) {
-        this._containerStrategy$ = containerStg;
-        this._contentStrategy$ = contentStg;
+        this._containerStrategy = containerStg;
+        this._contentStrategy = contentStg;
     }
 
     get canvasSize (): Size {
@@ -1017,7 +1017,7 @@ export class ResolutionPolicy {
      * @param _view The target view
      */
     public preApply (_view: View): void {
-        this._contentStrategy$.preApply$(_view);
+        this._contentStrategy.preApply$(_view);
     }
 
     /**
@@ -1030,8 +1030,8 @@ export class ResolutionPolicy {
      * @return An object contains the scale X/Y values and the viewport rect
      */
     public apply (_view: View, designedResolution: Size): AdaptResult {
-        this._containerStrategy$.apply$(_view, designedResolution);
-        return this._contentStrategy$.apply$(_view, designedResolution);
+        this._containerStrategy.apply$(_view, designedResolution);
+        return this._contentStrategy.apply$(_view, designedResolution);
     }
 
     /**
@@ -1040,7 +1040,7 @@ export class ResolutionPolicy {
      * @param _view - The target view
      */
     public postApply (_view: View): void {
-        this._contentStrategy$.postApply$(_view);
+        this._contentStrategy.postApply$(_view);
     }
 
     /**
@@ -1049,7 +1049,7 @@ export class ResolutionPolicy {
      * @param containerStg The container strategy
      */
     public setContainerStrategy (containerStg: ContainerStrategy): void {
-        this._containerStrategy$ = containerStg;
+        this._containerStrategy = containerStg;
     }
 
     /**
@@ -1058,7 +1058,7 @@ export class ResolutionPolicy {
      * @param contentStg The content strategy
      */
     public setContentStrategy (contentStg: ContentStrategy): void {
-        this._contentStrategy$ = contentStg;
+        this._contentStrategy = contentStg;
     }
 
     /**
@@ -1067,7 +1067,7 @@ export class ResolutionPolicy {
      * @returns ContentStrategy instance.
      */
     public getContentStrategy (): ContentStrategy {
-        return this._contentStrategy$;
+        return this._contentStrategy;
     }
 }
 cclegacy.ResolutionPolicy = ResolutionPolicy;

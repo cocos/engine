@@ -62,12 +62,12 @@ export class WebGL2PrimaryCommandBuffer extends WebGL2CommandBuffer {
             clearDepth,
             clearStencil,
         );
-        this._isInRenderPass$ = true;
+        this._isInRenderPass = true;
     }
 
     public draw (infoOrAssembler: Readonly<DrawInfo> | Readonly<InputAssembler>): void {
-        if (this._isInRenderPass$) {
-            if (this._isStateInvalid$) {
+        if (this._isInRenderPass) {
+            if (this._isStateInvalid) {
                 this.bindStates();
             }
 
@@ -75,19 +75,19 @@ export class WebGL2PrimaryCommandBuffer extends WebGL2CommandBuffer {
 
             WebGL2CmdFuncDraw(WebGL2DeviceManager.instance, info as DrawInfo);
 
-            ++this._numDrawCalls$;
-            this._numInstances$ += info.instanceCount;
+            ++this._numDrawCalls;
+            this._numInstances += info.instanceCount;
             const indexCount = info.indexCount || info.vertexCount;
-            if (this._curGPUPipelineState$) {
-                const glPrimitive = this._curGPUPipelineState$.glPrimitive$;
+            if (this._curGPUPipelineState) {
+                const glPrimitive = this._curGPUPipelineState.glPrimitive$;
                 switch (glPrimitive) {
                 case 0x0004: { // WebGLRenderingContext.TRIANGLES
-                    this._numTris$ += indexCount / 3 * Math.max(info.instanceCount, 1);
+                    this._numTris += indexCount / 3 * Math.max(info.instanceCount, 1);
                     break;
                 }
                 case 0x0005: // WebGLRenderingContext.TRIANGLE_STRIP
                 case 0x0006: { // WebGLRenderingContext.TRIANGLE_FAN
-                    this._numTris$ += (indexCount - 2) * Math.max(info.instanceCount, 1);
+                    this._numTris += (indexCount - 2) * Math.max(info.instanceCount, 1);
                     break;
                 }
                 default:
@@ -133,7 +133,7 @@ export class WebGL2PrimaryCommandBuffer extends WebGL2CommandBuffer {
     }
 
     public updateBuffer (buffer: Buffer, data: Readonly<BufferSource>, size?: number): void {
-        if (!this._isInRenderPass$) {
+        if (!this._isInRenderPass) {
             const gpuBuffer = (buffer as WebGL2Buffer).getGpuBuffer$();
             if (gpuBuffer) {
                 let buffSize: number;
@@ -153,7 +153,7 @@ export class WebGL2PrimaryCommandBuffer extends WebGL2CommandBuffer {
     }
 
     public copyBuffersToTexture (buffers: Readonly<ArrayBufferView[]>, texture: Texture, regions: Readonly<BufferTextureCopy[]>): void {
-        if (!this._isInRenderPass$) {
+        if (!this._isInRenderPass) {
             const gpuTexture = (texture as WebGL2Texture).gpuTexture;
             if (gpuTexture) {
                 WebGL2CmdFuncCopyBuffersToTexture(WebGL2DeviceManager.instance, buffers, gpuTexture, regions);
@@ -170,13 +170,13 @@ export class WebGL2PrimaryCommandBuffer extends WebGL2CommandBuffer {
     protected bindStates (): void {
         WebGL2CmdFuncBindStates(
             WebGL2DeviceManager.instance,
-            this._curGPUPipelineState$,
-            this._curGPUInputAssembler$,
-            this._curGPUDescriptorSets$,
-            this._curDynamicOffsets$,
-            this._curDynamicStates$,
+            this._curGPUPipelineState,
+            this._curGPUInputAssembler,
+            this._curGPUDescriptorSets,
+            this._curDynamicOffsets,
+            this._curDynamicStates,
         );
-        this._isStateInvalid$ = false;
+        this._isStateInvalid = false;
     }
 
     public blitTexture (srcTexture: Readonly<Texture>, dstTexture: Texture, regions: Readonly<TextureBlit []>, filter: Filter): void {

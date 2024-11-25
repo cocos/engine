@@ -38,15 +38,15 @@ export class TouchInputSource {
 
     constructor () {
         if (systemInfo.hasFeature(Feature.INPUT_TOUCH)) {
-            this._registerEvent$();
+            this._registerEvent();
         }
     }
 
     private _registerEvent (): void {
-        minigame.onTouchStart(this._createCallback$(InputEventType.TOUCH_START));
-        minigame.onTouchMove(this._createCallback$(InputEventType.TOUCH_MOVE));
-        minigame.onTouchEnd(this._createCallback$(InputEventType.TOUCH_END));
-        minigame.onTouchCancel(this._createCallback$(InputEventType.TOUCH_CANCEL));
+        minigame.onTouchStart(this._createCallback(InputEventType.TOUCH_START));
+        minigame.onTouchMove(this._createCallback(InputEventType.TOUCH_MOVE));
+        minigame.onTouchEnd(this._createCallback(InputEventType.TOUCH_END));
+        minigame.onTouchCancel(this._createCallback(InputEventType.TOUCH_CANCEL));
     }
 
     private _createCallback (eventType: InputEventType) {
@@ -61,7 +61,7 @@ export class TouchInputSource {
                 if (touchID === null) {
                     continue;
                 }
-                const location = this._getLocation$(changedTouch, windowSize, dpr);
+                const location = this._getLocation(changedTouch, windowSize, dpr);
                 const touch = touchManager.getOrCreateTouch(touchID, location.x, location.y);
                 if (!touch) {
                     continue;
@@ -78,7 +78,7 @@ export class TouchInputSource {
                     eventType,
                     touchManager.getAllTouches(),
                 );
-                this._eventTarget$.emit(eventType, eventTouch);
+                this._eventTarget.emit(eventType, eventTouch);
             }
         };
     }
@@ -90,7 +90,7 @@ export class TouchInputSource {
     }
 
     public on (eventType: InputEventType, callback: TouchCallback, target?: any): void {
-        this._eventTarget$.on(eventType, callback, target);
+        this._eventTarget.on(eventType, callback, target);
     }
 
     public dispatchEventsInCache (): void {

@@ -51,9 +51,9 @@ export class WebGPURenderPass extends RenderPass {
         return depthStencilDescriptor;
     }
     public initialize (info: Readonly<RenderPassInfo>): void {
-        this._colorInfos$ = info.colorAttachments;
-        this._depthStencilInfo$ = info.depthStencilAttachment;
-        this._subpasses$ = info.subpasses;
+        this._colorInfos = info.colorAttachments;
+        this._depthStencilInfo = info.depthStencilAttachment;
+        this._subpasses = info.subpasses;
 
         const colorDescriptions: GPURenderPassColorAttachment[] = [];
         const originalColorDesc: GPURenderPassColorAttachment[] = [];
@@ -78,8 +78,8 @@ export class WebGPURenderPass extends RenderPass {
         }
 
         this._gpuRenderPass = {
-            colorAttachments: this._colorInfos$,
-            depthStencilAttachment: this._depthStencilInfo$,
+            colorAttachments: this._colorInfos,
+            depthStencilAttachment: this._depthStencilInfo,
             nativeRenderPass: renderPassDesc,
             originalRP: originalRPDesc,
         };

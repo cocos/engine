@@ -30,15 +30,15 @@ import { GFXObject, ObjectType, DescriptorSetLayoutBinding, DescriptorSetLayoutI
  */
 export abstract class DescriptorSetLayout extends GFXObject {
     get bindings (): DescriptorSetLayoutBinding[] {
-        return this._bindings$;
+        return this._bindings;
     }
 
     get bindingIndices (): number[] {
-        return this._bindingIndices$;
+        return this._bindingIndices;
     }
 
     get descriptorIndices (): number[] {
-        return this._descriptorIndices$;
+        return this._descriptorIndices;
     }
 
     protected _bindings$: DescriptorSetLayoutBinding[] = [];

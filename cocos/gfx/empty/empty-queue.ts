@@ -28,7 +28,7 @@ import { Queue } from '../base/queue';
 
 export class EmptyQueue extends Queue {
     public initialize (info: Readonly<QueueInfo>): void {
-        this._type$ = info.type;
+        this._type = info.type;
     }
     public destroy (): void {}
     public submit (cmdBuffs: Readonly<CommandBuffer[]>): void {}

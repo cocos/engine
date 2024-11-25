@@ -90,7 +90,7 @@ export class SimpleTexture extends TextureBase {
      * @zh 贴图中的 Mipmap 层级数量。
      */
     get mipmapLevel (): number {
-        return this._mipmapLevel$;
+        return this._mipmapLevel;
     }
 
     /**
@@ -145,7 +145,7 @@ export class SimpleTexture extends TextureBase {
      * @param arrayIndex @en The array index. @zh 要上传的数组索引。
      */
     public uploadData (source: HTMLCanvasElement | HTMLImageElement | ArrayBufferView | ImageBitmap, level = 0, arrayIndex = 0): void {
-        if (!this._gfxTexture || this._mipmapLevel$ <= level) {
+        if (!this._gfxTexture || this._mipmapLevel <= level) {
             return;
         }
 
@@ -155,8 +155,8 @@ export class SimpleTexture extends TextureBase {
         }
 
         const region = _regions[0];
-        region.texExtent.width = this._textureWidth$ >> level;
-        region.texExtent.height = this._textureHeight$ >> level;
+        region.texExtent.width = this._textureWidth >> level;
+        region.texExtent.height = this._textureHeight >> level;
         region.texSubres.mipLevel = level;
         region.texSubres.baseArrayLayer = arrayIndex;
 
@@ -223,7 +223,7 @@ export class SimpleTexture extends TextureBase {
      *
      */
     protected _setMipmapLevel (value: number): void {
-        this._mipmapLevel$ = value < 1 ? 1 : value;
+        this._mipmapLevel = value < 1 ? 1 : value;
     }
 
     /**
@@ -282,7 +282,7 @@ export class SimpleTexture extends TextureBase {
     protected _tryReset (): void {
         this._tryDestroyTextureView();
         this._tryDestroyTexture();
-        if (this._mipmapLevel$ === 0) {
+        if (this._mipmapLevel === 0) {
             return;
         }
         const device = this._getGFXDevice();
@@ -308,7 +308,7 @@ export class SimpleTexture extends TextureBase {
         if (this._width === 0 || this._height === 0) { return; }
         let flags = TextureFlagBit.NONE;
         if (this._mipFilter !== Filter.NONE && canGenerateMipmap(device, this._width, this._height)) {
-            this._mipmapLevel$ = getMipLevel(this._width, this._height);
+            this._mipmapLevel = getMipLevel(this._width, this._height);
             if (!this.isUsingOfflineMipmaps() && !this.isCompressed) {
                 flags = TextureFlagBit.GEN_MIPMAP;
             }
@@ -316,7 +316,7 @@ export class SimpleTexture extends TextureBase {
         const textureCreateInfo = this._getGfxTextureCreateInfo({
             usage: TextureUsageBit.SAMPLED | TextureUsageBit.TRANSFER_DST | TextureUsageBit.COLOR_ATTACHMENT,
             format: this._getGFXFormat(),
-            levelCount: this._mipmapLevel$,
+            levelCount: this._mipmapLevel,
             flags,
         });
         if (!textureCreateInfo) {
@@ -324,8 +324,8 @@ export class SimpleTexture extends TextureBase {
         }
 
         const texture = device.createTexture(textureCreateInfo);
-        this._textureWidth$ = textureCreateInfo.width;
-        this._textureHeight$ = textureCreateInfo.height;
+        this._textureWidth = textureCreateInfo.width;
+        this._textureHeight = textureCreateInfo.height;
 
         this._gfxTexture = texture;
     }
@@ -337,7 +337,7 @@ export class SimpleTexture extends TextureBase {
         if (!this._gfxTexture) {
             return null;
         }
-        const maxLevel = this._maxLevel < this._mipmapLevel$ ? this._maxLevel : this._mipmapLevel$ - 1;
+        const maxLevel = this._maxLevel < this._mipmapLevel ? this._maxLevel : this._mipmapLevel - 1;
         const textureViewCreateInfo = this._getGfxTextureViewCreateInfo({
             texture: this._gfxTexture,
             format: this._getGFXFormat(),

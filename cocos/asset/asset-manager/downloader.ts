@@ -195,7 +195,7 @@ export class Downloader {
      *
      */
     public get remoteServerAddress (): string {
-        return this._remoteServerAddress$;
+        return this._remoteServerAddress;
     }
 
     /**
@@ -340,9 +340,9 @@ export class Downloader {
      * @engineInternal
      */
     public init (remoteServerAddress = '', bundleVers: Record<string, string> = {}, remoteBundles: string[] = []): void {
-        this._downloading$.clear();
-        this._queue$.length = 0;
-        this._remoteServerAddress$ = remoteServerAddress;
+        this._downloading.clear();
+        this._queue.length = 0;
+        this._remoteServerAddress = remoteServerAddress;
         this.bundleVers = bundleVers;
         this.remoteBundles = remoteBundles;
     }
@@ -351,7 +351,7 @@ export class Downloader {
      * @engineInternal
      */
     public get handlers (): Record<string, DownloadHandler> {
-        return this._downloaders$;
+        return this._downloaders;
     }
 
     /**
@@ -385,9 +385,9 @@ export class Downloader {
         handler?: (url: string, options: Record<string, any>, onComplete: ((err: Error | null, data?: any) => void)) => void,
     ): void {
         if (typeof type === 'object') {
-            js.mixin(this._downloaders$, type);
+            js.mixin(this._downloaders, type);
         } else {
-            this._downloaders$[type] = handler as DownloadHandler;
+            this._downloaders[type] = handler as DownloadHandler;
         }
     }
 
@@ -423,15 +423,15 @@ export class Downloader {
             return;
         }
 
-        const downloadCallbacks = this._downloading$.get(id);
+        const downloadCallbacks = this._downloading.get(id);
         if (downloadCallbacks) {
             downloadCallbacks.push(onComplete);
-            const request = this._queue$.find((x): boolean => x.id === id);
+            const request = this._queue.find((x): boolean => x.id === id);
             if (!request) { return; }
             const priority: number = options.priority || 0;
             if (request.priority < priority) {
                 request.priority = priority;
-                this._queueDirty$ = true;
+                this._queueDirty = true;
             }
             return;
         }
@@ -440,11 +440,11 @@ export class Downloader {
         const maxRetryCount = typeof options.maxRetryCount !== 'undefined' ? options.maxRetryCount as number : this.maxRetryCount;
         const maxConcurrency = typeof options.maxConcurrency !== 'undefined' ? options.maxConcurrency as number : this.maxConcurrency;
         const maxRequestsPerFrame = typeof options.maxRequestsPerFrame !== 'undefined' ? options.maxRequestsPerFrame as number : this.maxRequestsPerFrame;
-        const handler = this._downloaders$[type] || this._downloaders$.default;
+        const handler = this._downloaders[type] || this._downloaders.default;
 
         const process: RetryFunction = (index, callback): void => {
             if (index === 0) {
-                this._downloading$.add(id, [onComplete]);
+                this._downloading.add(id, [onComplete]);
             }
 
             if (!this.limited) {
@@ -457,28 +457,28 @@ export class Downloader {
 
             const done: ((err: Error | null, data?: any) => void) = (err, data): void => {
                 // when finish downloading, update _totalNum
-                this._totalNum$--;
+                this._totalNum--;
                 this._handleQueueInNextFrame(maxConcurrency, maxRequestsPerFrame);
                 callback(err, data);
             };
 
-            if (this._totalNum$ < maxConcurrency && this._totalNumThisPeriod$ < maxRequestsPerFrame) {
+            if (this._totalNum < maxConcurrency && this._totalNumThisPeriod < maxRequestsPerFrame) {
                 handler(urlAppendTimestamp(url, this.appendTimeStamp), options, done);
-                this._totalNum$++;
-                this._totalNumThisPeriod$++;
+                this._totalNum++;
+                this._totalNumThisPeriod++;
             } else {
                 // when number of request up to limitation, cache the rest
-                this._queue$.push({ id, priority: options.priority || 0, url, options, done, handler });
-                this._queueDirty$ = true;
+                this._queue.push({ id, priority: options.priority || 0, url, options, done, handler });
+                this._queueDirty = true;
 
-                if (this._totalNum$ < maxConcurrency) { this._handleQueueInNextFrame(maxConcurrency, maxRequestsPerFrame); }
+                if (this._totalNum < maxConcurrency) { this._handleQueueInNextFrame(maxConcurrency, maxRequestsPerFrame); }
             }
         };
 
         // when retry finished, invoke callbacks
         const finale = (err: Error | null, result: any): void => {
             if (!err) { files.add(id, result); }
-            const callbacks = this._downloading$.remove(id) as ((err: Error | null, data?: any) => void)[];
+            const callbacks = this._downloading.remove(id) as ((err: Error | null, data?: any) => void)[];
             for (let i = 0, l = callbacks.length; i < l; i++) {
                 callbacks[i](err, result);
             }
@@ -506,28 +506,28 @@ export class Downloader {
         const now = performance.now();
         // use deltaTime as interval
         const deltaTime = cclegacy.game.deltaTime;
-        const interval = deltaTime > this._maxInterval$ ? this._maxInterval$ : deltaTime;
-        if (now - this._lastDate$ > interval * 1000) {
-            this._totalNumThisPeriod$ = 0;
-            this._lastDate$ = now;
+        const interval = deltaTime > this._maxInterval ? this._maxInterval : deltaTime;
+        if (now - this._lastDate > interval * 1000) {
+            this._totalNumThisPeriod = 0;
+            this._lastDate = now;
         }
     }
 
     // handle the rest request in next period
     private _handleQueue (maxConcurrency: number, maxRequestsPerFrame: number): void {
-        this._checkNextPeriod$ = false;
+        this._checkNextPeriod = false;
         this._updateTime();
-        while (this._queue$.length > 0 && this._totalNum$ < maxConcurrency && this._totalNumThisPeriod$ < maxRequestsPerFrame) {
-            if (this._queueDirty$) {
-                this._queue$.sort((a, b): number => a.priority - b.priority);
-                this._queueDirty$ = false;
+        while (this._queue.length > 0 && this._totalNum < maxConcurrency && this._totalNumThisPeriod < maxRequestsPerFrame) {
+            if (this._queueDirty) {
+                this._queue.sort((a, b): number => a.priority - b.priority);
+                this._queueDirty = false;
             }
-            const request = this._queue$.pop();
+            const request = this._queue.pop();
             if (!request) {
                 break;
             }
-            this._totalNum$++;
-            this._totalNumThisPeriod$++;
+            this._totalNum++;
+            this._totalNumThisPeriod++;
             request.handler(urlAppendTimestamp(request.url, this.appendTimeStamp), request.options, request.done);
         }
 
@@ -535,9 +535,9 @@ export class Downloader {
     }
 
     private _handleQueueInNextFrame (maxConcurrency: number, maxRequestsPerFrame: number): void {
-        if (!this._checkNextPeriod$ && this._queue$.length > 0) {
+        if (!this._checkNextPeriod && this._queue.length > 0) {
             misc.callInNextTick(this._handleQueue.bind(this), maxConcurrency, maxRequestsPerFrame);
-            this._checkNextPeriod$ = true;
+            this._checkNextPeriod = true;
         }
     }
 }

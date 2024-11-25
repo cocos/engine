@@ -250,12 +250,12 @@ export default class Config {
         this.name = options.name || '';
         this.deps = options.deps || [];
         // init
-        this._initUuid$(options.uuids);
-        this._initPath$(options.paths);
-        this._initScene$(options.scenes);
-        this._initPackage$(options.packs);
-        this._initVersion$(options.versions);
-        this._initRedirect$(options.redirect);
+        this._initUuid(options.uuids);
+        this._initPath(options.paths);
+        this._initScene(options.scenes);
+        this._initPackage(options.packs);
+        this._initVersion(options.versions);
+        this._initRedirect(options.redirect);
         for (const ext in options.extensionMap) {
             if (!Object.prototype.hasOwnProperty.call(options.extensionMap, ext)) {
                 continue;

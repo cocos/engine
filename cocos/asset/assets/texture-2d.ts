@@ -112,26 +112,26 @@ export class Texture2D extends SimpleTexture {
             }
         }
 
-        this._setMipmapParams$(mipmaps);
+        this._setMipmapParams(mipmaps);
     }
 
     /**
      * TODO: See: cocos/cocos-engine#15305
      */
     private _setMipmapParams (value: ImageAsset[]): void {
-        this._generatedMipmaps$ = value;
-        this._setMipmapLevel(this._generatedMipmaps$.length);
-        if (this._generatedMipmaps$.length > 0) {
-            const imageAsset: ImageAsset = this._generatedMipmaps$[0];
+        this._generatedMipmaps = value;
+        this._setMipmapLevel(this._generatedMipmaps.length);
+        if (this._generatedMipmaps.length > 0) {
+            const imageAsset: ImageAsset = this._generatedMipmaps[0];
             this.reset({
                 width: imageAsset.width,
                 height: imageAsset.height,
                 format: imageAsset.format,
-                mipmapLevel: this._generatedMipmaps$.length,
+                mipmapLevel: this._generatedMipmaps.length,
                 baseLevel: this._baseLevel,
                 maxLevel: this._maxLevel,
             });
-            this._generatedMipmaps$.forEach((mipmap, level) => {
+            this._generatedMipmaps.forEach((mipmap, level) => {
                 this._assignImage(mipmap, level);
             });
             //
@@ -139,7 +139,7 @@ export class Texture2D extends SimpleTexture {
             this.reset({
                 width: 0,
                 height: 0,
-                mipmapLevel: this._generatedMipmaps$.length,
+                mipmapLevel: this._generatedMipmaps.length,
                 baseLevel: this._baseLevel,
                 maxLevel: this._maxLevel,
             });
@@ -229,18 +229,18 @@ export class Texture2D extends SimpleTexture {
     }
 
     public updateMipmaps (firstLevel = 0, count: number | undefined = undefined): void {
-        if (firstLevel >= this._generatedMipmaps$.length) {
+        if (firstLevel >= this._generatedMipmaps.length) {
             return;
         }
 
         const nUpdate = Math.min(
-            count === undefined ? this._generatedMipmaps$.length : count,
-            this._generatedMipmaps$.length - firstLevel,
+            count === undefined ? this._generatedMipmaps.length : count,
+            this._generatedMipmaps.length - firstLevel,
         );
 
         for (let i = 0; i < nUpdate; ++i) {
             const level = firstLevel + i;
-            this._assignImage(this._generatedMipmaps$[level], level);
+            this._assignImage(this._generatedMipmaps[level], level);
         }
     }
 
@@ -260,7 +260,7 @@ export class Texture2D extends SimpleTexture {
      */
     public destroy (): boolean {
         this._mipmaps = [];
-        this._generatedMipmaps$ = [];
+        this._generatedMipmaps = [];
         return super.destroy();
     }
 

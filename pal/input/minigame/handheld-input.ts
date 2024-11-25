@@ -29,8 +29,8 @@ import { InputSourcePosition, InputSourceOrientation } from '../input-source';
 import { Quat, Vec3 } from '../../../cocos/core/math';
 
 export class HandheldInputDevice {
-    public get handheldPosition (): InputSourcePosition { return this._handheldPosition$; }
-    public get handheldOrientation (): InputSourceOrientation { return this._handheldOrientation$; }
+    public get handheldPosition (): InputSourcePosition { return this._handheldPosition; }
+    public get handheldOrientation (): InputSourceOrientation { return this._handheldOrientation; }
 
     private _eventTarget: EventTarget = new EventTarget();
 
@@ -45,13 +45,13 @@ export class HandheldInputDevice {
      * @engineInternal
      */
     public _on (eventType: InputEventType, callback: HandheldCallback, target?: any): void {
-        this._eventTarget$.on(eventType, callback, target);
+        this._eventTarget.on(eventType, callback, target);
     }
 
     private _initInputSource (): void {
-        this._handheldPosition$ = new InputSourcePosition();
-        this._handheldPosition$.getValue = (): Readonly<Vec3> => Vec3.ZERO;
-        this._handheldOrientation$ = new InputSourceOrientation();
-        this._handheldOrientation$.getValue = (): Readonly<Quat> => Quat.IDENTITY;
+        this._handheldPosition = new InputSourcePosition();
+        this._handheldPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
+        this._handheldOrientation = new InputSourceOrientation();
+        this._handheldOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
     }
 }

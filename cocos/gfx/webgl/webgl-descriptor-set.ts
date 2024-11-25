@@ -32,7 +32,7 @@ import { DescriptorSetInfo, DESCRIPTOR_SAMPLER_TYPE, DESCRIPTOR_BUFFER_TYPE } fr
 
 export class WebGLDescriptorSet extends DescriptorSet {
     get gpuDescriptorSet (): IWebGLGPUDescriptorSet {
-        return this._gpuDescriptorSet$ as IWebGLGPUDescriptorSet;
+        return this._gpuDescriptorSet as IWebGLGPUDescriptorSet;
     }
 
     private _gpuDescriptorSet: IWebGLGPUDescriptorSet | null = null;
@@ -42,15 +42,15 @@ export class WebGLDescriptorSet extends DescriptorSet {
     }
 
     public initialize (info: Readonly<DescriptorSetInfo>): void {
-        this._layout$ = info.layout;
+        this._layout = info.layout;
         const { bindings$: bindings, descriptorIndices$: descriptorIndices, descriptorCount$: descriptorCount } = (info.layout as WebGLDescriptorSetLayout).gpuDescriptorSetLayout;
 
-        this._buffers$ = Array(descriptorCount).fill(null);
-        this._textures$ = Array(descriptorCount).fill(null);
-        this._samplers$ = Array(descriptorCount).fill(null);
+        this._buffers = Array(descriptorCount).fill(null);
+        this._textures = Array(descriptorCount).fill(null);
+        this._samplers = Array(descriptorCount).fill(null);
 
         const gpuDescriptors: IWebGLGPUDescriptor[] = [];
-        this._gpuDescriptorSet$ = { gpuDescriptors$: gpuDescriptors, descriptorIndices$: descriptorIndices };
+        this._gpuDescriptorSet = { gpuDescriptors$: gpuDescriptors, descriptorIndices$: descriptorIndices };
 
         for (let i = 0; i < bindings.length; ++i) {
             const binding = bindings[i];
@@ -66,29 +66,29 @@ export class WebGLDescriptorSet extends DescriptorSet {
     }
 
     public destroy (): void {
-        this._layout$ = null;
-        this._gpuDescriptorSet$ = null;
+        this._layout = null;
+        this._gpuDescriptorSet = null;
     }
 
     public update (): void {
-        if (this._isDirty$ && this._gpuDescriptorSet$) {
-            const descriptors = this._gpuDescriptorSet$.gpuDescriptors$;
+        if (this._isDirty && this._gpuDescriptorSet) {
+            const descriptors = this._gpuDescriptorSet.gpuDescriptors$;
             for (let i = 0; i < descriptors.length; ++i) {
                 if (descriptors[i].type$ & DESCRIPTOR_BUFFER_TYPE) {
-                    const buffer = this._buffers$[i] as WebGLBuffer | null;
+                    const buffer = this._buffers[i] as WebGLBuffer | null;
                     if (buffer) {
                         descriptors[i].gpuBuffer$ = buffer.gpuBuffer || buffer.gpuBufferView;
                     }
                 } else if (descriptors[i].type$ & DESCRIPTOR_SAMPLER_TYPE) {
-                    if (this._textures$[i]) {
-                        descriptors[i].gpuTexture$ = (this._textures$[i] as WebGLTexture).gpuTexture;
+                    if (this._textures[i]) {
+                        descriptors[i].gpuTexture$ = (this._textures[i] as WebGLTexture).gpuTexture;
                     }
-                    if (this._samplers$[i]) {
-                        descriptors[i].gpuSampler$ = (this._samplers$[i] as WebGLSampler).gpuSampler;
+                    if (this._samplers[i]) {
+                        descriptors[i].gpuSampler$ = (this._samplers[i] as WebGLSampler).gpuSampler;
                     }
                 }
             }
-            this._isDirty$ = false;
+            this._isDirty = false;
         }
     }
 }

@@ -331,7 +331,7 @@ export class Director extends EventTarget {
      * 如果想要更彻底得暂停游戏，包含渲染，音频和事件，请使用 `game.pause` 。
      */
     public pause (): void {
-        this._paused$ = true;
+        this._paused = true;
     }
 
     /**
@@ -342,16 +342,16 @@ export class Director extends EventTarget {
      */
     public purgeDirector (): void {
         // cleanup scheduler
-        this._scheduler$.unscheduleAll();
+        this._scheduler.unscheduleAll();
         this._compScheduler.unscheduleAll();
 
         this._nodeActivator.reset();
 
         if (!EDITOR) {
-            if (isValid(this._scene$)) {
-                this._scene$!.destroy();
+            if (isValid(this._scene)) {
+                this._scene!.destroy();
             }
-            this._scene$ = null;
+            this._scene = null;
         }
 
         this.stopAnimation();
@@ -367,8 +367,8 @@ export class Director extends EventTarget {
     public reset (): void {
         this.purgeDirector();
 
-        for (const id in this._persistRootNodes$) {
-            this.removePersistRootNode(this._persistRootNodes$[id]);
+        for (const id in this._persistRootNodes) {
+            this.removePersistRootNode(this._persistRootNodes[id]);
         }
 
         // Clear scene
@@ -410,7 +410,7 @@ export class Director extends EventTarget {
             // eslint-disable-next-line no-console
             console.time('AttachPersist');
         }
-        const persistNodeList = Object.keys(this._persistRootNodes$).map((x): Node => this._persistRootNodes$[x]);
+        const persistNodeList = Object.keys(this._persistRootNodes).map((x): Node => this._persistRootNodes[x]);
         for (let i = 0; i < persistNodeList.length; i++) {
             const node = persistNodeList[i];
             node.emit(NodeEventType.SCENE_CHANGED_FOR_PERSISTS, scene.renderScene);
@@ -432,7 +432,7 @@ export class Director extends EventTarget {
             // eslint-disable-next-line no-console
             console.timeEnd('AttachPersist');
         }
-        const oldScene = this._scene$;
+        const oldScene = this._scene;
 
         // unload scene
         if (BUILD && DEBUG) {
@@ -448,14 +448,14 @@ export class Director extends EventTarget {
                 // eslint-disable-next-line no-console
                 console.time('AutoRelease');
             }
-            releaseManager._autoRelease(oldScene!, scene, this._persistRootNodes$);
+            releaseManager._autoRelease(oldScene!, scene, this._persistRootNodes);
             if (BUILD && DEBUG) {
                 // eslint-disable-next-line no-console
                 console.timeEnd('AutoRelease');
             }
         }
 
-        this._scene$ = null;
+        this._scene = null;
 
         // purge destroyed nodes belongs to old scene
         CCObject._deferredDestroy();
@@ -468,7 +468,7 @@ export class Director extends EventTarget {
         this.emit(DirectorEvent.BEFORE_SCENE_LAUNCH, scene);
 
         // Run an Entity Scene
-        this._scene$ = scene;
+        this._scene = scene;
 
         if (BUILD && DEBUG) {
             // eslint-disable-next-line no-console
@@ -480,8 +480,8 @@ export class Director extends EventTarget {
             console.timeEnd('Activate');
         }
         // start scene
-        if (this._root$) {
-            this._root$.resetCumulativeTime();
+        if (this._root) {
+            this._root.resetCumulativeTime();
         }
         this.startAnimation();
         if (onLaunched) {
@@ -520,20 +520,20 @@ export class Director extends EventTarget {
      * @return if error, return false
      */
     public loadScene (sceneName: string, onLaunched?: Director.OnSceneLaunched, onUnloaded?: Director.OnUnload): boolean {
-        if (this._loadingScene$) {
-            warnID(1208, sceneName, this._loadingScene$);
+        if (this._loadingScene) {
+            warnID(1208, sceneName, this._loadingScene);
             return false;
         }
         const bundle = assetManager.bundles.find((bundle): boolean => !!bundle.getSceneInfo(sceneName));
         if (bundle) {
             this.emit(DirectorEvent.BEFORE_SCENE_LOADING, sceneName);
-            this._loadingScene$ = sceneName;
+            this._loadingScene = sceneName;
             // eslint-disable-next-line no-console
             console.time(`LoadScene ${sceneName}`);
             bundle.loadScene(sceneName, (err, scene): void => {
                 // eslint-disable-next-line no-console
                 console.timeEnd(`LoadScene ${sceneName}`);
-                this._loadingScene$ = '';
+                this._loadingScene = '';
                 if (err) {
                     error(err);
                     if (onLaunched) {
@@ -607,11 +607,11 @@ export class Director extends EventTarget {
      * @zh 恢复暂停场景的游戏逻辑，如果当前场景没有暂停将没任何事情发生。
      */
     public resume (): void {
-        this._paused$ = false;
+        this._paused = false;
     }
 
     get root (): Root | null {
-        return this._root$;
+        return this._root;
     }
 
     /**
@@ -625,7 +625,7 @@ export class Director extends EventTarget {
      * ```
      */
     public getScene (): Scene | null {
-        return this._scene$;
+        return this._scene;
     }
 
     /**
@@ -660,7 +660,7 @@ export class Director extends EventTarget {
      * @zh 获取 director 启动以来游戏运行的总帧数。
      */
     public getTotalFrames (): number {
-        return this._totalFrames$;
+        return this._totalFrames;
     }
 
     /**
@@ -668,7 +668,7 @@ export class Director extends EventTarget {
      * @zh 是否处于暂停状态。
      */
     public isPaused (): boolean {
-        return this._paused$;
+        return this._paused;
     }
 
     /**
@@ -676,7 +676,7 @@ export class Director extends EventTarget {
      * @zh 获取和 director 相关联的调度器。
      */
     public getScheduler (): Scheduler {
-        return this._scheduler$;
+        return this._scheduler;
     }
 
     /**
@@ -684,9 +684,9 @@ export class Director extends EventTarget {
      * @zh 设置和 director 相关联的调度器。
      */
     public setScheduler (scheduler: Scheduler): void {
-        if (this._scheduler$ !== scheduler) {
-            this.unregisterSystem(this._scheduler$);
-            this._scheduler$ = scheduler;
+        if (this._scheduler !== scheduler) {
+            this.unregisterSystem(this._scheduler);
+            this._scheduler = scheduler;
             this.registerSystem(Scheduler.ID, scheduler, 200);
         }
     }
@@ -698,13 +698,13 @@ export class Director extends EventTarget {
     public registerSystem (name: string, sys: System, priority: number): void {
         sys.id = name;
         sys.priority = priority;
-        this._systems$.push(sys);
-        this._systems$.sort(System.sortByPriority);
+        this._systems.push(sys);
+        this._systems.sort(System.sortByPriority);
     }
 
     public unregisterSystem (sys: System): void {
-        js.array.fastRemove(this._systems$, sys);
-        this._systems$.sort(System.sortByPriority);
+        js.array.fastRemove(this._systems, sys);
+        this._systems.sort(System.sortByPriority);
     }
 
     /**
@@ -712,7 +712,7 @@ export class Director extends EventTarget {
      * @zh 获取一个 system。
      */
     public getSystem (name: string): System | undefined {
-        return this._systems$.find((sys): boolean => sys.id === name);
+        return this._systems.find((sys): boolean => sys.id === name);
     }
 
     /**
@@ -730,7 +730,7 @@ export class Director extends EventTarget {
      * @zh 开始执行游戏逻辑
      */
     public startAnimation (): void {
-        this._invalid$ = false;
+        this._invalid = false;
     }
 
     /**
@@ -738,7 +738,7 @@ export class Director extends EventTarget {
      * @zh 停止执行游戏逻辑，每帧渲染会继续执行
      */
     public stopAnimation (): void {
-        this._invalid$ = true;
+        this._invalid = true;
     }
 
     /**
@@ -762,22 +762,22 @@ export class Director extends EventTarget {
      * @param dt Delta time in seconds
      */
     public tick (dt: number): void {
-        if (!this._invalid$) {
+        if (!this._invalid) {
             this.emit(DirectorEvent.BEGIN_FRAME);
             if (!EDITOR_NOT_IN_PREVIEW) {
                 input._frameDispatchEvents();
             }
 
             // Update
-            if (!this._paused$) {
+            if (!this._paused) {
                 this.emit(DirectorEvent.BEFORE_UPDATE);
                 // Call start for new added components
                 this._compScheduler.startPhase();
                 // Update for components
                 this._compScheduler.updatePhase(dt);
                 // Update systems
-                for (let i = 0; i < this._systems$.length; ++i) {
-                    this._systems$[i].update(dt);
+                for (let i = 0; i < this._systems.length; ++i) {
+                    this._systems[i].update(dt);
                 }
                 // Late update for components
                 this._compScheduler.lateUpdatePhase(dt);
@@ -787,21 +787,21 @@ export class Director extends EventTarget {
                 CCObject._deferredDestroy();
 
                 // Post update systems
-                for (let i = 0; i < this._systems$.length; ++i) {
-                    this._systems$[i].postUpdate(dt);
+                for (let i = 0; i < this._systems.length; ++i) {
+                    this._systems[i].postUpdate(dt);
                 }
             }
 
             this.emit(DirectorEvent.BEFORE_DRAW);
             uiRendererManager.updateAllDirtyRenderers();
-            this._root$!.frameMove(dt);
+            this._root!.frameMove(dt);
             this.emit(DirectorEvent.AFTER_DRAW);
 
             Node.resetHasChangedFlags();
             Node.clearNodeArray();
             scalableContainerManager.update(dt);
             this.emit(DirectorEvent.END_FRAME);
-            this._totalFrames$++;
+            this._totalFrames++;
         }
     }
 
@@ -810,12 +810,12 @@ export class Director extends EventTarget {
      * @zh 构建自定义渲染管线
      */
     private buildRenderPipeline (): void {
-        if (!this._root$) {
+        if (!this._root) {
             return;
         }
         // Here we should build the render pipeline.
-        const ppl = this._root$.customPipeline;
-        const cameras = this._root$.cameraList;
+        const ppl = this._root.customPipeline;
+        const cameras = this._root.cameraList;
 
         ppl.beginSetup();
         const builder = cclegacy.rendering.getCustomPipeline(macro.CUSTOM_PIPELINE_NAME);
@@ -830,7 +830,7 @@ export class Director extends EventTarget {
         //    (in CocosCreator/Project/Project Settings/Engine Manager/Macro Configuration/CUSTOM_PIPELINE_NAME)
         // 2. cclegacy.rendering is available
         // 3. The root node is created and uses custom pipeline
-        if (macro.CUSTOM_PIPELINE_NAME !== '' && cclegacy.rendering && this._root$ && this._root$.usesCustomPipeline) {
+        if (macro.CUSTOM_PIPELINE_NAME !== '' && cclegacy.rendering && this._root && this._root.usesCustomPipeline) {
             this.on(
                 DirectorEvent.BEFORE_RENDER,
                 this.buildRenderPipeline,
@@ -848,19 +848,19 @@ export class Director extends EventTarget {
      * @internal
      */
     public init (): void {
-        this._totalFrames$ = 0;
-        this._paused$ = false;
+        this._totalFrames = 0;
+        this._paused = false;
         // Scheduler
         // TODO: have a solid organization of priority and expose to user
-        this.registerSystem(Scheduler.ID, this._scheduler$, 200);
-        this._root$ = new Root(deviceManager.gfxDevice);
+        this.registerSystem(Scheduler.ID, this._scheduler, 200);
+        this._root = new Root(deviceManager.gfxDevice);
         const rootInfo = {};
-        this._root$.initialize(rootInfo);
+        this._root.initialize(rootInfo);
 
         this.setupRenderPipelineBuilder();
 
-        for (let i = 0; i < this._systems$.length; i++) {
-            this._systems$[i].init();
+        for (let i = 0; i < this._systems.length; i++) {
+            this._systems[i].init();
         }
 
         this.emit(DirectorEvent.INIT);
@@ -882,8 +882,8 @@ export class Director extends EventTarget {
             return;
         }
         const id = node.uuid;
-        if (!this._persistRootNodes$[id]) {
-            const scene = this._scene$ as any;
+        if (!this._persistRootNodes[id]) {
+            const scene = this._scene as any;
             if (isValid(scene)) {
                 if (!node.parent) {
                     node.parent = scene;
@@ -898,7 +898,7 @@ export class Director extends EventTarget {
                     node._originalSceneId = scene.uuid;
                 }
             }
-            this._persistRootNodes$[id] = node;
+            this._persistRootNodes[id] = node;
             node._persistNode = true;
             releaseManager._addPersistNodeRef(node);
         }
@@ -911,8 +911,8 @@ export class Director extends EventTarget {
      */
     public removePersistRootNode (node: Node): void {
         const id = node.uuid || '';
-        if (node === this._persistRootNodes$[id]) {
-            delete this._persistRootNodes$[id];
+        if (node === this._persistRootNodes[id]) {
+            delete this._persistRootNodes[id];
             node._persistNode = false;
             node._originalSceneId = '';
             releaseManager._removePersistNodeRef(node);

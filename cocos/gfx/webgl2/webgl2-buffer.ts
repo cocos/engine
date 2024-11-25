@@ -40,28 +40,28 @@ export class WebGL2Buffer extends Buffer {
     }
 
     getGpuBuffer$ (): IWebGL2GPUBuffer {
-        return  this._gpuBuffer$!;
+        return  this._gpuBuffer!;
     }
 
     private _gpuBuffer: IWebGL2GPUBuffer | null = null;
 
     public initialize (info: Readonly<BufferInfo> | Readonly<BufferViewInfo>): void {
         if ('buffer' in info) { // buffer view
-            this._isBufferView$ = true;
+            this._isBufferView = true;
 
             const buffer = info.buffer as WebGL2Buffer;
 
-            this._usage$ = buffer.usage;
-            this._memUsage$ = buffer.memUsage;
-            this._size$ = this._stride$ = info.range;
-            this._count$ = 1;
-            this._flags$ = buffer.flags;
+            this._usage = buffer.usage;
+            this._memUsage = buffer.memUsage;
+            this._size = this._stride = info.range;
+            this._count = 1;
+            this._flags = buffer.flags;
 
-            this._gpuBuffer$ = {
-                usage$: this._usage$,
-                memUsage$: this._memUsage$,
-                size$: this._size$,
-                stride$: this._stride$,
+            this._gpuBuffer = {
+                usage$: this._usage,
+                memUsage$: this._memUsage,
+                size$: this._size,
+                stride$: this._stride,
                 buffer$: null,
                 indirects$: buffer.getGpuBuffer$().indirects$,
                 glTarget$: buffer.getGpuBuffer$().glTarget$,
@@ -69,18 +69,18 @@ export class WebGL2Buffer extends Buffer {
                 glOffset$: info.offset,
             };
         } else { // native buffer
-            this._usage$ = info.usage;
-            this._memUsage$ = info.memUsage;
-            this._size$ = info.size;
-            this._stride$ = Math.max(info.stride || this._size$, 1);
-            this._count$ = this._size$ / this._stride$;
-            this._flags$ = info.flags;
+            this._usage = info.usage;
+            this._memUsage = info.memUsage;
+            this._size = info.size;
+            this._stride = Math.max(info.stride || this._size, 1);
+            this._count = this._size / this._stride;
+            this._flags = info.flags;
 
-            this._gpuBuffer$ = {
-                usage$: this._usage$,
-                memUsage$: this._memUsage$,
-                size$: this._size$,
-                stride$: this._stride$,
+            this._gpuBuffer = {
+                usage$: this._usage,
+                memUsage$: this._memUsage,
+                size$: this._size,
+                stride$: this._stride,
                 buffer$: null,
                 indirects$: new WebGL2IndirectDrawInfos(),
                 glTarget$: 0,
@@ -88,38 +88,38 @@ export class WebGL2Buffer extends Buffer {
                 glOffset$: 0,
             };
 
-            WebGL2CmdFuncCreateBuffer(WebGL2DeviceManager.instance, this._gpuBuffer$);
+            WebGL2CmdFuncCreateBuffer(WebGL2DeviceManager.instance, this._gpuBuffer);
 
-            WebGL2DeviceManager.instance.memoryStatus.bufferSize += this._size$;
+            WebGL2DeviceManager.instance.memoryStatus.bufferSize += this._size;
         }
     }
 
     public destroy (): void {
-        if (this._gpuBuffer$) {
-            if (!this._isBufferView$) {
-                WebGL2CmdFuncDestroyBuffer(WebGL2DeviceManager.instance, this._gpuBuffer$);
-                WebGL2DeviceManager.instance.memoryStatus.bufferSize -= this._size$;
+        if (this._gpuBuffer) {
+            if (!this._isBufferView) {
+                WebGL2CmdFuncDestroyBuffer(WebGL2DeviceManager.instance, this._gpuBuffer);
+                WebGL2DeviceManager.instance.memoryStatus.bufferSize -= this._size;
             }
-            this._gpuBuffer$ = null;
+            this._gpuBuffer = null;
         }
     }
 
     public resize (size: number): void {
-        if (this._isBufferView$) {
+        if (this._isBufferView) {
             warnID(16379);
             return;
         }
 
-        const oldSize = this._size$;
+        const oldSize = this._size;
         if (oldSize === size) { return; }
 
-        this._size$ = size;
-        this._count$ = this._size$ / this._stride$;
+        this._size = size;
+        this._count = this._size / this._stride;
 
-        if (this._gpuBuffer$) {
-            this._gpuBuffer$.size$ = size;
+        if (this._gpuBuffer) {
+            this._gpuBuffer.size$ = size;
             if (size > 0) {
-                WebGL2CmdFuncResizeBuffer(WebGL2DeviceManager.instance, this._gpuBuffer$);
+                WebGL2CmdFuncResizeBuffer(WebGL2DeviceManager.instance, this._gpuBuffer);
                 WebGL2DeviceManager.instance.memoryStatus.bufferSize -= oldSize;
                 WebGL2DeviceManager.instance.memoryStatus.bufferSize += size;
             }
@@ -127,7 +127,7 @@ export class WebGL2Buffer extends Buffer {
     }
 
     public update (buffer: Readonly<BufferSource>, size?: number): void {
-        if (this._isBufferView$) {
+        if (this._isBufferView) {
             warnID(16380);
             return;
         }
@@ -135,7 +135,7 @@ export class WebGL2Buffer extends Buffer {
         let buffSize: number;
         if (size !== undefined) {
             buffSize = size;
-        } else if (this._usage$ & BufferUsageBit.INDIRECT) {
+        } else if (this._usage & BufferUsageBit.INDIRECT) {
             buffSize = 0;
         } else {
             buffSize = (buffer as ArrayBuffer).byteLength;
@@ -143,7 +143,7 @@ export class WebGL2Buffer extends Buffer {
 
         WebGL2CmdFuncUpdateBuffer(
             WebGL2DeviceManager.instance,
-            this._gpuBuffer$!,
+            this._gpuBuffer!,
             buffer as BufferSource,
             0,
             buffSize,

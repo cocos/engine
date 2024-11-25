@@ -78,28 +78,28 @@ export class WebGPUDescriptorSetLayout extends DescriptorSetLayout {
         this._hasChange = false;
     }
     public initialize (info: Readonly<DescriptorSetLayoutInfo>): void {
-        Array.prototype.push.apply(this._bindings$, info.bindings);
+        Array.prototype.push.apply(this._bindings, info.bindings);
 
         let descriptorCount = 0; let maxBinding = -1;
         const flattenedIndices: number[] = [];
-        const bindingSize = this._bindings$.length;
+        const bindingSize = this._bindings.length;
         for (let i = 0; i < bindingSize; i++) {
-            const binding = this._bindings$[i];
+            const binding = this._bindings[i];
             flattenedIndices.push(descriptorCount);
             descriptorCount += binding.count;
             if (binding.binding > maxBinding) maxBinding = binding.binding;
         }
 
-        this._bindingIndices$ = Array(maxBinding + 1).fill(-1);
-        const descriptorIndices = this._descriptorIndices$ = Array(maxBinding + 1).fill(-1);
+        this._bindingIndices = Array(maxBinding + 1).fill(-1);
+        const descriptorIndices = this._descriptorIndices = Array(maxBinding + 1).fill(-1);
         for (let i = 0; i < bindingSize; i++) {
-            const binding = this._bindings$[i];
-            this._bindingIndices$[binding.binding] = i;
+            const binding = this._bindings[i];
+            this._bindingIndices[binding.binding] = i;
             descriptorIndices[binding.binding] = flattenedIndices[i];
         }
         const dynamicBindings: number[] = [];
         for (let i = 0; i < bindingSize; i++) {
-            const binding = this._bindings$[i];
+            const binding = this._bindings[i];
             if (binding.descriptorType & DESCRIPTOR_DYNAMIC_TYPE) {
                 for (let j = 0; j < binding.count; j++) {
                     dynamicBindings.push(binding.binding);
@@ -107,7 +107,7 @@ export class WebGPUDescriptorSetLayout extends DescriptorSetLayout {
             }
         }
         this._gpuDescriptorSetLayout = {
-            bindings: this._bindings$,
+            bindings: this._bindings,
             dynamicBindings,
             descriptorIndices,
             descriptorCount,
@@ -223,7 +223,7 @@ export class WebGPUDescriptorSetLayout extends DescriptorSetLayout {
     }
 
     public destroy (): void {
-        this._bindings$.length = 0;
+        this._bindings.length = 0;
         this.clear();
         this._gpuDescriptorSetLayout = null;
     }

@@ -125,7 +125,7 @@ export class PackManager {
     }
 
     public init (): void {
-        this._loading$.clear();
+        this._loading.clear();
     }
 
     /**
@@ -153,9 +153,9 @@ export class PackManager {
     public register (map: Record<string, Unpacker>): void;
     public register (type: string | Record<string, Unpacker>, handler?: Unpacker): void {
         if (typeof type === 'object') {
-            js.mixin(this._unpackers$, type);
+            js.mixin(this._unpackers, type);
         } else {
-            this._unpackers$[type] = handler!;
+            this._unpackers[type] = handler!;
         }
     }
 
@@ -192,7 +192,7 @@ export class PackManager {
             onComplete(new Error('package data is wrong!'));
             return;
         }
-        const unpacker = this._unpackers$[type];
+        const unpacker = this._unpackers[type];
         unpacker(pack, data, options, onComplete);
     }
 
@@ -232,10 +232,10 @@ export class PackManager {
         const packs = item.info.packs;
 
         // find a loading package
-        const loadingPack = packs.find((val): boolean => this._loading$.has(val.uuid));
+        const loadingPack = packs.find((val): boolean => this._loading.has(val.uuid));
 
         if (loadingPack) {
-            const req = this._loading$.get(loadingPack.uuid);
+            const req = this._loading.get(loadingPack.uuid);
             assertIsTrue(req);
             req.push({ onComplete, id: item.id });
             return;
@@ -243,7 +243,7 @@ export class PackManager {
 
         // download a new package
         const pack = packs[0];
-        this._loading$.add(pack.uuid, [{ onComplete, id: item.id }]);
+        this._loading.add(pack.uuid, [{ onComplete, id: item.id }]);
 
         // find the url of pack
         assertIsTrue(item.config);
@@ -261,7 +261,7 @@ export class PackManager {
                         files.add(id, result[id]);
                     }
                 }
-                const callbacks = this._loading$.remove(pack.uuid);
+                const callbacks = this._loading.remove(pack.uuid);
                 assertIsTrue(callbacks);
                 for (let i = 0, l = callbacks.length; i < l; i++) {
                     const cb = callbacks[i];

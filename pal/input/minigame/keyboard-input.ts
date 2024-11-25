@@ -145,27 +145,27 @@ export class KeyboardInputSource {
 
     constructor () {
         if (systemInfo.hasFeature(Feature.EVENT_KEYBOARD)) {
-            this._registerEvent$();
+            this._registerEvent();
         }
     }
 
     private _registerEvent (): void {
         minigame.wx?.onKeyDown?.((res) => {
             const keyCode = getKeyCode(res.code);
-            if (!this._keyStateMap$[keyCode]) {
-                const eventKeyDown = this._getInputEvent$(res, InputEventType.KEY_DOWN);
-                this._eventTarget$.emit(InputEventType.KEY_DOWN, eventKeyDown);
+            if (!this._keyStateMap[keyCode]) {
+                const eventKeyDown = this._getInputEvent(res, InputEventType.KEY_DOWN);
+                this._eventTarget.emit(InputEventType.KEY_DOWN, eventKeyDown);
             } else {
-                const eventKeyPressing = this._getInputEvent$(res, InputEventType.KEY_PRESSING);
-                this._eventTarget$.emit(InputEventType.KEY_PRESSING, eventKeyPressing);
+                const eventKeyPressing = this._getInputEvent(res, InputEventType.KEY_PRESSING);
+                this._eventTarget.emit(InputEventType.KEY_PRESSING, eventKeyPressing);
             }
-            this._keyStateMap$[keyCode] = true;
+            this._keyStateMap[keyCode] = true;
         });
         minigame.wx?.onKeyUp?.((res) => {
             const keyCode = getKeyCode(res.code);
-            const eventKeyUp = this._getInputEvent$(res, InputEventType.KEY_UP);
-            this._keyStateMap$[keyCode] = false;
-            this._eventTarget$.emit(InputEventType.KEY_UP, eventKeyUp);
+            const eventKeyUp = this._getInputEvent(res, InputEventType.KEY_UP);
+            this._keyStateMap[keyCode] = false;
+            this._eventTarget.emit(InputEventType.KEY_UP, eventKeyUp);
         });
     }
 
@@ -176,6 +176,6 @@ export class KeyboardInputSource {
     }
 
     public on (eventType: InputEventType, callback: KeyboardCallback, target?: any): void {
-        this._eventTarget$.on(eventType, callback,  target);
+        this._eventTarget.on(eventType, callback,  target);
     }
 }

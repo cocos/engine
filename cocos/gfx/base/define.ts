@@ -2006,15 +2006,15 @@ export class DynamicStates {
   */
 export class GFXObject extends GCObject {
     public get objectType (): ObjectType {
-        return this._objectType$;
+        return this._objectType;
     }
 
     public get objectID (): number {
-        return this._objectID$;
+        return this._objectID;
     }
 
     public get typedID (): number {
-        return this._typedID$;
+        return this._typedID;
     }
 
     protected _objectType$ = ObjectType.UNKNOWN;
@@ -2025,9 +2025,9 @@ export class GFXObject extends GCObject {
 
     constructor (objectType: ObjectType) {
         super();
-        this._objectType$ = objectType;
-        this._objectID$ = GFXObject._idTable[ObjectType.UNKNOWN]++;
-        this._typedID$ = GFXObject._idTable[objectType]++;
+        this._objectType = objectType;
+        this._objectID = GFXObject._idTable[ObjectType.UNKNOWN]++;
+        this._typedID = GFXObject._idTable[objectType]++;
     }
 }
 

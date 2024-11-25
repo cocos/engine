@@ -30,16 +30,16 @@ import { GFXObject, ObjectType, TextureBarrierInfo } from '../define';
  * @zh GFX 贴图内存屏障。
  */
 export class TextureBarrier extends GFXObject {
-    get info (): Readonly<TextureBarrierInfo> { return this._info$; }
-    get hash (): number { return this._hash$; }
+    get info (): Readonly<TextureBarrierInfo> { return this._info; }
+    get hash (): number { return this._hash; }
 
     protected _info$: TextureBarrierInfo = new TextureBarrierInfo();
     protected _hash$ = 0;
 
     constructor (info: Readonly<TextureBarrierInfo>, hash: number) {
         super(ObjectType.TEXTURE_BARRIER);
-        this._info$.copy(info);
-        this._hash$ = hash;
+        this._info.copy(info);
+        this._hash = hash;
     }
 
     static computeHash (info: Readonly<TextureBarrierInfo>): number {

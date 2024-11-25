@@ -32,7 +32,7 @@ import { IWebGLGPUInputAssembler, IWebGLGPUBuffer } from './webgl-gpu-objects';
 
 export class WebGLInputAssembler extends InputAssembler {
     get gpuInputAssembler (): IWebGLGPUInputAssembler {
-        return  this._gpuInputAssembler$!;
+        return  this._gpuInputAssembler!;
     }
 
     private _gpuInputAssembler: IWebGLGPUInputAssembler | null = null;
@@ -47,24 +47,24 @@ export class WebGLInputAssembler extends InputAssembler {
             return;
         }
 
-        this._attributes$ = info.attributes;
-        this._attributesHash$ = this.computeAttributesHash$();
-        this._vertexBuffers$ = info.vertexBuffers;
+        this._attributes = info.attributes;
+        this._attributesHash = this.computeAttributesHash$();
+        this._vertexBuffers = info.vertexBuffers;
 
         if (info.indexBuffer) {
-            this._indexBuffer$ = info.indexBuffer;
-            this._drawInfo$.indexCount = this._indexBuffer$.size / this._indexBuffer$.stride;
-            this._drawInfo$.firstIndex = 0;
+            this._indexBuffer = info.indexBuffer;
+            this._drawInfo.indexCount = this._indexBuffer.size / this._indexBuffer.stride;
+            this._drawInfo.firstIndex = 0;
         } else {
-            const vertBuff = this._vertexBuffers$[0];
-            this._drawInfo$.vertexCount = vertBuff.size / vertBuff.stride;
-            this._drawInfo$.firstVertex = 0;
-            this._drawInfo$.vertexOffset = 0;
+            const vertBuff = this._vertexBuffers[0];
+            this._drawInfo.vertexCount = vertBuff.size / vertBuff.stride;
+            this._drawInfo.firstVertex = 0;
+            this._drawInfo.vertexOffset = 0;
         }
-        this._drawInfo$.instanceCount = 0;
-        this._drawInfo$.firstInstance = 0;
+        this._drawInfo.instanceCount = 0;
+        this._drawInfo.firstInstance = 0;
 
-        this._indirectBuffer$ = info.indirectBuffer || null;
+        this._indirectBuffer = info.indirectBuffer || null;
 
         const gpuVertexBuffers: IWebGLGPUBuffer[] = new Array<IWebGLGPUBuffer>(info.vertexBuffers.length);
         for (let i = 0; i < info.vertexBuffers.length; ++i) {
@@ -95,7 +95,7 @@ export class WebGLInputAssembler extends InputAssembler {
             gpuIndirectBuffer = (info.indirectBuffer as WebGLBuffer).gpuBuffer;
         }
 
-        this._gpuInputAssembler$ = {
+        this._gpuInputAssembler = {
             attributes$: info.attributes,
             gpuVertexBuffers$: gpuVertexBuffers,
             gpuIndexBuffer$: gpuIndexBuffer,
@@ -106,14 +106,14 @@ export class WebGLInputAssembler extends InputAssembler {
             glVAOs$: new Map<WebGLProgram, WebGLVertexArrayObjectOES>(),
         };
 
-        WebGLCmdFuncCreateInputAssember(WebGLDeviceManager.instance, this._gpuInputAssembler$);
+        WebGLCmdFuncCreateInputAssember(WebGLDeviceManager.instance, this._gpuInputAssembler);
     }
 
     public destroy (): void {
         const device = WebGLDeviceManager.instance;
-        if (this._gpuInputAssembler$ && device.extensions.useVAO$) {
-            WebGLCmdFuncDestroyInputAssembler(device, this._gpuInputAssembler$);
+        if (this._gpuInputAssembler && device.extensions.useVAO$) {
+            WebGLCmdFuncDestroyInputAssembler(device, this._gpuInputAssembler);
         }
-        this._gpuInputAssembler$ = null;
+        this._gpuInputAssembler = null;
     }
 }

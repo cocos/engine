@@ -217,11 +217,11 @@ export function getContext (canvas: HTMLCanvasElement): WebGLRenderingContext | 
 
 export class WebGLSwapchain extends Swapchain {
     get extensions (): IWebGLExtensions {
-        return this._extensions$ as IWebGLExtensions;
+        return this._extensions as IWebGLExtensions;
     }
 
     get blitManager (): IWebGLBlitManager {
-        return this._blitManager$!;
+        return this._blitManager!;
     }
 
     public stateCache$: WebGLStateCache = new WebGLStateCache();
@@ -238,17 +238,17 @@ export class WebGLSwapchain extends Swapchain {
     }
 
     public initialize (info: Readonly<SwapchainInfo>): void {
-        this._canvas$ = info.windowHandle;
+        this._canvas = info.windowHandle;
 
-        this._webGLContextLostHandler$ = this._onWebGLContextLost$.bind(this);
-        this._canvas$.addEventListener(eventWebGLContextLost, this._webGLContextLostHandler$);
+        this._webGLContextLostHandler = this._onWebGLContextLost.bind(this);
+        this._canvas.addEventListener(eventWebGLContextLost, this._webGLContextLostHandler);
 
         const { instance } = WebGLDeviceManager;
         const { gl, capabilities } = instance;
 
         this.stateCache$.initialize(capabilities.maxTextureUnits, capabilities.maxVertexAttributes);
 
-        this._extensions$ = getExtensions(gl);
+        this._extensions = getExtensions(gl);
 
         // init states
         initStates(gl);
@@ -266,16 +266,16 @@ export class WebGLSwapchain extends Swapchain {
         if (depthBits && stencilBits) depthStencilFmt = Format.DEPTH_STENCIL;
         else if (depthBits) depthStencilFmt = Format.DEPTH;
 
-        this._colorTexture$ = new WebGLTexture();
-        this._colorTexture$.initAsSwapchainTexture({
+        this._colorTexture = new WebGLTexture();
+        this._colorTexture.initAsSwapchainTexture({
             swapchain: this,
             format: colorFmt,
             width: info.width,
             height: info.height,
         });
 
-        this._depthStencilTexture$ = new WebGLTexture();
-        this._depthStencilTexture$.initAsSwapchainTexture({
+        this._depthStencilTexture = new WebGLTexture();
+        this._depthStencilTexture.initAsSwapchainTexture({
             swapchain: this,
             format: depthStencilFmt,
             width: info.width,
@@ -316,13 +316,13 @@ export class WebGLSwapchain extends Swapchain {
             this.nullTexCube$,
             [nullTexRegion],
         );
-        this._blitManager$ = new IWebGLBlitManager();
+        this._blitManager = new IWebGLBlitManager();
     }
 
     public destroy (): void {
-        if (this._canvas$ && this._webGLContextLostHandler$) {
-            this._canvas$.removeEventListener(eventWebGLContextLost, this._webGLContextLostHandler$);
-            this._webGLContextLostHandler$ = null;
+        if (this._canvas && this._webGLContextLostHandler) {
+            this._canvas.removeEventListener(eventWebGLContextLost, this._webGLContextLostHandler);
+            this._webGLContextLostHandler = null;
         }
 
         if (this.nullTex2D$) {
@@ -335,22 +335,22 @@ export class WebGLSwapchain extends Swapchain {
             this.nullTexCube$ = null!;
         }
 
-        if (this._blitManager$) {
-            this._blitManager$.destroy();
-            this._blitManager$ = null!;
+        if (this._blitManager) {
+            this._blitManager.destroy();
+            this._blitManager = null!;
         }
 
-        this._extensions$ = null;
-        this._canvas$ = null;
+        this._extensions = null;
+        this._canvas = null;
     }
 
     public resize (width: number, height: number, surfaceTransform: SurfaceTransform): void {
-        if (this._colorTexture$.width !== width || this._colorTexture$.height !== height) {
+        if (this._colorTexture.width !== width || this._colorTexture.height !== height) {
             debug(`Resizing swapchain: ${width}x${height}`);
-            this._canvas$!.width = width;
-            this._canvas$!.height = height;
-            this._colorTexture$.resize(width, height);
-            this._depthStencilTexture$.resize(width, height);
+            this._canvas!.width = width;
+            this._canvas!.height = height;
+            this._colorTexture.resize(width, height);
+            this._depthStencilTexture.resize(width, height);
         }
     }
 

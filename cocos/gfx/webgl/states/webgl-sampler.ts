@@ -36,7 +36,7 @@ const WebGLWraps: GLenum[] = [
 
 export class WebGLSampler extends Sampler {
     public get gpuSampler (): IWebGLGPUSampler {
-        return  this._gpuSampler$!;
+        return  this._gpuSampler!;
     }
 
     private _gpuSampler: IWebGLGPUSampler | null = null;
@@ -47,9 +47,9 @@ export class WebGLSampler extends Sampler {
         let glMinFilter = 0;
         let glMagFilter = 0;
 
-        const minFilter = this._info$.minFilter;
-        const magFilter = this._info$.magFilter;
-        const mipFilter = this._info$.mipFilter;
+        const minFilter = this._info.minFilter;
+        const magFilter = this._info.magFilter;
+        const mipFilter = this._info.mipFilter;
 
         if (minFilter === Filter.LINEAR || minFilter === Filter.ANISOTROPIC) {
             if (mipFilter === Filter.LINEAR || mipFilter === Filter.ANISOTROPIC) {
@@ -73,11 +73,11 @@ export class WebGLSampler extends Sampler {
             glMagFilter = WebGLConstants.NEAREST;
         }
 
-        const glWrapS = WebGLWraps[this._info$.addressU];
-        const glWrapT = WebGLWraps[this._info$.addressV];
-        const glWrapR = WebGLWraps[this._info$.addressW];
+        const glWrapS = WebGLWraps[this._info.addressU];
+        const glWrapT = WebGLWraps[this._info.addressV];
+        const glWrapR = WebGLWraps[this._info.addressW];
 
-        this._gpuSampler$ = {
+        this._gpuSampler = {
             glMinFilter$: glMinFilter,
             glMagFilter$: glMagFilter,
             glWrapS$: glWrapS,

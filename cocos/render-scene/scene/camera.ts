@@ -427,7 +427,7 @@ export class Camera {
      * @zh 相机的名称
      */
     get name (): string | null {
-        return this._name$;
+        return this._name;
     }
 
     /**
@@ -435,7 +435,7 @@ export class Camera {
      * @zh 相机所挂载的场景
      */
     get scene (): RenderScene | null {
-        return this._scene$;
+        return this._scene;
     }
 
     /**
@@ -443,10 +443,10 @@ export class Camera {
      * @zh 相机绑定的节点，决定了它在世界空间的变换矩阵
      */
     set node (val: Node) {
-        this._node$ = val;
+        this._node = val;
     }
     get node (): Node {
-        return this._node$!;
+        return this._node!;
     }
 
     /**
@@ -454,7 +454,7 @@ export class Camera {
      * @zh 相机关联的渲染窗口ID
      */
     get systemWindowId (): number {
-        return this._windowId$;
+        return this._windowId;
     }
 
     /**
@@ -462,10 +462,10 @@ export class Camera {
      * @zh 相机关联的渲染窗口
      */
     set window (val) {
-        this._window$ = val;
+        this._window = val;
     }
     get window (): RenderWindow {
-        return this._window$!;
+        return this._window!;
     }
 
     /**
@@ -473,10 +473,10 @@ export class Camera {
      * @zh 相机是否启用，未启用的相机不会被渲染
      */
     set enabled (val) {
-        this._enabled$ = val;
+        this._enabled = val;
     }
     get enabled (): boolean {
-        return this._enabled$;
+        return this._enabled;
     }
 
     /**
@@ -484,10 +484,10 @@ export class Camera {
      * @zh 相机的可见性掩码，声明在当前相机中可见的节点层级集合。
      */
     set visibility (vis: number) {
-        this._visibility$ = vis;
+        this._visibility = vis;
     }
     get visibility (): number {
-        return this._visibility$;
+        return this._visibility;
     }
 
     /**
@@ -495,11 +495,11 @@ export class Camera {
      * @zh 相机的渲染优先级，值越小越优先渲染。
      */
     get priority (): number {
-        return this._priority$;
+        return this._priority;
     }
 
     set priority (val: number) {
-        this._priority$ = val;
+        this._priority = val;
     }
 
     /**
@@ -507,7 +507,7 @@ export class Camera {
      * @zh 相机的视图宽度
      */
     get width (): number {
-        return this._width$;
+        return this._width;
     }
 
     /**
@@ -515,7 +515,7 @@ export class Camera {
      * @zh 相机的视图高度
      */
     get height (): number {
-        return this._height$;
+        return this._height;
     }
 
     /**
@@ -523,10 +523,10 @@ export class Camera {
      * @zh 相机的世界坐标
      */
     set position (val) {
-        this._position$ = val;
+        this._position = val;
     }
     get position (): Vec3 {
-        return this._position$;
+        return this._position;
     }
 
     /**
@@ -534,10 +534,10 @@ export class Camera {
      * @zh 指向相机观察方向的向量
      */
     set forward (val) {
-        this._forward$ = val;
+        this._forward = val;
     }
     get forward (): Vec3 {
-        return this._forward$;
+        return this._forward;
     }
 
     /**
@@ -545,12 +545,12 @@ export class Camera {
      * @zh 相机光圈，影响相机的曝光参数。
      */
     set aperture (val: CameraAperture) {
-        this._aperture$ = val;
-        this._apertureValue$ = FSTOPS[this._aperture$];
+        this._aperture = val;
+        this._apertureValue = FSTOPS[this._aperture];
         this.updateExposure$();
     }
     get aperture (): CameraAperture {
-        return this._aperture$;
+        return this._aperture;
     }
 
     /**
@@ -558,7 +558,7 @@ export class Camera {
      * @zh 相机光圈值。
      */
     get apertureValue (): number {
-        return this._apertureValue$;
+        return this._apertureValue;
     }
 
     /**
@@ -566,12 +566,12 @@ export class Camera {
      * @zh 相机快门，影响相机的曝光参数。
      */
     set shutter (val: CameraShutter) {
-        this._shutter$ = val;
-        this._shutterValue$ = SHUTTERS[this._shutter$];
+        this._shutter = val;
+        this._shutterValue = SHUTTERS[this._shutter];
         this.updateExposure$();
     }
     get shutter (): CameraShutter {
-        return this._shutter$;
+        return this._shutter;
     }
 
     /**
@@ -579,7 +579,7 @@ export class Camera {
      * @zh 相机快门值。
      */
     get shutterValue (): number {
-        return this._shutterValue$;
+        return this._shutterValue;
     }
 
     /**
@@ -588,7 +588,7 @@ export class Camera {
      */
     set iso (val: CameraISO) {
         this._iso = val;
-        this._isoValue$ = ISOS[this._iso];
+        this._isoValue = ISOS[this._iso];
         this.updateExposure$();
     }
     get iso (): CameraISO {
@@ -600,7 +600,7 @@ export class Camera {
      * @zh 相机感光度值。
      */
     get isoValue (): number {
-        return this._isoValue$;
+        return this._isoValue;
     }
 
     /**
@@ -608,7 +608,7 @@ export class Camera {
      * @zh 相机的曝光参数
      */
     get exposure (): number {
-        return this._exposure$;
+        return this._exposure;
     }
 
     /**
@@ -616,10 +616,10 @@ export class Camera {
      * @zh 相机的缓冲清除标志位，指定帧缓冲的哪部分要每帧清除。
      */
     get clearFlag (): ClearFlags {
-        return this._clearFlag$;
+        return this._clearFlag;
     }
     set clearFlag (flag: ClearFlags) {
-        this._clearFlag$ = flag;
+        this._clearFlag = flag;
     }
 
     /**
@@ -627,13 +627,13 @@ export class Camera {
      * @zh 相机的颜色缓冲默认值。
      */
     set clearColor (val) {
-        this._clearColor$.x = val.x;
-        this._clearColor$.y = val.y;
-        this._clearColor$.z = val.z;
-        this._clearColor$.w = val.w;
+        this._clearColor.x = val.x;
+        this._clearColor.y = val.y;
+        this._clearColor.z = val.z;
+        this._clearColor.w = val.w;
     }
     get clearColor (): IVec4Like {
-        return this._clearColor$ as IVec4Like;
+        return this._clearColor as IVec4Like;
     }
 
     /**
@@ -641,10 +641,10 @@ export class Camera {
      * @zh 相机的深度缓冲默认值。
      */
     get clearDepth (): number {
-        return this._clearDepth$;
+        return this._clearDepth;
     }
     set clearDepth (depth: number) {
-        this._clearDepth$ = depth;
+        this._clearDepth = depth;
     }
 
     /**
@@ -652,10 +652,10 @@ export class Camera {
      * @zh 相机的模板缓冲默认值。
      */
     get clearStencil (): number {
-        return this._clearStencil$;
+        return this._clearStencil;
     }
     set clearStencil (stencil: number) {
-        this._clearStencil$ = stencil;
+        this._clearStencil = stencil;
     }
 
     /**
@@ -663,11 +663,11 @@ export class Camera {
      * @zh 相机的投影类型。
      */
     set projectionType (val) {
-        this._proj$ = val;
-        this._isProjDirty$ = true;
+        this._proj = val;
+        this._isProjDirty = true;
     }
     get projectionType (): CameraProjection {
-        return this._proj$;
+        return this._proj;
     }
 
     /**
@@ -675,7 +675,7 @@ export class Camera {
      * @zh 相机视图的长宽比
      */
     get aspect (): number {
-        return this._aspect$;
+        return this._aspect;
     }
 
     /**
@@ -683,11 +683,11 @@ export class Camera {
      * @zh 正交相机的视角高度。
      */
     set orthoHeight (val) {
-        this._orthoHeight$ = val;
-        this._isProjDirty$ = true;
+        this._orthoHeight = val;
+        this._isProjDirty = true;
     }
     get orthoHeight (): number {
-        return this._orthoHeight$;
+        return this._orthoHeight;
     }
 
     /**
@@ -695,11 +695,11 @@ export class Camera {
      * @zh 指定视角的固定轴向，在此轴上不会跟随屏幕长宽比例变化。
      */
     set fovAxis (axis) {
-        this._fovAxis$ = axis;
-        this._isProjDirty$ = true;
+        this._fovAxis = axis;
+        this._isProjDirty = true;
     }
     get fovAxis (): CameraFOVAxis {
-        return this._fovAxis$;
+        return this._fovAxis;
     }
 
     /**
@@ -708,7 +708,7 @@ export class Camera {
      */
     set fov (fov) {
         this._fov$ = fov;
-        this._isProjDirty$ = true;
+        this._isProjDirty = true;
     }
     get fov (): number {
         return this._fov$;
@@ -719,11 +719,11 @@ export class Camera {
      * @zh 相机的近裁剪距离，应在可接受范围内尽量取最大。
      */
     set nearClip (nearClip) {
-        this._nearClip$ = nearClip;
-        this._isProjDirty$ = true;
+        this._nearClip = nearClip;
+        this._isProjDirty = true;
     }
     get nearClip (): number {
-        return this._nearClip$;
+        return this._nearClip;
     }
 
     /**
@@ -731,11 +731,11 @@ export class Camera {
      * @zh 相机的远裁剪距离，应在可接受范围内尽量取最小。
      */
     set farClip (farClip) {
-        this._farClip$ = farClip;
-        this._isProjDirty$ = true;
+        this._farClip = farClip;
+        this._isProjDirty = true;
     }
     get farClip (): number {
-        return this._farClip$;
+        return this._farClip;
     }
 
     /**
@@ -743,7 +743,7 @@ export class Camera {
      * @zh 相机的视口矩形，如果设备允许的话，这个视口会永远保持竖屏状态，由渲染流程保障旋转的正确。
      */
     get viewport (): Rect {
-        return this._viewport$;
+        return this._viewport;
     }
     set viewport (val) {
         warnID(8302);
@@ -755,10 +755,10 @@ export class Camera {
      * @zh 相机的视锥体
      */
     set frustum (val) {
-        this._frustum$ = val;
+        this._frustum = val;
     }
     get frustum (): Frustum {
-        return this._frustum$;
+        return this._frustum;
     }
 
     /**
@@ -766,7 +766,7 @@ export class Camera {
      * @zh 相机的视图矩阵
      */
     get matView (): Mat4 {
-        return this._matView$;
+        return this._matView;
     }
 
     /**
@@ -774,7 +774,7 @@ export class Camera {
      * @zh 相机的投影矩阵
      */
     get matProj (): Mat4 {
-        return this._matProj$;
+        return this._matProj;
     }
 
     /**
@@ -782,7 +782,7 @@ export class Camera {
      * @zh 相机的逆投影矩阵
      */
     get matProjInv (): Mat4 {
-        return this._matProjInv$;
+        return this._matProjInv;
     }
 
     /**
@@ -790,7 +790,7 @@ export class Camera {
      * @zh 相机的视图投影矩阵
      */
     get matViewProj (): Mat4 {
-        return this._matViewProj$;
+        return this._matViewProj;
     }
 
     /**
@@ -798,12 +798,12 @@ export class Camera {
      * @zh 相机的逆视图投影矩阵
      */
     get matViewProjInv (): Mat4 {
-        return this._matViewProjInv$;
+        return this._matViewProjInv;
     }
 
     /** @engineInternal */
     get cameraId (): number {
-        return this._cameraId$;
+        return this._cameraId;
     }
 
     /**
@@ -872,12 +872,12 @@ export class Camera {
     private _cameraId = _cameraCount++;
 
     constructor (device: Device) {
-        this._device$ = device;
-        this._apertureValue$ = FSTOPS[this._aperture$];
-        this._shutterValue$ = SHUTTERS[this._shutter$];
-        this._isoValue$ = ISOS[this._iso];
+        this._device = device;
+        this._apertureValue = FSTOPS[this._aperture];
+        this._shutterValue = SHUTTERS[this._shutter];
+        this._isoValue = ISOS[this._iso];
 
-        this._frustum$.accurate = true;
+        this._frustum.accurate = true;
 
         if (!correctionMatrices.length) {
             const ySign = device.capabilities.clipSpaceSignY;
@@ -889,14 +889,14 @@ export class Camera {
     }
 
     private _updateAspect (oriented = true): void {
-        this._aspect$ = (this.window.width * this._viewport$.width) / (this.window.height * this._viewport$.height);
+        this._aspect = (this.window.width * this._viewport.width) / (this.window.height * this._viewport.height);
         // window size/viewport is pre-rotated, but aspect should be oriented to acquire the correct projection
         if (oriented) {
             const swapchain = this.window.swapchain;
             const orientation = swapchain && swapchain.surfaceTransform || SurfaceTransform.IDENTITY;
-            if (orientation % 2) this._aspect$ = 1 / this._aspect$;
+            if (orientation % 2) this._aspect = 1 / this._aspect;
         }
-        this._isProjDirty$ = true;
+        this._isProjDirty = true;
     }
 
     /**
@@ -905,26 +905,26 @@ export class Camera {
      */
     public initialize (info: ICameraInfo): void {
         if (info.usage !== undefined) {
-            this._usage$ = info.usage;
+            this._usage = info.usage;
         } else {
             this.setDefaultUsage$();
         }
         if (info.trackingType !== undefined) {
-            this._trackingType$ = info.trackingType;
+            this._trackingType = info.trackingType;
         }
         if (info.cameraType !== undefined) {
-            this._cameraType$ = info.cameraType;
+            this._cameraType = info.cameraType;
         }
         this.node = info.node;
-        this._width$ = 1;
-        this._height$ = 1;
+        this._width = 1;
+        this._height = 1;
         this.clearFlag = ClearFlagBit.NONE;
         this.clearDepth = 1.0;
         this.visibility = CAMERA_DEFAULT_MASK;
-        this._name$ = info.name;
-        this._proj$ = info.projection;
-        this._priority$ = info.priority || 0;
-        this._aspect$ = this.screenScale = 1;
+        this._name = info.name;
+        this._proj = info.projection;
+        this._priority = info.priority || 0;
+        this._aspect = this.screenScale = 1;
         this.updateExposure$();
         this.changeTargetWindow(info.window);
     }
@@ -934,14 +934,14 @@ export class Camera {
      * @zh 销毁相机，开发者不应该使用这个方法，销毁流程是由 RenderScene 管理的。
      */
     public destroy (): void {
-        this._node$ = null;
+        this._node = null;
         this.detachFromScene();
-        if (this._window$) {
-            this._window$.detachCamera(this);
+        if (this._window) {
+            this._window.detachCamera(this);
             this.window = null!;
         }
-        this._name$ = null;
-        this._geometryRenderer$?.destroy();
+        this._name = null;
+        this._geometryRenderer?.destroy();
     }
 
     /**
@@ -950,8 +950,8 @@ export class Camera {
      * @param scene @en The render scene @zh 渲染场景
      */
     public attachToScene (scene: RenderScene): void {
-        this._enabled$ = true;
-        this._scene$ = scene;
+        this._enabled = true;
+        this._scene = scene;
     }
 
     /**
@@ -959,8 +959,8 @@ export class Camera {
      * @zh 将相机从之前设置的渲染场景移除，之后将不会再被渲染。
      */
     public detachFromScene (): void {
-        this._enabled$ = false;
-        this._scene$ = null;
+        this._enabled = false;
+        this._scene = null;
     }
 
     /**
@@ -970,12 +970,12 @@ export class Camera {
      * @param height The height of the view size
      */
     public resize (width: number, height: number): void {
-        if (!this._window$) return;
+        if (!this._window) return;
 
-        this._width$ = width;
-        this._height$ = height;
-        this._aspect$ = (width * this._viewport$.width) / (height * this._viewport$.height);
-        this._isProjDirty$ = true;
+        this._width = width;
+        this._height = height;
+        this._aspect = (width * this._viewport.width) / (height * this._viewport.height);
+        this._isProjDirty = true;
     }
 
     /**
@@ -985,9 +985,9 @@ export class Camera {
      * @param height The height of the view size
      */
     public setFixedSize (width: number, height: number): void {
-        this._width$ = width;
-        this._height$ = height;
-        this._updateAspect$();
+        this._width = width;
+        this._height = height;
+        this._updateAspect();
         this.isWindowSize = false;
     }
 
@@ -999,10 +999,10 @@ export class Camera {
         if (EDITOR) {
             this.position = camera.position;
             this.forward = camera.forward;
-            this._matView$ = camera.matView;
-            this._matProj$ = camera.matProj;
-            this._matProjInv$ = camera.matProjInv;
-            this._matViewProj$ = camera.matViewProj;
+            this._matView = camera.matView;
+            this._matProj = camera.matProj;
+            this._matProjInv = camera.matProjInv;
+            this._matViewProj = camera.matViewProj;
         }
     }
 
@@ -1012,82 +1012,82 @@ export class Camera {
      * @param forceUpdate If force update, then dirty flag will be ignored
      */
     public update (forceUpdate = false): void { // for lazy eval situations like the in-editor preview
-        if (!this._node$) return;
+        if (!this._node) return;
 
         let viewProjDirty = false;
         const xr = globalThis.__globalXR;
         if (xr && xr.isWebXR && xr.webXRWindowMap && xr.updateViewport) {
             const x = xr.webXRMatProjs ? 1 / xr.webXRMatProjs.length : 1;
-            const wndXREye = xr.webXRWindowMap.get(this._window$);
+            const wndXREye = xr.webXRWindowMap.get(this._window);
             this.setViewportInOrientedSpace(new Rect(x * wndXREye, 0, x, 1));
         }
         // view matrix
-        if (this._node$.hasChangedFlags || forceUpdate) {
-            Mat4.invert(this._matView$, this._node$.worldMatrix);
-            this._forward$.x = -this._matView$.m02;
-            this._forward$.y = -this._matView$.m06;
-            this._forward$.z = -this._matView$.m10;
+        if (this._node.hasChangedFlags || forceUpdate) {
+            Mat4.invert(this._matView, this._node.worldMatrix);
+            this._forward.x = -this._matView.m02;
+            this._forward.y = -this._matView.m06;
+            this._forward.z = -this._matView.m10;
             // Remove scale
-            Mat4.multiply(this._matView$, new Mat4().scale(this._node$.worldScale), this._matView$);
-            this._node$.getWorldPosition(this._position$);
+            Mat4.multiply(this._matView, new Mat4().scale(this._node.worldScale), this._matView);
+            this._node.getWorldPosition(this._position);
             viewProjDirty = true;
         }
 
         // projection matrix
         const swapchain = this.window?.swapchain;
         const orientation = swapchain && swapchain.surfaceTransform || SurfaceTransform.IDENTITY;
-        if (this._isProjDirty$ || this._curTransform$ !== orientation) {
-            this._curTransform$ = orientation;
-            const projectionSignY = this._device$.capabilities.clipSpaceSignY;
+        if (this._isProjDirty || this._curTransform !== orientation) {
+            this._curTransform = orientation;
+            const projectionSignY = this._device.capabilities.clipSpaceSignY;
             // Only for rendertexture processing
-            if (this._proj$ === CameraProjection.PERSPECTIVE) {
+            if (this._proj === CameraProjection.PERSPECTIVE) {
                 if (xr && xr.isWebXR && xr.webXRWindowMap && xr.webXRMatProjs) {
-                    const wndXREye = xr.webXRWindowMap.get(this._window$);
-                    this._matProj$.set(xr.webXRMatProjs[wndXREye] as Mat4);
+                    const wndXREye = xr.webXRWindowMap.get(this._window);
+                    this._matProj.set(xr.webXRMatProjs[wndXREye] as Mat4);
                 } else {
                     Mat4.perspective(
-                        this._matProj$,
+                        this._matProj,
                         this._fov$,
-                        this._aspect$,
-                        this._nearClip$,
-                        this._farClip$,
-                        this._fovAxis$ === CameraFOVAxis.VERTICAL,
-                        this._device$.capabilities.clipSpaceMinZ,
+                        this._aspect,
+                        this._nearClip,
+                        this._farClip,
+                        this._fovAxis === CameraFOVAxis.VERTICAL,
+                        this._device.capabilities.clipSpaceMinZ,
                         projectionSignY,
                         orientation,
                     );
                 }
             } else {
-                const x = this._orthoHeight$ * this._aspect$;
-                const y = this._orthoHeight$;
+                const x = this._orthoHeight * this._aspect;
+                const y = this._orthoHeight;
                 Mat4.ortho(
-                    this._matProj$,
+                    this._matProj,
                     -x,
                     x,
                     -y,
                     y,
-                    this._nearClip$,
-                    this._farClip$,
-                    this._device$.capabilities.clipSpaceMinZ,
+                    this._nearClip,
+                    this._farClip,
+                    this._device.capabilities.clipSpaceMinZ,
                     projectionSignY,
                     orientation,
                 );
             }
-            Mat4.invert(this._matProjInv$, this._matProj$);
+            Mat4.invert(this._matProjInv, this._matProj);
             viewProjDirty = true;
-            this._isProjDirty$ = false;
+            this._isProjDirty = false;
         }
 
         // view-projection
         if (viewProjDirty) {
-            Mat4.multiply(this._matViewProj$, this._matProj$, this._matView$);
-            Mat4.invert(this._matViewProjInv$, this._matViewProj$);
-            this._frustum$.update(this._matViewProj$, this._matViewProjInv$);
+            Mat4.multiply(this._matViewProj, this._matProj, this._matView);
+            Mat4.invert(this._matViewProjInv, this._matViewProj);
+            this._frustum.update(this._matViewProj, this._matViewProjInv);
         }
     }
 
     get surfaceTransform (): SurfaceTransform {
-        return this._curTransform$;
+        return this._curTransform;
     }
 
     /**
@@ -1096,43 +1096,43 @@ export class Camera {
      */
     public setViewportInOrientedSpace (val: Rect): void {
         const { x, width, height } = val;
-        const y = this._device$.capabilities.screenSpaceSignY < 0 ? 1 - val.y - height : val.y;
+        const y = this._device.capabilities.screenSpaceSignY < 0 ? 1 - val.y - height : val.y;
 
         const swapchain = this.window?.swapchain;
         const orientation = swapchain && swapchain.surfaceTransform || SurfaceTransform.IDENTITY;
 
         switch (orientation) {
         case SurfaceTransform.ROTATE_90:
-            this._viewport$.x = 1 - y - height;
-            this._viewport$.y = x;
-            this._viewport$.width = height;
-            this._viewport$.height = width;
+            this._viewport.x = 1 - y - height;
+            this._viewport.y = x;
+            this._viewport.width = height;
+            this._viewport.height = width;
             break;
         case SurfaceTransform.ROTATE_180:
-            this._viewport$.x = 1 - x - width;
-            this._viewport$.y = 1 - y - height;
-            this._viewport$.width = width;
-            this._viewport$.height = height;
+            this._viewport.x = 1 - x - width;
+            this._viewport.y = 1 - y - height;
+            this._viewport.width = width;
+            this._viewport.height = height;
             break;
         case SurfaceTransform.ROTATE_270:
-            this._viewport$.x = y;
-            this._viewport$.y = 1 - x - width;
-            this._viewport$.width = height;
-            this._viewport$.height = width;
+            this._viewport.x = y;
+            this._viewport.y = 1 - x - width;
+            this._viewport.width = height;
+            this._viewport.height = width;
             break;
         case SurfaceTransform.IDENTITY:
-            this._viewport$.x = x;
-            this._viewport$.y = y;
-            this._viewport$.width = width;
-            this._viewport$.height = height;
+            this._viewport.x = x;
+            this._viewport.y = y;
+            this._viewport.width = width;
+            this._viewport.height = height;
             break;
         default:
         }
 
-        this._orientedViewport$.x = x;
-        this._orientedViewport$.y = y;
-        this._orientedViewport$.width = width;
-        this._orientedViewport$.height = height;
+        this._orientedViewport.x = x;
+        this._orientedViewport.y = y;
+        this._orientedViewport.width = width;
+        this._orientedViewport.height = height;
 
         this.resize(this.width, this.height);
     }
@@ -1142,10 +1142,10 @@ export class Camera {
      * @zh 创建这个摄像机的几何体渲染器
      */
     public initGeometryRenderer (): void {
-        if (!this._geometryRenderer$) {
+        if (!this._geometryRenderer) {
             const GeometryRenderer = cclegacy.internal.GeometryRenderer;
-            this._geometryRenderer$ = GeometryRenderer ? new GeometryRenderer() : null;
-            this._geometryRenderer$?.activate(this._device$);
+            this._geometryRenderer = GeometryRenderer ? new GeometryRenderer() : null;
+            this._geometryRenderer?.activate(this._device);
         }
     }
 
@@ -1155,31 +1155,31 @@ export class Camera {
      * @returns @en return the geometry renderer @zh 返回几何体渲染器
      */
     get geometryRenderer (): GeometryRenderer  | null {
-        return this._geometryRenderer$;
+        return this._geometryRenderer;
     }
 
     get cameraType (): CameraType {
-        return this._cameraType$;
+        return this._cameraType;
     }
 
     set cameraType (type: CameraType) {
-        this._cameraType$ = type;
+        this._cameraType = type;
     }
 
     get trackingType (): TrackingType {
-        return this._trackingType$;
+        return this._trackingType;
     }
 
     set trackingType (type: TrackingType) {
-        this._trackingType$ = type;
+        this._trackingType = type;
     }
 
     get cameraUsage (): CameraUsage {
-        return this._usage$;
+        return this._usage;
     }
 
     set cameraUsage (usage: CameraUsage) {
-        this._usage$ = usage;
+        this._usage = usage;
     }
 
     /**
@@ -1188,8 +1188,8 @@ export class Camera {
      * @param window The target render window, could be null
      */
     public changeTargetWindow (window: RenderWindow | null = null): void {
-        if (this._window$) {
-            this._window$.detachCamera(this);
+        if (this._window) {
+            this._window.detachCamera(this);
         }
         const win = window || (cclegacy.director.root as Root).mainWindow;
         if (win) {
@@ -1209,8 +1209,8 @@ export class Camera {
      * @zh 将 camera 从渲染窗口移除
      */
     public detachCamera (): void {
-        if (this._window$) {
-            this._window$.detachCamera(this);
+        if (this._window) {
+            this._window.detachCamera(this);
         }
     }
 
@@ -1223,17 +1223,17 @@ export class Camera {
      * @returns the resulting ray
      */
     public screenPointToRay (out: geometry.Ray, x: number, y: number): geometry.Ray {
-        if (!this._node$) return null!;
+        if (!this._node) return null!;
 
         const width = this.width;
         const height = this.height;
-        const cx = this._orientedViewport$.x * width;
-        const cy = this._orientedViewport$.y * height;
-        const cw = this._orientedViewport$.width * width;
-        const ch = this._orientedViewport$.height * height;
-        const isProj = this._proj$ === CameraProjection.PERSPECTIVE;
-        const ySign = this._device$.capabilities.clipSpaceSignY;
-        const preTransform = preTransforms[this._curTransform$];
+        const cx = this._orientedViewport.x * width;
+        const cy = this._orientedViewport.y * height;
+        const cw = this._orientedViewport.width * width;
+        const ch = this._orientedViewport.height * height;
+        const isProj = this._proj === CameraProjection.PERSPECTIVE;
+        const ySign = this._device.capabilities.clipSpaceSignY;
+        const preTransform = preTransforms[this._curTransform];
 
         Vec3.set(v_a, (x - cx) / cw * 2 - 1, (y - cy) / ch * 2 - 1, isProj ? 1 : -1);
 
@@ -1241,14 +1241,14 @@ export class Camera {
         v_a.x = ox * preTransform[0] + oy * preTransform[2] * ySign;
         v_a.y = ox * preTransform[1] + oy * preTransform[3] * ySign;
 
-        Vec3.transformMat4(isProj ? v_a : out.o, v_a, this._matViewProjInv$);
+        Vec3.transformMat4(isProj ? v_a : out.o, v_a, this._matViewProjInv);
 
         if (isProj) {
             // camera origin
-            this._node$.getWorldPosition(v_b);
+            this._node.getWorldPosition(v_b);
             geometry.Ray.fromPoints(out, v_b, v_a);
         } else {
-            Vec3.transformQuat(out.d, Vec3.FORWARD, this._node$.worldRotation);
+            Vec3.transformQuat(out.d, Vec3.FORWARD, this._node.worldRotation);
         }
 
         return out;
@@ -1264,14 +1264,14 @@ export class Camera {
     public screenToWorld (out: Vec3, screenPos: Vec3): Vec3 {
         const width = this.width;
         const height = this.height;
-        const cx = this._orientedViewport$.x * width;
-        const cy = this._orientedViewport$.y * height;
-        const cw = this._orientedViewport$.width * width;
-        const ch = this._orientedViewport$.height * height;
-        const ySign = this._device$.capabilities.clipSpaceSignY;
-        const preTransform = preTransforms[this._curTransform$];
+        const cx = this._orientedViewport.x * width;
+        const cy = this._orientedViewport.y * height;
+        const cw = this._orientedViewport.width * width;
+        const ch = this._orientedViewport.height * height;
+        const ySign = this._device.capabilities.clipSpaceSignY;
+        const preTransform = preTransforms[this._curTransform];
 
-        if (this._proj$ === CameraProjection.PERSPECTIVE) {
+        if (this._proj === CameraProjection.PERSPECTIVE) {
             // calculate screen pos in far clip plane
             Vec3.set(
                 out,
@@ -1284,12 +1284,12 @@ export class Camera {
             const { x, y } = out;
             out.x = x * preTransform[0] + y * preTransform[2] * ySign;
             out.y = x * preTransform[1] + y * preTransform[3] * ySign;
-            Vec3.transformMat4(out, out, this._matViewProjInv$);
+            Vec3.transformMat4(out, out, this._matViewProjInv);
 
             // lerp to depth z
-            if (this._node$) { this._node$.getWorldPosition(v_a); }
+            if (this._node) { this._node.getWorldPosition(v_a); }
 
-            Vec3.lerp(out, v_a, out, lerp(this._nearClip$ / this._farClip$, 1, screenPos.z));
+            Vec3.lerp(out, v_a, out, lerp(this._nearClip / this._farClip, 1, screenPos.z));
         } else {
             Vec3.set(
                 out,
@@ -1302,7 +1302,7 @@ export class Camera {
             const { x, y } = out;
             out.x = x * preTransform[0] + y * preTransform[2] * ySign;
             out.y = x * preTransform[1] + y * preTransform[3] * ySign;
-            Vec3.transformMat4(out, out, this._matViewProjInv$);
+            Vec3.transformMat4(out, out, this._matViewProjInv);
         }
 
         return out;
@@ -1316,10 +1316,10 @@ export class Camera {
      * @returns the resulting vector
      */
     public worldToScreen (out: Vec3, worldPos: Vec3 | Readonly<Vec3>): Vec3 {
-        const ySign = this._device$.capabilities.clipSpaceSignY;
-        const preTransform = preTransforms[this._curTransform$];
+        const ySign = this._device.capabilities.clipSpaceSignY;
+        const preTransform = preTransforms[this._curTransform];
 
-        Vec3.transformMat4(out, worldPos, this._matViewProj$);
+        Vec3.transformMat4(out, worldPos, this._matViewProj);
 
         const { x, y } = out;
         out.x = x * preTransform[0] + y * preTransform[2] * ySign;
@@ -1327,10 +1327,10 @@ export class Camera {
 
         const width = this.width;
         const height = this.height;
-        const cx = this._orientedViewport$.x * width;
-        const cy = this._orientedViewport$.y * height;
-        const cw = this._orientedViewport$.width * width;
-        const ch = this._orientedViewport$.height * height;
+        const cx = this._orientedViewport.x * width;
+        const cy = this._orientedViewport.y * height;
+        const cw = this._orientedViewport.width * width;
+        const ch = this._orientedViewport.height * height;
 
         out.x = cx + (out.x + 1) * 0.5 * cw;
         out.y = cy + (out.y + 1) * 0.5 * ch;
@@ -1349,8 +1349,8 @@ export class Camera {
      * @returns the resulting matrix
      */
     public worldMatrixToScreen (out: Mat4, worldMatrix: Mat4, width: number, height: number): Mat4 {
-        Mat4.multiply(out, this._matViewProj$, worldMatrix);
-        Mat4.multiply(out, correctionMatrices[this._curTransform$], out);
+        Mat4.multiply(out, this._matViewProj, worldMatrix);
+        Mat4.multiply(out, correctionMatrices[this._curTransform], out);
 
         const halfWidth = width / 2;
         const halfHeight = height / 2;
@@ -1370,22 +1370,22 @@ export class Camera {
      */
     public calculateObliqueMat (viewSpacePlane: Vec4): void {
         const clipFar = new Vec4(Math.sign(viewSpacePlane.x), Math.sign(viewSpacePlane.y), 1.0, 1.0);
-        const viewFar = clipFar.transformMat4(this._matProjInv$);
+        const viewFar = clipFar.transformMat4(this._matProjInv);
 
-        const m4 = new Vec4(this._matProj$.m03, this._matProj$.m07, this._matProj$.m11, this._matProj$.m15);
+        const m4 = new Vec4(this._matProj.m03, this._matProj.m07, this._matProj.m11, this._matProj.m15);
         const scale = 2.0 / Vec4.dot(viewSpacePlane, viewFar);
         const newViewSpaceNearPlane = viewSpacePlane.multiplyScalar(scale);
 
         const m3 = newViewSpaceNearPlane.subtract(m4);
 
-        this._matProj$.m02 = m3.x;
-        this._matProj$.m06 = m3.y;
-        this._matProj$.m10 = m3.z;
-        this._matProj$.m14 = m3.w;
+        this._matProj.m02 = m3.x;
+        this._matProj.m06 = m3.y;
+        this._matProj.m10 = m3.z;
+        this._matProj.m14 = m3.w;
     }
 
     public getClipSpaceMinz (): number {
-        return this._device$.capabilities.clipSpaceMinZ;
+        return this._device.capabilities.clipSpaceMinZ;
     }
 
     /**
@@ -1394,23 +1394,23 @@ export class Camera {
      * @param ev100
      */
     protected setExposure (ev100): void {
-        this._exposure$ = 0.833333 / (2.0 ** ev100);
+        this._exposure = 0.833333 / (2.0 ** ev100);
     }
 
     private updateExposure$ (): void {
-        const ev100 = Math.log2((this._apertureValue$ * this._apertureValue$) / this._shutterValue$ * 100.0 / this._isoValue$);
+        const ev100 = Math.log2((this._apertureValue * this._apertureValue) / this._shutterValue * 100.0 / this._isoValue);
         this.setExposure(ev100);
     }
 
     private setDefaultUsage$ (): void {
         if (EDITOR) {
             if (cclegacy.GAME_VIEW) {
-                this._usage$ = CameraUsage.GAME_VIEW;
+                this._usage = CameraUsage.GAME_VIEW;
             } else {
-                this._usage$ = CameraUsage.EDITOR;
+                this._usage = CameraUsage.EDITOR;
             }
         } else {
-            this._usage$ = CameraUsage.GAME;
+            this._usage = CameraUsage.GAME;
         }
     }
 }

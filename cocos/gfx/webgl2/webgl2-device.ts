@@ -77,35 +77,35 @@ export class WebGL2Device extends Device {
     }
 
     get gl (): WebGL2RenderingContext {
-        return this._context$!;
+        return this._context!;
     }
 
     get extensions (): IWebGL2Extensions {
-        return this._swapchain$!.extensions;
+        return this._swapchain!.extensions;
     }
 
     getStateCache$ (): WebGL2StateCache {
-        return this._swapchain$!.stateCache$;
+        return this._swapchain!.stateCache$;
     }
 
     get nullTex2D (): WebGL2Texture {
-        return this._swapchain$!.nullTex2D$;
+        return this._swapchain!.nullTex2D$;
     }
 
     get nullTexCube (): WebGL2Texture {
-        return this._swapchain$!.nullTexCube$;
+        return this._swapchain!.nullTexCube$;
     }
 
     get textureExclusive (): boolean[] {
-        return this._textureExclusive$;
+        return this._textureExclusive;
     }
 
     get bindingMappings (): IWebGL2BindingMapping {
-        return this._bindingMappings$!;
+        return this._bindingMappings!;
     }
 
     get blitManager (): IWebGL2BlitManager | null {
-        return this._swapchain$!.blitManager;
+        return this._swapchain!.blitManager;
     }
 
     private _swapchain: WebGL2Swapchain | null = null;
@@ -116,9 +116,9 @@ export class WebGL2Device extends Device {
 
     public initialize (info: Readonly<DeviceInfo>): boolean {
         WebGL2DeviceManager.setInstance(this);
-        this._gfxAPI$ = API.WEBGL2;
+        this._gfxAPI = API.WEBGL2;
 
-        const mapping = this._bindingMappingInfo$ = info.bindingMappingInfo;
+        const mapping = this._bindingMappingInfo = info.bindingMappingInfo;
         const blockOffsets: number[] = [];
         const samplerTextureOffsets: number[] = [];
         const firstSet = mapping.setIndices[0];
@@ -136,13 +136,13 @@ export class WebGL2Device extends Device {
             // textures always come after UBOs
             samplerTextureOffsets[curSet] -= mapping.maxBlockCounts[curSet];
         }
-        this._bindingMappings$ = {
+        this._bindingMappings = {
             blockOffsets$: blockOffsets,
             samplerTextureOffsets$: samplerTextureOffsets,
             flexibleSet$: mapping.setIndices[mapping.setIndices.length - 1],
         };
 
-        const gl = this._context$ = getContext(Device.canvas);
+        const gl = this._context = getContext(Device.canvas);
 
         if (!gl) {
             errorID(16405);
@@ -150,35 +150,35 @@ export class WebGL2Device extends Device {
         }
 
         // create queue
-        this._queue$ = this.createQueue(new QueueInfo(QueueType.GRAPHICS));
-        this._cmdBuff$ = this.createCommandBuffer(new CommandBufferInfo(this._queue$));
+        this._queue = this.createQueue(new QueueInfo(QueueType.GRAPHICS));
+        this._cmdBuff = this.createCommandBuffer(new CommandBufferInfo(this._queue));
 
         const glGetParameter = gl.getParameter.bind(gl);
 
-        this._caps$.maxVertexAttributes = glGetParameter(WebGLConstants.MAX_VERTEX_ATTRIBS);
-        this._caps$.maxVertexUniformVectors = glGetParameter(WebGLConstants.MAX_VERTEX_UNIFORM_VECTORS);
+        this._caps.maxVertexAttributes = glGetParameter(WebGLConstants.MAX_VERTEX_ATTRIBS);
+        this._caps.maxVertexUniformVectors = glGetParameter(WebGLConstants.MAX_VERTEX_UNIFORM_VECTORS);
         // Implementation of WebGL2 in WECHAT browser and Safari in IOS exist bugs.
         // It seems to be related to Safari's experimental features 'WebGL via Metal'.
         // So limit using vertex uniform vectors no more than 256 in wechat browser,
         // and using vertex uniform vectors no more than 512 in safari.
         if (systemInfo.os === OS.IOS) {
-            const maxVertexUniformVectors = this._caps$.maxVertexUniformVectors;
+            const maxVertexUniformVectors = this._caps.maxVertexUniformVectors;
             if (sys.browserType === BrowserType.WECHAT) {
-                this._caps$.maxVertexUniformVectors = maxVertexUniformVectors < 256 ? maxVertexUniformVectors : 256;
+                this._caps.maxVertexUniformVectors = maxVertexUniformVectors < 256 ? maxVertexUniformVectors : 256;
             } else if (sys.browserType === BrowserType.SAFARI) {
-                this._caps$.maxVertexUniformVectors = maxVertexUniformVectors < 512 ? maxVertexUniformVectors : 512;
+                this._caps.maxVertexUniformVectors = maxVertexUniformVectors < 512 ? maxVertexUniformVectors : 512;
             }
         }
-        this._caps$.maxFragmentUniformVectors = glGetParameter(WebGLConstants.MAX_FRAGMENT_UNIFORM_VECTORS);
-        this._caps$.maxTextureUnits = glGetParameter(WebGLConstants.MAX_TEXTURE_IMAGE_UNITS);
-        this._caps$.maxVertexTextureUnits = glGetParameter(WebGLConstants.MAX_VERTEX_TEXTURE_IMAGE_UNITS);
-        this._caps$.maxUniformBufferBindings = glGetParameter(WebGLConstants.MAX_UNIFORM_BUFFER_BINDINGS);
-        this._caps$.maxUniformBlockSize = glGetParameter(WebGLConstants.MAX_UNIFORM_BLOCK_SIZE);
-        this._caps$.maxTextureSize = glGetParameter(WebGLConstants.MAX_TEXTURE_SIZE);
-        this._caps$.maxCubeMapTextureSize = glGetParameter(WebGLConstants.MAX_CUBE_MAP_TEXTURE_SIZE);
-        this._caps$.maxArrayTextureLayers = glGetParameter(WebGLConstants.MAX_ARRAY_TEXTURE_LAYERS);
-        this._caps$.max3DTextureSize = glGetParameter(WebGLConstants.MAX_3D_TEXTURE_SIZE);
-        this._caps$.uboOffsetAlignment = glGetParameter(WebGLConstants.UNIFORM_BUFFER_OFFSET_ALIGNMENT);
+        this._caps.maxFragmentUniformVectors = glGetParameter(WebGLConstants.MAX_FRAGMENT_UNIFORM_VECTORS);
+        this._caps.maxTextureUnits = glGetParameter(WebGLConstants.MAX_TEXTURE_IMAGE_UNITS);
+        this._caps.maxVertexTextureUnits = glGetParameter(WebGLConstants.MAX_VERTEX_TEXTURE_IMAGE_UNITS);
+        this._caps.maxUniformBufferBindings = glGetParameter(WebGLConstants.MAX_UNIFORM_BUFFER_BINDINGS);
+        this._caps.maxUniformBlockSize = glGetParameter(WebGLConstants.MAX_UNIFORM_BLOCK_SIZE);
+        this._caps.maxTextureSize = glGetParameter(WebGLConstants.MAX_TEXTURE_SIZE);
+        this._caps.maxCubeMapTextureSize = glGetParameter(WebGLConstants.MAX_CUBE_MAP_TEXTURE_SIZE);
+        this._caps.maxArrayTextureLayers = glGetParameter(WebGLConstants.MAX_ARRAY_TEXTURE_LAYERS);
+        this._caps.max3DTextureSize = glGetParameter(WebGLConstants.MAX_3D_TEXTURE_SIZE);
+        this._caps.uboOffsetAlignment = glGetParameter(WebGLConstants.UNIFORM_BUFFER_OFFSET_ALIGNMENT);
 
         const extensions = gl.getSupportedExtensions();
         let extStr = '';
@@ -191,23 +191,23 @@ export class WebGL2Device extends Device {
         const exts = getExtensions(gl);
 
         if (exts.WEBGL_debug_renderer_info$) {
-            this._renderer$ = glGetParameter(exts.WEBGL_debug_renderer_info$.UNMASKED_RENDERER_WEBGL);
-            this._vendor$ = glGetParameter(exts.WEBGL_debug_renderer_info$.UNMASKED_VENDOR_WEBGL);
+            this._renderer = glGetParameter(exts.WEBGL_debug_renderer_info$.UNMASKED_RENDERER_WEBGL);
+            this._vendor = glGetParameter(exts.WEBGL_debug_renderer_info$.UNMASKED_VENDOR_WEBGL);
         } else {
-            this._renderer$ = glGetParameter(WebGLConstants.RENDERER);
-            this._vendor$ = glGetParameter(WebGLConstants.VENDOR);
+            this._renderer = glGetParameter(WebGLConstants.RENDERER);
+            this._vendor = glGetParameter(WebGLConstants.VENDOR);
         }
 
         const version: string = glGetParameter(WebGLConstants.VERSION);
 
-        this._features$.fill(false);
+        this._features.fill(false);
 
         this.initFormatFeatures(exts);
 
-        this._features$[Feature.ELEMENT_INDEX_UINT] = true;
-        this._features$[Feature.INSTANCED_ARRAYS] = true;
-        this._features$[Feature.MULTIPLE_RENDER_TARGETS] = true;
-        this._features$[Feature.BLEND_MINMAX] = true;
+        this._features[Feature.ELEMENT_INDEX_UINT] = true;
+        this._features[Feature.INSTANCED_ARRAYS] = true;
+        this._features[Feature.MULTIPLE_RENDER_TARGETS] = true;
+        this._features[Feature.BLEND_MINMAX] = true;
 
         let compressedFormat = '';
 
@@ -232,8 +232,8 @@ export class WebGL2Device extends Device {
         }
 
         debug('WebGL2 device initialized.');
-        debug(`RENDERER: ${this._renderer$}`);
-        debug(`VENDOR: ${this._vendor$}`);
+        debug(`RENDERER: ${this._renderer}`);
+        debug(`VENDOR: ${this._vendor}`);
         debug(`VERSION: ${version}`);
         debug(`COMPRESSED_FORMAT: ${compressedFormat}`);
         debug(`EXTENSIONS: ${extStr}`);
@@ -242,24 +242,24 @@ export class WebGL2Device extends Device {
     }
 
     public destroy (): void {
-        if (this._queue$) {
-            this._queue$.destroy();
-            this._queue$ = null;
+        if (this._queue) {
+            this._queue.destroy();
+            this._queue = null;
         }
 
-        if (this._cmdBuff$) {
-            this._cmdBuff$.destroy();
-            this._cmdBuff$ = null;
+        if (this._cmdBuff) {
+            this._cmdBuff.destroy();
+            this._cmdBuff = null;
         }
 
-        const it = this._samplers$.values();
+        const it = this._samplers.values();
         let res = it.next();
         while (!res.done) {
             (res.value as WebGL2Sampler).destroy();
             res = it.next();
         }
 
-        this._swapchain$ = null;
+        this._swapchain = null;
     }
 
     public flushCommands (cmdBuffs: Readonly<CommandBuffer[]>): void {
@@ -271,16 +271,16 @@ export class WebGL2Device extends Device {
     }
 
     public present (): void {
-        const queue = (this._queue$ as WebGL2Queue);
-        this._numDrawCalls$ = queue.numDrawCalls$;
-        this._numInstances$ = queue.numInstances$;
-        this._numTris$ = queue.numTris$;
+        const queue = (this._queue as WebGL2Queue);
+        this._numDrawCalls = queue.numDrawCalls$;
+        this._numInstances = queue.numInstances$;
+        this._numTris = queue.numTris$;
         queue.clear();
     }
 
     protected initFormatFeatures (exts: IWebGL2Extensions): void {
-        const formatFeatures = this._formatFeatures$;
-        const textureExclusive = this._textureExclusive$;
+        const formatFeatures = this._formatFeatures;
+        const textureExclusive = this._textureExclusive;
 
         formatFeatures.fill(FormatFeatureBit.NONE);
         textureExclusive.fill(true);
@@ -508,7 +508,7 @@ export class WebGL2Device extends Device {
 
     public createSwapchain (info: Readonly<SwapchainInfo>): Swapchain {
         const swapchain = new WebGL2Swapchain();
-        this._swapchain$ = swapchain;
+        this._swapchain = swapchain;
         swapchain.initialize(info);
         return swapchain;
     }
@@ -581,38 +581,38 @@ export class WebGL2Device extends Device {
 
     public getSampler (info: Readonly<SamplerInfo>): Sampler {
         const hash = Sampler.computeHash(info);
-        if (!this._samplers$.has(hash)) {
-            this._samplers$.set(hash, new WebGL2Sampler(info, hash));
+        if (!this._samplers.has(hash)) {
+            this._samplers.set(hash, new WebGL2Sampler(info, hash));
         }
-        return this._samplers$.get(hash)!;
+        return this._samplers.get(hash)!;
     }
 
     public getSwapchains (): Readonly<Swapchain[]> {
-        return [this._swapchain$ as Swapchain];
+        return [this._swapchain as Swapchain];
     }
 
     public getGeneralBarrier (info: Readonly<GeneralBarrierInfo>): GeneralBarrier {
         const hash = GeneralBarrier.computeHash(info);
-        if (!this._generalBarrierss$.has(hash)) {
-            this._generalBarrierss$.set(hash, new GeneralBarrier(info, hash));
+        if (!this._generalBarrierss.has(hash)) {
+            this._generalBarrierss.set(hash, new GeneralBarrier(info, hash));
         }
-        return this._generalBarrierss$.get(hash)!;
+        return this._generalBarrierss.get(hash)!;
     }
 
     public getTextureBarrier (info: Readonly<TextureBarrierInfo>): TextureBarrier {
         const hash = TextureBarrier.computeHash(info);
-        if (!this._textureBarriers$.has(hash)) {
-            this._textureBarriers$.set(hash, new TextureBarrier(info, hash));
+        if (!this._textureBarriers.has(hash)) {
+            this._textureBarriers.set(hash, new TextureBarrier(info, hash));
         }
-        return this._textureBarriers$.get(hash)!;
+        return this._textureBarriers.get(hash)!;
     }
 
     public getBufferBarrier (info: Readonly<BufferBarrierInfo>): BufferBarrier {
         const hash = BufferBarrier.computeHash(info);
-        if (!this._bufferBarriers$.has(hash)) {
-            this._bufferBarriers$.set(hash, new BufferBarrier(info, hash));
+        if (!this._bufferBarriers.has(hash)) {
+            this._bufferBarriers.set(hash, new BufferBarrier(info, hash));
         }
-        return this._bufferBarriers$.get(hash)!;
+        return this._bufferBarriers.get(hash)!;
     }
 
     public copyBuffersToTexture (buffers: Readonly<ArrayBufferView[]>, texture: Texture, regions: Readonly<BufferTextureCopy[]>): void {

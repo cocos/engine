@@ -307,7 +307,7 @@ export class CallbacksInvoker<EventTypeClass extends EventType = EventType> {
                 this.removeAll(key);
             }
         }
-        this._offCallback$?.();
+        this._offCallback?.();
     }
 
     /**
@@ -375,7 +375,7 @@ export class CallbacksInvoker<EventTypeClass extends EventType = EventType> {
      * @engineInternal
      */
     public _registerOffCallback (cb: () => void): void {
-        this._offCallback$ = cb;
+        this._offCallback = cb;
     }
 }
 

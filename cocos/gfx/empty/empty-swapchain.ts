@@ -28,16 +28,16 @@ import { EmptyTexture } from './empty-texture';
 
 export class EmptySwapchain extends Swapchain {
     public initialize (info: Readonly<SwapchainInfo>): void {
-        this._colorTexture$ = new EmptyTexture();
-        this._colorTexture$.initAsSwapchainTexture({
+        this._colorTexture = new EmptyTexture();
+        this._colorTexture.initAsSwapchainTexture({
             swapchain: this,
             format: Format.RGBA8,
             width: info.width,
             height: info.height,
         });
 
-        this._depthStencilTexture$ = new EmptyTexture();
-        this._depthStencilTexture$.initAsSwapchainTexture({
+        this._depthStencilTexture = new EmptyTexture();
+        this._depthStencilTexture.initAsSwapchainTexture({
             swapchain: this,
             format: Format.DEPTH_STENCIL,
             width: info.width,

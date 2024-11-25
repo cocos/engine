@@ -27,7 +27,7 @@ import { DescriptorSetLayout } from '../base/descriptor-set-layout';
 
 export class EmptyDescriptorSetLayout extends DescriptorSetLayout {
     public initialize (info: Readonly<DescriptorSetLayoutInfo>): void {
-        Array.prototype.push.apply(this._bindings$, info.bindings);
+        Array.prototype.push.apply(this._bindings, info.bindings);
     }
     public destroy (): void {}
 }

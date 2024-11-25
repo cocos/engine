@@ -58,7 +58,7 @@ export abstract class Device {
      * @zh 当前 GFX 使用的渲染 API。
      */
     get gfxAPI (): API {
-        return this._gfxAPI$;
+        return this._gfxAPI;
     }
 
     /**
@@ -66,7 +66,7 @@ export abstract class Device {
      * @zh GFX 默认队列。
      */
     get queue (): Queue {
-        return this._queue$ as Queue;
+        return this._queue as Queue;
     }
 
     /**
@@ -74,7 +74,7 @@ export abstract class Device {
      * @zh GFX 默认命令缓冲。
      */
     get commandBuffer (): CommandBuffer {
-        return this._cmdBuff$ as CommandBuffer;
+        return this._cmdBuff as CommandBuffer;
     }
 
     /**
@@ -82,7 +82,7 @@ export abstract class Device {
      * @zh 当前使用的swapchain的格式。
      */
     get swapchainFormat (): Format {
-        return this._swapchainFormat$;
+        return this._swapchainFormat;
     }
 
     /**
@@ -90,7 +90,7 @@ export abstract class Device {
      * @zh 渲染器描述。
      */
     get renderer (): string {
-        return this._renderer$;
+        return this._renderer;
     }
 
     /**
@@ -98,7 +98,7 @@ export abstract class Device {
      * @zh 厂商描述。
      */
     get vendor (): string {
-        return this._vendor$;
+        return this._vendor;
     }
 
     /**
@@ -106,7 +106,7 @@ export abstract class Device {
      * @zh 绘制调用次数。
      */
     get numDrawCalls (): number {
-        return this._numDrawCalls$;
+        return this._numDrawCalls;
     }
 
     /**
@@ -114,7 +114,7 @@ export abstract class Device {
      * @zh 绘制 Instance 数量。
      */
     get numInstances (): number {
-        return this._numInstances$;
+        return this._numInstances;
     }
 
     /**
@@ -122,7 +122,7 @@ export abstract class Device {
      * @zh 渲染三角形数量。
      */
     get numTris (): number {
-        return this._numTris$;
+        return this._numTris;
     }
 
     /**
@@ -130,7 +130,7 @@ export abstract class Device {
      * @zh 内存状态。
      */
     get memoryStatus (): MemoryStatus {
-        return this._memoryStatus$;
+        return this._memoryStatus;
     }
 
     /**
@@ -138,7 +138,7 @@ export abstract class Device {
      * @zh 当前设备能力数据。
      */
     get capabilities (): DeviceCaps {
-        return this._caps$;
+        return this._caps;
     }
 
     /**
@@ -146,7 +146,7 @@ export abstract class Device {
      * @zh 当前设备的绑定槽位映射关系。
      */
     get bindingMappingInfo (): BindingMappingInfo {
-        return this._bindingMappingInfo$;
+        return this._bindingMappingInfo;
     }
 
     protected _gfxAPI$ = API.UNKNOWN;
@@ -350,7 +350,7 @@ export abstract class Device {
      * @param feature The GFX feature to be queried.
      */
     public hasFeature (feature: Feature): boolean {
-        return this._features$[feature];
+        return this._features[feature];
     }
 
     /**
@@ -359,7 +359,7 @@ export abstract class Device {
      * @param format The GFX format to be queried.
      */
     public getFormatFeatures (format: Format): FormatFeature {
-        return this._formatFeatures$[format];
+        return this._formatFeatures[format];
     }
 
     /**
@@ -396,7 +396,7 @@ export class DefaultResource {
         const buffer = new Uint8Array(bufferSize);
         buffer.fill(255);
         if (capabilities.maxTextureSize >= 2) {
-            this._texture2D$ = device.createTexture(new TextureInfo(
+            this._texture2D = device.createTexture(new TextureInfo(
                 TextureType.TEX2D,
                 TextureUsageBit.STORAGE | TextureUsageBit.SAMPLED,
                 Format.RGBA8,
@@ -405,10 +405,10 @@ export class DefaultResource {
                 TextureFlagBit.NONE,
             ));
             const copyRegion = new BufferTextureCopy(0, 0, 0, new Offset(0, 0, 0), new Extent(2, 2, 1));
-            device.copyBuffersToTexture([buffer], this._texture2D$, [copyRegion]);
+            device.copyBuffersToTexture([buffer], this._texture2D, [copyRegion]);
         }
         if (capabilities.maxTextureSize >= 2) {
-            this._textureCube$ = device.createTexture(new TextureInfo(
+            this._textureCube = device.createTexture(new TextureInfo(
                 TextureType.CUBE,
                 TextureUsageBit.STORAGE | TextureUsageBit.SAMPLED,
                 Format.RGBA8,
@@ -418,20 +418,20 @@ export class DefaultResource {
                 6,
             ));
             const copyRegion = new BufferTextureCopy(0, 0, 0, new Offset(0, 0, 0), new Extent(2, 2, 1));
-            device.copyBuffersToTexture([buffer], this._textureCube$, [copyRegion]);
+            device.copyBuffersToTexture([buffer], this._textureCube, [copyRegion]);
             copyRegion.texSubres.baseArrayLayer = 1;
-            device.copyBuffersToTexture([buffer], this._textureCube$, [copyRegion]);
+            device.copyBuffersToTexture([buffer], this._textureCube, [copyRegion]);
             copyRegion.texSubres.baseArrayLayer = 2;
-            device.copyBuffersToTexture([buffer], this._textureCube$, [copyRegion]);
+            device.copyBuffersToTexture([buffer], this._textureCube, [copyRegion]);
             copyRegion.texSubres.baseArrayLayer = 3;
-            device.copyBuffersToTexture([buffer], this._textureCube$, [copyRegion]);
+            device.copyBuffersToTexture([buffer], this._textureCube, [copyRegion]);
             copyRegion.texSubres.baseArrayLayer = 4;
-            device.copyBuffersToTexture([buffer], this._textureCube$, [copyRegion]);
+            device.copyBuffersToTexture([buffer], this._textureCube, [copyRegion]);
             copyRegion.texSubres.baseArrayLayer = 5;
-            device.copyBuffersToTexture([buffer], this._textureCube$, [copyRegion]);
+            device.copyBuffersToTexture([buffer], this._textureCube, [copyRegion]);
         }
         if (capabilities.max3DTextureSize >= 2) {
-            this._texture3D$ = device.createTexture(new TextureInfo(
+            this._texture3D = device.createTexture(new TextureInfo(
                 TextureType.TEX3D,
                 TextureUsageBit.STORAGE | TextureUsageBit.SAMPLED,
                 Format.RGBA8,
@@ -444,10 +444,10 @@ export class DefaultResource {
                 2,
             ));
             const copyRegion = new BufferTextureCopy(0, 0, 0, new Offset(0, 0, 0), new Extent(2, 2, 2), new TextureSubresLayers(0, 0, 1));
-            device.copyBuffersToTexture([buffer], this._texture3D$, [copyRegion]);
+            device.copyBuffersToTexture([buffer], this._texture3D, [copyRegion]);
         }
         if (capabilities.maxArrayTextureLayers >= 2) {
-            this._texture2DArray$ = device.createTexture(new TextureInfo(
+            this._texture2DArray = device.createTexture(new TextureInfo(
                 TextureType.TEX2D_ARRAY,
                 TextureUsageBit.STORAGE | TextureUsageBit.SAMPLED,
                 Format.RGBA8,
@@ -457,18 +457,18 @@ export class DefaultResource {
                 2,
             ));
             const copyRegion = new BufferTextureCopy(0, 0, 0, new Offset(0, 0, 0), new Extent(2, 2, 1), new TextureSubresLayers(0, 0, 1));
-            device.copyBuffersToTexture([buffer], this._texture2DArray$, [copyRegion]);
+            device.copyBuffersToTexture([buffer], this._texture2DArray, [copyRegion]);
             copyRegion.texSubres.baseArrayLayer = 1;
-            device.copyBuffersToTexture([buffer], this._texture2DArray$, [copyRegion]);
+            device.copyBuffersToTexture([buffer], this._texture2DArray, [copyRegion]);
         }
     }
 
     public getTexture (type: TextureType): Texture | null {
         switch (type) {
-        case TextureType.TEX2D: return this._texture2D$;
-        case TextureType.TEX3D: return this._texture3D$;
-        case TextureType.CUBE: return this._textureCube$;
-        case TextureType.TEX2D_ARRAY: return this._texture2DArray$;
+        case TextureType.TEX2D: return this._texture2D;
+        case TextureType.TEX3D: return this._texture3D;
+        case TextureType.CUBE: return this._textureCube;
+        case TextureType.TEX2D_ARRAY: return this._texture2DArray;
         default: return null;
         }
     }

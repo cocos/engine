@@ -35,7 +35,7 @@ class GarbageCollectionManager {
     private _gcObjects: WeakMap<any, GCObject> = new WeakMap();
 
     public registerGCObject (gcObject: GCObject): GCObject {
-        if (EDITOR && this._finalizationRegistry$) {
+        if (EDITOR && this._finalizationRegistry) {
             const token = {};
             const proxy = new Proxy(gcObject, {
                 get (target, property, receiver): unknown {
@@ -57,8 +57,8 @@ class GarbageCollectionManager {
                     return true;
                 },
             });
-            this._gcObjects$.set(token, gcObject);
-            this._finalizationRegistry$.register(proxy, token, token);
+            this._gcObjects.set(token, gcObject);
+            this._finalizationRegistry.register(proxy, token, token);
             return proxy;
         } else {
             return gcObject;
@@ -69,12 +69,12 @@ class GarbageCollectionManager {
     }
 
     private finalizationRegistryCallback$ (token: any): void {
-        const gcObject = this._gcObjects$.get(token);
+        const gcObject = this._gcObjects.get(token);
         if (gcObject) {
-            this._gcObjects$.delete(token);
+            this._gcObjects.delete(token);
             gcObject.destroy();
         }
-        this._finalizationRegistry$!.unregister(token);
+        this._finalizationRegistry!.unregister(token);
     }
 
     public destroy (): void {
