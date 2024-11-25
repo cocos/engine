@@ -94,24 +94,12 @@ export class Spline {
     private declare _mode: SplineMode;
     private _knots: Vec3[] = [];
 
-    // The private properties '_mode' and '_knots' are used in 'jsb_conversions_spec.cpp' for native platforms.
-    // bool sevalue_to_native(const se::Value &from, cc::geometry::Spline *to, se::Object * /*unused*/)
-    // So declare them here and add references in constructor.
-    private declare _mode: SplineMode;
-    private declare _knots: Vec3[];
-    //
-
     private constructor (mode: SplineMode = SplineMode.CATMULL_ROM, knots: Readonly<Vec3[]> = []) {
         this._type = ShapeType.SHAPE_SPLINE;
         this._mode = mode;
 
         for (let i = 0; i < knots.length; i++) {
             this._knots[i] = new Vec3(knots[i]);
-        }
-
-        if (JSB) {
-            this._mode = this._mode;
-            this._knots = this._knots;
         }
     }
 
