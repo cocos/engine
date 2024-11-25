@@ -41,9 +41,9 @@ export abstract class DescriptorSetLayout extends GFXObject {
         return this._descriptorIndices;
     }
 
-    protected _bindings$: DescriptorSetLayoutBinding[] = [];
-    protected _bindingIndices$: number[] = [];
-    protected _descriptorIndices$: number[] = [];
+    protected _bindings: DescriptorSetLayoutBinding[] = [];
+    protected _bindingIndices: number[] = [];
+    protected _descriptorIndices: number[] = [];
 
     constructor () {
         super(ObjectType.DESCRIPTOR_SET_LAYOUT);

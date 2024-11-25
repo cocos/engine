@@ -88,11 +88,11 @@ export abstract class CommandBuffer extends GFXObject {
         return this._numTris;
     }
 
-    protected _queue$: Queue | null = null;
-    protected _type$: CommandBufferType = CommandBufferType.PRIMARY;
-    protected _numDrawCalls$ = 0;
-    protected _numInstances$ = 0;
-    protected _numTris$ = 0;
+    protected _queue: Queue | null = null;
+    protected _type: CommandBufferType = CommandBufferType.PRIMARY;
+    protected _numDrawCalls = 0;
+    protected _numInstances = 0;
+    protected _numTris = 0;
 
     constructor () {
         super(ObjectType.COMMAND_BUFFER);

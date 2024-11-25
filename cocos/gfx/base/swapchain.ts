@@ -62,9 +62,9 @@ export abstract class Swapchain extends GFXObject {
         return this._colorTexture.height;
     }
 
-    protected _transform$ = SurfaceTransform.IDENTITY;
-    protected _colorTexture$: Texture = null!;
-    protected _depthStencilTexture$: Texture = null!;
+    protected _transform = SurfaceTransform.IDENTITY;
+    protected _colorTexture: Texture = null!;
+    protected _depthStencilTexture: Texture = null!;
 
     constructor () {
         super(ObjectType.SWAPCHAIN);

@@ -33,8 +33,8 @@ export class GeneralBarrier extends GFXObject {
     get info (): Readonly<GeneralBarrierInfo> { return this._info; }
     get hash (): number { return this._hash; }
 
-    protected _info$: GeneralBarrierInfo = new GeneralBarrierInfo();
-    protected _hash$ = 0;
+    protected _info: GeneralBarrierInfo = new GeneralBarrierInfo();
+    protected _hash = 0;
 
     constructor (info: Readonly<GeneralBarrierInfo>, hash: number) {
         super(ObjectType.GLOBAL_BARRIER);

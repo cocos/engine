@@ -37,12 +37,12 @@ export abstract class DescriptorSet extends GFXObject {
         return this._layout!;
     }
 
-    protected _layout$: DescriptorSetLayout | null = null;
-    protected _buffers$: Buffer[] = [];
-    protected _textures$: Texture[] = [];
-    protected _samplers$: Sampler[] = [];
+    protected _layout: DescriptorSetLayout | null = null;
+    protected _buffers: Buffer[] = [];
+    protected _textures: Texture[] = [];
+    protected _samplers: Sampler[] = [];
 
-    protected _isDirty$ = false;
+    protected _isDirty = false;
 
     constructor () {
         super(ObjectType.DESCRIPTOR_SET);

@@ -66,19 +66,19 @@ function watchArrayElementsField<S, T> (self: S, list: T[], eleField: string, ca
 }
 
 export class RasterizerState {
-    protected _nativeObj$;
-    protected _isDiscard$: boolean = false;
-    protected _polygonMode$: PolygonMode = PolygonMode.FILL;
-    protected _shadeModel$: ShadeModel = ShadeModel.GOURAND;
-    protected _cullMode$: CullMode = CullMode.BACK;
-    protected _isFrontFaceCCW$: boolean = true;
-    protected _depthBiasEnabled$: boolean = false;
-    protected _depthBias$: number = 0;
-    protected _depthBiasClamp$: number = 0.0;
-    protected _depthBiasSlop$: number = 0.0;
-    protected _isDepthClip$: boolean = true;
-    protected _isMultisample$: boolean = false;
-    protected _lineWidth$: number = 1.0;
+    protected _nativeObj;
+    protected _isDiscard: boolean = false;
+    protected _polygonMode: PolygonMode = PolygonMode.FILL;
+    protected _shadeModel: ShadeModel = ShadeModel.GOURAND;
+    protected _cullMode: CullMode = CullMode.BACK;
+    protected _isFrontFaceCCW: boolean = true;
+    protected _depthBiasEnabled: boolean = false;
+    protected _depthBias: number = 0;
+    protected _depthBiasClamp: number = 0.0;
+    protected _depthBiasSlop: number = 0.0;
+    protected _isDepthClip: boolean = true;
+    protected _isMultisample: boolean = false;
+    protected _lineWidth: number = 1.0;
     constructor (
         isDiscard: boolean = false,
         polygonMode: PolygonMode = PolygonMode.FILL,
@@ -222,26 +222,26 @@ export class RasterizerState {
  * @zh GFX 深度模板状态。
  */
 export class DepthStencilState {
-    protected _nativeObj$;
-    protected _depthTest$: boolean = true;
-    protected _depthWrite$: boolean = true;
-    protected _depthFunc$: ComparisonFunc = ComparisonFunc.LESS;
-    protected _stencilTestFront$: boolean = false;
-    protected _stencilFuncFront$: ComparisonFunc = ComparisonFunc.ALWAYS;
-    protected _stencilReadMaskFront$: number = 0xffff;
-    protected _stencilWriteMaskFront$: number = 0xffff;
-    protected _stencilFailOpFront$: StencilOp = StencilOp.KEEP;
-    protected _stencilZFailOpFront$: StencilOp = StencilOp.KEEP;
-    protected _stencilPassOpFront$: StencilOp = StencilOp.KEEP;
-    protected _stencilRefFront$: number = 1;
-    protected _stencilTestBack$: boolean = false;
-    protected _stencilFuncBack$: ComparisonFunc = ComparisonFunc.ALWAYS;
-    protected _stencilReadMaskBack$: number = 0xffff;
-    protected _stencilWriteMaskBack$: number = 0xffff;
-    protected _stencilFailOpBack$: StencilOp = StencilOp.KEEP;
-    protected _stencilZFailOpBack$: StencilOp = StencilOp.KEEP;
-    protected _stencilPassOpBack$: StencilOp = StencilOp.KEEP;
-    protected _stencilRefBack$: number = 1;
+    protected _nativeObj;
+    protected _depthTest: boolean = true;
+    protected _depthWrite: boolean = true;
+    protected _depthFunc: ComparisonFunc = ComparisonFunc.LESS;
+    protected _stencilTestFront: boolean = false;
+    protected _stencilFuncFront: ComparisonFunc = ComparisonFunc.ALWAYS;
+    protected _stencilReadMaskFront: number = 0xffff;
+    protected _stencilWriteMaskFront: number = 0xffff;
+    protected _stencilFailOpFront: StencilOp = StencilOp.KEEP;
+    protected _stencilZFailOpFront: StencilOp = StencilOp.KEEP;
+    protected _stencilPassOpFront: StencilOp = StencilOp.KEEP;
+    protected _stencilRefFront: number = 1;
+    protected _stencilTestBack: boolean = false;
+    protected _stencilFuncBack: ComparisonFunc = ComparisonFunc.ALWAYS;
+    protected _stencilReadMaskBack: number = 0xffff;
+    protected _stencilWriteMaskBack: number = 0xffff;
+    protected _stencilFailOpBack: StencilOp = StencilOp.KEEP;
+    protected _stencilZFailOpBack: StencilOp = StencilOp.KEEP;
+    protected _stencilPassOpBack: StencilOp = StencilOp.KEEP;
+    protected _stencilRefBack: number = 1;
     constructor (
         depthTest: boolean = true,
         depthWrite: boolean = true,
@@ -443,15 +443,15 @@ export class DepthStencilState {
  * @zh GFX 混合目标。
  */
 export class BlendTarget {
-    protected _nativeObj$;
-    protected _blend$: boolean = false;
-    protected _blendSrc$: BlendFactor = BlendFactor.ONE;
-    protected _blendDst$: BlendFactor = BlendFactor.ZERO;
-    protected _blendEq$: BlendOp = BlendOp.ADD;
-    protected _blendSrcAlpha$: BlendFactor = BlendFactor.ONE;
-    protected _blendDstAlpha$: BlendFactor = BlendFactor.ZERO;
-    protected _blendAlphaEq$: BlendOp = BlendOp.ADD;
-    protected _blendColorMask$: ColorMask = ColorMask.ALL;
+    protected _nativeObj;
+    protected _blend: boolean = false;
+    protected _blendSrc: BlendFactor = BlendFactor.ONE;
+    protected _blendDst: BlendFactor = BlendFactor.ZERO;
+    protected _blendEq: BlendOp = BlendOp.ADD;
+    protected _blendSrcAlpha: BlendFactor = BlendFactor.ONE;
+    protected _blendDstAlpha: BlendFactor = BlendFactor.ZERO;
+    protected _blendAlphaEq: BlendOp = BlendOp.ADD;
+    protected _blendColorMask: ColorMask = ColorMask.ALL;
     get native () {
         return this._nativeObj;
     }
@@ -555,9 +555,9 @@ export class BlendState {
     public targets!: BlendTarget[];
     // NOTE: not initialize in constructor
     private _blendColor!: Color;
-    protected _nativeObj$;
-    protected _isA2C$: boolean = false;
-    protected _isIndepend$: boolean = false;
+    protected _nativeObj;
+    protected _isA2C: boolean = false;
+    protected _isIndepend: boolean = false;
 
     private _setTargets (targets: BlendTarget[]) {
         this.targets = targets;

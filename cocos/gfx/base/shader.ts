@@ -49,11 +49,11 @@ export abstract class Shader extends GFXObject {
         return this._stages;
     }
 
-    protected _name$ = '';
-    protected _stages$: ShaderStage[] = [];
-    protected _attributes$: Attribute[] = [];
-    protected _blocks$: UniformBlock[] = [];
-    protected _samplers$: UniformSampler[] = [];
+    protected _name = '';
+    protected _stages: ShaderStage[] = [];
+    protected _attributes: Attribute[] = [];
+    protected _blocks: UniformBlock[] = [];
+    protected _samplers: UniformSampler[] = [];
 
     constructor () {
         super(ObjectType.SHADER);

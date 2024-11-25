@@ -132,15 +132,15 @@ export abstract class PipelineState extends GFXObject {
         return this._renderPass as RenderPass;
     }
 
-    protected _shader$: Shader | null = null;
-    protected _pipelineLayout$: PipelineLayout | null = null;
-    protected _primitive$: PrimitiveMode = PrimitiveMode.TRIANGLE_LIST;
+    protected _shader: Shader | null = null;
+    protected _pipelineLayout: PipelineLayout | null = null;
+    protected _primitive: PrimitiveMode = PrimitiveMode.TRIANGLE_LIST;
     protected _is$: InputState | null = null;
     protected _rs$: RasterizerState = new RasterizerState();
     protected _dss$: DepthStencilState = new DepthStencilState();
     protected _bs$: BlendState = new BlendState();
-    protected _dynamicStates$: DynamicStateFlags = DynamicStateFlagBit.NONE;
-    protected _renderPass$: RenderPass | null = null;
+    protected _dynamicStates: DynamicStateFlags = DynamicStateFlagBit.NONE;
+    protected _renderPass: RenderPass | null = null;
 
     constructor () {
         super(ObjectType.PIPELINE_STATE);

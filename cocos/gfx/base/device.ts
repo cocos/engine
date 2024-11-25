@@ -149,24 +149,24 @@ export abstract class Device {
         return this._bindingMappingInfo;
     }
 
-    protected _gfxAPI$ = API.UNKNOWN;
-    protected _renderer$ = '';
-    protected _vendor$ = '';
-    protected _features$ = new Array<boolean>(Feature.COUNT);
-    protected _formatFeatures$ = new Array<FormatFeature>(Format.COUNT);
-    protected _queue$: Queue | null = null;
-    protected _cmdBuff$: CommandBuffer | null = null;
-    protected _numDrawCalls$ = 0;
-    protected _numInstances$ = 0;
-    protected _numTris$ = 0;
-    protected _memoryStatus$ = new MemoryStatus();
-    protected _caps$ = new DeviceCaps();
-    protected _bindingMappingInfo$: BindingMappingInfo = new BindingMappingInfo();
-    protected _samplers$ = new Map<number, Sampler>();
-    protected _generalBarrierss$ = new Map<number, GeneralBarrier>();
-    protected _textureBarriers$ = new Map<number, TextureBarrier>();
-    protected _bufferBarriers$ = new Map<number, BufferBarrier>();
-    protected _swapchainFormat$ = Format.RGBA8;
+    protected _gfxAPI = API.UNKNOWN;
+    protected _renderer = '';
+    protected _vendor = '';
+    protected _features = new Array<boolean>(Feature.COUNT);
+    protected _formatFeatures = new Array<FormatFeature>(Format.COUNT);
+    protected _queue: Queue | null = null;
+    protected _cmdBuff: CommandBuffer | null = null;
+    protected _numDrawCalls = 0;
+    protected _numInstances = 0;
+    protected _numTris = 0;
+    protected _memoryStatus = new MemoryStatus();
+    protected _caps = new DeviceCaps();
+    protected _bindingMappingInfo: BindingMappingInfo = new BindingMappingInfo();
+    protected _samplers = new Map<number, Sampler>();
+    protected _generalBarrierss = new Map<number, GeneralBarrier>();
+    protected _textureBarriers = new Map<number, TextureBarrier>();
+    protected _bufferBarriers = new Map<number, BufferBarrier>();
+    protected _swapchainFormat = Format.RGBA8;
 
     public static canvas: HTMLCanvasElement; // Hack for WebGL device initialization process
 

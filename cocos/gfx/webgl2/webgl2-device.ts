@@ -112,7 +112,7 @@ export class WebGL2Device extends Device {
     private _context: WebGL2RenderingContext | null = null;
     private _bindingMappings: IWebGL2BindingMapping | null = null;
 
-    protected _textureExclusive$ = new Array<boolean>(Format.COUNT);
+    protected _textureExclusive = new Array<boolean>(Format.COUNT);
 
     public initialize (info: Readonly<DeviceInfo>): boolean {
         WebGL2DeviceManager.setInstance(this);

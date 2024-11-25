@@ -85,13 +85,13 @@ export abstract class Buffer extends GFXObject {
         return this._flags;
     }
 
-    protected _usage$: BufferUsage = BufferUsageBit.NONE;
-    protected _memUsage$: MemoryUsage = MemoryUsageBit.NONE;
-    protected _size$ = 0;
-    protected _stride$ = 1;
-    protected _count$ = 0;
-    protected _flags$: BufferFlags = BufferFlagBit.NONE;
-    protected _isBufferView$ = false;
+    protected _usage: BufferUsage = BufferUsageBit.NONE;
+    protected _memUsage: MemoryUsage = MemoryUsageBit.NONE;
+    protected _size = 0;
+    protected _stride = 1;
+    protected _count = 0;
+    protected _flags: BufferFlags = BufferFlagBit.NONE;
+    protected _isBufferView = false;
 
     constructor () {
         super(ObjectType.BUFFER);

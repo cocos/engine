@@ -33,8 +33,8 @@ export class TextureBarrier extends GFXObject {
     get info (): Readonly<TextureBarrierInfo> { return this._info; }
     get hash (): number { return this._hash; }
 
-    protected _info$: TextureBarrierInfo = new TextureBarrierInfo();
-    protected _hash$ = 0;
+    protected _info: TextureBarrierInfo = new TextureBarrierInfo();
+    protected _hash = 0;
 
     constructor (info: Readonly<TextureBarrierInfo>, hash: number) {
         super(ObjectType.TEXTURE_BARRIER);

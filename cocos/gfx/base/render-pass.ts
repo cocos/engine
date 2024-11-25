@@ -37,10 +37,10 @@ import {
  * @zh GFX 渲染过程。
  */
 export abstract class RenderPass extends GFXObject {
-    protected _colorInfos$: ColorAttachment[] = [];
-    protected _depthStencilInfo$: DepthStencilAttachment | null = null;
-    protected _subpasses$: SubpassInfo[] = [];
-    protected _hash$ = 0;
+    protected _colorInfos: ColorAttachment[] = [];
+    protected _depthStencilInfo: DepthStencilAttachment | null = null;
+    protected _subpasses: SubpassInfo[] = [];
+    protected _hash = 0;
 
     get colorAttachments (): Readonly<ColorAttachment[]> { return this._colorInfos; }
     get depthStencilAttachment (): Readonly<DepthStencilAttachment> | null { return this._depthStencilInfo; }

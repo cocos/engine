@@ -38,7 +38,7 @@ export abstract class Queue extends GFXObject {
         return this._type;
     }
 
-    protected _type$: QueueType = QueueType.GRAPHICS;
+    protected _type: QueueType = QueueType.GRAPHICS;
 
     constructor () {
         super(ObjectType.QUEUE);

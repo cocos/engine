@@ -740,7 +740,7 @@ class ContentStrategy {
     /**
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
      */
-    public _buildResult$ (containerW: number, containerH: number, contentW: number, contentH: number, scaleX: number, scaleY: number): AdaptResult {
+    public _buildResult (containerW: number, containerH: number, contentW: number, contentH: number, scaleX: number, scaleY: number): AdaptResult {
         // Makes content fit better the canvas
         if (Math.abs(containerW - contentW) < 2) {
             contentW = containerW;

@@ -33,8 +33,8 @@ export class BufferBarrier extends GFXObject {
     get info (): Readonly<BufferBarrierInfo> { return this._info; }
     get hash (): number { return this._hash; }
 
-    protected _info$: BufferBarrierInfo = new BufferBarrierInfo();
-    protected _hash$ = 0;
+    protected _info: BufferBarrierInfo = new BufferBarrierInfo();
+    protected _hash = 0;
 
     constructor (info: Readonly<BufferBarrierInfo>, hash: number) {
         super(ObjectType.BUFFER_BARRIER);

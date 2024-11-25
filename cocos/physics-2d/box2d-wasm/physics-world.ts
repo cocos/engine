@@ -345,7 +345,7 @@ export class B2PhysicsWorld implements IPhysicsWorld {
         }
     }
 
-    public _updateBodyType$ (body: B2RigidBody2D): void {
+    public _updateBodyType (body: B2RigidBody2D): void {
         const animatedBodies = this._animatedBodies;
         const comp = body.rigidBody;
         if (comp.type !== ERigidBody2DType.Animated) {

@@ -43,13 +43,13 @@ import { WebGLDeviceManager } from './webgl-define';
 import { errorID } from '../../core/platform/debug';
 
 export class WebGLCommandBuffer extends CommandBuffer {
-    protected _isInRenderPass$ = false;
-    protected _curGPUPipelineState$: IWebGLGPUPipelineState | null = null;
-    protected _curGPUInputAssembler$: IWebGLGPUInputAssembler | null = null;
-    protected _curGPUDescriptorSets$: IWebGLGPUDescriptorSet[] = [];
-    protected _curDynamicOffsets$: number[] = Array(8).fill(0);
-    protected _curDynamicStates$: DynamicStates = new DynamicStates();
-    protected _isStateInvalied$ = false;
+    protected _isInRenderPass = false;
+    protected _curGPUPipelineState: IWebGLGPUPipelineState | null = null;
+    protected _curGPUInputAssembler: IWebGLGPUInputAssembler | null = null;
+    protected _curGPUDescriptorSets: IWebGLGPUDescriptorSet[] = [];
+    protected _curDynamicOffsets: number[] = Array(8).fill(0);
+    protected _curDynamicStates: DynamicStates = new DynamicStates();
+    protected _isStateInvalied = false;
 
     constructor () {
         super();

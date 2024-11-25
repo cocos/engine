@@ -47,13 +47,13 @@ import { WebGL2DeviceManager } from './webgl2-define';
 import { errorID } from '../../core/platform/debug';
 
 export class WebGL2CommandBuffer extends CommandBuffer {
-    protected _isInRenderPass$ = false;
-    protected _curGPUPipelineState$: IWebGL2GPUPipelineState | null = null;
-    protected _curGPUDescriptorSets$: IWebGL2GPUDescriptorSet[] = [];
-    protected _curGPUInputAssembler$: IWebGL2GPUInputAssembler | null = null;
-    protected _curDynamicOffsets$: number[] = Array(8).fill(0);
-    protected _curDynamicStates$: DynamicStates = new DynamicStates();
-    protected _isStateInvalid$ = false;
+    protected _isInRenderPass = false;
+    protected _curGPUPipelineState: IWebGL2GPUPipelineState | null = null;
+    protected _curGPUDescriptorSets: IWebGL2GPUDescriptorSet[] = [];
+    protected _curGPUInputAssembler: IWebGL2GPUInputAssembler | null = null;
+    protected _curDynamicOffsets: number[] = Array(8).fill(0);
+    protected _curDynamicStates: DynamicStates = new DynamicStates();
+    protected _isStateInvalid = false;
 
     constructor () {
         super();

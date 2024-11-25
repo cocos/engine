@@ -164,14 +164,14 @@ export abstract class InputAssembler extends GFXObject {
         return this._drawInfo;
     }
 
-    protected _attributes$: Attribute[] = [];
-    protected _attributesHash$ = 0;
+    protected _attributes: Attribute[] = [];
+    protected _attributesHash = 0;
 
-    protected _vertexBuffers$: Buffer[] = [];
-    protected _indexBuffer$: Buffer | null = null;
-    protected _indirectBuffer$: Buffer | null = null;
+    protected _vertexBuffers: Buffer[] = [];
+    protected _indexBuffer: Buffer | null = null;
+    protected _indirectBuffer: Buffer | null = null;
 
-    protected _drawInfo$ = new DrawInfo();
+    protected _drawInfo = new DrawInfo();
 
     constructor () {
         super(ObjectType.INPUT_ASSEMBLER);
