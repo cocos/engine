@@ -279,9 +279,9 @@ export interface IWebGL2GPUPipelineState {
     glPrimitive: GLenum;
     gpuShader: IWebGL2GPUShader | null;
     gpuPipelineLayout: IWebGL2GPUPipelineLayout | null;
-    rs$: RasterizerState;
-    dss$: DepthStencilState;
-    bs$: BlendState;
+    rs: RasterizerState;
+    dss: DepthStencilState;
+    bs: BlendState;
     dynamicStates: DynamicStateFlagBit[];
     gpuRenderPass: IWebGL2GPURenderPass | null;
 }

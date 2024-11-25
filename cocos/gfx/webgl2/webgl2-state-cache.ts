@@ -44,9 +44,9 @@ export class WebGL2StateCache {
     public glReadFramebuffer: WebGLFramebuffer | null = null;
     public viewport = new Viewport();
     public scissorRect = new Rect(0, 0, 0, 0);
-    public rs$ = new RasterizerState();
-    public dss$ = new DepthStencilState();
-    public bs$ = new BlendState();
+    public rs = new RasterizerState();
+    public dss = new DepthStencilState();
+    public bs = new BlendState();
     public glProgram: WebGLProgram | null = null;
     public glEnabledAttribLocs: boolean[] = [];
     public glCurrentAttribLocs: boolean[] = [];

@@ -1330,7 +1330,7 @@ export function WebGLCmdFuncCreateShader (device: WebGLDevice, gpuShader: IWebGL
     const glActiveSamplers: IWebGLGPUUniformSamplerTexture[] = [];
     const glActiveSamplerLocations: WebGLUniformLocation[] = [];
     const { bindingMappings, capabilities } = device;
-    const { texUnitCacheMap: texUnitCacheMap } = device.stateCache;
+    const { texUnitCacheMap } = device.stateCache;
     const { maxTextureUnits } = capabilities;
 
     if (!(cclegacy.rendering && cclegacy.rendering.enableEffectImport)) {
@@ -1585,7 +1585,7 @@ export function WebGLCmdFuncBeginRenderPass (
             clearCount = 1;
         }
 
-        const cacheDSS = cache.dss$;
+        const cacheDSS = cache.dss;
 
         for (let j = 0; j < clearCount; ++j) {
             const colorAttachment = gpuRenderPass.colorAttachments[j];
@@ -1594,7 +1594,7 @@ export function WebGLCmdFuncBeginRenderPass (
                 switch (colorAttachment.loadOp) {
                 case LoadOp.LOAD: break; // GL default behavior
                 case LoadOp.CLEAR: {
-                    if (cache.bs$.targets[0].blendColorMask !== ColorMask.ALL) {
+                    if (cache.bs.targets[0].blendColorMask !== ColorMask.ALL) {
                         gl.colorMask(true, true, true, true);
                     }
 
@@ -1674,7 +1674,7 @@ export function WebGLCmdFuncBeginRenderPass (
 
         // restore states
         if (clears & WebGLConstants.COLOR_BUFFER_BIT) {
-            const colorMask = cache.bs$.targets[0].blendColorMask;
+            const colorMask = cache.bs.targets[0].blendColorMask;
             if (colorMask !== ColorMask.ALL) {
                 const r = (colorMask & ColorMask.R) !== ColorMask.NONE;
                 const g = (colorMask & ColorMask.G) !== ColorMask.NONE;
@@ -1711,8 +1711,8 @@ export function WebGLCmdFuncBindStates (
 ): void {
     const { gl } = device;
     const cache = device.stateCache;
-    const cacheDSS = cache.dss$;
-    const cacheBS = cache.bs$;
+    const cacheDSS = cache.dss;
+    const cacheBS = cache.bs;
     const gpuShader = gpuPipelineState && gpuPipelineState.gpuShader;
 
     let isShaderChanged = false;
@@ -1726,7 +1726,7 @@ export function WebGLCmdFuncBindStates (
         gfxStateCache.glPrimitive = gpuPipelineState.glPrimitive;
 
         if (gpuPipelineState.gpuShader) {
-            const { glProgram: glProgram } = gpuPipelineState.gpuShader;
+            const { glProgram } = gpuPipelineState.gpuShader;
             if (cache.glProgram !== glProgram) {
                 gl.useProgram(glProgram);
                 cache.glProgram = glProgram;
@@ -1735,8 +1735,8 @@ export function WebGLCmdFuncBindStates (
         }
 
         // rasterizer state
-        const { rs$: rs } = gpuPipelineState;
-        const cacheRS = cache.rs$;
+        const { rs } = gpuPipelineState;
+        const cacheRS = cache.rs;
         if (rs) {
             if (cacheRS.cullMode !== rs.cullMode) {
                 switch (rs.cullMode) {
@@ -1780,7 +1780,7 @@ export function WebGLCmdFuncBindStates (
         } // rasterizater state
 
         // depth-stencil state
-        const { dss$: dss } = gpuPipelineState;
+        const { dss } = gpuPipelineState;
 
         if (dss) {
             if (cacheDSS.depthTest !== dss.depthTest) {
@@ -1887,7 +1887,7 @@ export function WebGLCmdFuncBindStates (
         } // depth-stencil state
 
         // blend state
-        const { bs$: bs } = gpuPipelineState;
+        const { bs } = gpuPipelineState;
 
         if (bs) {
             if (cacheBS.isA2C !== bs.isA2C) {
@@ -1963,7 +1963,7 @@ export function WebGLCmdFuncBindStates (
     // bind descriptor sets
     if (gpuPipelineState && gpuPipelineState.gpuPipelineLayout && gpuShader) {
         const blockLen = gpuShader.glBlocks.length;
-        const { dynamicOffsetIndices: dynamicOffsetIndices } = gpuPipelineState.gpuPipelineLayout;
+        const { dynamicOffsetIndices } = gpuPipelineState.gpuPipelineLayout;
 
         for (let j = 0; j < blockLen; j++) {
             const glBlock = gpuShader.glBlocks[j];
@@ -1973,7 +1973,7 @@ export function WebGLCmdFuncBindStates (
             let vf32: Float32Array | null = null; let offset = 0;
 
             if (gpuDescriptor && gpuDescriptor.gpuBuffer) {
-                const { gpuBuffer: gpuBuffer } = gpuDescriptor;
+                const { gpuBuffer } = gpuDescriptor;
                 const dynamicOffsetIndexSet = dynamicOffsetIndices[glBlock.set$];
                 const dynamicOffsetIndex = dynamicOffsetIndexSet && dynamicOffsetIndexSet[glBlock.binding];
                 if (dynamicOffsetIndex >= 0) { offset = dynamicOffsets[dynamicOffsetIndex]; }
@@ -2166,7 +2166,7 @@ export function WebGLCmdFuncBindStates (
                 }
 
                 if (gpuDescriptor.gpuTexture && gpuDescriptor.gpuTexture.size > 0) {
-                    const { gpuTexture: gpuTexture } = gpuDescriptor;
+                    const { gpuTexture } = gpuDescriptor;
                     const glTexUnit = cache.glTexUnits[texUnit];
 
                     if (glTexUnit.glTexture !== gpuTexture.glTexture) {
@@ -2182,7 +2182,7 @@ export function WebGLCmdFuncBindStates (
                         glTexUnit.glTexture = gpuTexture.glTexture;
                     }
 
-                    const { gpuSampler: gpuSampler } = gpuDescriptor;
+                    const { gpuSampler } = gpuDescriptor;
                     if (gpuTexture.isPowerOf2) {
                         glWrapS = gpuSampler.glWrapS;
                         glWrapT = gpuSampler.glWrapT;
@@ -2385,18 +2385,18 @@ export function WebGLCmdFuncBindStates (
             const dynamicState = gpuPipelineState.dynamicStates[j];
             switch (dynamicState) {
             case DynamicStateFlagBit.LINE_WIDTH: {
-                if (cache.rs$.lineWidth !== dynamicStates.lineWidth) {
+                if (cache.rs.lineWidth !== dynamicStates.lineWidth) {
                     gl.lineWidth(dynamicStates.lineWidth);
-                    cache.rs$.lineWidth = dynamicStates.lineWidth;
+                    cache.rs.lineWidth = dynamicStates.lineWidth;
                 }
                 break;
             }
             case DynamicStateFlagBit.DEPTH_BIAS: {
-                if (cache.rs$.depthBias !== dynamicStates.depthBiasConstant
-                    || cache.rs$.depthBiasSlop !== dynamicStates.depthBiasSlope) {
+                if (cache.rs.depthBias !== dynamicStates.depthBiasConstant
+                    || cache.rs.depthBiasSlop !== dynamicStates.depthBiasSlope) {
                     gl.polygonOffset(dynamicStates.depthBiasConstant, dynamicStates.depthBiasSlope);
-                    cache.rs$.depthBias = dynamicStates.depthBiasConstant;
-                    cache.rs$.depthBiasSlop = dynamicStates.depthBiasSlope;
+                    cache.rs.depthBias = dynamicStates.depthBiasConstant;
+                    cache.rs.depthBiasSlop = dynamicStates.depthBiasSlope;
                 }
                 break;
             }

@@ -89,7 +89,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 光栅化状态。
      */
     get rasterizerState (): RasterizerState {
-        return this._rs$;
+        return this._rs;
     }
 
     /**
@@ -97,7 +97,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 深度模板状态。
      */
     get depthStencilState (): DepthStencilState {
-        return this._dss$;
+        return this._dss;
     }
 
     /**
@@ -105,7 +105,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 混合状态。
      */
     get blendState (): BlendState {
-        return this._bs$;
+        return this._bs;
     }
 
     /**
@@ -113,7 +113,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 输入状态。
      */
     get inputState (): InputState {
-        return this._is$ as InputState;
+        return this._is as InputState;
     }
 
     /**
@@ -135,10 +135,10 @@ export abstract class PipelineState extends GFXObject {
     protected _shader: Shader | null = null;
     protected _pipelineLayout: PipelineLayout | null = null;
     protected _primitive: PrimitiveMode = PrimitiveMode.TRIANGLE_LIST;
-    protected _is$: InputState | null = null;
-    protected _rs$: RasterizerState = new RasterizerState();
-    protected _dss$: DepthStencilState = new DepthStencilState();
-    protected _bs$: BlendState = new BlendState();
+    protected _is: InputState | null = null;
+    protected _rs: RasterizerState = new RasterizerState();
+    protected _dss: DepthStencilState = new DepthStencilState();
+    protected _bs: BlendState = new BlendState();
     protected _dynamicStates: DynamicStateFlags = DynamicStateFlagBit.NONE;
     protected _renderPass: RenderPass | null = null;
 

@@ -278,9 +278,9 @@ export interface IWebGLGPUPipelineState {
     glPrimitive: GLenum;
     gpuShader: IWebGLGPUShader | null;
     gpuPipelineLayout: IWebGLGPUPipelineLayout | null;
-    rs$: RasterizerState;
-    dss$: DepthStencilState;
-    bs$: BlendState;
+    rs: RasterizerState;
+    dss: DepthStencilState;
+    bs: BlendState;
     dynamicStates: DynamicStateFlagBit[];
     gpuRenderPass: IWebGLGPURenderPass | null;
 }
@@ -418,9 +418,9 @@ void main() {
             glPrimitive: WebGLConstants.TRIANGLE_STRIP,
             gpuShader: this._gpuShader,
             gpuPipelineLayout: this._gpuPipelineLayout,
-            rs$: null!,
-            dss$: new DepthStencilState(false, false),
-            bs$: null!,
+            rs: null!,
+            dss: new DepthStencilState(false, false),
+            bs: null!,
             dynamicStates: [],
             gpuRenderPass: null,
         };

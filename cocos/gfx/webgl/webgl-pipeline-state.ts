@@ -61,7 +61,7 @@ export class WebGLPipelineState extends PipelineState {
         this._primitive = info.primitive;
         this._shader = info.shader;
         this._pipelineLayout = info.pipelineLayout;
-        const bs = this._bs$;
+        const bs = this._bs;
         if (info.blendState) {
             const bsInfo = info.blendState;
             const { targets } = bsInfo;
@@ -75,9 +75,9 @@ export class WebGLPipelineState extends PipelineState {
             if (bsInfo.isIndepend !== undefined) { bs.isIndepend = bsInfo.isIndepend; }
             if (bsInfo.blendColor !== undefined) { bs.blendColor = bsInfo.blendColor; }
         }
-        Object.assign(this._rs$, info.rasterizerState);
-        Object.assign(this._dss$, info.depthStencilState);
-        this._is$ = info.inputState;
+        Object.assign(this._rs, info.rasterizerState);
+        Object.assign(this._dss, info.depthStencilState);
+        this._is = info.inputState;
         this._renderPass = info.renderPass;
         this._dynamicStates = info.dynamicStates;
 
@@ -92,9 +92,9 @@ export class WebGLPipelineState extends PipelineState {
             glPrimitive: WebGLPrimitives[info.primitive],
             gpuShader: (info.shader as WebGLShader).gpuShader,
             gpuPipelineLayout: (info.pipelineLayout as WebGLPipelineLayout).gpuPipelineLayout,
-            rs$: info.rasterizerState,
-            dss$: info.depthStencilState,
-            bs$: info.blendState,
+            rs: info.rasterizerState,
+            dss: info.depthStencilState,
+            bs: info.blendState,
             gpuRenderPass: (info.renderPass as WebGLRenderPass).gpuRenderPass,
             dynamicStates: dynamicStates,
         };
