@@ -10,8 +10,8 @@ const url = 'https://docs.cocos.com/creator';
 module.exports = link(mixin({
     common: {
         'attribute': {
-            'title': 'Attribute: ',
-            'description': 'Description: ',
+            'title': 'Attribute:&nbsp;',
+            'description': 'Description:&nbsp;',
         },
     },
     classes: {
