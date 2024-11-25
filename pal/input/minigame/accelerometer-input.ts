@@ -30,24 +30,24 @@ import { InputEventType } from '../../../cocos/input/types/event-enum';
 import { errorID } from '../../../cocos/core/platform/debug';
 
 export class AccelerometerInputSource {
-    private _isStarted$ = false;
-    private _accelMode$: AccelerometerIntervalMode = 'normal';
-    private _eventTarget$: EventTarget = new  EventTarget();
+    private _isStarted = false;
+    private _accelMode: AccelerometerIntervalMode = 'normal';
+    private _eventTarget: EventTarget = new  EventTarget();
     private declare _didAccelerateFunc$: (event: AccelerometerData) => void;
 
     constructor () {
         this._didAccelerateFunc$  = this._didAccelerate$.bind(this);
     }
 
-    private _registerEvent$ (): void {
+    private _registerEvent (): void {
         minigame.onAccelerometerChange(this._didAccelerateFunc$);
     }
 
-    private _unregisterEvent$ (): void {
+    private _unregisterEvent (): void {
         minigame.offAccelerometerChange(this._didAccelerateFunc$);
     }
 
-    private _didAccelerate$ (event: AccelerometerData): void {
+    private _didAccelerate (event: AccelerometerData): void {
         const timestamp = performance.now();
         const acceleration = new Acceleration(event.x, event.y, event.z, timestamp);
         const eventAcceleration = new EventAcceleration(acceleration);

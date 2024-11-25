@@ -43,7 +43,7 @@ export class WebGL2Buffer extends Buffer {
         return  this._gpuBuffer$!;
     }
 
-    private _gpuBuffer$: IWebGL2GPUBuffer | null = null;
+    private _gpuBuffer: IWebGL2GPUBuffer | null = null;
 
     public initialize (info: Readonly<BufferInfo> | Readonly<BufferViewInfo>): void {
         if ('buffer' in info) { // buffer view

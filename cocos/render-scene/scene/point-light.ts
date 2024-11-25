@@ -102,10 +102,10 @@ export class PointLight extends Light {
         return this._aabb;
     }
 
-    private _needUpdate$ = false;
-    private _range$ = 1.0;
-    private _luminanceHDR$ = 0;
-    private _luminanceLDR$ = 0;
+    private _needUpdate = false;
+    private _range = 1.0;
+    private _luminanceHDR = 0;
+    private _luminanceLDR = 0;
     private _pos: Vec3 = v3();
     private _aabb: AABB = AABB.create();
 

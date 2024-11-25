@@ -36,8 +36,8 @@ export class RangedDirectionalLight extends Light {
     private _pos: Vec3 = new Vec3(0, 0, 0);
     private _scale: Vec3 = new Vec3(1, 1, 1);
     private _right: Vec3 = new Vec3(1, 0, 0);
-    private _illuminanceHDR$: number = Ambient.SUN_ILLUM;
-    private _illuminanceLDR$ = 1.0;
+    private _illuminanceHDR: number = Ambient.SUN_ILLUM;
+    private _illuminanceLDR = 1.0;
 
     /**
      * @en The direction vector of the light

@@ -108,7 +108,7 @@ export class HandleInputDevice {
         this._eventTarget.on(eventType, callback, target);
     }
 
-    private _initInputSource$ (): void {
+    private _initInputSource (): void {
         this._buttonNorth$ = new InputSourceButton();
         this._buttonNorth$.getValue = (): number => 0;
         this._buttonEast$ = new InputSourceButton();

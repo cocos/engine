@@ -307,13 +307,13 @@ export class AssetManager {
      */
     public references = references;
 
-    private _releaseManager$ = releaseManager;
-    private _files$ = files;
-    private _parsed$ = parsed;
-    private _parsePipeline$ = BUILD ? null : new Pipeline('parse existing json', [this.loadPipe]);
-    private _projectBundles$: string[] = [];
+    private _releaseManager = releaseManager;
+    private _files = files;
+    private _parsed = parsed;
+    private _parsePipeline = BUILD ? null : new Pipeline('parse existing json', [this.loadPipe]);
+    private _projectBundles: string[] = [];
     private static _instance: AssetManager;
-    private _eventTarget$ = new EventTarget();
+    private _eventTarget = new EventTarget();
 
     /**
      * @en

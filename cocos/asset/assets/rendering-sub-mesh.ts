@@ -104,17 +104,17 @@ export class RenderingSubMesh {
      */
     public subMeshIdx?: number;
 
-    private _flatBuffers$: IFlatBuffer[] = [];
+    private _flatBuffers: IFlatBuffer[] = [];
 
-    private _jointMappedBuffers$?: Buffer[];
+    private _jointMappedBuffers?: Buffer[];
 
-    private _jointMappedBufferIndices$?: number[];
+    private _jointMappedBufferIndices?: number[];
 
-    private _vertexIdChannel$?: { stream: number; index: number };
+    private _vertexIdChannel?: { stream: number; index: number };
 
-    private _geometricInfo$?: IGeometricInfo;
+    private _geometricInfo?: IGeometricInfo;
 
-    private _vertexBuffers$: Buffer[];
+    private _vertexBuffers: Buffer[];
 
     private declare _attributes$: Attribute[];
 
@@ -128,7 +128,7 @@ export class RenderingSubMesh {
 
     private declare _isOwnerOfIndexBuffer$: boolean;
 
-    private _drawInfo$?: DrawInfo | null = null;
+    private _drawInfo?: DrawInfo | null = null;
 
     /**
      * @en

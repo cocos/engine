@@ -27,11 +27,11 @@ import { assertIsTrue } from '../../cocos/core/data/utils/asserts';
 import { checkPalIntegrity, withImpl } from '../integrity-check';
 
 export class Pacer {
-    private _rafHandle$ = 0;
-    private _onTick$: (() => void) | null = null;
+    private _rafHandle = 0;
+    private _onTick: (() => void) | null = null;
     private declare _updateCallback$: () => void;
-    private _targetFrameRate$ = 60;
-    private _isPlaying$ = false;
+    private _targetFrameRate = 60;
+    private _isPlaying = false;
     constructor () {
         this._updateCallback$ = (): void => {
             if (this._isPlaying$) {

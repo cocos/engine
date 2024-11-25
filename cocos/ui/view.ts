@@ -68,13 +68,13 @@ export class View extends Eventify(System) {
      */
     public _designResolutionSize: Size = size(0, 0); // resolution size, it is the size appropriate for the app resources.
 
-    private _scaleX$: number = 1;
-    private _scaleY$: number = 1;
-    private _viewportRect$: Rect = rect(); // Viewport is the container's rect related to content's coordinates in pixel
-    private _visibleRect$: Rect = rect(); // The visible rect in content's coordinate in point
-    private _autoFullScreen$: boolean = false; // Auto full screen disabled by default
-    private _retinaEnabled$: boolean = false; // Retina disabled by default
-    private _resizeCallback$: (() => void) | null = null; // Custom callback for resize event
+    private _scaleX: number = 1;
+    private _scaleY: number = 1;
+    private _viewportRect: Rect = rect(); // Viewport is the container's rect related to content's coordinates in pixel
+    private _visibleRect: Rect = rect(); // The visible rect in content's coordinate in point
+    private _autoFullScreen: boolean = false; // Auto full screen disabled by default
+    private _retinaEnabled: boolean = false; // Retina disabled by default
+    private _resizeCallback: (() => void) | null = null; // Custom callback for resize event
     private declare _resolutionPolicy$: ResolutionPolicy;
 
     private declare _rpExactFit$: ResolutionPolicy;
@@ -587,7 +587,7 @@ export class View extends Eventify(System) {
         point.y = (point.y - viewport.y) / this._scaleY$;
     }
 
-    private _updateAdaptResult$ (width: number, height: number, windowId?: number): void {
+    private _updateAdaptResult (width: number, height: number, windowId?: number): void {
         // The default invalid windowId is 0
         (cclegacy.director.root as Root).resize(width, height, (windowId === undefined || windowId === 0) ? 1 : windowId);
         // Frame size changed, do resize works

@@ -33,9 +33,9 @@ import { InputEventType } from '../../../cocos/input/types/event-enum';
 import { Feature } from '../../system-info/enum-type';
 
 export class MouseInputSource {
-    private _eventTarget$: EventTarget = new EventTarget();
-    private _isPressed$ = false;
-    private _preMousePos$: Vec2 = new Vec2();
+    private _eventTarget: EventTarget = new EventTarget();
+    private _isPressed = false;
+    private _preMousePos: Vec2 = new Vec2();
 
     constructor () {
         if (systemInfo.hasFeature(Feature.EVENT_MOUSE)) {
@@ -43,7 +43,7 @@ export class MouseInputSource {
         }
     }
 
-    private _getLocation$ (event: MouseEventData): Vec2 {
+    private _getLocation (event: MouseEventData): Vec2 {
         const windowSize = screenAdapter.windowSize;
         const dpr = screenAdapter.devicePixelRatio;
         const x = event.x * dpr;
@@ -51,14 +51,14 @@ export class MouseInputSource {
         return new Vec2(x, y);
     }
 
-    private _registerEvent$ (): void {
+    private _registerEvent (): void {
         minigame.wx?.onMouseDown?.(this._createCallback$(InputEventType.MOUSE_DOWN));
         minigame.wx?.onMouseMove?.(this._createCallback$(InputEventType.MOUSE_MOVE));
         minigame.wx?.onMouseUp?.(this._createCallback$(InputEventType.MOUSE_UP));
         minigame.wx?.onWheel?.(this._handleMouseWheel$.bind(this));
     }
 
-    private _createCallback$ (eventType: InputEventType) {
+    private _createCallback (eventType: InputEventType) {
         return (event: MouseEventData): void => {
             const location = this._getLocation$(event);
             let button = event.button;
@@ -90,7 +90,7 @@ export class MouseInputSource {
         };
     }
 
-    private _handleMouseWheel$ (event: MouseWheelEventData): void {
+    private _handleMouseWheel (event: MouseWheelEventData): void {
         const eventType = InputEventType.MOUSE_WHEEL;
         const location = this._getLocation$(event);
         const button = event.button;

@@ -31,7 +31,7 @@ export class WebGLRenderPass extends RenderPass {
         return  this._gpuRenderPass$!;
     }
 
-    private _gpuRenderPass$: IWebGLGPURenderPass | null = null;
+    private _gpuRenderPass: IWebGLGPURenderPass | null = null;
 
     constructor () {
         super();

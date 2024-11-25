@@ -43,7 +43,7 @@ export class WebGL2IndirectDrawInfos {
     // staging buffer
     public byteOffsets$: Int32Array;
 
-    private _capacity$ = 4;
+    private _capacity = 4;
 
     constructor () {
         this.counts$ = new Int32Array(this._capacity$);
@@ -74,7 +74,7 @@ export class WebGL2IndirectDrawInfos {
         this.instances$[idx] = Math.max(1, info.instanceCount);
     }
 
-    private _ensureCapacity$ (target: number): void {
+    private _ensureCapacity (target: number): void {
         if (this._capacity$ > target) return;
         this._capacity$ = nextPow2(target);
 
@@ -323,8 +323,8 @@ export interface IWebGL2GPUInputAssembler {
 }
 
 export class IWebGL2BlitManager {
-    private _srcFramebuffer$: WebGLFramebuffer | null;
-    private _dstFramebuffer$: WebGLFramebuffer | null;
+    private _srcFramebuffer: WebGLFramebuffer | null;
+    private _dstFramebuffer: WebGLFramebuffer | null;
 
     get srcFramebuffer (): WebGLFramebuffer | null {
         return this._srcFramebuffer$;

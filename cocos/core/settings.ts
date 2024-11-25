@@ -183,8 +183,8 @@ export class Settings {
         return null;
     }
 
-    private _settings$: Record<string, any> = {};
-    private _override$: Record<string, any> = {};
+    private _settings: Record<string, any> = {};
+    private _override: Record<string, any> = {};
 }
 
 export declare namespace Settings {

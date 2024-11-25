@@ -34,7 +34,7 @@ import { InputEventType } from '../../../cocos/input/types/event-enum';
 import { Feature } from '../../system-info/enum-type';
 
 export class TouchInputSource {
-    private _eventTarget$: EventTarget = new EventTarget();
+    private _eventTarget: EventTarget = new EventTarget();
 
     constructor () {
         if (systemInfo.hasFeature(Feature.INPUT_TOUCH)) {
@@ -42,14 +42,14 @@ export class TouchInputSource {
         }
     }
 
-    private _registerEvent$ (): void {
+    private _registerEvent (): void {
         minigame.onTouchStart(this._createCallback$(InputEventType.TOUCH_START));
         minigame.onTouchMove(this._createCallback$(InputEventType.TOUCH_MOVE));
         minigame.onTouchEnd(this._createCallback$(InputEventType.TOUCH_END));
         minigame.onTouchCancel(this._createCallback$(InputEventType.TOUCH_CANCEL));
     }
 
-    private _createCallback$ (eventType: InputEventType) {
+    private _createCallback (eventType: InputEventType) {
         return (event: TouchEvent): void => {
             const handleTouches: Touch[] = [];
             const windowSize = screenAdapter.windowSize;
@@ -83,7 +83,7 @@ export class TouchInputSource {
         };
     }
 
-    private _getLocation$ (touch: globalThis.Touch, windowSize: Size, dpr: number): Vec2 {
+    private _getLocation (touch: globalThis.Touch, windowSize: Size, dpr: number): Vec2 {
         const x = touch.clientX * dpr;
         const y = windowSize.height - touch.clientY * dpr;
         return new Vec2(x, y);

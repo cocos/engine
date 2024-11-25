@@ -39,9 +39,9 @@ export class WebGL2Framebuffer extends Framebuffer {
         return  this._gpuFramebuffer$!;
     }
 
-    private _gpuFramebuffer$: IWebGL2GPUFramebuffer | null = null;
-    private _gpuColorViews$: (WebGLTexture | null)[] = [];
-    private _gpuDepthStencilView$: WebGLTexture | null | undefined;
+    private _gpuFramebuffer: IWebGL2GPUFramebuffer | null = null;
+    private _gpuColorViews: (WebGLTexture | null)[] = [];
+    private _gpuDepthStencilView: WebGLTexture | null | undefined;
 
     get needRebuild (): boolean {
         const gpuFramebuffer = this.getGpuFramebuffer$();

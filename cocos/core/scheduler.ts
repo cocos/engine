@@ -209,17 +209,17 @@ class CallbackTimer {
         }
     }
 
-    private _lock$: boolean;
-    private _scheduler$: Scheduler | null;
-    private _elapsed$: number;
-    private _runForever$: boolean;
-    private _useDelay$: boolean;
-    private _timesExecuted$: number;
-    private _repeat$: number;
-    private _delay$: number;
-    private _interval$: number;
-    private _target$: ISchedulable | null;
-    private _callback$?: CallbackType | null;
+    private _lock: boolean;
+    private _scheduler: Scheduler | null;
+    private _elapsed: number;
+    private _runForever: boolean;
+    private _useDelay: boolean;
+    private _timesExecuted: number;
+    private _repeat: number;
+    private _delay: number;
+    private _interval: number;
+    private _target: ISchedulable | null;
+    private _callback?: CallbackType | null;
 
     constructor () {
         this._lock$ = false;
@@ -350,16 +350,16 @@ class CallbackTimer {
 export class Scheduler extends System {
     public static ID = 'scheduler';
 
-    private _timeScale$: number;
-    private _updatesNegList$: ListEntry[];
-    private _updates0List$: ListEntry[];
-    private _updatesPosList$: ListEntry[];
-    private _hashForUpdates$: Record<string, HashUpdateEntry>;
-    private _hashForTimers$: Record<string, HashTimerEntry>;
-    private _currentTarget$: HashTimerEntry | null;
-    private _currentTargetSalvaged$: boolean;
-    private _updateHashLocked$: boolean;
-    private _arrayForTimers$: HashTimerEntry[];
+    private _timeScale: number;
+    private _updatesNegList: ListEntry[];
+    private _updates0List: ListEntry[];
+    private _updatesPosList: ListEntry[];
+    private _hashForUpdates: Record<string, HashUpdateEntry>;
+    private _hashForTimers: Record<string, HashTimerEntry>;
+    private _currentTarget: HashTimerEntry | null;
+    private _currentTargetSalvaged: boolean;
+    private _updateHashLocked: boolean;
+    private _arrayForTimers: HashTimerEntry[];
 
     /**
      * @en This method should be called for any target which needs to schedule tasks, and this method should be called before any scheduler API usage.
@@ -1149,7 +1149,7 @@ export class Scheduler extends System {
     }
 
     // -----------------------private method----------------------
-    private _removeHashElement$ (element: HashTimerEntry): void {
+    private _removeHashElement (element: HashTimerEntry): void {
         if (!element.target$) {
             return;
         }
@@ -1168,7 +1168,7 @@ export class Scheduler extends System {
         HashTimerEntry.put(element);
     }
 
-    private _removeUpdateFromHash$ (entry: ListEntry): void {
+    private _removeUpdateFromHash (entry: ListEntry): void {
         if (!entry.target$) {
             return;
         }
@@ -1198,7 +1198,7 @@ export class Scheduler extends System {
         }
     }
 
-    private _priorityIn$ (ppList: ListEntry[], listElement: ListEntry, priority: number): void {
+    private _priorityIn (ppList: ListEntry[], listElement: ListEntry, priority: number): void {
         for (let i = 0; i < ppList.length; i++) {
             if (priority < ppList[i].priority$) {
                 ppList.splice(i, 0, listElement);
@@ -1208,7 +1208,7 @@ export class Scheduler extends System {
         ppList.push(listElement);
     }
 
-    private _appendIn$ (ppList: ListEntry[], listElement: ListEntry): void {
+    private _appendIn (ppList: ListEntry[], listElement: ListEntry): void {
         ppList.push(listElement);
     }
 }

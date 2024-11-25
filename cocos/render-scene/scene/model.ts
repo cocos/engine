@@ -493,16 +493,16 @@ export class Model {
      */
     protected _localSHBuffer: Buffer | null = null;
 
-    private _lightmap$: Texture2D | null = null;
-    private _lightmapUVParam$: Vec4 = v4();
+    private _lightmap: Texture2D | null = null;
+    private _lightmapUVParam: Vec4 = v4();
 
     /**
      * @en located tetrahedron index
      * @zh 所处的四面体索引
      */
-    private _tetrahedronIndex$ = -1;
-    private _lastWorldBoundCenter$ = v3(Infinity, Infinity, Infinity);
-    private _useLightProbe$ = false;
+    private _tetrahedronIndex = -1;
+    private _lastWorldBoundCenter = v3(Infinity, Infinity, Infinity);
+    private _useLightProbe = false;
 
     /**
      * @en World AABB buffer
@@ -859,7 +859,7 @@ export class Model {
         this._worldBounds.copy(this._modelBounds);
     }
 
-    private _createSubModel$ (): SubModel {
+    private _createSubModel (): SubModel {
         return new SubModel();
     }
 

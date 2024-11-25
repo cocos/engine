@@ -825,51 +825,51 @@ export class Camera {
     public pipelineSettings: object | null = null;
 
     private declare _device$: Device;
-    private _scene$: RenderScene | null = null;
-    private _node$: Node | null = null;
-    private _name$: string | null = null;
-    private _enabled$ = false;
-    private _proj$: CameraProjection = -1 as CameraProjection;
-    private _aspect$: number = 1;
-    private _orthoHeight$ = 10.0;
-    private _fovAxis$ = CameraFOVAxis.VERTICAL;
-    private _fov$: number = toRadian(45);
-    private _nearClip$ = 1.0;
-    private _farClip$ = 1000.0;
-    private _clearColor$ = new Color(0.2, 0.2, 0.2, 1);
-    private _viewport$: Rect = rect(0, 0, 1, 1);
-    private _orientedViewport$: Rect = rect(0, 0, 1, 1);
-    private _curTransform$ = SurfaceTransform.IDENTITY;
-    private _isProjDirty$ = true;
-    private _matView$: Mat4 = mat4();
-    private _matProj$: Mat4 = mat4();
-    private _matProjInv$: Mat4 = mat4();
-    private _matViewProj$: Mat4 = mat4();
-    private _matViewProjInv$: Mat4 = mat4();
-    private _frustum$: geometry.Frustum = new geometry.Frustum();
-    private _forward$: Vec3 = v3();
-    private _position$: Vec3 = v3();
-    private _priority$ = 0;
-    private _aperture$: CameraAperture = CameraAperture.F16_0;
+    private _scene: RenderScene | null = null;
+    private _node: Node | null = null;
+    private _name: string | null = null;
+    private _enabled = false;
+    private _proj: CameraProjection = -1 as CameraProjection;
+    private _aspect: number = 1;
+    private _orthoHeight = 10.0;
+    private _fovAxis = CameraFOVAxis.VERTICAL;
+    private _fov: number = toRadian(45);
+    private _nearClip = 1.0;
+    private _farClip = 1000.0;
+    private _clearColor = new Color(0.2, 0.2, 0.2, 1);
+    private _viewport: Rect = rect(0, 0, 1, 1);
+    private _orientedViewport: Rect = rect(0, 0, 1, 1);
+    private _curTransform = SurfaceTransform.IDENTITY;
+    private _isProjDirty = true;
+    private _matView: Mat4 = mat4();
+    private _matProj: Mat4 = mat4();
+    private _matProjInv: Mat4 = mat4();
+    private _matViewProj: Mat4 = mat4();
+    private _matViewProjInv: Mat4 = mat4();
+    private _frustum: geometry.Frustum = new geometry.Frustum();
+    private _forward: Vec3 = v3();
+    private _position: Vec3 = v3();
+    private _priority = 0;
+    private _aperture: CameraAperture = CameraAperture.F16_0;
     private declare _apertureValue$: number;
-    private _shutter$: CameraShutter = CameraShutter.D125;
-    private _shutterValue$ = 0.0;
+    private _shutter: CameraShutter = CameraShutter.D125;
+    private _shutterValue = 0.0;
     private _iso: CameraISO = CameraISO.ISO100;
-    private _isoValue$ = 0.0;
-    private _window$: RenderWindow | null = null;
-    private _width$ = 1;
-    private _height$ = 1;
-    private _clearFlag$ = ClearFlagBit.NONE;
-    private _clearDepth$ = 1.0;
-    private _visibility$ = CAMERA_DEFAULT_MASK;
-    private _exposure$ = 0;
-    private _clearStencil$ = 0;
-    private _geometryRenderer$: GeometryRenderer | null = null;
-    private _windowId$ = 0;
-    private _cameraType$: CameraType = CameraType.DEFAULT;
-    private _trackingType$: TrackingType = TrackingType.NO_TRACKING;
-    private _usage$: CameraUsage = CameraUsage.GAME;
-    private _cameraId$ = _cameraCount++;
+    private _isoValue = 0.0;
+    private _window: RenderWindow | null = null;
+    private _width = 1;
+    private _height = 1;
+    private _clearFlag = ClearFlagBit.NONE;
+    private _clearDepth = 1.0;
+    private _visibility = CAMERA_DEFAULT_MASK;
+    private _exposure = 0;
+    private _clearStencil = 0;
+    private _geometryRenderer: GeometryRenderer | null = null;
+    private _windowId = 0;
+    private _cameraType: CameraType = CameraType.DEFAULT;
+    private _trackingType: TrackingType = TrackingType.NO_TRACKING;
+    private _usage: CameraUsage = CameraUsage.GAME;
+    private _cameraId = _cameraCount++;
 
     constructor (device: Device) {
         this._device$ = device;
@@ -888,7 +888,7 @@ export class Camera {
         }
     }
 
-    private _updateAspect$ (oriented = true): void {
+    private _updateAspect (oriented = true): void {
         this._aspect$ = (this.window.width * this._viewport$.width) / (this.window.height * this._viewport$.height);
         // window size/viewport is pre-rotated, but aspect should be oriented to acquire the correct projection
         if (oriented) {

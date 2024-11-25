@@ -470,7 +470,7 @@ class _Deserializer {
      * @param owner - Tracing purpose.
      * @param propName - Tracing purpose.
      */
-    private _deserializeObject$ (
+    private _deserializeObject (
         serialized: SerializedObject,
         globalIndex: number,
         owner?: Record<PropertyKey, unknown> | unknown[],
@@ -493,11 +493,11 @@ class _Deserializer {
         }
     }
 
-    private _deserializeTypedArrayView$ (value: SerializedTypedArray): Uint8Array | Int8Array | Uint16Array | Int16Array | Uint32Array | Int32Array | Float32Array | Float64Array {
+    private _deserializeTypedArrayView (value: SerializedTypedArray): Uint8Array | Int8Array | Uint16Array | Int16Array | Uint32Array | Int32Array | Float32Array | Float64Array {
         return globalThis[value.ctor].from(value.array);
     }
 
-    private _deserializeTypedArrayViewRef$ (value: SerializedTypedArrayRef): Uint8Array | Int8Array | Uint16Array | Int16Array | Uint32Array | Int32Array | Float32Array | Float64Array {
+    private _deserializeTypedArrayViewRef (value: SerializedTypedArrayRef): Uint8Array | Int8Array | Uint16Array | Int16Array | Uint32Array | Int32Array | Float32Array | Float64Array {
         const { offset, length, ctor: constructorName } = value;
         const obj = new globalThis[constructorName](
             this._mainBinChunk$.buffer,
@@ -507,7 +507,7 @@ class _Deserializer {
         return obj;
     }
 
-    private _deserializeArray$ (value: SerializedValue[]): unknown[] {
+    private _deserializeArray (value: SerializedValue[]): unknown[] {
         const obj = new Array<unknown>(value.length);
         let prop: unknown;
         for (let i = 0; i < value.length; i++) {
@@ -525,13 +525,13 @@ class _Deserializer {
         return obj;
     }
 
-    private _deserializePlainObject$ (value: Record<string, unknown>): Record<string, any> {
+    private _deserializePlainObject (value: Record<string, unknown>): Record<string, any> {
         const obj = {};
         this._fillPlainObject(obj, value);
         return obj;
     }
 
-    private _deserializeTypeTaggedObject$ (
+    private _deserializeTypeTaggedObject (
         value: SerializedGeneralTypedObject,
         globalIndex: number,
         owner?: Record<PropertyKey, unknown> | unknown[],
@@ -577,7 +577,7 @@ class _Deserializer {
         }
     }
 
-    private _deserializeInto$ (
+    private _deserializeInto (
         value: SerializedGeneralTypedObject,
         object: Record<PropertyKey, unknown>,
         constructor: deserialize.SerializableClassConstructor,
@@ -606,7 +606,7 @@ class _Deserializer {
         }
     }
 
-    private _runCustomizedDeserialize$ (
+    private _runCustomizedDeserialize (
         value: SerializedGeneralTypedObject,
         object: Record<PropertyKey, unknown> & CustomSerializable,
         constructor: deserialize.SerializableClassConstructor,
@@ -636,7 +636,7 @@ class _Deserializer {
         object[deserializeTag]!(serializationInput, this._context$);
     }
 
-    private _deserializeFireClass$ (obj: Record<PropertyKey, unknown>, serialized: SerializedGeneralTypedObject, klass: CCClassConstructor<unknown>): void {
+    private _deserializeFireClass (obj: Record<PropertyKey, unknown>, serialized: SerializedGeneralTypedObject, klass: CCClassConstructor<unknown>): void {
         let deserialize: CompiledDeserializeFn;
         // eslint-disable-next-line no-prototype-builtins
         if (klass.hasOwnProperty('__deserialize__')) {
@@ -713,7 +713,7 @@ class _Deserializer {
         return false;
     }
 
-    private _deserializeObjectField$ (serializedField: SerializedFieldObjectValue): Record<string, any> | null {
+    private _deserializeObjectField (serializedField: SerializedFieldObjectValue): Record<string, any> | null {
         const id = (serializedField as Partial<SerializedObjectReference>).__id__;
         if (typeof id === 'number') {
             const field = this.deserializedList[id];

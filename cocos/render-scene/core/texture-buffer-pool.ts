@@ -64,18 +64,18 @@ function roundUp (n: number, alignment: number): number {
 
 export class TextureBufferPool {
     private declare _device$: Device;
-    private _format$ = Format.UNKNOWN;
-    private _formatSize$ = 0;
-    private _chunks$: ITextureBuffer[] = [];
-    private _chunkCount$ = 0;
-    private _handles$: ITextureBufferHandle[] = [];
-    private _region0$ = new BufferTextureCopy();
-    private _region1$ = new BufferTextureCopy();
-    private _region2$ = new BufferTextureCopy();
-    private _roundUpFn$: ((targetSize: number, formatSize: number) => number) | null = null;
-    private _bufferViewCtor$: TypedArrayConstructor = Uint8Array;
-    private _channels$ = 4;
-    private _alignment$ = 1;
+    private _format = Format.UNKNOWN;
+    private _formatSize = 0;
+    private _chunks: ITextureBuffer[] = [];
+    private _chunkCount = 0;
+    private _handles: ITextureBufferHandle[] = [];
+    private _region0 = new BufferTextureCopy();
+    private _region1 = new BufferTextureCopy();
+    private _region2 = new BufferTextureCopy();
+    private _roundUpFn: ((targetSize: number, formatSize: number) => number) | null = null;
+    private _bufferViewCtor: TypedArrayConstructor = Uint8Array;
+    private _channels = 4;
+    private _alignment = 1;
 
     public constructor (device: Device) {
         this._device$ = device;
@@ -243,7 +243,7 @@ export class TextureBufferPool {
         this._device$.copyBuffersToTexture(buffers, handle.texture, regions);
     }
 
-    private _findAvailableSpace$ (size: number, chunkIdx: number): number {
+    private _findAvailableSpace (size: number, chunkIdx: number): number {
         const chunk = this._chunks$[chunkIdx];
         let isFound = false;
         let start = chunk.start;
@@ -268,7 +268,7 @@ export class TextureBufferPool {
     }
 
     // [McDonald 12] Efficient Buffer Management
-    private _McDonaldAlloc$ (size: number): ITextureBufferHandle {
+    private _McDonaldAlloc (size: number): ITextureBufferHandle {
         size = roundUp(size, this._alignment$);
 
         for (let i = 0; i < this._chunkCount$; ++i) {

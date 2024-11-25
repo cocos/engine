@@ -114,7 +114,7 @@ class SystemInfo extends EventTarget {
     public declare readonly browserVersion: string;
     public declare readonly isXR: boolean;
     private declare _featureMap$: IFeatureMap;
-    private _initPromise$: Promise<void>[] = [];
+    private _initPromise: Promise<void>[] = [];
 
     constructor () {
         super();
@@ -223,7 +223,7 @@ class SystemInfo extends EventTarget {
         this._registerEvent$();
     }
 
-    private _supportsWebpPromise$ (): Promise<void> {
+    private _supportsWebpPromise (): Promise<void> {
         if (!TEST) {
             return this._supportsWebp$().then((isSupport) => {
                 this._setFeature$(Feature.WEBP, isSupport);
@@ -232,7 +232,7 @@ class SystemInfo extends EventTarget {
         return Promise.resolve();
     }
 
-    private _supportsWebp$ (): Promise<boolean> {
+    private _supportsWebp (): Promise<boolean> {
         return new Promise<boolean>((resolve, reject) => {
             if (WECHAT_MINI_PROGRAM) {
                 resolve(true);
@@ -268,7 +268,7 @@ class SystemInfo extends EventTarget {
         });
     }
 
-    private _registerEvent$ (): void {
+    private _registerEvent (): void {
         minigame.onHide((): void => {
             this.emit('hide');
         });
@@ -277,7 +277,7 @@ class SystemInfo extends EventTarget {
         });
     }
 
-    private _setFeature$ (feature: Feature, value: boolean): boolean {
+    private _setFeature (feature: Feature, value: boolean): boolean {
         return this._featureMap$[feature] = value;
     }
 

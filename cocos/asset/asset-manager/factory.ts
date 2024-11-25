@@ -96,9 +96,9 @@ function createBundle (id: string, data: IConfigOption, options: Record<string, 
 }
 
 export class Factory {
-    private _creating$ = new Cache<((err: Error | null, data?: any | null) => void)[]>();
+    private _creating = new Cache<((err: Error | null, data?: any | null) => void)[]>();
 
-    private _producers$: Record<string, CreateHandler> = {
+    private _producers: Record<string, CreateHandler> = {
         // Images
         '.png': createImageAsset,
         '.jpg': createImageAsset,

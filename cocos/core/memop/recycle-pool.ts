@@ -38,7 +38,7 @@ import { ScalableContainer } from './scalable-container';
 export class RecyclePool<T = any> extends ScalableContainer {
     private declare _fn: () => T;
     private declare _dtor: ((obj: T) => void) | null;
-    private _count$ = 0;
+    private _count = 0;
     private declare _data$: T[];
     private declare _initSize$: number;
 

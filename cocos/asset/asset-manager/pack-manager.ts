@@ -53,8 +53,8 @@ interface IUnpackRequest {
  *
  */
 export class PackManager {
-    private _loading$ = new Cache<IUnpackRequest[]>();
-    private _unpackers$: Record<string, Unpacker> = {
+    private _loading = new Cache<IUnpackRequest[]>();
+    private _unpackers: Record<string, Unpacker> = {
         '.json': this.unpackJson,
     };
 

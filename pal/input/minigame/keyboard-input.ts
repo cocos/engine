@@ -138,10 +138,10 @@ function getKeyCode (code: string): KeyCode {
 }
 
 export class KeyboardInputSource {
-    private _eventTarget$: EventTarget = new EventTarget();
+    private _eventTarget: EventTarget = new EventTarget();
 
     // KeyboardEvent.repeat is not supported on Wechat PC platform.
-    private _keyStateMap$: Record<number, boolean> = {};
+    private _keyStateMap: Record<number, boolean> = {};
 
     constructor () {
         if (systemInfo.hasFeature(Feature.EVENT_KEYBOARD)) {
@@ -149,7 +149,7 @@ export class KeyboardInputSource {
         }
     }
 
-    private _registerEvent$ (): void {
+    private _registerEvent (): void {
         minigame.wx?.onKeyDown?.((res) => {
             const keyCode = getKeyCode(res.code);
             if (!this._keyStateMap$[keyCode]) {
@@ -169,7 +169,7 @@ export class KeyboardInputSource {
         });
     }
 
-    private _getInputEvent$ (event: KeyboardEventData, eventType: InputEventType): EventKeyboard {
+    private _getInputEvent (event: KeyboardEventData, eventType: InputEventType): EventKeyboard {
         const keyCode = getKeyCode(event.code);
         const eventKeyboard = new EventKeyboard(keyCode, eventType);
         return eventKeyboard;

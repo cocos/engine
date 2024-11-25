@@ -54,7 +54,7 @@ export class WebGLIndirectDrawInfos {
     // staging buffer
     public declare byteOffsets$: Int32Array;
 
-    private _capacity$ = 4;
+    private _capacity = 4;
 
     constructor () {
         this.counts$ = createInt32Array(this._capacity$);
@@ -85,7 +85,7 @@ export class WebGLIndirectDrawInfos {
         this.instances$[idx] = Math.max(1, info.instanceCount);
     }
 
-    private _ensureCapacity$ (target: number): void {
+    private _ensureCapacity (target: number): void {
         if (this._capacity$ > target) return;
         this._capacity$ = nextPow2(target);
 
@@ -322,21 +322,21 @@ export interface IWebGLGPUInputAssembler {
 }
 
 export class IWebGLBlitManager {
-    private _gpuShader$: IWebGLGPUShader | null = null;
-    private _gpuDescriptorSetLayout$: IWebGLGPUDescriptorSetLayout | null = null;
-    private _gpuPipelineLayout$: IWebGLGPUPipelineLayout | null = null;
-    private _gpuPipelineState$: IWebGLGPUPipelineState | null = null;
+    private _gpuShader: IWebGLGPUShader | null = null;
+    private _gpuDescriptorSetLayout: IWebGLGPUDescriptorSetLayout | null = null;
+    private _gpuPipelineLayout: IWebGLGPUPipelineLayout | null = null;
+    private _gpuPipelineState: IWebGLGPUPipelineState | null = null;
 
-    private _gpuVertexBuffer$: IWebGLGPUBuffer | null = null;
-    private _gpuInputAssembler$: IWebGLGPUInputAssembler | null = null;
-    private _gpuPointSampler$: IWebGLGPUSampler | null = null;
-    private _gpuLinearSampler$: IWebGLGPUSampler | null = null;
-    private _gpuDescriptorSet$: IWebGLGPUDescriptorSet | null = null;
-    private _gpuUniformBuffer$: IWebGLGPUBuffer | null = null;
-    private _drawInfo$: DrawInfo | null = null;
-    private _glFramebuffer$: WebGLFramebuffer | null = null;
+    private _gpuVertexBuffer: IWebGLGPUBuffer | null = null;
+    private _gpuInputAssembler: IWebGLGPUInputAssembler | null = null;
+    private _gpuPointSampler: IWebGLGPUSampler | null = null;
+    private _gpuLinearSampler: IWebGLGPUSampler | null = null;
+    private _gpuDescriptorSet: IWebGLGPUDescriptorSet | null = null;
+    private _gpuUniformBuffer: IWebGLGPUBuffer | null = null;
+    private _drawInfo: DrawInfo | null = null;
+    private _glFramebuffer: WebGLFramebuffer | null = null;
 
-    private _uniformBuffer$: Float32Array | null = null;
+    private _uniformBuffer: Float32Array | null = null;
 
     constructor () {
         const device = WebGLDeviceManager.instance;

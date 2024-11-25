@@ -213,7 +213,7 @@ export class DependUtil {
         return out;
     }
 
-    private _parseDepsFromAsset$ (asset: Asset): IDependencies {
+    private _parseDepsFromAsset (asset: Asset): IDependencies {
         const out: IDependencies = {
             deps: [],
             parsedFromExistAsset: true,
@@ -232,13 +232,13 @@ export class DependUtil {
         return out;
     }
 
-    private _parseDepsFromJson$ (json: any[]): string[] {
+    private _parseDepsFromJson (json: any[]): string[] {
         const depends = parseUuidDependencies(json);
         depends.forEach((uuid, index): string => depends[index] = decodeUuid(uuid));
         return depends;
     }
 
-    private _descend$ (uuid: string, exclude: Record<string, any>, depends: string[]): void {
+    private _descend (uuid: string, exclude: Record<string, any>, depends: string[]): void {
         const deps = this.getDeps(uuid);
         for (let i = 0; i < deps.length; i++) {
             const depend = deps[i];

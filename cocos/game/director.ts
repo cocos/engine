@@ -298,15 +298,15 @@ export class Director extends EventTarget {
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
      */
     public _nodeActivator: NodeActivator = new NodeActivator();
-    private _invalid$: boolean = false;
-    private _paused$: boolean = false;
-    private _root$: Root | null = null;
-    private _loadingScene$: string = '';
-    private _scene$: Scene | null = null;
-    private _totalFrames$: number = 0; // FPS
-    private _scheduler$: Scheduler = new Scheduler(); // Scheduler for user registration update
-    private _systems$: System[] = [];
-    private _persistRootNodes$: Record<string, Node> = {};
+    private _invalid: boolean = false;
+    private _paused: boolean = false;
+    private _root: Root | null = null;
+    private _loadingScene: string = '';
+    private _scene: Scene | null = null;
+    private _totalFrames: number = 0; // FPS
+    private _scheduler: Scheduler = new Scheduler(); // Scheduler for user registration update
+    private _systems: System[] = [];
+    private _persistRootNodes: Record<string, Node> = {};
 
     constructor () {
         super();

@@ -35,7 +35,7 @@ export class WebGL2RenderPass extends RenderPass {
         return  this._gpuRenderPass$!;
     }
 
-    private _gpuRenderPass$: IWebGL2GPURenderPass | null = null;
+    private _gpuRenderPass: IWebGL2GPURenderPass | null = null;
 
     public initialize (info: Readonly<RenderPassInfo>): void {
         this._colorInfos$ = info.colorAttachments;

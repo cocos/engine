@@ -32,7 +32,7 @@ import { warnID } from '../../core';
  * @class saxParser
  */
 export class SAXParser {
-    private _parser$: DOMParser | null = null;
+    private _parser: DOMParser | null = null;
     constructor () {
         if (globalThis.DOMParser) {
             this._parser$ = new DOMParser();
@@ -89,7 +89,7 @@ class PlistParser extends SAXParser {
         return this._parseNode$(node!);
     }
 
-    private _parseNode$ (node: HTMLElement): unknown {
+    private _parseNode (node: HTMLElement): unknown {
         let data: any = null;
         const tagName = node.tagName;
         if (tagName === 'dict') {
@@ -118,7 +118,7 @@ class PlistParser extends SAXParser {
         return data;
     }
 
-    private _parseArray$ (node: HTMLElement): unknown[] {
+    private _parseArray (node: HTMLElement): unknown[] {
         const data: any[] = [];
         for (let i = 0, len = node.childNodes.length; i < len; i++) {
             const child = node.childNodes[i];
@@ -130,7 +130,7 @@ class PlistParser extends SAXParser {
         return data;
     }
 
-    private _parseDict$ (node: HTMLElement): Record<string, any> {
+    private _parseDict (node: HTMLElement): Record<string, any> {
         const data = {};
         let key = '';
         for (let i = 0, len = node.childNodes.length; i < len; i++) {

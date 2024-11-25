@@ -118,7 +118,7 @@ export class Texture2D extends SimpleTexture {
     /**
      * TODO: See: cocos/cocos-engine#15305
      */
-    private _setMipmapParams$ (value: ImageAsset[]): void {
+    private _setMipmapParams (value: ImageAsset[]): void {
         this._generatedMipmaps$ = value;
         this._setMipmapLevel(this._generatedMipmaps$.length);
         if (this._generatedMipmaps$.length > 0) {
@@ -168,7 +168,7 @@ export class Texture2D extends SimpleTexture {
     @type([ImageAsset])
     public _mipmaps: ImageAsset[] = [];
 
-    private _generatedMipmaps$: ImageAsset[] = [];
+    private _generatedMipmaps: ImageAsset[] = [];
 
     /**
      * @engineInternal

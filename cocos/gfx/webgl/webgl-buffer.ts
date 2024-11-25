@@ -44,9 +44,9 @@ export class WebGLBuffer extends Buffer {
         return  this._gpuBufferView$!;
     }
 
-    private _gpuBuffer$: IWebGLGPUBuffer | null = null;
-    private _gpuBufferView$: IWebGLGPUBufferView | null = null;
-    private _uniformBuffer$: Uint8Array | null = null;
+    private _gpuBuffer: IWebGLGPUBuffer | null = null;
+    private _gpuBufferView: IWebGLGPUBufferView | null = null;
+    private _uniformBuffer: Uint8Array | null = null;
 
     constructor () {
         super();

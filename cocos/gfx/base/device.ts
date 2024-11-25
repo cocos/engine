@@ -384,10 +384,10 @@ export abstract class Device {
 }
 
 export class DefaultResource {
-    private _texture2D$: Texture | null = null;
-    private _texture3D$: Texture | null = null;
-    private _textureCube$: Texture | null = null;
-    private _texture2DArray$: Texture | null = null;
+    private _texture2D: Texture | null = null;
+    private _texture3D: Texture | null = null;
+    private _textureCube: Texture | null = null;
+    private _texture2DArray: Texture | null = null;
 
     constructor (device: Device) {
         const capabilities = device.capabilities;

@@ -67,10 +67,10 @@ export class SimpleTexture extends TextureBase {
      * @engineInternal
      */
     protected _gfxTextureView: Texture | null = null;
-    private _mipmapLevel$ = 1;
+    private _mipmapLevel = 1;
     // Cache these data to reduce JSB invoking.
-    private _textureWidth$ = 0;
-    private _textureHeight$ = 0;
+    private _textureWidth = 0;
+    private _textureHeight = 0;
 
     /**
      * @engineInternal

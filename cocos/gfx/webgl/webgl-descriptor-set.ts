@@ -35,7 +35,7 @@ export class WebGLDescriptorSet extends DescriptorSet {
         return this._gpuDescriptorSet$ as IWebGLGPUDescriptorSet;
     }
 
-    private _gpuDescriptorSet$: IWebGLGPUDescriptorSet | null = null;
+    private _gpuDescriptorSet: IWebGLGPUDescriptorSet | null = null;
 
     constructor () {
         super();

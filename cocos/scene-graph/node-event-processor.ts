@@ -394,21 +394,21 @@ export class NodeEventProcessor {
         return null;
     }
 
-    private _attachMask$ (): void {
+    private _attachMask (): void {
         this.maskList = this._searchComponentsInParent(NodeEventProcessor._maskComp);
     }
 
-    private _isTouchEvent$ (type: NodeEventType): boolean {
+    private _isTouchEvent (type: NodeEventType): boolean {
         const index = _touchEvents.indexOf(type);
         return index !== -1;
     }
 
-    private _isMouseEvent$ (type: NodeEventType): boolean {
+    private _isMouseEvent (type: NodeEventType): boolean {
         const index = _mouseEvents.indexOf(type);
         return index !== -1;
     }
 
-    private _hasTouchListeners$ (): boolean {
+    private _hasTouchListeners (): boolean {
         for (let i = 0; i < _touchEvents.length; ++i) {
             const eventType = _touchEvents[i];
             if (this.hasEventListener(eventType)) {
@@ -418,7 +418,7 @@ export class NodeEventProcessor {
         return false;
     }
 
-    private _hasMouseListeners$ (): boolean {
+    private _hasMouseListeners (): boolean {
         for (let i = 0; i < _mouseEvents.length; ++i) {
             const eventType = _mouseEvents[i];
             if (this.hasEventListener(eventType)) {
@@ -428,7 +428,7 @@ export class NodeEventProcessor {
         return false;
     }
 
-    private _hasPointerListeners$ (): boolean {
+    private _hasPointerListeners (): boolean {
         const has = this._hasTouchListeners$();
         if (has) {
             return true;
@@ -436,7 +436,7 @@ export class NodeEventProcessor {
         return this._hasMouseListeners$();
     }
 
-    private _tryEmittingAddEvent$ (typeToAdd: NodeEventType): void {
+    private _tryEmittingAddEvent (typeToAdd: NodeEventType): void {
         const isTouchEvent = this._isTouchEvent$(typeToAdd);
         const isMouseEvent = this._isMouseEvent$(typeToAdd);
         if (isTouchEvent) {
@@ -454,7 +454,7 @@ export class NodeEventProcessor {
      * We need to inject some nodeEventProcessor's logic into the `callbacksInvoker.off` method.
      * @returns {CallbacksInvoker<SystemEventTypeUnion>} decorated callbacks invoker
      */
-    private _newCallbacksInvoker$ (): CallbacksInvoker<SystemEventTypeUnion> {
+    private _newCallbacksInvoker (): CallbacksInvoker<SystemEventTypeUnion> {
         const callbacksInvoker = new CallbacksInvoker<SystemEventTypeUnion>();
         callbacksInvoker._registerOffCallback(() => {
             if (this.shouldHandleEventTouch && !this._hasTouchListeners$()) {
@@ -494,7 +494,7 @@ export class NodeEventProcessor {
         }
     }
 
-    private _handleMouseDown$ (event: EventMouse): boolean {
+    private _handleMouseDown (event: EventMouse): boolean {
         const node = this._node;
         if (!node || !node._uiProps.uiTransformComp) {
             return false;
@@ -512,7 +512,7 @@ export class NodeEventProcessor {
         return false;
     }
 
-    private _handleMouseMove$ (event: EventMouse): boolean {
+    private _handleMouseMove (event: EventMouse): boolean {
         const node = this._node;
         if (!node || !node._uiProps.uiTransformComp || this._isMouseLeaveWindow) {
             return false;
@@ -548,7 +548,7 @@ export class NodeEventProcessor {
         return false;
     }
 
-    private _handleMouseUp$ (event: EventMouse): boolean {
+    private _handleMouseUp (event: EventMouse): boolean {
         const node = this._node;
         if (!node || !node._uiProps.uiTransformComp) {
             return false;
@@ -566,7 +566,7 @@ export class NodeEventProcessor {
         return false;
     }
 
-    private _handleMouseWheel$ (event: EventMouse): boolean {
+    private _handleMouseWheel (event: EventMouse): boolean {
         const node = this._node;
         if (!node || !node._uiProps.uiTransformComp) {
             return false;
@@ -585,7 +585,7 @@ export class NodeEventProcessor {
         return false;
     }
 
-    private _handleMouseLeave$ (event: EventMouse): boolean {
+    private _handleMouseLeave (event: EventMouse): boolean {
         this._isMouseLeaveWindow = true;
         if (this.previousMouseIn) {
             event.type = NodeEventType.MOUSE_LEAVE;
@@ -596,7 +596,7 @@ export class NodeEventProcessor {
         return false;
     }
 
-    private _handleMouseEnter$ (event: EventMouse): boolean {
+    private _handleMouseEnter (event: EventMouse): boolean {
         this._isMouseLeaveWindow = false;
         return false;
     }
@@ -628,7 +628,7 @@ export class NodeEventProcessor {
         }
     }
 
-    private _handleTouchStart$ (event: EventTouch): boolean {
+    private _handleTouchStart (event: EventTouch): boolean {
         const node = this.node;
         if (!node || !node._uiProps.uiTransformComp) {
             return false;
@@ -647,7 +647,7 @@ export class NodeEventProcessor {
         return false;
     }
 
-    private _handleTouchMove$ (event: EventTouch): boolean {
+    private _handleTouchMove (event: EventTouch): boolean {
         const node = this.node;
         if (!node || !node._uiProps.uiTransformComp) {
             return false;
@@ -660,7 +660,7 @@ export class NodeEventProcessor {
         return true;
     }
 
-    private _handleTouchEnd$ (event: EventTouch): void {
+    private _handleTouchEnd (event: EventTouch): void {
         const node = this.node;
         if (!node || !node._uiProps.uiTransformComp) {
             return;
@@ -678,7 +678,7 @@ export class NodeEventProcessor {
         this._dispatchingTouch = null;
     }
 
-    private _handleTouchCancel$ (event: EventTouch): void {
+    private _handleTouchCancel (event: EventTouch): void {
         const node = this.node;
         if (!node || !node._uiProps.uiTransformComp) {
             return;

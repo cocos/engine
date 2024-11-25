@@ -36,7 +36,7 @@ export class WebGLShader extends Shader {
         return this._gpuShader$!;
     }
 
-    private _gpuShader$: IWebGLGPUShader | null = null;
+    private _gpuShader: IWebGLGPUShader | null = null;
 
     constructor () {
         super();

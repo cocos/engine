@@ -274,7 +274,7 @@ export class Downloader {
     public _downloadJson = downloadJson;
 
     // default handler map
-    private _downloaders$: Record<string, DownloadHandler> = {
+    private _downloaders: Record<string, DownloadHandler> = {
         // Images
         '.png': downloadImage,
         '.jpg': downloadImage,
@@ -321,19 +321,19 @@ export class Downloader {
         default: downloadText,
     };
 
-    private _downloading$ = new Cache<((err: Error | null, data?: any) => void)[]>();
-    private _queue$: IDownloadRequest[] = [];
-    private _queueDirty$ = false;
+    private _downloading = new Cache<((err: Error | null, data?: any) => void)[]>();
+    private _queue: IDownloadRequest[] = [];
+    private _queueDirty = false;
     // the number of loading thread
-    private _totalNum$ = 0;
+    private _totalNum = 0;
     // the number of request that launched in this period
-    private _totalNumThisPeriod$ = 0;
+    private _totalNumThisPeriod = 0;
     // last time, if now - lastTime > period, refresh _totalNumThisPeriod.
-    private _lastDate$ = -1;
+    private _lastDate = -1;
     // if _totalNumThisPeriod equals max, move request to next period using setTimeOut.
-    private _checkNextPeriod$ = false;
-    private _remoteServerAddress$ = '';
-    private _maxInterval$ = 1 / 30;
+    private _checkNextPeriod = false;
+    private _remoteServerAddress = '';
+    private _maxInterval = 1 / 30;
     private static _instance: Downloader;
 
     /**

@@ -153,19 +153,19 @@ export class RenderScene {
     get lodGroups (): readonly LODGroup[] { return this._lodGroups$; }
 
     private declare _root$: Root;
-    private _name$ = '';
-    private _cameras$: Camera[] = [];
-    private _models$: Model[] = [];
-    private _lodGroups$: LODGroup[] = []; // LOD Group gathered
-    private _batches$: DrawBatch2D[] = [];
-    private _directionalLights$: DirectionalLight[] = [];
-    private _sphereLights$: SphereLight[] = [];
-    private _spotLights$: SpotLight[] = [];
-    private _pointLights$: PointLight[] = [];
-    private _rangedDirLights$: RangedDirectionalLight[] = [];
-    private _mainLight$: DirectionalLight | null = null;
-    private _modelId$ = 0;
-    private _lodStateCache$: LodStateCache = null!;
+    private _name = '';
+    private _cameras: Camera[] = [];
+    private _models: Model[] = [];
+    private _lodGroups: LODGroup[] = []; // LOD Group gathered
+    private _batches: DrawBatch2D[] = [];
+    private _directionalLights: DirectionalLight[] = [];
+    private _sphereLights: SphereLight[] = [];
+    private _spotLights: SpotLight[] = [];
+    private _pointLights: PointLight[] = [];
+    private _rangedDirLights: RangedDirectionalLight[] = [];
+    private _mainLight: DirectionalLight | null = null;
+    private _modelId = 0;
+    private _lodStateCache: LodStateCache = null!;
 
     /**
      * Register the creation function of the render scene to root.
@@ -887,26 +887,26 @@ class LodStateCache {
         return (camera.visibility & layer) === layer;
     }
 
-    private _renderScene$: RenderScene = null!;
+    private _renderScene: RenderScene = null!;
 
     /**
      * @zh LOD使用的model集合以及每个model当前能被看到的相机列表；包含每个LODGroup的每一级LOD
      * @en The set of models used by the LOD and the list of cameras that each models can currently be seen,
      *  contains each level of LOD for each LODGroup.
      */
-    private _modelsInLODGroup$: Map<Model, Map<Camera, boolean>> = new Map<Model, Map<Camera, boolean>>();
+    private _modelsInLODGroup: Map<Model, Map<Camera, boolean>> = new Map<Model, Map<Camera, boolean>>();
 
     /**
       * @zh 指定相机下，LODGroup使用哪一级的LOD
       * @en Specify which level of LOD is used by the LODGroup under the camera.
       */
-    private _lodStateInCamera$: Map<Camera, Map<LODGroup, LODInfo>> = new Map<Camera, Map<LODGroup, LODInfo>>();
+    private _lodStateInCamera: Map<Camera, Map<LODGroup, LODInfo>> = new Map<Camera, Map<LODGroup, LODInfo>>();
 
     /**
       * @zh 上一帧添加的lodgroup
       * @en The lodgroup added in the previous frame.
       */
-    private _newAddedLodGroupVec$: Array<LODGroup> = new Array<LODGroup>();
+    private _newAddedLodGroupVec: Array<LODGroup> = new Array<LODGroup>();
 
-    private _levelModels$: Map<LODGroup, Map<number, Array<Model>>> = new Map<LODGroup, Map<number, Array<Model>>>();
+    private _levelModels: Map<LODGroup, Map<number, Array<Model>>> = new Map<LODGroup, Map<number, Array<Model>>>();
 }

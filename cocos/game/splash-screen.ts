@@ -69,7 +69,7 @@ interface SplashLogo {
 
 export class SplashScreen {
     private settings$!: ISplashSetting;
-    private _curTime$ = 0;
+    private _curTime = 0;
 
     private device$!: Device;
     private swapchain$!: Swapchain;

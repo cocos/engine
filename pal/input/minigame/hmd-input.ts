@@ -36,7 +36,7 @@ export class HMDInputDevice {
     public get headMiddlePosition (): InputSourcePosition { return this._headMiddlePosition$; }
     public get headMiddleOrientation (): InputSourceOrientation { return this._headMiddleOrientation$; }
 
-    private _eventTarget$: EventTarget = new EventTarget();
+    private _eventTarget: EventTarget = new EventTarget();
 
     private declare _viewLeftPosition$: InputSourcePosition;
     private declare _viewLeftOrientation$: InputSourceOrientation;
@@ -56,7 +56,7 @@ export class HMDInputDevice {
         this._eventTarget$.on(eventType, callback, target);
     }
 
-    private _initInputSource$ (): void {
+    private _initInputSource (): void {
         this._viewLeftPosition$ = new InputSourcePosition();
         this._viewLeftPosition$.getValue = (): Readonly<Vec3> => Vec3.ZERO;
         this._viewLeftOrientation$ = new InputSourceOrientation();

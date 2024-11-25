@@ -709,7 +709,7 @@ export class Pass {
         Object.assign(directHandleMap, indirectHandleMap);
     }
 
-    private _buildUniformBlocks$ (device: Device, blocks: EffectAsset.IBlockInfo[], blockSizes: number[]): void {
+    private _buildUniformBlocks (device: Device, blocks: EffectAsset.IBlockInfo[], blockSizes: number[]): void {
         const alignment = device.capabilities.uboOffsetAlignment;
         const startOffsets: number[] = [];
         let lastSize = 0; let lastOffset = 0;
@@ -747,7 +747,7 @@ export class Pass {
         }
     }
 
-    private _buildMaterialUniformBlocks$ (device: Device, blocks: UniformBlock[], blockSizes: number[]): void {
+    private _buildMaterialUniformBlocks (device: Device, blocks: UniformBlock[], blockSizes: number[]): void {
         const alignment = device.capabilities.uboOffsetAlignment;
         const startOffsets: number[] = [];
         let lastSize = 0; let lastOffset = 0;
@@ -808,7 +808,7 @@ export class Pass {
         }
     }
 
-    private _getBlockView$ (type: Type, binding: number): Int32Array | Float32Array {
+    private _getBlockView (type: Type, binding: number): Int32Array | Float32Array {
         return type < Type.FLOAT ? this._blocksInt[binding] : this._blocks[binding];
     }
 

@@ -37,8 +37,8 @@ export class WebGLTexture extends Texture {
         return this._lodLevel$;
     }
 
-    private _gpuTexture$: IWebGLGPUTexture | null = null;
-    private _lodLevel$ = 0;
+    private _gpuTexture: IWebGLGPUTexture | null = null;
+    private _lodLevel = 0;
 
     constructor () {
         super();

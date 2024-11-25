@@ -74,12 +74,12 @@ class BufferPool<P extends PoolType, E extends BufferManifest> implements IMemor
     private declare _entryMask$: number;
     private declare _chunkMask$: number;
     private declare _poolFlag$: number;
-    private _arrayBuffers$: ArrayBuffer[] = [];
-    private _freeLists$: number[][] = [];
-    private _uint32BufferViews$: Uint32Array[][] = [];
-    private _float32BufferViews$: Float32Array[][] = [];
-    private _hasUint32$ = false;
-    private _hasFloat32$ = false;
+    private _arrayBuffers: ArrayBuffer[] = [];
+    private _freeLists: number[][] = [];
+    private _uint32BufferViews: Uint32Array[][] = [];
+    private _float32BufferViews: Float32Array[][] = [];
+    private _hasUint32 = false;
+    private _hasFloat32 = false;
     private declare _nativePool$: NativeBufferPool;
 
     constructor (poolType: P, dataType: BufferDataTypeManifest<E>, dataMembers: BufferDataMembersManifest<E>, enumType: E, entryBits = 8) {

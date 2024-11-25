@@ -36,9 +36,9 @@ export class WebGLFramebuffer extends Framebuffer {
         return  this._gpuFramebuffer$!;
     }
 
-    private _gpuFramebuffer$: IWebGLGPUFramebuffer | null = null;
-    private _gpuColorTextures$: (WebGLTexture | null)[] = [];
-    private _gpuDepthStencilTexture$: WebGLTexture | null | undefined;
+    private _gpuFramebuffer: IWebGLGPUFramebuffer | null = null;
+    private _gpuColorTextures: (WebGLTexture | null)[] = [];
+    private _gpuDepthStencilTexture: WebGLTexture | null | undefined;
 
     constructor () {
         super();

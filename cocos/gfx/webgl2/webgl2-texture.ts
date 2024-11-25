@@ -33,8 +33,8 @@ import { WebGL2DeviceManager } from './webgl2-define';
 import { IWebGL2GPUTexture, IWebGL2GPUTextureView } from './webgl2-gpu-objects';
 
 export class WebGL2Texture extends Texture {
-    private _gpuTexture$: IWebGL2GPUTexture | null = null;
-    private _gpuTextureView$: IWebGL2GPUTextureView | null = null;
+    private _gpuTexture: IWebGL2GPUTexture | null = null;
+    private _gpuTextureView: IWebGL2GPUTextureView | null = null;
 
     constructor () {
         super();

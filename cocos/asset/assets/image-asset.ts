@@ -623,16 +623,16 @@ export class ImageAsset extends Asset {
 
     private static extnames = ['.png', '.jpg', '.jpeg', '.bmp', '.webp', '.pvr', '.pkm', '.astc'];
 
-    private _nativeData$: ImageSource;
+    private _nativeData: ImageSource;
 
     //NOTE: _exportedExts is used by editor, should not rename or mangle it.
     private _exportedExts: string[] | null | undefined = undefined;
 
-    private _format$: PixelFormat = PixelFormat.RGBA8888;
+    private _format: PixelFormat = PixelFormat.RGBA8888;
 
-    private _width$ = 0;
+    private _width = 0;
 
-    private _height$ = 0;
+    private _height = 0;
 
     constructor (nativeAsset?: ImageSource) {
         super();

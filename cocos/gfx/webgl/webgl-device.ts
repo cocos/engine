@@ -105,9 +105,9 @@ export class WebGLDevice extends Device {
         return this._swapchain$!.blitManager;
     }
 
-    private _swapchain$: WebGLSwapchain | null = null;
-    private _context$: WebGLRenderingContext | null = null;
-    private _bindingMappings$: IWebGLBindingMapping | null = null;
+    private _swapchain: WebGLSwapchain | null = null;
+    private _context: WebGLRenderingContext | null = null;
+    private _bindingMappings: IWebGLBindingMapping | null = null;
 
     protected _textureExclusive$ = new Array<boolean>(Format.COUNT);
 

@@ -44,8 +44,8 @@ export abstract class ScalableContainer {
  * It will shrink all managed ScalableContainer in a fixed interval.
  */
 class ScalableContainerManager {
-    private _pools$: ScalableContainer[] = [];
-    private _lastShrinkPassed$ = 0;
+    private _pools: ScalableContainer[] = [];
+    private _lastShrinkPassed = 0;
     /**
      * @en Shrink interval in seconds.
      */

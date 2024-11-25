@@ -32,8 +32,8 @@ import { enqueueOperation, OperationInfo, OperationQueueable } from '../operatio
 import { OS } from '../../system-info/enum-type';
 
 export class OneShotAudioMinigame {
-    private _innerAudioContext$: InnerAudioContext;
-    private _onPlayCb$?: () => void;
+    private _innerAudioContext: InnerAudioContext;
+    private _onPlayCb?: () => void;
     get onPlay (): (() => void) | undefined {
         return this._onPlayCb$;
     }
@@ -41,7 +41,7 @@ export class OneShotAudioMinigame {
         this._onPlayCb$ = cb;
     }
 
-    private _onEndCb$?: () => void;
+    private _onEndCb?: () => void;
     get onEnd (): (() => void) | undefined {
         return this._onEndCb$;
     }
@@ -75,11 +75,11 @@ export class OneShotAudioMinigame {
         systemInfo.on('show', this._onInterruptedEnd$, this);
     }
 
-    private _onInterruptedBegin$ (): void {
+    private _onInterruptedBegin (): void {
         this._innerAudioContext$.pause();
     }
 
-    private _onInterruptedEnd$ (): void {
+    private _onInterruptedEnd (): void {
         this._innerAudioContext$.play();
     }
 
@@ -92,11 +92,11 @@ export class OneShotAudioMinigame {
 }
 
 export class AudioPlayerMinigame implements OperationQueueable {
-    private _innerAudioContext$: InnerAudioContext;
-    private _state$: AudioState = AudioState.INIT;
-    private _cacheTime$ = 0;
-    private _needSeek$ = false;
-    private _seeking$ = false;
+    private _innerAudioContext: InnerAudioContext;
+    private _state: AudioState = AudioState.INIT;
+    private _cacheTime = 0;
+    private _needSeek = false;
+    private _seeking = false;
 
     private _onPlay: () => void;
     private _onPause: () => void;
@@ -204,7 +204,7 @@ export class AudioPlayerMinigame implements OperationQueueable {
             this._state$ = AudioState.INIT;
         }
     }
-    private _onInterruptedBegin$ (): void {
+    private _onInterruptedBegin (): void {
         if (this._state$ === AudioState.PLAYING) {
             this.pause().then(() => {
                 this._state$ = AudioState.INTERRUPTED;
@@ -214,7 +214,7 @@ export class AudioPlayerMinigame implements OperationQueueable {
             }).catch((e) => {});
         }
     }
-    private _onInterruptedEnd$ (): void {
+    private _onInterruptedEnd (): void {
         // We don't know whether onShow or resolve callback in pause promise is called at first.
         if (!this._readyToHandleOnShow) {
             this._eventTarget.once(AudioEvent.INTERRUPTION_END, this._onInterruptedEnd$, this);
@@ -228,7 +228,7 @@ export class AudioPlayerMinigame implements OperationQueueable {
         }
         this._readyToHandleOnShow = false;
     }
-    private _offEvent$ (eventName: string): void {
+    private _offEvent (eventName: string): void {
         if (this[`_on${eventName}`]) {
             this._innerAudioContext$[`off${eventName}`](this[`_on${eventName}`]);
             this[`_on${eventName}`] = null;

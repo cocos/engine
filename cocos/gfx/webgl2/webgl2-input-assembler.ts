@@ -40,7 +40,7 @@ export class WebGL2InputAssembler extends InputAssembler {
         return  this._gpuInputAssembler$!;
     }
 
-    private _gpuInputAssembler$: IWebGL2GPUInputAssembler | null = null;
+    private _gpuInputAssembler: IWebGL2GPUInputAssembler | null = null;
 
     public initialize (info: Readonly<InputAssemblerInfo>): void {
         if (info.vertexBuffers.length === 0) {

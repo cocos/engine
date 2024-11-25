@@ -37,7 +37,7 @@ export class Pool<T> extends ScalableContainer {
     private declare _elementsPerBatch$: number;
     private declare _shrinkThreshold$: number;
     private declare _nextAvail$: number;
-    private _freePool$: T[] = [];
+    private _freePool: T[] = [];
     private declare _dtor$: ((obj: T) => void) | null;
 
     /**

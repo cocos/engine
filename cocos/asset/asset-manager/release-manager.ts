@@ -113,10 +113,10 @@ function checkCircularReference (asset: Asset): number {
 }
 
 export class ReleaseManager {
-    private _persistNodeDeps$ = new Cache<string[]>();
-    private _toDelete$ = new Cache<Asset>();
-    private _eventListener$ = false;
-    private _dontDestroyAssets$: string[] = [];
+    private _persistNodeDeps = new Cache<string[]>();
+    private _toDelete = new Cache<Asset>();
+    private _eventListener = false;
+    private _dontDestroyAssets: string[] = [];
 
     public addIgnoredAsset (asset: Asset): void {
         this._dontDestroyAssets$.push(asset._uuid);
@@ -220,7 +220,7 @@ export class ReleaseManager {
         }
     }
 
-    private _freeAssets$ (): void {
+    private _freeAssets (): void {
         this._eventListener$ = false;
         this._toDelete$.forEach((asset): void => {
             this._free$(asset);
@@ -228,7 +228,7 @@ export class ReleaseManager {
         this._toDelete$.clear();
     }
 
-    private _free$ (asset: Asset, force = false): void {
+    private _free (asset: Asset, force = false): void {
         const uuid = asset._uuid;
         this._toDelete$.remove(uuid);
 

@@ -333,7 +333,7 @@ export default class Config {
         this.assetInfos.destroy();
     }
 
-    private _initUuid$ (uuidList: string[]): void {
+    private _initUuid (uuidList: string[]): void {
         if (!uuidList) {
             return;
         }
@@ -344,7 +344,7 @@ export default class Config {
         }
     }
 
-    private _initPath$ (pathList: Record<string, string[]>): void {
+    private _initPath (pathList: Record<string, string[]>): void {
         if (!pathList) { return; }
         const paths = this.paths;
         paths.clear();
@@ -369,7 +369,7 @@ export default class Config {
         }
     }
 
-    private _initScene$ (sceneList: Record<string, string>): void {
+    private _initScene (sceneList: Record<string, string>): void {
         if (!sceneList) { return; }
         const scenes = this.scenes;
         scenes.clear();
@@ -382,7 +382,7 @@ export default class Config {
         }
     }
 
-    private _initPackage$ (packageList: Record<string, string[]>): void {
+    private _initPackage (packageList: Record<string, string[]>): void {
         if (!packageList) { return; }
         const assetInfos = this.assetInfos;
         for (const packUuid in packageList) {
@@ -407,7 +407,7 @@ export default class Config {
         }
     }
 
-    private _initVersion$ (versions: { import?: string[], native?: string[] }): void {
+    private _initVersion (versions: { import?: string[], native?: string[] }): void {
         if (!versions) { return; }
         const assetInfos = this.assetInfos;
         let entries = versions.import;
@@ -428,7 +428,7 @@ export default class Config {
         }
     }
 
-    private _initRedirect$ (redirect: string[]): void {
+    private _initRedirect (redirect: string[]): void {
         if (!redirect) { return; }
         const assetInfos = this.assetInfos;
         for (let i = 0, l = redirect.length; i < l; i += 2) {

@@ -34,7 +34,7 @@ export class WebGL2PipelineLayout extends PipelineLayout {
 
     getGpuPipelineLayout$ (): IWebGL2GPUPipelineLayout { return this._gpuPipelineLayout$!; }
 
-    private _gpuPipelineLayout$: IWebGL2GPUPipelineLayout | null = null;
+    private _gpuPipelineLayout: IWebGL2GPUPipelineLayout | null = null;
 
     public initialize (info: Readonly<PipelineLayoutInfo>): void {
         Array.prototype.push.apply(this._setLayouts$, info.setLayouts);

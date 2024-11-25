@@ -214,8 +214,8 @@ function decodeJson (data: Uint8Array): string {
 export class InvalidCCONError extends Error { }
 
 export class BufferBuilder {
-    private _viewOrPaddings$: (ArrayBufferView | number)[] = [];
-    private _length$ = 0;
+    private _viewOrPaddings: (ArrayBufferView | number)[] = [];
+    private _length = 0;
 
     get byteLength (): number {
         return this._length$;

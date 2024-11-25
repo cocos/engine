@@ -43,9 +43,9 @@ export type ParseHandler = (file: any, options: Record<string, any>, onComplete:
  *
  */
 export class Parser {
-    private _parsing$ = new Cache<((err: Error | null, data?: any) => void)[]>();
+    private _parsing = new Cache<((err: Error | null, data?: any) => void)[]>();
 
-    private _parsers$: Record<string, ParseHandler> = {
+    private _parsers: Record<string, ParseHandler> = {
         '.png': this.parseImage,
         '.jpg': this.parseImage,
         '.bmp': this.parseImage,

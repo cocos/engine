@@ -63,13 +63,13 @@ export class NodeUIProperties {
         this._uiComp$ = comp;
     }
 
-    private _uiComp$: UIMeshRenderer | UIRenderer | null = null;
+    private _uiComp: UIMeshRenderer | UIRenderer | null = null;
 
     /**
      * @en The opacity of the UI node for final rendering
      * @zh 最终显示的 UI 透明度，受父节点透明度影响
      */
-    private _opacity$ = 1;
+    private _opacity = 1;
     /**
      * NOTE: engineInternal tag cannot only mark opacity setter as internal.
      * @engineInternal
@@ -81,7 +81,7 @@ export class NodeUIProperties {
      * @en The opacity of the UI node itself
      * @zh 本节点的 UI 透明度
      */
-    private _localOpacity$ = 1;
+    private _localOpacity = 1;
     get localOpacity (): number { return this._localOpacity$; }
     set localOpacity (val) {
         this._localOpacity$ = val;

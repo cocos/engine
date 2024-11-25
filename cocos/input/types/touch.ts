@@ -32,12 +32,12 @@ const _vec2 = new Vec2();
  * @zh 封装了触点相关的信息。
  */
 export class Touch {
-    private _point$: Vec2 = new Vec2();
-    private _prevPoint$: Vec2 = new Vec2();
-    private _lastModified$ = 0;
+    private _point: Vec2 = new Vec2();
+    private _prevPoint: Vec2 = new Vec2();
+    private _lastModified = 0;
     private _id = 0;
-    private _startPoint$: Vec2 = new Vec2();
-    private _startPointCaptured$ = false;
+    private _startPoint: Vec2 = new Vec2();
+    private _startPointCaptured = false;
 
     get lastModified (): number {
         return this._lastModified$;

@@ -32,7 +32,7 @@ export class HandheldInputDevice {
     public get handheldPosition (): InputSourcePosition { return this._handheldPosition$; }
     public get handheldOrientation (): InputSourceOrientation { return this._handheldOrientation$; }
 
-    private _eventTarget$: EventTarget = new EventTarget();
+    private _eventTarget: EventTarget = new EventTarget();
 
     private declare _handheldPosition$: InputSourcePosition;
     private declare _handheldOrientation$: InputSourceOrientation;

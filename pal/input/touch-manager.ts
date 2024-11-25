@@ -33,7 +33,7 @@ class TouchManager {
     /**
      * A map from touch ID to touch object.
      */
-    private _touchMap$: Map<number, Touch> = new Map();
+    private _touchMap: Map<number, Touch> = new Map();
     private readonly _maxTouches$ = 8;
 
     constructor () {
@@ -50,7 +50,7 @@ class TouchManager {
      * @param y The y-axis coordinate of the current touch point.
      * @return The Touch instance or undefined.
      */
-    private _createTouch$ (touchID: number, x: number, y: number): Touch | undefined {
+    private _createTouch (touchID: number, x: number, y: number): Touch | undefined {
         if (this._touchMap$.has(touchID)) {
             logID(2301);
             return undefined;
@@ -129,13 +129,13 @@ class TouchManager {
      * @param x The current location X
      * @param y The current location Y
      */
-    private _updateTouch$ (touch: Touch, x: number, y: number): void {
+    private _updateTouch (touch: Touch, x: number, y: number): void {
         touch.getLocation(tempVec2);
         touch.setPrevPoint(tempVec2);
         touch.setPoint(x, y);
     }
 
-    private _checkTouchMapSizeMoreThanMax$ (touchID: number): boolean {
+    private _checkTouchMapSizeMoreThanMax (touchID: number): boolean {
         if (this._touchMap$.has(touchID)) {
             return false;
         }

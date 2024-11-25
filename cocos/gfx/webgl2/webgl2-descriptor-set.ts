@@ -39,7 +39,7 @@ export class WebGL2DescriptorSet extends DescriptorSet {
         return this._gpuDescriptorSet$ as IWebGL2GPUDescriptorSet;
     }
 
-    private _gpuDescriptorSet$: IWebGL2GPUDescriptorSet | null = null;
+    private _gpuDescriptorSet: IWebGL2GPUDescriptorSet | null = null;
 
     public initialize (info: Readonly<DescriptorSetInfo>): void {
         this._layout$ = info.layout;

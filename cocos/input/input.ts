@@ -133,26 +133,26 @@ export class Input {
      */
     public static EventType = InputEventType;
 
-    private _eventTarget$: EventTarget = new EventTarget();
-    private _touchInput$ = new TouchInputSource();
-    private _mouseInput$ = new MouseInputSource();
-    private _keyboardInput$ = new KeyboardInputSource();
-    private _accelerometerInput$ = new AccelerometerInputSource();
-    private _handleInput$ = new HandleInputDevice();
-    private _hmdInput$ = new HMDInputDevice();
-    private _handheldInput$ = new HandheldInputDevice();
+    private _eventTarget: EventTarget = new EventTarget();
+    private _touchInput = new TouchInputSource();
+    private _mouseInput = new MouseInputSource();
+    private _keyboardInput = new KeyboardInputSource();
+    private _accelerometerInput = new AccelerometerInputSource();
+    private _handleInput = new HandleInputDevice();
+    private _hmdInput = new HMDInputDevice();
+    private _handheldInput = new HandheldInputDevice();
 
-    private _eventKeyboardList$: EventKeyboard[] = [];
-    private _eventAccelerationList$: EventAcceleration[] = [];
-    private _eventGamepadList$: EventGamepad[] = [];
-    private _eventHandleList$: EventHandle[] = [];
-    private _eventHMDList$: EventHMD[] = [];
-    private _eventHandheldList$: EventHandheld[] = [];
+    private _eventKeyboardList: EventKeyboard[] = [];
+    private _eventAccelerationList: EventAcceleration[] = [];
+    private _eventGamepadList: EventGamepad[] = [];
+    private _eventHandleList: EventHandle[] = [];
+    private _eventHMDList: EventHMD[] = [];
+    private _eventHandheldList: EventHandheld[] = [];
 
-    private _needSimulateTouchMoveEvent$ = false;
+    private _needSimulateTouchMoveEvent = false;
 
     private declare _inputEventDispatcher$: InputEventDispatcher;
-    private _eventDispatcherList$: IEventDispatcher[] = [];
+    private _eventDispatcherList: IEventDispatcher[] = [];
 
     constructor () {
         this._registerEvent$();
@@ -308,7 +308,7 @@ export class Input {
         this._accelerometerInput$.setInterval(intervalInMileSeconds);
     }
 
-    private _simulateEventTouch$ (eventMouse: EventMouse): void {
+    private _simulateEventTouch (eventMouse: EventMouse): void {
         const eventType = pointerEventTypeMap[eventMouse.type];
         const touchID = 0;
         const touch = touchManager.getOrCreateTouch(touchID, eventMouse.getLocationX(), eventMouse.getLocationY());
@@ -333,7 +333,7 @@ export class Input {
         this._eventDispatcherList$.sort((a, b): number => b.priority - a.priority);
     }
 
-    private _emitEvent$ (event: Event): void {
+    private _emitEvent (event: Event): void {
         const length = this._eventDispatcherList$.length;
         for (let i = 0; i < length; ++i) {
             const dispatcher = this._eventDispatcherList$[i];
@@ -349,7 +349,7 @@ export class Input {
         }
     }
 
-    private _registerEvent$ (): void {
+    private _registerEvent (): void {
         if (sys.hasFeature(sys.Feature.INPUT_TOUCH)) {
             this._touchInput$.on(InputEventType.TOUCH_START, (event): void => {
                 this._dispatchEventTouch$(event);
@@ -462,7 +462,7 @@ export class Input {
         this._eventHMDList$.length = 0;
     }
 
-    private _dispatchOrPushEvent$ (event: Event, eventList: Event[]): void {
+    private _dispatchOrPushEvent (event: Event, eventList: Event[]): void {
         if (dispatchImmediately) {
             this._emitEvent$(event);
         } else {
@@ -470,11 +470,11 @@ export class Input {
         }
     }
 
-    private _dispatchEventMouse$ (event: Event): void {
+    private _dispatchEventMouse (event: Event): void {
         this._emitEvent$(event);
     }
 
-    private _dispatchEventTouch$ (eventTouch: EventTouch): void {
+    private _dispatchEventTouch (eventTouch: EventTouch): void {
         const touches = eventTouch.getTouches();
         const touchesLength = touches.length;
         for (let i = 0; i < touchesLength; ++i) {

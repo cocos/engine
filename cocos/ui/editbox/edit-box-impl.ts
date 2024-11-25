@@ -90,20 +90,20 @@ export class EditBoxImpl extends EditBoxImplBase {
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
      */
     public _edTxt: HTMLInputElement | HTMLTextAreaElement | null = null;
-    private _isTextArea$ = false;
+    private _isTextArea = false;
 
-    private _textLabelFont$ = null;
-    private _textLabelFontSize$: number | null = null;
-    private _textLabelFontColor$ = null;
-    private _textLabelAlign$ = null;
-    private _placeholderLabelFont$ = null;
-    private _placeholderLabelFontSize$: number | null = null;
-    private _placeholderLabelFontColor$ = null;
-    private _placeholderLabelAlign$ = null;
-    private _placeholderLineHeight$ = null;
-    private _placeholderStyleSheet$: HTMLStyleElement | null = null;
-    private _domId$ = `EditBoxId_${++_domCount}`;
-    private _forceUpdate$: boolean = false;
+    private _textLabelFont = null;
+    private _textLabelFontSize: number | null = null;
+    private _textLabelFontColor = null;
+    private _textLabelAlign = null;
+    private _placeholderLabelFont = null;
+    private _placeholderLabelFontSize: number | null = null;
+    private _placeholderLabelFontColor = null;
+    private _placeholderLabelAlign = null;
+    private _placeholderLineHeight = null;
+    private _placeholderStyleSheet: HTMLStyleElement | null = null;
+    private _domId = `EditBoxId_${++_domCount}`;
+    private _forceUpdate: boolean = false;
 
     constructor () {
         super();

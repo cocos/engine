@@ -570,17 +570,17 @@ export class Button extends Component {
     protected _zoomScale = 1.2;
     @serializable
     protected _target: Node | null = null;
-    private _pressed$ = false;
-    private _hovered$ = false;
-    private _fromColor$: Color = new Color();
-    private _toColor$: Color = new Color();
-    private _time$ = 0;
-    private _transitionFinished$ = true;
-    private _fromScale$: Vec3 = v3();
-    private _toScale$: Vec3 = v3();
-    private _originalScale$: Vec3 | null = null;
-    private _sprite$: Sprite | null = null;
-    private _targetScale$: Vec3 = v3();
+    private _pressed = false;
+    private _hovered = false;
+    private _fromColor: Color = new Color();
+    private _toColor: Color = new Color();
+    private _time = 0;
+    private _transitionFinished = true;
+    private _fromScale: Vec3 = v3();
+    private _toScale: Vec3 = v3();
+    private _originalScale: Vec3 | null = null;
+    private _sprite: Sprite | null = null;
+    private _targetScale: Vec3 = v3();
 
     constructor () {
         super();
@@ -764,13 +764,13 @@ export class Button extends Component {
         }
     }
 
-    private _onTargetSpriteFrameChanged$ (comp: Sprite): void {
+    private _onTargetSpriteFrameChanged (comp: Sprite): void {
         if (this._transition === Transition.SPRITE) {
             this._setCurrentStateSpriteFrame$(comp.spriteFrame);
         }
     }
 
-    private _setCurrentStateSpriteFrame$ (spriteFrame: SpriteFrame | null): void {
+    private _setCurrentStateSpriteFrame (spriteFrame: SpriteFrame | null): void {
         if (!spriteFrame) {
             return;
         }
@@ -792,13 +792,13 @@ export class Button extends Component {
         }
     }
 
-    private _onTargetColorChanged$ (color: Color): void {
+    private _onTargetColorChanged (color: Color): void {
         if (this._transition === Transition.COLOR) {
             this._setCurrentStateColor$(color);
         }
     }
 
-    private _setCurrentStateColor$ (color: Color): void {
+    private _setCurrentStateColor (color: Color): void {
         switch (this._getButtonState()) {
         case State.NORMAL:
             this._normalColor = color;
@@ -817,7 +817,7 @@ export class Button extends Component {
         }
     }
 
-    private _onTargetTransformChanged$ (transformBit: TransformBit): void {
+    private _onTargetTransformChanged (transformBit: TransformBit): void {
         // update originalScale
         if ((transformBit & TransformBit.SCALE) && this._originalScale$
             && this._transition === Transition.SCALE && this._transitionFinished$) {
@@ -1005,7 +1005,7 @@ export class Button extends Component {
         }
     }
 
-    private _getSpriteFrameByState$ (state: State): SpriteFrame | null {
+    private _getSpriteFrameByState (state: State): SpriteFrame | null {
         switch (state) {
         case State.NORMAL:
             return this._normalSprite;
@@ -1024,7 +1024,7 @@ export class Button extends Component {
         }
     }
 
-    private _getColorByState$ (state: State): Color {
+    private _getColorByState (state: State): Color {
         switch (state) {
         case State.NORMAL:
             return this._normalColor;
@@ -1043,12 +1043,12 @@ export class Button extends Component {
         }
     }
 
-    private _xrHoverEnter$ (): void {
+    private _xrHoverEnter (): void {
         this._onMouseMoveIn();
         this._updateState();
     }
 
-    private _xrHoverExit$ (): void {
+    private _xrHoverExit (): void {
         this._onMouseMoveOut();
         if (this._pressed$) {
             this._pressed$ = false;
@@ -1056,13 +1056,13 @@ export class Button extends Component {
         }
     }
 
-    private _xrClick$ (): void {
+    private _xrClick (): void {
         if (!this._interactable || !this.enabledInHierarchy) { return; }
         this._pressed$ = true;
         this._updateState();
     }
 
-    private _xrUnClick$ (): void {
+    private _xrUnClick (): void {
         if (!this._interactable || !this.enabledInHierarchy) {
             return;
         }

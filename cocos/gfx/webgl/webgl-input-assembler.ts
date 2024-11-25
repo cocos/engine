@@ -35,7 +35,7 @@ export class WebGLInputAssembler extends InputAssembler {
         return  this._gpuInputAssembler$!;
     }
 
-    private _gpuInputAssembler$: IWebGLGPUInputAssembler | null = null;
+    private _gpuInputAssembler: IWebGLGPUInputAssembler | null = null;
 
     constructor () {
         super();

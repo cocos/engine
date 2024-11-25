@@ -457,19 +457,19 @@ export class Game extends EventTarget {
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
      */
     public _isCloning = false;    // deserializing or instantiating
-    private _inited$ = false;
-    private _engineInited$ = false; // whether the engine has inited
-    private _rendererInitialized$ = false;
-    private _paused$ = true;
-    private _pausedByEngine$ = false;
+    private _inited = false;
+    private _engineInited = false; // whether the engine has inited
+    private _rendererInitialized = false;
+    private _paused = true;
+    private _pausedByEngine = false;
     // frame control
-    private _frameRate$ = 60;
-    private _pacer$: Pacer | null = null;
-    private _initTime$ = 0;
-    private _startTime$ = 0;
-    private _deltaTime$ = 0.0;
-    private _useFixedDeltaTime$ = false;
-    private _shouldLoadLaunchScene$ = true;
+    private _frameRate = 60;
+    private _pacer: Pacer | null = null;
+    private _initTime = 0;
+    private _startTime = 0;
+    private _deltaTime = 0.0;
+    private _useFixedDeltaTime = false;
+    private _shouldLoadLaunchScene = true;
 
     /**
      * @en The event delegate pre base module initialization. At this point you can not use pal/logging/sys/settings API.
@@ -911,7 +911,7 @@ export class Game extends EventTarget {
             });
     }
 
-    private _initXR$ (): void {
+    private _initXR (): void {
         if (typeof globalThis.__globalXR === 'undefined') {
             globalThis.__globalXR = {};
         }
@@ -929,7 +929,7 @@ export class Game extends EventTarget {
         }
     }
 
-    private _compatibleWithOldParams$ (config: IGameConfig): void {
+    private _compatibleWithOldParams (config: IGameConfig): void {
         const overrideSettings = config.overrideSettings = config.overrideSettings || {};
         if ('showFPS' in config) {
             overrideSettings.profiling = overrideSettings.profiling || {};
@@ -969,7 +969,7 @@ export class Game extends EventTarget {
         }
     }
 
-    private _loadPreloadAssets$ (): Promise<any[]> {
+    private _loadPreloadAssets (): Promise<any[]> {
         const preloadAssets = settings.querySettings<string[]>(SettingsCategory.ASSETS, 'preloadAssets');
         if (!preloadAssets) return Promise.resolve([]);
         return Promise.all(preloadAssets.map((uuid): Promise<void> => new Promise<void>((resolve, reject): void => {
@@ -986,7 +986,7 @@ export class Game extends EventTarget {
     /**
      * @internal only for browser preview
      */
-    private _loadCCEScripts$ (): Promise<void> {
+    private _loadCCEScripts (): Promise<void> {
         return new Promise<void>((resolve, reject): void => {
             // Since there is no script in the bundle during preview, we need to load the user's script in the following way
             if (PREVIEW && !TEST && !EDITOR && !NATIVE) {
@@ -1053,7 +1053,7 @@ export class Game extends EventTarget {
         return this._deltaTime$;
     }
 
-    private _updateCallback$ (): void {
+    private _updateCallback (): void {
         if (!this._inited$) return;
         if (!WECHAT && SplashScreen.instance && !SplashScreen.instance.isFinished) {
             SplashScreen.instance.update(this._calculateDT(false));
@@ -1089,23 +1089,23 @@ export class Game extends EventTarget {
         this.frameRate = frameRate;
     }
 
-    private _initEvents$ (): void {
+    private _initEvents (): void {
         systemInfo.on('show', this._onShow$, this);
         systemInfo.on('hide', this._onHide$, this);
         systemInfo.on('close', this._onClose$, this);
     }
 
-    private _onHide$ (): void {
+    private _onHide (): void {
         this.emit(Game.EVENT_HIDE);
         this.pauseByEngine$();
     }
 
-    private _onShow$ (): void {
+    private _onShow (): void {
         this.emit(Game.EVENT_SHOW);
         this.resumeByEngine$();
     }
 
-    private _onClose$ (): void {
+    private _onClose (): void {
         this.emit(Game.EVENT_CLOSE);
         // TODO : Release Resources.
         systemInfo.exit();
@@ -1146,7 +1146,7 @@ export class Game extends EventTarget {
         return director.isPersistRootNode(node);
     }
 
-    private _setupRenderPipeline$ (): void | Promise<void> {
+    private _setupRenderPipeline (): void | Promise<void> {
         const usesCustomPipeline = settings.querySettings(
             SettingsCategory.RENDERING,
             'customPipeline',
@@ -1155,7 +1155,7 @@ export class Game extends EventTarget {
         return this._setRenderPipeline$(!!usesCustomPipeline);
     }
 
-    private _setRenderPipeline$ (customPipeline: boolean): void {
+    private _setRenderPipeline (customPipeline: boolean): void {
         if (!director.root!.setRenderPipeline(customPipeline)) {
             errorID(1222);
             return;
@@ -1165,7 +1165,7 @@ export class Game extends EventTarget {
         this._safeEmit$(Game.EVENT_RENDERER_INITED);
     }
 
-    private _safeEmit$ (event: string | number): void {
+    private _safeEmit (event: string | number): void {
         if (EDITOR) {
             try {
                 this.emit(event);

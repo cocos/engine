@@ -40,7 +40,7 @@ export class WebGL2Shader extends Shader {
         return  this._gpuShader$!;
     }
 
-    private _gpuShader$: IWebGL2GPUShader | null = null;
+    private _gpuShader: IWebGL2GPUShader | null = null;
 
     public initialize (info: Readonly<ShaderInfo>): void {
         this._name$ = info.name;

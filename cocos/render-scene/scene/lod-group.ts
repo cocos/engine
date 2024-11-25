@@ -35,7 +35,7 @@ export class LODData {
     // Range in [0, 1].
     screenUsagePercentage = 1.0;
 
-    private _models$: Model[] = [];
+    private _models: Model[] = [];
 
     get models (): readonly Model[] {
         return this._models$;
@@ -69,7 +69,7 @@ export class LODGroup {
 
     public enabled = true;
 
-    private _localBoundaryCenter$: Vec3 = v3(0, 0, 0);
+    private _localBoundaryCenter: Vec3 = v3(0, 0, 0);
 
     /**
      * @en Object Size in local space, may be auto-calculated value from object bounding box or value from user input.
@@ -86,7 +86,7 @@ export class LODGroup {
      */
     protected _lockedLODLevelVec: number[] = [];
 
-    private _isLockLevelChanged$ = false;
+    private _isLockLevelChanged = false;
 
     constructor () {
         this._device = deviceManager.gfxDevice;

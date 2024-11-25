@@ -106,13 +106,13 @@ export class SubContextView extends Component {
 
     @serializable
     private _fps = 60;
-    private _sprite$: Sprite | null = null;
-    private _imageAsset$: ImageAsset = new ImageAsset();
-    private _texture$: Texture2D = new Texture2D();
-    private _updatedTime$ = 0;
-    private _updateInterval$ = 0;
-    private _openDataContext$: any = null;
-    private _content$: Node = new Node('content');
+    private _sprite: Sprite | null = null;
+    private _imageAsset: ImageAsset = new ImageAsset();
+    private _texture: Texture2D = new Texture2D();
+    private _updatedTime = 0;
+    private _updateInterval = 0;
+    private _openDataContext: any = null;
+    private _content: Node = new Node('content');
     @serializable
     private _designResolutionSize: Size = new Size(640, 960);
 
@@ -143,7 +143,7 @@ export class SubContextView extends Component {
         this._unregisterNodeEvent$();
     }
 
-    private _initSharedCanvas$ (): void {
+    private _initSharedCanvas (): void {
         if (this._openDataContext$) {
             const sharedCanvas = this._openDataContext$.canvas;
             let designWidth = this._designResolutionSize.width;
@@ -165,7 +165,7 @@ export class SubContextView extends Component {
         }
     }
 
-    private _initContentNode$ (): void {
+    private _initContentNode (): void {
         if (this._openDataContext$) {
             const sharedCanvas = this._openDataContext$.canvas;
 
@@ -191,7 +191,7 @@ export class SubContextView extends Component {
         }
     }
 
-    private _updateSubContextView$ (): void {
+    private _updateSubContextView (): void {
         if (!this._openDataContext$) {
             return;
         }
@@ -230,7 +230,7 @@ export class SubContextView extends Component {
         });
     }
 
-    private _updateSubContextTexture$ (): void {
+    private _updateSubContextTexture (): void {
         const img = this._imageAsset$;
         if (!img || !this._openDataContext$) {
             return;
@@ -249,19 +249,19 @@ export class SubContextView extends Component {
         this._texture$.uploadData(sharedCanvas);
     }
 
-    private _registerNodeEvent$ (): void {
+    private _registerNodeEvent (): void {
         this.node.on(NodeEventType.TRANSFORM_CHANGED, this._updateSubContextView$, this);
         this.node.on(NodeEventType.SIZE_CHANGED, this._updateSubContextView$, this);
         this.node.on(NodeEventType.LAYER_CHANGED, this._updateContentLayer$, this);
     }
 
-    private _unregisterNodeEvent$ (): void {
+    private _unregisterNodeEvent (): void {
         this.node.off(NodeEventType.TRANSFORM_CHANGED, this._updateSubContextView$, this);
         this.node.off(NodeEventType.SIZE_CHANGED, this._updateSubContextView$, this);
         this.node.off(NodeEventType.LAYER_CHANGED, this._updateContentLayer$, this);
     }
 
-    private _updateContentLayer$ (): void {
+    private _updateContentLayer (): void {
         this._content$.layer = this.node.layer;
     }
 

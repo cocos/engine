@@ -56,7 +56,7 @@ export class WebGL2PipelineState extends PipelineState {
         return  this._gpuPipelineState$!;
     }
 
-    private _gpuPipelineState$: IWebGL2GPUPipelineState | null = null;
+    private _gpuPipelineState: IWebGL2GPUPipelineState | null = null;
 
     public initialize (info: Readonly<PipelineStateInfo>): void {
         this._primitive$ = info.primitive;

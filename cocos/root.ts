@@ -243,31 +243,31 @@ export class Root {
     public _createWindowFun: (root: Root) => RenderWindow = null!;
 
     private declare _device$: Device;
-    private _windows$: RenderWindow[] = [];
-    private _mainWindow$: RenderWindow | null = null;
-    private _curWindow$: RenderWindow | null = null;
-    private _tempWindow$: RenderWindow | null = null;
-    private _usesCustomPipeline$ = true;
-    private _pipeline$: PipelineRuntime | null = null;
-    private _pipelineEvent$: IPipelineEvent | null = new PipelineEventProcessor();
-    private _classicPipeline$: (PipelineRuntime & IPipelineEvent) | null = null;
-    private _customPipeline$: BasicPipeline | null = null;
-    private _batcher$: Batcher2D | null = null;
+    private _windows: RenderWindow[] = [];
+    private _mainWindow: RenderWindow | null = null;
+    private _curWindow: RenderWindow | null = null;
+    private _tempWindow: RenderWindow | null = null;
+    private _usesCustomPipeline = true;
+    private _pipeline: PipelineRuntime | null = null;
+    private _pipelineEvent: IPipelineEvent | null = new PipelineEventProcessor();
+    private _classicPipeline: (PipelineRuntime & IPipelineEvent) | null = null;
+    private _customPipeline: BasicPipeline | null = null;
+    private _batcher: Batcher2D | null = null;
     private declare _dataPoolMgr$: DataPoolManager;
-    private _scenes$: RenderScene[] = [];
-    private _modelPools$ = new Map<Constructor<Model>, Pool<Model>>();
-    private _cameraPool$: Pool<Camera> | null = null;
-    private _lightPools$ = new Map<Constructor<Light>, Pool<Light>>();
-    private _debugView$ = new DebugView();
-    private _fpsTime$ = 0;
-    private _frameCount$ = 0;
-    private _fps$ = 0;
-    private _fixedFPS$ = 0;
-    private _useDeferredPipeline$ = false;
-    private _cumulativeTime$ = 0;
-    private _frameTime$ = 0;
+    private _scenes: RenderScene[] = [];
+    private _modelPools = new Map<Constructor<Model>, Pool<Model>>();
+    private _cameraPool: Pool<Camera> | null = null;
+    private _lightPools = new Map<Constructor<Light>, Pool<Light>>();
+    private _debugView = new DebugView();
+    private _fpsTime = 0;
+    private _frameCount = 0;
+    private _fps = 0;
+    private _fixedFPS = 0;
+    private _useDeferredPipeline = false;
+    private _cumulativeTime = 0;
+    private _frameTime = 0;
     private declare _naitveObj: any;
-    private _cameraList$: Camera[] = [];
+    private _cameraList: Camera[] = [];
 
     /**
      * @en The constructor of the root, user shouldn't create the root instance, it's managed by the [[Director]].

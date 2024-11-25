@@ -47,7 +47,7 @@ import { array } from '../utils/js';
  * ```
  */
 export class AsyncDelegate<T extends (...args: any) => (Promise<void> | void) = () => (Promise<void> | void)> {
-    private _delegates$: T[] = [];
+    private _delegates: T[] = [];
 
     /**
      * @en

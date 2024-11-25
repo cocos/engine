@@ -42,7 +42,7 @@ export class PassInstance extends Pass {
 
     private declare _owner$: MaterialInstance;
 
-    private _dontNotify$ = false;
+    private _dontNotify = false;
 
     constructor (parent: Pass, owner: MaterialInstance) {
         super(parent.root);

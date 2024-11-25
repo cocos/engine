@@ -141,11 +141,11 @@ export class TextureBase extends Asset {
     protected _height = 1;
 
     private declare _id: string;
-    private _samplerInfo$ = new SamplerInfo();
-    private _gfxSampler$: Sampler | null = null;
-    private _gfxDevice$: Device | null = null;
+    private _samplerInfo = new SamplerInfo();
+    private _gfxSampler: Sampler | null = null;
+    private _gfxDevice: Device | null = null;
 
-    private _textureHash$ = 0;
+    private _textureHash = 0;
 
     constructor () {
         super();

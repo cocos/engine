@@ -68,45 +68,45 @@ export class ReflectionProbe {
      * @en Render cubemap's camera
      * @zh 渲染cubemap的相机
      */
-    private _camera$: Camera | null = null;
+    private _camera: Camera | null = null;
 
     /**
      * @en Unique id of probe.
      * @zh probe的唯一id
      */
-    private _probeId$ = 0;
+    private _probeId = 0;
 
-    private _needRefresh$ = false;
+    private _needRefresh = false;
 
-    private _needRender$ = false;
+    private _needRender = false;
 
-    private _node$: Node | null = null;
+    private _node: Node | null = null;
 
-    private _cameraNode$: Node | null = null;
+    private _cameraNode: Node | null = null;
 
     /**
      * @en The AABB bounding box and probe only render the objects inside the bounding box.
      * @zh AABB包围盒，probe只渲染包围盒内的物体
      */
-    private _boundingBox$: geometry.AABB | null = null;
+    private _boundingBox: geometry.AABB | null = null;
 
     /**
      * @en The position of the camera in world space.
      * @zh 世界空间相机的位置
      */
-    private _cameraWorldPos$ = v3();
+    private _cameraWorldPos = v3();
 
     /**
      * @en The rotation of the camera in world space.
      * @zh 世界空间相机的旋转
      */
-    private _cameraWorldRotation$ = quat();
+    private _cameraWorldRotation = quat();
 
     /**
      * @en The forward direction vertor of the camera in world space.
      * @zh 世界空间相机朝前的方向向量
      */
-    private _forward$ = v3();
+    private _forward = v3();
     /**
      * @en The up direction vertor of the camera in world space.
      * @zh 世界空间相机朝上的方向向量
@@ -406,7 +406,7 @@ export class ReflectionProbe {
         return true;
     }
 
-    private _syncCameraParams$ (camera: Camera): void {
+    private _syncCameraParams (camera: Camera): void {
         this.camera.projectionType = camera.projectionType;
         this.camera.orthoHeight = camera.orthoHeight;
         this.camera.nearClip = camera.nearClip;
@@ -418,7 +418,7 @@ export class ReflectionProbe {
         this.camera.resize(camera.width, camera.height);
     }
 
-    private _createCamera$ (cameraNode: Node): Camera | null {
+    private _createCamera (cameraNode: Node): Camera | null {
         const root = cclegacy.director.root;
         if (!this._camera$) {
             this._camera$ = root.createCamera();
@@ -450,7 +450,7 @@ export class ReflectionProbe {
         return this._camera$;
     }
 
-    private _resetCameraParams$ (): void {
+    private _resetCameraParams (): void {
         this.camera.projectionType = CameraProjection.PERSPECTIVE;
         this.camera.orthoHeight = 10;
         this.camera.nearClip = 1;
@@ -468,13 +468,13 @@ export class ReflectionProbe {
         this.camera.update(true);
     }
 
-    private _createTargetTexture$ (width: number, height: number): RenderTexture {
+    private _createTargetTexture (width: number, height: number): RenderTexture {
         const rt = new RenderTexture();
         rt.reset({ width, height });
         return rt;
     }
 
-    private _transformReflectionCamera$ (sourceCamera: Camera): void {
+    private _transformReflectionCamera (sourceCamera: Camera): void {
         const offset = Vec3.dot(this.node.worldPosition, this.node.up);
         this._reflect$(this._cameraWorldPos$, sourceCamera.node.worldPosition, this.node.up, offset);
         this.cameraNode.worldPosition = this._cameraWorldPos$;
@@ -500,7 +500,7 @@ export class ReflectionProbe {
         this.camera.calculateObliqueMat(viewSpaceProbe);
     }
 
-    private _reflect$ (out: Vec3, point: Vec3, normal: Vec3, offset: number): Vec3 {
+    private _reflect (out: Vec3, point: Vec3, normal: Vec3, offset: number): Vec3 {
         const n = Vec3.clone(normal);
         n.normalize();
         const dist = Vec3.dot(n, point) - offset;

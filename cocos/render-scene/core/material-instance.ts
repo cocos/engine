@@ -51,7 +51,7 @@ export class MaterialInstance extends Material {
 
     private declare _parent$: Material;
     private declare _owner$: Renderer | null;
-    private _subModelIdx$ = 0;
+    private _subModelIdx = 0;
 
     constructor (info: IMaterialInstanceInfo) {
         super();

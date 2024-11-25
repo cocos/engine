@@ -194,7 +194,7 @@ export class TextureCube extends SimpleTexture {
         this._setMipmapParams$(cubeMaps);
     }
 
-    private _setMipmapParams$ (value: ITextureCubeMipmap[]): void {
+    private _setMipmapParams (value: ITextureCubeMipmap[]): void {
         this._generatedMipmaps$ = value;
         this._setMipmapLevel(this._generatedMipmaps$.length);
         if (this._generatedMipmaps$.length > 0) {
@@ -359,7 +359,7 @@ export class TextureCube extends SimpleTexture {
     @serializable
     public _mipmaps: ITextureCubeMipmap[] = [];
 
-    private _generatedMipmaps$: ITextureCubeMipmap[] = [];
+    private _generatedMipmaps: ITextureCubeMipmap[] = [];
 
     public onLoaded (): void {
         if (this._mipmapMode === MipmapMode.BAKED_CONVOLUTION_MAP) {

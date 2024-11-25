@@ -174,10 +174,10 @@ export class WebGL2Swapchain extends Swapchain {
     public nullTex2D$: WebGL2Texture = null!;
     public nullTexCube$: WebGL2Texture = null!;
 
-    private _canvas$: HTMLCanvasElement | null = null;
-    private _webGL2ContextLostHandler$: ((event: Event) => void) | null = null;
-    private _extensions$: IWebGL2Extensions | null = null;
-    private _blitManager$: IWebGL2BlitManager | null = null;
+    private _canvas: HTMLCanvasElement | null = null;
+    private _webGL2ContextLostHandler: ((event: Event) => void) | null = null;
+    private _extensions: IWebGL2Extensions | null = null;
+    private _blitManager: IWebGL2BlitManager | null = null;
 
     public initialize (info: Readonly<SwapchainInfo>): void {
         this._canvas$ = info.windowHandle;

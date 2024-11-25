@@ -29,7 +29,7 @@ import { IWebGL2GPUDescriptorSetLayout } from './webgl2-gpu-objects';
 export class WebGL2DescriptorSetLayout extends DescriptorSetLayout {
     getGpuDescriptorSetLayout$ (): IWebGL2GPUDescriptorSetLayout { return this._gpuDescriptorSetLayout$!; }
 
-    private _gpuDescriptorSetLayout$: IWebGL2GPUDescriptorSetLayout | null = null;
+    private _gpuDescriptorSetLayout: IWebGL2GPUDescriptorSetLayout | null = null;
 
     constructor () {
         super();

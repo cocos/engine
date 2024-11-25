@@ -112,8 +112,8 @@ export class Prefab extends Asset {
     public persistent = false;
 
     // Cache function to optimize instance creation.
-    private _createFunction$: ((...arg: any[]) => Node) | null = null;
-    private _instantiatedTimes$: number = 0;
+    private _createFunction: ((...arg: any[]) => Node) | null = null;
+    private _instantiatedTimes: number = 0;
     constructor () {
         super();
     }

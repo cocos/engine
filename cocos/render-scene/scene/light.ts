@@ -202,7 +202,7 @@ export class Light {
 
     protected _colorTempRGB: Vec3 = v3(1, 1, 1);
 
-    private _finalColor$: Vec3 = v3(1, 1, 1);
+    private _finalColor: Vec3 = v3(1, 1, 1);
 
     protected _scene: RenderScene | null = null;
 

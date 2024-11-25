@@ -51,7 +51,7 @@ export class WebGLPipelineState extends PipelineState {
         return  this._gpuPipelineState$!;
     }
 
-    private _gpuPipelineState$: IWebGLGPUPipelineState | null = null;
+    private _gpuPipelineState: IWebGLGPUPipelineState | null = null;
 
     constructor () {
         super();

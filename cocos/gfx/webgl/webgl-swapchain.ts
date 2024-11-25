@@ -228,10 +228,10 @@ export class WebGLSwapchain extends Swapchain {
     public nullTex2D$: WebGLTexture = null!;
     public nullTexCube$: WebGLTexture = null!;
 
-    private _canvas$: HTMLCanvasElement | null = null;
-    private _webGLContextLostHandler$: ((event: Event) => void) | null = null;
-    private _extensions$: IWebGLExtensions | null = null;
-    private _blitManager$: IWebGLBlitManager | null = null;
+    private _canvas: HTMLCanvasElement | null = null;
+    private _webGLContextLostHandler: ((event: Event) => void) | null = null;
+    private _extensions: IWebGLExtensions | null = null;
+    private _blitManager: IWebGLBlitManager | null = null;
 
     constructor () {
         super();
@@ -354,7 +354,7 @@ export class WebGLSwapchain extends Swapchain {
         }
     }
 
-    private _onWebGLContextLost$ (event: Event): void {
+    private _onWebGLContextLost (event: Event): void {
         warnID(11000);
         warn(event);
         // 2020.9.3: `preventDefault` is not available on some platforms
