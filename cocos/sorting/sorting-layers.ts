@@ -48,7 +48,7 @@ game.on(Game.EVENT_POST_SUBSYSTEM_INIT, () => {
  * In the sorting component, layer has higher sorting priority than sortingOrder.
  * */
 export class SortingLayers {
-    private static nameMap$ = new Map<number, string>();
+    private static nameMap = new Map<number, string>();
     private static indexMap = new Map<number, number>();
 
     /**
