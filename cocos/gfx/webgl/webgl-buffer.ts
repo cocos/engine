@@ -65,9 +65,9 @@ export class WebGLBuffer extends Buffer {
             this._flags = buffer.flags;
 
             this._gpuBufferView = {
-                gpuBuffer$: buffer.gpuBuffer,
-                offset$: info.offset,
-                range$: info.range,
+                gpuBuffer: buffer.gpuBuffer,
+                offset: info.offset,
+                range: info.range,
             };
         } else { // native buffer
             this._usage = info.usage;
@@ -82,15 +82,15 @@ export class WebGLBuffer extends Buffer {
             }
 
             this._gpuBuffer = {
-                usage$: this._usage,
-                memUsage$: this._memUsage,
-                size$: this._size,
-                stride$: this._stride,
-                buffer$: null,
+                usage: this._usage,
+                memUsage: this._memUsage,
+                size: this._size,
+                stride: this._stride,
+                buffer: null,
                 vf32: null,
-                indirects$: new WebGLIndirectDrawInfos(),
-                glTarget$: 0,
-                glBuffer$: null,
+                indirects: new WebGLIndirectDrawInfos(),
+                glTarget: 0,
+                glBuffer: null,
             };
 
             if (this._usage & BufferUsageBit.UNIFORM) {

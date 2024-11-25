@@ -1550,14 +1550,14 @@ export function WebGL2CmdFuncCreateShader (device: WebGL2Device, gpuShader: IWeb
             const stride = WebGLGetTypeSize(attribInfo.type, gl);
 
             gpuShader.glInputs[i] = {
-                name$: varName,
-                type$: type,
-                stride$: stride,
-                count$: attribInfo.size,
-                size$: stride * attribInfo.size,
+                name: varName,
+                type: type,
+                stride: stride,
+                count: attribInfo.size,
+                size: stride * attribInfo.size,
 
-                glType$: attribInfo.type,
-                glLoc$: glLoc,
+                glType: attribInfo.type,
+                glLoc: glLoc,
             };
         }
     }
@@ -1603,11 +1603,11 @@ export function WebGL2CmdFuncCreateShader (device: WebGL2Device, gpuShader: IWeb
 
                 gpuShader.glBlocks[b] = {
                     set$: block.set,
-                    binding$: block.binding,
+                    binding: block.binding,
                     idx$: blockIdx,
-                    name$: blockName,
-                    size$: blockSize,
-                    glBinding$: glBinding,
+                    name: blockName,
+                    size: blockSize,
+                    glBinding: glBinding,
                 };
             }
         }
@@ -1629,14 +1629,14 @@ export function WebGL2CmdFuncCreateShader (device: WebGL2Device, gpuShader: IWeb
             const sampler = gpuShader.samplerTextures[i];
             gpuShader.glSamplerTextures[i] = {
                 set$: sampler.set,
-                binding$: sampler.binding,
-                name$: sampler.name,
-                type$: sampler.type,
-                count$: sampler.count,
-                units$: [],
-                glUnits$: null!,
-                glType$: GFXTypeToWebGLType(sampler.type, gl),
-                glLoc$: null!,
+                binding: sampler.binding,
+                name: sampler.name,
+                type: sampler.type,
+                count: sampler.count,
+                units: [],
+                glUnits: null!,
+                glType: GFXTypeToWebGLType(sampler.type, gl),
+                glLoc: null!,
             };
         }
     }
@@ -1774,16 +1774,16 @@ export function WebGL2CmdFuncCreateInputAssember (device: WebGL2Device, gpuInput
         const { size } = FormatInfos[attrib.format];
 
         gpuInputAssembler.glAttribs[i] = {
-            name$: attrib.name,
-            glBuffer$: gpuBuffer.glBuffer,
-            glType$: glType,
-            size$: size,
-            count$: FormatInfos[attrib.format].count,
-            stride$: gpuBuffer.stride,
-            componentCount$: WebGLGetComponentCount(glType, gl),
-            isNormalized$: (attrib.isNormalized !== undefined ? attrib.isNormalized : false),
-            isInstanced$: (attrib.isInstanced !== undefined ? attrib.isInstanced : false),
-            offset$: offsets[stream],
+            name: attrib.name,
+            glBuffer: gpuBuffer.glBuffer,
+            glType: glType,
+            size: size,
+            count: FormatInfos[attrib.format].count,
+            stride: gpuBuffer.stride,
+            componentCount: WebGLGetComponentCount(glType, gl),
+            isNormalized: (attrib.isNormalized !== undefined ? attrib.isNormalized : false),
+            isInstanced: (attrib.isInstanced !== undefined ? attrib.isInstanced : false),
+            offset: offsets[stream],
         };
 
         offsets[stream] += size;
@@ -2015,7 +2015,7 @@ export function WebGL2CmdFuncBindStates (
         gfxStateCache.glPrimitive = gpuPipelineState.glPrimitive;
 
         if (gpuShader) {
-            const { glProgram$: glProgram } = gpuShader;
+            const { glProgram: glProgram } = gpuShader;
             if (cache.glProgram !== glProgram) {
                 gl.useProgram(glProgram);
                 cache.glProgram = glProgram;
@@ -2251,7 +2251,7 @@ export function WebGL2CmdFuncBindStates (
     // bind descriptor sets
     if (gpuPipelineState && gpuPipelineState.gpuPipelineLayout && gpuShader) {
         const blockLen = gpuShader.glBlocks.length;
-        const { dynamicOffsetIndices$: dynamicOffsetIndices } = gpuPipelineState.gpuPipelineLayout;
+        const { dynamicOffsetIndices: dynamicOffsetIndices } = gpuPipelineState.gpuPipelineLayout;
 
         for (let j = 0; j < blockLen; j++) {
             const glBlock = gpuShader.glBlocks[j];
@@ -2323,7 +2323,7 @@ export function WebGL2CmdFuncBindStates (
                         glTexUnit.glTexture = gpuTexture.glTexture;
                     }
 
-                    const { gpuSampler$: gpuSampler } = gpuDescriptor; // get sampler with different mipmap levels
+                    const { gpuSampler: gpuSampler } = gpuDescriptor; // get sampler with different mipmap levels
                     const glSampler = gpuSampler.getGLSampler(device, minLod, maxLod);
                     if (cache.glSamplerUnits[texUnit] !== glSampler) {
                         gl.bindSampler(texUnit, glSampler);
@@ -2535,7 +2535,7 @@ export function WebGL2CmdFuncDraw (device: WebGL2Device, drawInfo: Readonly<Draw
     if (gpuInputAssembler) {
         const indexBuffer = gpuInputAssembler.gpuIndexBuffer;
         if (gpuInputAssembler.gpuIndirectBuffer) {
-            const { indirects$: indirects } = gpuInputAssembler.gpuIndirectBuffer;
+            const { indirects: indirects } = gpuInputAssembler.gpuIndirectBuffer;
             if (indirects.drawByIndex) {
                 for (let j = 0; j < indirects.drawCount; j++) {
                     indirects.byteOffsets[j] = indirects.offsets[j] * indexBuffer!.stride;

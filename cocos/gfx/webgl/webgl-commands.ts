@@ -1191,15 +1191,15 @@ export function WebGLCmdFuncCreateShader (device: WebGLDevice, gpuShader: IWebGL
             const stride = WebGLGetTypeSize(attribType, gl);
 
             gpuShader.glInputs[i] = {
-                binding$: glLoc,
-                name$: varName,
-                type$: gfxType,
-                stride$: stride,
-                count$: attribSize,
-                size$: stride * attribSize,
+                binding: glLoc,
+                name: varName,
+                type: gfxType,
+                stride: stride,
+                count: attribSize,
+                size: stride * attribSize,
 
-                glType$: attribType,
-                glLoc$: glLoc,
+                glType: attribType,
+                glLoc: glLoc,
             };
         }
     }
@@ -1212,11 +1212,11 @@ export function WebGLCmdFuncCreateShader (device: WebGLDevice, gpuShader: IWebGL
 
             const glBlock: IWebGLGPUUniformBlock = {
                 set$: block.set,
-                binding$: block.binding,
-                name$: block.name,
-                size$: 0,
-                glUniforms$: new Array<IWebGLGPUUniform>(block.members.length),
-                glActiveUniforms$: [],
+                binding: block.binding,
+                name: block.name,
+                size: 0,
+                glUniforms: new Array<IWebGLGPUUniform>(block.members.length),
+                glActiveUniforms: [],
             };
 
             gpuShader.glBlocks[i] = glBlock;
@@ -1228,17 +1228,17 @@ export function WebGLCmdFuncCreateShader (device: WebGLDevice, gpuShader: IWebGL
                 const size = stride * uniform.count;
 
                 glBlock.glUniforms[u] = {
-                    binding$: -1,
-                    name$: uniform.name,
-                    type$: uniform.type,
-                    stride$: stride,
-                    count$: uniform.count,
-                    size$: size,
-                    offset$: 0,
+                    binding: -1,
+                    name: uniform.name,
+                    type: uniform.type,
+                    stride: stride,
+                    count: uniform.count,
+                    size: size,
+                    offset: 0,
 
-                    glType$: glType,
-                    glLoc$: null!,
-                    array$: null!,
+                    glType: glType,
+                    glLoc: null!,
+                    array: null!,
                 };
             }
         }
@@ -1260,14 +1260,14 @@ export function WebGLCmdFuncCreateShader (device: WebGLDevice, gpuShader: IWebGL
             const sampler = gpuShader.samplerTextures[i];
             gpuShader.glSamplerTextures[i] = {
                 set$: sampler.set,
-                binding$: sampler.binding,
-                name$: sampler.name,
-                type$: sampler.type,
-                count$: sampler.count,
-                units$: [],
-                glUnits$: null!,
-                glType$: GFXTypeToWebGLType(sampler.type, gl),
-                glLoc$: null!,
+                binding: sampler.binding,
+                name: sampler.name,
+                type: sampler.type,
+                count: sampler.count,
+                units: [],
+                glUnits: null!,
+                glType: GFXTypeToWebGLType(sampler.type, gl),
+                glLoc: null!,
             };
         }
     }
@@ -1330,7 +1330,7 @@ export function WebGLCmdFuncCreateShader (device: WebGLDevice, gpuShader: IWebGL
     const glActiveSamplers: IWebGLGPUUniformSamplerTexture[] = [];
     const glActiveSamplerLocations: WebGLUniformLocation[] = [];
     const { bindingMappings, capabilities } = device;
-    const { texUnitCacheMap$: texUnitCacheMap } = device.stateCache;
+    const { texUnitCacheMap: texUnitCacheMap } = device.stateCache;
     const { maxTextureUnits } = capabilities;
 
     if (!(cclegacy.rendering && cclegacy.rendering.enableEffectImport)) {
@@ -1477,16 +1477,16 @@ export function WebGLCmdFuncCreateInputAssember (device: WebGLDevice, gpuInputAs
         const { size } = FormatInfos[attribFormat];
 
         gpuInputAssembler.glAttribs[i] = {
-            name$: attrib.name,
-            glBuffer$: gpuBuffer.glBuffer,
-            glType$: glType,
-            size$: size,
-            count$: FormatInfos[attribFormat].count,
-            stride$: gpuBuffer.stride,
-            componentCount$: WebGLGetComponentCount(glType, gl),
-            isNormalized$: (attribIsNormalized !== undefined ? attribIsNormalized : false),
-            isInstanced$: (attribIsInstanced !== undefined ? attribIsInstanced : false),
-            offset$: offsets[stream],
+            name: attrib.name,
+            glBuffer: gpuBuffer.glBuffer,
+            glType: glType,
+            size: size,
+            count: FormatInfos[attribFormat].count,
+            stride: gpuBuffer.stride,
+            componentCount: WebGLGetComponentCount(glType, gl),
+            isNormalized: (attribIsNormalized !== undefined ? attribIsNormalized : false),
+            isInstanced: (attribIsInstanced !== undefined ? attribIsInstanced : false),
+            offset: offsets[stream],
         };
 
         offsets[stream] += size;
@@ -1512,14 +1512,14 @@ export function WebGLCmdFuncDestroyInputAssembler (device: WebGLDevice, gpuInput
 }
 
 interface IWebGLStateCache {
-    gpuPipelineState$: IWebGLGPUPipelineState | null;
-    gpuInputAssembler$: IWebGLGPUInputAssembler | null;
-    glPrimitive$: number;
+    gpuPipelineState: IWebGLGPUPipelineState | null;
+    gpuInputAssembler: IWebGLGPUInputAssembler | null;
+    glPrimitive: number;
 }
 const gfxStateCache: IWebGLStateCache = {
-    gpuPipelineState$: null,
-    gpuInputAssembler$: null,
-    glPrimitive$: 0,
+    gpuPipelineState: null,
+    gpuInputAssembler: null,
+    glPrimitive: 0,
 };
 
 const realRenderArea = new Rect();
@@ -1726,7 +1726,7 @@ export function WebGLCmdFuncBindStates (
         gfxStateCache.glPrimitive = gpuPipelineState.glPrimitive;
 
         if (gpuPipelineState.gpuShader) {
-            const { glProgram$: glProgram } = gpuPipelineState.gpuShader;
+            const { glProgram: glProgram } = gpuPipelineState.gpuShader;
             if (cache.glProgram !== glProgram) {
                 gl.useProgram(glProgram);
                 cache.glProgram = glProgram;
@@ -1963,7 +1963,7 @@ export function WebGLCmdFuncBindStates (
     // bind descriptor sets
     if (gpuPipelineState && gpuPipelineState.gpuPipelineLayout && gpuShader) {
         const blockLen = gpuShader.glBlocks.length;
-        const { dynamicOffsetIndices$: dynamicOffsetIndices } = gpuPipelineState.gpuPipelineLayout;
+        const { dynamicOffsetIndices: dynamicOffsetIndices } = gpuPipelineState.gpuPipelineLayout;
 
         for (let j = 0; j < blockLen; j++) {
             const glBlock = gpuShader.glBlocks[j];
@@ -1973,7 +1973,7 @@ export function WebGLCmdFuncBindStates (
             let vf32: Float32Array | null = null; let offset = 0;
 
             if (gpuDescriptor && gpuDescriptor.gpuBuffer) {
-                const { gpuBuffer$: gpuBuffer } = gpuDescriptor;
+                const { gpuBuffer: gpuBuffer } = gpuDescriptor;
                 const dynamicOffsetIndexSet = dynamicOffsetIndices[glBlock.set$];
                 const dynamicOffsetIndex = dynamicOffsetIndexSet && dynamicOffsetIndexSet[glBlock.binding];
                 if (dynamicOffsetIndex >= 0) { offset = dynamicOffsets[dynamicOffsetIndex]; }
@@ -2166,7 +2166,7 @@ export function WebGLCmdFuncBindStates (
                 }
 
                 if (gpuDescriptor.gpuTexture && gpuDescriptor.gpuTexture.size > 0) {
-                    const { gpuTexture$: gpuTexture } = gpuDescriptor;
+                    const { gpuTexture: gpuTexture } = gpuDescriptor;
                     const glTexUnit = cache.glTexUnits[texUnit];
 
                     if (glTexUnit.glTexture !== gpuTexture.glTexture) {
@@ -2182,7 +2182,7 @@ export function WebGLCmdFuncBindStates (
                         glTexUnit.glTexture = gpuTexture.glTexture;
                     }
 
-                    const { gpuSampler$: gpuSampler } = gpuDescriptor;
+                    const { gpuSampler: gpuSampler } = gpuDescriptor;
                     if (gpuTexture.isPowerOf2) {
                         glWrapS = gpuSampler.glWrapS;
                         glWrapT = gpuSampler.glWrapT;
@@ -2450,7 +2450,7 @@ export function WebGLCmdFuncBindStates (
 export function WebGLCmdFuncDraw (device: WebGLDevice, drawInfo: Readonly<DrawInfo>): void {
     const { gl } = device;
     const { ANGLE_instanced_arrays: ia, WEBGL_multi_draw: md } = device.extensions;
-    const { gpuInputAssembler$: gpuInputAssembler, glPrimitive$: glPrimitive } = gfxStateCache;
+    const { gpuInputAssembler: gpuInputAssembler, glPrimitive: glPrimitive } = gfxStateCache;
 
     if (gpuInputAssembler) {
         const indexBuffer = gpuInputAssembler.gpuIndexBuffer;

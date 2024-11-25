@@ -44,9 +44,9 @@ export class WebGL2DescriptorSet extends DescriptorSet {
     public initialize (info: Readonly<DescriptorSetInfo>): void {
         this._layout = info.layout;
         const {
-            bindings$: bindings,
-            descriptorIndices$: descriptorIndices,
-            descriptorCount$: descriptorCount,
+            bindings: bindings,
+            descriptorIndices: descriptorIndices,
+            descriptorCount: descriptorCount,
         } = (info.layout as WebGL2DescriptorSetLayout).getGpuDescriptorSetLayout();
 
         this._buffers = Array(descriptorCount).fill(null);
@@ -54,16 +54,16 @@ export class WebGL2DescriptorSet extends DescriptorSet {
         this._samplers = Array(descriptorCount).fill(null);
 
         const gpuDescriptors: IWebGL2GPUDescriptor[] = [];
-        this._gpuDescriptorSet = { gpuDescriptors$: gpuDescriptors, descriptorIndices$: descriptorIndices };
+        this._gpuDescriptorSet = { gpuDescriptors: gpuDescriptors, descriptorIndices: descriptorIndices };
 
         for (let i = 0; i < bindings.length; ++i) {
             const binding = bindings[i];
             for (let j = 0; j < binding.count; j++) {
                 gpuDescriptors.push({
-                    type$: binding.descriptorType,
-                    gpuBuffer$: null,
-                    gpuTextureView$: null,
-                    gpuSampler$: null,
+                    type: binding.descriptorType,
+                    gpuBuffer: null,
+                    gpuTextureView: null,
+                    gpuSampler: null,
                 });
             }
         }

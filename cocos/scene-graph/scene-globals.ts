@@ -1446,7 +1446,7 @@ export class LightProbeInfo {
         this.onProbeBakingChanged(this._scene);
     }
 
-    private onProbeBakingChanged$ (node: Node | null): void {
+    private onProbeBakingChanged (node: Node | null): void {
         if (!node) {
             return;
         }
@@ -1560,7 +1560,7 @@ export class LightProbeInfo {
         }
     }
 
-    private clearAllSHUBOs$ (): void {
+    private clearAllSHUBOs (): void {
         if (!this._scene) {
             return;
         }
@@ -1576,7 +1576,7 @@ export class LightProbeInfo {
         }
     }
 
-    private resetAllTetraIndices$ (): void {
+    private resetAllTetraIndices (): void {
         if (!this._scene) {
             return;
         }

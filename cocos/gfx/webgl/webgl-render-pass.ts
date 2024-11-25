@@ -43,8 +43,8 @@ export class WebGLRenderPass extends RenderPass {
         this._subpasses = info.subpasses;
 
         this._gpuRenderPass = {
-            colorAttachments$: this._colorInfos,
-            depthStencilAttachment$: this._depthStencilInfo,
+            colorAttachments: this._colorInfos,
+            depthStencilAttachment: this._depthStencilInfo,
         };
 
         this._hash = this.computeHash();

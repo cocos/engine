@@ -39,7 +39,7 @@ export class WebGL2Buffer extends Buffer {
         super();
     }
 
-    getGpuBuffer$ (): IWebGL2GPUBuffer {
+    getGpuBuffer (): IWebGL2GPUBuffer {
         return  this._gpuBuffer!;
     }
 
@@ -58,15 +58,15 @@ export class WebGL2Buffer extends Buffer {
             this._flags = buffer.flags;
 
             this._gpuBuffer = {
-                usage$: this._usage,
-                memUsage$: this._memUsage,
-                size$: this._size,
-                stride$: this._stride,
-                buffer$: null,
-                indirects$: buffer.getGpuBuffer().indirects,
-                glTarget$: buffer.getGpuBuffer().glTarget,
-                glBuffer$: buffer.getGpuBuffer().glBuffer,
-                glOffset$: info.offset,
+                usage: this._usage,
+                memUsage: this._memUsage,
+                size: this._size,
+                stride: this._stride,
+                buffer: null,
+                indirects: buffer.getGpuBuffer().indirects,
+                glTarget: buffer.getGpuBuffer().glTarget,
+                glBuffer: buffer.getGpuBuffer().glBuffer,
+                glOffset: info.offset,
             };
         } else { // native buffer
             this._usage = info.usage;
@@ -77,15 +77,15 @@ export class WebGL2Buffer extends Buffer {
             this._flags = info.flags;
 
             this._gpuBuffer = {
-                usage$: this._usage,
-                memUsage$: this._memUsage,
-                size$: this._size,
-                stride$: this._stride,
-                buffer$: null,
-                indirects$: new WebGL2IndirectDrawInfos(),
-                glTarget$: 0,
-                glBuffer$: null,
-                glOffset$: 0,
+                usage: this._usage,
+                memUsage: this._memUsage,
+                size: this._size,
+                stride: this._stride,
+                buffer: null,
+                indirects: new WebGL2IndirectDrawInfos(),
+                glTarget: 0,
+                glBuffer: null,
+                glOffset: 0,
             };
 
             WebGL2CmdFuncCreateBuffer(WebGL2DeviceManager.instance, this._gpuBuffer);

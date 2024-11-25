@@ -882,7 +882,7 @@ class LodStateCache {
         this._newAddedLodGroupVec.length = 0;
     }
 
-    private isLodGroupVisibleByCamera$ (lodGroup: LODGroup, camera: Camera): boolean {
+    private isLodGroupVisibleByCamera (lodGroup: LODGroup, camera: Camera): boolean {
         const layer = lodGroup.node.layer;
         return (camera.visibility & layer) === layer;
     }

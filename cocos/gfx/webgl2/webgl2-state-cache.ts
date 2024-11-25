@@ -26,7 +26,7 @@ import { Rect, Viewport } from '../base/define';
 import { BlendState, DepthStencilState, RasterizerState } from '../base/pipeline-state';
 
 export interface IWebGL2TexUnit {
-    glTexture$: WebGLTexture | null;
+    glTexture: WebGLTexture | null;
 }
 
 export class WebGL2StateCache {
@@ -56,7 +56,7 @@ export class WebGL2StateCache {
     }
 
     initialize (texUnit: number, bufferBindings: number, vertexAttributes: number): void {
-        for (let i = 0; i < texUnit; ++i) this.glTexUnits.push({ glTexture$: null });
+        for (let i = 0; i < texUnit; ++i) this.glTexUnits.push({ glTexture: null });
 
         this.glSamplerUnits.length = texUnit;
         this.glSamplerUnits.fill(null);

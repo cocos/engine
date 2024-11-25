@@ -70,32 +70,32 @@ export class WebGL2Texture extends Texture {
 
         if (!this._isTextureView) {
             this._gpuTexture = {
-                type$: texInfo.type,
-                format$: texInfo.format,
-                usage$: texInfo.usage,
-                width$: texInfo.width,
-                height$: texInfo.height,
-                depth$: texInfo.depth,
-                size$: this._size,
-                arrayLayer$: texInfo.layerCount,
-                mipLevel$: texInfo.levelCount,
-                samples$: texInfo.samples,
-                flags$: texInfo.flags,
-                isPowerOf2$: this._isPowerOf2,
+                type: texInfo.type,
+                format: texInfo.format,
+                usage: texInfo.usage,
+                width: texInfo.width,
+                height: texInfo.height,
+                depth: texInfo.depth,
+                size: this._size,
+                arrayLayer: texInfo.layerCount,
+                mipLevel: texInfo.levelCount,
+                samples: texInfo.samples,
+                flags: texInfo.flags,
+                isPowerOf2: this._isPowerOf2,
 
-                glTarget$: 0,
-                glInternalFmt$: 0,
-                glFormat$: 0,
-                glType$: 0,
-                glUsage$: 0,
-                glTexture$: null,
-                glRenderbuffer$: null,
-                glWrapS$: 0,
-                glWrapT$: 0,
-                glMinFilter$: 0,
-                glMagFilter$: 0,
+                glTarget: 0,
+                glInternalFmt: 0,
+                glFormat: 0,
+                glType: 0,
+                glUsage: 0,
+                glTexture: null,
+                glRenderbuffer: null,
+                glWrapS: 0,
+                glWrapT: 0,
+                glMinFilter: 0,
+                glMagFilter: 0,
 
-                isSwapchainTexture$: isSwapchainTexture || false,
+                isSwapchainTexture: isSwapchainTexture || false,
             };
 
             if (!this._gpuTexture.isSwapchainTexture && this._gpuTexture) {
@@ -112,11 +112,11 @@ export class WebGL2Texture extends Texture {
             this._viewInfo.layerCount = info.layerCount;
 
             this._gpuTextureView = {
-                gpuTexture$: this._gpuTexture,
-                type$: this._viewInfo.type,
-                format$: this._viewInfo.format,
-                baseLevel$: this._viewInfo.baseLevel,
-                levelCount$: this._viewInfo.levelCount,
+                gpuTexture: this._gpuTexture,
+                type: this._viewInfo.type,
+                format: this._viewInfo.format,
+                baseLevel: this._viewInfo.baseLevel,
+                levelCount: this._viewInfo.levelCount,
             };
         } else {
             this._viewInfo.copy(viewInfo);
@@ -128,11 +128,11 @@ export class WebGL2Texture extends Texture {
             }
 
             this._gpuTextureView = {
-                gpuTexture$: this._gpuTexture,
-                type$: viewInfo.type,
-                format$: viewInfo.format,
-                baseLevel$: viewInfo.baseLevel,
-                levelCount$: viewInfo.levelCount,
+                gpuTexture: this._gpuTexture,
+                type: viewInfo.type,
+                format: viewInfo.format,
+                baseLevel: viewInfo.baseLevel,
+                levelCount: viewInfo.levelCount,
             };
         }
     }

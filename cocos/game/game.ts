@@ -553,7 +553,7 @@ export class Game extends EventTarget {
      * @en Called by the engine to pause the game.
      * @zh 提供给引擎调用暂停游戏接口。
      */
-    private pauseByEngine$ (): void {
+    private pauseByEngine (): void {
         if (this._paused) { return; }
         this._pausedByEngine = true;
         this.pause();
@@ -563,7 +563,7 @@ export class Game extends EventTarget {
      * @en Resume paused game by engine call.
      * @zh 提供给引擎调用恢复暂停游戏接口。
      */
-    private resumeByEngine$ (): void {
+    private resumeByEngine (): void {
         if (this._pausedByEngine) {
             this.resume();
             this._pausedByEngine = false;
@@ -688,7 +688,7 @@ export class Game extends EventTarget {
         return this.eventTargetOnce(type, callback, target);
     }
 
-    private canRegisterEvent$ (type: string): boolean {
+    private canRegisterEvent (type: string): boolean {
         return this._engineInited && type === Game.EVENT_ENGINE_INITED
             || this._inited && type === Game.EVENT_GAME_INITED
             || this._rendererInitialized && type === Game.EVENT_RENDERER_INITED;
@@ -1081,7 +1081,7 @@ export class Game extends EventTarget {
         }
     }
 
-    private initPacer$ (): void {
+    private initPacer (): void {
         const frameRate = settings.querySettings(SettingsCategory.SCREEN, 'frameRate') ?? 60;
         assert(typeof frameRate === 'number');
         this._pacer = new Pacer();

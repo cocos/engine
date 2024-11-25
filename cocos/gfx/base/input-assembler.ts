@@ -190,7 +190,7 @@ export abstract class InputAssembler extends GFXObject {
         }
     }
 
-    protected computeAttributesHash$ (): number {
+    protected computeAttributesHash (): number {
         let res = 'attrs';
         for (let i = 0; i < this.attributes.length; ++i) {
             const at = this.attributes[i];

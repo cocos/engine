@@ -50,25 +50,25 @@ export class WebGL2Shader extends Shader {
         this._samplers = info.samplers;
 
         this._gpuShader = {
-            name$: info.name,
-            blocks$: info.blocks.slice(),
-            samplerTextures$: info.samplerTextures.slice(),
-            subpassInputs$: info.subpassInputs.slice(),
+            name: info.name,
+            blocks: info.blocks.slice(),
+            samplerTextures: info.samplerTextures.slice(),
+            subpassInputs: info.subpassInputs.slice(),
 
-            gpuStages$: new Array<IWebGL2GPUShaderStage>(info.stages.length),
-            glProgram$: null,
-            glInputs$: [],
-            glUniforms$: [],
-            glBlocks$: [],
-            glSamplerTextures$: [],
+            gpuStages: new Array<IWebGL2GPUShaderStage>(info.stages.length),
+            glProgram: null,
+            glInputs: [],
+            glUniforms: [],
+            glBlocks: [],
+            glSamplerTextures: [],
         };
 
         for (let i = 0; i < info.stages.length; ++i) {
             const stage = info.stages[i];
             this._gpuShader.gpuStages[i] = {
-                type$: stage.stage,
-                source$: stage.source,
-                glShader$: null,
+                type: stage.stage,
+                source: stage.source,
+                glShader: null,
             };
         }
     }

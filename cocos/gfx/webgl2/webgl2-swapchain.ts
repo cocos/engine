@@ -89,22 +89,22 @@ function getExtension (gl: WebGL2RenderingContext, ext: string): any {
 
 export function getExtensions (gl: WebGL2RenderingContext): IWebGL2Extensions {
     const res: IWebGL2Extensions = {
-        EXT_texture_filter_anisotropic$: getExtension(gl, 'EXT_texture_filter_anisotropic'),
-        EXT_color_buffer_half_float$: getExtension(gl, 'EXT_color_buffer_half_float'),
-        EXT_color_buffer_float$: getExtension(gl, 'EXT_color_buffer_float'),
-        WEBGL_compressed_texture_etc1$: getExtension(gl, 'WEBGL_compressed_texture_etc1'),
+        EXT_texture_filter_anisotropic: getExtension(gl, 'EXT_texture_filter_anisotropic'),
+        EXT_color_buffer_half_float: getExtension(gl, 'EXT_color_buffer_half_float'),
+        EXT_color_buffer_float: getExtension(gl, 'EXT_color_buffer_float'),
+        WEBGL_compressed_texture_etc1: getExtension(gl, 'WEBGL_compressed_texture_etc1'),
         WEBGL_compressed_texture_etc$: getExtension(gl, 'WEBGL_compressed_texture_etc'),
-        WEBGL_compressed_texture_pvrtc$: getExtension(gl, 'WEBGL_compressed_texture_pvrtc'),
-        WEBGL_compressed_texture_astc$: getExtension(gl, 'WEBGL_compressed_texture_astc'),
-        WEBGL_compressed_texture_s3tc$: getExtension(gl, 'WEBGL_compressed_texture_s3tc'),
-        WEBGL_compressed_texture_s3tc_srgb$: getExtension(gl, 'WEBGL_compressed_texture_s3tc_srgb'),
-        WEBGL_debug_shaders$: getExtension(gl, 'WEBGL_debug_shaders'),
-        WEBGL_lose_context$: getExtension(gl, 'WEBGL_lose_context'),
-        WEBGL_debug_renderer_info$: getExtension(gl, 'WEBGL_debug_renderer_info'),
-        OES_texture_half_float_linear$: getExtension(gl, 'OES_texture_half_float_linear'),
-        OES_texture_float_linear$: getExtension(gl, 'OES_texture_float_linear'),
-        WEBGL_multi_draw$: null,
-        useVAO$: true,
+        WEBGL_compressed_texture_pvrtc: getExtension(gl, 'WEBGL_compressed_texture_pvrtc'),
+        WEBGL_compressed_texture_astc: getExtension(gl, 'WEBGL_compressed_texture_astc'),
+        WEBGL_compressed_texture_s3tc: getExtension(gl, 'WEBGL_compressed_texture_s3tc'),
+        WEBGL_compressed_texture_s3tc_srgb: getExtension(gl, 'WEBGL_compressed_texture_s3tc_srgb'),
+        WEBGL_debug_shaders: getExtension(gl, 'WEBGL_debug_shaders'),
+        WEBGL_lose_context: getExtension(gl, 'WEBGL_lose_context'),
+        WEBGL_debug_renderer_info: getExtension(gl, 'WEBGL_debug_renderer_info'),
+        OES_texture_half_float_linear: getExtension(gl, 'OES_texture_half_float_linear'),
+        OES_texture_float_linear: getExtension(gl, 'OES_texture_float_linear'),
+        WEBGL_multi_draw: null,
+        useVAO: true,
     };
 
     // platform-specific extension hacks

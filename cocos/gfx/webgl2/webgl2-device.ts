@@ -84,7 +84,7 @@ export class WebGL2Device extends Device {
         return this._swapchain!.extensions;
     }
 
-    getStateCache$ (): WebGL2StateCache {
+    getStateCache (): WebGL2StateCache {
         return this._swapchain!.stateCache;
     }
 
@@ -137,9 +137,9 @@ export class WebGL2Device extends Device {
             samplerTextureOffsets[curSet] -= mapping.maxBlockCounts[curSet];
         }
         this._bindingMappings = {
-            blockOffsets$: blockOffsets,
-            samplerTextureOffsets$: samplerTextureOffsets,
-            flexibleSet$: mapping.setIndices[mapping.setIndices.length - 1],
+            blockOffsets: blockOffsets,
+            samplerTextureOffsets: samplerTextureOffsets,
+            flexibleSet: mapping.setIndices[mapping.setIndices.length - 1],
         };
 
         const gl = this._context = getContext(Device.canvas);

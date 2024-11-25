@@ -35,7 +35,7 @@ export class WebGL2Framebuffer extends Framebuffer {
         super();
     }
 
-    getGpuFramebuffer$ (): IWebGL2GPUFramebuffer {
+    getGpuFramebuffer (): IWebGL2GPUFramebuffer {
         return  this._gpuFramebuffer!;
     }
 
@@ -80,11 +80,11 @@ export class WebGL2Framebuffer extends Framebuffer {
         let width = Number.MAX_SAFE_INTEGER;
         let height = Number.MAX_SAFE_INTEGER;
         this._gpuFramebuffer = {
-            gpuRenderPass$: (info.renderPass as WebGL2RenderPass).getGpuRenderPass(),
-            gpuColorViews$: gpuColorViews,
-            gpuDepthStencilView$: gpuDepthStencilView,
-            glFramebuffer$: null,
-            isOffscreen$: true,
+            gpuRenderPass: (info.renderPass as WebGL2RenderPass).getGpuRenderPass(),
+            gpuColorViews: gpuColorViews,
+            gpuDepthStencilView: gpuDepthStencilView,
+            glFramebuffer: null,
+            isOffscreen: true,
             get width (): number {
                 if (this.gpuColorViews.length > 0) {
                     return this.gpuColorViews[0].gpuTexture.width;

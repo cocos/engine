@@ -43,23 +43,23 @@ export class WebGLDescriptorSet extends DescriptorSet {
 
     public initialize (info: Readonly<DescriptorSetInfo>): void {
         this._layout = info.layout;
-        const { bindings$: bindings, descriptorIndices$: descriptorIndices, descriptorCount$: descriptorCount } = (info.layout as WebGLDescriptorSetLayout).gpuDescriptorSetLayout;
+        const { bindings: bindings, descriptorIndices: descriptorIndices, descriptorCount: descriptorCount } = (info.layout as WebGLDescriptorSetLayout).gpuDescriptorSetLayout;
 
         this._buffers = Array(descriptorCount).fill(null);
         this._textures = Array(descriptorCount).fill(null);
         this._samplers = Array(descriptorCount).fill(null);
 
         const gpuDescriptors: IWebGLGPUDescriptor[] = [];
-        this._gpuDescriptorSet = { gpuDescriptors$: gpuDescriptors, descriptorIndices$: descriptorIndices };
+        this._gpuDescriptorSet = { gpuDescriptors: gpuDescriptors, descriptorIndices: descriptorIndices };
 
         for (let i = 0; i < bindings.length; ++i) {
             const binding = bindings[i];
             for (let j = 0; j < binding.count; j++) {
                 gpuDescriptors.push({
-                    type$: binding.descriptorType,
-                    gpuBuffer$: null,
-                    gpuTexture$: null,
-                    gpuSampler$: null,
+                    type: binding.descriptorType,
+                    gpuBuffer: null,
+                    gpuTexture: null,
+                    gpuSampler: null,
                 });
             }
         }

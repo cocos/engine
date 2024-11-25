@@ -32,7 +32,7 @@ export class WebGL2PipelineLayout extends PipelineLayout {
         super();
     }
 
-    getGpuPipelineLayout$ (): IWebGL2GPUPipelineLayout { return this._gpuPipelineLayout!; }
+    getGpuPipelineLayout (): IWebGL2GPUPipelineLayout { return this._gpuPipelineLayout!; }
 
     private _gpuPipelineLayout: IWebGL2GPUPipelineLayout | null = null;
 
@@ -61,10 +61,10 @@ export class WebGL2PipelineLayout extends PipelineLayout {
         }
 
         this._gpuPipelineLayout = {
-            gpuSetLayouts$: gpuSetLayouts,
-            dynamicOffsetIndices$: dynamicOffsetIndices,
-            dynamicOffsetCount$: dynamicOffsetCount,
-            dynamicOffsetOffsets$: dynamicOffsetOffsets,
+            gpuSetLayouts: gpuSetLayouts,
+            dynamicOffsetIndices: dynamicOffsetIndices,
+            dynamicOffsetCount: dynamicOffsetCount,
+            dynamicOffsetOffsets: dynamicOffsetOffsets,
         };
     }
 

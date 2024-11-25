@@ -66,10 +66,10 @@ export class WebGLDescriptorSetLayout extends DescriptorSetLayout {
         }
 
         this._gpuDescriptorSetLayout = {
-            bindings$: this._bindings,
-            dynamicBindings$: dynamicBindings,
-            descriptorIndices$: descriptorIndices,
-            descriptorCount$: descriptorCount,
+            bindings: this._bindings,
+            dynamicBindings: dynamicBindings,
+            descriptorIndices: descriptorIndices,
+            descriptorCount: descriptorCount,
         };
     }
 

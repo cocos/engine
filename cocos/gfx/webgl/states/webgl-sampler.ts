@@ -78,11 +78,11 @@ export class WebGLSampler extends Sampler {
         const glWrapR = WebGLWraps[this._info.addressW];
 
         this._gpuSampler = {
-            glMinFilter$: glMinFilter,
-            glMagFilter$: glMagFilter,
-            glWrapS$: glWrapS,
-            glWrapT$: glWrapT,
-            glWrapR$: glWrapR,
+            glMinFilter: glMinFilter,
+            glMagFilter: glMagFilter,
+            glWrapS: glWrapS,
+            glWrapT: glWrapT,
+            glWrapR: glWrapR,
         };
     }
 }

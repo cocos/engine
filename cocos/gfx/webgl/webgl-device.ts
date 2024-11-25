@@ -134,9 +134,9 @@ export class WebGLDevice extends Device {
             samplerTextureOffsets[curSet] -= mapping.maxBlockCounts[curSet];
         }
         this._bindingMappings = {
-            blockOffsets$: blockOffsets,
-            samplerTextureOffsets$: samplerTextureOffsets,
-            flexibleSet$: mapping.setIndices[mapping.setIndices.length - 1],
+            blockOffsets: blockOffsets,
+            samplerTextureOffsets: samplerTextureOffsets,
+            flexibleSet: mapping.setIndices[mapping.setIndices.length - 1],
         };
 
         const gl = this._context = getContext(Device.canvas);

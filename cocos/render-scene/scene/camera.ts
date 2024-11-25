@@ -1397,12 +1397,12 @@ export class Camera {
         this._exposure = 0.833333 / (2.0 ** ev100);
     }
 
-    private updateExposure$ (): void {
+    private updateExposure (): void {
         const ev100 = Math.log2((this._apertureValue * this._apertureValue) / this._shutterValue * 100.0 / this._isoValue);
         this.setExposure(ev100);
     }
 
-    private setDefaultUsage$ (): void {
+    private setDefaultUsage (): void {
         if (EDITOR) {
             if (cclegacy.GAME_VIEW) {
                 this._usage = CameraUsage.GAME_VIEW;

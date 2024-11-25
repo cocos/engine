@@ -80,8 +80,8 @@ export class GamepadInputDevice {
     private declare _buttonR1: InputSourceButton;
     private declare _buttonR2: InputSourceButton;
     private declare _buttonR3: InputSourceButton;
-    // private declare buttonTouchPad$: InputSourceButton;
-    // private declare buttonHome$: InputSourceButton;
+    // private declare buttonTouchPad: InputSourceButton;
+    // private declare buttonHome: InputSourceButton;
     private declare _buttonShare: InputSourceButton;
     private declare _buttonOptions: InputSourceButton;
     private declare _dpad: InputSourceDpad;

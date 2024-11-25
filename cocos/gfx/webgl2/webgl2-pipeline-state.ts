@@ -90,14 +90,14 @@ export class WebGL2PipelineState extends PipelineState {
         }
 
         this._gpuPipelineState = {
-            glPrimitive$: WebGLPrimitives[info.primitive],
-            gpuShader$: (info.shader as WebGL2Shader).gpuShader,
-            gpuPipelineLayout$: (info.pipelineLayout as WebGL2PipelineLayout).getGpuPipelineLayout(),
+            glPrimitive: WebGLPrimitives[info.primitive],
+            gpuShader: (info.shader as WebGL2Shader).gpuShader,
+            gpuPipelineLayout: (info.pipelineLayout as WebGL2PipelineLayout).getGpuPipelineLayout(),
             rs$: info.rasterizerState,
             dss$: info.depthStencilState,
             bs$: info.blendState,
-            gpuRenderPass$: (info.renderPass as WebGL2RenderPass).getGpuRenderPass(),
-            dynamicStates$: dynamicStates,
+            gpuRenderPass: (info.renderPass as WebGL2RenderPass).getGpuRenderPass(),
+            dynamicStates: dynamicStates,
         };
     }
 

@@ -309,7 +309,7 @@ export class AnimationCurve {
      * @param optKey
      * @param t
      */
-    private findIndex$ (optKey: OptimizedKey, t: number): number {
+    private findIndex (optKey: OptimizedKey, t: number): number {
         const { _curve: curve } = this;
         const nKeyframes = curve.keyFramesCount;
         const cachedIndex = optKey.index;

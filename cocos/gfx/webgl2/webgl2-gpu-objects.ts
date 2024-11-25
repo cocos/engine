@@ -94,232 +94,232 @@ export class WebGL2IndirectDrawInfos {
 }
 
 export interface IWebGL2BindingMapping {
-    blockOffsets$: number[];
-    samplerTextureOffsets$: number[];
-    flexibleSet$: number;
+    blockOffsets: number[];
+    samplerTextureOffsets: number[];
+    flexibleSet: number;
 }
 
 export interface IWebGL2GPUUniformInfo {
-    name$: string;
-    type$: Type;
-    count$: number;
-    offset$: number;
-    view$: Float32Array | Int32Array;
-    isDirty$: boolean;
+    name: string;
+    type: Type;
+    count: number;
+    offset: number;
+    view: Float32Array | Int32Array;
+    isDirty: boolean;
 }
 
 export interface IWebGL2GPUBuffer {
-    usage$: BufferUsage;
-    memUsage$: MemoryUsage;
-    size$: number;
-    stride$: number;
+    usage: BufferUsage;
+    memUsage: MemoryUsage;
+    size: number;
+    stride: number;
 
-    glTarget$: GLenum;
-    glBuffer$: WebGLBuffer | null;
-    glOffset$: number;
+    glTarget: GLenum;
+    glBuffer: WebGLBuffer | null;
+    glOffset: number;
 
-    buffer$: ArrayBufferView | null;
-    indirects$: WebGL2IndirectDrawInfos;
+    buffer: ArrayBufferView | null;
+    indirects: WebGL2IndirectDrawInfos;
 }
 
 export interface IWebGL2GPUTexture {
-    type$: TextureType;
-    format$: Format;
-    usage$: TextureUsage;
-    width$: number;
-    height$: number;
-    depth$: number;
-    size$: number;
-    arrayLayer$: number;
-    mipLevel$: number;
-    samples$: SampleCount;
-    flags$: TextureFlags;
-    isPowerOf2$: boolean;
+    type: TextureType;
+    format: Format;
+    usage: TextureUsage;
+    width: number;
+    height: number;
+    depth: number;
+    size: number;
+    arrayLayer: number;
+    mipLevel: number;
+    samples: SampleCount;
+    flags: TextureFlags;
+    isPowerOf2: boolean;
 
-    glTarget$: GLenum;
-    glInternalFmt$: GLenum;
-    glFormat$: GLenum;
-    glType$: GLenum;
-    glUsage$: GLenum;
-    glTexture$: WebGLTexture | null;
-    glRenderbuffer$: WebGLRenderbuffer | null;
-    glWrapS$: GLenum;
-    glWrapT$: GLenum;
-    glMinFilter$: GLenum;
-    glMagFilter$: GLenum;
+    glTarget: GLenum;
+    glInternalFmt: GLenum;
+    glFormat: GLenum;
+    glType: GLenum;
+    glUsage: GLenum;
+    glTexture: WebGLTexture | null;
+    glRenderbuffer: WebGLRenderbuffer | null;
+    glWrapS: GLenum;
+    glWrapT: GLenum;
+    glMinFilter: GLenum;
+    glMagFilter: GLenum;
 
-    isSwapchainTexture$: boolean;
+    isSwapchainTexture: boolean;
 }
 
 export interface IWebGL2GPUTextureView {
-    gpuTexture$: IWebGL2GPUTexture;
-    type$: TextureType;
-    format$: Format;
-    baseLevel$: number;
-    levelCount$: number;
+    gpuTexture: IWebGL2GPUTexture;
+    type: TextureType;
+    format: Format;
+    baseLevel: number;
+    levelCount: number;
 }
 
 export interface IWebGL2GPURenderPass {
-    colorAttachments$: ColorAttachment[];
-    depthStencilAttachment$: DepthStencilAttachment | null;
+    colorAttachments: ColorAttachment[];
+    depthStencilAttachment: DepthStencilAttachment | null;
 }
 
 export interface IWebGL2GPUFramebuffer {
-    gpuRenderPass$: IWebGL2GPURenderPass;
-    gpuColorViews$: IWebGL2GPUTextureView[];
-    gpuDepthStencilView$: IWebGL2GPUTextureView | null;
-    glFramebuffer$: WebGLFramebuffer | null;
-    isOffscreen$: boolean;
+    gpuRenderPass: IWebGL2GPURenderPass;
+    gpuColorViews: IWebGL2GPUTextureView[];
+    gpuDepthStencilView: IWebGL2GPUTextureView | null;
+    glFramebuffer: WebGLFramebuffer | null;
+    isOffscreen: boolean;
     width: number;
     height: number;
 }
 
 export interface IWebGL2GPUSampler {
-    glSamplers$: Map<number, WebGLSampler>;
+    glSamplers: Map<number, WebGLSampler>;
 
-    minFilter$: Filter;
-    magFilter$: Filter;
-    mipFilter$: Filter;
-    addressU$: Address;
-    addressV$: Address;
-    addressW$: Address;
+    minFilter: Filter;
+    magFilter: Filter;
+    mipFilter: Filter;
+    addressU: Address;
+    addressV: Address;
+    addressW: Address;
 
-    glMinFilter$: GLenum;
-    glMagFilter$: GLenum;
-    glWrapS$: GLenum;
-    glWrapT$: GLenum;
-    glWrapR$: GLenum;
+    glMinFilter: GLenum;
+    glMagFilter: GLenum;
+    glWrapS: GLenum;
+    glWrapT: GLenum;
+    glWrapR: GLenum;
 
-    getGLSampler$ (device: WebGL2Device, minLod: number, maxLod: number): WebGLSampler;
+    getGLSampler (device: WebGL2Device, minLod: number, maxLod: number): WebGLSampler;
 }
 
 export interface IWebGL2GPUInput {
-    name$: string;
-    type$: Type;
-    stride$: number;
-    count$: number;
-    size$: number;
+    name: string;
+    type: Type;
+    stride: number;
+    count: number;
+    size: number;
 
-    glType$: GLenum;
-    glLoc$: GLint;
+    glType: GLenum;
+    glLoc: GLint;
 }
 
 export interface IWebGL2GPUUniform {
-    binding$: number;
-    name$: string;
-    type$: Type;
-    stride$: number;
-    count$: number;
-    size$: number;
-    offset$: number;
+    binding: number;
+    name: string;
+    type: Type;
+    stride: number;
+    count: number;
+    size: number;
+    offset: number;
 
-    glType$: GLenum;
-    glLoc$: WebGLUniformLocation;
-    array$: number[];
-    begin$: number;
+    glType: GLenum;
+    glLoc: WebGLUniformLocation;
+    array: number[];
+    begin: number;
 }
 
 export interface IWebGL2GPUUniformBlock {
     set$: number;
-    binding$: number;
+    binding: number;
     idx$: number;
-    name$: string;
-    size$: number;
-    glBinding$: number;
+    name: string;
+    size: number;
+    glBinding: number;
 }
 
 export interface IWebGL2GPUUniformSamplerTexture {
     set$: number;
-    binding$: number;
-    name$: string;
-    type$: Type;
-    count$: number;
-    units$: number[];
-    glUnits$: Int32Array;
+    binding: number;
+    name: string;
+    type: Type;
+    count: number;
+    units: number[];
+    glUnits: Int32Array;
 
-    glType$: GLenum;
-    glLoc$: WebGLUniformLocation;
+    glType: GLenum;
+    glLoc: WebGLUniformLocation;
 }
 
 export interface IWebGL2GPUShaderStage {
-    type$: ShaderStageFlagBit;
-    source$: string;
-    glShader$: WebGLShader | null;
+    type: ShaderStageFlagBit;
+    source: string;
+    glShader: WebGLShader | null;
 }
 
 export interface IWebGL2GPUShader {
-    name$: string;
-    blocks$: UniformBlock[];
-    samplerTextures$: UniformSamplerTexture[];
-    subpassInputs$: UniformInputAttachment[];
+    name: string;
+    blocks: UniformBlock[];
+    samplerTextures: UniformSamplerTexture[];
+    subpassInputs: UniformInputAttachment[];
 
-    gpuStages$: IWebGL2GPUShaderStage[];
-    glProgram$: WebGLProgram | null;
-    glInputs$: IWebGL2GPUInput[];
-    glUniforms$: IWebGL2GPUUniform[];
-    glBlocks$: IWebGL2GPUUniformBlock[];
-    glSamplerTextures$: IWebGL2GPUUniformSamplerTexture[];
+    gpuStages: IWebGL2GPUShaderStage[];
+    glProgram: WebGLProgram | null;
+    glInputs: IWebGL2GPUInput[];
+    glUniforms: IWebGL2GPUUniform[];
+    glBlocks: IWebGL2GPUUniformBlock[];
+    glSamplerTextures: IWebGL2GPUUniformSamplerTexture[];
 }
 
 export interface IWebGL2GPUDescriptorSetLayout {
-    bindings$: DescriptorSetLayoutBinding[];
-    dynamicBindings$: number[];
-    descriptorIndices$: number[];
-    descriptorCount$: number;
+    bindings: DescriptorSetLayoutBinding[];
+    dynamicBindings: number[];
+    descriptorIndices: number[];
+    descriptorCount: number;
 }
 
 export interface IWebGL2GPUPipelineLayout {
-    gpuSetLayouts$: IWebGL2GPUDescriptorSetLayout[];
-    dynamicOffsetCount$: number;
-    dynamicOffsetOffsets$: number[];
-    dynamicOffsetIndices$: number[][];
+    gpuSetLayouts: IWebGL2GPUDescriptorSetLayout[];
+    dynamicOffsetCount: number;
+    dynamicOffsetOffsets: number[];
+    dynamicOffsetIndices: number[][];
 }
 
 export interface IWebGL2GPUPipelineState {
-    glPrimitive$: GLenum;
-    gpuShader$: IWebGL2GPUShader | null;
-    gpuPipelineLayout$: IWebGL2GPUPipelineLayout | null;
+    glPrimitive: GLenum;
+    gpuShader: IWebGL2GPUShader | null;
+    gpuPipelineLayout: IWebGL2GPUPipelineLayout | null;
     rs$: RasterizerState;
     dss$: DepthStencilState;
     bs$: BlendState;
-    dynamicStates$: DynamicStateFlagBit[];
-    gpuRenderPass$: IWebGL2GPURenderPass | null;
+    dynamicStates: DynamicStateFlagBit[];
+    gpuRenderPass: IWebGL2GPURenderPass | null;
 }
 
 export interface IWebGL2GPUDescriptor {
-    type$: DescriptorType;
-    gpuBuffer$: IWebGL2GPUBuffer | null;
-    gpuTextureView$: IWebGL2GPUTextureView | null;
-    gpuSampler$: IWebGL2GPUSampler | null;
+    type: DescriptorType;
+    gpuBuffer: IWebGL2GPUBuffer | null;
+    gpuTextureView: IWebGL2GPUTextureView | null;
+    gpuSampler: IWebGL2GPUSampler | null;
 }
 
 export interface IWebGL2GPUDescriptorSet {
-    gpuDescriptors$: IWebGL2GPUDescriptor[];
-    descriptorIndices$: number[];
+    gpuDescriptors: IWebGL2GPUDescriptor[];
+    descriptorIndices: number[];
 }
 
 export interface IWebGL2Attrib {
-    name$: string;
-    glBuffer$: WebGLBuffer | null;
-    glType$: GLenum;
-    size$: number;
-    count$: number;
-    stride$: number;
-    componentCount$: number;
-    isNormalized$: boolean;
-    isInstanced$: boolean;
-    offset$: number;
+    name: string;
+    glBuffer: WebGLBuffer | null;
+    glType: GLenum;
+    size: number;
+    count: number;
+    stride: number;
+    componentCount: number;
+    isNormalized: boolean;
+    isInstanced: boolean;
+    offset: number;
 }
 
 export interface IWebGL2GPUInputAssembler {
-    attributes$: Attribute[];
-    gpuVertexBuffers$: IWebGL2GPUBuffer[];
-    gpuIndexBuffer$: IWebGL2GPUBuffer | null;
-    gpuIndirectBuffer$: IWebGL2GPUBuffer | null;
+    attributes: Attribute[];
+    gpuVertexBuffers: IWebGL2GPUBuffer[];
+    gpuIndexBuffer: IWebGL2GPUBuffer | null;
+    gpuIndirectBuffer: IWebGL2GPUBuffer | null;
 
-    glAttribs$: IWebGL2Attrib[];
-    glIndexType$: GLenum;
-    glVAOs$: Map<WebGLProgram, WebGLVertexArrayObject>;
+    glAttribs: IWebGL2Attrib[];
+    glIndexType: GLenum;
+    glVAOs: Map<WebGLProgram, WebGLVertexArrayObject>;
 }
 
 export class IWebGL2BlitManager {
@@ -340,7 +340,7 @@ export class IWebGL2BlitManager {
         this._dstFramebuffer = gl.createFramebuffer();
     }
 
-    destroy$ (): void {
+    destroy (): void {
         const { gl } = WebGL2DeviceManager.instance;
         gl.deleteFramebuffer(this._srcFramebuffer);
         gl.deleteFramebuffer(this._dstFramebuffer);

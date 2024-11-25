@@ -68,7 +68,7 @@ class GarbageCollectionManager {
     public init (): void {
     }
 
-    private finalizationRegistryCallback$ (token: any): void {
+    private finalizationRegistryCallback (token: any): void {
         const gcObject = this._gcObjects.get(token);
         if (gcObject) {
             this._gcObjects.delete(token);

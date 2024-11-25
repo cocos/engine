@@ -104,7 +104,7 @@ export interface IWebGLExtensions {
     EXT_shader_texture_lod: EXT_shader_texture_lod | null;
     EXT_sRGB: EXT_sRGB | null;
     OES_vertex_array_object: OES_vertex_array_object | null;
-    EXT_color_buffer_half_float$: EXT_color_buffer_half_float | null;
+    EXT_color_buffer_half_float: EXT_color_buffer_half_float | null;
     WEBGL_multi_draw: WEBGL_multi_draw | null;
     WEBGL_color_buffer_float: WEBGL_color_buffer_float | null;
     WEBGL_compressed_texture_etc1: WEBGL_compressed_texture_etc1 | null;
@@ -136,7 +136,7 @@ export class WebGLDeviceManager {
     static get instance (): WebGLDevice {
         return WebGLDeviceManager._instance!;
     }
-    static setInstance$ (instance: WebGLDevice): void {
+    static setInstance (instance: WebGLDevice): void {
         WebGLDeviceManager._instance = instance;
     }
     private static _instance: WebGLDevice | null = null;

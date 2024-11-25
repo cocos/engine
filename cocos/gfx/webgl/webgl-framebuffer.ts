@@ -84,11 +84,11 @@ export class WebGLFramebuffer extends Framebuffer {
         let width = Number.MAX_SAFE_INTEGER;
         let height = Number.MAX_SAFE_INTEGER;
         this._gpuFramebuffer = {
-            gpuRenderPass$: (info.renderPass as WebGLRenderPass).gpuRenderPass,
-            gpuColorTextures$: gpuColorTextures,
-            gpuDepthStencilTexture$: gpuDepthStencilTexture,
-            glFramebuffer$: null,
-            isOffscreen$: true,
+            gpuRenderPass: (info.renderPass as WebGLRenderPass).gpuRenderPass,
+            gpuColorTextures: gpuColorTextures,
+            gpuDepthStencilTexture: gpuDepthStencilTexture,
+            glFramebuffer: null,
+            isOffscreen: true,
             get width (): number {
                 if (this.gpuColorTextures.length > 0) {
                     return this.gpuColorTextures[0].width;
@@ -111,7 +111,7 @@ export class WebGLFramebuffer extends Framebuffer {
             set height (val) {
                 height = val;
             },
-            lodLevel$: lodLevel,
+            lodLevel: lodLevel,
         };
 
         WebGLCmdFuncCreateFramebuffer(WebGLDeviceManager.instance, this._gpuFramebuffer);

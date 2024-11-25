@@ -97,14 +97,14 @@ export class WebGL2InputAssembler extends InputAssembler {
         }
 
         this._gpuInputAssembler = {
-            attributes$: info.attributes,
-            gpuVertexBuffers$: gpuVertexBuffers,
-            gpuIndexBuffer$: gpuIndexBuffer,
-            gpuIndirectBuffer$: gpuIndirectBuffer,
+            attributes: info.attributes,
+            gpuVertexBuffers: gpuVertexBuffers,
+            gpuIndexBuffer: gpuIndexBuffer,
+            gpuIndirectBuffer: gpuIndirectBuffer,
 
-            glAttribs$: [],
-            glIndexType$: glIndexType,
-            glVAOs$: new Map<WebGLProgram, WebGLVertexArrayObject>(),
+            glAttribs: [],
+            glIndexType: glIndexType,
+            glVAOs: new Map<WebGLProgram, WebGLVertexArrayObject>(),
         };
 
         WebGL2CmdFuncCreateInputAssember(WebGL2DeviceManager.instance, this._gpuInputAssembler);

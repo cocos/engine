@@ -27,7 +27,7 @@ import { DescriptorSetLayout } from '../base/descriptor-set-layout';
 import { IWebGL2GPUDescriptorSetLayout } from './webgl2-gpu-objects';
 
 export class WebGL2DescriptorSetLayout extends DescriptorSetLayout {
-    getGpuDescriptorSetLayout$ (): IWebGL2GPUDescriptorSetLayout { return this._gpuDescriptorSetLayout!; }
+    getGpuDescriptorSetLayout (): IWebGL2GPUDescriptorSetLayout { return this._gpuDescriptorSetLayout!; }
 
     private _gpuDescriptorSetLayout: IWebGL2GPUDescriptorSetLayout | null = null;
 
@@ -66,10 +66,10 @@ export class WebGL2DescriptorSetLayout extends DescriptorSetLayout {
         }
 
         this._gpuDescriptorSetLayout = {
-            bindings$: this._bindings,
-            dynamicBindings$: dynamicBindings,
-            descriptorIndices$: descriptorIndices,
-            descriptorCount$: descriptorCount,
+            bindings: this._bindings,
+            dynamicBindings: dynamicBindings,
+            descriptorIndices: descriptorIndices,
+            descriptorCount: descriptorCount,
         };
     }
 

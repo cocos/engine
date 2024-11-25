@@ -404,7 +404,7 @@ export class Spline {
         }
     }
 
-    private static calcLinear$ (v0: Vec3, v1: Vec3, t: number): Vec3 {
+    private static calcLinear (v0: Vec3, v1: Vec3, t: number): Vec3 {
         const result = new Vec3();
         Vec3.multiplyScalar(_v0, v0, (1.0 - t));
         Vec3.multiplyScalar(_v1, v1, t);
@@ -413,7 +413,7 @@ export class Spline {
         return result;
     }
 
-    private static calcBezier$ (v0: Vec3, v1: Vec3, v2: Vec3, v3: Vec3, t: number): Vec3 {
+    private static calcBezier (v0: Vec3, v1: Vec3, v2: Vec3, v3: Vec3, t: number): Vec3 {
         const result = new Vec3();
         const s = 1.0 - t;
         Vec3.multiplyScalar(_v0, v0, s * s * s);
@@ -426,7 +426,7 @@ export class Spline {
 
         return result;
     }
-    private static calcCatmullRom$ (v0: Vec3, v1: Vec3, v2: Vec3, v3: Vec3, t: number): Vec3 {
+    private static calcCatmullRom (v0: Vec3, v1: Vec3, v2: Vec3, v3: Vec3, t: number): Vec3 {
         const result = new Vec3();
         const t2 = t * t;
         const t3 = t2 * t;

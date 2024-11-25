@@ -755,7 +755,7 @@ export class Model {
         return this.isLightProbeAvailable();
     }
 
-    private isLightProbeAvailable$ (): boolean {
+    private isLightProbeAvailable (): boolean {
         if (!this._useLightProbe) {
             return false;
         }
@@ -772,7 +772,7 @@ export class Model {
         return true;
     }
 
-    private updateSHBuffer$ (): void {
+    private updateSHBuffer (): void {
         if (!this._localSHData) {
             return;
         }

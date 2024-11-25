@@ -41,21 +41,21 @@ export class WebGL2Sampler extends Sampler {
         super(info, hash);
 
         this._gpuSampler = {
-            glSamplers$: new Map<number, WebGL2Sampler>(),
-            minFilter$: this._info.minFilter,
-            magFilter$: this._info.magFilter,
-            mipFilter$: this._info.mipFilter,
-            addressU$: this._info.addressU,
-            addressV$: this._info.addressV,
-            addressW$: this._info.addressW,
+            glSamplers: new Map<number, WebGL2Sampler>(),
+            minFilter: this._info.minFilter,
+            magFilter: this._info.magFilter,
+            mipFilter: this._info.mipFilter,
+            addressU: this._info.addressU,
+            addressV: this._info.addressV,
+            addressW: this._info.addressW,
 
-            glMinFilter$: 0,
-            glMagFilter$: 0,
-            glWrapS$: 0,
-            glWrapT$: 0,
-            glWrapR$: 0,
+            glMinFilter: 0,
+            glMagFilter: 0,
+            glWrapS: 0,
+            glWrapT: 0,
+            glWrapR: 0,
 
-            getGLSampler$ (device: WebGL2Device, minLod: number, maxLod: number): WebGLSampler {
+            getGLSampler (device: WebGL2Device, minLod: number, maxLod: number): WebGLSampler {
                 const { gl } = device;
                 const samplerHash = minLod << 16 | maxLod;
                 if (!this.glSamplers.has(samplerHash)) {

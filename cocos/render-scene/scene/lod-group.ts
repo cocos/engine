@@ -192,7 +192,7 @@ export class LODGroup {
         return this.distanceToScreenUsagePercentage(camera, distance, this.getWorldSpaceSize());
     }
 
-    private distanceToScreenUsagePercentage$ (camera: Camera, distance: number | undefined, size: number): number {
+    private distanceToScreenUsagePercentage (camera: Camera, distance: number | undefined, size: number): number {
         if (camera.projectionType === CameraProjection.PERSPECTIVE) {
             assertIsTrue(typeof distance === 'number', 'distance must be present for perspective projection');
             return (size * camera.matProj.m05) / (distance * 2.0); // note: matProj.m11 is 1 / tan(fov / 2.0)
@@ -201,7 +201,7 @@ export class LODGroup {
         }
     }
 
-    private getWorldSpaceSize$ (): number {
+    private getWorldSpaceSize (): number {
         const scale = this.node.scale;
         const maxScale = Math.max(Math.abs(scale.x), Math.abs(scale.y), Math.abs(scale.z));
         return maxScale * this.objectSize;
