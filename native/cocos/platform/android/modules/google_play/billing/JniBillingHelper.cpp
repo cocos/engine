@@ -37,7 +37,7 @@
 namespace {
 
 #ifndef JCLS_BILLING
-    #define JCLS_BILLING "com/cocos/lib/CocosBillingHelper"
+    #define JCLS_BILLING "com/cocos/billing/CocosBillingHelper"
 #endif
 }; // namespace
 
@@ -112,6 +112,15 @@ template void callJSfunc(const char*, BillingResult*&&, AlternativeBillingOnlyRe
 template void callJSfunc(const char*, BillingResult*&&, ExternalOfferReportingDetails*&&);
 template void callJSfunc(const char*, InAppMessageResult*&&);
 
+void JniBillingHelper::removeProductDetails(int productDetailsID) {
+    JniHelper::callStaticVoidMethod(JCLS_BILLING, "removeProductDetails", productDetailsID);
+}
+
+void JniBillingHelper::removePurchase(int purchaseID) {
+    JniHelper::callStaticVoidMethod(JCLS_BILLING, "removePurchase", purchaseID);
+}
+
+
 void JniBillingHelper::startConnection() {
     JniHelper::callStaticVoidMethod(JCLS_BILLING, "startConnection");
 }
@@ -177,7 +186,7 @@ void JniBillingHelper::launchBillingFlow(const std::vector<ProductDetails*>& pro
     jintArray result = env->NewIntArray(size);
     jint* buf = new jint[size];
     for (int i = 0; i < size; ++i) {
-        buf[i] = productDetailsList[i]->hashCode;
+        buf[i] = productDetailsList[i]->_id;
     }
     env->SetIntArrayRegion(result, 0, size, buf);
     delete[] buf;
@@ -196,7 +205,7 @@ void JniBillingHelper::consumePurchases(const std::vector<Purchase*>& purchases)
     jintArray result = env->NewIntArray(size);
     jint* buf = new jint[size];
     for (int i = 0; i < size; ++i) {
-        buf[i] = purchases[i]->hashCode;
+        buf[i] = purchases[i]->_id;
     }
     env->SetIntArrayRegion(result, 0, size, buf);
     delete[] buf;
@@ -214,7 +223,7 @@ void JniBillingHelper::acknowledgePurchase(const std::vector<Purchase*>& purchas
     jintArray result = env->NewIntArray(size);
     jint* buf = new jint[size];
     for (int i = 0; i < size; ++i) {
-        buf[i] = purchases[i]->hashCode;
+        buf[i] = purchases[i]->_id;
     }
     env->SetIntArrayRegion(result, 0, size, buf);
     delete[] buf;
@@ -254,18 +263,20 @@ void JniBillingHelper::onBillingServiceDisconnected(JNIEnv* env, jclass clazz) {
 
 void JniBillingHelper::onProductDetailsResponse(JNIEnv* env, jclass clazz,
                                                 jobject billingResultObj,
-                                                jobject productDetailsListObj) {
+                                                jobject productDetailsListObj,
+                                                jint startID) {
     auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
-    std::vector<cc::ProductDetails*> productDetailsList = cc::JniBillingHelper::toProductDetailList(env, productDetailsListObj);
+    std::vector<cc::ProductDetails*> productDetailsList = cc::JniBillingHelper::toProductDetailList(env, productDetailsListObj, startID);
     cc::callJSfunc("onProductDetailsResponse", billingResult, productDetailsList);
 }
 
 void JniBillingHelper::onPurchasesUpdated(JNIEnv* env, jclass clazz,
                                           jobject billingResultObj,
-                                          jobject purchasesListObj) {
+                                          jobject purchasesListObj,
+                                          jint startID) {
     auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
     if (purchasesListObj != nullptr) {
-        std::vector<cc::Purchase*> purchasesList = cc::JniBillingHelper::toPurchaseList(env, purchasesListObj);
+        std::vector<cc::Purchase*> purchasesList = cc::JniBillingHelper::toPurchaseList(env, purchasesListObj, startID);
         cc::callJSfunc("onPurchasesUpdated", billingResult, purchasesList);
     } else {
         cc::callJSfunc("onPurchasesUpdated", billingResult, std::vector<cc::Purchase*>());
@@ -277,9 +288,9 @@ void JniBillingHelper::onConsumeResponse(JNIEnv* env, jclass clazz, jobject bill
     cc::callJSfunc("onConsumeResponse", billingResult, cc::StringUtils::getStringUTFCharsJNI(env, static_cast<jstring>(purchaseToken)));
 }
 
-void JniBillingHelper::onQueryPurchasesResponse(JNIEnv* env, jclass clazz, jobject billingResultObj, jobject purchasesObj) {
+void JniBillingHelper::onQueryPurchasesResponse(JNIEnv* env, jclass clazz, jobject billingResultObj, jobject purchasesListObj, jint startID) {
     auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
-    std::vector<cc::Purchase*> purchasesList = cc::JniBillingHelper::toPurchaseList(env, purchasesObj);
+    std::vector<cc::Purchase*> purchasesList = cc::JniBillingHelper::toPurchaseList(env, purchasesListObj, startID);
     cc::callJSfunc("onQueryPurchasesResponse", billingResult, purchasesList);
 }
 
@@ -423,7 +434,7 @@ cc::SubscriptionOfferDetails* JniBillingHelper::toSubscriptionOfferDetails(JNIEn
     return details;
 }
 
-std::vector<ProductDetails*> JniBillingHelper::toProductDetailList(JNIEnv* env, jobject productListObj) {
+std::vector<ProductDetails*> JniBillingHelper::toProductDetailList(JNIEnv* env, jobject productListObj, jint startID) {
     jclass clazz = env->GetObjectClass(productListObj);
     jmethodID listGetMethod = env->GetMethodID(clazz, "get", "(I)Ljava/lang/Object;");
     int size = callIntMethod(env, clazz, productListObj, "size");
@@ -431,6 +442,7 @@ std::vector<ProductDetails*> JniBillingHelper::toProductDetailList(JNIEnv* env, 
     for (int i = 0; i < size; ++i) {
         jobject productDetailObj = env->CallObjectMethod(productListObj, listGetMethod, i);
         cc::ProductDetails* productDetails = cc::JniBillingHelper::toProductDetail(env, productDetailObj);
+        productDetails->_id = startID++;
         productDetailsList.push_back(productDetails);
     }
     return std::move(productDetailsList);
@@ -495,7 +507,7 @@ cc::PendingPurchaseUpdate* JniBillingHelper::toPendingPurchaseUpdate(JNIEnv* env
     return pendingPurchaseUpdate;
 }
 
-std::vector<Purchase*> JniBillingHelper::toPurchaseList(JNIEnv* env, jobject productsListObj) {
+std::vector<Purchase*> JniBillingHelper::toPurchaseList(JNIEnv* env, jobject productsListObj, jint startID) {
     jclass clazz = env->GetObjectClass(productsListObj);
     jmethodID listGetMethod = env->GetMethodID(clazz, "get", "(I)Ljava/lang/Object;");
     int size = callIntMethod(env, clazz, productsListObj, "size");
@@ -503,6 +515,7 @@ std::vector<Purchase*> JniBillingHelper::toPurchaseList(JNIEnv* env, jobject pro
     for (int i = 0; i < size; ++i) {
         jobject purchaseObj = env->CallObjectMethod(productsListObj, listGetMethod, i);
         cc::Purchase* purchase = cc::JniBillingHelper::toPurchase(env, purchaseObj);
+        purchase->_id = startID++;
         purchases.push_back(purchase);
     }
     return std::move(purchases);

@@ -357,11 +357,11 @@ SE_DECLARE_FINALIZE_FUNC(js_delete_cc_PricingPhases)
 static bool js_cc_PricingPhases_pricingPhaseList_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::SubscriptionOfferDetails* arg1 = (cc::SubscriptionOfferDetails*)NULL;
-    std::vector<cc::PricingPhase*> result;
+    cc::PricingPhases* result;
 
     arg1 = SE_THIS_OBJECT<cc::SubscriptionOfferDetails>(s);
     if (nullptr == arg1) return true;
-    result = arg1->pricingPhaseList;
+    result = arg1->pricingPhases.get();
 
     ok &= nativevalue_to_se(result, s.rval(), s.thisObject() /*ctx*/);
     SE_PRECONDITION2(ok, false, "Error processing arguments");
@@ -382,7 +382,7 @@ bool js_register_cc_PricingPhases(se::Object* obj) { // NOLINT
     cls->defineFinalizeFunction(_SE(js_delete_cc_PricingPhases));
 
     cls->install();
-    JSBClassType::registerClass<cc::PricingPhase>(cls);
+    JSBClassType::registerClass<cc::PricingPhases>(cls);
 
     se::ScriptEngine::getInstance()->clearException();
     return true;
@@ -478,11 +478,11 @@ SE_BIND_PROP_GET(js_cc_SubscriptionOfferDetails_offerToken_get)
 static bool js_cc_SubscriptionOfferDetails_pricingPhases_get(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     cc::SubscriptionOfferDetails* arg1 = (cc::SubscriptionOfferDetails*)NULL;
-    std::vector<cc::PricingPhase*> result;
+    cc::PricingPhases* result;
 
     arg1 = SE_THIS_OBJECT<cc::SubscriptionOfferDetails>(s);
     if (nullptr == arg1) return true;
-    result = arg1->pricingPhases;
+    result = arg1->pricingPhases.get();
 
     ok &= nativevalue_to_se(result, s.rval(), s.thisObject() /*ctx*/);
     SE_PRECONDITION2(ok, false, "Error processing arguments");

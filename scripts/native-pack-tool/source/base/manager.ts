@@ -2,7 +2,7 @@
 import { Paths } from "../utils";
 import { CocosParams, NativePackTool } from "./default";
 
-export type ISupportPlatform = 'mac-os' | 'mac' | 'ios' | 'android' | 'ohos';
+export type ISupportPlatform = 'mac-os' | 'mac' | 'ios' | 'android' | 'google-play' | 'ohos';
 
 export class NativePackToolManager {
     static Paths: Paths;

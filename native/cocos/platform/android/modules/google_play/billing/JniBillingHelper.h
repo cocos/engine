@@ -48,6 +48,8 @@ class InAppMessageResult;
 
 class CC_DLL JniBillingHelper {
 public:
+    static void removeProductDetails(int productDetailsID);
+    static void removePurchase(int purchaseID);
     static void startConnection();
     static void endConnection();
     static int getConnectionState();
@@ -74,12 +76,14 @@ public:
     static void onBillingServiceDisconnected(JNIEnv *env, jclass clazz);
     static void onProductDetailsResponse(JNIEnv *env, jclass clazz,
                                          jobject billingResultObj,
-                                         jobject productDetailsListObj);
+                                         jobject productDetailsListObj,
+                                         jint startID);
     static void onPurchasesUpdated(JNIEnv *env, jclass clazz,
                                    jobject billingResultObj,
-                                   jobject purchaseListObj);
+                                   jobject purchaseListObj,
+                                   jint startID);
     static void onConsumeResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jstring purchaseToken);
-    static void onQueryPurchasesResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject purchaseListObj);
+    static void onQueryPurchasesResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject purchaseListObj, jint startID);
     static void onAcknowledgePurchaseResponse(JNIEnv *env, jclass clazz, jobject billingResultObj);
     static void onBillingConfigResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject billingConfigObj);
     static void onAlternativeBillingOnlyTokenResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject alternativeBillingOnlyReportingDetailsObj);
@@ -92,8 +96,8 @@ public:
 
 private:
     static BillingResult *toBillingResult(JNIEnv *env, jobject obj);
-    static std::vector<ProductDetails *> toProductDetailList(JNIEnv *env, jobject productsObj);
-    static std::vector<Purchase *> toPurchaseList(JNIEnv *env, jobject productsObj);
+    static std::vector<ProductDetails *> toProductDetailList(JNIEnv *env, jobject productsObj, jint startID);
+    static std::vector<Purchase *> toPurchaseList(JNIEnv *env, jobject productsObj, jint startID);
     static BillingConfig *toBillingConfig(JNIEnv *env, jobject billingConfigObj);
     static AlternativeBillingOnlyReportingDetails *toAlternativeBillingOnlyReportingDetails(JNIEnv *env, jobject alternativeBillingOnlyReportingDetailsObj);
     static ExternalOfferReportingDetails *toExternalOfferReportingDetails(JNIEnv *env, jobject externalOfferReportingDetailsObj);

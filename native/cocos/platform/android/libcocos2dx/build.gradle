@@ -17,10 +17,13 @@ android {
 
     sourceSets.main {
         aidl.srcDir "../java/src"
-        java.srcDir "../java/src"
+        java.srcDirs = ["../java/src"]
         manifest.srcFile "AndroidManifest.xml"
     }
 
+    if(project.hasProperty("PROP_ENABLE_BILLING") && project.PROP_ENABLE_BILLING.toBoolean()) {
+        sourceSets.main.java.srcDirs += ["../java/vendor"]
+    }
     buildDir = new File(rootProject.buildDir, project.name)
 
     buildTypes {
@@ -37,5 +40,7 @@ android {
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: '../java/libs')
-    implementation "com.android.billingclient:billing:7.1.0"
+    if(project.hasProperty("PROP_ENABLE_BILLING") && project.PROP_ENABLE_BILLING.toBoolean()) {
+        implementation "com.android.billingclient:billing:7.1.0"
+    }
 }

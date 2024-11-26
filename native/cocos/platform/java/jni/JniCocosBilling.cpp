@@ -29,82 +29,84 @@
 extern "C" {
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onBillingSetupFinished(JNIEnv *env, jclass clazz, jobject billingResultObj) {
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onBillingSetupFinished(JNIEnv *env, jclass clazz, jobject billingResultObj) {
     cc::JniBillingHelper::onBillingSetupFinished(env, clazz, billingResultObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onBillingServiceDisconnected(JNIEnv *env, jclass clazz) {
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onBillingServiceDisconnected(JNIEnv *env, jclass clazz) {
     cc::JniBillingHelper::onBillingServiceDisconnected(env, clazz);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onProductDetailsResponse(JNIEnv *env, jclass clazz,
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onProductDetailsResponse(JNIEnv *env, jclass clazz,
                                                                                       jobject billingResultObj,
-                                                                                      jobject productDetailsListObj) {
-    cc::JniBillingHelper::onProductDetailsResponse(env, clazz, billingResultObj, productDetailsListObj);
+                                                                                      jobject productDetailsListObj,
+                                                                                      jint startID) {
+    cc::JniBillingHelper::onProductDetailsResponse(env, clazz, billingResultObj, productDetailsListObj, startID);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onPurchasesUpdated(JNIEnv *env, jclass clazz,
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onPurchasesUpdated(JNIEnv *env, jclass clazz,
                                                                                 jobject billingResultObj,
-                                                                                jobject purchaseListObj) {
-    cc::JniBillingHelper::onPurchasesUpdated(env, clazz, billingResultObj, purchaseListObj);
+                                                                                jobject purchaseListObj,
+                                                                                jint startID) {
+    cc::JniBillingHelper::onPurchasesUpdated(env, clazz, billingResultObj, purchaseListObj, startID);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onConsumeResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jstring purchaseToken) {
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onConsumeResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jstring purchaseToken) {
     cc::JniBillingHelper::onConsumeResponse(env, clazz, billingResultObj, purchaseToken);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onQueryPurchasesResponse(JNIEnv *env, jclass clazz, jobject billingResultObj,
-                                                                                      jobject purchaseListObj) {
-    cc::JniBillingHelper::onQueryPurchasesResponse(env, clazz, billingResultObj, purchaseListObj);
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onQueryPurchasesResponse(JNIEnv *env, jclass clazz, jobject billingResultObj,
+                                                                                      jobject purchaseListObj, jint startID) {
+    cc::JniBillingHelper::onQueryPurchasesResponse(env, clazz, billingResultObj, purchaseListObj, startID);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onAcknowledgePurchaseResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onAcknowledgePurchaseResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
     cc::JniBillingHelper::onAcknowledgePurchaseResponse(env, clazz, billingResultObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onBillingConfigResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject billingConfigObj) {
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onBillingConfigResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject billingConfigObj) {
     cc::JniBillingHelper::onBillingConfigResponse(env, clazz, billingResultObj, billingConfigObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onAlternativeBillingOnlyTokenResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject alternativeBillingOnlyReportingDetailsObj) {
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onAlternativeBillingOnlyTokenResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject alternativeBillingOnlyReportingDetailsObj) {
     cc::JniBillingHelper::onAlternativeBillingOnlyTokenResponse(env, clazz, billingResultObj, alternativeBillingOnlyReportingDetailsObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onExternalOfferReportingDetailsResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject externalOfferReportingDetailsObj) {
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onExternalOfferReportingDetailsResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject externalOfferReportingDetailsObj) {
     cc::JniBillingHelper::onExternalOfferReportingDetailsResponse(env, clazz, billingResultObj, externalOfferReportingDetailsObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onAlternativeBillingOnlyAvailabilityResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onAlternativeBillingOnlyAvailabilityResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
     cc::JniBillingHelper::onAlternativeBillingOnlyAvailabilityResponse(env, clazz, billingResultObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onExternalOfferAvailabilityResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onExternalOfferAvailabilityResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
     cc::JniBillingHelper::onExternalOfferAvailabilityResponse(env, clazz, billingResultObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onAlternativeBillingOnlyInformationDialogResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onAlternativeBillingOnlyInformationDialogResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
     cc::JniBillingHelper::onAlternativeBillingOnlyInformationDialogResponse(env, clazz, billingResultObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onExternalOfferInformationDialogResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onExternalOfferInformationDialogResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
     cc::JniBillingHelper::onExternalOfferInformationDialogResponse(env, clazz, billingResultObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_com_cocos_lib_CocosBillingHelper_onInAppMessageResponse(JNIEnv *env, jclass clazz, jobject inAppMessageResultObj) {
+JNIEXPORT void JNICALL Java_com_cocos_billing_CocosBillingHelper_onInAppMessageResponse(JNIEnv *env, jclass clazz, jobject inAppMessageResultObj) {
     cc::JniBillingHelper::onInAppMessageResponse(env, clazz, inAppMessageResultObj);
 }
 }
