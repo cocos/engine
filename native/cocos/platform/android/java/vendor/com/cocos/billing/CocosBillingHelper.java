@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  ****************************************************************************/
 
-package com.cocos.lib;
+package com.cocos.billing;
 
 import android.annotation.SuppressLint;
 
@@ -37,15 +37,15 @@ import com.android.billingclient.api.InAppMessageResult;
 import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import java.util.List;
-
-import com.cocos.lib.CocosBilling;
+import com.cocos.lib.GlobalObject;
+import com.cocos.billing.CocosBilling;
 
 public class CocosBillingHelper {
     public static native void onBillingSetupFinished(@NonNull BillingResult billingResult);
     public static native void onBillingServiceDisconnected();
-    public static native void onProductDetailsResponse(@NonNull BillingResult billingResult, @NonNull List<ProductDetails> productDetailsList);
-    public static native void onPurchasesUpdated(@NonNull BillingResult billingResult, @Nullable List<Purchase> purchasesList);
-    public static native void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> purchasesList);
+    public static native void onProductDetailsResponse(@NonNull BillingResult billingResult, @NonNull List<ProductDetails> productDetailsList, int startID);
+    public static native void onPurchasesUpdated(@NonNull BillingResult billingResult, @Nullable List<Purchase> purchasesList, int startID);
+    public static native void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> purchasesList, int startID);
     public static native void onConsumeResponse(@NonNull BillingResult billingResult, @NonNull String purchaseToken);
     public static native void onAcknowledgePurchaseResponse(@NonNull BillingResult billingResult);
     public static native void onBillingConfigResponse(@NonNull BillingResult billingResult, @Nullable BillingConfig billingConfig);
@@ -71,6 +71,14 @@ public class CocosBillingHelper {
             instance = new CocosBilling();
         }
         return instance;
+    }
+
+    public static void removeProductDetails(int productDetailsID) {
+        instance.removeProductDetails(productDetailsID);
+    }
+
+    public static void removePurchase(int purchaseID) {
+        instance.removeProductDetails(purchaseID);
     }
 
     public static void startConnection() {

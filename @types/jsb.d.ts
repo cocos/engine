@@ -672,8 +672,8 @@ declare namespace jsb {
     }
 
     /**
-     * @en The details used to report transactions made via alternative billing without user choice to use Google Play billing.
-     * @zh 用于报告用户未选择使用 Google Play 结算方式而通过替代结算方式进行的交易的详细信息。
+     * @en The details used to report transactions made via alternative billing without user choice to use Google Play Billing.
+     * @zh 用于报告用户未选择使用 Google Play Billing方式而通过替代Billing方式进行的交易的详细信息。
      */
     export interface AlternativeBillingOnlyReportingDetails {
         /**
@@ -714,7 +714,7 @@ declare namespace jsb {
     }
 
     /**
-     * @en Main interface for communication between the google play library and user application code.
+     * @en Main interface for communication between the Google Play library and user application code.
      * @zh 产品 ID。
      */
     const billing: {
@@ -777,12 +777,12 @@ declare namespace jsb {
 
         /**
          * @en Creates alternative billing only purchase details that can be used to report a transaction made via alternative billing without user choice to use Google Play billing.
-         * @zh 创建仅限替代结算的购买详情，可用于报告通过替代结算进行的交易，而无需用户选择使用 Google Play 结算。
+         * @zh 创建仅限替代结算的购买详情，可用于报告通过替代结算进行的交易，而无需用户选择使用 Google Play Billing。
          */
         createAlternativeBillingOnlyReportingDetailsAsync(): void;
         /**
-         * @en Checks the availability of offering alternative billing without user choice to use Google Play billing.
-         * @zh 检查是否可以提供替代结算方式，而无需用户选择使用 Google Play 结算方式。
+         * @en Checks the availability of offering alternative billing without user choice to use Google Play Billing.
+         * @zh 检查是否可以提供替代结算方式，而无需用户选择使用 Google Play Billing方式。
          */
         isAlternativeBillingOnlyAvailableAsync(): void;
 

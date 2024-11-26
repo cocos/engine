@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  ****************************************************************************/
 
-package com.cocos.lib;
+package com.cocos.billing;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -57,8 +57,8 @@ import com.android.billingclient.api.ExternalOfferAvailabilityListener;
 import com.android.billingclient.api.ExternalOfferInformationDialogListener;
 import com.android.billingclient.api.InAppMessageParams;
 import com.android.billingclient.api.InAppMessageResponseListener;
-
-
+import com.cocos.lib.GlobalObject;
+import com.cocos.lib.CocosHelper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -73,6 +73,8 @@ public class CocosBilling implements BillingClientStateListener,
     private static final String TAG = CocosBilling.class.getSimpleName();
     private Map<Integer, ProductDetails> _productDetails = new HashMap<>();
     private Map<Integer, Purchase> _purchase = new HashMap<>();
+    private int _productDetailsNextID = 0;
+    private int _purchaseNextID = 0;
 
     /**
      * The billing client.
@@ -84,6 +86,22 @@ public class CocosBilling implements BillingClientStateListener,
             .setListener(this)
             .enablePendingPurchases()
             .build();
+    }
+
+    public void removeProductDetails(int productDetailsID) {
+        if (_productDetails.containsKey(productDetailsID)) {
+            _productDetails.remove(productDetailsID);
+        } else {
+            Log.w(TAG, "Remove invalid product details id");
+        }
+    }
+
+    public void removePurchase(int purchaseID) {
+        if (_purchase.containsKey(purchaseID)) {
+            _purchase.remove(purchaseID);
+        } else {
+            Log.w(TAG, "Remove invalid purchase id");
+        }
     }
 
     public void startConnection() {
@@ -180,6 +198,10 @@ public class CocosBilling implements BillingClientStateListener,
                 Log.w(TAG, "Purchased product ID does not exist");
             }
 
+        }
+        if(productDetailsParamsList.isEmpty()) {
+            Log.w(TAG, "Purchased product ID does not exist");
+            return;
         }
         BillingFlowParams params = BillingFlowParams.newBuilder().setProductDetailsParamsList(productDetailsParamsList).build();
         _billingClient.launchBillingFlow(GlobalObject.getActivity(), params);
@@ -322,13 +344,14 @@ public class CocosBilling implements BillingClientStateListener,
     @Override
     public void onProductDetailsResponse(@NonNull BillingResult billingResult,
                                          @NonNull List<ProductDetails> productDetailsList) {
+        int startID = _productDetailsNextID;
         for (ProductDetails productDetails: productDetailsList) {
-            _productDetails.put(productDetails.hashCode(), productDetails);
+            _productDetails.put(_productDetailsNextID++, productDetails);
         }
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onProductDetailsResponse(billingResult, productDetailsList);
+                CocosBillingHelper.onProductDetailsResponse(billingResult, productDetailsList, startID);
             }
         });
     }
@@ -336,15 +359,16 @@ public class CocosBilling implements BillingClientStateListener,
     @Override
     public void onPurchasesUpdated(@NonNull BillingResult billingResult,
                                    @Nullable List<Purchase> purchaseList) {
+        int startID = _purchaseNextID;
         if(purchaseList != null) {
             for (Purchase purchase: purchaseList) {
-                _purchase.put(purchase.hashCode(), purchase);
+                _purchase.put(_purchaseNextID++, purchase);
             }
         }
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onPurchasesUpdated(billingResult, purchaseList);
+                CocosBillingHelper.onPurchasesUpdated(billingResult, purchaseList, startID);
             }
         });
     }
@@ -352,13 +376,14 @@ public class CocosBilling implements BillingClientStateListener,
     @Override
     public void onQueryPurchasesResponse(@NonNull BillingResult billingResult,
                                          @NonNull List<Purchase> purchaseList) {
+        int startID = _purchaseNextID;
         for (Purchase purchase: purchaseList) {
-            _purchase.put(purchase.hashCode(), purchase);
+            _purchase.put(_purchaseNextID++, purchase);
         }
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onQueryPurchasesResponse(billingResult, purchaseList);
+                CocosBillingHelper.onQueryPurchasesResponse(billingResult, purchaseList, startID);
             }
         });
     }
