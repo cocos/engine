@@ -55,6 +55,7 @@
       "exports/**/*.ts",
       "editor/exports/**/*.ts",
       "typedoc-index.ts",
-      "pal/**/*.ts"
+      "pal/**/*.ts",
+      "vendor/**/*.ts"
   ]
 }

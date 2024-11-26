@@ -1630,7 +1630,9 @@ bool jsb_register_global_variables(se::Object *global) { // NOLINT
     jsb_register_TextEncoder(global);
     jsb_register_TextDecoder(global);
 
+#if CC_USE_ADPF
     jsb_register_ADPF(__jsbObj);
+#endif
 
     se::ScriptEngine::getInstance()->clearException();
 

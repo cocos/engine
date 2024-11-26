@@ -1031,6 +1031,10 @@ module.exports = link(mixin({
             label: "Tiled 地图",
             description: "Tiled 地图支持。",
         },
+        vendor: {
+            label: "Vendor",
+            description: "Vendor 支持.",
+        },
         spine: {
             label: "Spine 动画",
             description: "Spine 动画支持。",

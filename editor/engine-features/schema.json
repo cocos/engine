@@ -179,6 +179,9 @@
                 "tiled-map": {
                     "$ref": "#/definitions/IFeatureItem"
                 },
+                "vendor": {
+                    "$ref": "#/definitions/IFeatureItem"
+                },
                 "tween": {
                     "$ref": "#/definitions/IFeatureItem"
                 },
@@ -363,6 +366,9 @@
                     "$ref": "#/definitions/BaseItem"
                 },
                 "tiled-map": {
+                    "$ref": "#/definitions/BaseItem"
+                },
+                "vendor": {
                     "$ref": "#/definitions/BaseItem"
                 },
                 "tween": {

@@ -84,15 +84,11 @@ public:
 
 class CC_DLL ProductDetails : public cc::RefCounted {
 public:
-    ~ProductDetails() {
-        for (auto* ptr : subscriptionOfferDetails) {
-            delete ptr;
-        }
-        subscriptionOfferDetails.clear();
-    }
+    ~ProductDetails() override;
     bool equals(const ProductDetails& other) const {
         return hashCode == other.hashCode;
     }
+    int _id; // This is an ID that is not visible to ts and is used to free the java object.
     int hashCode;
     std::string description;
     std::string name;
@@ -119,10 +115,11 @@ public:
 
 class CC_DLL Purchase : public  cc::RefCounted {
 public:
+    ~Purchase() override;
     bool equals(const Purchase& other) const {
         return hashCode == other.hashCode;
     }
-
+    int _id; // This is an ID that is not visible to ts and is used to free the java object.
     bool isAcknowledged;
     bool isAutoRenewing;
     int purchaseState;

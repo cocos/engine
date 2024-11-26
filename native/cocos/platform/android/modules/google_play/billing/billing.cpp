@@ -29,6 +29,18 @@
 
 namespace cc {
 
+ProductDetails::~ProductDetails() {
+    for (auto* ptr : subscriptionOfferDetails) {
+        delete ptr;
+    }
+    subscriptionOfferDetails.clear();
+    JniBillingHelper::removeProductDetails(_id);
+}
+
+Purchase::~Purchase() {
+    JniBillingHelper::removePurchase(_id);
+}
+
 void Billing::startConnection() {
     JniBillingHelper::startConnection();
 }

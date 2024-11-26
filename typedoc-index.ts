@@ -29,3 +29,4 @@ export * from './exports/video';
 export * from './exports/webview';
 export * from './exports/sorting';
 export * from './exports/xr';
+export * from './exports/vendor';

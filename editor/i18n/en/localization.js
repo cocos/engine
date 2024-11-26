@@ -1053,6 +1053,10 @@ module.exports = link(mixin({
             label: "Tiled Map",
             description: "Tiled map support.",
         },
+        vendor: {
+            label: "Vendor",
+            description: "Vendor support.",
+        },
         spine: {
             label: "Spine Animation",
             description: "Spine Animation support.",

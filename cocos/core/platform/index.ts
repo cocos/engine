@@ -47,14 +47,3 @@ export {
 
 export { screen } from './screen';
 export type { Screen } from './screen';
-export {
-    googlePlayBilling,
-    BillingEventType,
-    ProductType,
-    BillingResponseCode,
-    RecurrenceMode,
-    ConnectionState,
-    FeatureType,
-    PurchaseState,
-    InAppMessageResponseCode,
-} from './billing/billing';

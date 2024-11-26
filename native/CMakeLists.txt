@@ -47,7 +47,8 @@ cc_set_if_undefined(USE_GEOMETRY_RENDERER    ON)
 cc_set_if_undefined(USE_WEBP                 ON)
 cc_set_if_undefined(NET_MODE                  0) # 0 is client
 cc_set_if_undefined(USE_REMOTE_LOG           OFF)
-
+cc_set_if_undefined(USE_ADPF                 OFF)
+cc_set_if_undefined(USE_GOOGLE_PLAY_BILLING  OFF)
 
 if(ANDROID AND NOT DEFINED USE_CCACHE)
     if("$ENV{COCOS_USE_CCACHE}" STREQUAL "1")
@@ -565,8 +566,6 @@ elseif(ANDROID)
         cocos/platform/android/AndroidPlatform.cpp
         cocos/platform/android/AndroidPlatform.h
         cocos/platform/android/AndroidKeyCodes.cpp
-        cocos/platform/android/adpf_manager.h
-        cocos/platform/android/adpf_manager.cpp
     )
 elseif(OPENHARMONY)
     cocos_source_files(
@@ -598,6 +597,13 @@ elseif(IOS)
         cocos/platform/ios/IOSPlatform.h
         cocos/platform/ios/AppDelegateBridge.mm
         cocos/platform/ios/AppDelegateBridge.h
+    )
+endif()
+
+if(USE_ADPF) 
+    cocos_source_files(
+        cocos/platform/android/adpf_manager.h
+        cocos/platform/android/adpf_manager.cpp
     )
 endif()
 
@@ -754,6 +760,15 @@ elseif(ANDROID OR OHOS)
     endif()
 endif()
 
+if(USE_GOOGLE_PLAY_BILLING)
+    cocos_source_files(
+        cocos/platform/android/modules/google_play/billing/billing.cpp
+        cocos/platform/android/modules/google_play/billing/billing.h
+        cocos/platform/android/modules/google_play/billing/JniBillingHelper.cpp
+        cocos/platform/android/modules/google_play/billing/JniBillingHelper.h
+    )
+endif()
+
 if(ANDROID)
     cocos_source_files(
         cocos/platform/android/modules/Screen.cpp
@@ -761,12 +776,7 @@ if(ANDROID)
         cocos/platform/android/modules/System.cpp
         cocos/platform/android/modules/System.h
     )
-    cocos_source_files(
-        cocos/platform/android/modules/google_play/billing/billing.cpp
-        cocos/platform/android/modules/google_play/billing/billing.h
-        cocos/platform/android/modules/google_play/billing/JniBillingHelper.cpp
-        cocos/platform/android/modules/google_play/billing/JniBillingHelper.h
-    )
+
 elseif(OPENHARMONY)
     # Because there will be a definition of OHOS in harmonyos, it is necessary to define the macro of OPENHARMONY.
 elseif(OHOS)
@@ -1121,7 +1131,6 @@ elseif(ANDROID)
         ${CWD}/cocos/platform/java/jni/JniImp.h
         ${CWD}/cocos/platform/java/jni/glue/MessagePipe.cpp
         ${CWD}/cocos/platform/java/jni/glue/MessagePipe.h
-        ${CWD}/cocos/platform/java/jni/JniCocosBilling.cpp
     )
 
     cocos_source_files(MODULE ccfilesystem
@@ -1183,6 +1192,10 @@ elseif(LINUX)
         cocos/platform/linux/FileUtils-linux.cpp
         cocos/platform/linux/FileUtils-linux.h
     )
+endif()
+
+if(USE_GOOGLE_PLAY_BILLING)
+    list(APPEND CC_JNI_SRC_FILES ${CWD}/cocos/platform/java/jni/JniCocosBilling.cpp)
 endif()
 
 ##### renderer
@@ -2566,8 +2579,6 @@ cocos_source_files(
             cocos/bindings/manual/jsb_xmlhttprequest.h
             cocos/bindings/manual/jsb_pipeline_manual.h
             cocos/bindings/manual/jsb_pipeline_manual.cpp
-            cocos/bindings/manual/jsb_adpf.cpp
-            cocos/bindings/manual/jsb_billing.cpp
 )
 if(USE_AUDIO)
     cocos_source_files(
@@ -2589,6 +2600,19 @@ if(USE_WEBSOCKET_SERVER)
                      cocos/bindings/manual/jsb_websocket_server.cpp
                      cocos/bindings/manual/jsb_websocket_server.h
     )
+endif()
+
+if(USE_ADPF)
+    cocos_source_files(
+        cocos/bindings/manual/jsb_adpf.cpp
+    )
+endif()
+
+if(USE_GOOGLE_PLAY_BILLING)
+    cocos_source_files(
+        cocos/bindings/manual/jsb_billing.cpp
+    )
+   
 endif()
 
 if(ANDROID)
@@ -3122,6 +3146,8 @@ function(cc_apply_definations target)
         $<$<BOOL:${USE_SE_NAPI}>:SCRIPT_ENGINE_TYPE=5>
         $<$<BOOL:${USE_SE_JSVM}>:SCRIPT_ENGINE_TYPE=6>
         $<$<OR:$<CONFIG:Debug>,$<BOOL:${CC_DEBUG_FORCE}>>:CC_DEBUG=1>
+        $<IF:$<BOOL:${USE_APDF}>,CC_USE_APDF=1,CC_USE_USE_APDF=0>
+        $<IF:$<BOOL:${USE_GOOGLE_PLAY_BILLING}>,CC_USE_GOOGLE_PLAY_BILLING=1,CC_USE_GOOGLE_PLAY_BILLING=0>
     )
 endfunction()
 
