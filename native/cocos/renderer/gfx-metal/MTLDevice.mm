@@ -144,10 +144,10 @@ bool CCMTLDevice::doInit(const DeviceInfo &info) {
         _features[toNumber(Feature::MULTI_SAMPLE_RESOLVE_DEPTH_STENCIL)] = [mtlDevice supportsFamily:MTLGPUFamilyApple5];
         _features[toNumber(Feature::MULTI_SAMPLE_RESOLVE_DEPTH_STENCIL)] |= [mtlDevice supportsFamily:MTLGPUFamilyMac2];
     } else {
-#if CC_PLATFOTM == CC_PLATFORM_IOS
+#if CC_PLATFORM == CC_PLATFORM_IOS
         id<MTLDevice> device = static_cast<id<MTLDevice>>(_mtlDevice);
         _features[toNumber(Feature::MULTI_SAMPLE_RESOLVE_DEPTH_STENCIL)] = [device supportsFeatureSet:MTLFeatureSet_iOS_GPUFamily2_v4];
-#elif CC_PLATFOTM == CC_PLATFORM_MACOS
+#elif CC_PLATFORM == CC_PLATFORM_MACOS
         _features[toNumber(Feature::MULTI_SAMPLE_RESOLVE_DEPTH_STENCIL)] = false;
 #endif
     }
