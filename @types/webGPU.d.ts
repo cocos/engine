@@ -9,14 +9,14 @@
 interface HTMLCanvasElement {
   getContext(
     contextId:
-      | "webgpu"
+      | 'webgpu'
   ): GPUCanvasContext | null;
 }
 
 interface OffscreenCanvas {
   getContext(
     contextId:
-      | "webgpu"
+      | 'webgpu'
   ): GPUCanvasContext | null;
 }
 
@@ -68,6 +68,7 @@ type GPUColor =
     | GPUColorDict;
 type GPUColorWriteFlags =
   number;
+declare interface VideoFrame {}
 type GPUCopyExternalImageSource =
 
     | ImageBitmap
@@ -123,334 +124,334 @@ type GPUTextureUsageFlags =
   number;
 type GPUAddressMode =
 
-    | "clamp-to-edge"
-    | "repeat"
-    | "mirror-repeat";
+    | 'clamp-to-edge'
+    | 'repeat'
+    | 'mirror-repeat';
 type GPUAutoLayoutMode =
-  "auto";
+  'auto';
 type GPUBlendFactor =
 
-    | "zero"
-    | "one"
-    | "src"
-    | "one-minus-src"
-    | "src-alpha"
-    | "one-minus-src-alpha"
-    | "dst"
-    | "one-minus-dst"
-    | "dst-alpha"
-    | "one-minus-dst-alpha"
-    | "src-alpha-saturated"
-    | "constant"
-    | "one-minus-constant"
-    | "src1"
-    | "one-minus-src1"
-    | "src1-alpha"
-    | "one-minus-src1-alpha";
+    | 'zero'
+    | 'one'
+    | 'src'
+    | 'one-minus-src'
+    | 'src-alpha'
+    | 'one-minus-src-alpha'
+    | 'dst'
+    | 'one-minus-dst'
+    | 'dst-alpha'
+    | 'one-minus-dst-alpha'
+    | 'src-alpha-saturated'
+    | 'constant'
+    | 'one-minus-constant'
+    | 'src1'
+    | 'one-minus-src1'
+    | 'src1-alpha'
+    | 'one-minus-src1-alpha';
 type GPUBlendOperation =
 
-    | "add"
-    | "subtract"
-    | "reverse-subtract"
-    | "min"
-    | "max";
+    | 'add'
+    | 'subtract'
+    | 'reverse-subtract'
+    | 'min'
+    | 'max';
 type GPUBufferBindingType =
 
-    | "uniform"
-    | "storage"
-    | "read-only-storage";
+    | 'uniform'
+    | 'storage'
+    | 'read-only-storage';
 type GPUBufferMapState =
 
-    | "unmapped"
-    | "pending"
-    | "mapped";
+    | 'unmapped'
+    | 'pending'
+    | 'mapped';
 type GPUCanvasAlphaMode =
 
-    | "opaque"
-    | "premultiplied";
+    | 'opaque'
+    | 'premultiplied';
 type GPUCanvasToneMappingMode =
 
-    | "standard"
-    | "extended";
+    | 'standard'
+    | 'extended';
 type GPUCompareFunction =
 
-    | "never"
-    | "less"
-    | "equal"
-    | "less-equal"
-    | "greater"
-    | "not-equal"
-    | "greater-equal"
-    | "always";
+    | 'never'
+    | 'less'
+    | 'equal'
+    | 'less-equal'
+    | 'greater'
+    | 'not-equal'
+    | 'greater-equal'
+    | 'always';
 type GPUCompilationMessageType =
 
-    | "error"
-    | "warning"
-    | "info";
+    | 'error'
+    | 'warning'
+    | 'info';
 type GPUCullMode =
 
-    | "none"
-    | "front"
-    | "back";
+    | 'none'
+    | 'front'
+    | 'back';
 type GPUDeviceLostReason =
 
-    | "unknown"
-    | "destroyed";
+    | 'unknown'
+    | 'destroyed';
 type GPUErrorFilter =
 
-    | "validation"
-    | "out-of-memory"
-    | "internal";
+    | 'validation'
+    | 'out-of-memory'
+    | 'internal';
 type GPUFeatureName =
 
-    | "depth-clip-control"
-    | "depth32float-stencil8"
-    | "texture-compression-bc"
-    | "texture-compression-bc-sliced-3d"
-    | "texture-compression-etc2"
-    | "texture-compression-astc"
-    | "texture-compression-astc-sliced-3d"
-    | "timestamp-query"
-    | "indirect-first-instance"
-    | "shader-f16"
-    | "rg11b10ufloat-renderable"
-    | "bgra8unorm-storage"
-    | "float32-filterable"
-    | "float32-blendable"
-    | "clip-distances"
-    | "dual-source-blending";
+    | 'depth-clip-control'
+    | 'depth32float-stencil8'
+    | 'texture-compression-bc'
+    | 'texture-compression-bc-sliced-3d'
+    | 'texture-compression-etc2'
+    | 'texture-compression-astc'
+    | 'texture-compression-astc-sliced-3d'
+    | 'timestamp-query'
+    | 'indirect-first-instance'
+    | 'shader-f16'
+    | 'rg11b10ufloat-renderable'
+    | 'bgra8unorm-storage'
+    | 'float32-filterable'
+    | 'float32-blendable'
+    | 'clip-distances'
+    | 'dual-source-blending';
 type GPUFilterMode =
 
-    | "nearest"
-    | "linear";
+    | 'nearest'
+    | 'linear';
 type GPUFrontFace =
 
-    | "ccw"
-    | "cw";
+    | 'ccw'
+    | 'cw';
 type GPUIndexFormat =
 
-    | "uint16"
-    | "uint32";
+    | 'uint16'
+    | 'uint32';
 type GPULoadOp =
 
-    | "load"
-    | "clear";
+    | 'load'
+    | 'clear';
 type GPUMipmapFilterMode =
 
-    | "nearest"
-    | "linear";
+    | 'nearest'
+    | 'linear';
 type GPUPipelineErrorReason =
 
-    | "validation"
-    | "internal";
+    | 'validation'
+    | 'internal';
 type GPUPowerPreference =
 
-    | "low-power"
-    | "high-performance";
+    | 'low-power'
+    | 'high-performance';
 type GPUPrimitiveTopology =
 
-    | "point-list"
-    | "line-list"
-    | "line-strip"
-    | "triangle-list"
-    | "triangle-strip";
+    | 'point-list'
+    | 'line-list'
+    | 'line-strip'
+    | 'triangle-list'
+    | 'triangle-strip';
 type GPUQueryType =
 
-    | "occlusion"
-    | "timestamp";
+    | 'occlusion'
+    | 'timestamp';
 type GPUSamplerBindingType =
 
-    | "filtering"
-    | "non-filtering"
-    | "comparison";
+    | 'filtering'
+    | 'non-filtering'
+    | 'comparison';
 type GPUStencilOperation =
 
-    | "keep"
-    | "zero"
-    | "replace"
-    | "invert"
-    | "increment-clamp"
-    | "decrement-clamp"
-    | "increment-wrap"
-    | "decrement-wrap";
+    | 'keep'
+    | 'zero'
+    | 'replace'
+    | 'invert'
+    | 'increment-clamp'
+    | 'decrement-clamp'
+    | 'increment-wrap'
+    | 'decrement-wrap';
 type GPUStorageTextureAccess =
 
-    | "write-only"
-    | "read-only"
-    | "read-write";
+    | 'write-only'
+    | 'read-only'
+    | 'read-write';
 type GPUStoreOp =
 
-    | "store"
-    | "discard";
+    | 'store'
+    | 'discard';
 type GPUTextureAspect =
 
-    | "all"
-    | "stencil-only"
-    | "depth-only";
+    | 'all'
+    | 'stencil-only'
+    | 'depth-only';
 type GPUTextureDimension =
 
-    | "1d"
-    | "2d"
-    | "3d";
+    | '1d'
+    | '2d'
+    | '3d';
 type GPUTextureFormat =
 
-    | "r8unorm"
-    | "r8snorm"
-    | "r8uint"
-    | "r8sint"
-    | "r16uint"
-    | "r16sint"
-    | "r16float"
-    | "rg8unorm"
-    | "rg8snorm"
-    | "rg8uint"
-    | "rg8sint"
-    | "r32uint"
-    | "r32sint"
-    | "r32float"
-    | "rg16uint"
-    | "rg16sint"
-    | "rg16float"
-    | "rgba8unorm"
-    | "rgba8unorm-srgb"
-    | "rgba8snorm"
-    | "rgba8uint"
-    | "rgba8sint"
-    | "bgra8unorm"
-    | "bgra8unorm-srgb"
-    | "rgb9e5ufloat"
-    | "rgb10a2uint"
-    | "rgb10a2unorm"
-    | "rg11b10ufloat"
-    | "rg32uint"
-    | "rg32sint"
-    | "rg32float"
-    | "rgba16uint"
-    | "rgba16sint"
-    | "rgba16float"
-    | "rgba32uint"
-    | "rgba32sint"
-    | "rgba32float"
-    | "stencil8"
-    | "depth16unorm"
-    | "depth24plus"
-    | "depth24plus-stencil8"
-    | "depth32float"
-    | "depth32float-stencil8"
-    | "bc1-rgba-unorm"
-    | "bc1-rgba-unorm-srgb"
-    | "bc2-rgba-unorm"
-    | "bc2-rgba-unorm-srgb"
-    | "bc3-rgba-unorm"
-    | "bc3-rgba-unorm-srgb"
-    | "bc4-r-unorm"
-    | "bc4-r-snorm"
-    | "bc5-rg-unorm"
-    | "bc5-rg-snorm"
-    | "bc6h-rgb-ufloat"
-    | "bc6h-rgb-float"
-    | "bc7-rgba-unorm"
-    | "bc7-rgba-unorm-srgb"
-    | "etc2-rgb8unorm"
-    | "etc2-rgb8unorm-srgb"
-    | "etc2-rgb8a1unorm"
-    | "etc2-rgb8a1unorm-srgb"
-    | "etc2-rgba8unorm"
-    | "etc2-rgba8unorm-srgb"
-    | "eac-r11unorm"
-    | "eac-r11snorm"
-    | "eac-rg11unorm"
-    | "eac-rg11snorm"
-    | "astc-4x4-unorm"
-    | "astc-4x4-unorm-srgb"
-    | "astc-5x4-unorm"
-    | "astc-5x4-unorm-srgb"
-    | "astc-5x5-unorm"
-    | "astc-5x5-unorm-srgb"
-    | "astc-6x5-unorm"
-    | "astc-6x5-unorm-srgb"
-    | "astc-6x6-unorm"
-    | "astc-6x6-unorm-srgb"
-    | "astc-8x5-unorm"
-    | "astc-8x5-unorm-srgb"
-    | "astc-8x6-unorm"
-    | "astc-8x6-unorm-srgb"
-    | "astc-8x8-unorm"
-    | "astc-8x8-unorm-srgb"
-    | "astc-10x5-unorm"
-    | "astc-10x5-unorm-srgb"
-    | "astc-10x6-unorm"
-    | "astc-10x6-unorm-srgb"
-    | "astc-10x8-unorm"
-    | "astc-10x8-unorm-srgb"
-    | "astc-10x10-unorm"
-    | "astc-10x10-unorm-srgb"
-    | "astc-12x10-unorm"
-    | "astc-12x10-unorm-srgb"
-    | "astc-12x12-unorm"
-    | "astc-12x12-unorm-srgb";
+    | 'r8unorm'
+    | 'r8snorm'
+    | 'r8uint'
+    | 'r8sint'
+    | 'r16uint'
+    | 'r16sint'
+    | 'r16float'
+    | 'rg8unorm'
+    | 'rg8snorm'
+    | 'rg8uint'
+    | 'rg8sint'
+    | 'r32uint'
+    | 'r32sint'
+    | 'r32float'
+    | 'rg16uint'
+    | 'rg16sint'
+    | 'rg16float'
+    | 'rgba8unorm'
+    | 'rgba8unorm-srgb'
+    | 'rgba8snorm'
+    | 'rgba8uint'
+    | 'rgba8sint'
+    | 'bgra8unorm'
+    | 'bgra8unorm-srgb'
+    | 'rgb9e5ufloat'
+    | 'rgb10a2uint'
+    | 'rgb10a2unorm'
+    | 'rg11b10ufloat'
+    | 'rg32uint'
+    | 'rg32sint'
+    | 'rg32float'
+    | 'rgba16uint'
+    | 'rgba16sint'
+    | 'rgba16float'
+    | 'rgba32uint'
+    | 'rgba32sint'
+    | 'rgba32float'
+    | 'stencil8'
+    | 'depth16unorm'
+    | 'depth24plus'
+    | 'depth24plus-stencil8'
+    | 'depth32float'
+    | 'depth32float-stencil8'
+    | 'bc1-rgba-unorm'
+    | 'bc1-rgba-unorm-srgb'
+    | 'bc2-rgba-unorm'
+    | 'bc2-rgba-unorm-srgb'
+    | 'bc3-rgba-unorm'
+    | 'bc3-rgba-unorm-srgb'
+    | 'bc4-r-unorm'
+    | 'bc4-r-snorm'
+    | 'bc5-rg-unorm'
+    | 'bc5-rg-snorm'
+    | 'bc6h-rgb-ufloat'
+    | 'bc6h-rgb-float'
+    | 'bc7-rgba-unorm'
+    | 'bc7-rgba-unorm-srgb'
+    | 'etc2-rgb8unorm'
+    | 'etc2-rgb8unorm-srgb'
+    | 'etc2-rgb8a1unorm'
+    | 'etc2-rgb8a1unorm-srgb'
+    | 'etc2-rgba8unorm'
+    | 'etc2-rgba8unorm-srgb'
+    | 'eac-r11unorm'
+    | 'eac-r11snorm'
+    | 'eac-rg11unorm'
+    | 'eac-rg11snorm'
+    | 'astc-4x4-unorm'
+    | 'astc-4x4-unorm-srgb'
+    | 'astc-5x4-unorm'
+    | 'astc-5x4-unorm-srgb'
+    | 'astc-5x5-unorm'
+    | 'astc-5x5-unorm-srgb'
+    | 'astc-6x5-unorm'
+    | 'astc-6x5-unorm-srgb'
+    | 'astc-6x6-unorm'
+    | 'astc-6x6-unorm-srgb'
+    | 'astc-8x5-unorm'
+    | 'astc-8x5-unorm-srgb'
+    | 'astc-8x6-unorm'
+    | 'astc-8x6-unorm-srgb'
+    | 'astc-8x8-unorm'
+    | 'astc-8x8-unorm-srgb'
+    | 'astc-10x5-unorm'
+    | 'astc-10x5-unorm-srgb'
+    | 'astc-10x6-unorm'
+    | 'astc-10x6-unorm-srgb'
+    | 'astc-10x8-unorm'
+    | 'astc-10x8-unorm-srgb'
+    | 'astc-10x10-unorm'
+    | 'astc-10x10-unorm-srgb'
+    | 'astc-12x10-unorm'
+    | 'astc-12x10-unorm-srgb'
+    | 'astc-12x12-unorm'
+    | 'astc-12x12-unorm-srgb';
 type GPUTextureSampleType =
 
-    | "float"
-    | "unfilterable-float"
-    | "depth"
-    | "sint"
-    | "uint";
+    | 'float'
+    | 'unfilterable-float'
+    | 'depth'
+    | 'sint'
+    | 'uint';
 type GPUTextureViewDimension =
 
-    | "1d"
-    | "2d"
-    | "2d-array"
-    | "cube"
-    | "cube-array"
-    | "3d";
+    | '1d'
+    | '2d'
+    | '2d-array'
+    | 'cube'
+    | 'cube-array'
+    | '3d';
 type GPUVertexFormat =
 
-    | "uint8"
-    | "uint8x2"
-    | "uint8x4"
-    | "sint8"
-    | "sint8x2"
-    | "sint8x4"
-    | "unorm8"
-    | "unorm8x2"
-    | "unorm8x4"
-    | "snorm8"
-    | "snorm8x2"
-    | "snorm8x4"
-    | "uint16"
-    | "uint16x2"
-    | "uint16x4"
-    | "sint16"
-    | "sint16x2"
-    | "sint16x4"
-    | "unorm16"
-    | "unorm16x2"
-    | "unorm16x4"
-    | "snorm16"
-    | "snorm16x2"
-    | "snorm16x4"
-    | "float16"
-    | "float16x2"
-    | "float16x4"
-    | "float32"
-    | "float32x2"
-    | "float32x3"
-    | "float32x4"
-    | "uint32"
-    | "uint32x2"
-    | "uint32x3"
-    | "uint32x4"
-    | "sint32"
-    | "sint32x2"
-    | "sint32x3"
-    | "sint32x4"
-    | "unorm10-10-10-2"
-    | "unorm8x4-bgra";
+    | 'uint8'
+    | 'uint8x2'
+    | 'uint8x4'
+    | 'sint8'
+    | 'sint8x2'
+    | 'sint8x4'
+    | 'unorm8'
+    | 'unorm8x2'
+    | 'unorm8x4'
+    | 'snorm8'
+    | 'snorm8x2'
+    | 'snorm8x4'
+    | 'uint16'
+    | 'uint16x2'
+    | 'uint16x4'
+    | 'sint16'
+    | 'sint16x2'
+    | 'sint16x4'
+    | 'unorm16'
+    | 'unorm16x2'
+    | 'unorm16x4'
+    | 'snorm16'
+    | 'snorm16x2'
+    | 'snorm16x4'
+    | 'float16'
+    | 'float16x2'
+    | 'float16x4'
+    | 'float32'
+    | 'float32x2'
+    | 'float32x3'
+    | 'float32x4'
+    | 'uint32'
+    | 'uint32x2'
+    | 'uint32x3'
+    | 'uint32x4'
+    | 'sint32'
+    | 'sint32x2'
+    | 'sint32x3'
+    | 'sint32x4'
+    | 'unorm10-10-10-2'
+    | 'unorm8x4-bgra';
 type GPUVertexStepMode =
 
-    | "vertex"
-    | "instance";
+    | 'vertex'
+    | 'instance';
 
 interface GPUBindGroupDescriptor
   extends GPUObjectDescriptorBase {
@@ -668,7 +669,7 @@ interface GPUCanvasConfigurationOut
   extends Required<
     Omit<
       GPUCanvasConfiguration,
-      "toneMapping"
+      'toneMapping'
     >
   > {
   /** {@inheritDoc GPUCanvasConfiguration.viewFormats} */
@@ -1875,7 +1876,7 @@ interface GPU {
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPU";
+  readonly __brand: 'GPU';
   /**
    * Requests an adapter from the user agent.
    * The user agent chooses whether to return an adapter, and, if so,
@@ -1910,7 +1911,7 @@ interface GPUAdapter {
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUAdapter";
+  readonly __brand: 'GPUAdapter';
   /**
    * The set of values in `this`.{@link GPUAdapter#[[adapter]]}.{@link adapter#[[features]]}.
    */
@@ -1959,7 +1960,7 @@ interface GPUAdapterInfo {
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUAdapterInfo";
+  readonly __brand: 'GPUAdapterInfo';
   /**
    * The name of the vendor of the adapter, if available. Empty string otherwise.
    */
@@ -1999,7 +2000,7 @@ interface GPUBindGroup
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUBindGroup";
+  readonly __brand: 'GPUBindGroup';
 }
 
 declare var GPUBindGroup: {
@@ -2014,7 +2015,7 @@ interface GPUBindGroupLayout
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUBindGroupLayout";
+  readonly __brand: 'GPUBindGroupLayout';
 }
 
 declare var GPUBindGroupLayout: {
@@ -2029,7 +2030,7 @@ interface GPUBuffer
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUBuffer";
+  readonly __brand: 'GPUBuffer';
   readonly size: GPUSize64Out;
   readonly usage: GPUFlagsConstant;
   readonly mapState: GPUBufferMapState;
@@ -2088,7 +2089,7 @@ interface GPUCanvasContext {
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUCanvasContext";
+  readonly __brand: 'GPUCanvasContext';
   /**
    * The canvas this context was created from.
    */
@@ -2133,7 +2134,7 @@ interface GPUCommandBuffer
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUCommandBuffer";
+  readonly __brand: 'GPUCommandBuffer';
 }
 
 declare var GPUCommandBuffer: {
@@ -2150,7 +2151,7 @@ interface GPUCommandEncoder
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUCommandEncoder";
+  readonly __brand: 'GPUCommandEncoder';
   /**
    * Begins encoding a render pass described by `descriptor`.
    * @param descriptor - Description of the {@link GPURenderPassEncoder} to create.
@@ -2261,7 +2262,7 @@ interface GPUCompilationInfo {
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUCompilationInfo";
+  readonly __brand: 'GPUCompilationInfo';
   readonly messages: ReadonlyArray<GPUCompilationMessage>;
 }
 
@@ -2276,7 +2277,7 @@ interface GPUCompilationMessage {
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUCompilationMessage";
+  readonly __brand: 'GPUCompilationMessage';
   /**
    * The human-readable, localizable text for this compilation message.
    * Note: The {@link GPUCompilationMessage#message} should follow the best practices for language
@@ -2344,7 +2345,7 @@ interface GPUComputePassEncoder
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUComputePassEncoder";
+  readonly __brand: 'GPUComputePassEncoder';
   /**
    * Sets the current {@link GPUComputePipeline}.
    * @param pipeline - The compute pipeline to use for subsequent dispatch commands.
@@ -2397,7 +2398,7 @@ interface GPUComputePipeline
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUComputePipeline";
+  readonly __brand: 'GPUComputePipeline';
 }
 
 declare var GPUComputePipeline: {
@@ -2413,7 +2414,7 @@ interface GPUDevice
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUDevice";
+  readonly __brand: 'GPUDevice';
   /**
    * A set containing the {@link GPUFeatureName} values of the features
    * supported by the device (i.e. the ones with which it was created).
@@ -2602,7 +2603,7 @@ interface GPUDeviceLostInfo {
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUDeviceLostInfo";
+  readonly __brand: 'GPUDeviceLostInfo';
   readonly reason: GPUDeviceLostReason;
   readonly message: string;
 }
@@ -2643,7 +2644,7 @@ interface GPUExternalTexture
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUExternalTexture";
+  readonly __brand: 'GPUExternalTexture';
 }
 
 declare var GPUExternalTexture: {
@@ -2658,7 +2659,7 @@ interface GPUInternalError
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUInternalError";
+  readonly __brand: 'GPUInternalError';
 }
 
 declare var GPUInternalError: {
@@ -2675,7 +2676,7 @@ interface GPUOutOfMemoryError
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUOutOfMemoryError";
+  readonly __brand: 'GPUOutOfMemoryError';
 }
 
 declare var GPUOutOfMemoryError: {
@@ -2692,7 +2693,7 @@ interface GPUPipelineError
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUPipelineError";
+  readonly __brand: 'GPUPipelineError';
   /**
    * A read-only slot-backed attribute exposing the type of error encountered in pipeline creation
    * as a <dfn enum for="">GPUPipelineErrorReason</dfn>:
@@ -2721,7 +2722,7 @@ interface GPUPipelineLayout
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUPipelineLayout";
+  readonly __brand: 'GPUPipelineLayout';
 }
 
 declare var GPUPipelineLayout: {
@@ -2736,7 +2737,7 @@ interface GPUQuerySet
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUQuerySet";
+  readonly __brand: 'GPUQuerySet';
   /**
    * Destroys the {@link GPUQuerySet}.
    */
@@ -2763,7 +2764,7 @@ interface GPUQueue
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUQueue";
+  readonly __brand: 'GPUQueue';
   /**
    * Schedules the execution of the command buffers by the GPU on this queue.
    * Submitted command buffers cannot be used again.
@@ -2847,7 +2848,7 @@ interface GPURenderBundle
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPURenderBundle";
+  readonly __brand: 'GPURenderBundle';
 }
 
 declare var GPURenderBundle: {
@@ -2866,7 +2867,7 @@ interface GPURenderBundleEncoder
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPURenderBundleEncoder";
+  readonly __brand: 'GPURenderBundleEncoder';
   /**
    * Completes recording of the render bundle commands sequence.
    * 	descriptor:
@@ -2892,7 +2893,7 @@ interface GPURenderPassEncoder
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPURenderPassEncoder";
+  readonly __brand: 'GPURenderPassEncoder';
   /**
    * Sets the viewport used during the rasterization stage to linearly map from
    * NDC|normalized device coordinates to viewport coordinates.
@@ -2984,7 +2985,7 @@ interface GPURenderPipeline
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPURenderPipeline";
+  readonly __brand: 'GPURenderPipeline';
 }
 
 declare var GPURenderPipeline: {
@@ -2999,7 +3000,7 @@ interface GPUSampler
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUSampler";
+  readonly __brand: 'GPUSampler';
 }
 
 declare var GPUSampler: {
@@ -3014,7 +3015,7 @@ interface GPUShaderModule
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUShaderModule";
+  readonly __brand: 'GPUShaderModule';
   /**
    * Returns any messages generated during the {@link GPUShaderModule}'s compilation.
    * The locations, order, and contents of messages are implementation-defined
@@ -3037,7 +3038,7 @@ interface GPUSupportedLimits {
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUSupportedLimits";
+  readonly __brand: 'GPUSupportedLimits';
   readonly maxTextureDimension1D: number;
   readonly maxTextureDimension2D: number;
   readonly maxTextureDimension3D: number;
@@ -3082,7 +3083,7 @@ interface GPUTexture
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUTexture";
+  readonly __brand: 'GPUTexture';
   /**
    * Creates a {@link GPUTextureView}.
    * @param descriptor - Description of the {@link GPUTextureView} to create.
@@ -3140,7 +3141,7 @@ interface GPUTextureView
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUTextureView";
+  readonly __brand: 'GPUTextureView';
 }
 
 declare var GPUTextureView: {
@@ -3155,7 +3156,7 @@ interface GPUUncapturedErrorEvent
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUUncapturedErrorEvent";
+  readonly __brand: 'GPUUncapturedErrorEvent';
   /**
    * A slot-backed attribute holding an object representing the error that was uncaptured.
    * This has the same type as errors returned by {@link GPUDevice#popErrorScope}.
@@ -3178,7 +3179,7 @@ interface GPUValidationError
    * https://github.com/microsoft/TypeScript/pull/33038
    * @internal
    */
-  readonly __brand: "GPUValidationError";
+  readonly __brand: 'GPUValidationError';
 }
 
 declare var GPUValidationError: {
@@ -3197,7 +3198,7 @@ interface Navigator
 interface WorkerNavigator
   extends NavigatorGPU {}
 
-declare var GPUBufferUsage: {
+declare let GPUBufferUsage: {
   readonly MAP_READ: GPUFlagsConstant;
   readonly MAP_WRITE: GPUFlagsConstant;
   readonly COPY_SRC: GPUFlagsConstant;
@@ -3210,7 +3211,7 @@ declare var GPUBufferUsage: {
   readonly QUERY_RESOLVE: GPUFlagsConstant;
 };
 
-declare var GPUColorWrite: {
+declare let GPUColorWrite: {
   readonly RED: GPUFlagsConstant;
   readonly GREEN: GPUFlagsConstant;
   readonly BLUE: GPUFlagsConstant;
@@ -3218,18 +3219,18 @@ declare var GPUColorWrite: {
   readonly ALL: GPUFlagsConstant;
 };
 
-declare var GPUMapMode: {
+declare let GPUMapMode: {
   readonly READ: GPUFlagsConstant;
   readonly WRITE: GPUFlagsConstant;
 };
 
-declare var GPUShaderStage: {
+declare let GPUShaderStage: {
   readonly VERTEX: GPUFlagsConstant;
   readonly FRAGMENT: GPUFlagsConstant;
   readonly COMPUTE: GPUFlagsConstant;
 };
 
-declare var GPUTextureUsage: {
+declare let GPUTextureUsage: {
   readonly COPY_SRC: GPUFlagsConstant;
   readonly COPY_DST: GPUFlagsConstant;
   readonly TEXTURE_BINDING: GPUFlagsConstant;
