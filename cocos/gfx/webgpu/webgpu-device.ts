@@ -527,9 +527,9 @@ export class WebGPUDevice extends Device {
         this._context = canvas.getContext('webgpu')!;
         const device: GPUDevice = this._device as GPUDevice;
 
-        const adapterInfo = await this._adapter!.requestAdapterInfo();
-        this._vendor = adapterInfo.vendor;
-        this._renderer = adapterInfo.device;
+        const adapterInfo = this._adapter!.info;
+        this._vendor$ = adapterInfo.vendor;
+        this._renderer$ = adapterInfo.device;
         const description = adapterInfo.description;
 
         const limits =  this._adapter!.limits;
