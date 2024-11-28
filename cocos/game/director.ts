@@ -947,6 +947,7 @@ export declare namespace Director {
 }
 
 cclegacy.Director = Director;
+cclegacy.DirectorEvent = DirectorEvent;
 
 /**
  * @en Director of the game, used to control game update loop and scene management
