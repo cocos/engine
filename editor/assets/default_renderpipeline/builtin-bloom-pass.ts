@@ -63,25 +63,25 @@ export class BuiltinBloomPass extends BuiltinPipelinePassBuilder
         group: { id: 'BuiltinPass', name: 'Pass Settings', style: 'section' },
         type: CCInteger,
     })
-        configOrder = 0;
+    configOrder = 0;
     @property({
         group: { id: 'BuiltinPass', name: 'Pass Settings', style: 'section' },
         type: CCInteger,
     })
-        renderOrder = 200;
+    renderOrder = 200;
 
     @property
     protected _bloomEnable = true;
     @property
-    protected _material: Material | null = null;
+    protected _bloomMaterial: Material | null = null;
     @property
-    protected _enableAlphaMask = false;
+    protected _bloomEnableAlphaMask = false;
     @property
-    protected _iterations = 3;
+    protected _bloomIterations = 3;
     @property
-    protected _threshold = 0.8;
+    protected _bloomThreshold = 0.8;
     @property
-    protected _intensity = 2.3;
+    protected _bloomIntensity = 2.3;
 
     // Bloom
     @property({
@@ -103,16 +103,16 @@ export class BuiltinBloomPass extends BuiltinPipelinePassBuilder
         type: Material,
     })
     set bloomMaterial(value: Material) {
-        if (this._material === value) {
+        if (this._bloomMaterial === value) {
             return;
         }
-        this._material = value;
+        this._bloomMaterial = value;
         if (EDITOR) {
             this._parent._tryEnableEditorPreview();
         }
     }
     get bloomMaterial(): Material {
-        return this._material!;
+        return this._bloomMaterial!;
     }
 
     @property({
@@ -121,13 +121,13 @@ export class BuiltinBloomPass extends BuiltinPipelinePassBuilder
         type: CCBoolean,
     })
     set bloomEnableAlphaMask(value: boolean) {
-        this._enableAlphaMask = value;
+        this._bloomEnableAlphaMask = value;
         if (EDITOR) {
             this._parent._tryEnableEditorPreview();
         }
     }
     get bloomEnableAlphaMask(): boolean {
-        return this._enableAlphaMask;
+        return this._bloomEnableAlphaMask;
     }
 
     @property({
@@ -138,13 +138,13 @@ export class BuiltinBloomPass extends BuiltinPipelinePassBuilder
         slide: true,
     })
     set bloomIterations(value: number) {
-        this._iterations = value;
+        this._bloomIterations = value;
         if (EDITOR) {
             this._parent._tryEnableEditorPreview();
         }
     }
     get bloomIterations(): number {
-        return this._iterations;
+        return this._bloomIterations;
     }
 
     @property({
@@ -154,24 +154,24 @@ export class BuiltinBloomPass extends BuiltinPipelinePassBuilder
         min: 0,
     })
     set bloomThreshold(value: number) {
-        this._threshold = value;
+        this._bloomThreshold = value;
     }
     get bloomThreshold(): number {
-        return this._threshold;
+        return this._bloomThreshold;
     }
 
     set bloomIntensity(value: number) {
-        this._intensity = value;
+        this._bloomIntensity = value;
     }
     get bloomIntensity(): number {
-        return this._intensity;
+        return this._bloomIntensity;
     }
 
     configCamera(
         camera: Readonly<renderer.scene.Camera>,
         pipelineConfigs: Readonly<PipelineConfigs>,
         cameraConfigs: CameraConfigs & BloomPassConfigs): void {
-        cameraConfigs.enableBloom = this._bloomEnable && !!this._material;
+        cameraConfigs.enableBloom = this._bloomEnable && !!this._bloomMaterial;
         if (cameraConfigs.enableBloom) {
             ++cameraConfigs.remainingPasses;
         }
@@ -185,7 +185,7 @@ export class BuiltinBloomPass extends BuiltinPipelinePassBuilder
             const id = window.renderWindowId;
             let bloomWidth = cameraConfigs.width;
             let bloomHeight = cameraConfigs.height;
-            for (let i = 0; i !== this._iterations + 1; ++i) {
+            for (let i = 0; i !== this._bloomIterations + 1; ++i) {
                 bloomWidth = Math.max(Math.floor(bloomWidth / 2), 1);
                 bloomHeight = Math.max(Math.floor(bloomHeight / 2), 1);
                 ppl.addRenderTarget(`BloomTex${id}_${i}`,
@@ -208,7 +208,7 @@ export class BuiltinBloomPass extends BuiltinPipelinePassBuilder
         --cameraConfigs.remainingPasses;
         assert(cameraConfigs.remainingPasses >= 0);
         const id = camera.window.renderWindowId;
-        assert(!!this._material);
+        assert(!!this._bloomMaterial);
         return this._addKawaseDualFilterBloomPasses(
             ppl, pplConfigs,
             cameraConfigs,
@@ -227,14 +227,14 @@ export class BuiltinBloomPass extends BuiltinPipelinePassBuilder
         height: number,
         radianceName: string,
     ): rendering.BasicRenderPassBuilder {
-        assert(!!this._material);
+        assert(!!this._bloomMaterial);
         const QueueHint = rendering.QueueHint;
         // Based on Kawase Dual Filter Blur. Saves bandwidth on mobile devices.
         // eslint-disable-next-line max-len
         // https://community.arm.com/cfs-file/__key/communityserver-blogs-components-weblogfiles/00-00-00-20-66/siggraph2015_2D00_mmg_2D00_marius_2D00_slides.pdf
 
         // Size: [prefilter(1/2), downsample(1/4), downsample(1/8), downsample(1/16), ...]
-        const iterations = this._iterations;
+        const iterations = this._bloomIterations;
         const sizeCount = iterations + 1;
         this._bloomWidths.length = sizeCount;
         this._bloomHeights.length = sizeCount;
@@ -254,8 +254,8 @@ export class BuiltinBloomPass extends BuiltinPipelinePassBuilder
         // Setup bloom parameters
         this._bloomParams.x = pplConfigs.useFloatOutput ? 1 : 0;
         this._bloomParams.x = 0; // unused
-        this._bloomParams.z = this._threshold;
-        this._bloomParams.w = this._enableAlphaMask ? 1 : 0;
+        this._bloomParams.z = this._bloomThreshold;
+        this._bloomParams.w = this._bloomEnableAlphaMask ? 1 : 0;
 
         // Prefilter pass
         const prefilterPass = ppl.addRenderPass(this._bloomWidths[0], this._bloomHeights[0], 'cc-bloom-prefilter');
@@ -270,7 +270,7 @@ export class BuiltinBloomPass extends BuiltinPipelinePassBuilder
         prefilterPass.setVec4('bloomParams', this._bloomParams);
         prefilterPass
             .addQueue(QueueHint.OPAQUE)
-            .addFullscreenQuad(this._material, 0);
+            .addFullscreenQuad(this._bloomMaterial, 0);
 
         // Downsample passes
         for (let i = 1; i !== sizeCount; ++i) {
@@ -283,7 +283,7 @@ export class BuiltinBloomPass extends BuiltinPipelinePassBuilder
             downPass.setVec4('bloomTexSize', this._bloomTexSize);
             downPass
                 .addQueue(QueueHint.OPAQUE)
-                .addFullscreenQuad(this._material, 1);
+                .addFullscreenQuad(this._bloomMaterial, 1);
         }
 
         // Upsample passes
@@ -297,7 +297,7 @@ export class BuiltinBloomPass extends BuiltinPipelinePassBuilder
             upPass.setVec4('bloomTexSize', this._bloomTexSize);
             upPass
                 .addQueue(QueueHint.OPAQUE)
-                .addFullscreenQuad(this._material, 2);
+                .addFullscreenQuad(this._bloomMaterial, 2);
         }
 
         // Combine pass
@@ -308,7 +308,7 @@ export class BuiltinBloomPass extends BuiltinPipelinePassBuilder
         combinePass.setVec4('bloomParams', this._bloomParams);
         combinePass
             .addQueue(QueueHint.BLEND)
-            .addFullscreenQuad(this._material, 3);
+            .addFullscreenQuad(this._bloomMaterial, 3);
 
         if (cameraConfigs.remainingPasses === 0) {
             return addCopyToScreenPass(ppl, pplConfigs, cameraConfigs, radianceName);

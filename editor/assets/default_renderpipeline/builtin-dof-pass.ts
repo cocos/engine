@@ -71,19 +71,19 @@ export class BuiltinDepthOfFieldPass extends BuiltinPipelinePassBuilder
     renderOrder = 150;
 
     @property
-    private _enableDof = false;
+    protected _enableDof = false;
     @property
-    private _material: Material | null = null;
+    protected _material: Material | null = null;
     @property
-    private _minRange = 0;
+    protected _minRange = 0;
     @property
-    private _maxRange = 2;
+    protected _maxRange = 2;
     @property
-    private _blurRadius = 1;
+    protected _blurRadius = 1;
     @property
-    private _intensity = 1;
+    protected _intensity = 1;
     @property
-    private _focusPos = new Vec3(0, 0, 0);
+    protected _focusPos = new Vec3(0, 0, 0);
 
     // DepthOfField
     @property({

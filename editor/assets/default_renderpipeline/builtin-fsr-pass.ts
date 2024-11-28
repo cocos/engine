@@ -64,12 +64,12 @@ export class BuiltinFSRPass extends BuiltinPipelinePassBuilder
         group: { id: 'BuiltinPass', name: 'Pass Settings', style: 'section' },
         type: CCInteger,
     })
-        configOrder = 0;
+    configOrder = 0;
     @property({
         group: { id: 'BuiltinPass', name: 'Pass Settings', style: 'section' },
         type: CCInteger,
     })
-        renderOrder = 500;
+    renderOrder = 500;
 
     @property
     protected _fsrEnable = true;
