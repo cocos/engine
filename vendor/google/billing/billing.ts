@@ -22,7 +22,7 @@
  THE SOFTWARE.
 *****************************************************************************/
 import { JSB } from 'internal:constants';
-import { EventTarget } from '../../../../cocos/core/event';
+import { EventTarget } from '../../../cocos/core/event';
 
 interface BillingEventMap {
     [google.BillingEventType.BILLING_SETUP_FINISHED]: (result: google.BillingResult) => void,
@@ -48,7 +48,7 @@ interface BillingEventMap {
 class Billing {
     private _eventTarget: EventTarget = new EventTarget();
     constructor () {
-        if (!JSB || !jsb.billing) {
+        if (!JSB || !jsb.googleBilling) {
             return;
         }
         jsb.onBillingSetupFinished = (result: google.BillingResult): void => {
@@ -132,7 +132,7 @@ class Billing {
      * @zh 异步启动 BillingClient 设置过程。
      */
     public startConnection (): void {
-        jsb.billing?.startConnection();
+        jsb.googleBilling?.startConnection();
     }
 
     /**
@@ -140,7 +140,7 @@ class Billing {
      * @zh 关闭连接并释放所有持有的资源，例如服务连接。
      */
     public endConnection (): void {
-        jsb.billing?.endConnection();
+        jsb.googleBilling?.endConnection();
     }
 
     /**
@@ -148,9 +148,9 @@ class Billing {
      * @zh 获取当前billing客户端连接状态。
      */
     public getConnectionState (): number {
-        if (jsb.billing) {
+        if (jsb.googleBilling) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            return jsb.billing.getConnectionState();
+            return jsb.googleBilling.getConnectionState();
         }
         return google.ConnectionState.DISCONNECTED;
     }
@@ -162,9 +162,9 @@ class Billing {
            如果客户端当前已连接到服务，则返回 true，否则返回 false。
      */
     public isReady (): boolean {
-        if (jsb.billing) {
+        if (jsb.googleBilling) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            return jsb.billing.isReady();
+            return jsb.googleBilling.isReady();
         }
         return false;
     }
@@ -178,11 +178,11 @@ class Billing {
      */
     public queryProductDetailsParams (productId: string[] | string, productType: google.ProductType): void {
         if (productId instanceof Array) {
-            jsb.billing?.queryProductDetailsParams(productId, productType);
+            jsb.googleBilling?.queryProductDetailsParams(productId, productType);
         } else {
             const productIdList: string[] = [];
             productIdList.push(productId);
-            jsb.billing?.queryProductDetailsParams(productIdList, productType);
+            jsb.googleBilling?.queryProductDetailsParams(productIdList, productType);
         }
     }
 
@@ -194,11 +194,11 @@ class Billing {
      */
     public launchBillingFlow (productDetails: google.ProductDetails[] | google.ProductDetails, selectedOfferToken: string | null): void {
         if (productDetails instanceof Array) {
-            jsb.billing?.launchBillingFlow(productDetails, selectedOfferToken);
+            jsb.googleBilling?.launchBillingFlow(productDetails, selectedOfferToken);
         } else {
             const productDetailsList: google.ProductDetails[] = [];
             productDetailsList.push(productDetails);
-            jsb.billing?.launchBillingFlow(productDetailsList, selectedOfferToken);
+            jsb.googleBilling?.launchBillingFlow(productDetailsList, selectedOfferToken);
         }
     }
 
@@ -209,11 +209,11 @@ class Billing {
      */
     public consumePurchases (purchase: google.Purchase[] | google.Purchase): void {
         if (purchase instanceof Array) {
-            jsb.billing?.consumePurchases(purchase);
+            jsb.googleBilling?.consumePurchases(purchase);
         } else {
             const purchaseList: google.Purchase[] = [];
             purchaseList.push(purchase);
-            jsb.billing?.consumePurchases(purchaseList);
+            jsb.googleBilling?.consumePurchases(purchaseList);
         }
     }
 
@@ -224,11 +224,11 @@ class Billing {
      */
     public acknowledgePurchase (purchase: google.Purchase[] | google.Purchase): void {
         if (purchase instanceof Array) {
-            jsb.billing?.acknowledgePurchase(purchase);
+            jsb.googleBilling?.acknowledgePurchase(purchase);
         } else {
             const purchaseList: google.Purchase[] = [];
             purchaseList.push(purchase);
-            jsb.billing?.acknowledgePurchase(purchaseList);
+            jsb.googleBilling?.acknowledgePurchase(purchaseList);
         }
     }
 
@@ -238,7 +238,7 @@ class Billing {
      * @param productType @zh 产品类型 @en Product type.
      */
     public queryPurchasesAsync (productType: google.ProductType): void {
-        jsb.billing?.queryPurchasesAsync(productType);
+        jsb.googleBilling?.queryPurchasesAsync(productType);
     }
 
     /**
@@ -246,7 +246,7 @@ class Billing {
      * @zh 获取计费配置，其中存储用于执行计费操作的配置。
      */
     public getBillingConfigAsync (): void {
-        jsb.billing?.getBillingConfigAsync();
+        jsb.googleBilling?.getBillingConfigAsync();
     }
 
     /**
@@ -255,7 +255,7 @@ class Billing {
      * @zh 创建仅限替代结算的购买详情，可用于报告通过替代结算进行的交易，而无需用户选择使用 Google Play 结算。
      */
     public createAlternativeBillingOnlyReportingDetailsAsync (): void {
-        jsb.billing?.createAlternativeBillingOnlyReportingDetailsAsync();
+        jsb.googleBilling?.createAlternativeBillingOnlyReportingDetailsAsync();
     }
 
     /**
@@ -263,7 +263,7 @@ class Billing {
      * @zh 检查是否可以提供替代结算方式，而无需用户选择使用 Google Play 结算方式。
      */
     public isAlternativeBillingOnlyAvailableAsync (): void {
-        jsb.billing?.isAlternativeBillingOnlyAvailableAsync();
+        jsb.googleBilling?.isAlternativeBillingOnlyAvailableAsync();
     }
 
     /**
@@ -271,7 +271,7 @@ class Billing {
      * @zh 创建可用于报告通过外部报价进行的交易的购买详情。
      */
     public createExternalOfferReportingDetailsAsync (): void {
-        jsb.billing?.createExternalOfferReportingDetailsAsync();
+        jsb.googleBilling?.createExternalOfferReportingDetailsAsync();
     }
 
     /**
@@ -279,7 +279,7 @@ class Billing {
      * @zh 检查提供外部报价的可用性。
      */
     public isExternalOfferAvailableAsync (): void {
-        jsb.billing?.isExternalOfferAvailableAsync();
+        jsb.googleBilling?.isExternalOfferAvailableAsync();
     }
 
     /**
@@ -288,9 +288,9 @@ class Billing {
      * @param feature @zh 功能特性 @en feature.
      */
     public isFeatureSupported (feature: string): google.BillingResult | null {
-        if (jsb.billing) {
+        if (jsb.googleBilling) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            return jsb.billing.isFeatureSupported(feature);
+            return jsb.googleBilling.isFeatureSupported(feature);
         }
         return null;
     }
@@ -300,9 +300,9 @@ class Billing {
      * @zh 在调用应用程序顶部显示仅显示备用计费信息对话框。
      */
     public showAlternativeBillingOnlyInformationDialog (): google.BillingResult | null {
-        if (jsb.billing) {
+        if (jsb.googleBilling) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            return jsb.billing.showAlternativeBillingOnlyInformationDialog();
+            return jsb.googleBilling.showAlternativeBillingOnlyInformationDialog();
         }
         return null;
     }
@@ -312,9 +312,9 @@ class Billing {
      * @zh 在调用应用程序顶部显示外部优惠信息对话框。
      */
     public showExternalOfferInformationDialog (): google.BillingResult | null {
-        if (jsb.billing) {
+        if (jsb.googleBilling) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            return jsb.billing.showExternalOfferInformationDialog();
+            return jsb.googleBilling.showExternalOfferInformationDialog();
         }
         return null;
     }
@@ -324,9 +324,9 @@ class Billing {
      * @zh 在调用应用程序上叠加与计费相关的消息。
      */
     public showInAppMessages (): google.BillingResult | null {
-        if (jsb.billing) {
+        if (jsb.googleBilling) {
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-            return jsb.billing.showInAppMessages();
+            return jsb.googleBilling.showInAppMessages();
         }
         return null;
     }

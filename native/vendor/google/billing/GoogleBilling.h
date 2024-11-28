@@ -159,10 +159,10 @@ public:
     std::string purchaseToken;
 };
 
-class CC_DLL Billing {
+class CC_DLL GoogleBilling {
 public:
-    static Billing &getInstance() {
-        static Billing instance;
+    static GoogleBilling &getInstance() {
+        static GoogleBilling instance;
         return instance;
     }
 
@@ -186,7 +186,7 @@ public:
     BillingResult* showExternalOfferInformationDialog();
     BillingResult* showInAppMessages();
 private:
-    Billing() = default;
+    GoogleBilling() = default;
 };
 
 } // namespace cc

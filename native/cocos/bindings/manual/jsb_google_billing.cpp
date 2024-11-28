@@ -29,7 +29,7 @@
     #include "bindings/jswrapper/SeApi.h"
     #include "bindings/manual/jsb_conversions.h"
     #include "bindings/manual/jsb_global.h"
-    #include "cocos/platform/android/modules/google_play/billing/billing.h"
+    #include "vendor/google/billing/GoogleBilling.h"
 JSB_REGISTER_OBJECT_TYPE(cc::BillingResult);
 JSB_REGISTER_OBJECT_TYPE(cc::OneTimePurchaseOfferDetails);
 JSB_REGISTER_OBJECT_TYPE(cc::InstallmentPlanDetails);
@@ -40,7 +40,7 @@ JSB_REGISTER_OBJECT_TYPE(cc::AccountIdentifiers);
 JSB_REGISTER_OBJECT_TYPE(cc::PendingPurchaseUpdate);
 JSB_REGISTER_OBJECT_TYPE(cc::Purchase);
 JSB_REGISTER_OBJECT_TYPE(cc::BillingConfig);
-JSB_REGISTER_OBJECT_TYPE(cc::Billing);
+JSB_REGISTER_OBJECT_TYPE(cc::GoogleBilling);
 
 #endif
 
@@ -1204,35 +1204,35 @@ bool js_register_cc_BillingConfig(se::Object* obj) { // NOLINT
     return true;
 }
 
-SE_DECLARE_FINALIZE_FUNC(js_delete_cc_Billing)
+SE_DECLARE_FINALIZE_FUNC(js_delete_cc_Google_Billing)
 
-static bool js_cc_Billing_startConnection(se::State& s) { // NOLINT
-    cc::Billing::getInstance().startConnection();
+static bool js_cc_Google_Billing_startConnection(se::State& s) { // NOLINT
+    cc::GoogleBilling::getInstance().startConnection();
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_startConnection)
+SE_BIND_FUNC(js_cc_Google_Billing_startConnection)
 
-static bool js_cc_Billing_endConnection(se::State& s) { // NOLINT
-    cc::Billing::getInstance().endConnection();
+static bool js_cc_Google_Billing_endConnection(se::State& s) { // NOLINT
+    cc::GoogleBilling::getInstance().endConnection();
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_endConnection)
+SE_BIND_FUNC(js_cc_Google_Billing_endConnection)
 
-static bool js_cc_Billing_getConnectionState(se::State& s) { // NOLINT
-    int connectionState = cc::Billing::getInstance().getConnectionState();
+static bool js_cc_Google_Billing_getConnectionState(se::State& s) { // NOLINT
+    int connectionState = cc::GoogleBilling::getInstance().getConnectionState();
     s.rval().setFloat(connectionState);
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_getConnectionState)
+SE_BIND_FUNC(js_cc_Google_Billing_getConnectionState)
 
-static bool js_cc_Billing_isReady(se::State& s) {
-    int isReady = cc::Billing::getInstance().isReady();
+static bool js_cc_Google_Billing_isReady(se::State& s) {
+    int isReady = cc::GoogleBilling::getInstance().isReady();
     s.rval().setFloat(isReady);
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_isReady)
+SE_BIND_FUNC(js_cc_Google_Billing_isReady)
 
-static bool js_cc_Billing_queryProductDetailsParams(se::State& s) { // NOLINT
+static bool js_cc_Google_Billing_queryProductDetailsParams(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     const auto& args = s.args();
     size_t argc = args.size();
@@ -1250,12 +1250,12 @@ static bool js_cc_Billing_queryProductDetailsParams(se::State& s) { // NOLINT
     SE_PRECONDITION2(ok, false, "Error processing arguments");
     arg3 = &temp3;
 
-    cc::Billing::getInstance().queryProductDetailsParams((std::vector<std::string> const&)*arg2, (std::string const&)*arg3);
+    cc::GoogleBilling::getInstance().queryProductDetailsParams((std::vector<std::string> const&)*arg2, (std::string const&)*arg3);
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_queryProductDetailsParams)
+SE_BIND_FUNC(js_cc_Google_Billing_queryProductDetailsParams)
 
-static bool js_cc_Billing_launchBillingFlow(se::State& s) { // NOLINT
+static bool js_cc_Google_Billing_launchBillingFlow(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     const auto& args = s.args();
     size_t argc = args.size();
@@ -1278,13 +1278,13 @@ static bool js_cc_Billing_launchBillingFlow(se::State& s) { // NOLINT
     SE_PRECONDITION2(ok, false, "Error processing arguments");
     arg3 = &temp3;
 
-    cc::Billing::getInstance().launchBillingFlow((std::vector<cc::ProductDetails*> const&)*arg2, (std::string const&)*arg3);
+    cc::GoogleBilling::getInstance().launchBillingFlow((std::vector<cc::ProductDetails*> const&)*arg2, (std::string const&)*arg3);
 
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_launchBillingFlow)
+SE_BIND_FUNC(js_cc_Google_Billing_launchBillingFlow)
 
-static bool js_cc_Billing_consumePurchases(se::State& s) { // NOLINT
+static bool js_cc_Google_Billing_consumePurchases(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     const auto& args = s.args();
     size_t argc = args.size();
@@ -1300,13 +1300,13 @@ static bool js_cc_Billing_consumePurchases(se::State& s) { // NOLINT
     SE_PRECONDITION2(ok, false, "Error processing arguments");
     arg2 = &temp2;
 
-    cc::Billing::getInstance().consumePurchases((std::vector<cc::Purchase*> const&)*arg2);
+    cc::GoogleBilling::getInstance().consumePurchases((std::vector<cc::Purchase*> const&)*arg2);
 
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_consumePurchases)
+SE_BIND_FUNC(js_cc_Google_Billing_consumePurchases)
 
-static bool js_cc_Billing_acknowledgePurchase(se::State& s) { // NOLINT
+static bool js_cc_Google_Billing_acknowledgePurchase(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     const auto& args = s.args();
     size_t argc = args.size();
@@ -1322,13 +1322,13 @@ static bool js_cc_Billing_acknowledgePurchase(se::State& s) { // NOLINT
     SE_PRECONDITION2(ok, false, "Error processing arguments");
     arg1 = &temp2;
 
-    cc::Billing::getInstance().acknowledgePurchase((std::vector<cc::Purchase*> const&)*arg1);
+    cc::GoogleBilling::getInstance().acknowledgePurchase((std::vector<cc::Purchase*> const&)*arg1);
 
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_acknowledgePurchase)
+SE_BIND_FUNC(js_cc_Google_Billing_acknowledgePurchase)
 
-static bool js_cc_Billing_queryPurchasesAsync(se::State& s) { // NOLINT
+static bool js_cc_Google_Billing_queryPurchasesAsync(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     const auto& args = s.args();
     size_t argc = args.size();
@@ -1344,43 +1344,43 @@ static bool js_cc_Billing_queryPurchasesAsync(se::State& s) { // NOLINT
     SE_PRECONDITION2(ok, false, "Error processing arguments");
     arg2 = &temp2;
 
-    cc::Billing::getInstance().queryPurchasesAsync((std::string const&)*arg2);
+    cc::GoogleBilling::getInstance().queryPurchasesAsync((std::string const&)*arg2);
 
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_queryPurchasesAsync)
+SE_BIND_FUNC(js_cc_Google_Billing_queryPurchasesAsync)
 
-static bool js_cc_Billing_getBillingConfigAsync(se::State& s) { // NOLINT
-    cc::Billing::getInstance().getBillingConfigAsync();
+static bool js_cc_Google_Billing_getBillingConfigAsync(se::State& s) { // NOLINT
+    cc::GoogleBilling::getInstance().getBillingConfigAsync();
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_getBillingConfigAsync)
+SE_BIND_FUNC(js_cc_Google_Billing_getBillingConfigAsync)
 
-static bool js_cc_Billing_createAlternativeBillingOnlyReportingDetailsAsync(se::State& s) { // NOLINT
-    cc::Billing::getInstance().createAlternativeBillingOnlyReportingDetailsAsync();
+static bool js_cc_Google_Billing_createAlternativeBillingOnlyReportingDetailsAsync(se::State& s) { // NOLINT
+    cc::GoogleBilling::getInstance().createAlternativeBillingOnlyReportingDetailsAsync();
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_createAlternativeBillingOnlyReportingDetailsAsync)
+SE_BIND_FUNC(js_cc_Google_Billing_createAlternativeBillingOnlyReportingDetailsAsync)
 
-static bool js_cc_Billing_isAlternativeBillingOnlyAvailableAsync(se::State& s) { // NOLINT
-    cc::Billing::getInstance().isAlternativeBillingOnlyAvailableAsync();
+static bool js_cc_Google_Billing_isAlternativeBillingOnlyAvailableAsync(se::State& s) { // NOLINT
+    cc::GoogleBilling::getInstance().isAlternativeBillingOnlyAvailableAsync();
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_isAlternativeBillingOnlyAvailableAsync)
+SE_BIND_FUNC(js_cc_Google_Billing_isAlternativeBillingOnlyAvailableAsync)
 
-static bool js_cc_Billing_createExternalOfferReportingDetailsAsync(se::State& s) { // NOLINT
-    cc::Billing::getInstance().createExternalOfferReportingDetailsAsync();
+static bool js_cc_Google_Billing_createExternalOfferReportingDetailsAsync(se::State& s) { // NOLINT
+    cc::GoogleBilling::getInstance().createExternalOfferReportingDetailsAsync();
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_createExternalOfferReportingDetailsAsync)
+SE_BIND_FUNC(js_cc_Google_Billing_createExternalOfferReportingDetailsAsync)
 
-static bool js_cc_Billing_isExternalOfferAvailableAsync(se::State& s) { // NOLINT
-    cc::Billing::getInstance().isExternalOfferAvailableAsync();
+static bool js_cc_Google_Billing_isExternalOfferAvailableAsync(se::State& s) { // NOLINT
+    cc::GoogleBilling::getInstance().isExternalOfferAvailableAsync();
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_isExternalOfferAvailableAsync)
+SE_BIND_FUNC(js_cc_Google_Billing_isExternalOfferAvailableAsync)
 
-static bool js_cc_Billing_isFeatureSupported(se::State& s) { // NOLINT
+static bool js_cc_Google_Billing_isFeatureSupported(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
     const auto& args = s.args();
     size_t argc = args.size();
@@ -1394,74 +1394,74 @@ static bool js_cc_Billing_isFeatureSupported(se::State& s) { // NOLINT
     ok &= sevalue_to_native(args[0], &temp2, s.thisObject());
     SE_PRECONDITION2(ok, false, "Error processing arguments");
 
-    cc::BillingResult* result = cc::Billing::getInstance().isFeatureSupported(temp2);
+    cc::BillingResult* result = cc::GoogleBilling::getInstance().isFeatureSupported(temp2);
 
     ok &= nativevalue_to_se(*result, s.rval(), s.thisObject());
     SE_PRECONDITION2(ok, false, "Error processing arguments");
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_isFeatureSupported)
+SE_BIND_FUNC(js_cc_Google_Billing_isFeatureSupported)
 
-static bool js_cc_Billing_showAlternativeBillingOnlyInformationDialog(se::State& s) { // NOLINT
+static bool js_cc_Google_Billing_showAlternativeBillingOnlyInformationDialog(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
-    cc::BillingResult* result = cc::Billing::getInstance().showAlternativeBillingOnlyInformationDialog();
+    cc::BillingResult* result = cc::GoogleBilling::getInstance().showAlternativeBillingOnlyInformationDialog();
     ok &= nativevalue_to_se(*result, s.rval(), s.thisObject());
     SE_PRECONDITION2(ok, false, "Error processing arguments");
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_showAlternativeBillingOnlyInformationDialog)
+SE_BIND_FUNC(js_cc_Google_Billing_showAlternativeBillingOnlyInformationDialog)
 
-static bool js_cc_Billing_showExternalOfferInformationDialog(se::State& s) { // NOLINT
+static bool js_cc_Google_Billing_showExternalOfferInformationDialog(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
-    cc::BillingResult* result = cc::Billing::getInstance().showExternalOfferInformationDialog();
+    cc::BillingResult* result = cc::GoogleBilling::getInstance().showExternalOfferInformationDialog();
     ok &= nativevalue_to_se(*result, s.rval(), s.thisObject());
     SE_PRECONDITION2(ok, false, "Error processing arguments");
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_showExternalOfferInformationDialog)
+SE_BIND_FUNC(js_cc_Google_Billing_showExternalOfferInformationDialog)
 
-static bool js_cc_Billing_showInAppMessages(se::State& s) { // NOLINT
+static bool js_cc_Google_Billing_showInAppMessages(se::State& s) { // NOLINT
     CC_UNUSED bool ok = true;
-    cc::BillingResult* result = cc::Billing::getInstance().showInAppMessages();
+    cc::BillingResult* result = cc::GoogleBilling::getInstance().showInAppMessages();
     ok &= nativevalue_to_se(*result, s.rval(), s.thisObject());
     SE_PRECONDITION2(ok, false, "Error processing arguments");
     return true;
 }
-SE_BIND_FUNC(js_cc_Billing_showInAppMessages)
+SE_BIND_FUNC(js_cc_Google_Billing_showInAppMessages)
 
-static bool js_delete_cc_Billing(se::State& s) { // NOLINT
+static bool js_delete_cc_Google_Billing(se::State& s) { // NOLINT
     return true;
 }
-SE_BIND_FINALIZE_FUNC(js_delete_cc_Billing)
+SE_BIND_FINALIZE_FUNC(js_delete_cc_Google_Billing)
 
-bool js_register_cc_Billing(se::Object* obj) { // NOLINT
-    se::Value billingVal{se::Object::createPlainObject()};
-    auto* cls = billingVal.toObject();
+bool js_register_cc_Google_Billing(se::Object* obj) { // NOLINT
+    se::Value googleBillingVal{se::Object::createPlainObject()};
+    auto* cls = googleBillingVal.toObject();
 
-    cls->defineFunction("startConnection", _SE(js_cc_Billing_startConnection));
-    cls->defineFunction("endConnection", _SE(js_cc_Billing_endConnection));
-    cls->defineFunction("getConnectionState", _SE(js_cc_Billing_getConnectionState));
-    cls->defineFunction("isReady", _SE(js_cc_Billing_isReady));
-    cls->defineFunction("queryProductDetailsParams", _SE(js_cc_Billing_queryProductDetailsParams));
+    cls->defineFunction("startConnection", _SE(js_cc_Google_Billing_startConnection));
+    cls->defineFunction("endConnection", _SE(js_cc_Google_Billing_endConnection));
+    cls->defineFunction("getConnectionState", _SE(js_cc_Google_Billing_getConnectionState));
+    cls->defineFunction("isReady", _SE(js_cc_Google_Billing_isReady));
+    cls->defineFunction("queryProductDetailsParams", _SE(js_cc_Google_Billing_queryProductDetailsParams));
 
-    cls->defineFunction("launchBillingFlow", _SE(js_cc_Billing_launchBillingFlow));
-    cls->defineFunction("consumePurchases", _SE(js_cc_Billing_consumePurchases));
-    cls->defineFunction("acknowledgePurchase", _SE(js_cc_Billing_acknowledgePurchase));
-    cls->defineFunction("queryPurchasesAsync", _SE(js_cc_Billing_queryPurchasesAsync));
-    cls->defineFunction("getBillingConfigAsync", _SE(js_cc_Billing_getBillingConfigAsync));
+    cls->defineFunction("launchBillingFlow", _SE(js_cc_Google_Billing_launchBillingFlow));
+    cls->defineFunction("consumePurchases", _SE(js_cc_Google_Billing_consumePurchases));
+    cls->defineFunction("acknowledgePurchase", _SE(js_cc_Google_Billing_acknowledgePurchase));
+    cls->defineFunction("queryPurchasesAsync", _SE(js_cc_Google_Billing_queryPurchasesAsync));
+    cls->defineFunction("getBillingConfigAsync", _SE(js_cc_Google_Billing_getBillingConfigAsync));
 
-    cls->defineFunction("createAlternativeBillingOnlyReportingDetailsAsync", _SE(js_cc_Billing_createAlternativeBillingOnlyReportingDetailsAsync));
-    cls->defineFunction("isAlternativeBillingOnlyAvailableAsync", _SE(js_cc_Billing_isAlternativeBillingOnlyAvailableAsync));
-    cls->defineFunction("createExternalOfferReportingDetailsAsync", _SE(js_cc_Billing_createExternalOfferReportingDetailsAsync));
-    cls->defineFunction("isExternalOfferAvailableAsync", _SE(js_cc_Billing_isExternalOfferAvailableAsync));
+    cls->defineFunction("createAlternativeBillingOnlyReportingDetailsAsync", _SE(js_cc_Google_Billing_createAlternativeBillingOnlyReportingDetailsAsync));
+    cls->defineFunction("isAlternativeBillingOnlyAvailableAsync", _SE(js_cc_Google_Billing_isAlternativeBillingOnlyAvailableAsync));
+    cls->defineFunction("createExternalOfferReportingDetailsAsync", _SE(js_cc_Google_Billing_createExternalOfferReportingDetailsAsync));
+    cls->defineFunction("isExternalOfferAvailableAsync", _SE(js_cc_Google_Billing_isExternalOfferAvailableAsync));
 
-    cls->defineFunction("isFeatureSupported", _SE(js_cc_Billing_isFeatureSupported));
+    cls->defineFunction("isFeatureSupported", _SE(js_cc_Google_Billing_isFeatureSupported));
 
-    cls->defineFunction("showAlternativeBillingOnlyInformationDialog", _SE(js_cc_Billing_showAlternativeBillingOnlyInformationDialog));
-    cls->defineFunction("showExternalOfferInformationDialog", _SE(js_cc_Billing_showExternalOfferInformationDialog));
-    cls->defineFunction("showInAppMessages", _SE(js_cc_Billing_showInAppMessages));
+    cls->defineFunction("showAlternativeBillingOnlyInformationDialog", _SE(js_cc_Google_Billing_showAlternativeBillingOnlyInformationDialog));
+    cls->defineFunction("showExternalOfferInformationDialog", _SE(js_cc_Google_Billing_showExternalOfferInformationDialog));
+    cls->defineFunction("showInAppMessages", _SE(js_cc_Google_Billing_showInAppMessages));
 
-    obj->setProperty("billing", billingVal);
+    obj->setProperty("googleBilling", googleBillingVal);
 
     return true;
 }
@@ -1487,7 +1487,7 @@ bool jsb_register_all_billing(se::Object* obj) { // NOLINT
     js_register_cc_PendingPurchaseUpdate(ns);
     js_register_cc_Purchase(ns);
     js_register_cc_BillingConfig(ns);
-    js_register_cc_Billing(ns);
+    js_register_cc_Google_Billing(ns);
     return true;
 }
 

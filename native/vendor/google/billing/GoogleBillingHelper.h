@@ -46,7 +46,7 @@ class AlternativeBillingOnlyReportingDetails;
 class ExternalOfferReportingDetails;
 class InAppMessageResult;
 
-class CC_DLL JniBillingHelper {
+class CC_DLL GoogleBillingHelper {
 public:
     static void removeProductDetails(int productDetailsID);
     static void removePurchase(int purchaseID);

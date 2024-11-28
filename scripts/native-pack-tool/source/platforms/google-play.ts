@@ -13,6 +13,21 @@ export interface IOrientation {
     portrait: boolean;
     upsideDown: boolean;
 }
+/**
+ * 默认 CustomIconList，存放在 static 下的 icon 路径
+ */
+export interface ICustomIconDpi {
+    fileName: string;
+    dirName: string;
+    dpi: number;
+    path: string;
+}
+
+export interface ICustomIconInfo {
+    type: string,
+    display: string,
+    list: ICustomIconDpi[]
+}
 
 export interface IAndroidParams {
     packageName: string;
@@ -34,9 +49,13 @@ export interface IAndroidParams {
     orientation: IOrientation;
     appBundle: boolean;
     resizeableActivity: boolean;
+    googleBilling: boolean;
+    customIconInfo: ICustomIconInfo,
 }
 
 const DefaultAPILevel = 27;
+
+
 export class GooglePlayPackTool extends NativePackTool {
     params!: CocosParams<IAndroidParams>;
 
@@ -59,6 +78,26 @@ export class GooglePlayPackTool extends NativePackTool {
         } else {
             this.validateNativeDir();
         }
+
+        // 替换icon
+        await this.copyCustomIcons(this.params.platformParams.customIconInfo);
+    }
+
+    /**
+     * 拷贝自定义 ICON
+     * @param type - 类型自定义还是默认
+     * @param buildDir - 构建路径
+     * @param outputName - 用于获取 CustomIcon
+     */
+    protected async copyCustomIcons(customIconInfo: ICustomIconInfo) {
+        const tasks = customIconInfo.list.map(async (item) => {
+            const distRoot = ps.join(this.paths.platformTemplateDirInPrj, 'res', item.dirName);
+    
+            await fs.ensureDir(distRoot);
+            const filePath = ps.join(distRoot, item.fileName);
+            await fs.copy(item.path, filePath);
+        });
+        await Promise.all(tasks);
     }
 
     protected validatePlatformDirectory(missing: string[]): void {
@@ -363,6 +402,9 @@ export class GooglePlayPackTool extends NativePackTool {
             content = content.replace(/COCOS_ENGINE_PATH=.*/, `COCOS_ENGINE_PATH=${cchelper.fixPath(Paths.nativeRoot)}`);
             content = content.replace(/APPLICATION_ID=.*/, `APPLICATION_ID=${options.packageName}`);
             content = content.replace(/NATIVE_DIR=.*/, `NATIVE_DIR=${cchelper.fixPath(this.paths.platformTemplateDirInPrj)}`);
+
+            content = content.replace(/PROP_ENABLE_GOOGLE_BILLING=.*/, `PROP_ENABLE_GOOGLE_BILLING=${options.googleBilling ? "true" : "false"}`);
+            
 
 
             if (process.platform === 'win32') {

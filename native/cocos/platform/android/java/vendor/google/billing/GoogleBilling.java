@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  ****************************************************************************/
 
-package com.cocos.billing;
+package google.billing;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -64,13 +64,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class CocosBilling implements BillingClientStateListener,
+public class GoogleBilling implements BillingClientStateListener,
     PurchasesUpdatedListener, ProductDetailsResponseListener, PurchasesResponseListener,
     ConsumeResponseListener, AcknowledgePurchaseResponseListener, BillingConfigResponseListener,
     AlternativeBillingOnlyReportingDetailsListener, AlternativeBillingOnlyAvailabilityListener,AlternativeBillingOnlyInformationDialogListener,
     ExternalOfferReportingDetailsListener, ExternalOfferAvailabilityListener,ExternalOfferInformationDialogListener, InAppMessageResponseListener {
 
-    private static final String TAG = CocosBilling.class.getSimpleName();
+    private static final String TAG = GoogleBilling.class.getSimpleName();
     private Map<Integer, ProductDetails> _productDetails = new HashMap<>();
     private Map<Integer, Purchase> _purchase = new HashMap<>();
     private int _productDetailsNextID = 0;
@@ -81,7 +81,7 @@ public class CocosBilling implements BillingClientStateListener,
      */
     private BillingClient _billingClient;
 
-    public CocosBilling() {
+    public GoogleBilling() {
         _billingClient = BillingClient.newBuilder(GlobalObject.getActivity())
             .setListener(this)
             .enablePendingPurchases()
@@ -327,7 +327,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onBillingSetupFinished(billingResult);
+                GoogleBillingHelper.onBillingSetupFinished(billingResult);
             }
         });
     }
@@ -336,7 +336,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onBillingServiceDisconnected();
+                GoogleBillingHelper.onBillingServiceDisconnected();
             }
         });
     }
@@ -351,7 +351,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onProductDetailsResponse(billingResult, productDetailsList, startID);
+                GoogleBillingHelper.onProductDetailsResponse(billingResult, productDetailsList, startID);
             }
         });
     }
@@ -368,7 +368,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onPurchasesUpdated(billingResult, purchaseList, startID);
+                GoogleBillingHelper.onPurchasesUpdated(billingResult, purchaseList, startID);
             }
         });
     }
@@ -383,7 +383,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onQueryPurchasesResponse(billingResult, purchaseList, startID);
+                GoogleBillingHelper.onQueryPurchasesResponse(billingResult, purchaseList, startID);
             }
         });
     }
@@ -394,7 +394,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onConsumeResponse(billingResult, purchaseToken);
+                GoogleBillingHelper.onConsumeResponse(billingResult, purchaseToken);
             }
         });
     }
@@ -404,7 +404,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onAcknowledgePurchaseResponse(billingResult);
+                GoogleBillingHelper.onAcknowledgePurchaseResponse(billingResult);
             }
         });
     }
@@ -414,7 +414,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onBillingConfigResponse(billingResult, billingConfig);
+                GoogleBillingHelper.onBillingConfigResponse(billingResult, billingConfig);
             }
         });
     }
@@ -426,7 +426,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onAlternativeBillingOnlyTokenResponse(billingResult, alternativeBillingOnlyReportingDetails);
+                GoogleBillingHelper.onAlternativeBillingOnlyTokenResponse(billingResult, alternativeBillingOnlyReportingDetails);
             }
         });
     }
@@ -436,7 +436,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onAlternativeBillingOnlyAvailabilityResponse(billingResult);
+                GoogleBillingHelper.onAlternativeBillingOnlyAvailabilityResponse(billingResult);
             }
         });
     }
@@ -449,7 +449,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onExternalOfferReportingDetailsResponse(billingResult, externalOfferReportingDetails);
+                GoogleBillingHelper.onExternalOfferReportingDetailsResponse(billingResult, externalOfferReportingDetails);
             }
         });
     }
@@ -459,7 +459,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onExternalOfferAvailabilityResponse(billingResult);
+                GoogleBillingHelper.onExternalOfferAvailabilityResponse(billingResult);
             }
         });
     }
@@ -469,7 +469,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onExternalOfferInformationDialogResponse(billingResult);
+                GoogleBillingHelper.onExternalOfferInformationDialogResponse(billingResult);
             }
         });
     }
@@ -479,7 +479,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onAlternativeBillingOnlyInformationDialogResponse(billingResult);
+                GoogleBillingHelper.onAlternativeBillingOnlyInformationDialogResponse(billingResult);
             }
         });
     }
@@ -489,7 +489,7 @@ public class CocosBilling implements BillingClientStateListener,
         CocosHelper.runOnGameThread(new Runnable() {
             @Override
             public void run() {
-                CocosBillingHelper.onInAppMessageResponse(inAppMessageResult);
+                GoogleBillingHelper.onInAppMessageResponse(inAppMessageResult);
             }
         });
     }

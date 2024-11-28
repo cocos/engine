@@ -21,8 +21,8 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 ****************************************************************************/
-#include "platform/android/modules/google_play/billing/JniBillingHelper.h"
-#include "platform/android/modules/google_play/billing/billing.h"
+#include "vendor/google/billing/GoogleBillingHelper.h"
+#include "vendor/google/billing/GoogleBilling.h"
 #include "platform/java/jni/JniHelper.h"
 
 #include <cstring>
@@ -37,7 +37,7 @@
 namespace {
 
 #ifndef JCLS_BILLING
-    #define JCLS_BILLING "com/cocos/billing/CocosBillingHelper"
+    #define JCLS_BILLING "google/billing/GoogleBillingHelper"
 #endif
 }; // namespace
 
@@ -112,72 +112,72 @@ template void callJSfunc(const char*, BillingResult*&&, AlternativeBillingOnlyRe
 template void callJSfunc(const char*, BillingResult*&&, ExternalOfferReportingDetails*&&);
 template void callJSfunc(const char*, InAppMessageResult*&&);
 
-void JniBillingHelper::removeProductDetails(int productDetailsID) {
+void GoogleBillingHelper::removeProductDetails(int productDetailsID) {
     JniHelper::callStaticVoidMethod(JCLS_BILLING, "removeProductDetails", productDetailsID);
 }
 
-void JniBillingHelper::removePurchase(int purchaseID) {
+void GoogleBillingHelper::removePurchase(int purchaseID) {
     JniHelper::callStaticVoidMethod(JCLS_BILLING, "removePurchase", purchaseID);
 }
 
 
-void JniBillingHelper::startConnection() {
+void GoogleBillingHelper::startConnection() {
     JniHelper::callStaticVoidMethod(JCLS_BILLING, "startConnection");
 }
 
-void JniBillingHelper::endConnection() {
+void GoogleBillingHelper::endConnection() {
     JniHelper::callStaticVoidMethod(JCLS_BILLING, "endConnection");
 }
 
-int JniBillingHelper::getConnectionState() {
+int GoogleBillingHelper::getConnectionState() {
     return JniHelper::callStaticIntMethod(JCLS_BILLING, "getConnectionState");
 }
 
-bool JniBillingHelper::isReady() {
+bool GoogleBillingHelper::isReady() {
     return JniHelper::callStaticBooleanMethod(JCLS_BILLING, "isReady");
 }
 
-void JniBillingHelper::queryProductDetailsParams(const std::vector<std::string>& productIds, const std::string& type) {
+void GoogleBillingHelper::queryProductDetailsParams(const std::vector<std::string>& productIds, const std::string& type) {
     JniHelper::callStaticVoidMethod(JCLS_BILLING, "queryProductDetailsParams", productIds, type);
 }
 
-void JniBillingHelper::queryPurchasesAsync(const std::string& productType) {
+void GoogleBillingHelper::queryPurchasesAsync(const std::string& productType) {
     JniHelper::callStaticVoidMethod(JCLS_BILLING, "queryPurchasesAsync", productType);
 }
 
-void JniBillingHelper::getBillingConfigAsync() {
+void GoogleBillingHelper::getBillingConfigAsync() {
     JniHelper::callStaticVoidMethod(JCLS_BILLING, "getBillingConfigAsync");
 }
 
-void JniBillingHelper::createAlternativeBillingOnlyReportingDetailsAsync() {
+void GoogleBillingHelper::createAlternativeBillingOnlyReportingDetailsAsync() {
     JniHelper::callStaticVoidMethod(JCLS_BILLING, "createAlternativeBillingOnlyReportingDetailsAsync");
 }
 
-void JniBillingHelper::isAlternativeBillingOnlyAvailableAsync() {
+void GoogleBillingHelper::isAlternativeBillingOnlyAvailableAsync() {
     JniHelper::callStaticVoidMethod(JCLS_BILLING, "isAlternativeBillingOnlyAvailableAsync");
 }
 
-void JniBillingHelper::createExternalOfferReportingDetailsAsync() {
+void GoogleBillingHelper::createExternalOfferReportingDetailsAsync() {
     JniHelper::callStaticVoidMethod(JCLS_BILLING, "createExternalOfferReportingDetailsAsync");
 }
 
-void JniBillingHelper::isExternalOfferAvailableAsync() {
+void GoogleBillingHelper::isExternalOfferAvailableAsync() {
     JniHelper::callStaticVoidMethod(JCLS_BILLING, "isExternalOfferAvailableAsync");
 }
 
-BillingResult* JniBillingHelper::showAlternativeBillingOnlyInformationDialog() {
+BillingResult* GoogleBillingHelper::showAlternativeBillingOnlyInformationDialog() {
     return callFunctionAndReturnBillingResult("showAlternativeBillingOnlyInformationDialog");
 }
 
-BillingResult* JniBillingHelper::showExternalOfferInformationDialog() {
+BillingResult* GoogleBillingHelper::showExternalOfferInformationDialog() {
     return callFunctionAndReturnBillingResult("showExternalOfferInformationDialog");
 }
 
-BillingResult* JniBillingHelper::showInAppMessages() {
+BillingResult* GoogleBillingHelper::showInAppMessages() {
     return callFunctionAndReturnBillingResult("showInAppMessages");
 }
 
-void JniBillingHelper::launchBillingFlow(const std::vector<ProductDetails*>& productDetailsList, const std::string& selectedOfferToken) {
+void GoogleBillingHelper::launchBillingFlow(const std::vector<ProductDetails*>& productDetailsList, const std::string& selectedOfferToken) {
     if (productDetailsList.empty()) {
         return;
     }
@@ -196,7 +196,7 @@ void JniBillingHelper::launchBillingFlow(const std::vector<ProductDetails*>& pro
     t.env->CallStaticVoidMethod(t.classID, t.methodID, result, offerToken);
 }
 
-void JniBillingHelper::consumePurchases(const std::vector<Purchase*>& purchases) {
+void GoogleBillingHelper::consumePurchases(const std::vector<Purchase*>& purchases) {
     if (purchases.empty()) {
         return;
     }
@@ -214,7 +214,7 @@ void JniBillingHelper::consumePurchases(const std::vector<Purchase*>& purchases)
     t.env->CallStaticVoidMethod(t.classID, t.methodID, result);
 }
 
-void JniBillingHelper::acknowledgePurchase(const std::vector<Purchase*>& purchases) {
+void GoogleBillingHelper::acknowledgePurchase(const std::vector<Purchase*>& purchases) {
     if (purchases.empty()) {
         return;
     }
@@ -232,7 +232,7 @@ void JniBillingHelper::acknowledgePurchase(const std::vector<Purchase*>& purchas
     t.env->CallStaticVoidMethod(t.classID, t.methodID, result);
 }
 
-BillingResult* JniBillingHelper::callFunctionAndReturnBillingResult(const std::string& functionName) {
+BillingResult* GoogleBillingHelper::callFunctionAndReturnBillingResult(const std::string& functionName) {
     auto* env = JniHelper::getEnv();
     cc::JniMethodInfo t;
     if (cc::JniHelper::getStaticMethodInfo(t, JCLS_BILLING, functionName.c_str(), "()Lcom/android/billingclient/api/BillingResult;")) {
@@ -242,7 +242,7 @@ BillingResult* JniBillingHelper::callFunctionAndReturnBillingResult(const std::s
     return nullptr;
 }
 
-BillingResult* JniBillingHelper::isFeatureSupported(const std::string& feature) {
+BillingResult* GoogleBillingHelper::isFeatureSupported(const std::string& feature) {
     auto* env = JniHelper::getEnv();
     cc::JniMethodInfo t;
     if (cc::JniHelper::getStaticMethodInfo(t, JCLS_BILLING, "isFeatureSupported", "(Ljava/lang/String;)Lcom/android/billingclient/api/BillingResult;")) {
@@ -253,104 +253,104 @@ BillingResult* JniBillingHelper::isFeatureSupported(const std::string& feature) 
     return nullptr;
 }
 
-void JniBillingHelper::onBillingSetupFinished(JNIEnv* env, jclass clazz, jobject billingResultObj) {
+void GoogleBillingHelper::onBillingSetupFinished(JNIEnv* env, jclass clazz, jobject billingResultObj) {
     cc::callJSfunc("onBillingSetupFinished", toBillingResult(env, billingResultObj));
 }
 
-void JniBillingHelper::onBillingServiceDisconnected(JNIEnv* env, jclass clazz) {
+void GoogleBillingHelper::onBillingServiceDisconnected(JNIEnv* env, jclass clazz) {
     cc::callJSfunc("onBillingServiceDisconnected");
 }
 
-void JniBillingHelper::onProductDetailsResponse(JNIEnv* env, jclass clazz,
+void GoogleBillingHelper::onProductDetailsResponse(JNIEnv* env, jclass clazz,
                                                 jobject billingResultObj,
                                                 jobject productDetailsListObj,
                                                 jint startID) {
-    auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
-    std::vector<cc::ProductDetails*> productDetailsList = cc::JniBillingHelper::toProductDetailList(env, productDetailsListObj, startID);
+    auto* billingResult = cc::GoogleBillingHelper::toBillingResult(env, billingResultObj);
+    std::vector<cc::ProductDetails*> productDetailsList = cc::GoogleBillingHelper::toProductDetailList(env, productDetailsListObj, startID);
     cc::callJSfunc("onProductDetailsResponse", billingResult, productDetailsList);
 }
 
-void JniBillingHelper::onPurchasesUpdated(JNIEnv* env, jclass clazz,
+void GoogleBillingHelper::onPurchasesUpdated(JNIEnv* env, jclass clazz,
                                           jobject billingResultObj,
                                           jobject purchasesListObj,
                                           jint startID) {
-    auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
+    auto* billingResult = cc::GoogleBillingHelper::toBillingResult(env, billingResultObj);
     if (purchasesListObj != nullptr) {
-        std::vector<cc::Purchase*> purchasesList = cc::JniBillingHelper::toPurchaseList(env, purchasesListObj, startID);
+        std::vector<cc::Purchase*> purchasesList = cc::GoogleBillingHelper::toPurchaseList(env, purchasesListObj, startID);
         cc::callJSfunc("onPurchasesUpdated", billingResult, purchasesList);
     } else {
         cc::callJSfunc("onPurchasesUpdated", billingResult, std::vector<cc::Purchase*>());
     }
 }
 
-void JniBillingHelper::onConsumeResponse(JNIEnv* env, jclass clazz, jobject billingResultObj, jstring purchaseToken) {
-    auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
+void GoogleBillingHelper::onConsumeResponse(JNIEnv* env, jclass clazz, jobject billingResultObj, jstring purchaseToken) {
+    auto* billingResult = cc::GoogleBillingHelper::toBillingResult(env, billingResultObj);
     cc::callJSfunc("onConsumeResponse", billingResult, cc::StringUtils::getStringUTFCharsJNI(env, static_cast<jstring>(purchaseToken)));
 }
 
-void JniBillingHelper::onQueryPurchasesResponse(JNIEnv* env, jclass clazz, jobject billingResultObj, jobject purchasesListObj, jint startID) {
-    auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
-    std::vector<cc::Purchase*> purchasesList = cc::JniBillingHelper::toPurchaseList(env, purchasesListObj, startID);
+void GoogleBillingHelper::onQueryPurchasesResponse(JNIEnv* env, jclass clazz, jobject billingResultObj, jobject purchasesListObj, jint startID) {
+    auto* billingResult = cc::GoogleBillingHelper::toBillingResult(env, billingResultObj);
+    std::vector<cc::Purchase*> purchasesList = cc::GoogleBillingHelper::toPurchaseList(env, purchasesListObj, startID);
     cc::callJSfunc("onQueryPurchasesResponse", billingResult, purchasesList);
 }
 
-void JniBillingHelper::onAcknowledgePurchaseResponse(JNIEnv* env, jclass clazz, jobject billingResultObj) {
-    auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
+void GoogleBillingHelper::onAcknowledgePurchaseResponse(JNIEnv* env, jclass clazz, jobject billingResultObj) {
+    auto* billingResult = cc::GoogleBillingHelper::toBillingResult(env, billingResultObj);
     cc::callJSfunc("onAcknowledgePurchaseResponse", billingResult);
 }
 
-void JniBillingHelper::onBillingConfigResponse(JNIEnv* env, jclass clazz, jobject billingResultObj, jobject billingConfigObj) {
-    auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
+void GoogleBillingHelper::onBillingConfigResponse(JNIEnv* env, jclass clazz, jobject billingResultObj, jobject billingConfigObj) {
+    auto* billingResult = cc::GoogleBillingHelper::toBillingResult(env, billingResultObj);
     cc::BillingConfig* billingConfig = nullptr;
     if (billingConfigObj) {
-        billingConfig = cc::JniBillingHelper::toBillingConfig(env, billingConfigObj);
+        billingConfig = cc::GoogleBillingHelper::toBillingConfig(env, billingConfigObj);
     }
     cc::callJSfunc("onBillingConfigResponse", billingResult, billingConfig);
 }
-void JniBillingHelper::onAlternativeBillingOnlyTokenResponse(JNIEnv* env, jclass clazz, jobject billingResultObj, jobject alternativeBillingOnlyReportingDetailsObj) {
-    auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
+void GoogleBillingHelper::onAlternativeBillingOnlyTokenResponse(JNIEnv* env, jclass clazz, jobject billingResultObj, jobject alternativeBillingOnlyReportingDetailsObj) {
+    auto* billingResult = cc::GoogleBillingHelper::toBillingResult(env, billingResultObj);
     cc::AlternativeBillingOnlyReportingDetails* toAlternativeBillingOnlyReporting = nullptr;
     if (alternativeBillingOnlyReportingDetailsObj) {
-        toAlternativeBillingOnlyReporting = cc::JniBillingHelper::toAlternativeBillingOnlyReportingDetails(env, alternativeBillingOnlyReportingDetailsObj);
+        toAlternativeBillingOnlyReporting = cc::GoogleBillingHelper::toAlternativeBillingOnlyReportingDetails(env, alternativeBillingOnlyReportingDetailsObj);
     }
     cc::callJSfunc("onAlternativeBillingOnlyTokenResponse", billingResult, toAlternativeBillingOnlyReporting);
 }
 
-void JniBillingHelper::onExternalOfferReportingDetailsResponse(JNIEnv* env, jclass clazz, jobject billingResultObj, jobject externalOfferReportingDetailsObj) {
-    auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
+void GoogleBillingHelper::onExternalOfferReportingDetailsResponse(JNIEnv* env, jclass clazz, jobject billingResultObj, jobject externalOfferReportingDetailsObj) {
+    auto* billingResult = cc::GoogleBillingHelper::toBillingResult(env, billingResultObj);
     cc::ExternalOfferReportingDetails* externalOfferReportingDetails = nullptr;
     if (externalOfferReportingDetailsObj) {
-        externalOfferReportingDetails = cc::JniBillingHelper::toExternalOfferReportingDetails(env, externalOfferReportingDetailsObj);
+        externalOfferReportingDetails = cc::GoogleBillingHelper::toExternalOfferReportingDetails(env, externalOfferReportingDetailsObj);
     }
     cc::callJSfunc("onExternalOfferReportingDetailsResponse", billingResult, externalOfferReportingDetails);
 }
 
-void JniBillingHelper::onAlternativeBillingOnlyAvailabilityResponse(JNIEnv* env, jclass clazz, jobject billingResultObj) {
-    auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
+void GoogleBillingHelper::onAlternativeBillingOnlyAvailabilityResponse(JNIEnv* env, jclass clazz, jobject billingResultObj) {
+    auto* billingResult = cc::GoogleBillingHelper::toBillingResult(env, billingResultObj);
     cc::callJSfunc("onAlternativeBillingOnlyAvailabilityResponse", billingResult);
 }
 
-void JniBillingHelper::onExternalOfferAvailabilityResponse(JNIEnv* env, jclass clazz, jobject billingResultObj) {
-    auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
+void GoogleBillingHelper::onExternalOfferAvailabilityResponse(JNIEnv* env, jclass clazz, jobject billingResultObj) {
+    auto* billingResult = cc::GoogleBillingHelper::toBillingResult(env, billingResultObj);
     cc::callJSfunc("onExternalOfferAvailabilityResponse", billingResult);
 }
 
-void JniBillingHelper::onAlternativeBillingOnlyInformationDialogResponse(JNIEnv* env, jclass clazz, jobject billingResultObj) {
-    auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
+void GoogleBillingHelper::onAlternativeBillingOnlyInformationDialogResponse(JNIEnv* env, jclass clazz, jobject billingResultObj) {
+    auto* billingResult = cc::GoogleBillingHelper::toBillingResult(env, billingResultObj);
     cc::callJSfunc("onAlternativeBillingOnlyInformationDialogResponse", billingResult);
 }
 
-void JniBillingHelper::onExternalOfferInformationDialogResponse(JNIEnv* env, jclass clazz, jobject billingResultObj) {
-    auto* billingResult = cc::JniBillingHelper::toBillingResult(env, billingResultObj);
+void GoogleBillingHelper::onExternalOfferInformationDialogResponse(JNIEnv* env, jclass clazz, jobject billingResultObj) {
+    auto* billingResult = cc::GoogleBillingHelper::toBillingResult(env, billingResultObj);
     cc::callJSfunc("onExternalOfferInformationDialogResponse", billingResult);
 }
 
-void JniBillingHelper::onInAppMessageResponse(JNIEnv* env, jclass clazz, jobject inAppMessageResultObj) {
-    auto* inAppMessageResult = cc::JniBillingHelper::toInAppMessageResult(env, inAppMessageResultObj);
+void GoogleBillingHelper::onInAppMessageResponse(JNIEnv* env, jclass clazz, jobject inAppMessageResultObj) {
+    auto* inAppMessageResult = cc::GoogleBillingHelper::toInAppMessageResult(env, inAppMessageResultObj);
     cc::callJSfunc("onInAppMessageResponse", inAppMessageResult);
 }
 
-cc::BillingResult* JniBillingHelper::toBillingResult(JNIEnv* env, jobject obj) {
+cc::BillingResult* GoogleBillingHelper::toBillingResult(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
     auto* billingResult = ccnew cc::BillingResult;
     billingResult->debugMessage = callStringMethod(env, clazz, obj, "getDebugMessage");
@@ -359,7 +359,7 @@ cc::BillingResult* JniBillingHelper::toBillingResult(JNIEnv* env, jobject obj) {
     return billingResult;
 }
 
-cc::OneTimePurchaseOfferDetails* JniBillingHelper::toOneTimePurchaseOfferDetails(JNIEnv* env, jobject obj) {
+cc::OneTimePurchaseOfferDetails* GoogleBillingHelper::toOneTimePurchaseOfferDetails(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
     auto oneTimePurchaseOfferDetails = new cc::OneTimePurchaseOfferDetails;
     oneTimePurchaseOfferDetails->formattedPrice = callStringMethod(env, clazz, obj, "getFormattedPrice");
@@ -368,7 +368,7 @@ cc::OneTimePurchaseOfferDetails* JniBillingHelper::toOneTimePurchaseOfferDetails
     return oneTimePurchaseOfferDetails;
 }
 
-cc::InstallmentPlanDetails* JniBillingHelper::toInstallmentPlanDetails(JNIEnv* env, jobject obj) {
+cc::InstallmentPlanDetails* GoogleBillingHelper::toInstallmentPlanDetails(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
     auto* installmentPlanDetails = new cc::InstallmentPlanDetails;
     installmentPlanDetails->installmentPlanCommitmentPaymentsCount = callIntMethod(env, clazz, obj, "getInstallmentPlanCommitmentPaymentsCount");
@@ -376,7 +376,7 @@ cc::InstallmentPlanDetails* JniBillingHelper::toInstallmentPlanDetails(JNIEnv* e
     return installmentPlanDetails;
 }
 
-cc::PricingPhase* JniBillingHelper::toPricingPhase(JNIEnv* env, jobject obj) {
+cc::PricingPhase* GoogleBillingHelper::toPricingPhase(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
 
     auto* pricingPhase = new cc::PricingPhase;
@@ -389,7 +389,7 @@ cc::PricingPhase* JniBillingHelper::toPricingPhase(JNIEnv* env, jobject obj) {
     return pricingPhase;
 }
 
-cc::PricingPhases* JniBillingHelper::toPricingPhases(JNIEnv* env, jobject obj) {
+cc::PricingPhases* GoogleBillingHelper::toPricingPhases(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
 
     auto* pricingPhases = new cc::PricingPhases;
@@ -406,7 +406,7 @@ cc::PricingPhases* JniBillingHelper::toPricingPhases(JNIEnv* env, jobject obj) {
     return pricingPhases;
 }
 
-cc::SubscriptionOfferDetails* JniBillingHelper::toSubscriptionOfferDetails(JNIEnv* env, jobject obj) {
+cc::SubscriptionOfferDetails* GoogleBillingHelper::toSubscriptionOfferDetails(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
     auto* details = ccnew cc::SubscriptionOfferDetails;
     details->basePlanId = callStringMethod(env, clazz, obj,
@@ -434,21 +434,21 @@ cc::SubscriptionOfferDetails* JniBillingHelper::toSubscriptionOfferDetails(JNIEn
     return details;
 }
 
-std::vector<ProductDetails*> JniBillingHelper::toProductDetailList(JNIEnv* env, jobject productListObj, jint startID) {
+std::vector<ProductDetails*> GoogleBillingHelper::toProductDetailList(JNIEnv* env, jobject productListObj, jint startID) {
     jclass clazz = env->GetObjectClass(productListObj);
     jmethodID listGetMethod = env->GetMethodID(clazz, "get", "(I)Ljava/lang/Object;");
     int size = callIntMethod(env, clazz, productListObj, "size");
     std::vector<cc::ProductDetails*> productDetailsList;
     for (int i = 0; i < size; ++i) {
         jobject productDetailObj = env->CallObjectMethod(productListObj, listGetMethod, i);
-        cc::ProductDetails* productDetails = cc::JniBillingHelper::toProductDetail(env, productDetailObj);
+        cc::ProductDetails* productDetails = cc::GoogleBillingHelper::toProductDetail(env, productDetailObj);
         productDetails->_id = startID++;
         productDetailsList.push_back(productDetails);
     }
     return std::move(productDetailsList);
 }
 
-cc::ProductDetails* JniBillingHelper::toProductDetail(JNIEnv* env, jobject productObj) {
+cc::ProductDetails* GoogleBillingHelper::toProductDetail(JNIEnv* env, jobject productObj) {
     jclass clazz = env->GetObjectClass(productObj);
     auto* productDetails = new cc::ProductDetails;
 
@@ -483,7 +483,7 @@ cc::ProductDetails* JniBillingHelper::toProductDetail(JNIEnv* env, jobject produ
     return productDetails;
 }
 
-cc::AccountIdentifiers* JniBillingHelper::toAccountIdentifiers(JNIEnv* env, jobject obj) {
+cc::AccountIdentifiers* GoogleBillingHelper::toAccountIdentifiers(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
     auto* accountIdentifiers = new cc::AccountIdentifiers;
     accountIdentifiers->obfuscatedAccountId = callStringMethod(env, clazz, obj, "getObfuscatedAccountId");
@@ -491,7 +491,7 @@ cc::AccountIdentifiers* JniBillingHelper::toAccountIdentifiers(JNIEnv* env, jobj
     return accountIdentifiers;
 }
 
-cc::PendingPurchaseUpdate* JniBillingHelper::toPendingPurchaseUpdate(JNIEnv* env, jobject obj) {
+cc::PendingPurchaseUpdate* GoogleBillingHelper::toPendingPurchaseUpdate(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
     auto* pendingPurchaseUpdate = new cc::PendingPurchaseUpdate;
     jmethodID methodId = env->GetMethodID(clazz, "getProducts", "()Ljava/util/ArrayList;");
@@ -507,21 +507,21 @@ cc::PendingPurchaseUpdate* JniBillingHelper::toPendingPurchaseUpdate(JNIEnv* env
     return pendingPurchaseUpdate;
 }
 
-std::vector<Purchase*> JniBillingHelper::toPurchaseList(JNIEnv* env, jobject productsListObj, jint startID) {
+std::vector<Purchase*> GoogleBillingHelper::toPurchaseList(JNIEnv* env, jobject productsListObj, jint startID) {
     jclass clazz = env->GetObjectClass(productsListObj);
     jmethodID listGetMethod = env->GetMethodID(clazz, "get", "(I)Ljava/lang/Object;");
     int size = callIntMethod(env, clazz, productsListObj, "size");
     std::vector<cc::Purchase*> purchases;
     for (int i = 0; i < size; ++i) {
         jobject purchaseObj = env->CallObjectMethod(productsListObj, listGetMethod, i);
-        cc::Purchase* purchase = cc::JniBillingHelper::toPurchase(env, purchaseObj);
+        cc::Purchase* purchase = cc::GoogleBillingHelper::toPurchase(env, purchaseObj);
         purchase->_id = startID++;
         purchases.push_back(purchase);
     }
     return std::move(purchases);
 }
 
-cc::Purchase* JniBillingHelper::toPurchase(JNIEnv* env, jobject purchaseObj) {
+cc::Purchase* GoogleBillingHelper::toPurchase(JNIEnv* env, jobject purchaseObj) {
     jclass clazz = env->GetObjectClass(purchaseObj);
     auto* purchase = new cc::Purchase;
 
@@ -564,28 +564,28 @@ cc::Purchase* JniBillingHelper::toPurchase(JNIEnv* env, jobject purchaseObj) {
     return purchase;
 }
 
-cc::BillingConfig* JniBillingHelper::toBillingConfig(JNIEnv* env, jobject obj) {
+cc::BillingConfig* GoogleBillingHelper::toBillingConfig(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
     auto* billingConfig = new cc::BillingConfig;
     billingConfig->countryCode = callStringMethod(env, clazz, obj, "getCountryCode");
     return billingConfig;
 }
 
-cc::AlternativeBillingOnlyReportingDetails* JniBillingHelper::toAlternativeBillingOnlyReportingDetails(JNIEnv* env, jobject obj) {
+cc::AlternativeBillingOnlyReportingDetails* GoogleBillingHelper::toAlternativeBillingOnlyReportingDetails(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
     auto* alternativeBillingOnlyReportingDetails = new cc::AlternativeBillingOnlyReportingDetails;
     alternativeBillingOnlyReportingDetails->externalTransactionToken = callStringMethod(env, clazz, obj, "getExternalTransactionToken");
     return alternativeBillingOnlyReportingDetails;
 }
 
-cc::ExternalOfferReportingDetails* JniBillingHelper::toExternalOfferReportingDetails(JNIEnv* env, jobject obj) {
+cc::ExternalOfferReportingDetails* GoogleBillingHelper::toExternalOfferReportingDetails(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
     auto* externalOfferReportingDetails = new cc::ExternalOfferReportingDetails;
     externalOfferReportingDetails->externalTransactionToken = callStringMethod(env, clazz, obj, "getExternalTransactionToken");
     return externalOfferReportingDetails;
 }
 
-cc::InAppMessageResult* JniBillingHelper::toInAppMessageResult(JNIEnv* env, jobject obj) {
+cc::InAppMessageResult* GoogleBillingHelper::toInAppMessageResult(JNIEnv* env, jobject obj) {
     jclass clazz = env->GetObjectClass(obj);
     auto* inAppMessageResult = new cc::InAppMessageResult;
     inAppMessageResult->responseCode = callIntMethod(env, clazz, obj, "getResponseCode");

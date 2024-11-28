@@ -192,7 +192,7 @@ bool jsb_register_all_modules() {
     se->addRegisterCallback(register_all_socketio);
 #endif
 
-#if CC_USE_GOOGLE_PLAY_BILLING
+#if CC_USE_GOOGLE_BILLING
     se->addRegisterCallback(jsb_register_all_billing);
 #endif
 

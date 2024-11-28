@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
  ****************************************************************************/
 
-package com.cocos.billing;
+package google.billing;
 
 import android.annotation.SuppressLint;
 
@@ -38,9 +38,9 @@ import com.android.billingclient.api.ProductDetails;
 import com.android.billingclient.api.Purchase;
 import java.util.List;
 import com.cocos.lib.GlobalObject;
-import com.cocos.billing.CocosBilling;
+import google.billing.GoogleBilling;
 
-public class CocosBillingHelper {
+public class GoogleBillingHelper {
     public static native void onBillingSetupFinished(@NonNull BillingResult billingResult);
     public static native void onBillingServiceDisconnected();
     public static native void onProductDetailsResponse(@NonNull BillingResult billingResult, @NonNull List<ProductDetails> productDetailsList, int startID);
@@ -64,11 +64,11 @@ public class CocosBillingHelper {
     public static native void onInAppMessageResponse(@NonNull InAppMessageResult inAppMessageResult);
 
     @SuppressLint("StaticFieldLeak")
-    private static CocosBilling instance;
+    private static GoogleBilling instance;
 
-    public static CocosBilling getInstance() {
+    public static GoogleBilling getInstance() {
         if (instance == null) {
-            instance = new CocosBilling();
+            instance = new GoogleBilling();
         }
         return instance;
     }

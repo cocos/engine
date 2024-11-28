@@ -48,7 +48,7 @@ cc_set_if_undefined(USE_WEBP                 ON)
 cc_set_if_undefined(NET_MODE                  0) # 0 is client
 cc_set_if_undefined(USE_REMOTE_LOG           OFF)
 cc_set_if_undefined(USE_ADPF                 OFF)
-cc_set_if_undefined(USE_GOOGLE_PLAY_BILLING  OFF)
+cc_set_if_undefined(USE_GOOGLE_BILLING  OFF)
 
 if(ANDROID AND NOT DEFINED USE_CCACHE)
     if("$ENV{COCOS_USE_CCACHE}" STREQUAL "1")
@@ -760,12 +760,12 @@ elseif(ANDROID OR OHOS)
     endif()
 endif()
 
-if(USE_GOOGLE_PLAY_BILLING)
+if(USE_GOOGLE_BILLING)
     cocos_source_files(
-        cocos/platform/android/modules/google_play/billing/billing.cpp
-        cocos/platform/android/modules/google_play/billing/billing.h
-        cocos/platform/android/modules/google_play/billing/JniBillingHelper.cpp
-        cocos/platform/android/modules/google_play/billing/JniBillingHelper.h
+        vendor/google/billing/GoogleBilling.cpp
+        vendor/google/billing/GoogleBilling.h
+        vendor/google/billing/GoogleBillingHelper.cpp
+        vendor/google/billing/GoogleBillingHelper.h
     )
 endif()
 
@@ -1194,8 +1194,8 @@ elseif(LINUX)
     )
 endif()
 
-if(USE_GOOGLE_PLAY_BILLING)
-    list(APPEND CC_JNI_SRC_FILES ${CWD}/cocos/platform/java/jni/JniCocosBilling.cpp)
+if(USE_GOOGLE_BILLING)
+    list(APPEND CC_JNI_SRC_FILES ${CWD}/cocos/platform/java/jni/JniGoogleBillingHandler.cpp)
 endif()
 
 ##### renderer
@@ -2608,9 +2608,9 @@ if(USE_ADPF)
     )
 endif()
 
-if(USE_GOOGLE_PLAY_BILLING)
+if(USE_GOOGLE_BILLING)
     cocos_source_files(
-        cocos/bindings/manual/jsb_billing.cpp
+        cocos/bindings/manual/jsb_google_billing.cpp
     )
    
 endif()
@@ -3147,7 +3147,7 @@ function(cc_apply_definations target)
         $<$<BOOL:${USE_SE_JSVM}>:SCRIPT_ENGINE_TYPE=6>
         $<$<OR:$<CONFIG:Debug>,$<BOOL:${CC_DEBUG_FORCE}>>:CC_DEBUG=1>
         $<IF:$<BOOL:${USE_APDF}>,CC_USE_APDF=1,CC_USE_USE_APDF=0>
-        $<IF:$<BOOL:${USE_GOOGLE_PLAY_BILLING}>,CC_USE_GOOGLE_PLAY_BILLING=1,CC_USE_GOOGLE_PLAY_BILLING=0>
+        $<IF:$<BOOL:${USE_GOOGLE_BILLING}>,CC_USE_GOOGLE_BILLING=1,CC_USE_GOOGLE_BILLING=0>
     )
 endfunction()
 

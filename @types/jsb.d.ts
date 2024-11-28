@@ -717,7 +717,7 @@ declare namespace jsb {
      * @en Main interface for communication between the Google Play library and user application code.
      * @zh 产品 ID。
      */
-    const billing: {
+    const googleBilling: {
         /**
          * @en Starts up BillingClient setup process asynchronously.
          * @zh 异步启动 BillingClient 设置过程。

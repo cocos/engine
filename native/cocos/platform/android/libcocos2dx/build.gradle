@@ -21,7 +21,7 @@ android {
         manifest.srcFile "AndroidManifest.xml"
     }
 
-    if(project.hasProperty("PROP_ENABLE_BILLING") && project.PROP_ENABLE_BILLING.toBoolean()) {
+    if(project.hasProperty("PROP_ENABLE_GOOGLE_BILLING") && project.PROP_ENABLE_GOOGLE_BILLING.toBoolean()) {
         sourceSets.main.java.srcDirs += ["../java/vendor"]
     }
     buildDir = new File(rootProject.buildDir, project.name)
@@ -40,7 +40,7 @@ android {
 
 dependencies {
     api fileTree(include: ['*.jar'], dir: '../java/libs')
-    if(project.hasProperty("PROP_ENABLE_BILLING") && project.PROP_ENABLE_BILLING.toBoolean()) {
+    if(project.hasProperty("PROP_ENABLE_GOOGLE_BILLING") && project.PROP_ENABLE_GOOGLE_BILLING.toBoolean()) {
         implementation "com.android.billingclient:billing:7.1.0"
     }
 }

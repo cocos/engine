@@ -23,4 +23,4 @@
  THE SOFTWARE.
  */
 
-export * from '../vendor/google/play';
+export * from '../vendor/google';
