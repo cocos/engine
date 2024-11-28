@@ -1,4 +1,7 @@
-globalThis.window = globalThis;
+
+if (!globalThis.window) {
+    globalThis.window = globalThis;
+}
 globalThis.self = $global;
 
 globalThis.__taobaoRequire = (urlNoSchema) => {
@@ -71,7 +74,6 @@ function loadCC() {
 
     function onApplicationCreated(application) {
         return System.import('cc').then((cc) => {
-            globalThis.cc = cc;
             require('./engine-adapter');
             return application.init(cc);
         }).then(() => { return application.start(); });

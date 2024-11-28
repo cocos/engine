@@ -33,7 +33,6 @@ import { Texture } from '../../gfx';
 import { Camera, Model } from '../../render-scene/scene';
 import { ProbeType, ReflectionProbe } from '../../render-scene/scene/reflection-probe';
 import { Layers } from '../../scene-graph/layers';
-import type { Director } from '../../game/director';
 
 const REFLECTION_PROBE_DEFAULT_MASK = Layers.makeMaskExclude([Layers.BitMask.UI_2D, Layers.BitMask.UI_3D, Layers.BitMask.GIZMOS, Layers.BitMask.EDITOR,
     Layers.BitMask.SCENE_GIZMO, Layers.BitMask.PROFILER, Layers.Enum.IGNORE_RAYCAST]);

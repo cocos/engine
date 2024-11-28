@@ -11,7 +11,9 @@ const features = [];
 files.forEach(file => {
     const filePath = ps.join(exportsDir, file);
     const feature = ps.parse(ps.basename(filePath)).name;
-    features.push(feature);
+    if (feature !== 'vendor') {
+        features.push(feature);
+    }
 });
 
 console.log(`features: [ ${features.join(', ')} ]`);

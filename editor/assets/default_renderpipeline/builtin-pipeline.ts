@@ -1211,7 +1211,7 @@ export class BuiltinToneMappingPassBuilder implements rendering.PipelinePassBuil
         assert(cameraConfigs.remainingPasses >= 0);
         if (cameraConfigs.remainingPasses === 0) {
             return this._addCopyAndTonemapPass(ppl, pplConfigs, cameraConfigs,
-                cameraConfigs.width, cameraConfigs.height,
+                cameraConfigs.nativeWidth, cameraConfigs.nativeHeight,
                 context.colorName, cameraConfigs.colorName);
         } else {
             const id = cameraConfigs.renderWindowId;
