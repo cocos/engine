@@ -3146,7 +3146,7 @@ function(cc_apply_definations target)
         $<$<BOOL:${USE_SE_NAPI}>:SCRIPT_ENGINE_TYPE=5>
         $<$<BOOL:${USE_SE_JSVM}>:SCRIPT_ENGINE_TYPE=6>
         $<$<OR:$<CONFIG:Debug>,$<BOOL:${CC_DEBUG_FORCE}>>:CC_DEBUG=1>
-        $<IF:$<BOOL:${USE_APDF}>,CC_USE_APDF=1,CC_USE_USE_APDF=0>
+        $<IF:$<BOOL:${USE_APDF}>,CC_USE_APDF=1,CC_USE_APDF=0>
         $<IF:$<BOOL:${USE_GOOGLE_BILLING}>,CC_USE_GOOGLE_BILLING=1,CC_USE_GOOGLE_BILLING=0>
     )
 endfunction()

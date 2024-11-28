@@ -74,11 +74,11 @@ public class GoogleBillingHelper {
     }
 
     public static void removeProductDetails(int productDetailsID) {
-        instance.removeProductDetails(productDetailsID);
+        getInstance().removeProductDetails(productDetailsID);
     }
 
     public static void removePurchase(int purchaseID) {
-        instance.removeProductDetails(purchaseID);
+        getInstance().removeProductDetails(purchaseID);
     }
 
     public static void startConnection() {
