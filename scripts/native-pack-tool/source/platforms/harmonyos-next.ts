@@ -24,7 +24,7 @@ export interface OHOSParam {
     apiLevel: number;
 }
 
-export class OpenHarmonyPackTool extends NativePackTool {
+export class HarmonyOSNextPackTool extends NativePackTool {
     params!: CocosParams<OHOSParam>;
 
     initEnv() {
