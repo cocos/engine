@@ -528,8 +528,8 @@ export class WebGPUDevice extends Device {
         const device: GPUDevice = this._device as GPUDevice;
 
         const adapterInfo = this._adapter!.info;
-        this._vendor$ = adapterInfo.vendor;
-        this._renderer$ = adapterInfo.device;
+        this._vendor = adapterInfo.vendor;
+        this._renderer = adapterInfo.device;
         const description = adapterInfo.description;
 
         const limits =  this._adapter!.limits;
