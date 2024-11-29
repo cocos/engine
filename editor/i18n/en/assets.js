@@ -16,6 +16,11 @@ module.exports = {
             animation: 'Animation',
             loop: 'Loop',
             timeScale: 'Rate',
+            premultipliedAlpha: 'Premultiplied Alpha',
+            useTint: 'Use Tint',
+            debugSlots: 'Debug Slots',
+            debugBones: 'Debug Bones',
+            debugMesh: 'Debug Mesh',
         },
     },
 

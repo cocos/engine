@@ -16,6 +16,11 @@ module.exports = {
             animation: '动画',
             loop: '循环',
             timeScale: '速率',
+            premultipliedAlpha: 'Premultiplied Alpha',
+            useTint: 'Use Tint',
+            debugSlots: 'Debug Slots',
+            debugBones: 'Debug Bones',
+            debugMesh: 'Debug Mesh',
         },
     },
 
