@@ -118,13 +118,11 @@ RenderScene::~RenderScene() = default;
 void RenderScene::activate() {
     const auto *sceneData = Root::getInstance()->getPipeline()->getPipelineSceneData();
     _octree = sceneData->getOctree();
-    _rayTracing->activate();
 }
 
 bool RenderScene::initialize(const IRenderSceneInfo &info) {
     _name = info.name;
     _lodStateCache = ccnew LodStateCache(this);
-    _rayTracing = ccnew raytracing::RayTracing(this);
     return true;
 }
 

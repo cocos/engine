@@ -131,7 +131,6 @@ private:
     uint64_t _modelId{0};
     IntrusivePtr<DirectionalLight> _mainLight;
     IntrusivePtr<LodStateCache> _lodStateCache;
-    IntrusivePtr<raytracing::RayTracing> _rayTracing;
     ccstd::vector<IntrusivePtr<Model>> _models;
     ccstd::vector<IntrusivePtr<Camera>> _cameras;
     ccstd::vector<IntrusivePtr<DirectionalLight>> _directionalLights;
