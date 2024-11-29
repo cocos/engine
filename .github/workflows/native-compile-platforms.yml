@@ -327,7 +327,7 @@ jobs:
           NATIVE_ROOT=$GITHUB_WORKSPACE/native
           echo "Compiling Openharmony ... "
 
-          cd $GITHUB_WORKSPACE/templates/openharmony
+          cd $GITHUB_WORKSPACE/templates/harmonyos-next
 
           echo "message(STATUS \"hook before \${CC_TARGET_NAME}\")" >> Pre-Sample.cmake
           echo "message(STATUS \"hook after \${CC_TARGET_NAME}\")" >> Post-Sample.cmake
@@ -350,7 +350,7 @@ jobs:
 
           mkdir -p build-oh/assets
 
-          ASSET_DIR=$GITHUB_WORKSPACE/templates/openharmony/build-oh
+          ASSET_DIR=$GITHUB_WORKSPACE/templates/harmonyos-next/build-oh
 
           echo "=============== HACK ./entry/build-profile.json5 ==============="
           sed -i "s@[^-]DRES_DIR[^=]@$ASSET_DIR@g" ./entry/build-profile.json5
