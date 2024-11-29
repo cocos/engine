@@ -176,14 +176,8 @@ class Billing {
      * @param productType @zh 产品类型。 @en product type.
      *
      */
-    public queryProductDetailsParams (productId: string[] | string, productType: google.ProductType): void {
-        if (productId instanceof Array) {
-            jsb.googleBilling?.queryProductDetailsParams(productId, productType);
-        } else {
-            const productIdList: string[] = [];
-            productIdList.push(productId);
-            jsb.googleBilling?.queryProductDetailsParams(productIdList, productType);
-        }
+    public queryProductDetailsParams (productId: string[], productType: google.ProductType): void {
+        jsb.googleBilling?.queryProductDetailsParams(productId, productType);
     }
 
     /**
@@ -192,14 +186,8 @@ class Billing {
      * @param productDetails @zh 产品详情。 @en product details.
      * @param selectedOfferToken @zh 选择提供的token。 @en selected offer token.
      */
-    public launchBillingFlow (productDetails: google.ProductDetails[] | google.ProductDetails, selectedOfferToken: string | null): void {
-        if (productDetails instanceof Array) {
-            jsb.googleBilling?.launchBillingFlow(productDetails, selectedOfferToken);
-        } else {
-            const productDetailsList: google.ProductDetails[] = [];
-            productDetailsList.push(productDetails);
-            jsb.googleBilling?.launchBillingFlow(productDetailsList, selectedOfferToken);
-        }
+    public launchBillingFlow (productDetails: google.ProductDetails[], selectedOfferToken: string | null): void {
+        jsb.googleBilling?.launchBillingFlow(productDetails, selectedOfferToken);
     }
 
     /**
@@ -207,14 +195,8 @@ class Billing {
      * @zh 消费指定的应用内产品。
      * @param purchase @zh 已经购买的产品。 @en Purchased Products.
      */
-    public consumePurchases (purchase: google.Purchase[] | google.Purchase): void {
-        if (purchase instanceof Array) {
-            jsb.googleBilling?.consumePurchases(purchase);
-        } else {
-            const purchaseList: google.Purchase[] = [];
-            purchaseList.push(purchase);
-            jsb.googleBilling?.consumePurchases(purchaseList);
-        }
+    public consumePurchases (purchase: google.Purchase[]): void {
+        jsb.googleBilling?.consumePurchases(purchase);
     }
 
     /**
@@ -222,14 +204,8 @@ class Billing {
      * @zh 确认应用内购买。
      * @param purchase @zh 已经购买的产品。 @en Purchased Products.
      */
-    public acknowledgePurchase (purchase: google.Purchase[] | google.Purchase): void {
-        if (purchase instanceof Array) {
-            jsb.googleBilling?.acknowledgePurchase(purchase);
-        } else {
-            const purchaseList: google.Purchase[] = [];
-            purchaseList.push(purchase);
-            jsb.googleBilling?.acknowledgePurchase(purchaseList);
-        }
+    public acknowledgePurchase (purchase: google.Purchase[]): void {
+        jsb.googleBilling?.acknowledgePurchase(purchase);
     }
 
     /**

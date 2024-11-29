@@ -160,7 +160,7 @@
             "dependentModules": ["2d"]
         },
         "vendor": {
-            "modules": ["vendor"]
+            "modules": ["vendor-google"]
         },
         "spine": {
             "modules": ["spine"],

@@ -318,7 +318,7 @@
             "description": "i18n:ENGINE.features.vendor.description",
             "enginePlugin": false,
             "isNativeModule": true,
-            "cmakeConfig": "USE_GOOGLE_BILLING",
+            "cmakeConfig": "USE_VENDOR",
             "hidden": true
         },
         "spine": {
