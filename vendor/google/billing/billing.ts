@@ -28,7 +28,7 @@ interface BillingEventMap {
     [google.BillingEventType.BILLING_SETUP_FINISHED]: (result: google.BillingResult) => void,
     [google.BillingEventType.BILLING_SERVICE_DISCONNECTED]: () => void,
     [google.BillingEventType.PRODUCT_DETAILS_RESPONSE]:
-        (result: google.BillingResult, productDetailsList: google.ProductDetails[]) => void,
+    (result: google.BillingResult, productDetailsList: google.ProductDetails[]) => void,
     [google.BillingEventType.PURCHASES_UPDATED]: (result: google.BillingResult, purchases: google.Purchase[]) => void,
     [google.BillingEventType.CONSUME_RESPONSE]: (result: google.BillingResult, purchaseToken: string) => void,
     [google.BillingEventType.ACKNOWLEDGE_PURCHASES_RESPONSE]: (result: google.BillingResult) => void
@@ -131,8 +131,16 @@ class Billing {
      * @en Starts up BillingClient setup process asynchronously.
      * @zh 异步启动 BillingClient 设置过程。
      */
-    public startConnection (): void {
-        jsb.googleBilling?.startConnection();
+    public startConnection (): Promise<google.BillingResult> {
+        return new Promise((resolve, reject) => {
+            this.once(google.BillingEventType.BILLING_SETUP_FINISHED, (result: google.BillingResult): void => {
+                resolve(result);
+            });
+            this.once(google.BillingEventType.BILLING_SERVICE_DISCONNECTED, (): void => {
+                reject();
+            });
+            jsb.googleBilling?.startConnection();
+        });
     }
 
     /**
@@ -176,8 +184,20 @@ class Billing {
      * @param productType @zh 产品类型。 @en product type.
      *
      */
-    public queryProductDetailsParams (productId: string[], productType: google.ProductType): void {
-        jsb.googleBilling?.queryProductDetailsParams(productId, productType);
+    public queryProductDetailsParams (productId: string[], productType: google.ProductType): Promise<google.ProductDetails[]> {
+        return new Promise((resolve, reject) => {
+            this.once(
+                google.BillingEventType.PRODUCT_DETAILS_RESPONSE,
+                (result: google.BillingResult, productDetailsList: google.ProductDetails[]): void => {
+                    if (result.responseCode === google.BillingResponseCode.OK) {
+                        resolve(productDetailsList);
+                    } else {
+                        reject(result);
+                    }
+                },
+            );
+            jsb.googleBilling?.queryProductDetailsParams(productId, productType);
+        });
     }
 
     /**
@@ -186,8 +206,20 @@ class Billing {
      * @param productDetails @zh 产品详情。 @en product details.
      * @param selectedOfferToken @zh 选择提供的token。 @en selected offer token.
      */
-    public launchBillingFlow (productDetails: google.ProductDetails[], selectedOfferToken: string | null): void {
-        jsb.googleBilling?.launchBillingFlow(productDetails, selectedOfferToken);
+    public launchBillingFlow (productDetails: google.ProductDetails[], selectedOfferToken: string | null): Promise<google.Purchase[]> {
+        return new Promise((resolve, reject) => {
+            this.once(
+                google.BillingEventType.PURCHASES_UPDATED,
+                (result: google.BillingResult, purchaseList: google.Purchase[]): void => {
+                    if (result.responseCode === google.BillingResponseCode.OK) {
+                        resolve(purchaseList);
+                    } else {
+                        reject(result);
+                    }
+                },
+            );
+            jsb.googleBilling?.launchBillingFlow(productDetails, selectedOfferToken);
+        });
     }
 
     /**
@@ -195,8 +227,20 @@ class Billing {
      * @zh 消费指定的应用内产品。
      * @param purchase @zh 已经购买的产品。 @en Purchased Products.
      */
-    public consumePurchases (purchase: google.Purchase[]): void {
-        jsb.googleBilling?.consumePurchases(purchase);
+    public consumePurchases (purchase: google.Purchase[]): Promise<string> {
+        return new Promise((resolve, reject) => {
+            this.once(
+                google.BillingEventType.CONSUME_RESPONSE,
+                (result: google.BillingResult, token: string): void => {
+                    if (result.responseCode === google.BillingResponseCode.OK) {
+                        resolve(token);
+                    } else {
+                        reject(result);
+                    }
+                },
+            );
+            jsb.googleBilling?.consumePurchases(purchase);
+        });
     }
 
     /**
@@ -204,8 +248,20 @@ class Billing {
      * @zh 确认应用内购买。
      * @param purchase @zh 已经购买的产品。 @en Purchased Products.
      */
-    public acknowledgePurchase (purchase: google.Purchase[]): void {
-        jsb.googleBilling?.acknowledgePurchase(purchase);
+    public acknowledgePurchase (purchase: google.Purchase[]): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.once(
+                google.BillingEventType.ACKNOWLEDGE_PURCHASES_RESPONSE,
+                (result: google.BillingResult): void => {
+                    if (result.responseCode === google.BillingResponseCode.OK) {
+                        resolve();
+                    } else {
+                        reject(result);
+                    }
+                },
+            );
+            jsb.googleBilling?.acknowledgePurchase(purchase);
+        });
     }
 
     /**
@@ -213,16 +269,40 @@ class Billing {
      * @zh 返回您应用内当前拥有的购买商品的购买详情。
      * @param productType @zh 产品类型 @en Product type.
      */
-    public queryPurchasesAsync (productType: google.ProductType): void {
-        jsb.googleBilling?.queryPurchasesAsync(productType);
+    public queryPurchasesAsync (productType: google.ProductType): Promise<google.Purchase[]> {
+        return new Promise((resolve, reject) => {
+            this.once(
+                google.BillingEventType.QUERY_PURCHASES_RESPONSE,
+                (result: google.BillingResult, purchaseList: google.Purchase[]): void => {
+                    if (result.responseCode === google.BillingResponseCode.OK) {
+                        resolve(purchaseList);
+                    } else {
+                        reject(result);
+                    }
+                },
+            );
+            jsb.googleBilling?.queryPurchasesAsync(productType);
+        });
     }
 
     /**
      * @en Gets the billing config, which stores configuration used to perform billing operations.
      * @zh 获取计费配置，其中存储用于执行计费操作的配置。
      */
-    public getBillingConfigAsync (): void {
-        jsb.googleBilling?.getBillingConfigAsync();
+    public getBillingConfigAsync (): Promise<google.BillingConfig> {
+        return new Promise((resolve, reject) => {
+            this.once(
+                google.BillingEventType.BILLING_CONFIG_RESPONSE,
+                (result: google.BillingResult, billingConfig: google.BillingConfig): void => {
+                    if (result.responseCode === google.BillingResponseCode.OK) {
+                        resolve(billingConfig);
+                    } else {
+                        reject(result);
+                    }
+                },
+            );
+            jsb.googleBilling?.getBillingConfigAsync();
+        });
     }
 
     /**
@@ -230,32 +310,80 @@ class Billing {
      *     via alternative billing without user choice to use Google Play billing.
      * @zh 创建仅限替代结算的购买详情，可用于报告通过替代结算进行的交易，而无需用户选择使用 Google Play 结算。
      */
-    public createAlternativeBillingOnlyReportingDetailsAsync (): void {
-        jsb.googleBilling?.createAlternativeBillingOnlyReportingDetailsAsync();
+    public createAlternativeBillingOnlyReportingDetailsAsync (): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.once(
+                google.BillingEventType.ALTERNATIVE_BILLING_ONLY_TOKEN_RESPONSE,
+                (result: google.BillingResult): void => {
+                    if (result.responseCode === google.BillingResponseCode.OK) {
+                        resolve();
+                    } else {
+                        reject(result);
+                    }
+                },
+            );
+            jsb.googleBilling?.createAlternativeBillingOnlyReportingDetailsAsync();
+        });
     }
 
     /**
      * @en Checks the availability of offering alternative billing without user choice to use Google Play billing.
      * @zh 检查是否可以提供替代结算方式，而无需用户选择使用 Google Play 结算方式。
      */
-    public isAlternativeBillingOnlyAvailableAsync (): void {
-        jsb.googleBilling?.isAlternativeBillingOnlyAvailableAsync();
+    public isAlternativeBillingOnlyAvailableAsync (): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.once(
+                google.BillingEventType.EXTERNAL_OFFER_REPORTING_DETAILS_RESPONSE,
+                (result: google.BillingResult): void => {
+                    if (result.responseCode === google.BillingResponseCode.OK) {
+                        resolve();
+                    } else {
+                        reject(result);
+                    }
+                },
+            );
+            jsb.googleBilling?.isAlternativeBillingOnlyAvailableAsync();
+        });
     }
 
     /**
      * @en Creates purchase details that can be used to report a transaction made via external offer.
      * @zh 创建可用于报告通过外部报价进行的交易的购买详情。
      */
-    public createExternalOfferReportingDetailsAsync (): void {
-        jsb.googleBilling?.createExternalOfferReportingDetailsAsync();
+    public createExternalOfferReportingDetailsAsync (): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.once(
+                google.BillingEventType.EXTERNAL_OFFER_REPORTING_DETAILS_RESPONSE,
+                (result: google.BillingResult): void => {
+                    if (result.responseCode === google.BillingResponseCode.OK) {
+                        resolve();
+                    } else {
+                        reject(result);
+                    }
+                },
+            );
+            jsb.googleBilling?.createExternalOfferReportingDetailsAsync();
+        });
     }
 
     /**
      * @en Checks the availability of providing external offer.
      * @zh 检查提供外部报价的可用性。
      */
-    public isExternalOfferAvailableAsync (): void {
-        jsb.googleBilling?.isExternalOfferAvailableAsync();
+    public isExternalOfferAvailableAsync (): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.once(
+                google.BillingEventType.EXTERNAL_OFFER_AVAILABILITY_RESPONSE,
+                (result: google.BillingResult): void => {
+                    if (result.responseCode === google.BillingResponseCode.OK) {
+                        resolve();
+                    } else {
+                        reject(result);
+                    }
+                },
+            );
+            jsb.googleBilling?.isExternalOfferAvailableAsync();
+        });
     }
 
     /**
@@ -307,15 +435,15 @@ class Billing {
         return null;
     }
 
-    public on<K extends keyof BillingEventMap> (type: K, callback: BillingEventMap[K], target?: unknown): BillingEventMap[K] {
+    private on<K extends keyof BillingEventMap> (type: K, callback: BillingEventMap[K], target?: unknown): BillingEventMap[K] {
         this._eventTarget.on(type, callback, target);
         return callback;
     }
-    public once<K extends keyof BillingEventMap> (type: K, callback: BillingEventMap[K], target?: unknown): BillingEventMap[K] {
+    private once<K extends keyof BillingEventMap> (type: K, callback: BillingEventMap[K], target?: unknown): BillingEventMap[K] {
         this._eventTarget.once(type, callback, target);
         return callback;
     }
-    public off<K extends keyof BillingEventMap> (eventType: K, callback?: BillingEventMap[K], target?: any): void {
+    private off<K extends keyof BillingEventMap> (eventType: K, callback?: BillingEventMap[K], target?: any): void {
         this._eventTarget.off(eventType, callback, target);
     }
 }
@@ -816,7 +944,6 @@ export namespace google {
     export type AlternativeBillingOnlyReportingDetails = jsb.AlternativeBillingOnlyReportingDetails;
     export type ExternalOfferReportingDetails = jsb.ExternalOfferReportingDetails;
     export type InAppMessageResult = jsb.InAppMessageResult;
-
     /**
      * @en
      * Interface for Google Play blling module.

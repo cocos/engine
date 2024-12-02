@@ -372,7 +372,7 @@ declare namespace jsb {
          * @en Code returned in In-app Billing API calls.
          * @zh 应用内结算 API 调用中返回的响应代码。
          */
-        readonly responseCode: string;
+        readonly responseCode: number;
         readonly toStr: string;
     }
 
