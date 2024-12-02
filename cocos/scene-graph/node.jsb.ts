@@ -1171,6 +1171,14 @@ Object.defineProperty(nodeProto, 'scene', {
     }
 });
 
+Object.defineProperty(nodeProto, 'id', {
+    configurable: true,
+    enumerable: true,
+    set(id) {
+        this._id = id;
+    }
+});
+
 nodeProto.rotate = function (rot: Quat, ns?: NodeSpace): void {
     _tempFloatArray[1] = rot.x;
     _tempFloatArray[2] = rot.y;
