@@ -851,29 +851,33 @@ export class Tween<T extends object = any> {
         return action;
     }
 
-    private static readonly _tmp_args: FiniteTimeAction[] = [];
+    private static readonly _tmpArgs: FiniteTimeAction[] = [];
 
     private static _tweenToActions<U extends object = any> (args: Tween<U>[]): void {
-        const tmp_args = Tween._tmp_args;
-        tmp_args.length = 0;
+        const tmpArgs = Tween._tmpArgs;
+        tmpArgs.length = 0;
         for (let l = args.length, i = 0; i < l; i++) {
             const t = args[i];
             const action = t._union(true);
             if (action) {
                 action.setSpeed(t._timeScale);
-                tmp_args.push(action);
+                tmpArgs.push(action);
             }
         }
     }
 
     private static _wrappedSequence<U extends object = any> (args: Tween<U>[]): Sequence | null {
         Tween._tweenToActions(args);
-        return sequence(Tween._tmp_args);
+        const ret = sequence(Tween._tmpArgs);
+        this._tmpArgs.length = 0;
+        return ret;
     }
 
     private static _wrappedParallel<U extends object = any> (args: Tween<U>[]): Spawn | null {
         Tween._tweenToActions(args);
-        return spawn(Tween._tmp_args);
+        const ret = spawn(Tween._tmpArgs);
+        this._tmpArgs.length = 0;
+        return ret;
     }
 }
 legacyCC.Tween = Tween;
