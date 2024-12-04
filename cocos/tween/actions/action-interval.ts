@@ -355,8 +355,12 @@ export class Sequence extends ActionInterval {
         if (this._actions.length < 2) {
             return;
         }
-        this._actions[1]._owner = owner;
         const actionOne = this._actions[0];
+        const actionTwo = this._actions[1];
+
+        if (!actionTwo._owner) {
+            actionTwo._owner = owner;
+        }
         if (actionOne instanceof Sequence || actionOne instanceof Spawn) {
             actionOne.updateOwner(owner);
         } else if (!actionOne._owner) { // action's owner should never be changed, so only set owner when it's not set yet.
@@ -837,7 +841,9 @@ export class Spawn extends ActionInterval {
         if (!this._one || !this._two) {
             return;
         }
-        this._two._owner = owner;
+        if (!this._two._owner) {
+            this._two._owner = owner;
+        }
         const one = this._one;
         if (one instanceof Spawn || one instanceof Sequence) {
             one.updateOwner(owner);
