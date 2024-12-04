@@ -72,7 +72,7 @@ export abstract class ActionInstant extends FiniteTimeAction {
  */
 export class Show<T extends Node> extends ActionInstant {
     update (_dt: number): void {
-        const target = (this.workerTarget ?? this.target) as T;
+        const target = this._getWorkerTarget<T>();
         if (!target) return;
         const _renderComps = target.getComponentsInChildren(Renderer);
         for (let i = 0; i < _renderComps.length; ++i) {
@@ -112,7 +112,7 @@ export function show<T extends Node> (): Show<T> {
  */
 export class Hide<T extends Node> extends ActionInstant {
     update (_dt: number): void {
-        const target = (this.workerTarget ?? this.target) as T;
+        const target = this._getWorkerTarget<T>();
         if (!target) return;
         const _renderComps = target.getComponentsInChildren(Renderer);
         for (let i = 0; i < _renderComps.length; ++i) {
@@ -152,7 +152,7 @@ export function hide<T extends Node> (): Hide<T> {
  */
 export class ToggleVisibility<T extends Node> extends ActionInstant {
     update (_dt: number): void {
-        const target = (this.workerTarget ?? this.target) as T;
+        const target = this._getWorkerTarget<T>();
         if (!target) return;
         const _renderComps = target.getComponentsInChildren(Renderer);
         for (let i = 0; i < _renderComps.length; ++i) {
@@ -204,7 +204,7 @@ export class RemoveSelf<T extends Node> extends ActionInstant {
     }
 
     update (_dt: number): void {
-        const target = (this.workerTarget ?? this.target) as T;
+        const target = this._getWorkerTarget<T>();
         if (!target) return;
         target.removeFromParent();
         if (this._isNeedCleanUp) {
@@ -302,7 +302,7 @@ export class CallFunc<CallbackThis, Target, Data> extends ActionInstant {
      */
     execute (): void {
         if (this._callback) {
-            const target = (this.workerTarget ?? this.target) as Target;
+            const target = this._getWorkerTarget() as Target;
             this._callback.call(this._callbackThis, target, this._data);
         }
     }

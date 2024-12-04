@@ -28,7 +28,7 @@
 import { FiniteTimeAction } from './action';
 import { macro, logID, errorID } from '../../core';
 import { ActionInstant } from './action-instant';
-import type { TweenUpdateCallback } from '../tween';
+import type { Tween, TweenUpdateCallback } from '../tween';
 
 // Extra action for making a Sequence or Spawn when only adding one action to it.
 class DummyAction extends FiniteTimeAction {
@@ -351,16 +351,16 @@ export class Sequence extends ActionInterval {
         return action;
     }
 
-    updateWorkerTarget<T> (workerTarget: T): void {
+    updateOwner<T extends object> (owner: Tween<T>): void {
         if (this._actions.length < 2) {
             return;
         }
-        this._actions[1].workerTarget = workerTarget;
+        this._actions[1]._owner = owner;
         const actionOne = this._actions[0];
         if (actionOne instanceof Sequence || actionOne instanceof Spawn) {
-            actionOne.updateWorkerTarget(workerTarget);
-        } else {
-            actionOne.workerTarget = workerTarget;
+            actionOne.updateOwner(owner);
+        } else if (!actionOne._owner) { // action's owner should never be changed, so only set owner when it's not set yet.
+            actionOne._owner = owner;
         }
     }
 
@@ -833,16 +833,16 @@ export class Spawn extends ActionInterval {
         return this;
     }
 
-    updateWorkerTarget<T> (workerTarget: T): void {
+    updateOwner<T extends object> (owner: Tween<T>): void {
         if (!this._one || !this._two) {
             return;
         }
-        this._two.workerTarget = workerTarget;
+        this._two._owner = owner;
         const one = this._one;
         if (one instanceof Spawn || one instanceof Sequence) {
-            one.updateWorkerTarget(workerTarget);
-        } else {
-            one.workerTarget = workerTarget;
+            one.updateOwner(owner);
+        } else if (!one._owner) { // action's owner should never be changed, so only set owner when it's not set yet.
+            one._owner = owner;
         }
     }
 

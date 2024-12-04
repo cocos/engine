@@ -205,7 +205,7 @@ export class TweenAction<T extends object> extends ActionInterval {
     clone (): TweenAction<T> {
         const action = new TweenAction(this._duration, this._originProps, this._opts);
         action._reversed = this._reversed;
-        action.workerTarget = this.workerTarget;
+        action._owner = this._owner;
         action._id = this._id;
         this._cloneDecoration(action);
         return action;
@@ -220,7 +220,7 @@ export class TweenAction<T extends object> extends ActionInterval {
         const action = new TweenAction(this._duration, this._originProps, this._opts);
         this._cloneDecoration(action);
         action._reversed = !this._reversed;
-        action.workerTarget = this.workerTarget;
+        action._owner = this._owner;
         return action;
     }
 
@@ -229,7 +229,7 @@ export class TweenAction<T extends object> extends ActionInterval {
         if (!isEqual) return;
         super.startWithTarget(target);
 
-        const workerTarget = (this.workerTarget ?? this.target) as T;
+        const workerTarget = this._getWorkerTarget<T>();
         if (!workerTarget) return;
         const relative = !!this._opts.relative;
         const props = this._props;
@@ -355,7 +355,7 @@ export class TweenAction<T extends object> extends ActionInterval {
     }
 
     update (t: number): void {
-        const workerTarget = (this.workerTarget ?? this.target) as T;
+        const workerTarget = this._getWorkerTarget<T>();
         if (!workerTarget) return;
 
         if (!this._opts) return;

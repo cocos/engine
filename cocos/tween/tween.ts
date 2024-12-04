@@ -233,7 +233,7 @@ export class Tween<T extends object = any> {
 
         if (action) {
             reversedAction = action.reverse();
-            reversedAction.workerTarget = t._target;
+            reversedAction._owner = t;
         } else {
             warnID(16391, `${actionId}`);
         }
@@ -259,17 +259,17 @@ export class Tween<T extends object = any> {
      */
     private insertAction (other: FiniteTimeAction): Tween<T> {
         const action = other.clone();
-        this.updateWorkerTargetForAction(action);
+        this.updateOwnerForAction(action);
         this._actions.push(action);
         return this;
     }
 
-    private updateWorkerTargetForAction (action: Action | null): void {
+    private updateOwnerForAction (action: Action | null): void {
         if (!action) return;
         if (action instanceof Sequence || action instanceof Spawn) {
-            action.updateWorkerTarget(this._target);
-        } else {
-            action.workerTarget = this._target;
+            action.updateOwner(this);
+        } else if (!action._owner) {  // action's owner should never be changed, so only set owner when it's not set yet.
+            action._owner = this;
         }
     }
 
@@ -284,12 +284,6 @@ export class Tween<T extends object = any> {
      */
     target<U extends object = any> (target: U): Tween<U> {
         (this as unknown as Tween<U>)._target = target;
-
-        for (let i = 0, len = this._actions.length; i < len; ++i) {
-            const action = this._actions[i];
-            this.updateWorkerTargetForAction(action);
-        }
-
         return this as unknown as Tween<U>;
     }
 
@@ -834,12 +828,12 @@ export class Tween<T extends object = any> {
         TweenSystem.instance.ActionManager.resumeTarget(target);
     }
 
-    private _union (updateWorkerTarget: boolean): Sequence | null {
+    private _union (needUpdateOwner: boolean): Sequence | null {
         const actions = this._actions;
         if (actions.length === 0) return null;
         const action = sequence(actions);
-        if (updateWorkerTarget) {
-            this.updateWorkerTargetForAction(action);
+        if (needUpdateOwner) {
+            this.updateOwnerForAction(action);
         }
         return action;
     }
