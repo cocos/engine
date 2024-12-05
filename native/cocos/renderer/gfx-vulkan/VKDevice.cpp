@@ -642,10 +642,6 @@ void CCVKDevice::acquire(Swapchain *const *swapchains, uint32_t count) {
     _gpuDescriptorSetHub->flush();
     _gpuSemaphorePool->reset();
 
-    auto *bufferPool = gpuStagingBufferPool();
-    bufferPool->reset();
-    bufferPool->shrinkSize();
-
     for (uint32_t i = 0; i < vkSwapchains.size(); ++i) {
         VkSemaphore acquireSemaphore = _gpuSemaphorePool->alloc();
         VkResult res = vkAcquireNextImageKHR(_gpuDevice->vkDevice, vkSwapchains[i], ~0ULL,
@@ -724,6 +720,7 @@ void CCVKDevice::present() {
     gpuFencePool()->reset();
     gpuRecycleBin()->clear();
     gpuStagingBufferPool()->reset();
+    gpuStagingBufferPool()->shrinkSize();
     if (_xr) {
         _xr->postGFXDevicePresent(_api);
     }
