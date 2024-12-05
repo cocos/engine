@@ -23,7 +23,7 @@
 */
 import { ccclass, executeInEditMode, help, menu, playOnFocus, serializable, tooltip, type, visible } from 'cc.decorator';
 import { EDITOR, EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
-import { CCBoolean, CCObject, Color, Enum, Vec3, warn } from '../../core';
+import { CCBoolean, CCObject, Color, screen, Enum, Vec3, warn } from '../../core';
 
 import { TextureCube } from '../../asset/assets';
 import { scene } from '../../render-scene';
@@ -104,10 +104,6 @@ export class ReflectionProbe extends Component {
     private _sourceCameraPos = new Vec3(0, 0, 0);
 
     private _position = new Vec3(0, 0, 0);
-
-    constructor () {
-        super();
-    }
 
     /**
      * @en
@@ -324,6 +320,14 @@ export class ReflectionProbe extends Component {
         this._createProbe();
         if (EDITOR) {
             ReflectionProbeManager.probeManager.registerEvent();
+        }
+        screen.on('window-resize', this._handleResize$, this);
+        screen.on('fullscreen-change', this._handleResize$, this);
+    }
+
+    private _handleResize$(): void {
+        if (this.probe && this.sourceCamera && this.probeType === ProbeType.PLANAR) {
+            this.probe.renderPlanarReflection(this.sourceCamera.camera);
         }
     }
 
