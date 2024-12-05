@@ -321,11 +321,9 @@ export class ReflectionProbe extends Component {
         if (EDITOR) {
             ReflectionProbeManager.probeManager.registerEvent();
         }
-        screen.on('window-resize', this._handleResize$, this);
-        screen.on('fullscreen-change', this._handleResize$, this);
     }
 
-    private _handleResize$(): void {
+    private _handleResize$ (): void {
         if (this.probe && this.sourceCamera && this.probeType === ProbeType.PLANAR) {
             this.probe.renderPlanarReflection(this.sourceCamera.camera);
         }
@@ -342,12 +340,16 @@ export class ReflectionProbe extends Component {
             ReflectionProbeManager.probeManager.onUpdateProbes();
             this._probe.enable();
         }
+        screen.on('window-resize', this._handleResize$, this);
+        screen.on('fullscreen-change', this._handleResize$, this);
     }
     onDisable (): void {
         if (this._probe) {
             ReflectionProbeManager.probeManager.unregister(this._probe);
             this._probe.disable();
         }
+        screen.off('window-resize', this._handleResize$, this);
+        screen.off('fullscreen-change', this._handleResize$, this);
     }
 
     public start (): void {
