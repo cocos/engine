@@ -178,6 +178,8 @@ struct CCMTLGPUDescriptorSet {
 
 class CCMTLGPUStagingBufferPool final {
 public:
+    static constexpr uint32_t CHUNK_SIZE = 16 * 1024 * 1024; // 16M per block by default
+
     CCMTLGPUStagingBufferPool(id<MTLDevice> device)
     : _device(device) {}
 
@@ -225,8 +227,14 @@ public:
         }
     }
 
-    void shrinkSize() {
+    void shrinkSize(size_t minimalSize = CHUNK_SIZE) {
+        size_t reservedSize = 0;
         for (auto iter = _pool.begin(); iter != _pool.end() && _pool.size() > 1;) {
+            if (reservedSize < minimalSize) {
+                reservedSize += [iter->mtlBuffer length];
+                ++iter;
+                continue;
+            }
             if (iter->curOffset == 0) {
                 [iter->mtlBuffer release];
                 iter = _pool.erase(iter);
@@ -256,7 +264,7 @@ struct CCMTLGPUBufferImageCopy {
     MTLOrigin destinationOrigin = {0, 0, 0};
 };
 
-//destroy GPU resource only, delete the owner object mannually.
+// destroy GPU resource only, delete the owner object mannually.
 class CCMTLGPUGarbageCollectionPool final {
     using GCFunc = std::function<void(void)>;
 
@@ -298,7 +306,7 @@ public:
     }
 
 protected:
-    //avoid cross-reference with CCMTLDevice
+    // avoid cross-reference with CCMTLDevice
     std::function<uint8_t(void)> _getFrameIndex;
     ccstd::queue<GCFunc> _releaseQueue[MAX_FRAMES_IN_FLIGHT];
 };
