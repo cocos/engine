@@ -4,18 +4,9 @@
 #include "util-function.h"
 #include "wasmSpineExtension.h"
 
-#include <emscripten/emscripten.h>
-#include <emscripten/val.h>
-
 #include "spine/HashMap.h"
 
 using namespace spine;
-
-static void logToConsole(const char* message) {
-    EM_ASM({
-        console.log(UTF8ToString($0));
-    }, message);
-}
 
 namespace {
     HashMap<String, SkeletonData*> skeletonDataMap{};
@@ -48,9 +39,9 @@ namespace {
                     attachmentVertices->_textureId = textureMap[textureName];
                 } else {
                     spine::String logInfo(attachment->getName());
-                    logInfo.append(" attachment's texture is not exist ");
+                    logInfo.append(" attachment's texture does not exist ");
                     logInfo.append(textureName);
-                    logToConsole(logInfo.buffer());
+                    printf("%s\n", logInfo.buffer());
                 }
             }
         }
