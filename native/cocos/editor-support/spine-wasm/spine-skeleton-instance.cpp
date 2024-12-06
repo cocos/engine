@@ -503,11 +503,11 @@ void SpineSkeletonInstance::resizeSlotRegion(const spine::String &slotName, uint
     }
 }
 
-void SpineSkeletonInstance::setSlotTexture(const spine::String &slotName, const spine::String& textureID) {
+void SpineSkeletonInstance::setSlotTexture(const spine::String &slotName, const spine::String& textureUuid) {
     if (!_skeleton) return;
     auto* slot = _skeleton->findSlot(slotName);
     if (!slot) return;
     _userData.useSlotTexture = true;
 
-    _slotTextureSet.put(slot, textureID);
+    _slotTextureSet.put(slot, textureUuid);
 }

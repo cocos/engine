@@ -214,7 +214,7 @@ export class SkeletonData extends Asset {
             this._skeletonCache = spData;
         } else {
             const size = this.textures.length;
-            const textureUUIDs = [] as string[];
+            const textureUUIDs: string[] = [];
             for (let i = 0; i < size; ++i) {
                 textureUUIDs.push(this.textures[i].uuid);
             }
