@@ -48,7 +48,7 @@ namespace {
                     attachmentVertices->_textureId = textureMap[textureName];
                 } else {
                     spine::String logInfo(attachment->getName());
-                    logInfo.append(" attachment's texture is not exist ");
+                    logInfo.append(" attachment's texture doesn`t exist ");
                     logInfo.append(textureName);
                     logToConsole(logInfo.buffer());
                 }
