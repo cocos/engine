@@ -90,10 +90,6 @@ ccenum(SpineAnimationCacheMode);
 // Use AnimationCacheMode instead.
 export const AnimationCacheMode = SpineAnimationCacheMode;
 
-export enum SkeletonEvent {
-    RENDER_UPDATED = 'spine_render_updated',
-}
-
 interface AnimationItem {
     animationName: string;
     loop: boolean;
@@ -1131,7 +1127,6 @@ export class Skeleton extends UIRenderer {
      * @engineInternal
      */
     public updateRenderData (): any {
-        this.node.emit(SkeletonEvent.RENDER_UPDATED);
         if (this.isAnimationCached()) {
             if (!this._curFrame) return null;
             const model = this._curFrame.model;
