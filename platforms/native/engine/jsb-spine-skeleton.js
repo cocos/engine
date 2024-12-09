@@ -844,6 +844,7 @@ const cacheManager = require('./jsb-cache-manager');
     };
 
     assembler.updateRenderData = function (comp) {
+        comp.node.emit(SkeletonEvent.RENDER_UPDATED);
         comp._render();
         comp.syncAttachedNode();
     };
