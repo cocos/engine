@@ -316,6 +316,8 @@ export class Skeleton extends UIRenderer {
 
     private _slotTextures: Map<number, Texture2D> | null = null;
 
+    private _customMaterialInstance: MaterialInstance | null = null;
+
     _vLength = 0;
     _vBuffer: Uint8Array | null = null;
     _iLength = 0;
@@ -638,6 +640,21 @@ export class Skeleton extends UIRenderer {
         this._customMaterial = val;
         this.updateMaterial();
         this.markForUpdateRenderData();
+    }
+
+    get customMaterialInstance (): MaterialInstance | null {
+        if (!this._customMaterial) {
+            return null;
+        }
+        if (!this._customMaterialInstance) {
+            const matInfo = {
+                parent: this._customMaterial,
+                subModelIdx: 0,
+                owner: this,
+            };
+            this._customMaterialInstance = new MaterialInstance(matInfo);
+        }
+        return this._customMaterialInstance;
     }
 
     public __preload (): void {
@@ -1210,17 +1227,20 @@ export class Skeleton extends UIRenderer {
     public getMaterialForBlendAndTint (src: BlendFactor, dst: BlendFactor, type: SpineMaterialType): MaterialInstance {
         const key = `${type}/${src}/${dst}`;
         let inst = this._materialCache[key];
-        if (inst && !this._customMaterial) {
+        if (inst) {
             return inst;
         }
-
-        const material = this.getMaterialTemplate();
-        const matInfo = {
-            parent: material,
-            subModelIdx: 0,
-            owner: this,
-        };
-        inst = new MaterialInstance(matInfo);
+        if (this._customMaterialInstance) {
+            inst = this._customMaterialInstance;
+        } else {
+            const material = this.getMaterialTemplate();
+            const matInfo = {
+                parent: material,
+                subModelIdx: 0,
+                owner: this,
+            };
+            inst = new MaterialInstance(matInfo);
+        }
         this._materialCache[key] = inst;
         inst.overridePipelineStates({
             blendState: {
