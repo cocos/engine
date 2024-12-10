@@ -22,7 +22,20 @@
  THE SOFTWARE.
 */
 import { EDITOR_NOT_IN_PREVIEW, JSB } from 'internal:constants';
-import { ccclass, executeInEditMode, help, menu, serializable, type, displayName, override, displayOrder, editable, tooltip } from 'cc.decorator';
+import {
+    ccclass,
+    executeInEditMode,
+    help,
+    menu,
+    serializable,
+    type,
+    displayName,
+    override,
+    displayOrder,
+    editable,
+    tooltip,
+    visible,
+} from 'cc.decorator';
 import { Material, Texture2D } from '../asset/assets';
 import { error, logID, warn } from '../core/platform/debug';
 import { Enum, EnumType, ccenum } from '../core/value-types/enum';
@@ -373,6 +386,7 @@ export class Skeleton extends UIRenderer {
     /**
      * @engineInternal
      */
+    @visible(true)
     @type(DefaultSkinsEnum)
     get _defaultSkinIndex (): number {
         if (this.skeletonData) {
@@ -422,6 +436,7 @@ export class Skeleton extends UIRenderer {
     /**
      * @engineInternal
      */
+    @visible(true)
     @type(SpineDefaultAnimsEnum)
     get _animationIndex (): number {
         const animationName = EDITOR_NOT_IN_PREVIEW ? this.defaultAnimation : this.animation;
