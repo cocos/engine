@@ -638,6 +638,9 @@ export class Skeleton extends UIRenderer {
 
     public __preload (): void {
         super.__preload();
+        if (EDITOR_NOT_IN_PREVIEW) {
+            this.paused = true;
+        }
         this._updateSkeletonData();
         this._updateDebugDraw();
     }
