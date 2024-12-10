@@ -90,7 +90,7 @@ export class RenderDrawInfo {
     protected declare _uint32SharedBuffer: Uint32Array;
 
     // SharedBuffer of pos/uv/color
-    protected declare _render2dBuffer: Float32Array;
+    protected _render2dBuffer: Float32Array = null!;
 
     constructor (nativeDrawInfo?: NativeRenderDrawInfo) {
         this.init(nativeDrawInfo);
