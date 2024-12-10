@@ -223,6 +223,7 @@ export class SkeletonData extends Asset {
             wasmMem.set(rawData);
             this._skeletonCache = spine.wasmUtil.createSpineSkeletonDataWithBinary(byteSize, this._atlasText);
             spine.wasmUtil.registerSpineSkeletonDataWithUUID(this._skeletonCache, uuid);
+            spine.wasmUtil.freeStoreMemory();
         }
 
         return this._skeletonCache;

@@ -1214,6 +1214,7 @@ declare namespace spine {
     class wasmUtil {
         static spineWasmInit(): void;
         static spineWasmDestroy(): void;
+        static freeStoreMemory(): void;
         static queryStoreMemory(size: number): number;
         static querySpineSkeletonDataByUUID(uuid: string): SkeletonData;
         static createSpineSkeletonDataWithJson(jsonStr: string, atlasText: string): SkeletonData;
