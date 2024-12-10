@@ -96,16 +96,9 @@ void SpineWasmUtil::destroySpineSkeleton(Skeleton* skeleton) {
 }
 
 uint32_t SpineWasmUtil::queryStoreMemory(uint32_t size) {
-    if (s_mem) {
-        if (s_memSize < size) {
-            delete[] s_mem;
-            s_mem = new uint8_t[size];
-            s_memSize = size;
-        }
-    } else {
-        s_mem = new uint8_t[size];
-        s_memSize = size;
-    }
+    s_mem = new uint8_t[size];
+    s_memSize = size;
+
     return (uint32_t)s_mem;
 }
 
