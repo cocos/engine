@@ -43,12 +43,12 @@ let _comp: Label | null = null;
 let _uiTrans: UITransform | null = null;
 
 let _fntConfig: IConfig | null = null;
-let _spriteFrame: SpriteFrame|null = null;
+let _spriteFrame: SpriteFrame | null = null;
 let QUAD_INDICES: Uint16Array | null = null;
 
 export const bmfontUtils = {
 
-    updateProcessingData (
+    updateProcessingData(
         style: TextStyle,
         layout: TextLayout,
         outputLayoutData: TextOutputLayoutData,
@@ -93,7 +93,7 @@ export const bmfontUtils = {
         style.color.set(comp.color);
     },
 
-    updateRenderData (comp: Label): void {
+    updateRenderData(comp: Label): void {
         if (!comp.renderData) {
             return;
         }
@@ -172,21 +172,22 @@ export const bmfontUtils = {
         }
     },
 
-    updateUVs (label: Label): void {
+    updateUVs(label: Label): void {
         const renderData = label.renderData!;
         const vData = renderData.chunk.vb;
         const vertexCount = renderData.vertexCount;
+        const stride = renderData.stride;
         const dataList = renderData.data;
         let vertexOffset = 3;
         for (let i = 0; i < vertexCount; i++) {
             const vert = dataList[i];
             vData[vertexOffset] = vert.u;
             vData[vertexOffset + 1] = vert.v;
-            vertexOffset += 9;
+            vertexOffset += stride;
         }
     },
 
-    updateColor (label: Label): void {
+    updateColor(label: Label): void {
         if (JSB) {
             const renderData = label.renderData!;
             const vertexCount = renderData.vertexCount;
@@ -209,14 +210,14 @@ export const bmfontUtils = {
         }
     },
 
-    resetRenderData (comp: Label): void {
+    resetRenderData(comp: Label): void {
         const renderData = comp.renderData!;
         renderData.dataLength = 0;
         renderData.resize(0, 0);
     },
 
     // callBack function
-    generateVertexData (
+    generateVertexData(
         style: TextStyle,
         outputLayoutData: TextOutputLayoutData,
         outputRenderData: TextOutputRenderData,
@@ -281,7 +282,7 @@ export const bmfontUtils = {
         dataList[dataOffset + 3].y = y;
     },
 
-    _updateFontFamily (comp): void {
+    _updateFontFamily(comp): void {
         const fontAsset = comp.font;
         _spriteFrame = fontAsset.spriteFrame;
         _fntConfig = fontAsset.fntConfig;
@@ -298,20 +299,20 @@ export const bmfontUtils = {
         // TODO update material and uv
     },
 
-    _updateLabelInfo (comp): void {
+    _updateLabelInfo(comp): void {
         // clear
         shareLabelInfo.hash = '';
         shareLabelInfo.margin = 0;
     },
 
-    _resetProperties (): void {
+    _resetProperties(): void {
         _fntConfig = null;
         _spriteFrame = null;
         shareLabelInfo.hash = '';
         shareLabelInfo.margin = 0;
     },
 
-    createQuadIndices (indexCount: number): void {
+    createQuadIndices(indexCount: number): void {
         if (indexCount % 6 !== 0) {
             errorID(16308);
             return;

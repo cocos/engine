@@ -41,7 +41,7 @@ const QUAD_INDICES = Uint16Array.from([0, 1, 2, 1, 3, 2]);
  * 可通过 `UI.simple` 获取该组装器。
  */
 export const simple: IAssembler = {
-    createData (sprite: Sprite) {
+    createData(sprite: Sprite) {
         const renderData = sprite.requestRenderData();
         renderData.dataLength = 4;
         renderData.resize(4, 6);
@@ -49,7 +49,7 @@ export const simple: IAssembler = {
         return renderData;
     },
 
-    updateRenderData (sprite: Sprite) {
+    updateRenderData(sprite: Sprite) {
         const frame = sprite.spriteFrame;
 
         dynamicAtlasManager.packToDynamicAtlas(sprite, frame);
@@ -65,7 +65,7 @@ export const simple: IAssembler = {
         }
     },
 
-    updateWorldVerts (sprite: Sprite, chunk: StaticVBChunk) {
+    updateWorldVerts(sprite: Sprite, chunk: StaticVBChunk) {
         const renderData = sprite.renderData!;
         const vData = chunk.vb;
 
@@ -94,7 +94,7 @@ export const simple: IAssembler = {
         }
     },
 
-    fillBuffers (sprite: Sprite, renderer: IBatcher) {
+    fillBuffers(sprite: Sprite, renderer: IBatcher) {
         if (sprite === null) {
             return;
         }
@@ -136,7 +136,7 @@ export const simple: IAssembler = {
         // renderer.switchBufferAccessor().appendIndices(chunk);
     },
 
-    updateVertexData (sprite: Sprite) {
+    updateVertexData(sprite: Sprite) {
         const renderData: RenderData | null = sprite.renderData;
         if (!renderData) {
             return;
@@ -186,22 +186,22 @@ export const simple: IAssembler = {
         renderData.vertDirty = true;
     },
 
-    updateUVs (sprite: Sprite) {
+    updateUVs(sprite: Sprite) {
         if (!sprite.spriteFrame) return;
         const renderData = sprite.renderData!;
         const vData = renderData.chunk.vb;
         const uv = sprite.spriteFrame.uv;
-        vData[3] = uv[0];
-        vData[4] = uv[1];
-        vData[12] = uv[2];
-        vData[13] = uv[3];
-        vData[21] = uv[4];
-        vData[22] = uv[5];
-        vData[30] = uv[6];
-        vData[31] = uv[7];
+        const stride = renderData.floatStride;
+        let uvOffset = 3;
+        for (let i = 0; i < renderData.dataLength; ++i) {
+            let index = i * 2;
+            vData[uvOffset] = uv[index];
+            vData[uvOffset + 1] = uv[index + 1];
+            uvOffset += stride;
+        }
     },
 
-    updateColor (sprite: Sprite) {
+    updateColor(sprite: Sprite) {
         const renderData = sprite.renderData!;
         const vData = renderData.chunk.vb;
         let colorOffset = 5;
