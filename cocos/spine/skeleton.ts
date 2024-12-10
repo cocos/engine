@@ -22,20 +22,7 @@
  THE SOFTWARE.
 */
 import { EDITOR_NOT_IN_PREVIEW, JSB } from 'internal:constants';
-import {
-    ccclass,
-    executeInEditMode,
-    help,
-    menu,
-    serializable,
-    type,
-    displayName,
-    override,
-    displayOrder,
-    editable,
-    tooltip,
-    visible,
-} from 'cc.decorator';
+import { ccclass, executeInEditMode, help, menu, serializable, type, override, displayOrder, editable, visible } from 'cc.decorator';
 import { Material, Texture2D } from '../asset/assets';
 import { error, logID, warn } from '../core/platform/debug';
 import { Enum, EnumType, ccenum } from '../core/value-types/enum';
