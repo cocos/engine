@@ -90,7 +90,7 @@ export class RenderDrawInfo {
     protected declare _uint32SharedBuffer: Uint32Array;
 
     // SharedBuffer of pos/uv/color
-    protected _render2dBuffer: Float32Array = null!;
+    protected _render2dBuffer: Float32Array | null = null;
 
     constructor (nativeDrawInfo?: NativeRenderDrawInfo) {
         this.init(nativeDrawInfo);
@@ -107,7 +107,7 @@ export class RenderDrawInfo {
         return this._nativeObj;
     }
 
-    get render2dBuffer (): Float32Array {
+    get render2dBuffer (): Float32Array | null {
         return this._render2dBuffer;
     }
 
@@ -301,6 +301,9 @@ export class RenderDrawInfo {
 
     public fillRender2dBuffer (vertexDataArr: IRenderData[]): void {
         if (JSB) {
+            if (!this._render2dBuffer) {
+                return;
+            }
             const fillLength = Math.min(this._vbCount, vertexDataArr.length);
             let bufferOffset = 0;
             for (let i = 0; i < fillLength; i++) {
