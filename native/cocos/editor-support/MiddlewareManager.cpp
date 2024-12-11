@@ -143,15 +143,16 @@ void MiddlewareManager::render(float dt) {
 }
 
 void MiddlewareManager::addTimer(IMiddleware *editor) {
-    auto it0 = std::find(_updateList.begin(), _updateList.end(), editor);
-    if (it0 != _updateList.end()) {
-        return;
-    }
-
     auto it1 = std::find(_removeList.begin(), _removeList.end(), editor);
     if (it1 != _removeList.end()) {
         _removeList.erase(it1);
     }
+
+    auto it0 = std::find(_updateList.begin(), _updateList.end(), editor);
+    if (it0 != _updateList.end()) {
+        return;
+    }
+    
     _updateList.push_back(editor);
 }
 
