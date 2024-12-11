@@ -5,7 +5,7 @@ using namespace spine;
 
 static uint16_t quadTriangles[6] = {0, 1, 2, 2, 3, 0};
 
-AttachmentVertices::AttachmentVertices(int verticesCount, uint16_t *triangles, int trianglesCount, spine::String textureId) {
+AttachmentVertices::AttachmentVertices(int verticesCount, uint16_t *triangles, int trianglesCount, const spine::String& textureId) {
     _triangles = new Triangles();
     _triangles->verts = new V3F_T2F_C4B[verticesCount];
     _triangles->vertCount = verticesCount;

@@ -710,7 +710,6 @@ export class Skeleton extends UIRenderer {
         this._vBuffer = null;
         this._iBuffer = null;
         this.attachUtil.reset();
-        //this._textures.length = 0;
         this._cachedSockets.clear();
         this._socketNodes.clear();
         //if (this._cacheMode == SpineAnimationCacheMode.PRIVATE_CACHE) this._animCache?.destroy();

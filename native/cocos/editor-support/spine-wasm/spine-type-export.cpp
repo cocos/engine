@@ -1388,8 +1388,8 @@ EMSCRIPTEN_BINDINGS(cocos_spine) {
     .class_function("querySpineSkeletonDataByUUID", &SpineWasmUtil::querySpineSkeletonDataByUUID, allow_raw_pointers())
     .class_function("createSpineSkeletonDataWithJson", optional_override([](String jsonStr, String atlasStr, emscripten::val nameArray, emscripten::val uuidArray){
             unsigned count = nameArray["length"].as<unsigned>();
-            Vector<String> names = Vector<String>();
-            Vector<String> ids = Vector<String>();
+            Vector<String> names;
+            Vector<String> ids;
             names.setSize(count, "");
             ids.setSize(count, "");
             for (int i = 0; i < count; i++) {
@@ -1400,8 +1400,8 @@ EMSCRIPTEN_BINDINGS(cocos_spine) {
         }), allow_raw_pointers())
     .class_function("createSpineSkeletonDataWithBinary", optional_override([](uint32_t byteSize, String atlasStr, emscripten::val nameArray, emscripten::val uuidArray){
             unsigned count = nameArray["length"].as<unsigned>();
-            Vector<String> names = Vector<String>();
-            Vector<String> ids = Vector<String>();
+            Vector<String> names;
+            Vector<String> ids;
             names.setSize(count, "");
             ids.setSize(count, "");
             for (int i = 0; i < count; i++) {

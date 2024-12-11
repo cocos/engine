@@ -11,8 +11,8 @@ public:
     static void freeStoreMemory();
 
     static spine::SkeletonData* querySpineSkeletonDataByUUID(const spine::String& uuid);
-    static spine::SkeletonData* createSpineSkeletonDataWithJson(const spine::String& jsonStr, const spine::String& altasStr, spine::Vector<spine::String>& textureNames, spine::Vector<spine::String>& textureUUIDs);
-    static spine::SkeletonData* createSpineSkeletonDataWithBinary(uint32_t byteSize, const spine::String& altasStr, spine::Vector<spine::String>& textureNames, spine::Vector<spine::String>& textureUUIDs);
+    static spine::SkeletonData* createSpineSkeletonDataWithJson(const spine::String& jsonStr, const spine::String& altasStr, const spine::Vector<spine::String>& textureNames, const spine::Vector<spine::String>& textureUUIDs);
+    static spine::SkeletonData* createSpineSkeletonDataWithBinary(uint32_t byteSize, const spine::String& altasStr, const spine::Vector<spine::String>& textureNames, const spine::Vector<spine::String>& textureUUIDs);
     static void registerSpineSkeletonDataWithUUID(spine::SkeletonData* data, const spine::String& uuid);
     static void destroySpineSkeletonDataWithUUID(const spine::String& uuid);
     static void destroySpineSkeleton(spine::Skeleton* skeleton);

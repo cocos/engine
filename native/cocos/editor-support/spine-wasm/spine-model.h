@@ -19,7 +19,7 @@ public:
     uint32_t vCount{};
     uint32_t iCount{};
     uint32_t blendMode{};
-    spine::String textureID{""};
+    spine::String textureID;
 };
 
 class SpineModel {
