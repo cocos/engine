@@ -849,15 +849,24 @@ void AndroidPlatform::exit() {
 int32_t AndroidPlatform::loop() {
     IXRInterface *xr = CC_GET_XR_INTERFACE();
     while (true) {
-        int events;
         struct android_poll_source *source;
 
         // suspend thread while _loopTimeOut set to -1
-        while ((ALooper_pollAll(_loopTimeOut, nullptr, &events,
-                                reinterpret_cast<void **>(&source))) >= 0) {
-            // process event
-            if (source != nullptr) {
-                source->process(_app, source);
+        while (true) {
+            int pollResult = ALooper_pollOnce(_loopTimeOut, nullptr, nullptr,
+                                              reinterpret_cast<void **>(&source));
+
+            // Process events if any
+            if (pollResult == ALOOPER_POLL_ERROR) {
+                CC_LOG_ERROR("ALooper_pollOnce returned and error");
+                break;
+            } else {
+                if (source != nullptr) {
+                    source->process(_app, source);
+                }
+                if (pollResult == ALOOPER_POLL_TIMEOUT) {
+                    break;
+                }
             }
 
             // Exit the game loop when the Activity is destroyed
