@@ -15,7 +15,6 @@ EventType SpineWasmUtil::s_currentType = EventType_Event;
 TrackEntry* SpineWasmUtil::s_currentEntry = nullptr;
 Event* SpineWasmUtil::s_currentEvent = nullptr;
 uint8_t* SpineWasmUtil::s_mem = nullptr;
-uint32_t SpineWasmUtil::s_memSize = 0;
 
 void SpineWasmUtil::spineWasmInit() {
     // LogUtil::Initialize();
@@ -95,9 +94,8 @@ void SpineWasmUtil::destroySpineSkeleton(Skeleton* skeleton) {
     }
 }
 
-uint32_t SpineWasmUtil::queryStoreMemory(uint32_t size) {
+uint32_t SpineWasmUtil::createStoreMemory(uint32_t size) {
     s_mem = new uint8_t[size];
-    s_memSize = size;
 
     return (uint32_t)s_mem;
 }
@@ -107,7 +105,6 @@ void SpineWasmUtil::freeStoreMemory() {
         delete[] s_mem;
         s_mem = nullptr;
     }
-    s_memSize = 0;
 }
 
 uint32_t SpineWasmUtil::getCurrentListenerID() {

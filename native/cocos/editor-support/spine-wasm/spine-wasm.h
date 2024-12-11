@@ -7,7 +7,7 @@ class SpineWasmUtil {
 public:
     static void spineWasmInit();
     static void spineWasmDestroy();
-    static uint32_t queryStoreMemory(uint32_t size);
+    static uint32_t createStoreMemory(uint32_t size);
     static void freeStoreMemory();
 
     static spine::SkeletonData* querySpineSkeletonDataByUUID(const spine::String& uuid);
@@ -28,5 +28,4 @@ public:
     static spine::Event* s_currentEvent;
 
     static uint8_t* s_mem;
-    static uint32_t s_memSize;
 };

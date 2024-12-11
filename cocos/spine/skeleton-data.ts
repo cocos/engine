@@ -218,7 +218,7 @@ export class SkeletonData extends Asset {
         } else {
             const rawData = new Uint8Array(this._nativeAsset);
             const byteSize = rawData.length;
-            const ptr = spine.wasmUtil.queryStoreMemory(byteSize);
+            const ptr = spine.wasmUtil.createStoreMemory(byteSize);
             const wasmMem = spine.wasmUtil.wasm.HEAPU8.subarray(ptr, ptr + byteSize);
             wasmMem.set(rawData);
             this._skeletonCache = spine.wasmUtil.createSpineSkeletonDataWithBinary(byteSize, this._atlasText);

@@ -1382,7 +1382,7 @@ EMSCRIPTEN_BINDINGS(cocos_spine) {
     class_<SpineWasmUtil>("SpineWasmUtil")
     .class_function("spineWasmInit", &SpineWasmUtil::spineWasmInit)
     .class_function("spineWasmDestroy", &SpineWasmUtil::spineWasmDestroy)
-    .class_function("queryStoreMemory", &SpineWasmUtil::queryStoreMemory)
+    .class_function("createStoreMemory", &SpineWasmUtil::createStoreMemory)
     .class_function("freeStoreMemory", &SpineWasmUtil::freeStoreMemory)
     .class_function("querySpineSkeletonDataByUUID", &SpineWasmUtil::querySpineSkeletonDataByUUID, allow_raw_pointers())
     .class_function("createSpineSkeletonDataWithJson", &SpineWasmUtil::createSpineSkeletonDataWithJson, allow_raw_pointers())
