@@ -860,14 +860,14 @@ int32_t AndroidPlatform::loop() {
             if (pollResult == ALOOPER_POLL_ERROR) {
                 CC_LOG_ERROR("ALooper_pollOnce returned and error");
                 break;
-            } else {
-                if (source != nullptr) {
-                    source->process(_app, source);
-                }
-                if (pollResult == ALOOPER_POLL_TIMEOUT) {
-                    break;
-                }
             }
+            if (source != nullptr) {
+                source->process(_app, source);
+            }
+            if (pollResult == ALOOPER_POLL_TIMEOUT) {
+                break;
+            }
+
 
             // Exit the game loop when the Activity is destroyed
             if (_app->destroyRequested) {
