@@ -467,7 +467,7 @@ class SkeletonCache {
                     delete animationPool[key];
                 }
             }
-            let skeletonInfo = this._skeletonCache[uuid];
+            const skeletonInfo = this._skeletonCache[uuid];
             const skeleton = skeletonInfo && skeletonInfo.skeleton;
             if (skeleton) {
                 spine.wasmUtil.destroySpineSkeleton(skeleton);
