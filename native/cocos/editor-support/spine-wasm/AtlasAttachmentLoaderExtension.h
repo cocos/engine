@@ -5,11 +5,11 @@
 
 class AttachmentVertices {
 public:
-    AttachmentVertices(int verticesCount, uint16_t *triangles, int trianglesCount, uint32_t textureId);
+    AttachmentVertices(int verticesCount, uint16_t *triangles, int trianglesCount, spine::String textureId);
     virtual ~AttachmentVertices();
     AttachmentVertices *copy();
     Triangles *_triangles = nullptr;
-    uint32_t _textureId = 0;
+    spine::String _textureId{""};
 };
 
 class AtlasAttachmentLoaderExtension : public spine::AtlasAttachmentLoader {

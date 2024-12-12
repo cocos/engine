@@ -19,7 +19,7 @@ public:
     uint32_t vCount{};
     uint32_t iCount{};
     uint32_t blendMode{};
-    uint32_t textureID{};
+    spine::String textureID{""};
 };
 
 class SpineModel {
@@ -31,8 +31,10 @@ public:
     void setBufferPtr(uint8_t* vp, uint16_t* ip);
     
     spine::Vector<uint32_t>* getData();
+    inline spine::Vector<spine::String>* getTextures() { return &_textures; }
 private:
     spine::Vector<uint32_t> _data;
+    spine::Vector<spine::String> _textures;
 public:
     uint32_t vCount{};
     uint32_t iCount{};

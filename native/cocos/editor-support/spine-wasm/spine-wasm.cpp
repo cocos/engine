@@ -4,10 +4,43 @@
 #include "util-function.h"
 #include "wasmSpineExtension.h"
 
+#include <map>
+
 using namespace spine;
 
 namespace {
     HashMap<String, SkeletonData*> skeletonDataMap{};
+
+    static void updateAttachmentVerticesTextureId(SkeletonData* skeletonData, spine::Vector<spine::String>& textureNames, spine::Vector<spine::String>& textureUUIDs) {
+        std::map<std::string, std::string> textureMap;
+        int textureSize = textureNames.size();
+        for (int i = 0; i < textureSize; ++i) {
+            textureMap[textureNames[i].buffer()] = textureUUIDs[i].buffer();
+        }
+
+        auto& skins = skeletonData->getSkins();
+        auto skinSize = skins.size();
+        for (int i = 0; i < skinSize; ++i) {
+            auto* skin = skins[i];
+            auto entries = skin->getAttachments();
+            while (entries.hasNext()) {
+                Skin::AttachmentMap::Entry entry = entries.next();
+                AttachmentVertices* attachmentVertices;
+                auto* attachment = entry._attachment;
+                if (attachment->getRTTI().isExactly(MeshAttachment::rtti)) {
+                    auto* meshAttachment = static_cast<MeshAttachment *>(attachment);
+                    attachmentVertices = static_cast<AttachmentVertices*>(meshAttachment->getRendererObject());
+                } else {
+                    auto* regionAttachment = static_cast<RegionAttachment *>(attachment);
+                    attachmentVertices = static_cast<AttachmentVertices*>(regionAttachment->getRendererObject());
+                }
+                auto* textureName = attachmentVertices->_textureId.buffer();
+                auto iter = textureMap.find(textureName);
+                if (iter == textureMap.end()) continue;
+                attachmentVertices->_textureId = String(iter->second.c_str());
+            }
+        }
+    }
 }
 
 uint32_t SpineWasmUtil::s_listenerID = 0;
@@ -41,7 +74,7 @@ SkeletonData* SpineWasmUtil::querySpineSkeletonDataByUUID(const String& uuid) {
     return skeletonDataMap[uuid];
 }
 
-SkeletonData* SpineWasmUtil::createSpineSkeletonDataWithJson(const String& jsonStr, const String& altasStr) {
+SkeletonData* SpineWasmUtil::createSpineSkeletonDataWithJson(const String& jsonStr, const String& altasStr, spine::Vector<spine::String>& textureNames, spine::Vector<spine::String>& textureUUIDs) {
 #if ENABLE_JSON_PARSER
     auto* atlas = new Atlas(altasStr.buffer(), altasStr.length(), "", nullptr, false);
     if (!atlas) {
@@ -52,13 +85,15 @@ SkeletonData* SpineWasmUtil::createSpineSkeletonDataWithJson(const String& jsonS
     json.setScale(1.0F);
     SkeletonData* skeletonData = json.readSkeletonData(jsonStr.buffer());
 
+    updateAttachmentVerticesTextureId(skeletonData, textureNames, textureUUIDs);
+
     return skeletonData;
 #else
     return nullptr;
 #endif
 }
 
-SkeletonData* SpineWasmUtil::createSpineSkeletonDataWithBinary(uint32_t byteSize, const String& altasStr) {
+SkeletonData* SpineWasmUtil::createSpineSkeletonDataWithBinary(uint32_t byteSize, const String& altasStr, spine::Vector<spine::String>& textureNames, spine::Vector<spine::String>& textureUUIDs) {
 #if ENABLE_BINARY_PARSER
     auto* atlas = new Atlas(altasStr.buffer(), altasStr.length(), "", nullptr, false);
     if (!atlas) {
@@ -68,6 +103,9 @@ SkeletonData* SpineWasmUtil::createSpineSkeletonDataWithBinary(uint32_t byteSize
     SkeletonBinary binary(attachmentLoader);
     binary.setScale(1.0F);
     SkeletonData* skeletonData = binary.readSkeletonData(s_mem, byteSize);
+
+    updateAttachmentVerticesTextureId(skeletonData, textureNames, textureUUIDs);
+
     return skeletonData;
 #else
     return nullptr;
