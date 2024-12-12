@@ -135,7 +135,7 @@ bool BillingClient::isReady() const {
 
 void BillingClient::queryProductDetailsAsync(QueryProductDetailsParams* params, se::Object* listener) {
     if(!params || !listener) {
-        CC_LOG_WARNING("params or listener can't be null");
+        CC_LOG_WARNING("QueryProductDetailsParams or listener can't be null");
         return;
     }
     int listenerId = addListener(listener);
@@ -153,7 +153,7 @@ void BillingClient::queryProductDetailsAsync(QueryProductDetailsParams* params, 
 
 void BillingClient::launchBillingFlow(BillingFlowParams* params) {
     if(!params) {
-        CC_LOG_WARNING("Params can't be null");
+        CC_LOG_WARNING("BillingFlowParams can't be null");
         return;
     }
     GoogleBillingHelper::launchBillingFlow(_tag, params);
@@ -161,7 +161,7 @@ void BillingClient::launchBillingFlow(BillingFlowParams* params) {
 
 void BillingClient::consumeAsync(ConsumeParams* params, se::Object* listener) {
     if(!params || !listener) {
-        CC_LOG_WARNING("Params or listener can't be null");
+        CC_LOG_WARNING("ConsumeParams or listener can't be null");
         return;
     }
     int listenerId = addListener(listener);
@@ -170,7 +170,7 @@ void BillingClient::consumeAsync(ConsumeParams* params, se::Object* listener) {
 
 void BillingClient::acknowledgePurchase(AcknowledgePurchaseParams* params, se::Object* listener) {
     if(!params || !listener) {
-        CC_LOG_WARNING("Params or listener can't be null");
+        CC_LOG_WARNING("AcknowledgePurchaseParams or listener can't be null");
         return;
     }
     int listenerId = addListener(listener);
@@ -179,7 +179,7 @@ void BillingClient::acknowledgePurchase(AcknowledgePurchaseParams* params, se::O
 
 void BillingClient::queryPurchasesAsync(QueryPurchasesParams* params, se::Object* listener) {
     if(!params || !listener) {
-        CC_LOG_WARNING("Params or listener can't be null");
+        CC_LOG_WARNING("QueryPurchasesParams or listener can't be null");
         return;
     }
     int listenerId = addListener(listener);
@@ -188,7 +188,7 @@ void BillingClient::queryPurchasesAsync(QueryPurchasesParams* params, se::Object
 
 void BillingClient::getBillingConfigAsync(GetBillingConfigParams* params, se::Object* listener) {
     if(!params || !listener) {
-        CC_LOG_WARNING("Params or listener can't be null");
+        CC_LOG_WARNING("GetBillingConfigParams or listener can't be null");
         return;
     }
     int listenerId = addListener(listener);
