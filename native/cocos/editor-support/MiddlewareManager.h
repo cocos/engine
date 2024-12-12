@@ -83,13 +83,13 @@ public:
     void render(float dt);
 
     /**
-     * @brief Third party module add in _updateMap,it will update perframe.
+     * @brief Mark the add flag to _operateCacheMap, and perform the update in the next frame
      * @param[in] editor Module must implement IMiddleware interface.
      */
     void addTimer(IMiddleware *editor);
 
     /**
-     * @brief Third party module remove from _updateMap,it will stop update.
+     * @brief Mark the remove flag to _operateCacheMap, and perform the update in the next frame
      * @param[in] editor Module must implement IMiddleware interface.
      */
     void removeTimer(IMiddleware *editor);
@@ -112,7 +112,7 @@ private:
     void updateCache();
 
     ccstd::vector<IMiddleware *> _updateList;
-    ccstd::unordered_map<IMiddleware *, bool> _updateMap;
+    ccstd::unordered_map<IMiddleware *, bool> _operateCacheMap;
     ccstd::unordered_map<int, MeshBuffer *> _mbMap;
 
     SharedBufferManager _renderInfo;

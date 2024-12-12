@@ -55,15 +55,17 @@ MeshBuffer *MiddlewareManager::getMeshBuffer(int format) {
 }
 
 void MiddlewareManager::updateCache() {
-    for (auto &iter: _updateMap) {
+    for (auto &iter: _operateCacheMap) {
         auto it = std::find(_updateList.begin(), _updateList.end(), iter.first);
-        if (iter.second && it == _updateList.end()) {
-            _updateList.push_back(iter.first);
-        } else if (!iter.second && it != _updateList.end()) {
+        if (iter.second) {
+            if (it == _updateList.end()) {
+                _updateList.push_back(iter.first);
+            }
+        } else if (it != _updateList.end()) {
             _updateList.erase(it);
         }
     }
-    _updateMap.clear();
+    _operateCacheMap.clear();
 }
 
 void MiddlewareManager::update(float dt) {
@@ -116,11 +118,11 @@ void MiddlewareManager::render(float dt) {
 }
 
 void MiddlewareManager::addTimer(IMiddleware *editor) {
-    _updateMap[editor] = true;
+    _operateCacheMap[editor] = true;
 }
 
 void MiddlewareManager::removeTimer(IMiddleware *editor) {
-    _updateMap[editor] = false;
+    _operateCacheMap[editor] = false;
 }
 
 se_object_ptr MiddlewareManager::getVBTypedArray(int format, int bufferPos) {
