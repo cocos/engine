@@ -109,7 +109,7 @@ public:
     ~MiddlewareManager();
 
 private:
-    void updateCache();
+    void updateOperateCache();
 
     ccstd::vector<IMiddleware *> _updateList;
     ccstd::unordered_map<IMiddleware *, bool> _operateCacheMap;

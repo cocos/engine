@@ -54,7 +54,7 @@ MeshBuffer *MiddlewareManager::getMeshBuffer(int format) {
     return mb;
 }
 
-void MiddlewareManager::updateCache() {
+void MiddlewareManager::updateOperateCache() {
     for (auto &iter: _operateCacheMap) {
         auto it = std::find(_updateList.begin(), _updateList.end(), iter.first);
         if (iter.second) {
@@ -69,7 +69,7 @@ void MiddlewareManager::updateCache() {
 }
 
 void MiddlewareManager::update(float dt) {
-    updateCache();
+    updateOperateCache();
     _attachInfo.reset();
     auto *attachBuffer = _attachInfo.getBuffer();
     if (attachBuffer) {
