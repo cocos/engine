@@ -854,7 +854,7 @@ int32_t AndroidPlatform::loop() {
         // suspend thread while _loopTimeOut set to -1
         while (ALooper_pollOnce(_loopTimeOut, nullptr, nullptr,
                                 reinterpret_cast<void **>(&source)) >= 0) {
-            // Process events
+            // Process event
             if (source != nullptr) {
                 source->process(_app, source);
             }
