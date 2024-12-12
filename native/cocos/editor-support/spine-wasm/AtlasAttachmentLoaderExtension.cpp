@@ -5,13 +5,13 @@ using namespace spine;
 
 static uint16_t quadTriangles[6] = {0, 1, 2, 2, 3, 0};
 
-AttachmentVertices::AttachmentVertices(int verticesCount, uint16_t *triangles, int trianglesCount, const spine::String& textureId) {
+AttachmentVertices::AttachmentVertices(int verticesCount, uint16_t *triangles, int trianglesCount, const spine::String& textureUUID) {
     _triangles = new Triangles();
     _triangles->verts = new V3F_T2F_C4B[verticesCount];
     _triangles->vertCount = verticesCount;
     _triangles->indices = triangles;
     _triangles->indexCount = trianglesCount;
-    _textureId = textureId;
+    _textureId = textureUUID;
 }
 
 AttachmentVertices::~AttachmentVertices() {

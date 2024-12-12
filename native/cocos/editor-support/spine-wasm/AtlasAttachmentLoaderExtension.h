@@ -5,7 +5,7 @@
 
 class AttachmentVertices {
 public:
-    AttachmentVertices(int verticesCount, uint16_t *triangles, int trianglesCount, const spine::String& textureId);
+    AttachmentVertices(int verticesCount, uint16_t *triangles, int trianglesCount, const spine::String& textureUUID);
     virtual ~AttachmentVertices();
     AttachmentVertices *copy();
     Triangles *_triangles = nullptr;

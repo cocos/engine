@@ -1166,10 +1166,10 @@ export class Skeleton extends UIRenderer {
     /**
      * @engineInternal
      */
-    public requestDrawData (material: Material, textureID: string, indexOffset: number, indexCount: number): SkeletonDrawData {
+    public requestDrawData (material: Material, textureUUID: string, indexOffset: number, indexCount: number): SkeletonDrawData {
         const draw = this._drawList.add();
         draw.material = material;
-        draw.texture = assetManager.assets.get(textureID) as Texture2D;
+        draw.texture = assetManager.assets.get(textureUUID) as Texture2D;
         draw.indexOffset = indexOffset;
         draw.indexCount = indexCount;
         return draw;
