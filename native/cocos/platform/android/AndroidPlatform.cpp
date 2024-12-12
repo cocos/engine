@@ -852,22 +852,12 @@ int32_t AndroidPlatform::loop() {
         struct android_poll_source *source;
 
         // suspend thread while _loopTimeOut set to -1
-        while (true) {
-            int pollResult = ALooper_pollOnce(_loopTimeOut, nullptr, nullptr,
-                                              reinterpret_cast<void **>(&source));
-
-            // Process events if any
-            if (pollResult == ALOOPER_POLL_ERROR) {
-                CC_LOG_ERROR("ALooper_pollOnce returned and error");
-                break;
-            }
+        while (ALooper_pollOnce(_loopTimeOut, nullptr, nullptr,
+                                reinterpret_cast<void **>(&source)) >= 0) {
+            // Process events
             if (source != nullptr) {
                 source->process(_app, source);
             }
-            if (pollResult == ALOOPER_POLL_TIMEOUT) {
-                break;
-            }
-
 
             // Exit the game loop when the Activity is destroyed
             if (_app->destroyRequested) {
