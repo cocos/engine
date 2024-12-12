@@ -108,7 +108,6 @@ void CCArmatureDisplay::dbRender() {
     entity->clearDynamicRenderDrawInfos();
 
     auto *mgr = MiddlewareManager::getInstance();
-    if (!mgr->isRendering) return;
 
     auto *attachMgr = mgr->getAttachInfoMgr();
     auto *attachInfo = attachMgr->getBuffer();

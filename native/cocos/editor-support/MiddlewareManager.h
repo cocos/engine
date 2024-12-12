@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include "MeshBuffer.h"
 #include "MiddlewareMacro.h"
@@ -108,16 +108,12 @@ public:
     MiddlewareManager();
     ~MiddlewareManager();
 
-    // If manager is traversing _updateMap, will set the flag untill traverse is finished.
-    bool isRendering = false;
-    bool isUpdating = false;
-
 private:
-    void clearRemoveList();
+    void updateCache();
 
     ccstd::vector<IMiddleware *> _updateList;
-    ccstd::vector<IMiddleware *> _removeList;
-    std::map<int, MeshBuffer *> _mbMap;
+    ccstd::unordered_map<IMiddleware *, bool> _updateMap;
+    ccstd::unordered_map<int, MeshBuffer *> _mbMap;
 
     SharedBufferManager _renderInfo;
     SharedBufferManager _attachInfo;

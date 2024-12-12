@@ -266,7 +266,6 @@ void SkeletonRenderer::render(float /*deltaTime*/) {
 
     // avoid other place call update.
     auto *mgr = MiddlewareManager::getInstance();
-    if (!mgr->isRendering) return;
 
     auto *attachMgr = mgr->getAttachInfoMgr();
     auto *attachInfo = attachMgr->getBuffer();
