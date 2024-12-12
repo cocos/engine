@@ -37,15 +37,15 @@ public:
     class OneTimePurchaseOfferDetails {
     public:
         long getPriceAmountMicros() const {
-            return this->_priceAmountMicros;
+            return _priceAmountMicros;
         }
 
         std::string getFormattedPrice() const {
-            return this->_formattedPrice;
+            return _formattedPrice;
         }
 
         std::string getPriceCurrencyCode() const {
-            return this->_priceCurrencyCode;
+            return _priceCurrencyCode;
         }
 
     private:
@@ -58,10 +58,10 @@ public:
     class InstallmentPlanDetails {
     public:
         int getInstallmentPlanCommitmentPaymentsCount() const {
-            return this->_commitmentPaymentsCount;
+            return _commitmentPaymentsCount;
         }
         int getSubsequentInstallmentPlanCommitmentPaymentsCount() const {
-            return this->_subsequentCommitmentPaymentsCount;
+            return _subsequentCommitmentPaymentsCount;
         }
 
     private:
@@ -73,26 +73,26 @@ public:
     class PricingPhase {
     public:
         int getBillingCycleCount() const {
-            return this->_billingCycleCount;
+            return _billingCycleCount;
         }
 
         int getRecurrenceMode() const {
-            return this->_priceAmountMicros;
+            return _priceAmountMicros;
         }
 
         long getPriceAmountMicros() const {
-            return this->_recurrenceMode;
+            return _recurrenceMode;
         }
 
         std::string getBillingPeriod() const {
-            return this->_billingPeriod;
+            return _billingPeriod;
         }
         std::string getFormattedPrice() const {
-            return this->_formattedPrice;
+            return _formattedPrice;
         }
 
         std::string getPriceCurrencyCode() const {
-            return this->_priceCurrencyCode;
+            return _priceCurrencyCode;
         }
 
     private:
@@ -108,7 +108,7 @@ public:
     class PricingPhases {
     public:
         std::vector<PricingPhase*> getPricingPhaseList() const {
-            return this->_pricingPhaseList;
+            return _pricingPhaseList;
         }
         ~PricingPhases() {
             for (auto* pricingPhase : _pricingPhaseList) {
@@ -124,38 +124,38 @@ public:
     class SubscriptionOfferDetails {
     public:
         ~SubscriptionOfferDetails() {
-            if (this->_pricingPhases != nullptr) {
-                delete this->_pricingPhases;
-                this->_pricingPhases = nullptr;
+            if (_pricingPhases != nullptr) {
+                delete _pricingPhases;
+                _pricingPhases = nullptr;
             }
 
-            if (this->_installmentPlanDetails != nullptr) {
-                delete this->_installmentPlanDetails;
-                this->_installmentPlanDetails = nullptr;
+            if (_installmentPlanDetails != nullptr) {
+                delete _installmentPlanDetails;
+                _installmentPlanDetails = nullptr;
             }
         }
         InstallmentPlanDetails* getInstallmentPlanDetails() const {
-            return this->_installmentPlanDetails;
+            return _installmentPlanDetails;
         }
 
         PricingPhases* getPricingPhases() const {
-            return this->_pricingPhases;
+            return _pricingPhases;
         }
 
         std::string getBasePlanId() const {
-            return this->_basePlanId;
+            return _basePlanId;
         }
 
         std::string getOfferId() const {
-            return this->_offerId;
+            return _offerId;
         }
 
         std::string getOfferToken() const {
-            return this->_offerToken;
+            return _offerToken;
         }
 
         std::vector<std::string> getOfferTags() const {
-            return this->_offerTags;
+            return _offerTags;
         }
 
     private:
@@ -168,43 +168,43 @@ public:
         InstallmentPlanDetails* _installmentPlanDetails{nullptr};
     };
     int hashCode() const {
-        return this->_hashCode;
+        return _hashCode;
     }
 
     OneTimePurchaseOfferDetails* getOneTimePurchaseOfferDetails() const {
-        return this->_oneTimePurchaseOfferDetails;
+        return _oneTimePurchaseOfferDetails;
     }
 
     std::string getDescription() const {
-        return this->_description;
+        return _description;
     }
 
     std::string getName() const {
-        return this->_name;
+        return _name;
     }
 
     std::string getProductId() const {
-        return this->_productId;
+        return _productId;
     }
 
     std::string getProductType() const {
-        return this->_productType;
+        return _productType;
     }
 
     std::string getTitle() const {
-        return this->_title;
+        return _title;
     }
 
     std::string toString() const {
-        return this->_toString;
+        return _toString;
     }
 
     bool equals(const ProductDetails& other) const {
-        return this->_hashCode == other._hashCode;
+        return _hashCode == other._hashCode;
     }
 
     std::vector<SubscriptionOfferDetails*> getSubscriptionOfferDetails() const {
-        return this->_subscriptionOfferDetails;
+        return _subscriptionOfferDetails;
     }
 
 private:

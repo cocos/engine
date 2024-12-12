@@ -38,15 +38,15 @@ public:
         class Builder {
         public:
             Builder& setOldPurcchaseToken(const std::string& purchaseToken) {
-                this->_purchaseToken = purchaseToken;
+                _purchaseToken = purchaseToken;
                 return *this;
             }
             Builder& setOriginalExternalTransactionId(const std::string& externalTransactionId) {
-                this->_externalTransactionId = externalTransactionId;
+                _externalTransactionId = externalTransactionId;
                 return *this;
             }
             Builder& setSubscriptionReplacementMode(int subscriptionReplacementMode) {
-                this->_subscriptionReplacementMode = subscriptionReplacementMode;
+                _subscriptionReplacementMode = subscriptionReplacementMode;
                 return *this;
             }
             SubscriptionUpdateParams* build() {
@@ -64,9 +64,9 @@ public:
 
     private:
         SubscriptionUpdateParams(int subscriptionReplacementMode, const std::string& purchaseToken, const std::string& externalTransactionId) {
-            this->_subscriptionReplacementMode = subscriptionReplacementMode;
-            this->_purchaseToken = purchaseToken;
-            this->_externalTransactionId = externalTransactionId;
+            _subscriptionReplacementMode = subscriptionReplacementMode;
+            _purchaseToken = purchaseToken;
+            _externalTransactionId = externalTransactionId;
         }
         friend class JniBilling;
         int _subscriptionReplacementMode;
@@ -79,11 +79,11 @@ public:
         class Builder {
         public:
             Builder& setOfferToken(const std::string& offerToken) {
-                this->_offerToken = offerToken;
+                _offerToken = offerToken;
                 return *this;
             }
             Builder& setProductDetails(ProductDetails* productDetails) {
-                this->_productDetails = productDetails;
+                _productDetails = productDetails;
                 return *this;
             }
             ProductDetailsParams* build() {
@@ -100,9 +100,9 @@ public:
 
     private:
         friend class JniBilling;
-        ProductDetailsParams(std::string offerToken, ProductDetails* _productDetails) {
-            this->_offerToken = offerToken;
-            this->_productDetails = _productDetails;
+        ProductDetailsParams(std::string offerToken, ProductDetails* productDetails) {
+            _offerToken = offerToken;
+            _productDetails = productDetails;
         }
 
         std::string _offerToken;
@@ -112,23 +112,23 @@ public:
     class Builder {
     public:
         Builder& setIsOfferPersonalized(bool isOfferPersonalized) {
-            this->_isOfferPersonalized = isOfferPersonalized;
+            _isOfferPersonalized = isOfferPersonalized;
             return *this;
         }
         Builder& setObfuscatedAccountId(const std::string& obfuscatedAccountid) {
-            this->_obfuscatedAccountid = obfuscatedAccountid;
+            _obfuscatedAccountid = obfuscatedAccountid;
             return *this;
         }
         Builder& setObfuscatedProfileId(const std::string& obfuscatedProfileId) {
-            this->_obfuscatedProfileId = obfuscatedProfileId;
+            _obfuscatedProfileId = obfuscatedProfileId;
             return *this;
         }
         Builder& setProductDetailsParamsList(const std::vector<ProductDetailsParams*>& productDetailsParamsList) {
-            this->_productDetailsParamsList = productDetailsParamsList;
+            _productDetailsParamsList = productDetailsParamsList;
             return *this;
         }
         Builder& setSubscriptionUpdateParams(SubscriptionUpdateParams* subscriptionUpdateParams) {
-            this->_subscriptionUpdateParams = subscriptionUpdateParams;
+            _subscriptionUpdateParams = subscriptionUpdateParams;
             return *this;
         }
         BillingFlowParams* build() {

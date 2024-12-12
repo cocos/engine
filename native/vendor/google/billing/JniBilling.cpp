@@ -160,7 +160,7 @@ cc::ProductDetails::SubscriptionOfferDetails* JniBilling::toSubscriptionOfferDet
     return details;
 }
 
-std::vector<ProductDetails*> JniBilling::toProductDetailList(JNIEnv* env, jobject productListObj, jint startID) {
+std::vector<ProductDetails*> JniBilling::toProductDetailList(JNIEnv* env, jobject productListObj, jint tag, jint startID) {
     jclass clazz = env->GetObjectClass(productListObj);
     jmethodID listGetMethod = env->GetMethodID(clazz, "get", "(I)Ljava/lang/Object;");
     int size = callIntMethod(env, clazz, productListObj, "size");
@@ -169,6 +169,7 @@ std::vector<ProductDetails*> JniBilling::toProductDetailList(JNIEnv* env, jobjec
         jobject productDetailObj = env->CallObjectMethod(productListObj, listGetMethod, i);
         cc::ProductDetails* productDetails = cc::JniBilling::toProductDetail(env, productDetailObj);
         productDetails->_id = startID++;
+        productDetails->_tag = tag;
         productDetailsList.push_back(productDetails);
     }
     return std::move(productDetailsList);
@@ -232,7 +233,7 @@ cc::Purchase::PendingPurchaseUpdate* JniBilling::toPendingPurchaseUpdate(JNIEnv*
     return pendingPurchaseUpdate;
 }
 
-std::vector<Purchase*> JniBilling::toPurchaseList(JNIEnv* env, jobject productsListObj, jint startID) {
+std::vector<Purchase*> JniBilling::toPurchaseList(JNIEnv* env, jobject productsListObj, jint tag, jint startID) {
     jclass clazz = env->GetObjectClass(productsListObj);
     jmethodID listGetMethod = env->GetMethodID(clazz, "get", "(I)Ljava/lang/Object;");
     int size = callIntMethod(env, clazz, productsListObj, "size");
@@ -241,6 +242,7 @@ std::vector<Purchase*> JniBilling::toPurchaseList(JNIEnv* env, jobject productsL
         jobject purchaseObj = env->CallObjectMethod(productsListObj, listGetMethod, i);
         cc::Purchase* purchase = cc::JniBilling::toPurchase(env, purchaseObj);
         purchase->_id = startID++;
+        purchase->_tag = tag;
         purchases.push_back(purchase);
     }
     return std::move(purchases);
@@ -395,9 +397,11 @@ jobject JniBilling::newProductDetailsParamsObject(int tag, BillingFlowParams::Pr
 
     cc::JniMethodInfo t2;
     cc::JniHelper::getStaticMethodInfo(t2, JCLS_BILLING, "getProductDetailsObject", "(II)Lcom/android/billingclient/api/ProductDetails;");
-    jobject productDetailsObject = t2.env->CallStaticObjectMethod(t2.classID, t2.methodID, tag, params->_productDetails->_id);
-    jmethodID setProductDetailsMethodId = env->GetMethodID(builderClass, "setProductDetails", "(Lcom/android/billingclient/api/ProductDetails;)Lcom/android/billingclient/api/BillingFlowParams$ProductDetailsParams$Builder;");
-    env->CallObjectMethod(builder, setProductDetailsMethodId, productDetailsObject);
+    if(params->_productDetails) {
+        jobject productDetailsObject = t2.env->CallStaticObjectMethod(t2.classID, t2.methodID, tag, params->_productDetails->_id);
+        jmethodID setProductDetailsMethodId = env->GetMethodID(builderClass, "setProductDetails", "(Lcom/android/billingclient/api/ProductDetails;)Lcom/android/billingclient/api/BillingFlowParams$ProductDetailsParams$Builder;");
+        env->CallObjectMethod(builder, setProductDetailsMethodId, productDetailsObject);
+    }
 
     jmethodID buildMethodId = env->GetMethodID(builderClass, "build", "()Lcom/android/billingclient/api/BillingFlowParams$ProductDetailsParams;");
     return env->CallObjectMethod(builder, buildMethodId);

@@ -34,7 +34,7 @@ namespace cc {
 class CC_DLL BillingConfig : public cc::RefCounted {
 public:
     std::string getCountryCode() const {
-        return this->_countryCode;
+        return _countryCode;
     }
     static BillingConfig* forCountryCode(const std::string countryCode) {
         return new BillingConfig(countryCode);
@@ -43,7 +43,7 @@ public:
 private:
     friend class JniBilling;
     BillingConfig(const std::string countryCode) {
-        this->_countryCode = countryCode;
+        _countryCode = countryCode;
     }
     std::string _countryCode;
 };

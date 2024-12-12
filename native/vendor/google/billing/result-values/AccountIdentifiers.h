@@ -34,11 +34,11 @@ namespace cc {
 class CC_DLL AccountIdentifiers {
 public:
     std::string getObfuscatedAccountId() const {
-        return this->_obfuscatedAccountId;
+        return _obfuscatedAccountId;
     }
 
     std::string getObfuscatedProfileId() const {
-        return this->_obfuscatedProfileId;
+        return _obfuscatedProfileId;
     }
 
 private:

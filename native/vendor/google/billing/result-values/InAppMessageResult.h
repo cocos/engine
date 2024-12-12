@@ -34,16 +34,16 @@ namespace cc {
 class InAppMessageResult : public cc::RefCounted {
 public:
     int getResponseCode() const {
-        return this->_responseCode;
+        return _responseCode;
     }
 
     std::string getPurchaseToken() const {
-        return this->_purchaseToken;
+        return _purchaseToken;
     }
 
     InAppMessageResult(int responseCode, const std::string& purchaseToken) {
-        this->_responseCode = responseCode;
-        this->_purchaseToken = purchaseToken;
+        _responseCode = responseCode;
+        _purchaseToken = purchaseToken;
     }
 
 private:

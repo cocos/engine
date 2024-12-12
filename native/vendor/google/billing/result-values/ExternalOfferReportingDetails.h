@@ -34,7 +34,7 @@ namespace cc {
 class ExternalOfferReportingDetails : public cc::RefCounted {
 public:
     std::string getExternalTransactionToken() const {
-        return this->_externalTransactionToken;
+        return _externalTransactionToken;
     }
 
 private:

@@ -96,12 +96,16 @@ export declare namespace google {
         export namespace BillingClient {
             export type Builder = jsb.BillingClientBuilder;
             export type ConnectionState = jsb.ConnectionState;
+            export type BillingResponseCode = jsb.BillingResponseCode;
+            export type FeatureType = jsb.FeatureType;
+            export type ProductType = jsb.ProductType;
         }
         export type BillingClient = jsb.BillingClient;
         export namespace BillingFlowParams {
             export type Builder = jsb.BillingFlowParamsBuilder;
             export namespace SubscriptionUpdateParams {
                 export type Builder = jsb.SubscriptionUpdateParamsBuilder;
+                export type ReplacementMode = jsb.ReplacementMode;
             }
             export type SubscriptionUpdateParams = jsb.SubscriptionUpdateParams;
             export namespace ProductDetailsParams {
@@ -143,6 +147,7 @@ export declare namespace google {
 
         namespace InAppMessageParams {
             export type Builder = jsb.InAppMessageParamsBuilder;
+            export type InAppMessageCategoryId = jsb.InAppMessageCategoryId;
         }
         export type InAppMessageParams = jsb.InAppMessageParams;
         namespace GetBillingConfigParams {

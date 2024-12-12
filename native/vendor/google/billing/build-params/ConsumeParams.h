@@ -36,12 +36,12 @@ public:
     class Builder {
     public:
         Builder& setPurchaseToken(const std::string& purchaseToken) {
-            this->_purchaseToken = purchaseToken;
+            _purchaseToken = purchaseToken;
             return *this;
         }
 
         ConsumeParams* build() {
-            return new ConsumeParams(this->_purchaseToken);
+            return new ConsumeParams(_purchaseToken);
         }
 
     private:
@@ -58,7 +58,7 @@ public:
 
 private:
     ConsumeParams(const std::string& purchaseToken) {
-        this->_purchaseToken = purchaseToken;
+        _purchaseToken = purchaseToken;
     }
 
     std::string _purchaseToken;

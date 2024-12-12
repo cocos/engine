@@ -37,11 +37,11 @@ public:
     class CC_DLL PendingPurchaseUpdate {
     public:
         std::string getPurchaseToken() const {
-            return this->_purchaseToken;
+            return _purchaseToken;
         }
 
         std::vector<std::string> getProducts() const {
-            return this->_products;
+            return _products;
         }
 
     private:
@@ -51,68 +51,68 @@ public:
     };
 
     int getPurchaseState() const {
-        return this->_purchaseState;
+        return _purchaseState;
     }
     int getQuantity() const {
-        return this->_quantity;
+        return _quantity;
     }
 
     int hashCode() const {
-        return this->_hashCode;
+        return _hashCode;
     }
 
     long getPurchaseTime() const {
-        return this->_purchaseTime;
+        return _purchaseTime;
     }
 
     AccountIdentifiers* getAccountIdentifiers() const {
-        return this->_accountIdentifiers;
+        return _accountIdentifiers;
     }
     PendingPurchaseUpdate* getPendingPurchaseUpdate() const {
-        return this->_pendingPurchaseUpdate;
+        return _pendingPurchaseUpdate;
     }
 
     std::string getDeveloperPayload() const {
-        return this->_developerPayload;
+        return _developerPayload;
     }
 
     std::string getOrderId() const {
-        return this->_orderId;
+        return _orderId;
     }
 
     std::string getOriginalJson() const {
-        return this->_originalJson;
+        return _originalJson;
     }
 
     std::string getPackageName() const {
-        return this->_packageName;
+        return _packageName;
     }
 
     std::string getPurchaseToken() const {
-        return this->_purchaseToken;
+        return _purchaseToken;
     }
 
     std::string getSignature() const {
-        return this->_signature;
+        return _signature;
     }
 
     std::string toString() const {
-        return this->_toString;
+        return _toString;
     }
 
     std::vector<std::string> getProducts() const {
-        return this->_products;
+        return _products;
     }
     bool isAcknowledged() const {
-        return this->_isAcknowledged;
+        return _isAcknowledged;
     }
 
     bool isAutoRenewing() const {
-        return this->_isAutoRenewing;
+        return _isAutoRenewing;
     }
     ~Purchase() override;
     bool equals(const Purchase& other) const {
-        return this->_originalJson == other._originalJson && this->_signature == other._signature;
+        return _originalJson == other._originalJson && _signature == other._signature;
     }
 
 private:

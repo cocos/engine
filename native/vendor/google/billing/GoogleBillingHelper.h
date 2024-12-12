@@ -101,7 +101,7 @@ public:
     static void onInAppMessageResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject inAppMessageResultObj);
     static void userSelectedAlternativeBilling(JNIEnv *env, jclass clazz, jint tag, jobject userChoiceDetailsObj);
 private:
-
+    static void responseOnlyWithBillingResult(const std::string& functionName, JNIEnv* env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj);
 private:
 
 };

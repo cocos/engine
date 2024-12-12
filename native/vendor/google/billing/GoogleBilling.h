@@ -25,7 +25,7 @@
 #pragma once
 
 #include <vector>
-
+#include <unordered_map>
 #include "base/Macros.h"
 #include "base/RefCounted.h"
 
@@ -45,6 +45,23 @@ class InAppMessageParams;
 class BillingResult;
 
 class CC_DLL BillingClient : public cc::RefCounted {
+private:
+    class scopedListener {
+    public:
+        scopedListener() = default;
+        scopedListener(se::Object* obj);
+        ~scopedListener();
+        se::Object* get() const {
+            return _obj;
+        }
+        void reset(se::Object* obj);
+        operator bool() const { 
+            return _obj != nullptr; 
+        }
+    private:
+        se::Object* _obj{nullptr};
+    };
+
 public:
     class Builder {
     public:
@@ -63,9 +80,8 @@ public:
             return *this;
         }
 
-        Builder& enableUserChoiceBilling(se::Object* listener) ;
-
-        Builder& setListener(se::Object* listener) ;
+        Builder& enableUserChoiceBilling(se::Object* listener);
+        Builder& setListener(se::Object* listener);
 
         BillingClient* build() {
             return new BillingClient(this);
@@ -77,8 +93,8 @@ public:
         bool _enableAlternativeBillingOnly;
         bool _enableExternalOffer;
         PendingPurchasesParams* _pendingPurchasesParams;
-        se::Object* _purchasesUpdatedListener{nullptr};
-        se::Object* _userChoiceBillingListener{nullptr};
+        scopedListener _purchasesUpdatedListener;
+        scopedListener _userChoiceBillingListener;
     };
 
     static Builder* newBuilder() {
@@ -106,7 +122,8 @@ public:
 private:
     BillingClient(Builder* builder);
     ~BillingClient();
-    void RemoveJsObject(std::vector<se::Object*>* listeners);
+    int getNextListenerId();
+    int addListener(se::Object* listener);
 
 private:
     friend class GoogleBillingHelper;
@@ -115,21 +132,11 @@ private:
     bool _enableExternalOffer{false};
     PendingPurchasesParams* _pendingPurchasesParams{nullptr};
 
-    se::Object* _purchasesUpdatedListener{nullptr};
-    se::Object* _userChoiceBillingListener{nullptr};
-    std::vector<se::Object*> _billingClientStateListeners;
-    std::vector<se::Object*> _productDetailsResponseListeners;
-    std::vector<se::Object*> _consumeResponseListeners;
-    std::vector<se::Object*> _acknowledgePurchaseResponseListeners;
-    std::vector<se::Object*> _queryPurchasesResponseListeners;
-    std::vector<se::Object*> _alternativeBillingOnlyReportingDetailsListeners;
-    std::vector<se::Object*> _alternativeBillingOnlyAvailabilityListeners;
-    std::vector<se::Object*> _externalOfferReportingDetailsListeners;
-    std::vector<se::Object*> _externalOfferAvailabilityListeners;
-    std::vector<se::Object*> _alternativeBillingOnlyInformationDialogListeners;
-    std::vector<se::Object*> _externalOfferInformationDialogListeners;
-    std::vector<se::Object*> _inappListeners;
-    std::vector<se::Object*> _billingConfigListeners;
+    scopedListener _purchasesUpdatedListener;
+    scopedListener _userChoiceBillingListener;
+	
+    int _nextListnerId{0};
+    std::unordered_map<int, scopedListener> _listeners;
 };
 
 } // namespace cc

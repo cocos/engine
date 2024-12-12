@@ -33,15 +33,15 @@ namespace cc {
 class CC_DLL BillingResult : public cc::RefCounted {
 public:
     int getResponseCode() const {
-        return this->_responseCode;
+        return _responseCode;
     }
 
     std::string getDebugMessage() const {
-        return this->_debugMessage;
+        return _debugMessage;
     }
 
     std::string toString() const {
-        return this->_toString;
+        return _toString;
     }
     class Builder {
     private:
@@ -51,11 +51,11 @@ public:
 
     public:
         Builder& setDebugMessage(const std::string debugMsg) {
-            this->_debugMessage = debugMsg;
+            _debugMessage = debugMsg;
             return *this;
         }
         Builder& setResponseCode(int responseCode) {
-            this->_responseCode = responseCode;
+            _responseCode = responseCode;
             return *this;
         }
         BillingResult* build() {

@@ -46,8 +46,8 @@ namespace cc {
 class CC_DLL JniBilling {
 public:
     static BillingResult *toBillingResult(JNIEnv *env, jobject obj);
-    static std::vector<ProductDetails *> toProductDetailList(JNIEnv *env, jobject productsObj, jint startID);
-    static std::vector<Purchase *> toPurchaseList(JNIEnv *env, jobject productsObj, jint startID);
+    static std::vector<ProductDetails *> toProductDetailList(JNIEnv *env, jobject productsObj, jint tag, jint startID);
+    static std::vector<Purchase *> toPurchaseList(JNIEnv *env, jobject productsObj, jint tag, jint startID);
     static BillingConfig *toBillingConfig(JNIEnv *env, jobject billingConfigObj);
     static AlternativeBillingOnlyReportingDetails *toAlternativeBillingOnlyReportingDetails(JNIEnv *env, jobject alternativeBillingOnlyReportingDetailsObj);
     static ExternalOfferReportingDetails *toExternalOfferReportingDetails(JNIEnv *env, jobject externalOfferReportingDetailsObj);

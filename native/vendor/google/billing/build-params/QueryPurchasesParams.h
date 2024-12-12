@@ -36,12 +36,12 @@ public:
     class Builder {
     public:
         Builder& setProductType(const std::string& productType) {
-            this->_productType = productType;
+            _productType = productType;
             return *this;
         }
 
         QueryPurchasesParams* build() {
-            return new QueryPurchasesParams(this->_productType);
+            return new QueryPurchasesParams(_productType);
         }
 
     private:
@@ -54,7 +54,7 @@ public:
 
 private:
     QueryPurchasesParams(const std::string& productType) {
-        this->_productType = productType;
+        _productType = productType;
     }
     friend class BillingClient;
     std::string _productType;
