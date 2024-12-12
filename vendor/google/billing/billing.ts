@@ -95,6 +95,7 @@ export declare namespace google {
 
         export namespace BillingClient {
             export type Builder = jsb.BillingClientBuilder;
+            export type ConnectionState = jsb.ConnectionState;
         }
         export type BillingClient = jsb.BillingClient;
         export namespace BillingFlowParams {

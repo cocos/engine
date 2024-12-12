@@ -538,7 +538,7 @@ declare namespace jsb {
          * @en To string
          * @zh 转换成字符串
          */
-        toStr(): string;
+        toString(): string;
         /**
          * @en The offer details of an one-time purchase product.
          * @zh 代表一次性购买产品的报价详情。

@@ -198,7 +198,6 @@ cc::ProductDetails* JniBilling::toProductDetail(JNIEnv* env, jobject productObj)
         jclass listClazz = env->GetObjectClass(listObj);
         jmethodID listGetMethod = env->GetMethodID(listClazz, "get", "(I)Ljava/lang/Object;");
         int size = callIntMethod(env, listClazz, listObj, "size");
-        std::vector<cc::ProductDetails::SubscriptionOfferDetails*> details;
         for (int i = 0; i < size; ++i) {
             jobject subscriptionOfferDetailsObj = env->CallObjectMethod(listObj, listGetMethod, i);
             cc::ProductDetails::SubscriptionOfferDetails* detail = toSubscriptionOfferDetails(env, subscriptionOfferDetailsObj);
