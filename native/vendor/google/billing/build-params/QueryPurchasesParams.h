@@ -31,9 +31,9 @@
 
 namespace cc {
 
-class QueryPurchasesParams {
+class QueryPurchasesParams : public cc::RefCounted {
 public:
-    class Builder {
+    class Builder : public cc::RefCounted {
     public:
         Builder& setProductType(const std::string& productType) {
             _productType = productType;
@@ -41,7 +41,7 @@ public:
         }
 
         QueryPurchasesParams* build() {
-            return new QueryPurchasesParams(_productType);
+            return new QueryPurchasesParams(std::move(_productType));
         }
 
     private:
@@ -53,8 +53,7 @@ public:
     }
 
 private:
-    QueryPurchasesParams(const std::string& productType) {
-        _productType = productType;
+    QueryPurchasesParams(const std::string& productType): _productType(productType) {
     }
     friend class BillingClient;
     std::string _productType;

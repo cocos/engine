@@ -30,29 +30,26 @@
 #include "base/RefCounted.h"
 
 namespace cc {
-class QueryProductDetailsParams {
+class QueryProductDetailsParams : public cc::RefCounted {
 public:
     class Product {
     public:
-        class Builder {
+        class Builder : public cc::RefCounted {
         private:
-            std::string _productID;
+            std::string _productId;
             std::string _productType;
 
         public:
-            Builder& setProductId(const std::string& productID) {
-                this->_productID = productID;
+            Builder& setProductId(const std::string& productId) {
+                _productId = productId;
                 return *this;
             }
             Builder& setProductType(const std::string& productType) {
-                this->_productType = productType;
+                _productType = productType;
                 return *this;
             }
             Product* build() {
-                if (_productID.empty()) {
-                } else if (_productType.empty()) {
-                }
-                return new Product(_productID, _productType);
+                return new Product(std::move(_productId), std::move(_productType));
             }
         };
 
@@ -61,17 +58,15 @@ public:
         }
 
     private:
-        Product(const std::string& productID, const std::string& productType) {
-            this->_productID = productID;
-            this->_productType = productType;
+        Product(const std::string& productId, const std::string& productType) : _productId(productId), _productType(productType) {
         }
 
     private:
         friend class BillingClient;
-        std::string _productID;
+        std::string _productId;
         std::string _productType;
     };
-    class Builder {
+    class Builder : public cc::RefCounted {
     private:
         std::vector<Product*> _productList;
 
@@ -82,10 +77,7 @@ public:
         }
 
         QueryProductDetailsParams* build() {
-            if (this->_productList.empty()) {
-                return nullptr;
-            }
-            return new QueryProductDetailsParams(this->_productList);
+            return new QueryProductDetailsParams(std::move(_productList));
         }
     };
 
@@ -94,8 +86,7 @@ public:
     }
 
 private:
-    QueryProductDetailsParams(const std::vector<Product*>& productLists) {
-        _productList = productLists;
+    QueryProductDetailsParams(const std::vector<Product*>&& productLists) : _productList(productLists) {
     }
 
 private:

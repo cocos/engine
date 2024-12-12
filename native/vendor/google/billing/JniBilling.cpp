@@ -360,7 +360,7 @@ BillingResult* JniBilling::callFunctionAndReturnBillingResult(const std::string&
    return nullptr;
 }
 
-jobject JniBilling::newSubscriptionUpdateParamsObject(BillingFlowParams::SubscriptionUpdateParams* params) {
+jobject JniBilling::newSubscriptionUpdateParamsObject(const BillingFlowParams::SubscriptionUpdateParams* params) {
     if(!params) {
         return nullptr;
     }
@@ -383,7 +383,7 @@ jobject JniBilling::newSubscriptionUpdateParamsObject(BillingFlowParams::Subscri
     return env->CallObjectMethod(builder, buildMethodIdMethodId);
 }
 
-jobject JniBilling::newProductDetailsParamsObject(int tag, BillingFlowParams::ProductDetailsParams* params) {
+jobject JniBilling::newProductDetailsParamsObject(int tag, const BillingFlowParams::ProductDetailsParams* params) {
     auto* env = JniHelper::getEnv();
     cc::JniMethodInfo t;
     cc::JniHelper::getStaticMethodInfo(t, "com/android/billingclient/api/BillingFlowParams$ProductDetailsParams", "newBuilder", "()Lcom/android/billingclient/api/BillingFlowParams$ProductDetailsParams$Builder;");
@@ -419,7 +419,7 @@ jobject JniBilling::newProductDetailsParamsListObject(int tag, std::vector<Billi
     return list;
 }
 
-jobject JniBilling::newBillingFlowParamsObject(int tag, BillingFlowParams* params) {
+jobject JniBilling::newBillingFlowParamsObject(int tag, const BillingFlowParams* params) {
     JNIEnv *env = cc::JniHelper::getEnv();
     cc::JniMethodInfo t;
     cc::JniHelper::getStaticMethodInfo(t, "com/android/billingclient/api/BillingFlowParams", "newBuilder", "()Lcom/android/billingclient/api/BillingFlowParams$Builder;");
@@ -449,7 +449,7 @@ jobject JniBilling::newBillingFlowParamsObject(int tag, BillingFlowParams* param
     return env->CallObjectMethod(builder, buildMethodId);
  }
 
-jobject JniBilling::newPendingPurchasesParamsObject(PendingPurchasesParams* params) {
+jobject JniBilling::newPendingPurchasesParamsObject(const PendingPurchasesParams* params) {
     auto* env = JniHelper::getEnv();
     cc::JniMethodInfo t;
     cc::JniHelper::getStaticMethodInfo(t, "com/android/billingclient/api/PendingPurchasesParams", "newBuilder", "()Lcom/android/billingclient/api/PendingPurchasesParams$Builder;");
@@ -487,7 +487,7 @@ jobject JniBilling::newUserChoiceBillingListenerObj(int tag) {
     return newCustomListenerObject(tag, "BillingClientUserChoiceBillingListener");
 }
 
-jobject JniBilling::newBillingClientBuilderObject(int tag, BillingClient::Builder* params) {
+jobject JniBilling::newBillingClientBuilderObject(int tag, const BillingClient::Builder* params) {
     auto* env = JniHelper::getEnv();
     cc::JniMethodInfo t;
     auto *javaGameActivity = cc::JniHelper::getActivity();

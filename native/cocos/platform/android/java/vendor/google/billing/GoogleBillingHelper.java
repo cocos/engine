@@ -172,14 +172,14 @@ public final class GoogleBillingHelper {
     public static void removePurchase(int tag, int purchaseID) {
         GoogleBilling billing = googleBillings.get(tag);
         if (billing != null) {
-            billing.removeProductDetails(purchaseID);
+            billing.removePurchase(purchaseID);
         }
     }
 
-    public static ProductDetails getPurchase(int tag, int purchaseId) {
+    public static Purchase getPurchase(int tag, int purchaseId) {
         GoogleBilling billing = googleBillings.get(tag);
         if (billing != null) {
-            return billing.getProductDetails(purchaseId);
+            return billing.getPurchase(purchaseId);
         }
         return null;
     }

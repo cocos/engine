@@ -31,9 +31,9 @@
 
 namespace cc {
 
-class GetBillingConfigParams {
+class GetBillingConfigParams : public cc::RefCounted {
 public:
-    class Builder {
+    class Builder : public cc::RefCounted {
     public:
         GetBillingConfigParams* build() {
             return new GetBillingConfigParams();

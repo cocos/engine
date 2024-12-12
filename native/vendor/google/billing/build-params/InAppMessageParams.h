@@ -31,22 +31,22 @@
 
 namespace cc {
 
-class InAppMessageParams {
+class InAppMessageParams : public cc::RefCounted {
 public:
-    class Builder {
+    class Builder : public cc::RefCounted {
     public:
         Builder& addAllInAppMessageCategoriesToShow() {
-            this->_inAppMessageCategoryIds.push_back(2);
+            _inAppMessageCategoryIds.push_back(2);
             return *this;
         }
 
         Builder& addInAppMessageCategoryToShow(int inAppMessageCategoryId) {
-            this->_inAppMessageCategoryIds.push_back(inAppMessageCategoryId);
+            _inAppMessageCategoryIds.push_back(inAppMessageCategoryId);
             return *this;
         }
 
         InAppMessageParams* build() {
-            return new InAppMessageParams(this->_inAppMessageCategoryIds);
+            return new InAppMessageParams(std::move(_inAppMessageCategoryIds));
         }
 
     private:
@@ -58,8 +58,7 @@ public:
     }
 
 private:
-    InAppMessageParams(const std::vector<int>& inAppMessageCategoryIds) {
-        this->_inAppMessageCategoryIds = inAppMessageCategoryIds;
+    InAppMessageParams(const std::vector<int>&& inAppMessageCategoryIds):_inAppMessageCategoryIds(inAppMessageCategoryIds) {
     }
     friend class BillingClient;
     std::vector<int> _inAppMessageCategoryIds;

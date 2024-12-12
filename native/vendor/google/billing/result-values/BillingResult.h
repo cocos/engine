@@ -43,14 +43,14 @@ public:
     std::string toString() const {
         return _toString;
     }
-    class Builder {
+    class Builder : public cc::RefCounted {
     private:
         int _responseCode{0};
         std::string _debugMessage;
         std::string _toStr;
 
     public:
-        Builder& setDebugMessage(const std::string debugMsg) {
+        Builder& setDebugMessage(const std::string& debugMsg) {
             _debugMessage = debugMsg;
             return *this;
         }

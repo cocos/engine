@@ -121,6 +121,7 @@ public:
         friend class JniBilling;
         std::vector<PricingPhase*> _pricingPhaseList;
     };
+
     class SubscriptionOfferDetails {
     public:
         ~SubscriptionOfferDetails() {

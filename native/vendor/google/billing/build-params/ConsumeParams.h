@@ -31,9 +31,9 @@
 
 namespace cc {
 
-class ConsumeParams {
+class ConsumeParams : public cc::RefCounted {
 public:
-    class Builder {
+    class Builder : public cc::RefCounted {
     public:
         Builder& setPurchaseToken(const std::string& purchaseToken) {
             _purchaseToken = purchaseToken;
@@ -41,7 +41,7 @@ public:
         }
 
         ConsumeParams* build() {
-            return new ConsumeParams(_purchaseToken);
+            return new ConsumeParams(std::move(_purchaseToken));
         }
 
     private:
@@ -57,8 +57,7 @@ public:
     }
 
 private:
-    ConsumeParams(const std::string& purchaseToken) {
-        _purchaseToken = purchaseToken;
+    ConsumeParams(const std::string&& purchaseToken) : _purchaseToken(purchaseToken) {
     }
 
     std::string _purchaseToken;

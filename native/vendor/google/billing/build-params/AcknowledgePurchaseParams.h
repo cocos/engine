@@ -30,9 +30,9 @@
 #include "base/RefCounted.h"
 
 namespace cc {
-class AcknowledgePurchaseParams {
+class AcknowledgePurchaseParams : public cc::RefCounted {
 public:
-    class Builder {
+    class Builder : public cc::RefCounted {
     public:
         Builder& setPurchaseToken(const std::string& purchaseToken) {
             _purchaseToken = purchaseToken;
@@ -40,7 +40,7 @@ public:
         }
 
         AcknowledgePurchaseParams* build() {
-            return new AcknowledgePurchaseParams(_purchaseToken);
+            return new AcknowledgePurchaseParams(std::move(_purchaseToken));
         }
 
     private:
@@ -56,8 +56,7 @@ public:
     }
 
 private:
-    AcknowledgePurchaseParams(const std::string& purchaseToken) {
-        _purchaseToken = purchaseToken;
+    AcknowledgePurchaseParams(const std::string&& purchaseToken): _purchaseToken(purchaseToken) {
     }
 
     std::string _purchaseToken;

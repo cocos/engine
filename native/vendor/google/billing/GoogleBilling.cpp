@@ -135,13 +135,15 @@ bool BillingClient::isReady() const {
 void BillingClient::queryProductDetailsAsync(QueryProductDetailsParams* params, se::Object* listener) {
     int listenerId = addListener(listener);
 
-    std::vector<std::string> productIDs;
+    std::vector<std::string> productIds;
     std::vector<std::string> productTypes;
+    productIds.reserve(16);
+    productTypes.reserve(16);
     for (auto product : params->_productList) {
-        productIDs.push_back(product->_productID);
+        productIds.push_back(product->_productId);
         productTypes.push_back(product->_productType);
     }
-    GoogleBillingHelper::queryProductDetailsAsync(_tag, listenerId, productIDs, productTypes);
+    GoogleBillingHelper::queryProductDetailsAsync(_tag, listenerId, productIds, productTypes);
 }
 
 void BillingClient::launchBillingFlow(BillingFlowParams* params) {

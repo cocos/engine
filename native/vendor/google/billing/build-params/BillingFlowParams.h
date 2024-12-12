@@ -31,11 +31,11 @@
 #include "vendor/google/billing/result-values/ProductDetails.h"
 
 namespace cc {
-class CC_DLL BillingFlowParams {
+class CC_DLL BillingFlowParams : public cc::RefCounted {
 public:
-    class SubscriptionUpdateParams {
+    class SubscriptionUpdateParams : public cc::RefCounted {
     public:
-        class Builder {
+        class Builder : public cc::RefCounted {
         public:
             Builder& setOldPurcchaseToken(const std::string& purchaseToken) {
                 _purchaseToken = purchaseToken;
@@ -50,7 +50,7 @@ public:
                 return *this;
             }
             SubscriptionUpdateParams* build() {
-                return new SubscriptionUpdateParams(_subscriptionReplacementMode, _purchaseToken, _externalTransactionId);
+                return new SubscriptionUpdateParams(_subscriptionReplacementMode, std::move(_purchaseToken), std::move(_externalTransactionId));
             }
 
         private:
@@ -63,10 +63,8 @@ public:
         }
 
     private:
-        SubscriptionUpdateParams(int subscriptionReplacementMode, const std::string& purchaseToken, const std::string& externalTransactionId) {
-            _subscriptionReplacementMode = subscriptionReplacementMode;
-            _purchaseToken = purchaseToken;
-            _externalTransactionId = externalTransactionId;
+        SubscriptionUpdateParams(int subscriptionReplacementMode, const std::string&& purchaseToken, const std::string&& externalTransactionId)
+        : _subscriptionReplacementMode(subscriptionReplacementMode), _purchaseToken(purchaseToken), _externalTransactionId(externalTransactionId) {
         }
         friend class JniBilling;
         int _subscriptionReplacementMode;
@@ -74,20 +72,35 @@ public:
         std::string _externalTransactionId;
     };
 
-    class ProductDetailsParams {
+    class ProductDetailsParams : public cc::RefCounted {
     public:
-        class Builder {
+        ~ProductDetailsParams() {
+            if (_productDetails) {
+                _productDetails->release();
+            }
+            _productDetails = nullptr;
+        }
+        class Builder : public cc::RefCounted {
         public:
+            ~Builder() {
+                if (_productDetails) {
+                    _productDetails->release();
+                }
+                _productDetails = nullptr;
+            }
             Builder& setOfferToken(const std::string& offerToken) {
                 _offerToken = offerToken;
                 return *this;
             }
             Builder& setProductDetails(ProductDetails* productDetails) {
                 _productDetails = productDetails;
+                if (_productDetails) {
+                    _productDetails->addRef();
+                }
                 return *this;
             }
             ProductDetailsParams* build() {
-                return new ProductDetailsParams(_offerToken, _productDetails);
+                return new ProductDetailsParams(std::move(_offerToken), _productDetails);
             }
 
         private:
@@ -100,16 +113,17 @@ public:
 
     private:
         friend class JniBilling;
-        ProductDetailsParams(std::string offerToken, ProductDetails* productDetails) {
-            _offerToken = offerToken;
-            _productDetails = productDetails;
+        ProductDetailsParams(const std::string&& offerToken, ProductDetails* productDetails) : _offerToken(offerToken), _productDetails(productDetails) {
+            if (_productDetails) {
+                _productDetails->addRef();
+            }
         }
 
         std::string _offerToken;
         ProductDetails* _productDetails{nullptr};
     };
 
-    class Builder {
+    class Builder : public cc::RefCounted {
     public:
         Builder& setIsOfferPersonalized(bool isOfferPersonalized) {
             _isOfferPersonalized = isOfferPersonalized;
@@ -132,7 +146,11 @@ public:
             return *this;
         }
         BillingFlowParams* build() {
-            return new BillingFlowParams(_isOfferPersonalized, _obfuscatedAccountid, _obfuscatedProfileId, _productDetailsParamsList, _subscriptionUpdateParams);
+            return new BillingFlowParams(_isOfferPersonalized,
+                                         std::move(_obfuscatedAccountid),
+                                         std::move(_obfuscatedProfileId),
+                                         std::move(_productDetailsParamsList),
+                                         _subscriptionUpdateParams);
         }
 
     private:
@@ -151,15 +169,11 @@ private:
     friend class GoogleBillingHelper;
     friend class JniBilling;
     BillingFlowParams(bool isOfferPersonalized,
-                      const std::string& obfuscatedAccountid,
-                      const std::string& obfuscatedProfileId,
-                      const std::vector<ProductDetailsParams*>& productDetailsParamsList,
-                      SubscriptionUpdateParams* subscriptionUpdateParams) {
-        _isOfferPersonalized = isOfferPersonalized;
-        _obfuscatedAccountid = obfuscatedAccountid;
-        _obfuscatedProfileId = obfuscatedProfileId;
-        _productDetailsParamsList = productDetailsParamsList;
-        _subscriptionUpdateParams = subscriptionUpdateParams;
+                      const std::string&& obfuscatedAccountid,
+                      const std::string&& obfuscatedProfileId,
+                      const std::vector<ProductDetailsParams*>&& productDetailsParamsList,
+                      SubscriptionUpdateParams* subscriptionUpdateParams)
+    : _isOfferPersonalized(isOfferPersonalized), _obfuscatedAccountid(obfuscatedAccountid), _obfuscatedProfileId(obfuscatedProfileId), _productDetailsParamsList(productDetailsParamsList), _subscriptionUpdateParams(subscriptionUpdateParams) {
     }
     bool _isOfferPersonalized{false};
     std::string _obfuscatedAccountid;

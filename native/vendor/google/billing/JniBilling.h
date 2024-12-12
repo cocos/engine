@@ -67,16 +67,16 @@ public:
     static UserChoiceDetails* toUserChoiceDetails(JNIEnv* env, jobject obj);
 
 
-    static jobject newBillingFlowParamsObject(int tag, BillingFlowParams* params);
-    static jobject newBillingClientBuilderObject(int tag, BillingClient::Builder* params);
+    static jobject newBillingFlowParamsObject(int tag, const BillingFlowParams* params);
+    static jobject newBillingClientBuilderObject(int tag, const BillingClient::Builder* params);
 private:
-    static jobject newSubscriptionUpdateParamsObject(BillingFlowParams::SubscriptionUpdateParams* params);
-    static jobject newProductDetailsParamsObject(int tag, BillingFlowParams::ProductDetailsParams* params);
+    static jobject newSubscriptionUpdateParamsObject(const BillingFlowParams::SubscriptionUpdateParams* params);
+    static jobject newProductDetailsParamsObject(int tag, const BillingFlowParams::ProductDetailsParams* params);
     static jobject newProductDetailsParamsListObject(int tag, std::vector<BillingFlowParams::ProductDetailsParams*> listParams);
 
     static jobject newPurchaseUpdateListenerObject(int tag);
     static jobject newUserChoiceBillingListenerObj(int tag);
-    static jobject newPendingPurchasesParamsObject(PendingPurchasesParams* params);
+    static jobject newPendingPurchasesParamsObject(const PendingPurchasesParams* params);
     static jobject newCustomListenerObject(int tag, const std::string& functionName);
 };
 

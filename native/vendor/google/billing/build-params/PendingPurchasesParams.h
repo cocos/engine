@@ -31,27 +31,27 @@
 
 namespace cc {
 
-class PendingPurchasesParams {
+class PendingPurchasesParams : public cc::RefCounted {
 public:
-    class Builder {
+    class Builder : public cc::RefCounted {
     private:
         bool _enableOneTimeProducts;
         bool _enablePrepaidPlans;
 
     public:
         Builder& enableOneTimeProducts() {
-            this->_enableOneTimeProducts = true;
+            _enableOneTimeProducts = true;
             return *this;
         }
         Builder& enablePrepaidPlans() {
-            this->_enablePrepaidPlans = true;
+            _enablePrepaidPlans = true;
             return *this;
         }
         PendingPurchasesParams* build() {
-            if (!this->_enableOneTimeProducts) {
+            if (!_enableOneTimeProducts) {
                 return nullptr;
             }
-            return new PendingPurchasesParams(this->_enableOneTimeProducts, this->_enablePrepaidPlans);
+            return new PendingPurchasesParams(_enableOneTimeProducts, _enablePrepaidPlans);
         }
     };
 
@@ -60,9 +60,8 @@ public:
     }
 
 private:
-    PendingPurchasesParams(bool enableOneTimeProducts, bool enablePrepaidPlans) {
-        this->_enableOneTimeProducts = enableOneTimeProducts;
-        this->_enablePrepaidPlans = enablePrepaidPlans;
+    PendingPurchasesParams(bool enableOneTimeProducts, bool enablePrepaidPlans)
+        :_enableOneTimeProducts(enableOneTimeProducts), _enablePrepaidPlans(enablePrepaidPlans) {
     }
 
 private:

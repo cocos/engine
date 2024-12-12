@@ -36,7 +36,7 @@ public:
     std::string getCountryCode() const {
         return _countryCode;
     }
-    static BillingConfig* forCountryCode(const std::string countryCode) {
+    static BillingConfig* forCountryCode(const std::string& countryCode) {
         return new BillingConfig(countryCode);
     }
 
