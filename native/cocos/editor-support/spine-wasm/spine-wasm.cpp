@@ -43,14 +43,16 @@ namespace {
                     auto* regionAttachment = static_cast<RegionAttachment *>(attachment);
                     attachmentVertices = static_cast<AttachmentVertices*>(regionAttachment->getRendererObject());
                 }
-                auto& textureName = attachmentVertices->_textureId;
-                if (textureMap.containsKey(textureName)) {
-                    attachmentVertices->_textureId = textureMap[textureName];
-                } else {
-                    spine::String logInfo(attachment->getName());
-                    logInfo.append(" attachment's texture doesn`t exist ");
-                    logInfo.append(textureName);
-                    logToConsole(logInfo.buffer());
+                if (attachmentVertices) {
+                    auto& textureName = attachmentVertices->_textureId;
+                    if (textureMap.containsKey(textureName)) {
+                        attachmentVertices->_textureId = textureMap[textureName];
+                    } else {
+                        spine::String logInfo(attachment->getName());
+                        logInfo.append(" attachment's texture doesn`t exist ");
+                        logInfo.append(textureName);
+                        logToConsole(logInfo.buffer());
+                    }
                 }
             }
         }
