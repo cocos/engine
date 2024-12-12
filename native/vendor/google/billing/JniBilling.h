@@ -72,7 +72,7 @@ public:
 private:
     static jobject newSubscriptionUpdateParamsObject(const BillingFlowParams::SubscriptionUpdateParams* params);
     static jobject newProductDetailsParamsObject(int tag, const BillingFlowParams::ProductDetailsParams* params);
-    static jobject newProductDetailsParamsListObject(int tag, std::vector<BillingFlowParams::ProductDetailsParams*> listParams);
+    static jobject newProductDetailsParamsListObject(int tag, const std::vector<BillingFlowParams::ProductDetailsParams*>& listParams);
 
     static jobject newPurchaseUpdateListenerObject(int tag);
     static jobject newUserChoiceBillingListenerObj(int tag);

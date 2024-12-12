@@ -9,6 +9,8 @@
 
 # Add any project specific keep options here:
 -keep public class com.google.** { *; }
+-keep public class com.android.** { *; }
+-keep public class google.billing.** { *; }
 -keep public class androidx.** { *; }
 -keep class com.cocos.lib.CocosActivity {
     public <methods>;

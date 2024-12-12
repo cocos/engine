@@ -26,6 +26,7 @@
 #include "cocos/bindings/jswrapper/SeApi.h"
 #include "platform/java/jni/JniHelper.h"
 #include "platform/java/jni/JniImp.h"
+#include "vendor/google/billing/result-values/BillingResult.h"
 #include "vendor/google/billing/GoogleBillingHelper.h"
 #include "vendor/google/billing/GoogleBillingManager.h"
 #include "vendor/google/billing/build-params/AcknowledgePurchaseParams.h"
@@ -133,12 +134,16 @@ bool BillingClient::isReady() const {
 }
 
 void BillingClient::queryProductDetailsAsync(QueryProductDetailsParams* params, se::Object* listener) {
+    if(!params || !listener) {
+        CC_LOG_WARNING("params or listener can't be null");
+        return;
+    }
     int listenerId = addListener(listener);
-
     std::vector<std::string> productIds;
     std::vector<std::string> productTypes;
-    productIds.reserve(16);
-    productTypes.reserve(16);
+    size_t size = params->_productList.size();
+    productIds.reserve(size);
+    productTypes.reserve(size);
     for (auto product : params->_productList) {
         productIds.push_back(product->_productId);
         productTypes.push_back(product->_productType);
@@ -147,25 +152,45 @@ void BillingClient::queryProductDetailsAsync(QueryProductDetailsParams* params, 
 }
 
 void BillingClient::launchBillingFlow(BillingFlowParams* params) {
+    if(!params) {
+        CC_LOG_WARNING("Params can't be null");
+        return;
+    }
     GoogleBillingHelper::launchBillingFlow(_tag, params);
 }
 
 void BillingClient::consumeAsync(ConsumeParams* params, se::Object* listener) {
+    if(!params || !listener) {
+        CC_LOG_WARNING("Params or listener can't be null");
+        return;
+    }
     int listenerId = addListener(listener);
     GoogleBillingHelper::consumeAsync(_tag, listenerId, params);
 }
 
 void BillingClient::acknowledgePurchase(AcknowledgePurchaseParams* params, se::Object* listener) {
+    if(!params || !listener) {
+        CC_LOG_WARNING("Params or listener can't be null");
+        return;
+    }
     int listenerId = addListener(listener);
     GoogleBillingHelper::acknowledgePurchase(_tag, listenerId, params);
 }
 
 void BillingClient::queryPurchasesAsync(QueryPurchasesParams* params, se::Object* listener) {
+    if(!params || !listener) {
+        CC_LOG_WARNING("Params or listener can't be null");
+        return;
+    }
     int listenerId = addListener(listener);
     GoogleBillingHelper::queryPurchasesAsync(_tag, listenerId, params->_productType);
 }
 
 void BillingClient::getBillingConfigAsync(GetBillingConfigParams* params, se::Object* listener) {
+    if(!params || !listener) {
+        CC_LOG_WARNING("Params or listener can't be null");
+        return;
+    }
     int listenerId = addListener(listener);
     GoogleBillingHelper::getBillingConfigAsync(_tag, listenerId);
 }
@@ -175,36 +200,67 @@ BillingResult* BillingClient::isFeatureSupported(const std::string& feature) {
 }
 
 void BillingClient::createAlternativeBillingOnlyReportingDetailsAsync(se::Object* listener) {
+    if(!listener) {
+        CC_LOG_WARNING("Listener can't be null");
+        return;
+    }
     int listenerId = addListener(listener);
     GoogleBillingHelper::createAlternativeBillingOnlyReportingDetailsAsync(_tag, listenerId);
 }
 
 void BillingClient::isAlternativeBillingOnlyAvailableAsync(se::Object* listener) {
+    if(!listener) {
+        CC_LOG_WARNING("Listener can't be null");
+        return;
+    }
     int listenerId = addListener(listener);
     GoogleBillingHelper::isAlternativeBillingOnlyAvailableAsync(_tag, listenerId);
 }
 
 void BillingClient::createExternalOfferReportingDetailsAsync(se::Object* listener) {
+    if(!listener) {
+        CC_LOG_WARNING("Listener can't be null");
+        return;
+    }
     int listenerId = addListener(listener);
     GoogleBillingHelper::createExternalOfferReportingDetailsAsync(_tag, listenerId);
 }
 
 void BillingClient::isExternalOfferAvailableAsync(se::Object* listener) {
+    if(!listener) {
+        CC_LOG_WARNING("Listener can't be null");
+        return;
+    }
     int listenerId = addListener(listener);
     GoogleBillingHelper::isExternalOfferAvailableAsync(_tag, listenerId);
 }
 
 BillingResult* BillingClient::showAlternativeBillingOnlyInformationDialog(se::Object* listener) {
+    if(!listener) {
+        // Extending the return value of BillingResult.Normal behavior wouldn't get in here.
+        auto* builder = BillingResult::newBuilder();
+        return (*builder).setResponseCode(6).setDebugMessage("Listener can't be null").build();
+    }
     int listenerId = addListener(listener);
     return GoogleBillingHelper::showAlternativeBillingOnlyInformationDialog(_tag, listenerId);
 }
 
 BillingResult* BillingClient::showExternalOfferInformationDialog(se::Object* listener) {
+    if(!listener) {
+        // Extending the return value of BillingResult.Normal behavior wouldn't get in here.
+        auto* builder = BillingResult::newBuilder();
+        return (*builder).setResponseCode(6).setDebugMessage("Listener can't be null").build();
+    }
     int listenerId = addListener(listener);
     return GoogleBillingHelper::showExternalOfferInformationDialog(_tag, listenerId);
 }
 
 BillingResult* BillingClient::showInAppMessages(InAppMessageParams* params, se::Object* listener) {
+    if(!params || !listener) {
+        // Extending the return value of BillingResult.Normal behavior wouldn't get in here.
+        auto* builder = BillingResult::newBuilder();
+        return (*builder).setResponseCode(6).setDebugMessage("Listener can't be null").build();
+    }
     int listenerId = addListener(listener);
     return GoogleBillingHelper::showInAppMessages(_tag, listenerId, params->_inAppMessageCategoryIds);
 }

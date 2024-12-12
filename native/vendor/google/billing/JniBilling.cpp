@@ -407,7 +407,7 @@ jobject JniBilling::newProductDetailsParamsObject(int tag, const BillingFlowPara
     return env->CallObjectMethod(builder, buildMethodId);
 }
 
-jobject JniBilling::newProductDetailsParamsListObject(int tag, std::vector<BillingFlowParams::ProductDetailsParams*> listParams) {
+jobject JniBilling::newProductDetailsParamsListObject(int tag, const std::vector<BillingFlowParams::ProductDetailsParams*>& listParams) {
     JNIEnv *env = cc::JniHelper::getEnv();
     jclass listClass = env->FindClass("java/util/ArrayList");
     jmethodID methodInit = env->GetMethodID(listClass, "<init>", "()V"); /* 无参构造 */

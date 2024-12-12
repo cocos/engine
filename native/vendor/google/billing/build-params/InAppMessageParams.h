@@ -58,7 +58,7 @@ public:
     }
 
 private:
-    InAppMessageParams(const std::vector<int>&& inAppMessageCategoryIds):_inAppMessageCategoryIds(inAppMessageCategoryIds) {
+    InAppMessageParams(std::vector<int>&& inAppMessageCategoryIds):_inAppMessageCategoryIds(inAppMessageCategoryIds) {
     }
     friend class BillingClient;
     std::vector<int> _inAppMessageCategoryIds;

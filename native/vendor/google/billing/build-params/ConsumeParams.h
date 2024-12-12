@@ -57,7 +57,7 @@ public:
     }
 
 private:
-    ConsumeParams(const std::string&& purchaseToken) : _purchaseToken(purchaseToken) {
+    ConsumeParams(std::string&& purchaseToken) : _purchaseToken(purchaseToken) {
     }
 
     std::string _purchaseToken;

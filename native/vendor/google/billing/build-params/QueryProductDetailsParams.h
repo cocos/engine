@@ -86,7 +86,7 @@ public:
     }
 
 private:
-    QueryProductDetailsParams(const std::vector<Product*>&& productLists) : _productList(productLists) {
+    QueryProductDetailsParams(std::vector<Product*>&& productLists) : _productList(productLists) {
     }
 
 private:
