@@ -503,7 +503,7 @@ const Elements = {
             }, 100, { leading: false, trailing: true });
 
             panel.__nodeChanged__ = (uuid) => {
-                if (Array.isArray(panel.uuidList) && panel.uuidList.includes(uuid)) {
+                if (panel.throttleUpdate && Array.isArray(panel.uuidList) && panel.uuidList.includes(uuid)) {
                     panel.throttleUpdate();
                 }
             };
@@ -548,7 +548,9 @@ const Elements = {
                 }
             }, 100, { leading: false, trailing: true });
 
-            Profile.on('change', panel.__throttleProfileChanged__);
+            if (panel.__throttleProfileChanged__) {
+                Profile.on('change', panel.__throttleProfileChanged__);
+            }
 
             // 识别拖入脚本资源
             panel.$.container.addEventListener('dragover', (event) => {
@@ -645,15 +647,19 @@ const Elements = {
         close() {
             const panel = this;
 
-            panel.throttleUpdate.cancel();
+            if (panel.throttleUpdate) {
+                panel.throttleUpdate.cancel();
+            }
             panel.throttleUpdate = undefined;
 
             Editor.Message.removeBroadcastListener('scene:change-node', panel.__nodeChanged__);
             Editor.Message.removeBroadcastListener('scene:animation-time-change', panel.__animationTimeChange__);
             Editor.Message.removeBroadcastListener('project:setting-change', panel.__projectSettingChanged__);
 
-            Profile.removeListener('change', panel.__throttleProfileChanged__);
-            panel.__throttleProfileChanged__.cancel();
+            if (panel.__throttleProfileChanged__) {
+                Profile.removeListener('change', panel.__throttleProfileChanged__);
+                panel.__throttleProfileChanged__.cancel();
+            }
             panel.__throttleProfileChanged__ = undefined;
         },
     },
