@@ -204,7 +204,7 @@ jobject JniHelper::getContext() {
 jobject JniHelper::getActivity() {
     // TODO(cjh): In normal mode, sContext is Activity itself, but in surface-less mode, we need to
     // returns nullptr.
-    return sContext;
+    return sActivity;
 }
 
 void JniHelper::setActivity(jobject activity) {
