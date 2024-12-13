@@ -38,7 +38,7 @@ enum PrimitiveType {
     PLANE = 6,
     QUAD = 7,
 }
-Enum(PrimitiveType);
+Enum(PrimitiveType); // Need reversed keys in Primitive.onLoaded, so use Enum to generate reversed keys.
 
 /**
  * @en
