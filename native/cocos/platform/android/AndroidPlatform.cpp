@@ -158,7 +158,7 @@ public:
         }
         ABORT_IF(_jniEnv != nullptr)
 
-        Paddleboat_init(_jniEnv, platform->_app->activity->javaGameActivity);
+        Paddleboat_init(_jniEnv, cc::JniHelper::getContext());
         Paddleboat_setControllerStatusCallback(gameControllerStatusCallback, this);
         // This is needed to allow controller events through to us.
         // By default, only touch-screen events are passed through, to match the

@@ -104,7 +104,7 @@ bool ADPFManager::initializePowerManager() {
     #endif
 
     JNIEnv *env = cc::JniHelper::getEnv();
-    auto *javaGameActivity = cc::JniHelper::getActivity();
+    auto *javaGameActivity = cc::JniHelper::getContext();
 
     // Retrieve class information
     jclass context = env->FindClass("android/content/Context");
@@ -189,7 +189,7 @@ bool ADPFManager::initializePerformanceHintManager() {
     return true;
 #else
     JNIEnv *env = cc::JniHelper::getEnv();
-    auto *javaGameActivity = cc::JniHelper::getActivity();
+    auto *javaGameActivity = cc::JniHelper::getContext();
 
     // Retrieve class information
     jclass context = env->FindClass("android/content/Context");
