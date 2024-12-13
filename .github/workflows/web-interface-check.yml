@@ -95,6 +95,7 @@ jobs:
           
       - name: Copy files to external directory (BASE)
         run: |
+          rm -rf dist
           mkdir dist
           cp ./engine/native/cocos/editor-support/spine-wasm/build-wasm/spine.wasm ./dist/
           cp ./engine/native/cocos/editor-support/spine-wasm/build-wasm/spine.js ./dist/spine.wasm.js
@@ -203,6 +204,7 @@ jobs:
           
       - name: Copy files to external directory (HEAD)
         run: |
+          rm -rf dist
           mkdir dist
           cp ./engine-HEAD/native/cocos/editor-support/spine-wasm/build-wasm/spine.wasm ./dist/
           cp ./engine-HEAD/native/cocos/editor-support/spine-wasm/build-wasm/spine.js ./dist/spine.wasm.js
