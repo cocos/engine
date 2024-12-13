@@ -65,7 +65,7 @@ jobs:
           ref: "${{ env.EXT_VERSION }}"
           fetch-depth: 1
 
-- name: Apply emscripten patches (BASE)
+      - name: Apply emscripten patches (BASE)
         run: |
           echo "--------------------------------- Save bind.cpp ---------------------------------"
           cp $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp.bak
@@ -116,6 +116,14 @@ jobs:
           if [ -e ./.github/workflows/package-size-check.js ]; then
             node ./.github/workflows/package-size-check.js
           fi
+
+      - name: Restore patches (BASE)
+        run: |
+          echo "-------------------------- Restore patches ---------------------------------"
+          rm $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+          mv $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp.bak $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+          echo "-------------------------- Restore patches DONE! ---------------------------------"
+          cat $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
 
       - name: Clear npm Cache
         run: |
@@ -221,7 +229,7 @@ jobs:
           npm install
           node ./.github/workflows/package-size-check.js
 
-      - name: Restore patches
+      - name: Restore patches (HEAD)
         run: |
           echo "-------------------------- Restore patches ---------------------------------"
           rm $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
