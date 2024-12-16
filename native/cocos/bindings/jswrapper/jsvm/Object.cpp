@@ -104,7 +104,7 @@ void Object::setPrivateObject(PrivateObjectBase* data) {
     auto tmpThis = _objRef.getValue(_env);
     JSVM_Ref result = nullptr;
     NODE_API_CALL(status, _env,
-                  OH_JSVM_Wrap(_env, tmpThis, this, sendWeakCallback,
+                  OH_JSVM_Wrap(_env, tmpThis, this, weakCallback,
                             (void*)this /* finalize_hint */, &result));
     //_objRef.setWeakref(_env, result);
     setProperty("__native_ptr__", se::Value(static_cast<uint64_t>(reinterpret_cast<uintptr_t>(data))));
@@ -423,19 +423,8 @@ Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object *ob
 Object* Object::createExternalArrayBufferObject(void* contents, size_t byteLength, BufferContentsFreeFunc freeFunc, void* freeUserData) {
     JSVM_Status status;
     JSVM_Value result;
-    if (freeFunc) {
-        struct ExternalArrayBufferCallbackParams* param = new (struct ExternalArrayBufferCallbackParams);
-        param->func = freeFunc;
-        param->contents = contents;
-        param->byteLength = byteLength;
-        param->userData = freeUserData;
-        NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateArraybuffer(ScriptEngine::getEnv(), byteLength, &contents,  &result));
-        param->func(param->contents, param->byteLength, param->userData);
-        delete param;
-    } else {
-        NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateArraybuffer(ScriptEngine::getEnv(), byteLength, &contents,  &result));
-    }
-
+    // JSVM does not support the napi_create_external_arraybuffer interface like in NAPI.
+    NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateArrayBufferFromBackingStoreData(ScriptEngine::getEnv(), contents, byteLength, 0, byteLength, &result));
     Object* obj = Object::_createJSObject(ScriptEngine::getEnv(), result, nullptr);
     return obj;
 }
@@ -703,6 +692,7 @@ void Object::sendWeakCallback(JSVM_Env env, void* nativeObject, void* finalizeHi
 }
 
 void Object::weakCallback(JSVM_Env env, void* nativeObject, void* finalizeHint /*finalize_hint*/) {
+    
     if (finalizeHint) {
         if (nativeObject == nullptr) {
             return;
@@ -710,9 +700,6 @@ void Object::weakCallback(JSVM_Env env, void* nativeObject, void* finalizeHint /
         void *rawPtr = reinterpret_cast<Object*>(finalizeHint)->_privateData;
         Object* seObj = reinterpret_cast<Object*>(finalizeHint);
         Object* rawPtrObj = reinterpret_cast<Object*>(rawPtr);
-        if(rawPtrObj->getRefCount() == 0) {
-            return;
-        }
         if (seObj->_onCleaingPrivateData) { //called by cleanPrivateData, not release seObj;
             return;
         }
@@ -726,11 +713,11 @@ void Object::weakCallback(JSVM_Env env, void* nativeObject, void* finalizeHint /
         }
 
         if (seObj->_finalizeCb != nullptr) {
-            seObj->_finalizeCb(env, rawPtr, rawPtr);
+            seObj->_finalizeCb(env, finalizeHint, finalizeHint);
         } else {
             assert(seObj->_getClass() != nullptr);
             if (seObj->_getClass()->_getFinalizeFunction() != nullptr) {
-                seObj->_getClass()->_getFinalizeFunction()(env, rawPtr, rawPtr);
+                seObj->_getClass()->_getFinalizeFunction()(env, finalizeHint, finalizeHint);
             }
         }
         seObj->decRef();

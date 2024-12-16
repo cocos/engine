@@ -979,7 +979,7 @@ static bool jsb_createExternalArrayBuffer(se::State &s) { // NOLINT
         SE_PRECONDITION2(ok, false, "Error processing arguments");
         if (byteLength > 0) {
 // NOTE: Currently V8 use shared_ptr which has different abi on win64-debug and win64-release
-#if CC_PLATFORM == CC_PLATFORM_WINDOWS && SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8
+#if (CC_PLATFORM == CC_PLATFORM_WINDOWS && SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8) || (SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_JSVM)
             se::HandleObject arrayBuffer{se::Object::createArrayBufferObject(nullptr, byteLength)};
 #else
             void *buffer = malloc(byteLength);
