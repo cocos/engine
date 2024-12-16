@@ -104,7 +104,7 @@ bool ADPFManager::initializePowerManager() {
     #endif
 
     JNIEnv *env = cc::JniHelper::getEnv();
-    auto *javaGameActivity = cc::JniHelper::getContext();
+    auto *applicationContext = cc::JniHelper::getContext();
 
     // Retrieve class information
     jclass context = env->FindClass("android/content/Context");
@@ -117,7 +117,7 @@ bool ADPFManager::initializePowerManager() {
     // Get the method 'getSystemService' and call it
     jmethodID mid_getss = env->GetMethodID(
         context, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;");
-    jobject obj_power_service = env->CallObjectMethod(javaGameActivity, mid_getss, str_svc);
+    jobject obj_power_service = env->CallObjectMethod(applicationContext, mid_getss, str_svc);
 
     // Add global reference to the power service object.
     obj_power_service_ = env->NewGlobalRef(obj_power_service);
@@ -189,7 +189,7 @@ bool ADPFManager::initializePerformanceHintManager() {
     return true;
 #else
     JNIEnv *env = cc::JniHelper::getEnv();
-    auto *javaGameActivity = cc::JniHelper::getContext();
+    auto *applicationContext = cc::JniHelper::getContext();
 
     // Retrieve class information
     jclass context = env->FindClass("android/content/Context");
@@ -203,7 +203,7 @@ bool ADPFManager::initializePerformanceHintManager() {
     jmethodID mid_getss = env->GetMethodID(
         context, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;");
     jobject obj_perfhint_service = env->CallObjectMethod(
-        javaGameActivity, mid_getss, str_svc);
+        applicationContext, mid_getss, str_svc);
 
     // Add global reference to the power service object.
     obj_perfhint_service_ = env->NewGlobalRef(obj_perfhint_service);
