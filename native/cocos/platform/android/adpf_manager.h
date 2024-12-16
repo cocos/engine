@@ -16,7 +16,7 @@
 
 #pragma once
 
-#if CC_PLATFORM == CC_PLATFORM_ANDROID && __ANDROID_API__ >= 30
+#if CC_PLATFORM == CC_PLATFORM_ANDROID && __ANDROID_API__ >= 30 && CC_USE_ADPF
     #include <android/api-level.h>
     #include <android/log.h>
     #include <android/thermal.h>
