@@ -169,12 +169,11 @@ export class NodeEventProcessor {
     }
 
     public reattach (): void {
-        let currentMaskList: IMask[] | null;
         this.node.walk((node) => {
-            if (!currentMaskList) {
-                currentMaskList = this._searchComponentsInParent(NodeEventProcessor._maskComp);
-            }
-            node.eventProcessor.maskList = currentMaskList;
+            const eventProcessor = node.eventProcessor;
+            // NOTE: When reattaching the current node, the masks of all its descendants need to be recalculated
+            const currentMaskList = eventProcessor._searchComponentsInParent(NodeEventProcessor._maskComp);
+            eventProcessor.maskList = currentMaskList;
         });
     }
 
