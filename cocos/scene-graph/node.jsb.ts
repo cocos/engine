@@ -81,6 +81,7 @@ const TRANSFORMBIT_TRS = TransformBit.TRS;
 
 const nodeProto: any = jsb.Node.prototype;
 export const TRANSFORM_ON = 1 << 0;
+const ACTIVE_ON = 1 << 1;
 const Destroying = CCObject.Flags.Destroying;
 
 // TODO: `_setTempFloatArray` is only implemented on Native platforms. @dumganhar
@@ -262,6 +263,9 @@ nodeProto.on = function (type, callback, target, useCapture: any = false) {
                 this._registeredNodeEventTypeMask |= REGISTERED_EVENT_MASK_TRANSFORM_CHANGED;
             }
             break;
+        case NodeEventType.ACTIVE_CHANGED:
+            this._eventMask |= ACTIVE_ON;
+            break;
         case NodeEventType.PARENT_CHANGED:
             if (!(this._registeredNodeEventTypeMask & REGISTERED_EVENT_MASK_PARENT_CHANGED)) {
                 this._registerOnParentChanged();
@@ -308,6 +312,9 @@ nodeProto.off = function (type: string, callback?, target?, useCapture = false) 
             case NodeEventType.TRANSFORM_CHANGED:
                 this._eventMask &= ~TRANSFORM_ON;
                 break;
+            case NodeEventType.ACTIVE_CHANGED:
+                this._eventMask &= ~ACTIVE_ON;
+                break;
             default:
                 break;
         }
@@ -335,6 +342,10 @@ nodeProto.targetOff = function (target: string | unknown) {
     // Check for event mask reset
     if ((this._eventMask & TRANSFORM_ON) && !this._eventProcessor.hasEventListener(NodeEventType.TRANSFORM_CHANGED)) {
         this._eventMask &= ~TRANSFORM_ON;
+    }
+    
+    if ((this._eventMask & ACTIVE_ON) && !this._eventProcessor.hasEventListener(NodeEventType.ACTIVE_CHANGED)) {
+        this._eventMask &= ~ACTIVE_ON;
     }
 };
 
@@ -500,6 +511,10 @@ nodeProto._onActivateNode = function (shouldActiveNow) {
 };
 
 nodeProto._onPostActivated = function (active: boolean) {
+    if (this._eventMask & ACTIVE_ON) {
+        this.emit(NodeEventType.ACTIVE_CHANGED, this, active);
+    }
+
     this._eventProcessor.setEnabled(active);
     if (active) {
         // in case transform updated during deactivated period
@@ -1263,6 +1278,12 @@ nodeProto._onActiveNode = function (shouldActiveNow: boolean) {
 };
 
 nodeProto._onBatchCreated = function (dontSyncChildPrefab: boolean) {
+    if (this._eventMask & ACTIVE_ON) {
+        if (!this._activeInHierarchy) {
+            this.emit(NodeEventType.ACTIVE_CHANGED, this, false);
+        }
+    }
+
     this.hasChangedFlags = TRANSFORMBIT_TRS;
     const children = this._children;
     const len = children.length;
