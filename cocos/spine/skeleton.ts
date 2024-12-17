@@ -33,7 +33,7 @@ import { Graphics, UIRenderer } from '../2d';
 import { Batcher2D } from '../2d/renderer/batcher-2d';
 import { BlendFactor, BlendOp } from '../gfx';
 import { MaterialInstance } from '../render-scene';
-import { builtinResMgr } from '../asset/asset-manager';
+import { assetManager, builtinResMgr } from '../asset/asset-manager';
 import { legacyCC } from '../core/global-exports';
 import { SkeletonSystem } from './skeleton-system';
 import { RenderEntity, RenderEntityType } from '../2d/renderer/render-entity';
@@ -45,8 +45,6 @@ import { TrackEntryListeners } from './track-entry-listeners';
 import { setPropertyEnumType } from '../core/internal-index';
 
 const CachedFrameTime = 1 / 60;
-const CUSTOM_SLOT_TEXTURE_BEGIN = 10000;
-let _slotTextureID = CUSTOM_SLOT_TEXTURE_BEGIN;
 
 type TrackListener = (x: spine.TrackEntry) => void;
 type TrackListener2 = (x: spine.TrackEntry, ev: spine.Event | number) => void;
@@ -310,10 +308,7 @@ export class Skeleton extends UIRenderer {
      */
     public _endSlotIndex;
 
-    private _slotTextures: Map<number, Texture2D> | null = null;
-
     private _customMaterialInstance: MaterialInstance | null = null;
-
     _vLength = 0;
     _vBuffer: Uint8Array | null = null;
     _iLength = 0;
@@ -715,9 +710,6 @@ export class Skeleton extends UIRenderer {
         this._vBuffer = null;
         this._iBuffer = null;
         this.attachUtil.reset();
-        //this._textures.length = 0;
-        this._slotTextures?.clear();
-        this._slotTextures = null;
         this._cachedSockets.clear();
         this._socketNodes.clear();
         //if (this._cacheMode == SpineAnimationCacheMode.PRIVATE_CACHE) this._animCache?.destroy();
@@ -1174,15 +1166,10 @@ export class Skeleton extends UIRenderer {
     /**
      * @engineInternal
      */
-    public requestDrawData (material: Material, textureID: number, indexOffset: number, indexCount: number): SkeletonDrawData {
+    public requestDrawData (material: Material, textureUUID: string, indexOffset: number, indexCount: number): SkeletonDrawData {
         const draw = this._drawList.add();
         draw.material = material;
-        if (textureID < CUSTOM_SLOT_TEXTURE_BEGIN) {
-            draw.texture = this._textures[textureID];
-        } else {
-            const texture = this._slotTextures?.get(textureID);
-            if (texture) draw.texture = texture;
-        }
+        draw.texture = assetManager.assets.get(textureUUID) as Texture2D;
         draw.indexOffset = indexOffset;
         draw.indexCount = indexCount;
         return draw;
@@ -1871,16 +1858,7 @@ export class Skeleton extends UIRenderer {
         const height = tex2d.height;
         const createNewAttachment = createNew || false;
         this._instance!.resizeSlotRegion(slotName, width, height, createNewAttachment);
-        if (!this._slotTextures) this._slotTextures = new Map<number, Texture2D>();
-        let textureID = 0;
-        this._slotTextures.forEach((value, key) => {
-            if (value === tex2d) textureID = key;
-        });
-        if (textureID === 0) {
-            textureID = ++_slotTextureID;
-            this._slotTextures.set(textureID, tex2d);
-        }
-        this._instance!.setSlotTexture(slotName, textureID);
+        this._instance!.setSlotTexture(slotName, tex2d.uuid);
     }
 
     private _destroySkeletonInfo (skeletonCache: SkeletonCache | null): void {

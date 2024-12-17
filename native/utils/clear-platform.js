@@ -253,7 +253,7 @@ async function minimizeBoost() {
             let boostURL;
             console.log(`Testing local url: ${BOOST_URL_LOCAL}`);
             try {
-                const FETCH_TIMEOUTOUT = 3000;
+                const FETCH_TIMEOUTOUT = 30 * 1000;
                 const testLocal = await Promise.race( [fetch(BOOST_URL_LOCAL), new Promise((_, r)=> {
                     setTimeout(()=> r(new Error('Request timed out')), FETCH_TIMEOUTOUT);
                 })]);

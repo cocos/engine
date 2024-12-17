@@ -21,7 +21,7 @@
 */
 
 import { EDITOR, EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
-import { legacyCC } from '../core/global-exports';
+import { cclegacy } from '../core/global-exports';
 import { errorID, getError } from '../core/platform/debug';
 import { Component } from './component';
 import { NodeEventType } from './node-event';
@@ -38,14 +38,16 @@ import { nodePolyfill } from './node-dev';
 import * as js from '../core/utils/js';
 import { patch_cc_Node } from '../native-binding/decorators';
 import type { Node as JsbNode } from './node';
+import { DispatcherEventType, NodeEventProcessor } from './node-event-processor';
 
 const reserveContentsForAllSyncablePrefabTag = Symbol('ReserveContentsForAllSyncablePrefab');
 
 declare const jsb: any;
+declare const EditorExtends: any;
 
 export const Node: typeof JsbNode = jsb.Node;
 export type Node = JsbNode;
-legacyCC.Node = Node;
+cclegacy.Node = Node;
 
 const NodeCls: any = Node;
 
@@ -81,6 +83,7 @@ const TRANSFORMBIT_TRS = TransformBit.TRS;
 
 const nodeProto: any = jsb.Node.prototype;
 export const TRANSFORM_ON = 1 << 0;
+const ACTIVE_ON = 1 << 1;
 const Destroying = CCObject.Flags.Destroying;
 
 // TODO: `_setTempFloatArray` is only implemented on Native platforms. @dumganhar
@@ -162,7 +165,7 @@ nodeProto.addComponent = function (typeOrClassName) {
     if (typeof typeOrClassName === 'string') {
         constructor = getClassByName(typeOrClassName);
         if (!constructor) {
-            if (legacyCC._RF.peek()) {
+            if (cclegacy._RF.peek()) {
                 errorID(3808, typeOrClassName);
             }
             throw TypeError(getError(3807, typeOrClassName));
@@ -221,7 +224,7 @@ nodeProto.addComponent = function (typeOrClassName) {
     }
     this.emit(NodeEventType.COMPONENT_ADDED, component);
     if (this._activeInHierarchy) {
-        legacyCC.director._nodeActivator.activateComp(component);
+        cclegacy.director._nodeActivator.activateComp(component);
     }
     if (EDITOR_NOT_IN_PREVIEW) {
         component.resetInEditor?.();
@@ -419,7 +422,7 @@ nodeProto._onEditorAttached = function (attached: boolean) {
 };
 
 nodeProto._onRemovePersistRootNode = function () {
-    legacyCC.game.removePersistRootNode(this);
+    cclegacy.game.removePersistRootNode(this);
 };
 
 nodeProto._onDestroyComponents = function () {
@@ -496,11 +499,17 @@ nodeProto._onSiblingOrderChanged = function () {
 };
 
 nodeProto._onActivateNode = function (shouldActiveNow) {
-    legacyCC.director._nodeActivator.activateNode(this, shouldActiveNow);
+    cclegacy.director._nodeActivator.activateNode(this, shouldActiveNow);
 };
 
 nodeProto._onPostActivated = function (active: boolean) {
-    this._eventProcessor.setEnabled(active);
+    const eventProcessor = this._eventProcessor;
+    if (eventProcessor.isEnabled === active) {
+        NodeEventProcessor.callbacksInvoker.emit(DispatcherEventType.MARK_LIST_DIRTY);
+    }
+
+    eventProcessor.setEnabled(active);
+
     if (active) {
         // in case transform updated during deactivated period
         this.invalidateChildren(TransformBit.TRS);
@@ -598,7 +607,7 @@ NodeCls._findChildComponents = function (children, constructor, components) {
 // @ts-ignore
 NodeCls.isNode = function (obj: unknown): obj is jsb.Node {
     // @ts-ignore
-    return obj instanceof jsb.Node && (obj.constructor === jsb.Node || !(obj instanceof legacyCC.Scene));
+    return obj instanceof jsb.Node && (obj.constructor === jsb.Node || !(obj instanceof cclegacy.Scene));
 };
 
 let _tempQuat = new Quat();
@@ -1259,7 +1268,7 @@ nodeProto[serializeTag] = function (serializationOutput: SerializationOutput, co
 };
 
 nodeProto._onActiveNode = function (shouldActiveNow: boolean) {
-    legacyCC.director._nodeActivator.activateNode(this, shouldActiveNow);
+    cclegacy.director._nodeActivator.activateNode(this, shouldActiveNow);
 };
 
 nodeProto._onBatchCreated = function (dontSyncChildPrefab: boolean) {
@@ -1323,7 +1332,7 @@ nodeProto._onLocalPositionRotationScaleUpdated = function (px, py, pz, rx, ry, r
 
 nodeProto._instantiate = function (cloned: Node, isSyncedNode: boolean) {
     if (!cloned) {
-        cloned = legacyCC.instantiate._clone(this, this);
+        cloned = cclegacy.instantiate._clone(this, this);
     }
 
     // TODO(PP_Pro): after we support editorOnly tag, we could remove this any type assertion.
@@ -1372,7 +1381,7 @@ nodeProto._ctor = function (name?: string) {
     this.__editorExtras__ = { editorOnly: true };
 
     this._components = [];
-    this._eventProcessor = new legacyCC.NodeEventProcessor(this);
+    this._eventProcessor = new NodeEventProcessor(this);
     this._uiProps = new NodeUIProperties(this);
 
     const sharedArrayBuffer = this._initAndReturnSharedBuffer();

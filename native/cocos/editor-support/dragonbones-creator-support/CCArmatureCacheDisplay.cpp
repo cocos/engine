@@ -141,7 +141,6 @@ void CCArmatureCacheDisplay::render(float /*dt*/) {
     if (!frameData) return;
 
     auto *mgr = MiddlewareManager::getInstance();
-    if (!mgr->isRendering) return;
     auto *entity = _entity;
     entity->clearDynamicRenderDrawInfos();
 

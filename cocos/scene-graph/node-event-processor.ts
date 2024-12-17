@@ -25,8 +25,8 @@
 import { CallbacksInvoker } from '../core/event/callbacks-invoker';
 import { Event, EventMouse, EventTouch, Touch } from '../input/types';
 import { Vec2 } from '../core/math/vec2';
-import { Node } from './node';
-import { legacyCC } from '../core/global-exports';
+import type { Node } from './node';
+import { cclegacy } from '../core/global-exports';
 import { Component } from './component';
 import { NodeEventType } from './node-event';
 import { InputEventType, SystemEventTypeUnion } from '../input/types/event-enum';
@@ -63,6 +63,8 @@ export enum DispatcherEventType {
     MARK_LIST_DIRTY,
 }
 
+const globalCallbacksInvoker = new CallbacksInvoker<DispatcherEventType>();
+
 /**
  * @en The event processor for Node
  * @zh 节点事件类。
@@ -75,7 +77,7 @@ export class NodeEventProcessor {
     /**
      * @internal
      */
-    public static callbacksInvoker = new CallbacksInvoker<DispatcherEventType>();
+    public static callbacksInvoker = globalCallbacksInvoker;
 
     /**
      * Whether the node event is enabled
@@ -159,7 +161,7 @@ export class NodeEventProcessor {
         if (value) {
             this._attachMask();
         }
-        NodeEventProcessor.callbacksInvoker.emit(DispatcherEventType.MARK_LIST_DIRTY);
+        globalCallbacksInvoker.emit(DispatcherEventType.MARK_LIST_DIRTY);
         if (recursive && children.length > 0) {
             for (let i = 0; i < children.length; ++i) {
                 const child = children[i];
@@ -169,12 +171,11 @@ export class NodeEventProcessor {
     }
 
     public reattach (): void {
-        let currentMaskList: IMask[] | null;
         this.node.walk((node) => {
-            if (!currentMaskList) {
-                currentMaskList = this._searchComponentsInParent(NodeEventProcessor._maskComp);
-            }
-            node.eventProcessor.maskList = currentMaskList;
+            const eventProcessor = node.eventProcessor;
+            // NOTE: When reattaching the current node, the masks of all its descendants need to be recalculated
+            const currentMaskList = eventProcessor._searchComponentsInParent(NodeEventProcessor._maskComp);
+            eventProcessor.maskList = currentMaskList;
         });
     }
 
@@ -185,7 +186,7 @@ export class NodeEventProcessor {
 
         if (this.capturingTarget) this.capturingTarget.clear();
         if (this.bubblingTarget) this.bubblingTarget.clear();
-        NodeEventProcessor.callbacksInvoker.emit(DispatcherEventType.REMOVE_POINTER_EVENT_PROCESSOR, this);
+        globalCallbacksInvoker.emit(DispatcherEventType.REMOVE_POINTER_EVENT_PROCESSOR, this);
         if (this._dispatchingTouch) {
             // Dispatch touch cancel event when node is destroyed.
             const cancelEvent = new EventTouch([this._dispatchingTouch], true, InputEventType.TOUCH_CANCEL);
@@ -245,7 +246,7 @@ export class NodeEventProcessor {
             this.shouldHandleEventMouse = false;
         }
         if (!this._hasPointerListeners()) {
-            NodeEventProcessor.callbacksInvoker.emit(DispatcherEventType.REMOVE_POINTER_EVENT_PROCESSOR, this);
+            globalCallbacksInvoker.emit(DispatcherEventType.REMOVE_POINTER_EVENT_PROCESSOR, this);
         }
     }
 
@@ -364,7 +365,7 @@ export class NodeEventProcessor {
     }
 
     public onUpdatingSiblingIndex (): void {
-        NodeEventProcessor.callbacksInvoker.emit(DispatcherEventType.MARK_LIST_DIRTY);
+        globalCallbacksInvoker.emit(DispatcherEventType.MARK_LIST_DIRTY);
     }
 
     private _searchComponentsInParent<T extends Component> (ctor: Constructor<T> | null): IMask[] | null {
@@ -372,7 +373,7 @@ export class NodeEventProcessor {
         if (ctor) {
             let index = 0;
             let list: IMask[] = [];
-            for (let curr: Node | null = node; curr && Node.isNode(curr); curr = curr.parent, ++index) {
+            for (let curr: Node | null = node; curr && cclegacy.Node.isNode(curr); curr = curr.parent, ++index) {
                 const comp = curr.getComponent(ctor);
                 if (comp) {
                     const next = {
@@ -445,7 +446,7 @@ export class NodeEventProcessor {
             this.shouldHandleEventMouse = true;
         }
         if ((isTouchEvent || isMouseEvent) && !this._hasPointerListeners()) {
-            NodeEventProcessor.callbacksInvoker.emit(DispatcherEventType.ADD_POINTER_EVENT_PROCESSOR, this);
+            globalCallbacksInvoker.emit(DispatcherEventType.ADD_POINTER_EVENT_PROCESSOR, this);
         }
     }
 
@@ -464,7 +465,7 @@ export class NodeEventProcessor {
                 this.shouldHandleEventMouse = false;
             }
             if (!this._hasPointerListeners()) {
-                NodeEventProcessor.callbacksInvoker.emit(DispatcherEventType.REMOVE_POINTER_EVENT_PROCESSOR, this);
+                globalCallbacksInvoker.emit(DispatcherEventType.REMOVE_POINTER_EVENT_PROCESSOR, this);
             }
         });
         return callbacksInvoker;
@@ -693,4 +694,4 @@ export class NodeEventProcessor {
     // #endregion handle touch event
 }
 
-legacyCC.NodeEventProcessor = NodeEventProcessor;
+cclegacy.NodeEventProcessor = NodeEventProcessor;

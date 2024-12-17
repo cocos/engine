@@ -158,7 +158,7 @@ public:
         }
         ABORT_IF(_jniEnv != nullptr)
 
-        Paddleboat_init(_jniEnv, platform->_app->activity->javaGameActivity);
+        Paddleboat_init(_jniEnv, cc::JniHelper::getContext());
         Paddleboat_setControllerStatusCallback(gameControllerStatusCallback, this);
         // This is needed to allow controller events through to us.
         // By default, only touch-screen events are passed through, to match the
@@ -849,13 +849,12 @@ void AndroidPlatform::exit() {
 int32_t AndroidPlatform::loop() {
     IXRInterface *xr = CC_GET_XR_INTERFACE();
     while (true) {
-        int events;
         struct android_poll_source *source;
 
         // suspend thread while _loopTimeOut set to -1
-        while ((ALooper_pollAll(_loopTimeOut, nullptr, &events,
-                                reinterpret_cast<void **>(&source))) >= 0) {
-            // process event
+        while (ALooper_pollOnce(_loopTimeOut, nullptr, nullptr,
+                                reinterpret_cast<void **>(&source)) >= 0) {
+            // Process event
             if (source != nullptr) {
                 source->process(_app, source);
             }

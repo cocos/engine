@@ -1341,6 +1341,7 @@ EMSCRIPTEN_BINDINGS(spine) {
         .property("iCount", &SpineModel::iCount)
         .property("vPtr", &SpineModel::vPtr)
         .property("iPtr", &SpineModel::iPtr)
+        .function("getTextures", &SpineModel::getTextures, allow_raw_pointers())
         .function("getData", &SpineModel::getData, allow_raw_pointer<SPVectorUint>());
 
     class_<SpineDebugShape>("SpineDebugShape")
@@ -1382,10 +1383,33 @@ EMSCRIPTEN_BINDINGS(cocos_spine) {
     class_<SpineWasmUtil>("SpineWasmUtil")
     .class_function("spineWasmInit", &SpineWasmUtil::spineWasmInit)
     .class_function("spineWasmDestroy", &SpineWasmUtil::spineWasmDestroy)
-    .class_function("queryStoreMemory", &SpineWasmUtil::queryStoreMemory)
+    .class_function("createStoreMemory", &SpineWasmUtil::createStoreMemory)
+    .class_function("freeStoreMemory", &SpineWasmUtil::freeStoreMemory)
     .class_function("querySpineSkeletonDataByUUID", &SpineWasmUtil::querySpineSkeletonDataByUUID, allow_raw_pointers())
-    .class_function("createSpineSkeletonDataWithJson", &SpineWasmUtil::createSpineSkeletonDataWithJson, allow_raw_pointers())
-    .class_function("createSpineSkeletonDataWithBinary", &SpineWasmUtil::createSpineSkeletonDataWithBinary, allow_raw_pointers())
+    .class_function("createSpineSkeletonDataWithJson", optional_override([](String jsonStr, String atlasStr, emscripten::val nameArray, emscripten::val uuidArray){
+            unsigned count = nameArray["length"].as<unsigned>();
+            Vector<String> names;
+            Vector<String> ids;
+            names.setSize(count, "");
+            ids.setSize(count, "");
+            for (int i = 0; i < count; i++) {
+                names[i] = nameArray[i].as<String>();
+                ids[i] = uuidArray[i].as<String>();
+            }
+            return SpineWasmUtil::createSpineSkeletonDataWithJson(jsonStr, atlasStr, names, ids);
+        }), allow_raw_pointers())
+    .class_function("createSpineSkeletonDataWithBinary", optional_override([](uint32_t byteSize, String atlasStr, emscripten::val nameArray, emscripten::val uuidArray){
+            unsigned count = nameArray["length"].as<unsigned>();
+            Vector<String> names;
+            Vector<String> ids;
+            names.setSize(count, "");
+            ids.setSize(count, "");
+            for (int i = 0; i < count; i++) {
+                names[i] = nameArray[i].as<String>();
+                ids[i] = uuidArray[i].as<String>();
+            }
+            return SpineWasmUtil::createSpineSkeletonDataWithBinary(byteSize, atlasStr, names, ids);
+        }), allow_raw_pointers())
     .class_function("registerSpineSkeletonDataWithUUID", &SpineWasmUtil::registerSpineSkeletonDataWithUUID, allow_raw_pointers())
     .class_function("destroySpineSkeletonDataWithUUID", &SpineWasmUtil::destroySpineSkeletonDataWithUUID)
     .class_function("destroySpineSkeleton", &SpineWasmUtil::destroySpineSkeleton, allow_raw_pointers())

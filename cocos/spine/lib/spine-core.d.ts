@@ -1208,16 +1208,17 @@ declare namespace spine {
         setDebugMode(debug: boolean);
         getDebugShapes();
         resizeSlotRegion(slotName: string, width: number, height: number, createNew: boolean);
-        setSlotTexture(slotName: string, index: number);
+        setSlotTexture(slotName: string, uuid: string);
     }
 
     class wasmUtil {
         static spineWasmInit(): void;
         static spineWasmDestroy(): void;
-        static queryStoreMemory(size: number): number;
+        static freeStoreMemory(): void;
+        static createStoreMemory(size: number): number;
         static querySpineSkeletonDataByUUID(uuid: string): SkeletonData;
-        static createSpineSkeletonDataWithJson(jsonStr: string, atlasText: string): SkeletonData;
-        static createSpineSkeletonDataWithBinary(byteSize: number, atlasText: string): SkeletonData;
+        static createSpineSkeletonDataWithJson(jsonStr: string, atlasText: string, textureNames: string[], textureUUIDs: string[]): SkeletonData;
+        static createSpineSkeletonDataWithBinary(byteSize: number, atlasText: string, textureNames: string[], textureUUIDs: string[]): SkeletonData;
         static registerSpineSkeletonDataWithUUID(data: SkeletonData, uuid: string);
         static destroySpineSkeletonDataWithUUID(uuid: string);
         static destroySpineSkeleton(skeleton: Skeleton): void;
