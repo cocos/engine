@@ -92,7 +92,7 @@ public:
         friend class JniBilling;
         bool _enableAlternativeBillingOnly{false};
         bool _enableExternalOffer{false};
-        PendingPurchasesParams* _pendingPurchasesParams;
+        PendingPurchasesParams* _pendingPurchasesParams{nullptr};
         scopedListener _purchasesUpdatedListener;
         scopedListener _userChoiceBillingListener;
     };
