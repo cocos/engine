@@ -38,6 +38,7 @@ import { nodePolyfill } from './node-dev';
 import * as js from '../core/utils/js';
 import { patch_cc_Node } from '../native-binding/decorators';
 import type { Node as JsbNode } from './node';
+import { DispatcherEventType, NodeEventProcessor } from './node-event-processor';
 
 const reserveContentsForAllSyncablePrefabTag = Symbol('ReserveContentsForAllSyncablePrefab');
 
@@ -500,7 +501,13 @@ nodeProto._onActivateNode = function (shouldActiveNow) {
 };
 
 nodeProto._onPostActivated = function (active: boolean) {
-    this._eventProcessor.setEnabled(active);
+    const eventProcessor = this._eventProcessor;
+    if (eventProcessor.isEnabled === active) {
+        NodeEventProcessor.callbacksInvoker.emit(DispatcherEventType.MARK_LIST_DIRTY);
+    }
+
+    eventProcessor.setEnabled(active);
+
     if (active) {
         // in case transform updated during deactivated period
         this.invalidateChildren(TransformBit.TRS);
@@ -1372,7 +1379,7 @@ nodeProto._ctor = function (name?: string) {
     this.__editorExtras__ = { editorOnly: true };
 
     this._components = [];
-    this._eventProcessor = new legacyCC.NodeEventProcessor(this);
+    this._eventProcessor = new NodeEventProcessor(this);
     this._uiProps = new NodeUIProperties(this);
 
     const sharedArrayBuffer = this._initAndReturnSharedBuffer();
