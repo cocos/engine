@@ -20,7 +20,6 @@ export interface IAndroidParams {
     ndkPath: string;
     javaHome: string;
     javaPath: string;
-    androidInstant: boolean,
     maxAspectRatio: string;
     remoteUrl?: string;
     apiLevel: number;
@@ -125,21 +124,6 @@ export class AndroidPackTool extends NativePackTool {
         }
 
 
-        // compile android-instant
-        if (options.androidInstant) {
-            buildMode = `instantapp:assemble${outputMode}`;
-            await cchelper.runCmd(gradle, [buildMode], false, projDir);
-        }
-
-        // compile google app bundle
-        if (options.appBundle) {
-            if (options.androidInstant) {
-                buildMode = `bundle${outputMode}`;
-            } else {
-                buildMode = `${this.params.projectName}:bundle${outputMode}`;
-            }
-            await cchelper.runCmd(gradle, [buildMode], false, projDir);
-        }
         return await this.copyToDist();
     }
 
@@ -274,28 +258,6 @@ export class AndroidPackTool extends NativePackTool {
             }
 
         };
-        const fnUpdateCategory = (data: any) => {
-            if (!this.params.platformParams.androidInstant) {
-                console.log('android instant not configured');
-                return;
-            }
-            const url = this.params.platformParams.remoteUrl;
-            if (!url) {
-                return;
-            }
-            const urlInfo = URL.parse(url);
-            if (!urlInfo.host) {
-                throw new Error(`parse url ${url} fail`);
-            }
-            const intentFilter: any = data.manifest.application[0].activity[0]['intent-filter'][0];
-            if (intentFilter) {
-                intentFilter.data ||= [];
-                intentFilter.data = intentFilter.data.concat([
-                    { $: { 'android:host': urlInfo.host, 'android:pathPattern': urlInfo.path, 'android:scheme': 'https' } },
-                    { $: { 'android:scheme': 'http' } }
-                ]);
-            }
-        }
 
         if (fs.existsSync(manifestPath)) {
             const app = await fnParseXml(manifestPath);
@@ -309,7 +271,6 @@ export class AndroidPackTool extends NativePackTool {
             await fnUpdateOrientation(instant.data);
             await fnUpdateResizeableActivity(instant.data);
             await fnUpdateMaxAspectRation(instant.data);
-            await fnUpdateCategory(instant.data);
             await instant.save();
         }
     }
@@ -355,7 +316,6 @@ export class AndroidPackTool extends NativePackTool {
             content = content.replace(/PROP_COMPILE_SDK_VERSION=.*/, `PROP_COMPILE_SDK_VERSION=${Math.max(apiLevel, compileSDKVersion, 27)}`);
             content = content.replace(/PROP_MIN_SDK_VERSION=.*/, `PROP_MIN_SDK_VERSION=${Math.min(apiLevel, minimalSDKVersion)}`);
             content = content.replace(/PROP_APP_NAME=.*/, `PROP_APP_NAME=${this.params.projectName}`);
-            content = content.replace(/PROP_ENABLE_INSTANT_APP=.*/, `PROP_ENABLE_INSTANT_APP=${options.androidInstant ? "true" : "false"}`);
             content = content.replace(/PROP_ENABLE_INPUTSDK=.*/, `PROP_ENABLE_INPUTSDK=${options.inputSDK ? "true" : "false"}`);
             content = content.replace(/PROP_IS_DEBUG=.*/, `PROP_IS_DEBUG=${this.params.debug ? "true" : "false"}`);
 
@@ -391,37 +351,6 @@ export class AndroidPackTool extends NativePackTool {
         }
     }
 
-    /**
-     * Deprecated, only be compatible with historical packaging tools
-     */
-    protected async configAndroidInstant() {
-        if (!this.params.platformParams.androidInstant) {
-            console.log('android instant not configured');
-            return;
-        }
-        const url = this.params.platformParams.remoteUrl;
-        if (!url) {
-            return;
-        }
-        const manifestPath = cchelper.join(this.paths.platformTemplateDirInPrj, 'instantapp/AndroidManifest.xml');
-        if (!fs.existsSync(manifestPath)) {
-            throw new Error(`${manifestPath} not found`);
-        }
-        const urlInfo = URL.parse(url);
-        if (!urlInfo.host) {
-            throw new Error(`parse url ${url} fail`);
-        }
-        let manifest = fs.readFileSync(manifestPath, 'utf8');
-        manifest = manifest.replace(/<category\s*android:name="android.intent.category.DEFAULT"\s*\/>/, (str) => {
-            let newStr = '<category android:name="android.intent.category.DEFAULT" />';
-            newStr += `\n                <data android:host="${urlInfo.host}" android:pathPattern="${urlInfo.path}" android:scheme="https"/>`
-                + `\n                <data android:scheme="http"/>`;
-            return newStr;
-        });
-
-        fs.writeFileSync(manifestPath, manifest, 'utf8');
-    }
-
     private async generateAppNameValues() {
         const valuesPath = cchelper.join(this.paths.platformTemplateDirInPrj, 'res/values/strings.xml');
         const matchCnt = fs.readFileSync(valuesPath, 'utf8').toString().split('\n').map(x => x.trim()).filter(x => /name=\"app_name\"/.test(x)).length;
@@ -452,14 +381,6 @@ export class AndroidPackTool extends NativePackTool {
             throw new Error(`apk not found at ${apkPath}`);
         }
         fs.copyFileSync(apkPath, ps.join(destDir, apkName));
-        if (options.androidInstant) {
-            apkName = `instantapp-${suffix}.apk`;
-            apkPath = ps.join(this.paths.nativePrjDir, `build/instantapp/outputs/apk/${suffix}/${apkName}`);
-            if (!fs.existsSync(apkPath)) {
-                throw new Error(`instant apk not found at ${apkPath}`);
-            }
-            fs.copyFileSync(apkPath, ps.join(destDir, apkName));
-        }
 
         if (options.appBundle) {
             apkName = `${this.params.projectName}-${suffix}.aab`;
