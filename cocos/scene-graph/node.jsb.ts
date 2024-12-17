@@ -503,10 +503,6 @@ nodeProto._onActivateNode = function (shouldActiveNow) {
 };
 
 nodeProto._onPostActivated = function (active: boolean) {
-    if (this._eventMask & ACTIVE_ON) {
-        this.emit(NodeEventType.ACTIVE_CHANGED, this, active);
-    }
-
     const eventProcessor = this._eventProcessor;
     if (eventProcessor.isEnabled === active) {
         NodeEventProcessor.callbacksInvoker.emit(DispatcherEventType.MARK_LIST_DIRTY);
