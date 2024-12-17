@@ -21,7 +21,6 @@ export interface IAndroidParams {
     javaHome: string;
     javaPath: string;
     maxAspectRatio: string;
-    remoteUrl?: string;
     apiLevel: number;
     appABIs: string[];
     keystorePassword: string;
@@ -31,7 +30,6 @@ export interface IAndroidParams {
     inputSDK: boolean;
 
     orientation: IOrientation;
-    appBundle: boolean;
     resizeableActivity: boolean;
 }
 
@@ -381,15 +379,6 @@ export class AndroidPackTool extends NativePackTool {
             throw new Error(`apk not found at ${apkPath}`);
         }
         fs.copyFileSync(apkPath, ps.join(destDir, apkName));
-
-        if (options.appBundle) {
-            apkName = `${this.params.projectName}-${suffix}.aab`;
-            apkPath = ps.join(this.outputsDir(), `bundle/${suffix}/${apkName}`);
-            if (!fs.existsSync(apkPath)) {
-                throw new Error(`instant apk not found at ${apkPath}`);
-            }
-            fs.copyFileSync(apkPath, ps.join(destDir, apkName));
-        }
         return true;
     }
 
