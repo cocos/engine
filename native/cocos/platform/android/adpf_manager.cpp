@@ -187,7 +187,7 @@ bool ADPFManager::initializePerformanceHintManager() {
         hint_session_ = APerformanceHint_createSession(hint_manager_, tids, 1, last_target_);
     }
     return true;
-#else
+#elif __ANDROID_API__ >= 31
     JNIEnv *env = cc::JniHelper::getEnv();
     auto *javaGameActivity = cc::JniHelper::getActivity();
 
@@ -264,6 +264,8 @@ bool ADPFManager::initializePerformanceHintManager() {
     }
 
     return true;
+#else
+    return false;
 #endif
 }
 
@@ -335,7 +337,7 @@ void ADPFManager::registerThreadIdsToHintSession() {
         APerformanceHint_closeSession(hint_session_);
     }
     hint_session_ = APerformanceHint_createSession(hint_manager_, data, size, last_target_);
-#else
+#elif __ANDROID_API__ >= 31
     JNIEnv *env = cc::JniHelper::getEnv();
     std::size_t size = thread_ids_.size();
     jintArray array = env->NewIntArray(size);
