@@ -1314,7 +1314,7 @@ void buildLayoutGraphNodeBuffer(
 se::Value buildRPVal;
 void buildRenderPipeline() {
     if (buildRPVal.isUndefined()) {
-        auto global = se::ScriptEngine::getInstance()->getGlobalObject();
+        auto *global = se::ScriptEngine::getInstance()->getGlobalObject();
         se::Value jsbVal;
         if(global->getProperty("jsb", &jsbVal) && jsbVal.isObject()) {
             jsbVal.toObject()->getProperty("buildRenderPipeline", &buildRPVal);
