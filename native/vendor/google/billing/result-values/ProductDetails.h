@@ -77,11 +77,11 @@ public:
         }
 
         int getRecurrenceMode() const {
-            return _priceAmountMicros;
+            return _recurrenceMode;
         }
 
         long getPriceAmountMicros() const {
-            return _recurrenceMode;
+            return _priceAmountMicros;
         }
 
         std::string getBillingPeriod() const {

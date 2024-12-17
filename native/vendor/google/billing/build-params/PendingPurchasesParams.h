@@ -35,8 +35,8 @@ class PendingPurchasesParams : public cc::RefCounted {
 public:
     class Builder : public cc::RefCounted {
     private:
-        bool _enableOneTimeProducts;
-        bool _enablePrepaidPlans;
+        bool _enableOneTimeProducts{false};
+        bool _enablePrepaidPlans{false};
 
     public:
         Builder& enableOneTimeProducts() {

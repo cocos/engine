@@ -54,7 +54,7 @@ public:
             }
 
         private:
-            int _subscriptionReplacementMode;
+            int _subscriptionReplacementMode{0};
             std::string _purchaseToken;
             std::string _externalTransactionId;
         };
@@ -67,7 +67,7 @@ public:
         : _subscriptionReplacementMode(subscriptionReplacementMode), _purchaseToken(purchaseToken), _externalTransactionId(externalTransactionId) {
         }
         friend class JniBilling;
-        int _subscriptionReplacementMode;
+        int _subscriptionReplacementMode{0};
         std::string _purchaseToken;
         std::string _externalTransactionId;
     };

@@ -90,8 +90,8 @@ public:
     private:
         friend class BillingClient;
         friend class JniBilling;
-        bool _enableAlternativeBillingOnly;
-        bool _enableExternalOffer;
+        bool _enableAlternativeBillingOnly{false};
+        bool _enableExternalOffer{false};
         PendingPurchasesParams* _pendingPurchasesParams;
         scopedListener _purchasesUpdatedListener;
         scopedListener _userChoiceBillingListener;
@@ -116,9 +116,9 @@ public:
     void createExternalOfferReportingDetailsAsync(se::Object* listener);
     void isExternalOfferAvailableAsync(se::Object* listener);
     BillingResult* isFeatureSupported(const std::string& feature);
-    BillingResult* showAlternativeBillingOnlyInformationDialog(se::Object* listener);
-    BillingResult* showExternalOfferInformationDialog(se::Object* listener);
-    BillingResult* showInAppMessages(InAppMessageParams* params, se::Object* listener);
+    void showAlternativeBillingOnlyInformationDialog(se::Object* listener);
+    void showExternalOfferInformationDialog(se::Object* listener);
+    void showInAppMessages(InAppMessageParams* params, se::Object* listener);
 private:
     BillingClient(Builder* builder);
     ~BillingClient();

@@ -104,7 +104,7 @@ int GoogleBillingHelper::createGoogleBilling(BillingClient::Builder* builder) {
 }
 
 void GoogleBillingHelper::removeGoogleBilling(int tag) {
-    JniHelper::callStaticIntMethod(JCLS_BILLING, "removeGoogleBilling", tag);
+    JniHelper::callStaticVoidMethod(JCLS_BILLING, "removeGoogleBilling", tag);
 }
 
 void GoogleBillingHelper::removeProductDetails(int tag, int productDetailsID) {
@@ -159,25 +159,23 @@ void GoogleBillingHelper::isExternalOfferAvailableAsync(int tag, int callbackId)
     JniHelper::callStaticVoidMethod(JCLS_BILLING, "isExternalOfferAvailableAsync", tag, callbackId);
 }
 
-BillingResult* GoogleBillingHelper::showAlternativeBillingOnlyInformationDialog(int tag, int callbackId) {
-    return cc::JniBilling::callFunctionAndReturnBillingResult("showAlternativeBillingOnlyInformationDialog", tag, callbackId);
+void GoogleBillingHelper::showAlternativeBillingOnlyInformationDialog(int tag, int callbackId) {
+    JniHelper::callStaticVoidMethod(JCLS_BILLING, "showAlternativeBillingOnlyInformationDialog", tag, callbackId);
 }
 
-BillingResult* GoogleBillingHelper::showExternalOfferInformationDialog(int tag, int callbackId) {
-    return cc::JniBilling::callFunctionAndReturnBillingResult("showExternalOfferInformationDialog", tag, callbackId);
+void GoogleBillingHelper::showExternalOfferInformationDialog(int tag, int callbackId) {
+    JniHelper::callStaticVoidMethod(JCLS_BILLING, "showExternalOfferInformationDialog", tag, callbackId);
 }
 
-BillingResult* GoogleBillingHelper::showInAppMessages(int tag, int callbackId, const std::vector<int>& inAppMessageCategoryId) {
+void GoogleBillingHelper::showInAppMessages(int tag, int callbackId, const std::vector<int>& inAppMessageCategoryId) {
     auto* env = JniHelper::getEnv();
     cc::JniMethodInfo t;
-    if (cc::JniHelper::getStaticMethodInfo(t, JCLS_BILLING, "showInAppMessages", "(II[I)Lcom/android/billingclient/api/BillingResult;")) {
+    if (cc::JniHelper::getStaticMethodInfo(t, JCLS_BILLING, "showInAppMessages", "(II[I)V")) {
         const int size = inAppMessageCategoryId.size();
         jintArray result = env->NewIntArray(size);
         env->SetIntArrayRegion(result, 0, inAppMessageCategoryId.size(), inAppMessageCategoryId.data());
-        jobject obj = t.env->CallStaticObjectMethod(t.classID, t.methodID, tag, callbackId, result);
-        return cc::JniBilling::toBillingResult(env, obj);
+        t.env->CallStaticVoidMethod(t.classID, t.methodID, tag, callbackId, result);
     }
-    return nullptr;
 }
 
 void GoogleBillingHelper::launchBillingFlow(int tag, BillingFlowParams* params) {

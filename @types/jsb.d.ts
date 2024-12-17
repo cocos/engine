@@ -1411,9 +1411,9 @@ declare namespace jsb {
         isExternalOfferAvailableAsync: (listener: ExternalOfferAvailabilityListener) => void;
 
         isFeatureSupported: (productType: string) => BillingResult;
-        showAlternativeBillingOnlyInformationDialog: (listener: AlternativeBillingOnlyInformationDialogListener) => BillingResult;
-        showExternalOfferInformationDialog: (listener: ExternalOfferInformationDialogListener) => BillingResult;
-        showInAppMessages: (params: InAppMessageParams, listener: InAppMessageResponseListener) => BillingResult;
+        showAlternativeBillingOnlyInformationDialog: (listener: AlternativeBillingOnlyInformationDialogListener) => void;
+        showExternalOfferInformationDialog: (listener: ExternalOfferInformationDialogListener) => void;
+        showInAppMessages: (params: InAppMessageParams, listener: InAppMessageResponseListener) => void;
     }
 }
 

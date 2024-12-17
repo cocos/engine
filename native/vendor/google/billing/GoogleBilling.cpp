@@ -235,34 +235,31 @@ void BillingClient::isExternalOfferAvailableAsync(se::Object* listener) {
     GoogleBillingHelper::isExternalOfferAvailableAsync(_tag, listenerId);
 }
 
-BillingResult* BillingClient::showAlternativeBillingOnlyInformationDialog(se::Object* listener) {
+void BillingClient::showAlternativeBillingOnlyInformationDialog(se::Object* listener) {
     if(!listener) {
-        // Extending the return value of BillingResult.Normal behavior wouldn't get in here.
-        auto* builder = BillingResult::newBuilder();
-        return (*builder).setResponseCode(6).setDebugMessage("Listener can't be null").build();
+        CC_LOG_WARNING("Listener can't be null");
+        return;
     }
     int listenerId = addListener(listener);
-    return GoogleBillingHelper::showAlternativeBillingOnlyInformationDialog(_tag, listenerId);
+    GoogleBillingHelper::showAlternativeBillingOnlyInformationDialog(_tag, listenerId);
 }
 
-BillingResult* BillingClient::showExternalOfferInformationDialog(se::Object* listener) {
+void BillingClient::showExternalOfferInformationDialog(se::Object* listener) {
     if(!listener) {
-        // Extending the return value of BillingResult.Normal behavior wouldn't get in here.
-        auto* builder = BillingResult::newBuilder();
-        return (*builder).setResponseCode(6).setDebugMessage("Listener can't be null").build();
+        CC_LOG_WARNING("Listener can't be null");
+        return;
     }
     int listenerId = addListener(listener);
     return GoogleBillingHelper::showExternalOfferInformationDialog(_tag, listenerId);
 }
 
-BillingResult* BillingClient::showInAppMessages(InAppMessageParams* params, se::Object* listener) {
+void BillingClient::showInAppMessages(InAppMessageParams* params, se::Object* listener) {
     if(!params || !listener) {
-        // Extending the return value of BillingResult.Normal behavior wouldn't get in here.
-        auto* builder = BillingResult::newBuilder();
-        return (*builder).setResponseCode(6).setDebugMessage("Listener can't be null").build();
+        CC_LOG_WARNING("InAppMessageParams and listener can't be null");
+        return;
     }
     int listenerId = addListener(listener);
-    return GoogleBillingHelper::showInAppMessages(_tag, listenerId, params->_inAppMessageCategoryIds);
+    GoogleBillingHelper::showInAppMessages(_tag, listenerId, params->_inAppMessageCategoryIds);
 }
 
 } // namespace cc

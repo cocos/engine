@@ -56,11 +56,14 @@ import com.android.billingclient.api.UserChoiceBillingListener;
 import com.android.billingclient.api.UserChoiceDetails;
 import com.cocos.lib.CocosHelper;
 import com.cocos.lib.GlobalObject;
+
+import android.nfc.Tag;
+import android.util.Log;
 import android.util.SparseArray;
 import com.android.billingclient.api.BillingClientStateListener;
 
 public final class GoogleBillingHelper {
-
+    private static final String TAG = GoogleBillingHelper.class.getSimpleName();
     private static SparseArray<GoogleBilling> googleBillings = new SparseArray<GoogleBilling>();
     private static int billingTag = 0;
 
@@ -68,24 +71,12 @@ public final class GoogleBillingHelper {
         return billingTag++;
     }
     public static void createGoogleBilling(int tag, BillingClient.Builder builder) {
-        GlobalObject.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                GoogleBilling billing = new GoogleBilling(tag, builder);
-                googleBillings.put(tag, billing);
-            }
-        });
+        GoogleBilling billing = new GoogleBilling(tag, builder);
+        googleBillings.put(tag, billing);
     }
 
-    public static int removeGoogleBilling(int tag) {
-        final int index = billingTag;
-        GlobalObject.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                googleBillings.remove(tag);
-            }
-        });
-        return billingTag++;
+    public static void removeGoogleBilling(int tag) {
+        googleBillings.remove(tag);
     }
 
     public static final class BillingClientPurchasesUpdatedListener implements PurchasesUpdatedListener {
@@ -186,49 +177,40 @@ public final class GoogleBillingHelper {
 
 
     public static void startConnection(int tag, int callbackId) {
-        GlobalObject.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                GoogleBilling billing = googleBillings.get(tag);
-                if (billing != null) {
-                    billing.startConnection(
-                        new BillingClientStateListener() {
-                            @Override
-                            public void onBillingSetupFinished(BillingResult billingResult) {
-                                CocosHelper.runOnGameThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        GoogleBillingHelper.onBillingSetupFinished(tag, callbackId, billingResult);
-                                    }
-                                });
-                            }
-
-                            @Override
-                            public void onBillingServiceDisconnected() {
-                                CocosHelper.runOnGameThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        GoogleBillingHelper.onBillingServiceDisconnected(tag, callbackId);
-                                    }
-                                });
-
-                            }
-                        });
+        GoogleBilling billing = googleBillings.get(tag);
+        if (billing == null) {
+            return;
+        }
+        billing.startConnection(
+            new BillingClientStateListener() {
+                @Override
+                public void onBillingSetupFinished(BillingResult billingResult) {
+                    CocosHelper.runOnGameThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            GoogleBillingHelper.onBillingSetupFinished(tag, callbackId, billingResult);
+                        }
+                    });
                 }
-            }
-        });
+
+                @Override
+                public void onBillingServiceDisconnected() {
+                    CocosHelper.runOnGameThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            GoogleBillingHelper.onBillingServiceDisconnected(tag, callbackId);
+                        }
+                    });
+
+                }
+            });
     }
 
     public static void endConnection(int tag) {
-        GlobalObject.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                GoogleBilling billing = googleBillings.get(tag);
-                if (billing != null) {
-                    billing.endConnection();
-                }
-            }
-        });
+        GoogleBilling billing = googleBillings.get(tag);
+        if (billing != null) {
+            billing.endConnection();
+        }
     }
 
     public static int getConnectionState(int tag) {
@@ -256,280 +238,263 @@ public final class GoogleBillingHelper {
     }
 
     public static void createAlternativeBillingOnlyReportingDetailsAsync(int tag, int callbackId) {
-        GlobalObject.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                GoogleBilling billing = googleBillings.get(tag);
-                if (billing != null) {
-                    billing.createAlternativeBillingOnlyReportingDetailsAsync(
-                        new AlternativeBillingOnlyReportingDetailsListener() {
-                            @Override
-                            public void onAlternativeBillingOnlyTokenResponse(@NonNull BillingResult var1, @Nullable AlternativeBillingOnlyReportingDetails var2) {
-                                CocosHelper.runOnGameThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        GoogleBillingHelper.onAlternativeBillingOnlyTokenResponse(tag, callbackId, var1, var2);
-                                    }
-                                });
-                            }
-                        }
-                    );
-                }
-            }
-        });
-    }
-
-    public static void isAlternativeBillingOnlyAvailableAsync(int tag, int callbackId) {
-        GlobalObject.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                GoogleBilling billing = googleBillings.get(tag);
-                if (billing != null) {
-                    billing.isAlternativeBillingOnlyAvailableAsync(
-                        new AlternativeBillingOnlyAvailabilityListener() {
-                            @Override
-                            public void onAlternativeBillingOnlyAvailabilityResponse(@NonNull BillingResult billingResult) {
-                                CocosHelper.runOnGameThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        GoogleBillingHelper.onAlternativeBillingOnlyAvailabilityResponse(tag, callbackId, billingResult);
-                                    }
-                                });
-                            }
-                        }
-                    );
-                }
-            }
-        });
-    }
-
-    public static void createExternalOfferReportingDetailsAsync(int tag, int callbackId) {
-        GlobalObject.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                GoogleBilling billing = googleBillings.get(tag);
-                if (billing != null) {
-                    billing.createExternalOfferReportingDetailsAsync(
-                        new ExternalOfferReportingDetailsListener() {
-                            @Override
-                            public void onExternalOfferReportingDetailsResponse(@NonNull BillingResult billingResult, @Nullable ExternalOfferReportingDetails externalOfferReportingDetails) {
-                                CocosHelper.runOnGameThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        GoogleBillingHelper.onExternalOfferReportingDetailsResponse(tag, callbackId, billingResult, externalOfferReportingDetails);
-                                    }
-                                });
-                            }
-                        }
-                    );
-                }
-            }
-        });
-    }
-
-    public static void isExternalOfferAvailableAsync(int tag, int callbackId) {
-        GlobalObject.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                GoogleBilling billing = googleBillings.get(tag);
-                if (billing != null) {
-                    billing.isExternalOfferAvailableAsync(
-                        new ExternalOfferAvailabilityListener() {
-                            @Override
-                            public void onExternalOfferAvailabilityResponse(@NonNull BillingResult billingResult) {
-                                CocosHelper.runOnGameThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        GoogleBillingHelper.onExternalOfferAvailabilityResponse(tag, callbackId, billingResult);
-                                    }
-                                });
-                            }
-                        }
-                    );
-                }
-            }
-        });
-    }
-
-    public static void queryProductDetailsAsync(int tag, int callbackId, String[] productIds, String[] productTypes) {
-        GlobalObject.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                GoogleBilling billing = googleBillings.get(tag);
-                if (billing != null) {
-                    billing.queryProductDetailsAsync(productIds, productTypes,
-                        new ProductDetailsResponseListener() {
-                            @Override
-                            public void onProductDetailsResponse(@NonNull BillingResult billingResult, @NonNull List<ProductDetails> list) {
-                                CocosHelper.runOnGameThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        int startID = billing.pushProductDetails(list);
-                                        GoogleBillingHelper.onProductDetailsResponse(tag, callbackId, billingResult, list, startID);
-                                    }
-                                });
-                            }
-                        });
-                }
-            }
-        });
-    }
-
-    public static void launchBillingFlow(int tag, BillingFlowParams params) {
-        GlobalObject.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                GoogleBilling billing = googleBillings.get(tag);
-                if (billing != null) {
-                    billing.launchBillingFlow(params);
-                }
-            }
-        });
-    }
-
-    public static void queryPurchasesAsync(int tag, int callbackId, String type) {
-        GlobalObject.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                GoogleBilling billing = googleBillings.get(tag);
-                if (billing != null) {
-                    billing.queryPurchasesAsync(type, new PurchasesResponseListener() {
+        GoogleBilling billing = googleBillings.get(tag);
+        if (billing == null) {
+            return;
+        }
+        billing.createAlternativeBillingOnlyReportingDetailsAsync(
+            new AlternativeBillingOnlyReportingDetailsListener() {
+                @Override
+                public void onAlternativeBillingOnlyTokenResponse(@NonNull BillingResult var1, @Nullable AlternativeBillingOnlyReportingDetails var2) {
+                    CocosHelper.runOnGameThread(new Runnable() {
                         @Override
-                        public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> list) {
-                            CocosHelper.runOnGameThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    int startID = billing.pushPurchases(list);
-                                    GoogleBillingHelper.onQueryPurchasesResponse(tag, callbackId, billingResult, list, startID);
-                                }
-                            });
+                        public void run() {
+                            GoogleBillingHelper.onAlternativeBillingOnlyTokenResponse(tag, callbackId, var1, var2);
                         }
                     });
                 }
+            }
+        );
+    }
+
+    public static void isAlternativeBillingOnlyAvailableAsync(int tag, int callbackId) {
+        GoogleBilling billing = googleBillings.get(tag);
+        if (billing == null) {
+            return;
+        }
+        billing.isAlternativeBillingOnlyAvailableAsync(
+            new AlternativeBillingOnlyAvailabilityListener() {
+                @Override
+                public void onAlternativeBillingOnlyAvailabilityResponse(@NonNull BillingResult billingResult) {
+                    CocosHelper.runOnGameThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            GoogleBillingHelper.onAlternativeBillingOnlyAvailabilityResponse(tag, callbackId, billingResult);
+                        }
+                    });
+                }
+            }
+        );
+    }
+
+    public static void createExternalOfferReportingDetailsAsync(int tag, int callbackId) {
+        GoogleBilling billing = googleBillings.get(tag);
+        if (billing == null) {
+            return;
+        }
+        billing.createExternalOfferReportingDetailsAsync(
+            new ExternalOfferReportingDetailsListener() {
+                @Override
+                public void onExternalOfferReportingDetailsResponse(@NonNull BillingResult billingResult, @Nullable ExternalOfferReportingDetails externalOfferReportingDetails) {
+                    CocosHelper.runOnGameThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            GoogleBillingHelper.onExternalOfferReportingDetailsResponse(tag, callbackId, billingResult, externalOfferReportingDetails);
+                        }
+                    });
+                }
+            }
+        );
+    }
+
+    public static void isExternalOfferAvailableAsync(int tag, int callbackId) {
+        GoogleBilling billing = googleBillings.get(tag);
+        if (billing == null) {
+            return;
+        }
+        billing.isExternalOfferAvailableAsync(
+            new ExternalOfferAvailabilityListener() {
+                @Override
+                public void onExternalOfferAvailabilityResponse(@NonNull BillingResult billingResult) {
+                    CocosHelper.runOnGameThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            GoogleBillingHelper.onExternalOfferAvailabilityResponse(tag, callbackId, billingResult);
+                        }
+                    });
+                }
+            }
+        );
+    }
+
+    public static void queryProductDetailsAsync(int tag, int callbackId, String[] productIds, String[] productTypes) {
+        GoogleBilling billing = googleBillings.get(tag);
+        if (billing == null) {
+            return;
+        }
+        billing.queryProductDetailsAsync(productIds, productTypes,
+            new ProductDetailsResponseListener() {
+                @Override
+                public void onProductDetailsResponse(@NonNull BillingResult billingResult, @NonNull List<ProductDetails> list) {
+                    CocosHelper.runOnGameThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            int startID = billing.pushProductDetails(list);
+                            GoogleBillingHelper.onProductDetailsResponse(tag, callbackId, billingResult, list, startID);
+                        }
+                    });
+                }
+            });
+    }
+
+    public static void launchBillingFlow(int tag, BillingFlowParams params) {
+        GoogleBilling billing = googleBillings.get(tag);
+        if (billing != null) {
+            GlobalObject.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    BillingResult res = billing.launchBillingFlow(params);
+                    Log.i(TAG, String.format("BillingResult: ResponseCode : %d, DebugMessage : %s,  ToString: %s", res.getResponseCode(), res.getDebugMessage(), res.toString()));
+                }
+            });
+        }
+    }
+
+    public static void queryPurchasesAsync(int tag, int callbackId, String type) {
+        GoogleBilling billing = googleBillings.get(tag);
+        if (billing == null) {
+            return;
+        }
+        billing.queryPurchasesAsync(type, new PurchasesResponseListener() {
+            @Override
+            public void onQueryPurchasesResponse(@NonNull BillingResult billingResult, @NonNull List<Purchase> list) {
+                CocosHelper.runOnGameThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        int startID = billing.pushPurchases(list);
+                        GoogleBillingHelper.onQueryPurchasesResponse(tag, callbackId, billingResult, list, startID);
+                    }
+                });
             }
         });
     }
 
     public static void consumeAsync(int tag, int callbackId, String purchaseToken) {
-        GlobalObject.runOnUiThread(new Runnable() {
+        GoogleBilling billing = googleBillings.get(tag);
+        if (billing == null) {
+            return;
+        }
+        billing.consumeAsync(purchaseToken, new ConsumeResponseListener() {
             @Override
-            public void run() {
-                GoogleBilling billing = googleBillings.get(tag);
-                if (billing != null) {
-                    billing.consumeAsync(purchaseToken, new ConsumeResponseListener() {
-                        @Override
-                        public void onConsumeResponse(@NonNull BillingResult billingResult, @NonNull String s) {
-                            CocosHelper.runOnGameThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    GoogleBillingHelper.onConsumeResponse(tag, callbackId, billingResult, s);
-                                }
-                            });
-                        }
-                    });
-                }
+            public void onConsumeResponse(@NonNull BillingResult billingResult, @NonNull String s) {
+                CocosHelper.runOnGameThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        GoogleBillingHelper.onConsumeResponse(tag, callbackId, billingResult, s);
+                    }
+                });
             }
         });
     }
 
     public static void acknowledgePurchase(int tag, int callbackId, String purchaseToken) {
-        GlobalObject.runOnUiThread(new Runnable() {
+        GoogleBilling billing = googleBillings.get(tag);
+        if (billing == null) {
+            return;
+        }
+        billing.acknowledgePurchase(purchaseToken, new AcknowledgePurchaseResponseListener() {
             @Override
-            public void run() {
-                GoogleBilling billing = googleBillings.get(tag);
-                if (billing != null) {
-                    billing.acknowledgePurchase(purchaseToken, new AcknowledgePurchaseResponseListener() {
-                        @Override
-                        public void onAcknowledgePurchaseResponse(@NonNull BillingResult billingResult) {
-                            CocosHelper.runOnGameThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    GoogleBillingHelper.onAcknowledgePurchaseResponse(tag, callbackId, billingResult);
-                                }
-                            });
-                        }
-                    });
-                }
+            public void onAcknowledgePurchaseResponse(@NonNull BillingResult billingResult) {
+                CocosHelper.runOnGameThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        GoogleBillingHelper.onAcknowledgePurchaseResponse(tag, callbackId, billingResult);
+                    }
+                });
             }
         });
     }
 
     public static void getBillingConfigAsync(int tag, int callbackId) {
-        GlobalObject.runOnUiThread(new Runnable() {
+        GoogleBilling billing = googleBillings.get(tag);
+        if (billing == null) {
+            return;
+        }
+        billing.getBillingConfigAsync(new BillingConfigResponseListener() {
             @Override
-            public void run() {
-                GoogleBilling billing = googleBillings.get(tag);
-                if (billing != null) {
-                    billing.getBillingConfigAsync(new BillingConfigResponseListener() {
-                        @Override
-                        public void onBillingConfigResponse(@NonNull BillingResult billingResult, @Nullable BillingConfig billingConfig) {
-                            CocosHelper.runOnGameThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    GoogleBillingHelper.onBillingConfigResponse(tag, callbackId, billingResult, billingConfig);
-                                }
-                            });
-                        }
-                    });
-                };
+            public void onBillingConfigResponse(@NonNull BillingResult billingResult, @Nullable BillingConfig billingConfig) {
+                CocosHelper.runOnGameThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        GoogleBillingHelper.onBillingConfigResponse(tag, callbackId, billingResult, billingConfig);
+                    }
+                });
             }
         });
     }
 
-    public static BillingResult showAlternativeBillingOnlyInformationDialog(int tag, int callbackId) {
+    public static void showAlternativeBillingOnlyInformationDialog(int tag, int callbackId) {
         GoogleBilling billing = googleBillings.get(tag);
-        if (billing != null) {
-            return billing.showAlternativeBillingOnlyInformationDialog(new AlternativeBillingOnlyInformationDialogListener(){
-                @Override
-                public void onAlternativeBillingOnlyInformationDialogResponse(@NonNull BillingResult billingResult) {
-                    CocosHelper.runOnGameThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            GoogleBillingHelper.onAlternativeBillingOnlyInformationDialogResponse(tag, callbackId, billingResult);
-                        }
-                    });
-                }
-            });
+        if (billing == null) {
+            return;
         }
-        return BillingResult.newBuilder().build();
+        GlobalObject.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                BillingResult res = billing.showAlternativeBillingOnlyInformationDialog(new AlternativeBillingOnlyInformationDialogListener() {
+                    @Override
+                    public void onAlternativeBillingOnlyInformationDialogResponse(@NonNull BillingResult billingResult) {
+                        CocosHelper.runOnGameThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                GoogleBillingHelper.onAlternativeBillingOnlyInformationDialogResponse(tag, callbackId, billingResult);
+                            }
+                        });
+                    }
+                });
+                Log.i(TAG, String.format("BillingResult: ResponseCode : %d, DebugMessage : %s,  ToString: %s", res.getResponseCode(), res.getDebugMessage(), res.toString()));
+            }
+        });
     }
 
-    public static BillingResult showExternalOfferInformationDialog(int tag, int callbackId) {
+    public static void showExternalOfferInformationDialog(int tag, int callbackId) {
         GoogleBilling billing = googleBillings.get(tag);
-        if (billing != null) {
-            return billing.showExternalOfferInformationDialog(new ExternalOfferInformationDialogListener() {
-                @Override
-                public void onExternalOfferInformationDialogResponse(@NonNull BillingResult billingResult) {
-                    CocosHelper.runOnGameThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            GoogleBillingHelper.onExternalOfferInformationDialogResponse(tag, callbackId, billingResult);
-                        }
-                    });
-                }
-            });
+        if (billing == null) {
+            return;
         }
-        return BillingResult.newBuilder().build();
+        GlobalObject.runOnUiThread(new Runnable() {
+           @Override
+           public void run() {
+               BillingResult res = billing.showExternalOfferInformationDialog(new ExternalOfferInformationDialogListener() {
+                   @Override
+                   public void onExternalOfferInformationDialogResponse(@NonNull BillingResult billingResult) {
+                       CocosHelper.runOnGameThread(new Runnable() {
+                           @Override
+                           public void run() {
+                               GoogleBillingHelper.onExternalOfferInformationDialogResponse(tag, callbackId, billingResult);
+                           }
+                       });
+                   }
+               });
+               Log.i(TAG, String.format("BillingResult: ResponseCode : %d, DebugMessage : %s,  ToString: %s", res.getResponseCode(), res.getDebugMessage(), res.toString()));
+           }
+       });
     }
-    public static BillingResult showInAppMessages(int tag, int callbackId, int[] inAppMessageCategoryId) {
+    public static void showInAppMessages(int tag, int callbackId, int[] inAppMessageCategoryId) {
         GoogleBilling billing = googleBillings.get(tag);
-        if (billing != null) {
-            InAppMessageParams.Builder builder = InAppMessageParams.newBuilder();
-            for(int i = 0; i < inAppMessageCategoryId.length; ++i) {
-                builder.addInAppMessageCategoryToShow(inAppMessageCategoryId[i]);
-            }
-            return billing.showInAppMessages(builder.build(), new InAppMessageResponseListener() {
-                @Override
-                public void onInAppMessageResponse(@NonNull InAppMessageResult inAppMessageResult) {
-                    CocosHelper.runOnGameThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            GoogleBillingHelper.onInAppMessageResponse(tag, callbackId, inAppMessageResult);
-                        }
-                    });
-                }
-            });
+        if (billing == null) {
+            return;
         }
-        return BillingResult.newBuilder().build();
+        GlobalObject.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                InAppMessageParams.Builder builder = InAppMessageParams.newBuilder();
+                for(int i = 0; i < inAppMessageCategoryId.length; ++i) {
+                    builder.addInAppMessageCategoryToShow(inAppMessageCategoryId[i]);
+                }
+                BillingResult res = billing.showInAppMessages(builder.build(), new InAppMessageResponseListener() {
+                    @Override
+                    public void onInAppMessageResponse(@NonNull InAppMessageResult inAppMessageResult) {
+                        CocosHelper.runOnGameThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                GoogleBillingHelper.onInAppMessageResponse(tag, callbackId, inAppMessageResult);
+                            }
+                        });
+                    }
+                });
+                Log.i(TAG, String.format("BillingResult: ResponseCode : %d, DebugMessage : %s,  ToString: %s", res.getResponseCode(), res.getDebugMessage(), res.toString()));
+            }
+        });
     }
 }

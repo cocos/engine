@@ -73,9 +73,9 @@ public:
     static void isExternalOfferAvailableAsync(int tag, int callbackId);
     static BillingResult *isFeatureSupported(int tag, const std::string &feature);
 
-    static BillingResult *showAlternativeBillingOnlyInformationDialog(int tag, int callbackId);
-    static BillingResult *showExternalOfferInformationDialog(int tag, int callbackId);
-    static BillingResult *showInAppMessages(int tag, int callbackId, const std::vector<int>& inAppMessageCategoryId);
+    static void showAlternativeBillingOnlyInformationDialog(int tag, int callbackId);
+    static void showExternalOfferInformationDialog(int tag, int callbackId);
+    static void showInAppMessages(int tag, int callbackId, const std::vector<int>& inAppMessageCategoryId);
 
     static void onBillingSetupFinished(JNIEnv *env, jclass clazz,  jint tag, jint callbackID, jobject billingResultObj);
     static void onBillingServiceDisconnected(JNIEnv *env, jclass clazz,  jint tag, jint callbackID);

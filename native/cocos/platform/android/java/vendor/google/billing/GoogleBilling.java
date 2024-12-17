@@ -203,12 +203,8 @@ public final class GoogleBilling {
             Log.e(TAG, e.getMessage());
         }
     }
-    public void launchBillingFlow(BillingFlowParams params) {
-        try {
-            _billingClient.launchBillingFlow(GlobalObject.getActivity(), params);
-        } catch (RuntimeException e) {
-            Log.e(TAG, e.getMessage());
-        }
+    public BillingResult launchBillingFlow(BillingFlowParams params) {
+        return _billingClient.launchBillingFlow(GlobalObject.getActivity(), params);
     }
 
     public void queryPurchasesAsync(String type, @NonNull PurchasesResponseListener listener) {

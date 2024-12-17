@@ -59,10 +59,10 @@ public:
             return *this;
         }
         BillingResult* build() {
-            auto* p = new BillingResult();
-            p->_responseCode = _responseCode;
-            p->_debugMessage = _debugMessage;
-            return p;
+            auto* billingResult = new BillingResult();
+            billingResult->_responseCode = _responseCode;
+            billingResult->_debugMessage = std::move(_debugMessage);
+            return billingResult;
         }
     };
     static Builder* newBuilder() {
