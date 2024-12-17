@@ -56,8 +56,6 @@ import com.android.billingclient.api.UserChoiceBillingListener;
 import com.android.billingclient.api.UserChoiceDetails;
 import com.cocos.lib.CocosHelper;
 import com.cocos.lib.GlobalObject;
-
-import android.nfc.Tag;
 import android.util.Log;
 import android.util.SparseArray;
 import com.android.billingclient.api.BillingClientStateListener;
