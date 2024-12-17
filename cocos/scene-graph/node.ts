@@ -1934,7 +1934,23 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
             this.emit(NodeEventType.ACTIVE_CHANGED, this, active);
         }
 
-        this._eventProcessor.setEnabled(active);
+        const eventProcessor = this._eventProcessor;
+        // If the 'enable' state of event processor is equal to the node's active state, we should mark the list dirty for the global callback invoker
+        // which will trigger re-sorting logic in PointerEventDispatcher._sortPointerEventProcessorList.
+        // Otherwise, pointerEventProcessorList will not be sorted correctly since the 'enable' state may not change and the following
+        // eventProcessor.setEnabled(active) may return directly.
+        // Think of the case:
+        //   this.node.pauseSystemEvents(true);  // child's eventProcessor will be disabled.
+        //   child.active = false;               // child's active state is false and its eventProcessor keeps disabled.
+        //   this.node.resumeSystemEvents(true); // child's eventProcessor will be enabled, MARK_LIST_DIRTY will be emitted,
+        //                                          but the node is not active, so the resorting logic will take the child to the end of the list,
+        //                                          see PointerEventDispatcher._sortByPriority.
+        //   child.active = true;                // child's eventProcessor has already been enabled, eventProcessor.setEnabled(true) will do nothing.
+        if (eventProcessor.isEnabled === active) {
+            NodeEventProcessor.callbacksInvoker.emit(DispatcherEventType.MARK_LIST_DIRTY);
+        }
+
+        eventProcessor.setEnabled(active);
 
         if (active) { // activated
             // in case transform updated during deactivated period
