@@ -320,10 +320,6 @@ export class UIRenderer extends Renderer {
         this.node.on(NodeEventType.ANCHOR_CHANGED, this._nodeStateChange, this);
         this.node.on(NodeEventType.SIZE_CHANGED, this._nodeStateChange, this);
         this.node.on(NodeEventType.PARENT_CHANGED, this._colorDirty, this);
-        // If the renderData is invalid, it needs to be rebuilt to recalculate the batch processing.
-        if (!this._renderData && this._flushAssembler) {
-            this._flushAssembler();
-        }
         this.updateMaterial();
         this._colorDirty();
         uiRendererManager.addRenderer(this);
@@ -341,9 +337,6 @@ export class UIRenderer extends Renderer {
         this.node.off(NodeEventType.ANCHOR_CHANGED, this._nodeStateChange, this);
         this.node.off(NodeEventType.SIZE_CHANGED, this._nodeStateChange, this);
         this.node.off(NodeEventType.PARENT_CHANGED, this._colorDirty, this);
-        // When disabling, it is necessary to free up idle space to fully utilize chunks
-        // and avoid breaking batch processing.
-        this.destroyRenderData();
         uiRendererManager.removeRenderer(this);
         this._renderFlag = false;
         this._renderEntity.enabled = false;
