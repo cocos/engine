@@ -806,6 +806,7 @@ export class Director extends EventTarget {
     }
 
     /**
+     * @engineInternal
      * @en Build custom render pipeline
      * @zh 构建自定义渲染管线
      */

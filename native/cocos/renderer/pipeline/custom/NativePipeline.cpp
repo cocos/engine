@@ -1319,6 +1319,9 @@ void buildRenderPipeline() {
         if(global->getProperty("jsb", &jsbVal) && jsbVal.isObject()) {
             jsbVal.toObject()->getProperty("buildRenderPipeline", &buildRPVal);
         }
+        se::ScriptEngine::getInstance()->addBeforeCleanupHook([]() {
+            buildRPVal.setUndefined();
+        });
     }
     se::ValueArray args;
     buildRPVal.toObject()->call(args, nullptr);
