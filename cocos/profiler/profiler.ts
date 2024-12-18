@@ -35,7 +35,7 @@ import { PerfCounter } from './perf-counter';
 import { Pass } from '../render-scene';
 import { preTransforms, System, sys, cclegacy, settings, warnID, SettingsCategory } from '../core';
 import { Root } from '../root';
-import { director, DirectorEvent } from '../game';
+import { director, DirectorEvent, game } from '../game';
 import { ccwindow } from '../core/global-exports';
 
 const _characters = '0123456789. ';
@@ -281,7 +281,7 @@ export class Profiler extends System {
 
         this._rootNode = new Node('PROFILER_NODE');
         this._rootNode._objFlags = cclegacy.Object.Flags.DontSave | cclegacy.Object.Flags.HideInHierarchy;
-        cclegacy.game.addPersistRootNode(this._rootNode);
+        game.addPersistRootNode(this._rootNode);
 
         const managerNode = new Node('Profiler_Root');
         managerNode.parent = this._rootNode;
@@ -367,7 +367,7 @@ export class Profiler extends System {
         }
 
         const now = performance.now();
-        if (cclegacy.director.isPaused()) {
+        if (director.isPaused()) {
             (this._profilerStats.frame.counter as PerfCounter).start(now);
         } else {
             (this._profilerStats.logic.counter as PerfCounter).end(now);

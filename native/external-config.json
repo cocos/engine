@@ -3,6 +3,6 @@
         "type": "github",
         "owner": "cocos-creator",
         "name": "engine-native-external",
-        "checkout": "v3.8.5-4"
+        "checkout": "v3.8.6-1"
     }
 }

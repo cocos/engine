@@ -72,7 +72,7 @@ function _getSlotMaterial (blendMode: number, comp: Skeleton): MaterialInstance 
         dst = BlendFactor.ONE_MINUS_SRC_ALPHA;
         break;
     case 3:
-        src = BlendFactor.ONE;
+        src = _premultipliedAlpha ? BlendFactor.ONE :  BlendFactor.SRC_ALPHA;
         dst = BlendFactor.ONE_MINUS_SRC_COLOR;
         break;
     case 0:
@@ -171,14 +171,14 @@ function realTimeTraverse (comp: Skeleton): void {
     for (let i = 0; i < ic; i++) ibuf[i] += chunkOffset;
 
     const data = model.getData();
+    const textures = model.getTextures();
     const count = data.size();
     let indexOffset = 0;
     let indexCount = 0;
-    for (let i = 0; i < count; i += 6) {
+    for (let i = 0; i < count; i += 5) {
         indexCount = data.get(i + 3);
         const material = _getSlotMaterial(data.get(i + 4) as number, comp);
-        const textureID: number = data.get(i + 5);
-        comp.requestDrawData(material, textureID, indexOffset, indexCount);
+        comp.requestDrawData(material, textures.get(i / 5), indexOffset, indexCount);
         indexOffset += indexCount;
     }
 
@@ -323,7 +323,7 @@ function cacheTraverse (comp: Skeleton): void {
         const material = _getSlotMaterial(mesh.blendMode as number, comp);
         const textureID = mesh.textureID;
         indexCount = mesh.iCount;
-        comp.requestDrawData(material, textureID as number, indexOffset, indexCount);
+        comp.requestDrawData(material, textureID, indexOffset, indexCount);
         indexOffset += indexCount;
     }
 

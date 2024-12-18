@@ -121,4 +121,63 @@ void setTypedArrayValue(TypedArray &arr, uint32_t idx, const TypedArrayElementTy
 #undef TYPEDARRAY_SET_VALUE
 }
 
+void copyTypedArray(TypedArray &dst, uint32_t dstOffset, const TypedArray &src) {
+    uint32_t srcLength = getTypedArrayLength(src);
+    uint32_t dstLength = getTypedArrayLength(dst);
+    uint32_t srcBytesPerElement = getTypedArrayBytesPerElement(src);
+    uint32_t dstBytesPerElement = getTypedArrayBytesPerElement(dst);
+
+    // Ensure the destination array can fit the data starting from the given offset
+    CC_ASSERT(dstOffset + srcLength <= dstLength);
+
+    // Optimization: If src and dst are of the same type, use memcpy for efficiency
+#define COPY_TYPED_ARRAY_MEMCPY(type)                               \
+    do {                                                            \
+        auto *srcArray = ccstd::get_if<type>(&src);                 \
+        auto *dstArray = ccstd::get_if<type>(&dst);                 \
+        if (srcArray != nullptr && dstArray != nullptr) {           \
+            memcpy(&(*dstArray)[dstOffset], &(*srcArray)[0],        \
+                   srcLength * srcBytesPerElement);                 \
+            return;                                                 \
+        }                                                           \
+    } while (false)
+
+    COPY_TYPED_ARRAY_MEMCPY(Float32Array);
+    COPY_TYPED_ARRAY_MEMCPY(Uint32Array);
+    COPY_TYPED_ARRAY_MEMCPY(Uint16Array);
+    COPY_TYPED_ARRAY_MEMCPY(Uint8Array);
+    COPY_TYPED_ARRAY_MEMCPY(Int32Array);
+    COPY_TYPED_ARRAY_MEMCPY(Int16Array);
+    COPY_TYPED_ARRAY_MEMCPY(Int8Array);
+    COPY_TYPED_ARRAY_MEMCPY(Float64Array);
+
+#undef COPY_TYPED_ARRAY_MEMCPY
+
+    // Cross-type copy: Use a loop for element-wise copying with type conversion
+#define COPY_TYPED_ARRAY_TO_DEST(type)                                 \
+    do {                                                               \
+        auto *dstArray = ccstd::get_if<type>(&dst);                    \
+        if (dstArray != nullptr) {                                     \
+            for (uint32_t i = 0; i < srcLength; ++i) {                 \
+                (*dstArray)[dstOffset + i] = getTypedArrayValue<type::value_type>(src, i); \
+            }                                                          \
+            return;                                                    \
+        }                                                              \
+    } while (false)
+
+    COPY_TYPED_ARRAY_TO_DEST(Float32Array);
+    COPY_TYPED_ARRAY_TO_DEST(Uint32Array);
+    COPY_TYPED_ARRAY_TO_DEST(Uint16Array);
+    COPY_TYPED_ARRAY_TO_DEST(Uint8Array);
+    COPY_TYPED_ARRAY_TO_DEST(Int32Array);
+    COPY_TYPED_ARRAY_TO_DEST(Int16Array);
+    COPY_TYPED_ARRAY_TO_DEST(Int8Array);
+    COPY_TYPED_ARRAY_TO_DEST(Float64Array);
+
+#undef COPY_TYPED_ARRAY_TO_DEST
+
+    // If this point is reached, the destination type is unsupported
+    CC_ASSERTF(false, "Unsupported TypedArray type for destination");
+}
+
 } // namespace cc

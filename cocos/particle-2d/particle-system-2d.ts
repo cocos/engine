@@ -1041,7 +1041,7 @@ export class ParticleSystem2D extends UIRenderer {
                     }
                 });
             } else if (dict.textureImageData) {
-                const textureData = dict.textureImageData;
+                const textureData = dict.textureImageData as string;
 
                 if (textureData && textureData.length > 0) {
                     let imgPathName = imgPath;

@@ -75,14 +75,6 @@ Skeleton &Slot::getSkeleton() {
     return _skeleton;
 }
 
-Color &Slot::getColor() {
-    return _color;
-}
-
-Color &Slot::getDarkColor() {
-    return _darkColor;
-}
-
 bool Slot::hasDarkColor() {
     return _hasDarkColor;
 }
@@ -107,8 +99,4 @@ float Slot::getAttachmentTime() {
 
 void Slot::setAttachmentTime(float inValue) {
     _attachmentTime = _skeleton.getTime() - inValue;
-}
-
-Vector<float> &Slot::getDeform() {
-    return _deform;
 }

@@ -36,8 +36,8 @@ export class RangedDirectionalLight extends Light {
     private _pos: Vec3 = new Vec3(0, 0, 0);
     private _scale: Vec3 = new Vec3(1, 1, 1);
     private _right: Vec3 = new Vec3(1, 0, 0);
-    private _illuminanceHDR$: number = Ambient.SUN_ILLUM;
-    private _illuminanceLDR$ = 1.0;
+    private _illuminanceHDR: number = Ambient.SUN_ILLUM;
+    private _illuminanceLDR = 1.0;
 
     /**
      * @en The direction vector of the light
@@ -78,9 +78,9 @@ export class RangedDirectionalLight extends Light {
     get illuminance (): number {
         const isHDR = cclegacy.director.root.pipeline.pipelineSceneData.isHDR;
         if (isHDR) {
-            return this._illuminanceHDR$;
+            return this._illuminanceHDR;
         } else {
-            return this._illuminanceLDR$;
+            return this._illuminanceLDR;
         }
     }
     set illuminance (value: number) {
@@ -97,10 +97,10 @@ export class RangedDirectionalLight extends Light {
      * @zh HDR 模式下光源的辐照度
      */
     get illuminanceHDR (): number {
-        return this._illuminanceHDR$;
+        return this._illuminanceHDR;
     }
     set illuminanceHDR (value: number) {
-        this._illuminanceHDR$ = value;
+        this._illuminanceHDR = value;
     }
 
     /**
@@ -108,10 +108,10 @@ export class RangedDirectionalLight extends Light {
      * @zh LDR 模式下光源的辐照度
      */
     get illuminanceLDR (): number {
-        return this._illuminanceLDR$;
+        return this._illuminanceLDR;
     }
     set illuminanceLDR (value: number) {
-        this._illuminanceLDR$ = value;
+        this._illuminanceLDR = value;
     }
 
     constructor () {

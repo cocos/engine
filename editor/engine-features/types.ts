@@ -94,6 +94,12 @@ export interface BaseItem {
      * @en Whether it is a required module. When adding a new module, the old version will be forced to select this module after the upgrade, otherwise it will not be selected.
      */
     required?: boolean;
+
+    /**
+     * @zh 当选择了某个模块时，可以做些附加的配置
+     * @en When a module is selected, additional configurations can be made
+     */
+    flags: {[k: string]: Pick<BaseItem, 'default' | 'label' | 'description' > & {'ui-type': 'checkbox' | 'select'}}
 }
 
 export interface IFeatureItem extends BaseItem {
@@ -104,4 +110,5 @@ export interface CategoryInfo {
     label?: string;
     description?: string;
     checkable?: boolean;
+    required?: boolean;
 }

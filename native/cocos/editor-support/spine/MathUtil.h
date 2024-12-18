@@ -31,20 +31,21 @@
 #define Spine_MathUtil_h
 
 #include <spine/SpineObject.h>
-
-#include <string.h>
+#include <spine/RTTI.h>
+#include <math.h>
+#include <cstdint>
 
 namespace spine {
 
-class SP_API MathUtil : public SpineObject {
+class SP_API MathUtil {
 private:
     MathUtil();
 
 public:
-    static const float Pi;
-    static const float Pi_2;
-    static const float Deg_Rad;
-    static const float Rad_Deg;
+    static constexpr float Pi = 3.1415926535897932385f;
+    static constexpr float Pi_2 = 3.1415926535897932385f * 2;
+    static constexpr float Deg_Rad = (3.1415926535897932385f / 180.0f);
+    static constexpr float Rad_Deg = (180.0f / 3.1415926535897932385f);
 
     template <typename T>
     static inline T min(T a, T b) { return a < b ? a : b; }
@@ -56,42 +57,69 @@ public:
 
     static float clamp(float x, float lower, float upper);
 
-    static float abs(float v);
+    static inline float abs(float v) {
+        return ::abs(v);
+    }
 
     /// Returns the sine in radians from a lookup table.
-    static float sin(float radians);
+    static inline float sin(float radians) {
+        return ::sin(radians);
+    }
 
     /// Returns the cosine in radians from a lookup table.
-    static float cos(float radians);
+    static inline float cos(float radians) {
+        return ::cos(radians);
+    }
 
     /// Returns the sine in radians from a lookup table.
-    static float sinDeg(float degrees);
+    static inline float sinDeg(float degrees) {
+        return ::sin(degrees * MathUtil::Deg_Rad);
+    }
 
     /// Returns the cosine in radians from a lookup table.
-    static float cosDeg(float degrees);
+    static inline float cosDeg(float degrees) {
+        return ::cos(degrees * MathUtil::Deg_Rad);
+    }
 
     /// Returns atan2 in radians, faster but less accurate than Math.Atan2. Average error of 0.00231 radians (0.1323
     /// degrees), largest error of 0.00488 radians (0.2796 degrees).
-    static float atan2(float y, float x);
+    static inline float atan2(float y, float x) {
+        return ::atan2(y, x);
+    }
 
-    static float acos(float v);
+    static inline float acos(float v) {
+        return ::acos(v);
+    }
 
-    static float sqrt(float v);
+    static inline float sqrt(float v) {
+        return ::sqrt(v);
+    }
 
-    static float fmod(float a, float b);
+    static inline float fmod(float a, float b) {
+        return ::fmod(a, b);
+    }
 
     static bool isNan(float v);
 
-    static float random();
+    static inline float random() {
+        return ::rand() / static_cast<float>(RAND_MAX);
+    }
 
-    static float randomTriangular(float min, float max);
+    static inline float randomTriangular(float min, float max) {
+        return randomTriangular(min, max, (min + max) * 0.5f);
+    }
 
     static float randomTriangular(float min, float max, float mode);
 
-    static float pow(float a, float b);
+    static inline float pow(float a, float b) {
+        return (float)::pow(a, b);
+    }
+
+    static uint64_t ipow(uint64_t base, uint32_t exp);
 };
 
 struct SP_API Interpolation {
+    RTTI_DECL
     virtual float apply(float a) = 0;
 
     virtual float interpolate(float start, float end, float a) {
@@ -101,7 +129,9 @@ struct SP_API Interpolation {
     virtual ~Interpolation(){};
 };
 
+
 struct SP_API PowInterpolation : public Interpolation {
+    RTTI_DECL
     PowInterpolation(int power) : power(power) {
     }
 
@@ -114,6 +144,7 @@ struct SP_API PowInterpolation : public Interpolation {
 };
 
 struct SP_API PowOutInterpolation : public Interpolation {
+    RTTI_DECL
     PowOutInterpolation(int power) : power(power) {
     }
 

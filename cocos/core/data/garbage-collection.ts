@@ -31,11 +31,11 @@ declare class FinalizationRegistry {
 const targetSymbol = Symbol('[[target]]');
 
 class GarbageCollectionManager {
-    private _finalizationRegistry$: FinalizationRegistry | null = EDITOR && typeof FinalizationRegistry !== 'undefined' ? new FinalizationRegistry(this.finalizationRegistryCallback$.bind(this)) : null;
-    private _gcObjects$: WeakMap<any, GCObject> = new WeakMap();
+    private _finalizationRegistry: FinalizationRegistry | null = EDITOR && typeof FinalizationRegistry !== 'undefined' ? new FinalizationRegistry(this.finalizationRegistryCallback.bind(this)) : null;
+    private _gcObjects: WeakMap<any, GCObject> = new WeakMap();
 
     public registerGCObject (gcObject: GCObject): GCObject {
-        if (EDITOR && this._finalizationRegistry$) {
+        if (EDITOR && this._finalizationRegistry) {
             const token = {};
             const proxy = new Proxy(gcObject, {
                 get (target, property, receiver): unknown {
@@ -57,8 +57,8 @@ class GarbageCollectionManager {
                     return true;
                 },
             });
-            this._gcObjects$.set(token, gcObject);
-            this._finalizationRegistry$.register(proxy, token, token);
+            this._gcObjects.set(token, gcObject);
+            this._finalizationRegistry.register(proxy, token, token);
             return proxy;
         } else {
             return gcObject;
@@ -68,13 +68,13 @@ class GarbageCollectionManager {
     public init (): void {
     }
 
-    private finalizationRegistryCallback$ (token: any): void {
-        const gcObject = this._gcObjects$.get(token);
+    private finalizationRegistryCallback (token: any): void {
+        const gcObject = this._gcObjects.get(token);
         if (gcObject) {
-            this._gcObjects$.delete(token);
+            this._gcObjects.delete(token);
             gcObject.destroy();
         }
-        this._finalizationRegistry$!.unregister(token);
+        this._finalizationRegistry!.unregister(token);
     }
 
     public destroy (): void {

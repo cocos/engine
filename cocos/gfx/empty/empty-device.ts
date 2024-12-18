@@ -65,12 +65,12 @@ export class EmptyDevice extends Device {
     private _swapchain: EmptySwapchain | null = null;
 
     public initialize (info: DeviceInfo): boolean {
-        this._gfxAPI$ = API.UNKNOWN;
+        this._gfxAPI = API.UNKNOWN;
 
-        this._bindingMappingInfo$ = info.bindingMappingInfo;
+        this._bindingMappingInfo = info.bindingMappingInfo;
 
-        this._queue$ = this.createQueue(new QueueInfo(QueueType.GRAPHICS));
-        this._cmdBuff$ = this.createCommandBuffer(new CommandBufferInfo(this._queue$));
+        this._queue = this.createQueue(new QueueInfo(QueueType.GRAPHICS));
+        this._cmdBuff = this.createCommandBuffer(new CommandBufferInfo(this._queue));
 
         debug('Empty device initialized.');
 
@@ -78,14 +78,14 @@ export class EmptyDevice extends Device {
     }
 
     public destroy (): void {
-        if (this._queue$) {
-            this._queue$.destroy();
-            this._queue$ = null;
+        if (this._queue) {
+            this._queue.destroy();
+            this._queue = null;
         }
 
-        if (this._cmdBuff$) {
-            this._cmdBuff$.destroy();
-            this._cmdBuff$ = null;
+        if (this._cmdBuff) {
+            this._cmdBuff.destroy();
+            this._cmdBuff = null;
         }
 
         this._swapchain = null;
@@ -182,10 +182,10 @@ export class EmptyDevice extends Device {
 
     public getSampler (info: Readonly<SamplerInfo>): Sampler {
         const hash = Sampler.computeHash(info);
-        if (!this._samplers$.has(hash)) {
-            this._samplers$.set(hash, new Sampler(info, hash));
+        if (!this._samplers.has(hash)) {
+            this._samplers.set(hash, new Sampler(info, hash));
         }
-        return this._samplers$.get(hash)!;
+        return this._samplers.get(hash)!;
     }
 
     public getSwapchains (): Readonly<Swapchain[]> {
@@ -194,26 +194,26 @@ export class EmptyDevice extends Device {
 
     public getGeneralBarrier (info: Readonly<GeneralBarrierInfo>): GeneralBarrier {
         const hash = GeneralBarrier.computeHash(info);
-        if (!this._generalBarrierss$.has(hash)) {
-            this._generalBarrierss$.set(hash, new GeneralBarrier(info, hash));
+        if (!this._generalBarrierss.has(hash)) {
+            this._generalBarrierss.set(hash, new GeneralBarrier(info, hash));
         }
-        return this._generalBarrierss$.get(hash)!;
+        return this._generalBarrierss.get(hash)!;
     }
 
     public getTextureBarrier (info: Readonly<TextureBarrierInfo>): TextureBarrier {
         const hash = TextureBarrier.computeHash(info);
-        if (!this._textureBarriers$.has(hash)) {
-            this._textureBarriers$.set(hash, new TextureBarrier(info, hash));
+        if (!this._textureBarriers.has(hash)) {
+            this._textureBarriers.set(hash, new TextureBarrier(info, hash));
         }
-        return this._textureBarriers$.get(hash)!;
+        return this._textureBarriers.get(hash)!;
     }
 
     public getBufferBarrier (info: Readonly<BufferBarrierInfo>): BufferBarrier {
         const hash = BufferBarrier.computeHash(info);
-        if (!this._bufferBarriers$.has(hash)) {
-            this._bufferBarriers$.set(hash, new BufferBarrier(info, hash));
+        if (!this._bufferBarriers.has(hash)) {
+            this._bufferBarriers.set(hash, new BufferBarrier(info, hash));
         }
-        return this._bufferBarriers$.get(hash)!;
+        return this._bufferBarriers.get(hash)!;
     }
 
     public copyBuffersToTexture (buffers: Readonly<ArrayBufferView[]>, texture: Texture, regions: Readonly<BufferTextureCopy[]>): void {

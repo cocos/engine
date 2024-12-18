@@ -159,15 +159,12 @@ export default class ParticleSystemRenderer {
     @type(Material)
     @displayOrder(8)
     @disallowAnimation
-    @visible(function (this: ParticleSystemRenderer): boolean { return !this._useGPU; })
     public get cpuMaterial (): Material | null {
         return this._cpuMaterial;
     }
 
     public set cpuMaterial (val: Material | null) {
-        if (val === null) {
-            return;
-        } else {
+        if (val) {
             const effectName = val.effectName;
             if (effectName.indexOf('particle') === -1 || effectName.indexOf('particle-gpu') !== -1) {
                 warnID(6035);
@@ -188,15 +185,12 @@ export default class ParticleSystemRenderer {
     @type(Material)
     @displayOrder(8)
     @disallowAnimation
-    @visible(function (this: ParticleSystemRenderer): boolean { return this._useGPU; })
     public get gpuMaterial (): Material | null {
         return this._gpuMaterial;
     }
 
     public set gpuMaterial (val: Material | null) {
-        if (val === null) {
-            return;
-        } else {
+        if (val) {
             const effectName = val.effectName;
             if (effectName.indexOf('particle-gpu') === -1) {
                 warnID(6035);
@@ -217,7 +211,6 @@ export default class ParticleSystemRenderer {
     @type(Material)
     @displayOrder(9)
     @disallowAnimation
-    @visible(function (this: ParticleSystemRenderer): boolean { return !this._useGPU; })
     @tooltip('i18n:particleSystemRenderer.trailMaterial')
     public get trailMaterial (): Material | null {
         if (!this._particleSystem) {
@@ -330,12 +323,7 @@ export default class ParticleSystemRenderer {
             this._particleSystem.processor = null!;
         }
         const useGPU = this._useGPU && isSupportGPUParticle();
-        if (!useGPU && this.cpuMaterial) {
-            this.particleMaterial = this.cpuMaterial;
-        }
-        if (useGPU && this.gpuMaterial) {
-            this.particleMaterial = this.gpuMaterial;
-        }
+        this.particleMaterial = useGPU ? this.gpuMaterial : this.cpuMaterial;
         this._particleSystem.processor = useGPU ? new ParticleSystemRendererGPU(this) : new ParticleSystemRendererCPU(this);
         this._particleSystem.processor.updateAlignSpace(this.alignSpace);
         this._particleSystem.processor.onInit(this._particleSystem);

@@ -76,6 +76,10 @@ export class VideoPlayer extends Component {
     protected _impl: VideoPlayerImplWeb | null = null;
     protected _cachedCurrentTime = 0;
 
+    constructor () {
+        super();
+    }
+
     /**
      * @en
      * The resource type of video player, REMOTE for remote url and LOCAL for local file path.

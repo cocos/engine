@@ -29,3 +29,7 @@
 import { selector, IPhysicsSelector } from '../framework/physics-selector';
 
 (selector as Mutable<IPhysicsSelector>).id = 'physx';
+
+export function loadWasmModulePhysX (): Promise<void> {
+    return Promise.resolve();
+}

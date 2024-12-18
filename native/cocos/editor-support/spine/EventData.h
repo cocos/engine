@@ -74,6 +74,9 @@ public:
 
 private:
     const String _name;
+#ifdef __EMSCRIPTEN__
+public:
+#endif
     int _intValue;
     float _floatValue;
     String _stringValue;

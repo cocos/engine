@@ -10,4 +10,7 @@ module.exports = {
     gltf: join(__dirname, './assets/fbx/preview.js'), // reuse
     'gltf-mesh': join(__dirname, './assets/mesh-preview.js'),
     'gltf-skeleton': join(__dirname, './assets/skeleton-preview.js'),
+    'gltf-scene': join(__dirname, './assets/prefab-preview.js'),
+    prefab: join(__dirname, './assets/prefab-preview.js'),
+    'spine-data': join(__dirname, './assets/spine-preview.js'),
 };

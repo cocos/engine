@@ -24,7 +24,7 @@
 
 // @ts-check
 import { ccclass, override } from 'cc.decorator';
-import { EDITOR, ALIPAY, XIAOMI, JSB, TEST, BAIDU, TAOBAO, TAOBAO_MINIGAME, WECHAT_MINI_PROGRAM } from 'internal:constants';
+import { EDITOR, ALIPAY, XIAOMI, JSB, TEST, TAOBAO, TAOBAO_MINIGAME, WECHAT_MINI_PROGRAM, BYTEDANCE } from 'internal:constants';
 import { Device, Format, FormatFeatureBit, deviceManager } from '../../gfx';
 import { Asset } from './asset';
 import { PixelFormat } from './asset-enum';
@@ -163,7 +163,7 @@ function fetchImageSource (imageSource: ImageSource): HTMLCanvasElement | HTMLIm
 
 // 返回该图像源是否是平台提供的图像对象。
 function isNativeImage (imageSource: ImageSource): imageSource is (HTMLImageElement | HTMLCanvasElement | ImageBitmap) {
-    if (ALIPAY || TAOBAO || TAOBAO_MINIGAME || XIAOMI || BAIDU || WECHAT_MINI_PROGRAM) {
+    if (ALIPAY || TAOBAO || TAOBAO_MINIGAME || XIAOMI || WECHAT_MINI_PROGRAM || BYTEDANCE) {
         // We're unable to grab the constructors of Alipay native image or canvas object.
         return !('_data' in imageSource);
     }
@@ -547,13 +547,13 @@ export class ImageAsset extends Asset {
     @override
     get _nativeAsset (): any {
         // Maybe returned to pool in webgl.
-        return this._nativeData$;
+        return this._nativeData;
     }
     // TODO: Property 'format' does not exist on type 'ImageBitmap'
     // set _nativeAsset (value: ImageSource) {
     set _nativeAsset (value: any) {
         if (!(value instanceof HTMLElement) && !isImageBitmap(value)) {
-            value.format = value.format || this._format$;
+            value.format = value.format || this._format;
         }
         this.reset(value as ImageSource);
     }
@@ -563,11 +563,11 @@ export class ImageAsset extends Asset {
      * @zh 此图像资源的图像数据。
      */
     get data (): ArrayBufferView | HTMLCanvasElement | HTMLImageElement | ImageBitmap | null {
-        if (isNativeImage(this._nativeData$)) {
-            return this._nativeData$;
+        if (isNativeImage(this._nativeData)) {
+            return this._nativeData;
         }
 
-        return this._nativeData$ && this._nativeData$._data;
+        return this._nativeData && this._nativeData._data;
     }
 
     /**
@@ -575,7 +575,7 @@ export class ImageAsset extends Asset {
      * @zh 此图像资源的像素宽度。
      */
     get width (): number {
-        return this._nativeData$.width || this._width$;
+        return this._nativeData.width || this._width;
     }
 
     /**
@@ -583,7 +583,7 @@ export class ImageAsset extends Asset {
      * @zh 此图像资源的像素高度。
      */
     get height (): number {
-        return this._nativeData$.height || this._height$;
+        return this._nativeData.height || this._height;
     }
 
     /**
@@ -591,7 +591,7 @@ export class ImageAsset extends Asset {
      * @zh 此图像资源的像素格式。
      */
     get format (): PixelFormat {
-        return this._format$;
+        return this._format;
     }
 
     /**
@@ -599,8 +599,8 @@ export class ImageAsset extends Asset {
      * @zh 此图像资源是否为压缩像素格式。
      */
     get isCompressed (): boolean {
-        return (this._format$ >= PixelFormat.RGB_ETC1 && this._format$ <= PixelFormat.RGBA_ASTC_12x12)
-        || (this._format$ >= PixelFormat.RGB_A_PVRTC_2BPPV1 && this._format$ <= PixelFormat.RGBA_ETC1);
+        return (this._format >= PixelFormat.RGB_ETC1 && this._format <= PixelFormat.RGBA_ASTC_12x12)
+        || (this._format >= PixelFormat.RGB_A_PVRTC_2BPPV1 && this._format <= PixelFormat.RGBA_ETC1);
     }
 
     /**
@@ -609,7 +609,7 @@ export class ImageAsset extends Asset {
      * @engineInternal
      */
     get mipmapLevelDataSize (): number[] | undefined {
-        return (this._nativeData$ as IMemoryImageSource).mipmapLevelDataSize;
+        return (this._nativeData as IMemoryImageSource).mipmapLevelDataSize;
     }
 
     /**
@@ -623,21 +623,21 @@ export class ImageAsset extends Asset {
 
     private static extnames = ['.png', '.jpg', '.jpeg', '.bmp', '.webp', '.pvr', '.pkm', '.astc'];
 
-    private _nativeData$: ImageSource;
+    private _nativeData: ImageSource;
 
     //NOTE: _exportedExts is used by editor, should not rename or mangle it.
     private _exportedExts: string[] | null | undefined = undefined;
 
-    private _format$: PixelFormat = PixelFormat.RGBA8888;
+    private _format: PixelFormat = PixelFormat.RGBA8888;
 
-    private _width$ = 0;
+    private _width = 0;
 
-    private _height$ = 0;
+    private _height = 0;
 
     constructor (nativeAsset?: ImageSource) {
         super();
 
-        this._nativeData$ = {
+        this._nativeData = {
             _data: null,
             width: 0,
             height: 0,
@@ -662,13 +662,13 @@ export class ImageAsset extends Asset {
      */
     public reset (data: ImageSource): void {
         if (isImageBitmap(data)) {
-            this._nativeData$ = data;
+            this._nativeData = data;
         } else if (!(data instanceof HTMLElement)) {
             // this._nativeData = Object.create(data);
-            this._nativeData$ = data;
-            this._format$ = data.format;
+            this._nativeData = data;
+            this._format = data.format;
         } else {
-            this._nativeData$ = data;
+            this._nativeData = data;
         }
     }
 
@@ -730,15 +730,15 @@ export class ImageAsset extends Asset {
         if (typeof data === 'string') {
             fmtStr = data;
         } else {
-            this._width$ = data.w;
-            this._height$ = data.h;
+            this._width = data.w;
+            this._height = data.h;
             fmtStr = data.fmt;
         }
         const device = _getGlobalDevice();
         const extensionIDs = fmtStr.split('_');
 
         let preferedExtensionIndex = Number.MAX_VALUE;
-        let format = this._format$;
+        let format = this._format;
         let ext = '';
         const SupportTextureFormats = macro.SUPPORT_TEXTURE_FORMATS;
         for (const extensionID of extensionIDs) {
@@ -749,7 +749,7 @@ export class ImageAsset extends Asset {
 
             const index = SupportTextureFormats.indexOf(tmpExt);
             if (index !== -1 && index < preferedExtensionIndex) {
-                const fmt = extFormat[1] ? parseInt(extFormat[1]) : this._format$;
+                const fmt = extFormat[1] ? parseInt(extFormat[1]) : this._format;
                 // check whether or not support compressed texture
                 if (tmpExt === '.astc' && (!device || !(device.getFormatFeatures(Format.ASTC_RGBA_4X4) & FormatFeatureBit.SAMPLED_TEXTURE))) {
                     continue;
@@ -772,26 +772,26 @@ export class ImageAsset extends Asset {
 
         if (ext) {
             this._setRawAsset(ext);
-            this._format$ = format;
+            this._format = format;
         } else {
             warnID(3121);
         }
     }
 
-    private static _sharedPlaceHolderCanvas$: HTMLCanvasElement | null = null;
+    private static _sharedPlaceHolderCanvas: HTMLCanvasElement | null = null;
 
     public initDefault (uuid?: string): void {
         super.initDefault(uuid);
-        if (!ImageAsset._sharedPlaceHolderCanvas$) {
+        if (!ImageAsset._sharedPlaceHolderCanvas) {
             const canvas = ccwindow.document.createElement('canvas');
             const context = canvas.getContext('2d')!;
             const l = canvas.width = canvas.height = 2;
             context.fillStyle = '#ff00ff';
             context.fillRect(0, 0, l, l);
             this.reset(canvas);
-            ImageAsset._sharedPlaceHolderCanvas$ = canvas;
+            ImageAsset._sharedPlaceHolderCanvas = canvas;
         } else {
-            this.reset(ImageAsset._sharedPlaceHolderCanvas$);
+            this.reset(ImageAsset._sharedPlaceHolderCanvas);
         }
     }
 

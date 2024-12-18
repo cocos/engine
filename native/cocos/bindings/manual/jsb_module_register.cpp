@@ -80,6 +80,10 @@
     #include "cocos/bindings/manual/JavaScriptJavaBridge.h"
 #endif
 
+#if (CC_PLATFORM == CC_PLATFORM_OPENHARMONY)
+    #include "cocos/bindings/manual/JavaScriptArkTsBridge.h"
+#endif
+
 #if(CC_PLATFORM == CC_PLATFORM_OPENHARMONY)
     #if CC_USE_WEBVIEW
         #include "cocos/bindings/auto/jsb_webview_auto.h"
@@ -120,6 +124,8 @@
 #if CC_USE_PHYSICS_PHYSX
     #include "cocos/bindings/auto/jsb_physics_auto.h"
 #endif
+
+extern bool jsb_register_all_billing(se::Object *); // NOLINT
 
 bool jsb_register_all_modules() {
     se::ScriptEngine *se = se::ScriptEngine::getInstance();
@@ -167,6 +173,10 @@ bool jsb_register_all_modules() {
     se->addRegisterCallback(register_script_native_bridge);
 #endif
 
+#if (CC_PLATFORM == CC_PLATFORM_OPENHARMONY)
+    se->addRegisterCallback(register_javascript_arkTs_bridge);
+#endif
+
 #if CC_USE_AUDIO
     se->addRegisterCallback(register_all_audio);
     se->addRegisterCallback(register_all_audio_manual);
@@ -180,6 +190,10 @@ bool jsb_register_all_modules() {
 #if CC_USE_SOCKET
     se->addRegisterCallback(register_all_websocket);
     se->addRegisterCallback(register_all_socketio);
+#endif
+
+#if CC_USE_GOOGLE_BILLING
+    se->addRegisterCallback(jsb_register_all_billing);
 #endif
 
 #if CC_USE_MIDDLEWARE

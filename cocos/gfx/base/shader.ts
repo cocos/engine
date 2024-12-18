@@ -30,30 +30,30 @@ import { GFXObject, ObjectType, ShaderInfo, ShaderStage, UniformBlock, UniformSa
  */
 export abstract class Shader extends GFXObject {
     get name (): string {
-        return this._name$;
+        return this._name;
     }
 
     get attributes (): Attribute[] {
-        return this._attributes$;
+        return this._attributes;
     }
 
     get blocks (): UniformBlock[] {
-        return this._blocks$;
+        return this._blocks;
     }
 
     get samplers (): UniformSampler[] {
-        return this._samplers$;
+        return this._samplers;
     }
 
     get stages (): ShaderStage[] {
-        return this._stages$;
+        return this._stages;
     }
 
-    protected _name$ = '';
-    protected _stages$: ShaderStage[] = [];
-    protected _attributes$: Attribute[] = [];
-    protected _blocks$: UniformBlock[] = [];
-    protected _samplers$: UniformSampler[] = [];
+    protected _name = '';
+    protected _stages: ShaderStage[] = [];
+    protected _attributes: Attribute[] = [];
+    protected _blocks: UniformBlock[] = [];
+    protected _samplers: UniformSampler[] = [];
 
     constructor () {
         super(ObjectType.SHADER);

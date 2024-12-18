@@ -39,6 +39,7 @@ namespace spine {
 class BoneData;
 
 class SP_API TransformConstraintData : public ConstraintData {
+    RTTI_DECL
     friend class SkeletonBinary;
     friend class SkeletonJson;
 
@@ -49,7 +50,7 @@ class SP_API TransformConstraintData : public ConstraintData {
 public:
     explicit TransformConstraintData(const String& name);
 
-    Vector<BoneData*>& getBones();
+    inline Vector<BoneData*>& getBones() { return _bones; }
     BoneData* getTarget();
     float getRotateMix();
     float getTranslateMix();
@@ -63,8 +64,8 @@ public:
     float getOffsetScaleY();
     float getOffsetShearY();
 
-    bool isRelative();
-    bool isLocal();
+    inline bool isRelative() const { return _relative; }
+    inline bool isLocal() const { return _local; }
 
 private:
     Vector<BoneData*> _bones;

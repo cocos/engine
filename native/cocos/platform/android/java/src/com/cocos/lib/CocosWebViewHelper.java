@@ -80,7 +80,7 @@ public class CocosWebViewHelper {
         GlobalObject.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                CocosWebView webView = new CocosWebView(GlobalObject.getContext(), index);
+                CocosWebView webView = new CocosWebView(GlobalObject.getActivity(), index);
                 FrameLayout.LayoutParams lParams = new FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.WRAP_CONTENT,
                         FrameLayout.LayoutParams.WRAP_CONTENT);

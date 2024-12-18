@@ -114,18 +114,6 @@ void MeshAttachment::setHullLength(int inValue) {
     _hullLength = inValue;
 }
 
-Vector<float> &MeshAttachment::getRegionUVs() {
-    return _regionUVs;
-}
-
-Vector<float> &MeshAttachment::getUVs() {
-    return _uvs;
-}
-
-Vector<unsigned short> &MeshAttachment::getTriangles() {
-    return _triangles;
-}
-
 const String &MeshAttachment::getPath() {
     return _path;
 }
@@ -249,10 +237,6 @@ void MeshAttachment::setParentMesh(MeshAttachment *inValue) {
     }
 }
 
-Vector<unsigned short> &MeshAttachment::getEdges() {
-    return _edges;
-}
-
 float MeshAttachment::getWidth() {
     return _width;
 }
@@ -276,7 +260,7 @@ spine::Color &MeshAttachment::getColor() {
 Attachment *MeshAttachment::copy() {
     if (_parentMesh) return newLinkedMesh();
 
-    MeshAttachment *copy = new (__FILE__, __LINE__) MeshAttachment(getName());
+    MeshAttachment *copy = spine_new MeshAttachment(getName());
     copy->setRendererObject(getRendererObject());
     copy->_regionU = _regionU;
     copy->_regionV = _regionV;
@@ -307,7 +291,7 @@ Attachment *MeshAttachment::copy() {
 }
 
 MeshAttachment *MeshAttachment::newLinkedMesh() {
-    MeshAttachment *copy = new (__FILE__, __LINE__) MeshAttachment(getName());
+    MeshAttachment *copy = spine_new MeshAttachment(getName());
     copy->setRendererObject(getRendererObject());
     copy->_regionU = _regionU;
     copy->_regionV = _regionV;

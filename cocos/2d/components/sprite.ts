@@ -35,6 +35,7 @@ import { TextureBase } from '../../asset/assets/texture-base';
 import { Material, RenderTexture } from '../../asset/assets';
 import { NodeEventType } from '../../scene-graph/node-event';
 import { RenderData } from '../renderer/render-data';
+import assetManager from '../../asset/asset-manager/asset-manager';
 
 /**
  * @en
@@ -728,7 +729,7 @@ export class Sprite extends UIRenderer {
         }
 
         if (!this.spriteAtlas || this.spriteAtlas.uuid !== spriteFrame.atlasUuid) {
-            cclegacy.assetManager.loadAny(spriteFrame.atlasUuid, (err: Error, asset: SpriteAtlas) => {
+            assetManager.loadAny(spriteFrame.atlasUuid, (err: Error, asset: SpriteAtlas) => {
                 if (err) {
                     this.spriteAtlas = null;
                     error(err);

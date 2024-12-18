@@ -138,44 +138,44 @@ function getKeyCode (code: string): KeyCode {
 }
 
 export class KeyboardInputSource {
-    private _eventTarget$: EventTarget = new EventTarget();
+    private _eventTarget: EventTarget = new EventTarget();
 
     // KeyboardEvent.repeat is not supported on Wechat PC platform.
-    private _keyStateMap$: Record<number, boolean> = {};
+    private _keyStateMap: Record<number, boolean> = {};
 
     constructor () {
         if (systemInfo.hasFeature(Feature.EVENT_KEYBOARD)) {
-            this._registerEvent$();
+            this._registerEvent();
         }
     }
 
-    private _registerEvent$ (): void {
+    private _registerEvent (): void {
         minigame.wx?.onKeyDown?.((res) => {
             const keyCode = getKeyCode(res.code);
-            if (!this._keyStateMap$[keyCode]) {
-                const eventKeyDown = this._getInputEvent$(res, InputEventType.KEY_DOWN);
-                this._eventTarget$.emit(InputEventType.KEY_DOWN, eventKeyDown);
+            if (!this._keyStateMap[keyCode]) {
+                const eventKeyDown = this._getInputEvent(res, InputEventType.KEY_DOWN);
+                this._eventTarget.emit(InputEventType.KEY_DOWN, eventKeyDown);
             } else {
-                const eventKeyPressing = this._getInputEvent$(res, InputEventType.KEY_PRESSING);
-                this._eventTarget$.emit(InputEventType.KEY_PRESSING, eventKeyPressing);
+                const eventKeyPressing = this._getInputEvent(res, InputEventType.KEY_PRESSING);
+                this._eventTarget.emit(InputEventType.KEY_PRESSING, eventKeyPressing);
             }
-            this._keyStateMap$[keyCode] = true;
+            this._keyStateMap[keyCode] = true;
         });
         minigame.wx?.onKeyUp?.((res) => {
             const keyCode = getKeyCode(res.code);
-            const eventKeyUp = this._getInputEvent$(res, InputEventType.KEY_UP);
-            this._keyStateMap$[keyCode] = false;
-            this._eventTarget$.emit(InputEventType.KEY_UP, eventKeyUp);
+            const eventKeyUp = this._getInputEvent(res, InputEventType.KEY_UP);
+            this._keyStateMap[keyCode] = false;
+            this._eventTarget.emit(InputEventType.KEY_UP, eventKeyUp);
         });
     }
 
-    private _getInputEvent$ (event: KeyboardEventData, eventType: InputEventType): EventKeyboard {
+    private _getInputEvent (event: KeyboardEventData, eventType: InputEventType): EventKeyboard {
         const keyCode = getKeyCode(event.code);
         const eventKeyboard = new EventKeyboard(keyCode, eventType);
         return eventKeyboard;
     }
 
     public on (eventType: InputEventType, callback: KeyboardCallback, target?: any): void {
-        this._eventTarget$.on(eventType, callback,  target);
+        this._eventTarget.on(eventType, callback,  target);
     }
 }

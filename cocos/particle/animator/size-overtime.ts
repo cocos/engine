@@ -43,6 +43,9 @@ const SIZE_OVERTIME_RAND_OFFSET = ModuleRandSeed.SIZE;
  */
 @ccclass('cc.SizeOvertimeModule')
 export default class SizeOvertimeModule extends ParticleModuleBase {
+    constructor () {
+        super();
+    }
     @serializable
     _enable = false;
     /**

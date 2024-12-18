@@ -39,7 +39,7 @@ export class NodeUIProperties {
      */
     get uiTransformComp (): UITransform | null {
         if (!this._uiTransformComp) {
-            this._uiTransformComp = this._node$.getComponent('cc.UITransform') as UITransform;
+            this._uiTransformComp = this._node.getComponent('cc.UITransform') as UITransform;
         }
 
         return this._uiTransformComp;
@@ -53,54 +53,54 @@ export class NodeUIProperties {
      * @zh UI 基类组件
      */
     get uiComp (): UIMeshRenderer | UIRenderer | null {
-        return this._uiComp$;
+        return this._uiComp;
     }
     set uiComp (comp: UIMeshRenderer | UIRenderer | null) {
-        if (this._uiComp$ && comp) {
+        if (this._uiComp && comp) {
             warnID(12002);
             return;
         }
-        this._uiComp$ = comp;
+        this._uiComp = comp;
     }
 
-    private _uiComp$: UIMeshRenderer | UIRenderer | null = null;
+    private _uiComp: UIMeshRenderer | UIRenderer | null = null;
 
     /**
      * @en The opacity of the UI node for final rendering
      * @zh 最终显示的 UI 透明度，受父节点透明度影响
      */
-    private _opacity$ = 1;
+    private _opacity = 1;
     /**
      * NOTE: engineInternal tag cannot only mark opacity setter as internal.
      * @engineInternal
      */
-    public setOpacity (v: number): void { this._opacity$ = v; }
-    public get opacity (): number { return this._opacity$; }
+    public setOpacity (v: number): void { this._opacity = v; }
+    public get opacity (): number { return this._opacity; }
 
     /**
      * @en The opacity of the UI node itself
      * @zh 本节点的 UI 透明度
      */
-    private _localOpacity$ = 1;
-    get localOpacity (): number { return this._localOpacity$; }
+    private _localOpacity = 1;
+    get localOpacity (): number { return this._localOpacity; }
     set localOpacity (val) {
-        this._localOpacity$ = val;
+        this._localOpacity = val;
         this.colorDirty = true;
     }
 
     public colorDirty = true;
     protected _uiTransformComp: UITransform | null = null;
-    private declare _node$: Node;
+    private declare _node: Node;
 
     constructor (node: Node) {
-        this._node$ = node;
+        this._node = node;
     }
 
     /**
      * @deprecated since v3.4
      */
     public applyOpacity (effectOpacity: number): void {
-        this._opacity$ = this._localOpacity$ * effectOpacity;
+        this._opacity = this._localOpacity * effectOpacity;
     }
 
     /**

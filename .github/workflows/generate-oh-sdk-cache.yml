@@ -2,24 +2,12 @@ name: <Native> Generate OH SDK Cache
 
 on:
   workflow_dispatch:
-    inputs:
-      oh_sdk_version:
-        description: 'Openharmony SDK version'
-        type: string
-        default: '9'
-        required: true
 
 jobs:
   generate_oh_sdk_cache:
     name: "Generate OH SDK cache"
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-java@v4
-        id: setup-jdk
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-      
       - name: Get oh sdk cache directory path
         id: oh-sdk-cache-dir-path
         run: |
@@ -34,19 +22,10 @@ jobs:
         id: cache-oh-sdk
         uses: actions/cache@v4
         env:
-          cache-name: cache-oh-sdk-${{ github.event.inputs.oh_sdk_version }}
+          cache-name: cache-oh-sdk-12
         with:
           path: ${{ steps.oh-sdk-cache-dir-path.outputs.dir }}
           key: ${{ runner.os }}-build-${{ env.cache-name }}
-
-      - name: Add package.json
-        run: |
-          echo "{}" > package.json
-          echo "{\"name\": \"tests\",\"lockfileVersion\": 3,\"requires\": true,\"packages\": {}}" > package-lock.json
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 14
-          cache: 'npm'
 
       - if: ${{ steps.cache-oh-sdk.outputs.cache-hit != 'true' }}
         name: No Cache found, install oh sdk
@@ -55,26 +34,12 @@ jobs:
           if [ ! -d "$HOME/openharmony" ]; then
             mkdir -p $HOME/openharmony
             echo "Download commandline-tools-linux.zip ..."
-            curl -o commandline-tools-linux.zip "https://contentcenter-vali-drcn.dbankcdn.cn/pvt_2/DeveloperAlliance_package_901_9/b1/v3/E6zhv5UFQ2-inIwNJhTN6Q/commandline-tools-linux-2.0.0.2.zip?HW-CC-KV=V1&HW-CC-Date=20230621T074401Z&HW-CC-Expire=315360000&HW-CC-Sign=621224257B02079B1E76C0A56FDF21483400B1E3556213F88DC79BC9BE7D595D"
+            wget -q https://github.com/dumganhar/oh-sdk-for-ci/releases/download/api-12/commandline-tools-linux-x64-5.0.3.906.zip.001
+            wget -q https://github.com/dumganhar/oh-sdk-for-ci/releases/download/api-12/commandline-tools-linux-x64-5.0.3.906.zip.002
             echo "Unzip commandline-tools-linux.zip ..."
-            unzip commandline-tools-linux.zip -d $HOME/openharmony > /dev/null
+            7z x commandline-tools-linux-x64-5.0.3.906.zip.001 -o$HOME/openharmony > /dev/null
             cd $HOME/openharmony
             ls -l
-            cd command-line-tools
-            echo "=============== PATCHING sdkmanager/bin/sdkmgr file ==============="
-            sed -i "s@-Dfile.encoding=UTF-8@-Dfile.encoding=UTF-8 -Duser.country=CN@g" ./sdkmanager/bin/sdkmgr
-            cd bin
-            ./sdkmgr list
-            echo "=============== INSTALL HOS toolchains:${{ github.event.inputs.oh_sdk_version }} ==============="
-            ./sdkmgr install toolchains:${{ github.event.inputs.oh_sdk_version }} --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK ets:${{ github.event.inputs.oh_sdk_version }} ==============="
-            ./sdkmgr install OpenHarmony/ets:${{ github.event.inputs.oh_sdk_version }} --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK js:${{ github.event.inputs.oh_sdk_version }} ==============="
-            ./sdkmgr install OpenHarmony/js:${{ github.event.inputs.oh_sdk_version }} --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK native:${{ github.event.inputs.oh_sdk_version }} ==============="
-            ./sdkmgr install OpenHarmony/native:${{ github.event.inputs.oh_sdk_version }} --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK toolchains:${{ github.event.inputs.oh_sdk_version }} ==============="
-            ./sdkmgr install OpenHarmony/toolchains:${{ github.event.inputs.oh_sdk_version }} --accept-license > /dev/null
-            echo "=============== INSTALL OH SDK DONE ==============="
-            ./sdkmgr list
+            cd commandline-tools-linux-x64-5.0.3.906
+            ls -l
           fi

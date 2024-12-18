@@ -44,9 +44,9 @@ export class WebGPUPipelineLayout extends PipelineLayout {
         const webGPUDevice = WebGPUDeviceManager.instance;
         const nativeDevice = webGPUDevice.nativeDevice;
         this._bindGrpLayouts.length = 0;
-        const setLayoutSize = this._setLayouts$.length;
+        const setLayoutSize = this._setLayouts.length;
         for (let i = 0; i < setLayoutSize; i++) {
-            const setLayout = this._setLayouts$[i] as WebGPUDescriptorSetLayout;
+            const setLayout = this._setLayouts[i] as WebGPUDescriptorSetLayout;
             const bindGroupLayout = setLayout.gpuDescriptorSetLayout!.bindGroupLayout;
             if (bindGroupLayout) {
                 if (resetAll) {
@@ -72,7 +72,7 @@ export class WebGPUPipelineLayout extends PipelineLayout {
     }
 
     public initialize (info: PipelineLayoutInfo): boolean {
-        Array.prototype.push.apply(this._setLayouts$, info.setLayouts);
+        Array.prototype.push.apply(this._setLayouts, info.setLayouts);
 
         const dynamicOffsetIndices: number[][] = [];
 
@@ -83,7 +83,7 @@ export class WebGPUPipelineLayout extends PipelineLayout {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const that = this;
         this._gpuPipelineLayout = {
-            setLayouts: this._setLayouts$,
+            setLayouts: this._setLayouts,
             gpuSetLayouts,
             dynamicOffsetIndices,
             dynamicOffsetCount,
@@ -100,10 +100,10 @@ export class WebGPUPipelineLayout extends PipelineLayout {
     }
 
     public changeSetLayout (idx: number, setLayout: WebGPUDescriptorSetLayout): void {
-        this._setLayouts$[idx] = setLayout;
+        this._setLayouts[idx] = setLayout;
     }
 
     public destroy (): void {
-        this._setLayouts$.length = 0;
+        this._setLayouts.length = 0;
     }
 }

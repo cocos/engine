@@ -96,9 +96,9 @@ function createBundle (id: string, data: IConfigOption, options: Record<string, 
 }
 
 export class Factory {
-    private _creating$ = new Cache<((err: Error | null, data?: any | null) => void)[]>();
+    private _creating = new Cache<((err: Error | null, data?: any | null) => void)[]>();
 
-    private _producers$: Record<string, CreateHandler> = {
+    private _producers: Record<string, CreateHandler> = {
         // Images
         '.png': createImageAsset,
         '.jpg': createImageAsset,
@@ -141,32 +141,32 @@ export class Factory {
 
     public register (type: string | Record<string, CreateHandler>, handler?: CreateHandler): void {
         if (typeof type === 'object') {
-            js.mixin(this._producers$, type);
+            js.mixin(this._producers, type);
         } else {
-            this._producers$[type] = handler!;
+            this._producers[type] = handler!;
         }
     }
 
     public create (id: string, data: any, type: string, options: Record<string, any>, onComplete: ((err: Error | null, data?: Asset | Bundle | null) => void)): void {
-        const handler = this._producers$[type] || this._producers$.default;
+        const handler = this._producers[type] || this._producers.default;
         const asset = assets.get(id);
         if (!options.reloadAsset && asset) {
             onComplete(null, asset);
             return;
         }
-        const creating = this._creating$.get(id);
+        const creating = this._creating.get(id);
         if (creating) {
             creating.push(onComplete);
             return;
         }
 
-        this._creating$.add(id, [onComplete]);
+        this._creating.add(id, [onComplete]);
         handler(id, data, options, (err, result): void => {
             if (!err && result instanceof Asset) {
                 result._uuid = id;
                 cache(id, result, options.cacheAsset);
             }
-            const callbacks = this._creating$.remove(id);
+            const callbacks = this._creating.remove(id);
             for (let i = 0, l = callbacks!.length; i < l; i++) {
                 callbacks![i](err, result);
             }

@@ -23,7 +23,7 @@
 */
 import { ccclass, executeInEditMode, help, menu, playOnFocus, serializable, tooltip, type, visible } from 'cc.decorator';
 import { EDITOR, EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
-import { CCBoolean, CCObject, Color, Enum, Vec3, warn } from '../../core';
+import { CCBoolean, CCObject, Color, screen, Enum, Vec3, warn } from '../../core';
 
 import { TextureCube } from '../../asset/assets';
 import { scene } from '../../render-scene';
@@ -323,6 +323,12 @@ export class ReflectionProbe extends Component {
         }
     }
 
+    private _handleResize$ (): void {
+        if (this.probe && this.sourceCamera && this.probeType === ProbeType.PLANAR) {
+            this.probe.renderPlanarReflection(this.sourceCamera.camera);
+        }
+    }
+
     onEnable (): void {
         if (this._probe) {
             const probe = ReflectionProbeManager.probeManager.getProbeById(this._probeId);
@@ -334,12 +340,16 @@ export class ReflectionProbe extends Component {
             ReflectionProbeManager.probeManager.onUpdateProbes();
             this._probe.enable();
         }
+        screen.on('window-resize', this._handleResize$, this);
+        screen.on('fullscreen-change', this._handleResize$, this);
     }
     onDisable (): void {
         if (this._probe) {
             ReflectionProbeManager.probeManager.unregister(this._probe);
             this._probe.disable();
         }
+        screen.off('window-resize', this._handleResize$, this);
+        screen.off('fullscreen-change', this._handleResize$, this);
     }
 
     public start (): void {

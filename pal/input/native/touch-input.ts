@@ -25,18 +25,64 @@
 import { screenAdapter } from 'pal/screen-adapter';
 import { Size, Vec2 } from '../../../cocos/core/math';
 import { EventTarget } from '../../../cocos/core/event';
-import { EventTouch, Touch } from '../../../cocos/input/types';
+import { EventTouch, Touch as CCTouch } from '../../../cocos/input/types';
 import { touchManager } from '../touch-manager';
-import { macro } from '../../../cocos/core/platform/macro';
 import { InputEventType } from '../../../cocos/input/types/event-enum';
 
 export type TouchCallback = (res: EventTouch) => void;
 
 declare const jsb: any;
 
+class TouchEventElement {
+    type: InputEventType | null = null;
+    changedTouches: Touch[] = [];
+    windowId: number = 0;
+}
+
+class TouchEventCache {
+    private _events: TouchEventElement[] = [];
+    private _length = 0;
+
+    push (eventType: InputEventType, changedTouches: Touch[], windowId: number): void {
+        const events = this._events;
+        const index = this._length;
+        if (index >= events.length) {
+            events.push(new TouchEventElement());
+        }
+        const e = events[index];
+        const cachedTouches = e.changedTouches;
+        e.type = eventType;
+        cachedTouches.length = changedTouches.length;
+        e.windowId = windowId;
+
+        for (let i = 0, len = changedTouches.length; i < len; ++i) {
+            const src = changedTouches[i];
+            let dst = cachedTouches[i] as any;
+            if (!dst) {
+                (cachedTouches[i] as any) = dst = {};
+            }
+            Object.assign(dst, src);
+        }
+
+        ++this._length;
+    }
+
+    clear (): void {
+        this._length = 0;
+    }
+
+    forEach (cb: ((e: TouchEventElement) => void)): void {
+        for (let i = 0, len = this._length; i < len; ++i) {
+            cb(this._events[i]);
+        }
+    }
+}
+
 export class TouchInputSource {
     private _eventTarget: EventTarget = new EventTarget();
     private _windowManager: any;
+
+    private _cache = new TouchEventCache();
 
     constructor () {
         this._registerEvent();
@@ -44,44 +90,57 @@ export class TouchInputSource {
     }
 
     private _registerEvent (): void {
-        jsb.onTouchStart = this._createCallback(InputEventType.TOUCH_START);
-        jsb.onTouchMove = this._createCallback(InputEventType.TOUCH_MOVE);
-        jsb.onTouchEnd = this._createCallback(InputEventType.TOUCH_END);
-        jsb.onTouchCancel = this._createCallback(InputEventType.TOUCH_CANCEL);
+        jsb.onTouchStart = this._createEventCacheCallback(InputEventType.TOUCH_START);
+        jsb.onTouchMove = this._createEventCacheCallback(InputEventType.TOUCH_MOVE);
+        jsb.onTouchEnd = this._createEventCacheCallback(InputEventType.TOUCH_END);
+        jsb.onTouchCancel = this._createEventCacheCallback(InputEventType.TOUCH_CANCEL);
     }
 
-    private _createCallback (eventType: InputEventType) {
-        return (changedTouches: TouchList, windowId: number): void => {
-            const handleTouches: Touch[] = [];
-            const length = changedTouches.length;
-            const windowSize = this._windowManager.getWindow(windowId).getViewSize() as Size;
-            for (let i = 0; i < length; ++i) {
-                const changedTouch = changedTouches[i];
-                const touchID = changedTouch.identifier;
-                if (touchID === null) {
-                    continue;
-                }
-                const location = this._getLocation(changedTouch, windowSize);
-                const touch = touchManager.getOrCreateTouch(touchID, location.x, location.y);
-                if (!touch) {
-                    continue;
-                }
-                if (eventType === InputEventType.TOUCH_END || eventType === InputEventType.TOUCH_CANCEL) {
-                    touchManager.releaseTouch(touchID);
-                }
-                handleTouches.push(touch);
-            }
-            if (handleTouches.length > 0) {
-                const eventTouch = new EventTouch(
-                    handleTouches,
-                    false,
-                    eventType,
-                    touchManager.getAllTouches(),
-                );
-                eventTouch.windowId = windowId;
-                this._eventTarget.emit(eventType, eventTouch);
-            }
+    private _createEventCacheCallback (eventType: InputEventType) {
+        return (changedTouches: Touch[], windowId: number): void => {
+            this._cache.push(eventType, changedTouches, windowId);
         };
+    }
+
+    public dispatchEventsInCache (): void {
+        const cache = this._cache;
+        cache.forEach((e: TouchEventElement) => {
+            this._dispatchEvent(e.type!, e.changedTouches, e.windowId);
+        });
+
+        cache.clear();
+    }
+
+    private _dispatchEvent (eventType: InputEventType, changedTouches: Touch[], windowId: number): void {
+        const handleTouches: CCTouch[] = [];
+        const length = changedTouches.length;
+        const windowSize = this._windowManager.getWindow(windowId).getViewSize() as Size;
+        for (let i = 0; i < length; ++i) {
+            const changedTouch = changedTouches[i];
+            const touchID = changedTouch.identifier;
+            if (touchID === null) {
+                continue;
+            }
+            const location = this._getLocation(changedTouch, windowSize);
+            const touch = touchManager.getOrCreateTouch(touchID, location.x, location.y);
+            if (!touch) {
+                continue;
+            }
+            if (eventType === InputEventType.TOUCH_END || eventType === InputEventType.TOUCH_CANCEL) {
+                touchManager.releaseTouch(touchID);
+            }
+            handleTouches.push(touch);
+        }
+        if (handleTouches.length > 0) {
+            const eventTouch = new EventTouch(
+                handleTouches,
+                false,
+                eventType,
+                touchManager.getAllTouches(),
+            );
+            eventTouch.windowId = windowId;
+            this._eventTarget.emit(eventType, eventTouch);
+        }
     }
 
     private _getLocation (touch: globalThis.Touch, windowSize: Size): Vec2 {

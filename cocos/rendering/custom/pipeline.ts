@@ -1657,6 +1657,30 @@ export interface Pipeline extends BasicPipeline {
         type: string): number;
 }
 
+export interface PipelinePassBuilder {
+    getConfigOrder (): number;
+    getRenderOrder (): number;
+    configCamera? (
+        camera: Readonly<Camera>,
+        pplConfigs: { readonly [name: string]: any },
+        cameraConfigs: { [name: string]: any }): void;
+    windowResize? (
+        ppl: BasicPipeline,
+        pplConfigs: { readonly [name: string]: any },
+        cameraConfigs: { readonly [name: string]: any },
+        window: RenderWindow,
+        camera: Camera,
+        width: number,
+        height: number): void;
+    setup? (
+        ppl: BasicPipeline,
+        pplConfigs: { readonly [name: string]: any },
+        cameraConfigs: { readonly [name: string]: any },
+        camera: Camera,
+        context: { [name: string]: any },
+        prevRenderPass?: BasicRenderPassBuilder): BasicRenderPassBuilder | undefined;
+}
+
 /**
  * @en Pipeline builder.
  * User can implement this interface and setup render graph.

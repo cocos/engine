@@ -54,20 +54,22 @@ MeshBuffer *MiddlewareManager::getMeshBuffer(int format) {
     return mb;
 }
 
-void MiddlewareManager::clearRemoveList() {
-    for (auto *editor : _removeList) {
-        auto it = std::find(_updateList.begin(), _updateList.end(), editor);
-        if (it != _updateList.end()) {
+void MiddlewareManager::updateOperateCache() {
+    for (auto &iter: _operateCacheMap) {
+        auto it = std::find(_updateList.begin(), _updateList.end(), iter.first);
+        if (iter.second) {
+            if (it == _updateList.end()) {
+                _updateList.push_back(iter.first);
+            }
+        } else if (it != _updateList.end()) {
             _updateList.erase(it);
         }
     }
-
-    _removeList.clear();
+    _operateCacheMap.clear();
 }
 
 void MiddlewareManager::update(float dt) {
-    isUpdating = true;
-
+    updateOperateCache();
     _attachInfo.reset();
     auto *attachBuffer = _attachInfo.getBuffer();
     if (attachBuffer) {
@@ -76,23 +78,8 @@ void MiddlewareManager::update(float dt) {
 
     for (size_t i = 0, len = _updateList.size(); i < len; ++i) {
         auto *editor = _updateList[i];
-        if (!_removeList.empty()) {
-            auto removeIt = std::find(_removeList.begin(), _removeList.end(), editor);
-            if (removeIt == _removeList.end()) {
-                if (editor) {
-                    editor->update(dt);
-                }
-            }
-        } else {
-            if (editor) {
-                editor->update(dt);
-            }
-        }
+        editor->update(dt);
     }
-
-    isUpdating = false;
-
-    clearRemoveList();
 }
 
 void MiddlewareManager::render(float dt) {
@@ -103,21 +90,11 @@ void MiddlewareManager::render(float dt) {
         }
     }
 
-    isRendering = true;
 
     for (size_t i = 0, len = _updateList.size(); i < len; ++i) {
         auto *editor = _updateList[i];
-        if (!_removeList.empty()) {
-            auto removeIt = std::find(_removeList.begin(), _removeList.end(), editor);
-            if (removeIt == _removeList.end()) {
-                editor->render(dt);
-            }
-        } else {
-            editor->render(dt);
-        }
+        editor->render(dt);
     }
-
-    isRendering = false;
 
     for (auto it : _mbMap) {
         auto *buffer = it.second;
@@ -138,32 +115,14 @@ void MiddlewareManager::render(float dt) {
         }
         batch2d->syncMeshBuffersToNative(accID, std::move(uiMeshArray));
     }
-
-    clearRemoveList();
 }
 
 void MiddlewareManager::addTimer(IMiddleware *editor) {
-    auto it0 = std::find(_updateList.begin(), _updateList.end(), editor);
-    if (it0 != _updateList.end()) {
-        return;
-    }
-
-    auto it1 = std::find(_removeList.begin(), _removeList.end(), editor);
-    if (it1 != _removeList.end()) {
-        _removeList.erase(it1);
-    }
-    _updateList.push_back(editor);
+    _operateCacheMap[editor] = true;
 }
 
 void MiddlewareManager::removeTimer(IMiddleware *editor) {
-    if (isUpdating || isRendering) {
-        _removeList.push_back(editor);
-    } else {
-        auto it = std::find(_updateList.begin(), _updateList.end(), editor);
-        if (it != _updateList.end()) {
-            _updateList.erase(it);
-        }
-    }
+    _operateCacheMap[editor] = false;
 }
 
 se_object_ptr MiddlewareManager::getVBTypedArray(int format, int bufferPos) {

@@ -50,8 +50,8 @@ public:
     /// @param drawOrder May be NULL to use bind pose draw order
     void setFrame(size_t frameIndex, float time, Vector<int>& drawOrder);
 
-    Vector<float>& getFrames();
-    Vector<Vector<int> >& getDrawOrders();
+    inline Vector<float>& getFrames() { return _frames; }
+    inline Vector<Vector<int> >& getDrawOrders() { return _drawOrders; }
     size_t getFrameCount();
 
 private:

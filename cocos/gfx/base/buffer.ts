@@ -46,7 +46,7 @@ export abstract class Buffer extends GFXObject {
      * @zh 缓冲使用方式。
      */
     get usage (): BufferUsage {
-        return this._usage$;
+        return this._usage;
     }
 
     /**
@@ -54,7 +54,7 @@ export abstract class Buffer extends GFXObject {
      * @zh 缓冲的内存使用方式。
      */
     get memUsage (): MemoryUsage {
-        return this._memUsage$;
+        return this._memUsage;
     }
 
     /**
@@ -62,7 +62,7 @@ export abstract class Buffer extends GFXObject {
      * @zh 缓冲大小。
      */
     get size (): number {
-        return this._size$;
+        return this._size;
     }
 
     /**
@@ -70,7 +70,7 @@ export abstract class Buffer extends GFXObject {
      * @zh 缓冲步长。
      */
     get stride (): number {
-        return this._stride$;
+        return this._stride;
     }
 
     /**
@@ -78,20 +78,20 @@ export abstract class Buffer extends GFXObject {
      * @zh 缓冲条目数量。
      */
     get count (): number {
-        return this._count$;
+        return this._count;
     }
 
     get flags (): BufferFlags {
-        return this._flags$;
+        return this._flags;
     }
 
-    protected _usage$: BufferUsage = BufferUsageBit.NONE;
-    protected _memUsage$: MemoryUsage = MemoryUsageBit.NONE;
-    protected _size$ = 0;
-    protected _stride$ = 1;
-    protected _count$ = 0;
-    protected _flags$: BufferFlags = BufferFlagBit.NONE;
-    protected _isBufferView$ = false;
+    protected _usage: BufferUsage = BufferUsageBit.NONE;
+    protected _memUsage: MemoryUsage = MemoryUsageBit.NONE;
+    protected _size = 0;
+    protected _stride = 1;
+    protected _count = 0;
+    protected _flags: BufferFlags = BufferFlagBit.NONE;
+    protected _isBufferView = false;
 
     constructor () {
         super(ObjectType.BUFFER);

@@ -1,0 +1,10 @@
+include ':libcocos',':libservice',':app'
+project(':libcocos').projectDir     = new File(COCOS_ENGINE_PATH,'cocos/platform/android/libcocos2dx')
+project(':app').projectDir    = new File(NATIVE_DIR, 'app')
+project(':app').name = "CocosGame"
+if(PROP_ENABLE_INSTANT_APP == "true" || PROP_ENABLE_INSTANT_APP == "yes") {
+    include ':instantapp'
+    project(':instantapp').projectDir   = new File(NATIVE_DIR, 'instantapp')
+}
+
+rootProject.name = "CocosGame"

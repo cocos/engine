@@ -35,10 +35,10 @@ export abstract class Queue extends GFXObject {
      * @zh 队列类型。
      */
     get type (): number {
-        return this._type$;
+        return this._type;
     }
 
-    protected _type$: QueueType = QueueType.GRAPHICS;
+    protected _type: QueueType = QueueType.GRAPHICS;
 
     constructor () {
         super(ObjectType.QUEUE);

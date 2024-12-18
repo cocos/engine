@@ -46,9 +46,17 @@ class LegacyThreadPool;
 
 class AudioPlayerProvider {
 public:
+#if CC_PLATFORM == CC_PLATFORM_ANDROID
     AudioPlayerProvider(SLEngineItf engineItf, SLObjectItf outputMixObject, int deviceSampleRate,
                         int bufferSizeInFrames, const FdGetterCallback &fdGetterCallback,
                         ICallerThreadUtils *callerThreadUtils);
+#elif CC_PLATFORM == CC_PLATFORM_OPENHARMONY
+    AudioPlayerProvider(SLEngineItf engineItf, int deviceSampleRate,
+                        const FdGetterCallback &fdGetterCallback, ICallerThreadUtils *callerThreadUtils);
+    int getBufferSizeInFrames() const {
+        return _bufferSizeInFrames;
+    }
+#endif
 
     virtual ~AudioPlayerProvider();
     bool isFileCached(const ccstd::string &audioFilePath);

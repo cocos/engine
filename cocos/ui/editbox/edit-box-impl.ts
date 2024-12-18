@@ -90,20 +90,20 @@ export class EditBoxImpl extends EditBoxImplBase {
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
      */
     public _edTxt: HTMLInputElement | HTMLTextAreaElement | null = null;
-    private _isTextArea$ = false;
+    private _isTextArea = false;
 
-    private _textLabelFont$ = null;
-    private _textLabelFontSize$: number | null = null;
-    private _textLabelFontColor$ = null;
-    private _textLabelAlign$ = null;
-    private _placeholderLabelFont$ = null;
-    private _placeholderLabelFontSize$: number | null = null;
-    private _placeholderLabelFontColor$ = null;
-    private _placeholderLabelAlign$ = null;
-    private _placeholderLineHeight$ = null;
-    private _placeholderStyleSheet$: HTMLStyleElement | null = null;
-    private _domId$ = `EditBoxId_${++_domCount}`;
-    private _forceUpdate$: boolean = false;
+    private _textLabelFont = null;
+    private _textLabelFontSize: number | null = null;
+    private _textLabelFontColor = null;
+    private _textLabelAlign = null;
+    private _placeholderLabelFont = null;
+    private _placeholderLabelFontSize: number | null = null;
+    private _placeholderLabelFontColor = null;
+    private _placeholderLabelAlign = null;
+    private _placeholderLineHeight = null;
+    private _placeholderStyleSheet: HTMLStyleElement | null = null;
+    private _domId = `EditBoxId_${++_domCount}`;
+    private _forceUpdate: boolean = false;
 
     constructor () {
         super();
@@ -149,7 +149,7 @@ export class EditBoxImpl extends EditBoxImplBase {
     }
 
     private _resize (): void {
-        this._forceUpdate$ = true;
+        this._forceUpdate = true;
     }
 
     // The beforeDraw function should be used here.
@@ -158,10 +158,10 @@ export class EditBoxImpl extends EditBoxImplBase {
     public beforeDraw (): void {
         if (!HTML5) return;
         const node = this._delegate!.node;
-        if (!node.hasChangedFlags && !this._forceUpdate$) {
+        if (!node.hasChangedFlags && !this._forceUpdate) {
             return;
         }
-        this._forceUpdate$ = false;
+        this._forceUpdate = false;
         this._updateMatrix();
     }
 
@@ -201,13 +201,13 @@ export class EditBoxImpl extends EditBoxImplBase {
 
     private _createInput (): void {
         if (!HTML5) return;
-        this._isTextArea$ = false;
+        this._isTextArea = false;
         this._edTxt = ccdocument.createElement('input');
     }
 
     private _createTextArea (): void {
         if (!HTML5) return;
-        this._isTextArea$ = true;
+        this._isTextArea = true;
         this._edTxt = ccdocument.createElement('textarea');
     }
 
@@ -215,7 +215,7 @@ export class EditBoxImpl extends EditBoxImplBase {
         if (!HTML5) return;
         if (game.container && this._edTxt) {
             game.container.appendChild(this._edTxt);
-            ccdocument.head.appendChild(this._placeholderStyleSheet$!);
+            ccdocument.head.appendChild(this._placeholderStyleSheet!);
         }
     }
 
@@ -225,13 +225,13 @@ export class EditBoxImpl extends EditBoxImplBase {
         if (hasElem && this._edTxt) {
             game.container!.removeChild(this._edTxt);
         }
-        const hasStyleSheet = contains(ccdocument.head, this._placeholderStyleSheet$);
+        const hasStyleSheet = contains(ccdocument.head, this._placeholderStyleSheet);
         if (hasStyleSheet) {
-            ccdocument.head.removeChild(this._placeholderStyleSheet$!);
+            ccdocument.head.removeChild(this._placeholderStyleSheet!);
         }
 
         this._edTxt = null;
-        this._placeholderStyleSheet$ = null;
+        this._placeholderStyleSheet = null;
     }
 
     private _showDom (): void {
@@ -402,7 +402,7 @@ export class EditBoxImpl extends EditBoxImplBase {
         this._returnType = returnType;
 
         // FIX ME: TextArea actually dose not support password type.
-        if (this._isTextArea$) {
+        if (this._isTextArea) {
             // input flag
             let transform = 'none';
             if (inputFlag === InputFlag.INITIAL_CAPS_ALL_CHARACTERS) {
@@ -483,9 +483,9 @@ export class EditBoxImpl extends EditBoxImplBase {
         elem.style.left = `${LEFT_PADDING}px`;
         elem.className = 'cocosEditBox';
         elem.style.fontFamily = 'Arial';
-        elem.id = this._domId$;
+        elem.id = this._domId;
 
-        if (!this._isTextArea$) {
+        if (!this._isTextArea) {
             elem = elem as HTMLInputElement;
             elem.type = 'text';
             elem.style['-moz-appearance'] = 'textfield';
@@ -494,7 +494,7 @@ export class EditBoxImpl extends EditBoxImplBase {
             elem.style.overflowY = 'scroll';
         }
 
-        this._placeholderStyleSheet$ = ccdocument.createElement('style');
+        this._placeholderStyleSheet = ccdocument.createElement('style');
     }
 
     private _updateStyleSheet (): void {
@@ -526,17 +526,17 @@ export class EditBoxImpl extends EditBoxImplBase {
 
         const fontSize = textLabel.fontSize * textLabel.node.scale.y;
 
-        if (this._textLabelFont$ === font
-            && this._textLabelFontSize$ === fontSize
-            && this._textLabelFontColor$ === textLabel.fontColor
-            && this._textLabelAlign$ === textLabel.horizontalAlign) {
+        if (this._textLabelFont === font
+            && this._textLabelFontSize === fontSize
+            && this._textLabelFontColor === textLabel.fontColor
+            && this._textLabelAlign === textLabel.horizontalAlign) {
             return;
         }
 
-        this._textLabelFont$ = font;
-        this._textLabelFontSize$ = fontSize;
-        this._textLabelFontColor$ = textLabel.fontColor;
-        this._textLabelAlign$ = textLabel.horizontalAlign;
+        this._textLabelFont = font;
+        this._textLabelFontSize = fontSize;
+        this._textLabelFontColor = textLabel.fontColor;
+        this._textLabelAlign = textLabel.horizontalAlign;
 
         if (!this._edTxt) {
             return;
@@ -577,21 +577,21 @@ export class EditBoxImpl extends EditBoxImplBase {
 
         const fontSize = placeholderLabel.fontSize * placeholderLabel.node.scale.y;
 
-        if (this._placeholderLabelFont$ === font
-            && this._placeholderLabelFontSize$ === fontSize
-            && this._placeholderLabelFontColor$ === placeholderLabel.fontColor
-            && this._placeholderLabelAlign$ === placeholderLabel.horizontalAlign
-            && this._placeholderLineHeight$ === placeholderLabel.fontSize) {
+        if (this._placeholderLabelFont === font
+            && this._placeholderLabelFontSize === fontSize
+            && this._placeholderLabelFontColor === placeholderLabel.fontColor
+            && this._placeholderLabelAlign === placeholderLabel.horizontalAlign
+            && this._placeholderLineHeight === placeholderLabel.fontSize) {
             return;
         }
 
-        this._placeholderLabelFont$ = font;
-        this._placeholderLabelFontSize$ = fontSize;
-        this._placeholderLabelFontColor$ = placeholderLabel.fontColor;
-        this._placeholderLabelAlign$ = placeholderLabel.horizontalAlign;
-        this._placeholderLineHeight$ = placeholderLabel.fontSize;
+        this._placeholderLabelFont = font;
+        this._placeholderLabelFontSize = fontSize;
+        this._placeholderLabelFontColor = placeholderLabel.fontColor;
+        this._placeholderLabelAlign = placeholderLabel.horizontalAlign;
+        this._placeholderLineHeight = placeholderLabel.fontSize;
 
-        const styleEl = this._placeholderStyleSheet$;
+        const styleEl = this._placeholderStyleSheet;
         const fontColor = placeholderLabel.color.toCSS();
         const lineHeight = placeholderLabel.fontSize;
 
@@ -610,13 +610,13 @@ export class EditBoxImpl extends EditBoxImplBase {
             break;
         }
 
-        styleEl!.innerHTML = `#${this._domId$}::-webkit-input-placeholder{text-transform: initial;-family: ${font};font-size: ${fontSize}px;color: ${fontColor};line-height: ${lineHeight}px;text-align: ${horizontalAlign};}`
-                            + `#${this._domId$}::-moz-placeholder{text-transform: initial;-family: ${font};font-size: ${fontSize}px;color: ${fontColor};line-height: ${lineHeight}px;text-align: ${horizontalAlign};}`
-                            + `#${this._domId$}::-ms-input-placeholder{text-transform: initial;-family: ${font};font-size: ${fontSize}px;color: ${fontColor};line-height: ${lineHeight}px;text-align: ${horizontalAlign};}`;
+        styleEl!.innerHTML = `#${this._domId}::-webkit-input-placeholder{text-transform: initial;-family: ${font};font-size: ${fontSize}px;color: ${fontColor};line-height: ${lineHeight}px;text-align: ${horizontalAlign};}`
+                            + `#${this._domId}::-moz-placeholder{text-transform: initial;-family: ${font};font-size: ${fontSize}px;color: ${fontColor};line-height: ${lineHeight}px;text-align: ${horizontalAlign};}`
+                            + `#${this._domId}::-ms-input-placeholder{text-transform: initial;-family: ${font};font-size: ${fontSize}px;color: ${fontColor};line-height: ${lineHeight}px;text-align: ${horizontalAlign};}`;
         // EDGE_BUG_FIX: hide clear button, because clearing input box in Edge does not emit input event
         // issue refference: https://github.com/angular/angular/issues/26307
         if (sys.browserType === BrowserType.EDGE) {
-            styleEl!.innerHTML += `#${this._domId$}::-ms-clear{display: none;}`;
+            styleEl!.innerHTML += `#${this._domId}::-ms-clear{display: none;}`;
         }
     }
 
@@ -665,7 +665,7 @@ export class EditBoxImpl extends EditBoxImplBase {
                 e.propagationStopped = true;
                 this._delegate!._editBoxEditingReturn();
 
-                if (!this._isTextArea$) {
+                if (!this._isTextArea) {
                     elem.blur();
                 }
             } else if (e.keyCode === KeyCode.TAB) {

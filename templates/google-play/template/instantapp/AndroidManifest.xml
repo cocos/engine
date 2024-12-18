@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+          xmlns:dist="http://schemas.android.com/apk/distribution"
+          android:installLocation="auto">
+    <dist:module dist:instant="true" />
+
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+
+    <application
+            android:extractNativeLibs="true"
+            android:allowBackup="true"
+            android:label="@string/app_name"
+            android:usesCleartextTraffic="true"
+            android:supportsRtl="true"
+            android:icon="@mipmap/ic_launcher">
+        <meta-data
+                android:name="aia-compat-api-min-version"
+                android:value="1" />
+        <!-- Tell CocosNativeActivity the name of our .so -->
+        <meta-data android:name="android.app.lib_name"
+            android:value="cocos" />
+
+        <activity
+                android:name="com.cocos.game.InstantActivity"
+                android:screenOrientation="landscape"
+                android:configChanges="orientation|keyboardHidden|screenSize|screenLayout|smallestScreenSize"
+                android:label="@string/app_name"
+                android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+                android:launchMode="singleTask"
+                android:exported="true">
+
+            <intent-filter android:order="1">
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.cocos.lib.CocosEditBoxActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize|screenLayout|smallestScreenSize"
+            android:screenOrientation="behind"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen" />
+</application>
+
+</manifest>

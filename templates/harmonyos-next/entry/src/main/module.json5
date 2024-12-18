@@ -1,0 +1,46 @@
+{
+  "module": {
+    "name": "entry",
+    "type": "entry",
+    "description": "$string:entry_desc",
+    "mainElement": "EntryAbility",
+    "deviceTypes": [
+      "default"
+    ],
+    "requestPermissions":[
+      {"name" : "ohos.permission.INTERNET"},
+      {"name" : "ohos.permission.VIBRATE"},
+      {"name" : "ohos.permission.GET_NETWORK_INFO"},
+      {"name" : "ohos.permission.ACCELEROMETER"},
+      {"name" : "ohos.permission.GYROSCOPE"}
+    ],
+    "deliveryWithInstall": true,
+    "installationFree": false,
+    "pages": "$profile:main_pages",
+    "abilities": [
+      {
+        "name": "EntryAbility",
+        "srcEntry": "./ets/entryability/EntryAbility.ts",
+        "description": "$string:MainAbility_desc",
+        "orientation": "portrait",
+        "icon": "$media:icon",
+        "label": "$string:MainAbility_label",
+        "startWindowIcon": "$media:icon",
+        "removeMissionAfterTerminate": true,
+        "startWindowBackground": "$color:white",
+        "supportWindowMode": ["fullscreen"],
+        "exported": true,
+        "skills": [
+          {
+            "entities": [
+              "entity.system.home"
+            ],
+            "actions": [
+              "action.system.home"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}

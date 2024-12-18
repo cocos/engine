@@ -33,17 +33,17 @@ import { InputEventType } from '../../../cocos/input/types/event-enum';
 import { Feature } from '../../system-info/enum-type';
 
 export class MouseInputSource {
-    private _eventTarget$: EventTarget = new EventTarget();
-    private _isPressed$ = false;
-    private _preMousePos$: Vec2 = new Vec2();
+    private _eventTarget: EventTarget = new EventTarget();
+    private _isPressed = false;
+    private _preMousePos: Vec2 = new Vec2();
 
     constructor () {
         if (systemInfo.hasFeature(Feature.EVENT_MOUSE)) {
-            this._registerEvent$();
+            this._registerEvent();
         }
     }
 
-    private _getLocation$ (event: MouseEventData): Vec2 {
+    private _getLocation (event: MouseEventData): Vec2 {
         const windowSize = screenAdapter.windowSize;
         const dpr = screenAdapter.devicePixelRatio;
         const x = event.x * dpr;
@@ -51,26 +51,26 @@ export class MouseInputSource {
         return new Vec2(x, y);
     }
 
-    private _registerEvent$ (): void {
-        minigame.wx?.onMouseDown?.(this._createCallback$(InputEventType.MOUSE_DOWN));
-        minigame.wx?.onMouseMove?.(this._createCallback$(InputEventType.MOUSE_MOVE));
-        minigame.wx?.onMouseUp?.(this._createCallback$(InputEventType.MOUSE_UP));
-        minigame.wx?.onWheel?.(this._handleMouseWheel$.bind(this));
+    private _registerEvent (): void {
+        minigame.wx?.onMouseDown?.(this._createCallback(InputEventType.MOUSE_DOWN));
+        minigame.wx?.onMouseMove?.(this._createCallback(InputEventType.MOUSE_MOVE));
+        minigame.wx?.onMouseUp?.(this._createCallback(InputEventType.MOUSE_UP));
+        minigame.wx?.onWheel?.(this._handleMouseWheel.bind(this));
     }
 
-    private _createCallback$ (eventType: InputEventType) {
+    private _createCallback (eventType: InputEventType) {
         return (event: MouseEventData): void => {
-            const location = this._getLocation$(event);
+            const location = this._getLocation(event);
             let button = event.button;
             switch (eventType) {
             case InputEventType.MOUSE_DOWN:
-                this._isPressed$ = true;
+                this._isPressed = true;
                 break;
             case InputEventType.MOUSE_UP:
-                this._isPressed$ = false;
+                this._isPressed = false;
                 break;
             case InputEventType.MOUSE_MOVE:
-                if (!this._isPressed$) {
+                if (!this._isPressed) {
                     button = EventMouse.BUTTON_MISSING;
                 }
                 break;
@@ -78,36 +78,40 @@ export class MouseInputSource {
                 break;
             }
 
-            const eventMouse = new EventMouse(eventType, false, this._preMousePos$);
+            const eventMouse = new EventMouse(eventType, false, this._preMousePos);
             eventMouse.setLocation(location.x, location.y);
             eventMouse.setButton(button);
-            eventMouse.movementX = location.x - this._preMousePos$.x;
-            eventMouse.movementY = this._preMousePos$.y - location.y;
+            eventMouse.movementX = location.x - this._preMousePos.x;
+            eventMouse.movementY = this._preMousePos.y - location.y;
 
             // update previous mouse position.
-            this._preMousePos$.set(location.x, location.y);
-            this._eventTarget$.emit(eventType, eventMouse);
+            this._preMousePos.set(location.x, location.y);
+            this._eventTarget.emit(eventType, eventMouse);
         };
     }
 
-    private _handleMouseWheel$ (event: MouseWheelEventData): void {
+    private _handleMouseWheel (event: MouseWheelEventData): void {
         const eventType = InputEventType.MOUSE_WHEEL;
-        const location = this._getLocation$(event);
+        const location = this._getLocation(event);
         const button = event.button;
 
-        const eventMouse = new EventMouse(eventType, false, this._preMousePos$);
+        const eventMouse = new EventMouse(eventType, false, this._preMousePos);
         eventMouse.setLocation(location.x, location.y);
         eventMouse.setButton(button);
-        eventMouse.movementX = location.x - this._preMousePos$.x;
-        eventMouse.movementY = this._preMousePos$.y - location.y;
+        eventMouse.movementX = location.x - this._preMousePos.x;
+        eventMouse.movementY = this._preMousePos.y - location.y;
 
         eventMouse.setScrollData(event.deltaX, -event.deltaY);
         // update previous mouse position.
-        this._preMousePos$.set(location.x, location.y);
-        this._eventTarget$.emit(InputEventType.MOUSE_WHEEL, eventMouse);
+        this._preMousePos.set(location.x, location.y);
+        this._eventTarget.emit(InputEventType.MOUSE_WHEEL, eventMouse);
     }
 
     public on (eventType: InputEventType, callback: MouseCallback, target?: any): void {
-        this._eventTarget$.on(eventType, callback, target);
+        this._eventTarget.on(eventType, callback, target);
+    }
+
+    public dispatchEventsInCache (): void {
+        // Do nothing
     }
 }

@@ -22,6 +22,7 @@
  THE SOFTWARE.
 */
 
+import { BUILD, LOAD_BOX2D_MANUALLY } from 'internal:constants';
 import { selector } from '../framework/physics-selector';
 import { B2PhysicsWorld } from './physics-world';
 import { B2RigidBody2D } from './rigid-body';
@@ -38,6 +39,8 @@ import { B2WheelJoint } from './joints/wheel-joint';
 import { B2HingeJoint } from './joints/hinge-joint';
 
 import { Game, game } from '../../game';
+import { waitForBox2dWasmInstantiation } from './instantiated';
+import { PhysicsSystem2D } from '../framework';
 
 game.once(Game.EVENT_PRE_SUBSYSTEM_INIT, () => {
     selector.register('box2d-wasm', {
@@ -58,3 +61,17 @@ game.once(Game.EVENT_PRE_SUBSYSTEM_INIT, () => {
         HingeJoint: B2HingeJoint,
     });
 });
+
+let loadBox2dPromise: Promise<void> | undefined;
+
+export function loadWasmModuleBox2D (): Promise<void> {
+    if (BUILD && LOAD_BOX2D_MANUALLY) {
+        if (loadBox2dPromise) return loadBox2dPromise;
+        loadBox2dPromise = Promise.resolve()
+            .then(() => waitForBox2dWasmInstantiation())
+            .then(() => PhysicsSystem2D.constructAndRegister());
+        return loadBox2dPromise;
+    } else {
+        return Promise.resolve();
+    }
+}

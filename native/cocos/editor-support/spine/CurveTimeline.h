@@ -45,8 +45,6 @@ public:
 
     virtual void apply(Skeleton& skeleton, float lastTime, float time, Vector<Event*>* pEvents, float alpha, MixBlend blend, MixDirection direction) = 0;
 
-    virtual int getPropertyId() = 0;
-
     size_t getFrameCount();
 
     void setLinear(size_t frameIndex);

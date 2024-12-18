@@ -170,6 +170,10 @@ export class SkinnedMeshBatchRenderer extends SkinnedMeshRenderer {
 
     private _batchMaterial: Material | null = null;
 
+    constructor () {
+        super();
+    }
+
     @override
     @visible(false)
     get mesh (): Mesh | null {

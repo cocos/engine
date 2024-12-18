@@ -233,7 +233,7 @@ export class Tween<T extends object = any> {
 
         if (action) {
             reversedAction = action.reverse();
-            reversedAction.workerTarget = t._target;
+            reversedAction._owner = t;
         } else {
             warnID(16391, `${actionId}`);
         }
@@ -259,17 +259,17 @@ export class Tween<T extends object = any> {
      */
     private insertAction (other: FiniteTimeAction): Tween<T> {
         const action = other.clone();
-        this.updateWorkerTargetForAction(action);
+        this.updateOwnerForAction(action);
         this._actions.push(action);
         return this;
     }
 
-    private updateWorkerTargetForAction (action: Action | null): void {
+    private updateOwnerForAction (action: Action | null): void {
         if (!action) return;
         if (action instanceof Sequence || action instanceof Spawn) {
-            action.updateWorkerTarget(this._target);
-        } else {
-            action.workerTarget = this._target;
+            action.updateOwner(this);
+        } else if (!action._owner) {  // action's owner should never be changed, so only set owner when it's not set yet.
+            action._owner = this;
         }
     }
 
@@ -284,12 +284,6 @@ export class Tween<T extends object = any> {
      */
     target<U extends object = any> (target: U): Tween<U> {
         (this as unknown as Tween<U>)._target = target;
-
-        for (let i = 0, len = this._actions.length; i < len; ++i) {
-            const action = this._actions[i];
-            this.updateWorkerTargetForAction(action);
-        }
-
         return this as unknown as Tween<U>;
     }
 
@@ -834,12 +828,12 @@ export class Tween<T extends object = any> {
         TweenSystem.instance.ActionManager.resumeTarget(target);
     }
 
-    private _union (updateWorkerTarget: boolean): Sequence | null {
+    private _union (needUpdateOwner: boolean): Sequence | null {
         const actions = this._actions;
         if (actions.length === 0) return null;
         const action = sequence(actions);
-        if (updateWorkerTarget) {
-            this.updateWorkerTargetForAction(action);
+        if (needUpdateOwner) {
+            this.updateOwnerForAction(action);
         }
         return action;
     }
@@ -857,29 +851,33 @@ export class Tween<T extends object = any> {
         return action;
     }
 
-    private static readonly _tmp_args: FiniteTimeAction[] = [];
+    private static readonly _tmpArgs: FiniteTimeAction[] = [];
 
     private static _tweenToActions<U extends object = any> (args: Tween<U>[]): void {
-        const tmp_args = Tween._tmp_args;
-        tmp_args.length = 0;
+        const tmpArgs = Tween._tmpArgs;
+        tmpArgs.length = 0;
         for (let l = args.length, i = 0; i < l; i++) {
             const t = args[i];
             const action = t._union(true);
             if (action) {
                 action.setSpeed(t._timeScale);
-                tmp_args.push(action);
+                tmpArgs.push(action);
             }
         }
     }
 
     private static _wrappedSequence<U extends object = any> (args: Tween<U>[]): Sequence | null {
         Tween._tweenToActions(args);
-        return sequence(Tween._tmp_args);
+        const ret = sequence(Tween._tmpArgs);
+        this._tmpArgs.length = 0;
+        return ret;
     }
 
     private static _wrappedParallel<U extends object = any> (args: Tween<U>[]): Spawn | null {
         Tween._tweenToActions(args);
-        return spawn(Tween._tmp_args);
+        const ret = spawn(Tween._tmpArgs);
+        this._tmpArgs.length = 0;
+        return ret;
     }
 }
 legacyCC.Tween = Tween;

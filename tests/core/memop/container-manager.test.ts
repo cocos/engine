@@ -9,55 +9,55 @@ class TestContainer extends ScalableContainer {
 
 test('container', () => {
     // @ts-expect-error
-    scalableContainerManager._pools$.length = 0;
+    scalableContainerManager._pools.length = 0;
 
     const testContainer = new TestContainer();
     // @ts-expect-error
-    expect(scalableContainerManager._pools$.length).toBe(1);
+    expect(scalableContainerManager._pools.length).toBe(1);
     expect(testContainer._poolHandle).toBe(0);
 
     scalableContainerManager.addContainer(testContainer);
     // @ts-expect-error
-    expect(scalableContainerManager._pools$.length).toBe(1);
+    expect(scalableContainerManager._pools.length).toBe(1);
     expect(testContainer._poolHandle).toBe(0);
 
     const testContainer1 = new TestContainer();
     // @ts-expect-error
-    expect(scalableContainerManager._pools$.length).toBe(2);
+    expect(scalableContainerManager._pools.length).toBe(2);
     expect(testContainer1._poolHandle).toBe(1);
 
     testContainer.destroy();
     // @ts-expect-error
-    expect(scalableContainerManager._pools$.length).toBe(1);
+    expect(scalableContainerManager._pools.length).toBe(1);
     expect(testContainer._poolHandle).toBe(-1);
     expect(testContainer1._poolHandle).toBe(0);
 
     const testContainer2 = new TestContainer();
     // @ts-expect-error
-    expect(scalableContainerManager._pools$.length).toBe(2);
+    expect(scalableContainerManager._pools.length).toBe(2);
     expect(testContainer2._poolHandle).toBe(1);
 
     testContainer2.destroy();
     // @ts-expect-error
-    expect(scalableContainerManager._pools$.length).toBe(1);
+    expect(scalableContainerManager._pools.length).toBe(1);
     expect(testContainer2._poolHandle).toBe(-1);
     expect(testContainer1._poolHandle).toBe(0);
 
     testContainer1.destroy();
     // @ts-expect-error
-    expect(scalableContainerManager._pools$.length).toBe(0);
+    expect(scalableContainerManager._pools.length).toBe(0);
     expect(testContainer2._poolHandle).toBe(-1);
     expect(testContainer1._poolHandle).toBe(-1);
     expect(testContainer._poolHandle).toBe(-1);
 
     scalableContainerManager.removeContainer(testContainer1);
     // @ts-expect-error
-    expect(scalableContainerManager._pools$.length).toBe(0);
+    expect(scalableContainerManager._pools.length).toBe(0);
 });
 
 test('shrink', () => {
     // @ts-expect-error
-    scalableContainerManager._pools$.length = 0;
+    scalableContainerManager._pools.length = 0;
     const testContainer = new TestContainer();
     expect(testContainer.calledTimes).toBe(0);
 

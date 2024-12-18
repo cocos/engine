@@ -8,6 +8,20 @@ module.exports = {
     inspector: {
         cloneToEdit: '克隆出新资源，使用并编辑',
         cloneToDirectoryIllegal: '保存路径请限制在当前项目 /assets 路径内',
+        preview: {
+            header: '预览',
+        },
+        spine: {
+            skin: '皮肤',
+            animation: '动画',
+            loop: '循环',
+            timeScale: '速率',
+            premultipliedAlpha: '启用贴图预乘',
+            useTint: '启用染色效果',
+            debugSlots: '调试槽',
+            debugBones: '调试骨骼',
+            debugMesh: '调试网格',
+        },
     },
 
     assets: {
@@ -152,6 +166,7 @@ module.exports = {
             isRGBE: '作为 RGBE 格式',
             isRGBETip: '作为 RGBE 格式',
             flipGreenChannel: '翻转绿色通道',
+            flipGreenChannelTip: '是否翻转绿色通道',
         },
         spriteFrame: {
             packable: 'Packable',

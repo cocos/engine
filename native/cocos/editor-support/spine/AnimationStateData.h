@@ -64,8 +64,9 @@ public:
     /// The mix duration to use when changing from the specified animation to the other,
     /// or the DefaultMix if no mix duration has been set.
     float getMix(Animation* from, Animation* to);
-
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     class AnimationPair : public SpineObject {
     public:
         Animation* _a1;

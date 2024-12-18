@@ -1,6 +1,6 @@
 {
   "name": "cocos-creator",
-  "version": "3.8.5",
+  "version": "3.8.6",
   "description": "Cocos Creator is a cross-platform 2D & 3D game engine written in C++ and TypeScript, licensed under MIT.",
   "homepage": "http://www.cocos.com",
   "license": "MIT",
@@ -80,7 +80,7 @@
     "@babel/plugin-proposal-class-properties": "^7.18.6",
     "@cocos/box2d": "1.0.1",
     "@cocos/cannon": "1.2.8",
-    "@cocos/ccbuild": "^2.2.16",
+    "@cocos/ccbuild": "^2.2.19",
     "@cocos/dragonbones-js": "^1.0.1"
   }
 }

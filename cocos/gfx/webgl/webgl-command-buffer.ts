@@ -43,25 +43,25 @@ import { WebGLDeviceManager } from './webgl-define';
 import { errorID } from '../../core/platform/debug';
 
 export class WebGLCommandBuffer extends CommandBuffer {
-    protected _isInRenderPass$ = false;
-    protected _curGPUPipelineState$: IWebGLGPUPipelineState | null = null;
-    protected _curGPUInputAssembler$: IWebGLGPUInputAssembler | null = null;
-    protected _curGPUDescriptorSets$: IWebGLGPUDescriptorSet[] = [];
-    protected _curDynamicOffsets$: number[] = Array(8).fill(0);
-    protected _curDynamicStates$: DynamicStates = new DynamicStates();
-    protected _isStateInvalied$ = false;
+    protected _isInRenderPass = false;
+    protected _curGPUPipelineState: IWebGLGPUPipelineState | null = null;
+    protected _curGPUInputAssembler: IWebGLGPUInputAssembler | null = null;
+    protected _curGPUDescriptorSets: IWebGLGPUDescriptorSet[] = [];
+    protected _curDynamicOffsets: number[] = Array(8).fill(0);
+    protected _curDynamicStates: DynamicStates = new DynamicStates();
+    protected _isStateInvalied = false;
 
     constructor () {
         super();
     }
 
     public initialize (info: Readonly<CommandBufferInfo>): void {
-        this._type$ = info.type;
-        this._queue$ = info.queue;
+        this._type = info.type;
+        this._queue = info.queue;
 
-        const setCount = WebGLDeviceManager.instance.bindingMappings.blockOffsets$.length;
+        const setCount = WebGLDeviceManager.instance.bindingMappings.blockOffsets.length;
         for (let i = 0; i < setCount; i++) {
-            this._curGPUDescriptorSets$.push(null!);
+            this._curGPUDescriptorSets.push(null!);
         }
     }
 
@@ -69,20 +69,20 @@ export class WebGLCommandBuffer extends CommandBuffer {
     }
 
     public begin (renderPass?: RenderPass, subpass?: number, frameBuffer?: Framebuffer): void {
-        this._curGPUPipelineState$ = null;
-        this._curGPUInputAssembler$ = null;
-        this._curGPUDescriptorSets$.length = 0;
-        this._numDrawCalls$ = 0;
-        this._numInstances$ = 0;
-        this._numTris$ = 0;
+        this._curGPUPipelineState = null;
+        this._curGPUInputAssembler = null;
+        this._curGPUDescriptorSets.length = 0;
+        this._numDrawCalls = 0;
+        this._numInstances = 0;
+        this._numTris = 0;
     }
 
     public end (): void {
-        if (this._isStateInvalied$) {
+        if (this._isStateInvalied) {
             this.bindStates();
         }
 
-        this._isInRenderPass$ = false;
+        this._isInRenderPass = false;
     }
 
     public beginRenderPass (
@@ -94,46 +94,46 @@ export class WebGLCommandBuffer extends CommandBuffer {
         clearStencil: number,
     ): void {
         errorID(16401);
-        this._isInRenderPass$ = true;
+        this._isInRenderPass = true;
     }
 
     public endRenderPass (): void {
-        this._isInRenderPass$ = false;
+        this._isInRenderPass = false;
     }
 
     public bindPipelineState (pipelineState: PipelineState): void {
         const gpuPipelineState = (pipelineState as WebGLPipelineState).gpuPipelineState;
-        if (gpuPipelineState !== this._curGPUPipelineState$) {
-            this._curGPUPipelineState$ = gpuPipelineState;
-            this._isStateInvalied$ = true;
+        if (gpuPipelineState !== this._curGPUPipelineState) {
+            this._curGPUPipelineState = gpuPipelineState;
+            this._isStateInvalied = true;
         }
     }
 
     public bindDescriptorSet (set: number, descriptorSet: DescriptorSet, dynamicOffsets?: Readonly<number[]>): void {
         const gpuDescriptorSet = (descriptorSet as WebGLDescriptorSet).gpuDescriptorSet;
-        if (gpuDescriptorSet !== this._curGPUDescriptorSets$[set]) {
-            this._curGPUDescriptorSets$[set] = gpuDescriptorSet;
-            this._isStateInvalied$ = true;
+        if (gpuDescriptorSet !== this._curGPUDescriptorSets[set]) {
+            this._curGPUDescriptorSets[set] = gpuDescriptorSet;
+            this._isStateInvalied = true;
         }
         if (dynamicOffsets) {
-            const gpuPipelineLayout = this._curGPUPipelineState$?.gpuPipelineLayout$;
+            const gpuPipelineLayout = this._curGPUPipelineState?.gpuPipelineLayout;
             if (gpuPipelineLayout) {
-                const offsets = this._curDynamicOffsets$;
-                const idx = gpuPipelineLayout.dynamicOffsetOffsets$[set];
+                const offsets = this._curDynamicOffsets;
+                const idx = gpuPipelineLayout.dynamicOffsetOffsets[set];
                 for (let i = 0; i < dynamicOffsets.length; i++) offsets[idx + i] = dynamicOffsets[i];
-                this._isStateInvalied$ = true;
+                this._isStateInvalied = true;
             }
         }
     }
 
     public bindInputAssembler (inputAssembler: InputAssembler): void {
         const gpuInputAssembler = (inputAssembler as WebGLInputAssembler).gpuInputAssembler;
-        this._curGPUInputAssembler$ = gpuInputAssembler;
-        this._isStateInvalied$ = true;
+        this._curGPUInputAssembler = gpuInputAssembler;
+        this._isStateInvalied = true;
     }
 
     public setViewport (viewport: Readonly<Viewport>): void {
-        const cache = this._curDynamicStates$.viewport;
+        const cache = this._curDynamicStates.viewport;
         if (cache.left !== viewport.left
             || cache.top !== viewport.top
             || cache.width !== viewport.width
@@ -146,12 +146,12 @@ export class WebGLCommandBuffer extends CommandBuffer {
             cache.height = viewport.height;
             cache.minDepth = viewport.minDepth;
             cache.maxDepth = viewport.maxDepth;
-            this._isStateInvalied$ = true;
+            this._isStateInvalied = true;
         }
     }
 
     public setScissor (scissor: Readonly<Rect>): void {
-        const cache = this._curDynamicStates$.scissor;
+        const cache = this._curDynamicStates.scissor;
         if (cache.x !== scissor.x
             || cache.y !== scissor.y
             || cache.width !== scissor.width
@@ -160,76 +160,76 @@ export class WebGLCommandBuffer extends CommandBuffer {
             cache.y = scissor.y;
             cache.width = scissor.width;
             cache.height = scissor.height;
-            this._isStateInvalied$ = true;
+            this._isStateInvalied = true;
         }
     }
 
     public setLineWidth (lineWidth: number): void {
-        if (this._curDynamicStates$.lineWidth !== lineWidth) {
-            this._curDynamicStates$.lineWidth = lineWidth;
-            this._isStateInvalied$ = true;
+        if (this._curDynamicStates.lineWidth !== lineWidth) {
+            this._curDynamicStates.lineWidth = lineWidth;
+            this._isStateInvalied = true;
         }
     }
 
     public setDepthBias (depthBiasConstantFactor: number, depthBiasClamp: number, depthBiasSlopeFactor: number): void {
-        const cache = this._curDynamicStates$;
+        const cache = this._curDynamicStates;
         if (cache.depthBiasConstant !== depthBiasConstantFactor
             || cache.depthBiasClamp !== depthBiasClamp
             || cache.depthBiasSlope !== depthBiasSlopeFactor) {
             cache.depthBiasConstant = depthBiasConstantFactor;
             cache.depthBiasClamp = depthBiasClamp;
             cache.depthBiasSlope = depthBiasSlopeFactor;
-            this._isStateInvalied$ = true;
+            this._isStateInvalied = true;
         }
     }
 
     public setBlendConstants (blendConstants: Readonly<Color>): void {
-        const cache = this._curDynamicStates$.blendConstant;
+        const cache = this._curDynamicStates.blendConstant;
         if (cache.x !== blendConstants.x
             || cache.y !== blendConstants.y
             || cache.z !== blendConstants.z
             || cache.w !== blendConstants.w) {
             cache.copy(blendConstants);
-            this._isStateInvalied$ = true;
+            this._isStateInvalied = true;
         }
     }
 
     public setDepthBound (minDepthBounds: number, maxDepthBounds: number): void {
-        const cache = this._curDynamicStates$;
+        const cache = this._curDynamicStates;
         if (cache.depthMinBounds !== minDepthBounds
             || cache.depthMaxBounds !== maxDepthBounds) {
             cache.depthMinBounds = minDepthBounds;
             cache.depthMaxBounds = maxDepthBounds;
-            this._isStateInvalied$ = true;
+            this._isStateInvalied = true;
         }
     }
 
     public setStencilWriteMask (face: StencilFace, writeMask: number): void {
-        const front = this._curDynamicStates$.stencilStatesFront;
-        const back = this._curDynamicStates$.stencilStatesBack;
+        const front = this._curDynamicStates.stencilStatesFront;
+        const back = this._curDynamicStates.stencilStatesBack;
         if (face & StencilFace.FRONT) {
             if (front.writeMask !== writeMask) {
                 front.writeMask = writeMask;
-                this._isStateInvalied$ = true;
+                this._isStateInvalied = true;
             }
         }
         if (face & StencilFace.BACK) {
             if (back.writeMask !== writeMask) {
                 back.writeMask = writeMask;
-                this._isStateInvalied$ = true;
+                this._isStateInvalied = true;
             }
         }
     }
 
     public setStencilCompareMask (face: StencilFace, reference: number, compareMask: number): void {
-        const front = this._curDynamicStates$.stencilStatesFront;
-        const back = this._curDynamicStates$.stencilStatesBack;
+        const front = this._curDynamicStates.stencilStatesFront;
+        const back = this._curDynamicStates.stencilStatesBack;
         if (face & StencilFace.FRONT) {
             if (front.compareMask !== compareMask
                 || front.reference !== reference) {
                 front.reference = reference;
                 front.compareMask = compareMask;
-                this._isStateInvalied$ = true;
+                this._isStateInvalied = true;
             }
         }
         if (face & StencilFace.BACK) {
@@ -237,7 +237,7 @@ export class WebGLCommandBuffer extends CommandBuffer {
                 || back.reference !== reference) {
                 back.reference = reference;
                 back.compareMask = compareMask;
-                this._isStateInvalied$ = true;
+                this._isStateInvalied = true;
             }
         }
     }

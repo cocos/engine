@@ -45,13 +45,13 @@ export class PointLight extends Light {
      * @zh 点光源的光照范围。
      */
     set range (range: number) {
-        this._range$ = range;
+        this._range = range;
 
-        this._needUpdate$ = true;
+        this._needUpdate = true;
     }
 
     get range (): number {
-        return this._range$;
+        return this._range;
     }
 
     /**
@@ -61,9 +61,9 @@ export class PointLight extends Light {
     get luminance (): number {
         const isHDR = cclegacy.director.root.pipeline.pipelineSceneData.isHDR;
         if (isHDR) {
-            return this._luminanceHDR$;
+            return this._luminanceHDR;
         } else {
-            return this._luminanceLDR$;
+            return this._luminanceLDR;
         }
     }
     set luminance (value: number) {
@@ -80,10 +80,10 @@ export class PointLight extends Light {
      * @zh HDR 模式下光源的亮度。
      */
     get luminanceHDR (): number {
-        return this._luminanceHDR$;
+        return this._luminanceHDR;
     }
     set luminanceHDR (value: number) {
-        this._luminanceHDR$ = value;
+        this._luminanceHDR = value;
     }
 
     /**
@@ -91,7 +91,7 @@ export class PointLight extends Light {
      * @zh LDR 模式下光源的亮度。
      */
     set luminanceLDR (value: number) {
-        this._luminanceLDR$ = value;
+        this._luminanceLDR = value;
     }
 
     /**
@@ -102,10 +102,10 @@ export class PointLight extends Light {
         return this._aabb;
     }
 
-    private _needUpdate$ = false;
-    private _range$ = 1.0;
-    private _luminanceHDR$ = 0;
-    private _luminanceLDR$ = 0;
+    private _needUpdate = false;
+    private _range = 1.0;
+    private _luminanceHDR = 0;
+    private _luminanceLDR = 0;
     private _pos: Vec3 = v3();
     private _aabb: AABB = AABB.create();
 
@@ -127,11 +127,11 @@ export class PointLight extends Light {
      * @zh 更新光源影响范围。
      */
     public update (): void {
-        if (this._node && (this._node.hasChangedFlags || this._needUpdate$)) {
+        if (this._node && (this._node.hasChangedFlags || this._needUpdate)) {
             this._node.getWorldPosition(this._pos);
-            const range = this._range$;
+            const range = this._range;
             AABB.set(this._aabb, this._pos.x, this._pos.y, this._pos.z, range, range, range);
-            this._needUpdate$ = false;
+            this._needUpdate = false;
         }
     }
 }

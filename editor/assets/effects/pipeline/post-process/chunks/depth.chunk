@@ -4,8 +4,11 @@
 
 #pragma rate DepthTex pass
 uniform sampler2D DepthTex; //Sample_Point_Clamp
+float GetDepthFromTex(vec2 uv) {
+  return texture(DepthTex, saturate(uv)).r;
+}
 
 float GetLinearDepthWithProj(vec2 uv, mat4 proj) {
-  float depthHS = texture(DepthTex, saturate(uv)).r * 2.0 - 1.0; // -1.0 ~ +1.0
+  float depthHS = GetDepthFromTex(uv) * 2.0 - 1.0; // -1.0 ~ +1.0
   return -GetCameraDepthRH(depthHS, proj);
 }

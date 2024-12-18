@@ -1,4 +1,5 @@
 #include "wasmSpineExtension.h"
+#include <cstdlib>
 #include "util-function.h"
 
 using namespace spine;
@@ -6,7 +7,7 @@ using namespace spine;
 // extern uint32_t jsReadFile(char* fileName, uint32_t length);
 // }
 
-WasmSpineExtension::WasmSpineExtension() : DefaultSpineExtension() {
+WasmSpineExtension::WasmSpineExtension() : SpineExtension() {
 }
 
 WasmSpineExtension::~WasmSpineExtension() {
@@ -29,44 +30,34 @@ char *WasmSpineExtension::_readFile(const String &path, int *length) {
 void *WasmSpineExtension::_alloc(size_t size, const char *file, int line) {
     SP_UNUSED(file);
     SP_UNUSED(line);
-
-    if (size == 0)
-        return 0;
-    void *ptr = new uint8_t[size];
-    return (void *)ptr;
+    if (size == 0) {
+        return nullptr;
+    }
+    return ::malloc(sizeof(uint8_t) * size);
 }
 
 void *WasmSpineExtension::_calloc(size_t size, const char *file, int line) {
     SP_UNUSED(file);
     SP_UNUSED(line);
-
-    if (size == 0)
-        return 0;
-    uint8_t *ptr = new uint8_t[size];
-    if (ptr) memset(ptr, 0, size);
-    return (void *)ptr;
+    if (size == 0) {
+        return nullptr;
+    }
+    return ::calloc(1, size);
 }
 
 void *WasmSpineExtension::_realloc(void *ptr, size_t size, const char *file, int line) {
     SP_UNUSED(file);
     SP_UNUSED(line);
-
-    if (size == 0)
-        return 0;
-    uint8_t *mem = new uint8_t[size];
-    memcpy(mem, ptr, size);
-    delete[](char *) ptr;
-    ptr = mem;
-    return mem;
+    if (size == 0) {
+        // Need to free the old memory before returning nullptr, otherwise the old memory block will be leaked.
+        ::free(ptr);
+        return nullptr;
+    }
+    return ::realloc(ptr, sizeof(uint8_t) * size);
 }
 
 void WasmSpineExtension::_free(void *mem, const char *file, int line) {
     SP_UNUSED(file);
     SP_UNUSED(line);
-
-    delete[](char *) mem;
-}
-
-SpineExtension *spine::getDefaultExtension() {
-    return new WasmSpineExtension();
+    ::free(mem);
 }

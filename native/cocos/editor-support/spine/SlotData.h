@@ -78,7 +78,7 @@ public:
 
     const String &getName();
 
-    BoneData &getBoneData();
+    inline BoneData &getBoneData() { return _boneData; }
 
     Color &getColor();
 
@@ -97,7 +97,9 @@ public:
 
     void setBlendMode(BlendMode inValue);
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     const int _index;
     String _name;
     BoneData &_boneData;

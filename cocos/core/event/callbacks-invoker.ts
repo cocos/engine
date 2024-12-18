@@ -184,7 +184,7 @@ export class CallbacksInvoker<EventTypeClass extends EventType = EventType> {
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
      */
     public _callbackTable: ICallbackTable = createMap(true);
-    private _offCallback$?: () => void;
+    private _offCallback?: () => void;
 
     /**
      * @zh 向一个事件名注册一个新的事件监听器，包含回调函数和调用者
@@ -307,7 +307,7 @@ export class CallbacksInvoker<EventTypeClass extends EventType = EventType> {
                 this.removeAll(key);
             }
         }
-        this._offCallback$?.();
+        this._offCallback?.();
     }
 
     /**
@@ -375,7 +375,7 @@ export class CallbacksInvoker<EventTypeClass extends EventType = EventType> {
      * @engineInternal
      */
     public _registerOffCallback (cb: () => void): void {
-        this._offCallback$ = cb;
+        this._offCallback = cb;
     }
 }
 

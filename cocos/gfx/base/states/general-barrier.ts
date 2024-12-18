@@ -30,16 +30,16 @@ import { GFXObject, ObjectType, GeneralBarrierInfo } from '../define';
  * @zh GFX 全局内存屏障。
  */
 export class GeneralBarrier extends GFXObject {
-    get info (): Readonly<GeneralBarrierInfo> { return this._info$; }
-    get hash (): number { return this._hash$; }
+    get info (): Readonly<GeneralBarrierInfo> { return this._info; }
+    get hash (): number { return this._hash; }
 
-    protected _info$: GeneralBarrierInfo = new GeneralBarrierInfo();
-    protected _hash$ = 0;
+    protected _info: GeneralBarrierInfo = new GeneralBarrierInfo();
+    protected _hash = 0;
 
     constructor (info: Readonly<GeneralBarrierInfo>, hash: number) {
         super(ObjectType.GLOBAL_BARRIER);
-        this._info$.copy(info);
-        this._hash$ = hash;
+        this._info.copy(info);
+        this._hash = hash;
     }
 
     static computeHash (info: Readonly<GeneralBarrierInfo>): number {

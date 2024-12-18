@@ -55,6 +55,10 @@
 
 #include <float.h>
 
+#ifndef __EMSCRIPTEN__
+#include <stdio.h>
+#endif
+
 using namespace spine;
 
 Skeleton::Skeleton(SkeletonData *skeletonData) : _data(skeletonData),
@@ -65,57 +69,63 @@ Skeleton::Skeleton(SkeletonData *skeletonData) : _data(skeletonData),
                                                  _scaleY(1),
                                                  _x(0),
                                                  _y(0) {
-    _bones.ensureCapacity(_data->getBones().size());
-    for (size_t i = 0; i < _data->getBones().size(); ++i) {
-        BoneData *data = _data->getBones()[i];
+    const auto &boneDatas = _data->getBones();
+    _bones.ensureCapacity(boneDatas.size());
+    for (size_t i = 0; i < boneDatas.size(); ++i) {
+        BoneData *data = boneDatas[i];
 
         Bone *bone;
-        if (data->getParent() == NULL) {
-            bone = new (__FILE__, __LINE__) Bone(*data, *this, NULL);
+        auto* dataParent = data->getParent();
+        if (dataParent == NULL) {
+            bone = spine_new Bone(*data, *this, NULL);
         } else {
-            Bone *parent = _bones[data->getParent()->getIndex()];
-            bone = new (__FILE__, __LINE__) Bone(*data, *this, parent);
+            Bone *parent = _bones[dataParent->getIndex()];
+            bone = spine_new Bone(*data, *this, parent);
             parent->getChildren().add(bone);
         }
 
         _bones.add(bone);
     }
 
-    _slots.ensureCapacity(_data->getSlots().size());
-    _drawOrder.ensureCapacity(_data->getSlots().size());
-    for (size_t i = 0; i < _data->getSlots().size(); ++i) {
-        SlotData *data = _data->getSlots()[i];
+    const auto &dataSlots = _data->getSlots();
+    _slots.ensureCapacity(dataSlots.size());
+    _drawOrder.ensureCapacity(dataSlots.size());
+    for (size_t i = 0; i < dataSlots.size(); ++i) {
+        SlotData *data = dataSlots[i];
 
         Bone *bone = _bones[data->getBoneData().getIndex()];
-        Slot *slot = new (__FILE__, __LINE__) Slot(*data, *bone);
+        Slot *slot = spine_new Slot(*data, *bone);
 
         _slots.add(slot);
         _drawOrder.add(slot);
     }
 
-    _ikConstraints.ensureCapacity(_data->getIkConstraints().size());
-    for (size_t i = 0; i < _data->getIkConstraints().size(); ++i) {
-        IkConstraintData *data = _data->getIkConstraints()[i];
+    const auto &dataIkConstraints = _data->getIkConstraints();
+    _ikConstraints.ensureCapacity(dataIkConstraints.size());
+    for (size_t i = 0; i < dataIkConstraints.size(); ++i) {
+        IkConstraintData *data = dataIkConstraints[i];
 
-        IkConstraint *constraint = new (__FILE__, __LINE__) IkConstraint(*data, *this);
+        IkConstraint *constraint = spine_new IkConstraint(*data, *this);
 
         _ikConstraints.add(constraint);
     }
 
-    _transformConstraints.ensureCapacity(_data->getTransformConstraints().size());
-    for (size_t i = 0; i < _data->getTransformConstraints().size(); ++i) {
-        TransformConstraintData *data = _data->getTransformConstraints()[i];
+    const auto &dataTransformConstraints = _data->getTransformConstraints();
+    _transformConstraints.ensureCapacity(dataTransformConstraints.size());
+    for (size_t i = 0; i < dataTransformConstraints.size(); ++i) {
+        TransformConstraintData *data = dataTransformConstraints[i];
 
-        TransformConstraint *constraint = new (__FILE__, __LINE__) TransformConstraint(*data, *this);
+        TransformConstraint *constraint = spine_new TransformConstraint(*data, *this);
 
         _transformConstraints.add(constraint);
     }
 
-    _pathConstraints.ensureCapacity(_data->getPathConstraints().size());
-    for (size_t i = 0; i < _data->getPathConstraints().size(); ++i) {
-        PathConstraintData *data = _data->getPathConstraints()[i];
+    const auto &dataPathConstraints = _data->getPathConstraints();
+    _pathConstraints.ensureCapacity(dataPathConstraints.size());
+    for (size_t i = 0; i < dataPathConstraints.size(); ++i) {
+        PathConstraintData *data = dataPathConstraints[i];
 
-        PathConstraint *constraint = new (__FILE__, __LINE__) PathConstraint(*data, *this);
+        PathConstraint *constraint = spine_new PathConstraint(*data, *this);
 
         _pathConstraints.add(constraint);
     }
@@ -197,6 +207,7 @@ continue_outer:
 }
 
 void Skeleton::printUpdateCache() {
+#ifndef __EMSCRIPTEN__
     for (size_t i = 0; i < _updateCache.size(); i++) {
         Updatable *updatable = _updateCache[i];
         if (updatable->getRTTI().isExactly(Bone::rtti)) {
@@ -209,6 +220,7 @@ void Skeleton::printUpdateCache() {
             printf("path constraint %s\n", ((PathConstraint *)updatable)->getData().getName().buffer());
         }
     }
+#endif
 }
 
 void Skeleton::updateWorldTransform() {
@@ -369,8 +381,9 @@ void Skeleton::setAttachment(const String &slotName, const String &attachmentNam
             return;
         }
     }
-
+#ifndef __EMSCRIPTEN__
     printf("Slot not found: %s", slotName.buffer());
+#endif
 
     assert(false);
 }
@@ -473,85 +486,12 @@ SkeletonData *Skeleton::getData() {
     return _data;
 }
 
-Vector<Bone *> &Skeleton::getBones() {
-    return _bones;
-}
-
-Vector<Updatable *> &Skeleton::getUpdateCacheList() {
-    return _updateCache;
-}
-
-Vector<Slot *> &Skeleton::getSlots() {
-    return _slots;
-}
-
-Vector<Slot *> &Skeleton::getDrawOrder() {
-    return _drawOrder;
-}
-
-Vector<IkConstraint *> &Skeleton::getIkConstraints() {
-    return _ikConstraints;
-}
-
-Vector<PathConstraint *> &Skeleton::getPathConstraints() {
-    return _pathConstraints;
-}
-
-Vector<TransformConstraint *> &Skeleton::getTransformConstraints() {
-    return _transformConstraints;
-}
-
 Skin *Skeleton::getSkin() {
     return _skin;
 }
 
 Color &Skeleton::getColor() {
     return _color;
-}
-
-float Skeleton::getTime() {
-    return _time;
-}
-
-void Skeleton::setTime(float inValue) {
-    _time = inValue;
-}
-
-void Skeleton::setPosition(float x, float y) {
-    _x = x;
-    _y = y;
-}
-
-float Skeleton::getX() {
-    return _x;
-}
-
-void Skeleton::setX(float inValue) {
-    _x = inValue;
-}
-
-float Skeleton::getY() {
-    return _y;
-}
-
-void Skeleton::setY(float inValue) {
-    _y = inValue;
-}
-
-float Skeleton::getScaleX() {
-    return _scaleX;
-}
-
-void Skeleton::setScaleX(float inValue) {
-    _scaleX = inValue;
-}
-
-float Skeleton::getScaleY() {
-    return _scaleY * (Bone::isYDown() ? -1 : 1);
-}
-
-void Skeleton::setScaleY(float inValue) {
-    _scaleY = inValue;
 }
 
 void Skeleton::sortIkConstraint(IkConstraint *constraint) {

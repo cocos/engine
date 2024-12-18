@@ -43,25 +43,25 @@ export class WebGPUInputAssembler extends InputAssembler {
             return;
         }
 
-        this._attributes$ = info.attributes;
-        this._attributesHash$ = this.computeAttributesHash$();
-        this._vertexBuffers$ = info.vertexBuffers;
+        this._attributes = info.attributes;
+        this._attributesHash = this.computeAttributesHash();
+        this._vertexBuffers = info.vertexBuffers;
 
         if (info.indexBuffer) {
-            this._indexBuffer$ = info.indexBuffer;
-            this.drawInfo.indexCount = this._indexBuffer$.size / this._indexBuffer$.stride;
+            this._indexBuffer = info.indexBuffer;
+            this.drawInfo.indexCount = this._indexBuffer.size / this._indexBuffer.stride;
             this.drawInfo.firstIndex = 0;
         } else {
-            const vertBuff = this._vertexBuffers$[0];
+            const vertBuff = this._vertexBuffers[0];
             this.drawInfo.vertexCount = vertBuff.size / vertBuff.stride;
             this.drawInfo.firstVertex = 0;
             this.drawInfo.vertexOffset = 0;
         }
 
-        this._drawInfo$.instanceCount = 0;
-        this._drawInfo$.firstInstance = 0;
+        this._drawInfo.instanceCount = 0;
+        this._drawInfo.firstInstance = 0;
 
-        this._indirectBuffer$ = info.indirectBuffer || null;
+        this._indirectBuffer = info.indirectBuffer || null;
         const vertBuffSize = info.vertexBuffers.length;
         const gpuVertexBuffers: IWebGPUGPUBuffer[] = new Array<IWebGPUGPUBuffer>(vertBuffSize);
         for (let i = 0; i < vertBuffSize; ++i) {

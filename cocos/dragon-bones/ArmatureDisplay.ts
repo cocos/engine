@@ -700,7 +700,6 @@ export class ArmatureDisplay extends UIRenderer {
     @override
     @type(Material)
     @displayOrder(0)
-    @displayName('CustomMaterial')
     get customMaterial (): Material | null {
         return this._customMaterial;
     }

@@ -44,6 +44,7 @@ import {
     isUnicodeSpace,
     safeMeasureText,
 } from '../../utils/text-utils';
+import type { Batcher2D } from '../../renderer/batcher-2d';
 
 const Alignment = [
     'left', // macro.TextAlignment.LEFT
@@ -568,9 +569,9 @@ export class TextProcessing {
                         // since `tex.reset(...)` will reset `gfxTexture` and `gfxSampler`.
                         // The other non-JSB branch uses `tex.getHash()` which returns the hash value that will not be
                         // changed after `tex.reset(...)`, so there will be no problems for non-JSB branch.
-                        cclegacy.director.root.batcher2D._releaseDescriptorSetCache(oldGfxTexture, oldGfxSampler);
+                        (cclegacy.director.root.batcher2D as Batcher2D)._releaseDescriptorSetCache(oldGfxTexture, oldGfxSampler);
                     } else {
-                        cclegacy.director.root.batcher2D._releaseDescriptorSetCache(tex.getHash());
+                        (cclegacy.director.root.batcher2D as Batcher2D)._releaseDescriptorSetCache(tex.getHash());
                     }
                 }
             }

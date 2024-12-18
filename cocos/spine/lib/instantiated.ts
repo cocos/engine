@@ -23,9 +23,9 @@
 */
 
 import { instantiateWasm, fetchBuffer, ensureWasmModuleReady } from 'pal/wasm';
-import { JSB, NATIVE_CODE_BUNDLE_MODE } from 'internal:constants';
+import { BUILD, JSB, LOAD_SPINE_MANUALLY, NATIVE_CODE_BUNDLE_MODE } from 'internal:constants';
 import { game } from '../../game';
-import { getError, error, sys } from '../../core';
+import { error, sys } from '../../core';
 import { NativeCodeBundleMode } from '../../misc/webassembly-support';
 import { overrideSpineDefine } from './spine-define';
 
@@ -120,8 +120,10 @@ export function waitForSpineWasmInstantiation (): Promise<void> {
     }).catch(errorReport);
 }
 
-if (!JSB) {
+if (!JSB && (!BUILD || !LOAD_SPINE_MANUALLY)) {
     game.onPostInfrastructureInitDelegate.add(waitForSpineWasmInstantiation);
-    registerList.push(overrideSpineDefine);
 }
+
+registerList.push(overrideSpineDefine);
+
 export const SPINE_WASM = 1;

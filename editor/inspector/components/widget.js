@@ -672,6 +672,11 @@ exports.methods = {
     },
 
     select(event) {
+
+        if (!event.path) {
+            event.path = event.composedPath();
+        }
+
         // Handling through delegated events
         const button = event.path.find((element) => element && element.classList && element.classList.contains('button'));
 

@@ -120,11 +120,7 @@
     margin-right: 4px;
 }
 
-.container > .body .component .component-header ui-drag-item {
-    flex: 1;
-}
-
-.container > .body .component .component-header .name {
+.container > .body .component .component-header ui-drag-item, .container > .body .component .component-header .name {
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;

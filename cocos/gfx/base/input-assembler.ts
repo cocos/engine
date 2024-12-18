@@ -36,7 +36,7 @@ export abstract class InputAssembler extends GFXObject {
      * @zh 顶点属性数组。
      */
     get attributes (): Attribute[] {
-        return this._attributes$;
+        return this._attributes;
     }
 
     /**
@@ -44,7 +44,7 @@ export abstract class InputAssembler extends GFXObject {
      * @zh 顶点缓冲数组。
      */
     get vertexBuffers (): Buffer[] {
-        return this._vertexBuffers$;
+        return this._vertexBuffers;
     }
 
     /**
@@ -52,7 +52,7 @@ export abstract class InputAssembler extends GFXObject {
      * @zh 索引缓冲。
      */
     get indexBuffer (): Buffer | null {
-        return this._indexBuffer$;
+        return this._indexBuffer;
     }
 
     /**
@@ -60,7 +60,7 @@ export abstract class InputAssembler extends GFXObject {
      * @zh 间接绘制缓冲。
      */
     get indirectBuffer (): Buffer | null {
-        return this._indirectBuffer$;
+        return this._indirectBuffer;
     }
 
     /**
@@ -68,7 +68,7 @@ export abstract class InputAssembler extends GFXObject {
      * @zh 获取顶点属性数组的哈希值。
      */
     get attributesHash (): number {
-        return this._attributesHash$;
+        return this._attributesHash;
     }
 
     /**
@@ -76,10 +76,10 @@ export abstract class InputAssembler extends GFXObject {
      * @zh 顶点数量。
      */
     set vertexCount (count: number) {
-        this._drawInfo$.vertexCount = count;
+        this._drawInfo.vertexCount = count;
     }
     get vertexCount (): number {
-        return this._drawInfo$.vertexCount;
+        return this._drawInfo.vertexCount;
     }
 
     /**
@@ -87,10 +87,10 @@ export abstract class InputAssembler extends GFXObject {
      * @zh 起始顶点。
      */
     set firstVertex (first: number) {
-        this._drawInfo$.firstVertex = first;
+        this._drawInfo.firstVertex = first;
     }
     get firstVertex (): number {
-        return this._drawInfo$.firstVertex;
+        return this._drawInfo.firstVertex;
     }
 
     /**
@@ -98,10 +98,10 @@ export abstract class InputAssembler extends GFXObject {
      * @zh 索引数量。
      */
     set indexCount (count: number) {
-        this._drawInfo$.indexCount = count;
+        this._drawInfo.indexCount = count;
     }
     get indexCount (): number {
-        return this._drawInfo$.indexCount;
+        return this._drawInfo.indexCount;
     }
 
     /**
@@ -109,10 +109,10 @@ export abstract class InputAssembler extends GFXObject {
      * @zh 起始索引。
      */
     set firstIndex (first: number) {
-        this._drawInfo$.firstIndex = first;
+        this._drawInfo.firstIndex = first;
     }
     get firstIndex (): number {
-        return this._drawInfo$.firstIndex;
+        return this._drawInfo.firstIndex;
     }
 
     /**
@@ -120,10 +120,10 @@ export abstract class InputAssembler extends GFXObject {
      * @zh 顶点偏移量。
      */
     set vertexOffset (offset: number) {
-        this._drawInfo$.vertexOffset = offset;
+        this._drawInfo.vertexOffset = offset;
     }
     get vertexOffset (): number {
-        return this._drawInfo$.vertexOffset;
+        return this._drawInfo.vertexOffset;
     }
 
     /**
@@ -131,10 +131,10 @@ export abstract class InputAssembler extends GFXObject {
      * @zh 实例数量。
      */
     set instanceCount (count: number) {
-        this._drawInfo$.instanceCount = count;
+        this._drawInfo.instanceCount = count;
     }
     get instanceCount (): number {
-        return this._drawInfo$.instanceCount;
+        return this._drawInfo.instanceCount;
     }
 
     /**
@@ -142,10 +142,10 @@ export abstract class InputAssembler extends GFXObject {
      * @zh 起始实例。
      */
     set firstInstance (first: number) {
-        this._drawInfo$.firstInstance = first;
+        this._drawInfo.firstInstance = first;
     }
     get firstInstance (): number {
-        return this._drawInfo$.firstInstance;
+        return this._drawInfo.firstInstance;
     }
 
     /**
@@ -153,7 +153,7 @@ export abstract class InputAssembler extends GFXObject {
      * @zh 设置渲染范围
      */
     set drawInfo (info: DrawInfo) {
-        this._drawInfo$ = info;
+        this._drawInfo = info;
     }
 
     /**
@@ -161,17 +161,17 @@ export abstract class InputAssembler extends GFXObject {
      * @zh 获取渲染范围
      */
     get drawInfo (): DrawInfo {
-        return this._drawInfo$;
+        return this._drawInfo;
     }
 
-    protected _attributes$: Attribute[] = [];
-    protected _attributesHash$ = 0;
+    protected _attributes: Attribute[] = [];
+    protected _attributesHash = 0;
 
-    protected _vertexBuffers$: Buffer[] = [];
-    protected _indexBuffer$: Buffer | null = null;
-    protected _indirectBuffer$: Buffer | null = null;
+    protected _vertexBuffers: Buffer[] = [];
+    protected _indexBuffer: Buffer | null = null;
+    protected _indirectBuffer: Buffer | null = null;
 
-    protected _drawInfo$ = new DrawInfo();
+    protected _drawInfo = new DrawInfo();
 
     constructor () {
         super(ObjectType.INPUT_ASSEMBLER);
@@ -183,14 +183,14 @@ export abstract class InputAssembler extends GFXObject {
      * @param stream The stream index of the vertex buffer.
      */
     public getVertexBuffer (stream = 0): Buffer | null {
-        if (stream < this._vertexBuffers$.length) {
-            return this._vertexBuffers$[stream];
+        if (stream < this._vertexBuffers.length) {
+            return this._vertexBuffers[stream];
         } else {
             return null;
         }
     }
 
-    protected computeAttributesHash$ (): number {
+    protected computeAttributesHash (): number {
         let res = 'attrs';
         for (let i = 0; i < this.attributes.length; ++i) {
             const at = this.attributes[i];

@@ -36,6 +36,7 @@
 namespace spine {
 /// The interface for all constraints.
 class SP_API ConstraintData : public SpineObject {
+    RTTI_DECL
 public:
     ConstraintData(const String& name);
 
@@ -52,7 +53,9 @@ public:
     bool isSkinRequired();
     void setSkinRequired(bool inValue);
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     const String _name;
     size_t _order;
     bool _skinRequired;

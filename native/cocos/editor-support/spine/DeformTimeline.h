@@ -53,12 +53,14 @@ public:
 
     int getSlotIndex();
     void setSlotIndex(int inValue);
-    Vector<float>& getFrames();
-    Vector<Vector<float> >& getVertices();
+    inline Vector<float>& getFrames() { return _frames; }
+    inline Vector<Vector<float> >& getVertices() { return _frameVertices; }
     VertexAttachment* getAttachment();
     void setAttachment(VertexAttachment* inValue);
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     int _slotIndex;
     Vector<float> _frames;
     Vector<Vector<float> > _frameVertices;

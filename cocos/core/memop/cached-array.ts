@@ -49,8 +49,8 @@ export class CachedArray<T> extends ScalableContainer {
      */
     public length = 0;
 
-    private declare _compareFn$?: (a: T, b: T) => number;
-    private _initSize$ = 0;
+    private declare _compareFn?: (a: T, b: T) => number;
+    private _initSize = 0;
 
     /**
      * @en Constructor. @zh 构造函数。
@@ -64,8 +64,8 @@ export class CachedArray<T> extends ScalableContainer {
     constructor (length: number, compareFn?: (a: T, b: T) => number) {
         super();
         this.array = new Array(length);
-        this._initSize$ = length;
-        this._compareFn$ = compareFn;
+        this._initSize = length;
+        this._compareFn = compareFn;
     }
 
     /**
@@ -132,7 +132,7 @@ export class CachedArray<T> extends ScalableContainer {
      */
     public tryShrink (): void {
         if (this.array.length >> 2 > this.length) {
-            this.array.length = Math.max(this._initSize$, this.array.length >> 1);
+            this.array.length = Math.max(this._initSize, this.array.length >> 1);
         }
     }
 
@@ -145,7 +145,7 @@ export class CachedArray<T> extends ScalableContainer {
      */
     public sort (): void {
         this.array.length = this.length;
-        this.array.sort(this._compareFn$);
+        this.array.sort(this._compareFn);
     }
 
     /**

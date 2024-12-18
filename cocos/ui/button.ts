@@ -570,17 +570,17 @@ export class Button extends Component {
     protected _zoomScale = 1.2;
     @serializable
     protected _target: Node | null = null;
-    private _pressed$ = false;
-    private _hovered$ = false;
-    private _fromColor$: Color = new Color();
-    private _toColor$: Color = new Color();
-    private _time$ = 0;
-    private _transitionFinished$ = true;
-    private _fromScale$: Vec3 = v3();
-    private _toScale$: Vec3 = v3();
-    private _originalScale$: Vec3 | null = null;
-    private _sprite$: Sprite | null = null;
-    private _targetScale$: Vec3 = v3();
+    private _pressed = false;
+    private _hovered = false;
+    private _fromColor: Color = new Color();
+    private _toColor: Color = new Color();
+    private _time = 0;
+    private _transitionFinished = true;
+    private _fromScale: Vec3 = v3();
+    private _toScale: Vec3 = v3();
+    private _originalScale: Vec3 | null = null;
+    private _sprite: Sprite | null = null;
+    private _targetScale: Vec3 = v3();
 
     constructor () {
         super();
@@ -603,7 +603,7 @@ export class Button extends Component {
         } else {
             this.node.on(SpriteEventType.SPRITE_FRAME_CHANGED, (comp: Sprite) => {
                 if (this._transition === Transition.SPRITE) {
-                    this._setCurrentStateSpriteFrame$(comp.spriteFrame);
+                    this._setCurrentStateSpriteFrame(comp.spriteFrame);
                 } else {
                     // avoid serialization data loss when in no-sprite mode
                     this._normalSprite = null;
@@ -633,7 +633,7 @@ export class Button extends Component {
 
     public update (dt: number): void {
         const target = this.target;
-        if (this._transitionFinished$ || !target) {
+        if (this._transitionFinished || !target) {
             return;
         }
 
@@ -641,10 +641,10 @@ export class Button extends Component {
             return;
         }
 
-        this._time$ += dt;
+        this._time += dt;
         let ratio = 1.0;
         if (this._duration > 0) {
-            ratio = this._time$ / this._duration;
+            ratio = this._time / this._duration;
         }
 
         if (ratio >= 1) {
@@ -653,19 +653,19 @@ export class Button extends Component {
 
         if (this._transition === Transition.COLOR) {
             const renderComp = target._uiProps.uiComp as UIRenderer;
-            Color.lerp(_tempColor, this._fromColor$, this._toColor$, ratio);
+            Color.lerp(_tempColor, this._fromColor, this._toColor, ratio);
             if (renderComp) {
                 renderComp.color = _tempColor;
             }
         } else if (this.transition === Transition.SCALE) {
-            target.getScale(this._targetScale$);
-            this._targetScale$.x = lerp(this._fromScale$.x, this._toScale$.x, ratio);
-            this._targetScale$.y = lerp(this._fromScale$.y, this._toScale$.y, ratio);
-            target.setScale(this._targetScale$);
+            target.getScale(this._targetScale);
+            this._targetScale.x = lerp(this._fromScale.x, this._toScale.x, ratio);
+            this._targetScale.y = lerp(this._fromScale.y, this._toScale.y, ratio);
+            target.setScale(this._targetScale);
         }
 
         if (ratio === 1) {
-            this._transitionFinished$ = true;
+            this._transitionFinished = true;
         }
     }
 
@@ -680,8 +680,8 @@ export class Button extends Component {
     }
 
     protected _resetState (): void {
-        this._pressed$ = false;
-        this._hovered$ = false;
+        this._pressed = false;
+        this._hovered = false;
         // Restore button status
         const target = this.target;
         if (!target) {
@@ -693,10 +693,10 @@ export class Button extends Component {
             if (renderComp) {
                 renderComp.color = this._normalColor;
             }
-        } else if (transition === Transition.SCALE && this._originalScale$) {
-            target.setScale(this._originalScale$);
+        } else if (transition === Transition.SCALE && this._originalScale) {
+            target.setScale(this._originalScale);
         }
-        this._transitionFinished$ = true;
+        this._transitionFinished = true;
     }
 
     protected _registerNodeEvent (): void {
@@ -708,18 +708,18 @@ export class Button extends Component {
         this.node.on(NodeEventType.MOUSE_ENTER, this._onMouseMoveIn, this);
         this.node.on(NodeEventType.MOUSE_LEAVE, this._onMouseMoveOut, this);
 
-        this.node.on(XrUIPressEventType.XRUI_HOVER_ENTERED, this._xrHoverEnter$, this);
-        this.node.on(XrUIPressEventType.XRUI_HOVER_EXITED, this._xrHoverExit$, this);
-        this.node.on(XrUIPressEventType.XRUI_CLICK, this._xrClick$, this);
-        this.node.on(XrUIPressEventType.XRUI_UNCLICK, this._xrUnClick$, this);
+        this.node.on(XrUIPressEventType.XRUI_HOVER_ENTERED, this._xrHoverEnter, this);
+        this.node.on(XrUIPressEventType.XRUI_HOVER_EXITED, this._xrHoverExit, this);
+        this.node.on(XrUIPressEventType.XRUI_CLICK, this._xrClick, this);
+        this.node.on(XrUIPressEventType.XRUI_UNCLICK, this._xrUnClick, this);
     }
 
     protected _registerTargetEvent (target): void {
         if (EDITOR_NOT_IN_PREVIEW) {
-            target.on(SpriteEventType.SPRITE_FRAME_CHANGED, this._onTargetSpriteFrameChanged$, this);
-            target.on(NodeEventType.COLOR_CHANGED, this._onTargetColorChanged$, this);
+            target.on(SpriteEventType.SPRITE_FRAME_CHANGED, this._onTargetSpriteFrameChanged, this);
+            target.on(NodeEventType.COLOR_CHANGED, this._onTargetColorChanged, this);
         }
-        target.on(NodeEventType.TRANSFORM_CHANGED, this._onTargetTransformChanged$, this);
+        target.on(NodeEventType.TRANSFORM_CHANGED, this._onTargetTransformChanged, this);
     }
 
     protected _unregisterNodeEvent (): void {
@@ -731,10 +731,10 @@ export class Button extends Component {
         this.node.off(NodeEventType.MOUSE_ENTER, this._onMouseMoveIn, this);
         this.node.off(NodeEventType.MOUSE_LEAVE, this._onMouseMoveOut, this);
 
-        this.node.off(XrUIPressEventType.XRUI_HOVER_ENTERED, this._xrHoverEnter$, this);
-        this.node.off(XrUIPressEventType.XRUI_HOVER_EXITED, this._xrHoverExit$, this);
-        this.node.off(XrUIPressEventType.XRUI_CLICK, this._xrClick$, this);
-        this.node.off(XrUIPressEventType.XRUI_UNCLICK, this._xrUnClick$, this);
+        this.node.off(XrUIPressEventType.XRUI_HOVER_ENTERED, this._xrHoverEnter, this);
+        this.node.off(XrUIPressEventType.XRUI_HOVER_EXITED, this._xrHoverExit, this);
+        this.node.off(XrUIPressEventType.XRUI_CLICK, this._xrClick, this);
+        this.node.off(XrUIPressEventType.XRUI_UNCLICK, this._xrUnClick, this);
     }
 
     protected _unregisterTargetEvent (target): void {
@@ -755,22 +755,22 @@ export class Button extends Component {
 
     protected _applyTarget (): void {
         if (this.target) {
-            this._sprite$ = this._getTargetSprite(this.target);
-            if (!this._originalScale$) {
-                this._originalScale$ = new Vec3();
+            this._sprite = this._getTargetSprite(this.target);
+            if (!this._originalScale) {
+                this._originalScale = new Vec3();
             }
-            Vec3.copy(this._originalScale$, this.target.scale);
+            Vec3.copy(this._originalScale, this.target.scale);
             this._registerTargetEvent(this.target);
         }
     }
 
-    private _onTargetSpriteFrameChanged$ (comp: Sprite): void {
+    private _onTargetSpriteFrameChanged (comp: Sprite): void {
         if (this._transition === Transition.SPRITE) {
-            this._setCurrentStateSpriteFrame$(comp.spriteFrame);
+            this._setCurrentStateSpriteFrame(comp.spriteFrame);
         }
     }
 
-    private _setCurrentStateSpriteFrame$ (spriteFrame: SpriteFrame | null): void {
+    private _setCurrentStateSpriteFrame (spriteFrame: SpriteFrame | null): void {
         if (!spriteFrame) {
             return;
         }
@@ -792,13 +792,13 @@ export class Button extends Component {
         }
     }
 
-    private _onTargetColorChanged$ (color: Color): void {
+    private _onTargetColorChanged (color: Color): void {
         if (this._transition === Transition.COLOR) {
-            this._setCurrentStateColor$(color);
+            this._setCurrentStateColor(color);
         }
     }
 
-    private _setCurrentStateColor$ (color: Color): void {
+    private _setCurrentStateColor (color: Color): void {
         switch (this._getButtonState()) {
         case State.NORMAL:
             this._normalColor = color;
@@ -817,11 +817,11 @@ export class Button extends Component {
         }
     }
 
-    private _onTargetTransformChanged$ (transformBit: TransformBit): void {
+    private _onTargetTransformChanged (transformBit: TransformBit): void {
         // update originalScale
-        if ((transformBit & TransformBit.SCALE) && this._originalScale$
-            && this._transition === Transition.SCALE && this._transitionFinished$) {
-            Vec3.copy(this._originalScale$, this.target.scale);
+        if ((transformBit & TransformBit.SCALE) && this._originalScale
+            && this._transition === Transition.SCALE && this._transitionFinished) {
+            Vec3.copy(this._originalScale, this.target.scale);
         }
     }
 
@@ -829,7 +829,7 @@ export class Button extends Component {
     protected _onTouchBegan (event?: EventTouch): void {
         if (!this._interactable || !this.enabledInHierarchy) { return; }
 
-        this._pressed$ = true;
+        this._pressed = true;
         this._updateState();
         if (event) {
             event.propagationStopped = true;
@@ -837,7 +837,7 @@ export class Button extends Component {
     }
 
     protected _onTouchMove (event?: EventTouch): void {
-        if (!this._interactable || !this.enabledInHierarchy || !this._pressed$) { return; }
+        if (!this._interactable || !this.enabledInHierarchy || !this._pressed) { return; }
         // mobile phone will not emit _onMouseMoveOut,
         // so we have to do hit test when touch moving
         if (!event) {
@@ -851,15 +851,15 @@ export class Button extends Component {
 
         const hit = this.node._uiProps.uiTransformComp!.hitTest(touch.getLocation(), event.windowId);
 
-        if (this._transition === Transition.SCALE && this.target && this._originalScale$) {
+        if (this._transition === Transition.SCALE && this.target && this._originalScale) {
             if (hit) {
-                Vec3.copy(this._fromScale$, this._originalScale$);
-                Vec3.multiplyScalar(this._toScale$, this._originalScale$, this._zoomScale);
-                this._transitionFinished$ = false;
+                Vec3.copy(this._fromScale, this._originalScale);
+                Vec3.multiplyScalar(this._toScale, this._originalScale, this._zoomScale);
+                this._transitionFinished = false;
             } else {
-                this._time$ = 0;
-                this._transitionFinished$ = true;
-                this.target.setScale(this._originalScale$);
+                this._time = 0;
+                this._transitionFinished = true;
+                this.target.setScale(this._originalScale);
             }
         } else {
             let state: State;
@@ -881,11 +881,11 @@ export class Button extends Component {
             return;
         }
 
-        if (this._pressed$) {
+        if (this._pressed) {
             ComponentEventHandler.emitEvents(this.clickEvents, event);
             this.node.emit(ButtonEventType.CLICK, this);
         }
-        this._pressed$ = false;
+        this._pressed = false;
         this._updateState();
 
         if (event) {
@@ -896,23 +896,23 @@ export class Button extends Component {
     protected _onTouchCancel (event?: EventTouch): void {
         if (!this._interactable || !this.enabledInHierarchy) { return; }
 
-        this._pressed$ = false;
+        this._pressed = false;
         this._updateState();
     }
 
     protected _onMouseMoveIn (event?: EventMouse): void {
-        if (this._pressed$ || !this.interactable || !this.enabledInHierarchy) { return; }
+        if (this._pressed || !this.interactable || !this.enabledInHierarchy) { return; }
         if (this._transition === Transition.SPRITE && !this._hoverSprite) { return; }
 
-        if (!this._hovered$) {
-            this._hovered$ = true;
+        if (!this._hovered) {
+            this._hovered = true;
             this._updateState();
         }
     }
 
     protected _onMouseMoveOut (event?: EventMouse): void {
-        if (this._hovered$) {
-            this._hovered$ = false;
+        if (this._hovered) {
+            this._hovered = false;
             this._updateState();
         }
     }
@@ -927,16 +927,16 @@ export class Button extends Component {
         let state = State.NORMAL;
         if (!this._interactable) {
             state = State.DISABLED;
-        } else if (this._pressed$) {
+        } else if (this._pressed) {
             state = State.PRESSED;
-        } else if (this._hovered$) {
+        } else if (this._hovered) {
             state = State.HOVER;
         }
         return state;
     }
 
     protected _updateColorTransition (state: State): void {
-        const color = this._getColorByState$(state);
+        const color = this._getColorByState(state);
 
         const renderComp = this.target?.getComponent(UIRenderer);
         if (!renderComp) {
@@ -945,19 +945,19 @@ export class Button extends Component {
 
         if (EDITOR_NOT_IN_PREVIEW || state === State.DISABLED) {
             renderComp.color = color;
-            this._transitionFinished$ = true;
+            this._transitionFinished = true;
         } else {
-            this._fromColor$ = renderComp.color.clone();
-            this._toColor$ = color;
-            this._time$ = 0;
-            this._transitionFinished$ = false;
+            this._fromColor = renderComp.color.clone();
+            this._toColor = color;
+            this._time = 0;
+            this._transitionFinished = false;
         }
     }
 
     protected _updateSpriteTransition (state: State): void {
-        const sprite = this._getSpriteFrameByState$(state);
-        if (this._sprite$ && sprite) {
-            this._sprite$.spriteFrame = sprite;
+        const sprite = this._getSpriteFrameByState(state);
+        if (this._sprite && sprite) {
+            this._sprite.spriteFrame = sprite;
         }
     }
 
@@ -975,23 +975,23 @@ export class Button extends Component {
 
     protected _zoomUp (): void {
         // skip before __preload()
-        if (!this._originalScale$) {
+        if (!this._originalScale) {
             return;
         }
-        Vec3.copy(this._fromScale$, this._originalScale$);
-        Vec3.multiplyScalar(this._toScale$, this._originalScale$, this._zoomScale);
-        this._time$ = 0;
-        this._transitionFinished$ = false;
+        Vec3.copy(this._fromScale, this._originalScale);
+        Vec3.multiplyScalar(this._toScale, this._originalScale, this._zoomScale);
+        this._time = 0;
+        this._transitionFinished = false;
     }
 
     protected _zoomBack (): void {
-        if (!this.target || !this._originalScale$) {
+        if (!this.target || !this._originalScale) {
             return;
         }
-        Vec3.copy(this._fromScale$, this.target.scale);
-        Vec3.copy(this._toScale$, this._originalScale$);
-        this._time$ = 0;
-        this._transitionFinished$ = false;
+        Vec3.copy(this._fromScale, this.target.scale);
+        Vec3.copy(this._toScale, this._originalScale);
+        this._time = 0;
+        this._transitionFinished = false;
     }
 
     protected _applyTransition (state: State): void {
@@ -1005,7 +1005,7 @@ export class Button extends Component {
         }
     }
 
-    private _getSpriteFrameByState$ (state: State): SpriteFrame | null {
+    private _getSpriteFrameByState (state: State): SpriteFrame | null {
         switch (state) {
         case State.NORMAL:
             return this._normalSprite;
@@ -1024,7 +1024,7 @@ export class Button extends Component {
         }
     }
 
-    private _getColorByState$ (state: State): Color {
+    private _getColorByState (state: State): Color {
         switch (state) {
         case State.NORMAL:
             return this._normalColor;
@@ -1043,35 +1043,35 @@ export class Button extends Component {
         }
     }
 
-    private _xrHoverEnter$ (): void {
+    private _xrHoverEnter (): void {
         this._onMouseMoveIn();
         this._updateState();
     }
 
-    private _xrHoverExit$ (): void {
+    private _xrHoverExit (): void {
         this._onMouseMoveOut();
-        if (this._pressed$) {
-            this._pressed$ = false;
+        if (this._pressed) {
+            this._pressed = false;
             this._updateState();
         }
     }
 
-    private _xrClick$ (): void {
+    private _xrClick (): void {
         if (!this._interactable || !this.enabledInHierarchy) { return; }
-        this._pressed$ = true;
+        this._pressed = true;
         this._updateState();
     }
 
-    private _xrUnClick$ (): void {
+    private _xrUnClick (): void {
         if (!this._interactable || !this.enabledInHierarchy) {
             return;
         }
 
-        if (this._pressed$) {
+        if (this._pressed) {
             ComponentEventHandler.emitEvents(this.clickEvents, this);
             this.node.emit(ButtonEventType.CLICK, this);
         }
-        this._pressed$ = false;
+        this._pressed = false;
         this._updateState();
     }
 }

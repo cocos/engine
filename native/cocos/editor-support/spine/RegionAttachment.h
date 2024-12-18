@@ -102,8 +102,8 @@ public:
     float getRegionOriginalHeight();
     void setRegionOriginalHeight(float inValue);
 
-    Vector<float>& getOffset();
-    Vector<float>& getUVs();
+    inline Vector<float>& getOffset() { return _vertexOffset; }
+    inline Vector<float>& getUVs() { return _uvs; }
 
     virtual Attachment* copy();
 
@@ -117,8 +117,12 @@ private:
     static const int BRX;
     static const int BRY;
 
+#ifdef __EMSCRIPTEN__
+public:
+#endif
     float _x, _y, _rotation, _scaleX, _scaleY, _width, _height;
     float _regionOffsetX, _regionOffsetY, _regionWidth, _regionHeight, _regionOriginalWidth, _regionOriginalHeight;
+
     Vector<float> _vertexOffset;
     Vector<float> _uvs;
     String _path;

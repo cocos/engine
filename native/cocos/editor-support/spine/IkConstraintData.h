@@ -39,6 +39,7 @@ namespace spine {
 class BoneData;
 
 class SP_API IkConstraintData : public ConstraintData {
+    RTTI_DECL
     friend class SkeletonBinary;
     friend class SkeletonJson;
     friend class IkConstraint;
@@ -49,7 +50,7 @@ public:
     explicit IkConstraintData(const String& name);
 
     /// The bones that are constrained by this IK Constraint.
-    Vector<BoneData*>& getBones();
+    inline Vector<BoneData*>& getBones() { return _bones; }
 
     /// The bone that is the IK target.
     BoneData* getTarget();
@@ -74,7 +75,9 @@ public:
     float getSoftness();
     void setSoftness(float inValue);
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     Vector<BoneData*> _bones;
     BoneData* _target;
     int _bendDirection;

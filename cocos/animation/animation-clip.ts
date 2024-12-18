@@ -48,6 +48,7 @@ import { EmbeddedPlayableState, EmbeddedPlayer } from './embedded-player/embedde
 import { AuxiliaryCurveEntry } from './auxiliary-curve-entry';
 import { removeIf } from '../core/utils/array';
 import { invokeComponentMethodsEngagedInAnimationEvent } from './event/event-emitter';
+import type { DataPoolManager } from '../3d/skeletal-animation/data-pool-manager';
 
 export declare namespace AnimationClip {
     export interface IEvent {
@@ -410,8 +411,9 @@ export class AnimationClip extends Asset {
     }
 
     public destroy (): boolean {
-        if (cclegacy.director.root?.dataPoolManager) {
-            (cclegacy.director.root.dataPoolManager).releaseAnimationClip(this);
+        const dataPoolManager = cclegacy.director.root?.dataPoolManager as (DataPoolManager | null);
+        if (dataPoolManager) {
+            dataPoolManager.releaseAnimationClip(this);
         }
         SkelAnimDataHub.destroy(this);
         return super.destroy();

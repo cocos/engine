@@ -86,7 +86,7 @@
             "dependentAssets": ["ba21476f-2866-4f81-9c4d-6e359316e448"]
         },
         "physics-ammo": {
-            "modules": ["physics-ammo", "physics-framework", "wait-for-ammo-instantiation"],
+            "modules": ["physics-ammo", "physics-framework"],
             "dependentAssets": ["ba21476f-2866-4f81-9c4d-6e359316e448"]
         },
         "physics-builtin": {
@@ -158,6 +158,9 @@
         "tiled-map": {
             "modules": ["tiled-map"],
             "dependentModules": ["2d"]
+        },
+        "vendor": {
+            "modules": ["vendor-google"]
         },
         "spine": {
             "modules": ["spine"],
@@ -478,13 +481,6 @@
             "value": false,
             "internal": false
         },
-        "BAIDU": {
-            "comment": "Running in the baidu's mini game.",
-            "type": "boolean",
-            "value": false,
-            "ccGlobal": true,
-            "internal": false
-        },
         "XIAOMI": {
             "comment": "Running in the xiaomi's quick game.",
             "type": "boolean",
@@ -539,27 +535,6 @@
             "ccGlobal": true,
             "internal": false
         },
-        "COCOSPLAY": {
-            "comment": "Running in the cocosplay.",
-            "type": "boolean",
-            "value": false,
-            "ccGlobal": true,
-            "internal": false
-        },
-        "QTT": {
-            "comment": "Running in the qtt's quick game.",
-            "type": "boolean",
-            "value": false,
-            "ccGlobal": true,
-            "internal": false
-        },
-        "LINKSURE": {
-            "comment": "Running in the linksure's quick game.",
-            "type": "boolean",
-            "value": false,
-            "ccGlobal": true,
-            "internal": false
-        },
         "MIGU": {
             "comment": "Running in the migu's quick game.",
             "type": "boolean",
@@ -567,7 +542,6 @@
             "ccGlobal": true,
             "internal": false
         },
-
         "EDITOR": {
             "comment": "Running in the editor.",
             "type": "boolean",
@@ -622,8 +596,6 @@
             "value": false,
             "internal": true
         },
-
-
         "DEV": {
             "comment": "Running in the editor or preview.",
             "type": "boolean",
@@ -635,14 +607,14 @@
         "MINIGAME": {
             "comment": "Running in mini game.",
             "type": "boolean",
-            "value": "$WECHAT || $WECHAT_MINI_PROGRAM || $BAIDU || $XIAOMI || $ALIPAY || $TAOBAO || $TAOBAO_MINIGAME || $BYTEDANCE",
+            "value": "$WECHAT || $WECHAT_MINI_PROGRAM || $XIAOMI || $ALIPAY || $TAOBAO || $TAOBAO_MINIGAME || $BYTEDANCE",
             "ccGlobal": true,
             "internal": false
         },
         "RUNTIME_BASED": {
             "comment": "Running in runtime based environment.",
             "type": "boolean",
-            "value": "$OPPO || $VIVO || $HUAWEI || $COCOSPLAY || $QTT || $LINKSURE || $MIGU",
+            "value": "$OPPO || $VIVO || $HUAWEI || $MIGU",
             "ccGlobal": true,
             "internal": false
         },
@@ -695,6 +667,30 @@
             "comment": "An internal constant to indicate whether we cull the meshopt wasm module and asm.js module.",
             "type": "boolean",
             "value": true,
+            "internal": true
+        },
+        "LOAD_SPINE_MANUALLY": {
+            "comment": "An internal constant to indicate whether we need to load spine wasm/asmjs module manually.",
+            "type": "boolean",
+            "value": false,
+            "internal": true
+        },
+        "LOAD_BOX2D_MANUALLY": {
+            "comment": "An internal constant to indicate whether we need to load box2d wasm/asmjs module manually.",
+            "type": "boolean",
+            "value": false,
+            "internal": true
+        },
+        "LOAD_BULLET_MANUALLY": {
+            "comment": "An internal constant to indicate whether we need to load bullet wasm/asmjs module manually.",
+            "type": "boolean",
+            "value": false,
+            "internal": true
+        },
+        "LOAD_PHYSX_MANUALLY": {
+            "comment": "An internal constant to indicate whether we need to load physx wasm/asmjs module manually.",
+            "type": "boolean",
+            "value": false,
             "internal": true
         }
     },

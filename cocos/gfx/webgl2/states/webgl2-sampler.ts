@@ -32,59 +32,59 @@ import { IWebGL2GPUSampler } from '../webgl2-gpu-objects';
 
 export class WebGL2Sampler extends Sampler {
     public get gpuSampler (): IWebGL2GPUSampler {
-        return  this._gpuSampler$!;
+        return  this._gpuSampler!;
     }
 
-    private _gpuSampler$: IWebGL2GPUSampler | null = null;
+    private _gpuSampler: IWebGL2GPUSampler | null = null;
 
     constructor (info: Readonly<SamplerInfo>, hash: number) {
         super(info, hash);
 
-        this._gpuSampler$ = {
-            glSamplers$: new Map<number, WebGL2Sampler>(),
-            minFilter$: this._info$.minFilter,
-            magFilter$: this._info$.magFilter,
-            mipFilter$: this._info$.mipFilter,
-            addressU$: this._info$.addressU,
-            addressV$: this._info$.addressV,
-            addressW$: this._info$.addressW,
+        this._gpuSampler = {
+            glSamplers: new Map<number, WebGL2Sampler>(),
+            minFilter: this._info.minFilter,
+            magFilter: this._info.magFilter,
+            mipFilter: this._info.mipFilter,
+            addressU: this._info.addressU,
+            addressV: this._info.addressV,
+            addressW: this._info.addressW,
 
-            glMinFilter$: 0,
-            glMagFilter$: 0,
-            glWrapS$: 0,
-            glWrapT$: 0,
-            glWrapR$: 0,
+            glMinFilter: 0,
+            glMagFilter: 0,
+            glWrapS: 0,
+            glWrapT: 0,
+            glWrapR: 0,
 
-            getGLSampler$ (device: WebGL2Device, minLod: number, maxLod: number): WebGLSampler {
+            getGLSampler (device: WebGL2Device, minLod: number, maxLod: number): WebGLSampler {
                 const { gl } = device;
                 const samplerHash = minLod << 16 | maxLod;
-                if (!this.glSamplers$.has(samplerHash)) {
+                if (!this.glSamplers.has(samplerHash)) {
                     const glSampler = gl.createSampler();
                     if (glSampler) {
-                        this.glSamplers$.set(samplerHash, glSampler);
+                        this.glSamplers.set(samplerHash, glSampler);
                         const glSamplerParameteri = gl.samplerParameteri.bind(gl);
                         const glSamplerParameterf = gl.samplerParameterf.bind(gl);
-                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_MIN_FILTER, this.glMinFilter$);
-                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_MAG_FILTER, this.glMagFilter$);
-                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_WRAP_S, this.glWrapS$);
-                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_WRAP_T, this.glWrapT$);
-                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_WRAP_R, this.glWrapR$);
+                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_MIN_FILTER, this.glMinFilter);
+                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_MAG_FILTER, this.glMagFilter);
+                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_WRAP_S, this.glWrapS);
+                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_WRAP_T, this.glWrapT);
+                        glSamplerParameteri(glSampler, WebGLConstants.TEXTURE_WRAP_R, this.glWrapR);
                         glSamplerParameterf(glSampler, WebGLConstants.TEXTURE_MIN_LOD, minLod);
                         glSamplerParameterf(glSampler, WebGLConstants.TEXTURE_MAX_LOD, maxLod);
                     }
                 }
-                const sampler = this.glSamplers$.get(samplerHash)!;
+                const sampler = this.glSamplers.get(samplerHash)!;
                 return sampler;
             },
         };
 
-        WebGL2CmdFuncPrepareSamplerInfo(WebGL2DeviceManager.instance, this._gpuSampler$);
+        WebGL2CmdFuncPrepareSamplerInfo(WebGL2DeviceManager.instance, this._gpuSampler);
     }
 
     destroy (): void {
-        if (this._gpuSampler$) {
-            WebGL2CmdFuncDestroySampler(WebGL2DeviceManager.instance, this._gpuSampler$);
-            this._gpuSampler$ = null;
+        if (this._gpuSampler) {
+            WebGL2CmdFuncDestroySampler(WebGL2DeviceManager.instance, this._gpuSampler);
+            this._gpuSampler = null;
         }
     }
 }

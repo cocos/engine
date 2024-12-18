@@ -144,8 +144,8 @@ export class WebGPUCommandBuffer extends CommandBuffer {
     private _renderPassFuncQueue: ((renPassEncoder: GPURenderPassEncoder) => void)[] = [];
 
     public initialize (info: CommandBufferInfo): boolean {
-        this._type$ = info.type;
-        this._queue$ = info.queue;
+        this._type = info.type;
+        this._queue = info.queue;
         const device = WebGPUDeviceManager.instance;
         this._webGPUAllocator = device.cmdAllocator;
         this._encoder = {} as CommandEncoder;
@@ -184,9 +184,9 @@ export class WebGPUCommandBuffer extends CommandBuffer {
         this._curDepthBounds = null;
         this._curStencilWriteMask = null;
         this._curStencilCompareMask = null;
-        this._numDrawCalls$ = 0;
-        this._numInstances$ = 0;
-        this._numTris$ = 0;
+        this._numDrawCalls = 0;
+        this._numInstances = 0;
+        this._numTris = 0;
     }
 
     public end (): void {
@@ -440,7 +440,7 @@ export class WebGPUCommandBuffer extends CommandBuffer {
 
     public draw (inputAssembler: InputAssembler): void {
         const device = WebGPUDeviceManager.instance;
-        if (this._type$ === CommandBufferType.PRIMARY && !this._isInRenderPass) {
+        if (this._type === CommandBufferType.PRIMARY && !this._isInRenderPass) {
             errorID(16328);
             return;
         }
@@ -497,17 +497,17 @@ export class WebGPUCommandBuffer extends CommandBuffer {
             }
         }
 
-        ++this._numDrawCalls$;
-        this._numInstances$ += inputAssembler.instanceCount;
+        ++this._numDrawCalls;
+        this._numInstances += inputAssembler.instanceCount;
         const indexCount = inputAssembler.indexCount || inputAssembler.vertexCount;
         if (this._curGPUPipelineState) {
             const gpuPrimitive = this._curGPUPipelineState.gpuPrimitive;
             switch (gpuPrimitive) {
             case 'triangle-strip':
-                this._numTris$ += (indexCount - 2) * Math.max(inputAssembler.instanceCount, 1);
+                this._numTris += (indexCount - 2) * Math.max(inputAssembler.instanceCount, 1);
                 break;
             case 'triangle-list': {
-                this._numTris$ += indexCount / 3 * Math.max(inputAssembler.instanceCount, 1);
+                this._numTris += indexCount / 3 * Math.max(inputAssembler.instanceCount, 1);
                 break;
             }
             default:
@@ -517,7 +517,7 @@ export class WebGPUCommandBuffer extends CommandBuffer {
     }
 
     public updateBuffer (buffer: Buffer, data: BufferSource, offset?: number, size?: number): void {
-        if (this._type$ === CommandBufferType.PRIMARY && this._isInRenderPass) {
+        if (this._type === CommandBufferType.PRIMARY && this._isInRenderPass) {
             errorID(16329);
             return;
         }
@@ -547,7 +547,7 @@ export class WebGPUCommandBuffer extends CommandBuffer {
     }
 
     public copyBuffersToTexture (buffers: ArrayBufferView[], texture: Texture, regions: BufferTextureCopy[]): void {
-        if (this._type$ === CommandBufferType.PRIMARY && this._isInRenderPass) {
+        if (this._type === CommandBufferType.PRIMARY && this._isInRenderPass) {
             errorID(16330);
             return;
         }
@@ -603,9 +603,9 @@ export class WebGPUCommandBuffer extends CommandBuffer {
 
             this.cmdPackage.cmds.concat(cmdPackage.cmds.array);
 
-            this._numDrawCalls$ += WebGPUCmdBuff._numDrawCalls$;
-            this._numInstances$ += WebGPUCmdBuff._numInstances$;
-            this._numTris$ += WebGPUCmdBuff._numTris$;
+            this._numDrawCalls += WebGPUCmdBuff._numDrawCalls;
+            this._numInstances += WebGPUCmdBuff._numInstances;
+            this._numTris += WebGPUCmdBuff._numTris;
         }
     }
 

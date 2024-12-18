@@ -40,6 +40,9 @@
                 },
                 "required": {
                     "type": "boolean"
+                },
+                "flags": {
+                    "type": "object"
                 }
             },
             "type": "object"
@@ -55,6 +58,9 @@
                 },
                 "label": {
                     "type": "string"
+                },
+                "required": {
+                    "type": "boolean"
                 }
             },
             "type": "object"
@@ -173,6 +179,9 @@
                 "tiled-map": {
                     "$ref": "#/definitions/IFeatureItem"
                 },
+                "vendor": {
+                    "$ref": "#/definitions/IFeatureItem"
+                },
                 "tween": {
                     "$ref": "#/definitions/IFeatureItem"
                 },
@@ -238,6 +247,9 @@
                 },
                 "required": {
                     "type": "boolean"
+                },
+                "flags": {
+                    "type": "object"
                 }
             },
             "type": "object"
@@ -356,6 +368,9 @@
                 "tiled-map": {
                     "$ref": "#/definitions/BaseItem"
                 },
+                "vendor": {
+                    "$ref": "#/definitions/BaseItem"
+                },
                 "tween": {
                     "$ref": "#/definitions/BaseItem"
                 },
@@ -406,4 +421,3 @@
     },
     "type": "object"
 }
-

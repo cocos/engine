@@ -112,19 +112,19 @@ function checkCircularReference (asset: Asset): number {
     return refs[asset._uuid];
 }
 
-class ReleaseManager {
-    private _persistNodeDeps$ = new Cache<string[]>();
-    private _toDelete$ = new Cache<Asset>();
-    private _eventListener$ = false;
-    private _dontDestroyAssets$: string[] = [];
+export class ReleaseManager {
+    private _persistNodeDeps = new Cache<string[]>();
+    private _toDelete = new Cache<Asset>();
+    private _eventListener = false;
+    private _dontDestroyAssets: string[] = [];
 
     public addIgnoredAsset (asset: Asset): void {
-        this._dontDestroyAssets$.push(asset._uuid);
+        this._dontDestroyAssets.push(asset._uuid);
     }
 
     public init (): void {
-        this._persistNodeDeps$.clear();
-        this._toDelete$.clear();
+        this._persistNodeDeps.clear();
+        this._toDelete.clear();
     }
 
     /**
@@ -139,23 +139,23 @@ class ReleaseManager {
                 dependAsset.addRef();
             }
         }
-        this._persistNodeDeps$.add(node.uuid, deps);
+        this._persistNodeDeps.add(node.uuid, deps);
     }
 
     /**
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
      */
     public _removePersistNodeRef (node: Node): void {
-        if (!this._persistNodeDeps$.has(node.uuid)) { return; }
+        if (!this._persistNodeDeps.has(node.uuid)) { return; }
 
-        const deps = this._persistNodeDeps$.get(node.uuid) as string[];
+        const deps = this._persistNodeDeps.get(node.uuid) as string[];
         for (let i = 0, l = deps.length; i < l; i++) {
             const dependAsset = assets.get(deps[i]);
             if (dependAsset) {
                 dependAsset.decRef();
             }
         }
-        this._persistNodeDeps$.remove(node.uuid);
+        this._persistNodeDeps.remove(node.uuid);
     }
 
     // do auto release
@@ -193,7 +193,7 @@ class ReleaseManager {
         if (sceneDeps) { sceneDeps.persistDeps = []; }
         for (const key in persistNodes) {
             const node = persistNodes[key];
-            const deps = this._persistNodeDeps$.get(node.uuid) as string[];
+            const deps = this._persistNodeDeps.get(node.uuid) as string[];
             for (const dep of deps) {
                 const dependAsset = assets.get(dep);
                 if (dependAsset) {
@@ -208,31 +208,31 @@ class ReleaseManager {
     public tryRelease (asset: Asset, force = false): void {
         if (!(asset instanceof Asset)) { return; }
         if (force) {
-            this._free$(asset, force);
+            this._free(asset, force);
             return;
         }
 
-        this._toDelete$.add(asset._uuid, asset);
+        this._toDelete.add(asset._uuid, asset);
         if (TEST) return;
-        if (!this._eventListener$) {
-            this._eventListener$ = true;
-            misc.callInNextTick(this._freeAssets$.bind(this));
+        if (!this._eventListener) {
+            this._eventListener = true;
+            misc.callInNextTick(this._freeAssets.bind(this));
         }
     }
 
-    private _freeAssets$ (): void {
-        this._eventListener$ = false;
-        this._toDelete$.forEach((asset): void => {
-            this._free$(asset);
+    private _freeAssets (): void {
+        this._eventListener = false;
+        this._toDelete.forEach((asset): void => {
+            this._free(asset);
         });
-        this._toDelete$.clear();
+        this._toDelete.clear();
     }
 
-    private _free$ (asset: Asset, force = false): void {
+    private _free (asset: Asset, force = false): void {
         const uuid = asset._uuid;
-        this._toDelete$.remove(uuid);
+        this._toDelete.remove(uuid);
 
-        if (!isValid(asset, true) || this._dontDestroyAssets$.indexOf(uuid) !== -1) { return; }
+        if (!isValid(asset, true) || this._dontDestroyAssets.indexOf(uuid) !== -1) { return; }
 
         if (!force) {
             if (asset.refCount > 0) {
@@ -249,7 +249,7 @@ class ReleaseManager {
                 dependAsset.decRef(false);
                 // no need to release dependencies recursively in editor
                 if (!EDITOR) {
-                    this._free$(dependAsset, false);
+                    this._free(dependAsset, false);
                 }
             }
         }

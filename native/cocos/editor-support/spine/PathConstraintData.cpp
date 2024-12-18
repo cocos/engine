@@ -40,6 +40,8 @@
 
 using namespace spine;
 
+RTTI_IMPL(PathConstraintData, ConstraintData)
+
 PathConstraintData::PathConstraintData(const String &name) : ConstraintData(name),
                                                              _target(NULL),
                                                              _positionMode(PositionMode_Fixed),
@@ -50,10 +52,6 @@ PathConstraintData::PathConstraintData(const String &name) : ConstraintData(name
                                                              _spacing(0),
                                                              _rotateMix(0),
                                                              _translateMix(0) {
-}
-
-Vector<BoneData *> &PathConstraintData::getBones() {
-    return _bones;
 }
 
 SlotData *PathConstraintData::getTarget() {

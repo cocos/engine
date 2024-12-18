@@ -43,9 +43,6 @@ presets.scene.maxRequestsPerFrame = 64;
 const subpackages = {};
 
 const sys = cc.sys;
-if (sys.platform === sys.Platform.BAIDU_MINI_GAME) {
-    require = __baiduRequire;
-}
 if (sys.platform === sys.Platform.TAOBAO_MINI_GAME) {
     require = globalThis.__taobaoRequire;
 }

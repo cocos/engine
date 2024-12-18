@@ -38,6 +38,9 @@
 #include <assert.h>
 
 using namespace spine;
+
+RTTI_IMPL(TransformConstraintData, ConstraintData)
+
 TransformConstraintData::TransformConstraintData(const String &name) : ConstraintData(name),
                                                                        _target(NULL),
                                                                        _rotateMix(0),
@@ -52,10 +55,6 @@ TransformConstraintData::TransformConstraintData(const String &name) : Constrain
                                                                        _offsetShearY(0),
                                                                        _relative(false),
                                                                        _local(false) {
-}
-
-Vector<BoneData *> &TransformConstraintData::getBones() {
-    return _bones;
 }
 
 BoneData *TransformConstraintData::getTarget() {
@@ -102,10 +101,3 @@ float TransformConstraintData::getOffsetShearY() {
     return _offsetShearY;
 }
 
-bool TransformConstraintData::isRelative() {
-    return _relative;
-}
-
-bool TransformConstraintData::isLocal() {
-    return _local;
-}

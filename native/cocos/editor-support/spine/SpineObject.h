@@ -56,4 +56,14 @@ public:
 };
 } // namespace spine
 
+#ifdef __EMSCRIPTEN__
+    #define __SPINE_FILE__ ""
+    #define __SPINE_LINE__ __LINE__
+    #define spine_new new
+#else
+    #define __SPINE_FILE__ __FILE__
+    #define __SPINE_LINE__ __LINE__
+    #define spine_new new (__FILE__, __LINE__)
+#endif
+
 #endif

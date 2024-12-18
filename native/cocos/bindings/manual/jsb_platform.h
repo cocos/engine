@@ -26,9 +26,17 @@
 #include "base/std/container/string.h"
 #include "base/std/container/unordered_map.h"
 
+#if CC_PLATFORM == CC_PLATFORM_OPENHARMONY
+#include <string>
+#include <native_drawing/drawing_text_declaration.h>
+#endif
 namespace se {
 class Object;
 }
 
 bool register_platform_bindings(se::Object *obj); // NOLINT[readability-identifier-naming]
 const ccstd::unordered_map<ccstd::string, ccstd::string> &getFontFamilyNameMap();
+#if CC_PLATFORM == CC_PLATFORM_OPENHARMONY
+const std::string defaultFontKey = "openharmony_system_font";
+const std::unordered_map<std::string, OH_Drawing_FontCollection*>& getFontFamilyCollectionMap();
+#endif

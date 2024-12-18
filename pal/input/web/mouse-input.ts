@@ -31,6 +31,7 @@ import { EventTarget } from '../../../cocos/core/event';
 import { Rect, Vec2 } from '../../../cocos/core/math';
 import { InputEventType } from '../../../cocos/input/types/event-enum';
 import { Feature } from '../../system-info/enum-type';
+import { warn } from '../../../cocos/core/platform/debug';
 
 export class MouseInputSource {
     private _canvas?: HTMLCanvasElement;
@@ -47,7 +48,7 @@ export class MouseInputSource {
         if (systemInfo.hasFeature(Feature.EVENT_MOUSE)) {
             this._canvas = document.getElementById('GameCanvas') as HTMLCanvasElement;
             if (!this._canvas && !TEST && !EDITOR) {
-                console.warn('failed to access canvas');
+                warn('failed to access canvas');
             }
 
             this._handleMouseDown = this._createCallback(InputEventType.MOUSE_DOWN);
@@ -60,9 +61,9 @@ export class MouseInputSource {
         }
     }
 
-    public dispatchMouseDownEvent (nativeMouseEvent: any): void { this._handleMouseDown(nativeMouseEvent); }
-    public dispatchMouseMoveEvent (nativeMouseEvent: any): void { this._handleMouseMove(nativeMouseEvent); }
-    public dispatchMouseUpEvent (nativeMouseEvent: any): void { this._handleMouseUp(nativeMouseEvent); }
+    public dispatchMouseDownEvent (nativeMouseEvent: any): void { this._handleMouseDown(nativeMouseEvent as MouseEvent); }
+    public dispatchMouseMoveEvent (nativeMouseEvent: any): void { this._handleMouseMove(nativeMouseEvent as MouseEvent); }
+    public dispatchMouseUpEvent (nativeMouseEvent: any): void { this._handleMouseUp(nativeMouseEvent as MouseEvent); }
     public dispatchScrollEvent (nativeMouseEvent: WheelEvent): void { this._handleMouseWheel(nativeMouseEvent); }
 
     public on (eventType: InputEventType, callback: MouseCallback, target?: any): void {
@@ -207,5 +208,9 @@ export class MouseInputSource {
         const eventType = InputEventType.MOUSE_ENTER;
         const eventMouse = new EventMouse(eventType, false);
         this._eventTarget.emit(eventType, eventMouse);
+    }
+
+    public dispatchEventsInCache (): void {
+        // Do nothing
     }
 }

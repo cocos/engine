@@ -47,7 +47,7 @@ public:
 
     virtual Attachment *copy() = 0;
 
-    int getRefCount();
+    int getRefCount() const;
     void reference();
     void dereference();
 

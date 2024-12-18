@@ -36,11 +36,11 @@ export class WebGPUShader extends Shader {
     private _gpuShader: IWebGPUGPUShader | null = null;
 
     public initialize (info: Readonly<ShaderInfo>): void {
-        this._name$ = info.name;
-        this._stages$ = info.stages;
-        this._attributes$ = info.attributes;
-        this._blocks$ = info.blocks;
-        this._samplers$ = info.samplers;
+        this._name = info.name;
+        this._stages = info.stages;
+        this._attributes = info.attributes;
+        this._blocks = info.blocks;
+        this._samplers = info.samplers;
         const stageSize = info.stages.length;
         this._gpuShader = {
             name: info.name,

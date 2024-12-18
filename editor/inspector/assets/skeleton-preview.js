@@ -1,17 +1,22 @@
 'use strict';
 
 exports.template = /* html */`
-<div class="preview">
-    <div class="info">
-        <ui-label value="JointCount:0" class="joint-count"></ui-label>
+<ui-section header="i18n:ENGINE.inspector.preview.header" class="preview-section config no-padding" expand>
+    <div class="preview">
+        <div class="info">
+            <ui-label value="JointCount:0" class="joint-count"></ui-label>
+        </div>
+        <div class="image">
+            <canvas class="canvas"></canvas>
+        </div>
     </div>
-    <div class="image">
-        <canvas class="canvas"></canvas>
-    </div>
-</div>
+</ui-section>
 `;
 
 exports.style = /* css */`
+.preview-section {
+    margin-top: 0px;
+}
 .preview {
     border-top: 1px solid var(--color-normal-border);
 }
@@ -208,6 +213,13 @@ exports.update = function(assetList, metaList) {
     this.metaList = metaList;
     this.asset = assetList[0];
     this.meta = metaList[0];
+
+    // 如何多选就隐藏预览
+    if (assetList.length > 1) {
+        this.$.container.style.display = 'none';
+    } else {
+        this.$.container.style.display = 'block';
+    }
 
     for (const prop in Elements) {
         const element = Elements[prop];

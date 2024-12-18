@@ -120,13 +120,8 @@ export function validPunctualLightsCulling (pipeline: BasicPipeline, camera: Cam
     sceneData.validPunctualLights = validPunctualLights;
 }
 
-const _cameras: Camera[] = [];
-
 export function getCameraUniqueID (camera: Camera): number {
-    if (!_cameras.includes(camera)) {
-        _cameras.push(camera);
-    }
-    return _cameras.indexOf(camera);
+    return camera.cameraId;
 }
 
 export function getLoadOpOfClearFlag (clearFlag: ClearFlagBit, attachment: AttachmentType): LoadOp {

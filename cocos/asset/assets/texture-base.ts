@@ -29,6 +29,7 @@ import { Asset } from './asset';
 import { Filter, PixelFormat, WrapMode } from './asset-enum';
 import { Sampler, Texture, Device, Format, SamplerInfo, Address, Filter as GFXFilter, deviceManager } from '../../gfx';
 import { errorID, murmurhash2_32_gc, ccenum, cclegacy, js } from '../../core';
+import type { Batcher2D } from '../../2d/renderer/batcher-2d';
 
 ccenum(Format);
 
@@ -140,19 +141,19 @@ export class TextureBase extends Asset {
     protected _height = 1;
 
     private declare _id: string;
-    private _samplerInfo$ = new SamplerInfo();
-    private _gfxSampler$: Sampler | null = null;
-    private _gfxDevice$: Device | null = null;
+    private _samplerInfo = new SamplerInfo();
+    private _gfxSampler: Sampler | null = null;
+    private _gfxDevice: Device | null = null;
 
-    private _textureHash$ = 0;
+    private _textureHash = 0;
 
     constructor () {
         super();
 
         // Id for generate hash in material
         this._id = idGenerator.getNewId();
-        this._gfxDevice$ = this._getGFXDevice();
-        this._textureHash$ = murmurhash2_32_gc(this._id, 666);
+        this._gfxDevice = this._getGFXDevice();
+        this._textureHash = murmurhash2_32_gc(this._id, 666);
     }
 
     /**
@@ -195,14 +196,14 @@ export class TextureBase extends Asset {
         if (wrapR === undefined) wrapR = wrapS; // wrap modes should be as consistent as possible for performance
 
         this._wrapS = wrapS;
-        this._samplerInfo$.addressU = wrapS as unknown as Address;
+        this._samplerInfo.addressU = wrapS as unknown as Address;
         this._wrapT = wrapT;
-        this._samplerInfo$.addressV = wrapT as unknown as Address;
+        this._samplerInfo.addressV = wrapT as unknown as Address;
         this._wrapR = wrapR;
-        this._samplerInfo$.addressW = wrapR as unknown as Address;
+        this._samplerInfo.addressW = wrapR as unknown as Address;
 
-        if (this._gfxDevice$) {
-            this._gfxSampler$ = this._gfxDevice$.getSampler(this._samplerInfo$);
+        if (this._gfxDevice) {
+            this._gfxSampler = this._gfxDevice.getSampler(this._samplerInfo);
         }
     }
 
@@ -214,12 +215,12 @@ export class TextureBase extends Asset {
      */
     public setFilters (minFilter: Filter, magFilter: Filter): void {
         this._minFilter = minFilter;
-        this._samplerInfo$.minFilter = minFilter as unknown as GFXFilter;
+        this._samplerInfo.minFilter = minFilter as unknown as GFXFilter;
         this._magFilter = magFilter;
-        this._samplerInfo$.magFilter = magFilter as unknown as GFXFilter;
+        this._samplerInfo.magFilter = magFilter as unknown as GFXFilter;
 
-        if (this._gfxDevice$) {
-            this._gfxSampler$ = this._gfxDevice$.getSampler(this._samplerInfo$);
+        if (this._gfxDevice) {
+            this._gfxSampler = this._gfxDevice.getSampler(this._samplerInfo);
         }
     }
 
@@ -230,10 +231,10 @@ export class TextureBase extends Asset {
      */
     public setMipFilter (mipFilter: Filter): void {
         this._mipFilter = mipFilter;
-        this._samplerInfo$.mipFilter = mipFilter as unknown as GFXFilter;
+        this._samplerInfo.mipFilter = mipFilter as unknown as GFXFilter;
 
-        if (this._gfxDevice$) {
-            this._gfxSampler$ = this._gfxDevice$.getSampler(this._samplerInfo$);
+        if (this._gfxDevice) {
+            this._gfxSampler = this._gfxDevice.getSampler(this._samplerInfo);
         }
     }
 
@@ -245,10 +246,10 @@ export class TextureBase extends Asset {
     public setAnisotropy (anisotropy: number): void {
         anisotropy = Math.min(anisotropy, 16);
         this._anisotropy = anisotropy;
-        this._samplerInfo$.maxAnisotropy = anisotropy;
+        this._samplerInfo.maxAnisotropy = anisotropy;
 
-        if (this._gfxDevice$) {
-            this._gfxSampler$ = this._gfxDevice$.getSampler(this._samplerInfo$);
+        if (this._gfxDevice) {
+            this._gfxSampler = this._gfxDevice.getSampler(this._samplerInfo);
         }
     }
 
@@ -259,7 +260,7 @@ export class TextureBase extends Asset {
     public destroy (): boolean {
         const destroyed = super.destroy();
         if (destroyed && cclegacy.director.root?.batcher2D) {
-            cclegacy.director.root.batcher2D._releaseDescriptorSetCache(this._textureHash$);
+            (cclegacy.director.root.batcher2D as Batcher2D)._releaseDescriptorSetCache(this._textureHash);
         }
         return destroyed;
     }
@@ -269,7 +270,7 @@ export class TextureBase extends Asset {
      * @zh 获取此贴图的哈希值。
      */
     public getHash (): number {
-        return this._textureHash$;
+        return this._textureHash;
     }
 
     /**
@@ -286,7 +287,7 @@ export class TextureBase extends Asset {
      * @private
      */
     public getSamplerInfo (): Readonly<SamplerInfo> {
-        return this._samplerInfo$;
+        return this._samplerInfo;
     }
 
     /**
@@ -294,14 +295,14 @@ export class TextureBase extends Asset {
      * @zh 获取此贴图底层的 GFX 采样信息。
      */
     public getGFXSampler (): Sampler {
-        if (!this._gfxSampler$) {
-            if (this._gfxDevice$) {
-                this._gfxSampler$ = this._gfxDevice$.getSampler(this._samplerInfo$);
+        if (!this._gfxSampler) {
+            if (this._gfxDevice) {
+                this._gfxSampler = this._gfxDevice.getSampler(this._samplerInfo);
             } else {
                 errorID(9302);
             }
         }
-        return this._gfxSampler$!;
+        return this._gfxSampler!;
     }
 
     // SERIALIZATION

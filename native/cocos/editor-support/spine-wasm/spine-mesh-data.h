@@ -1,5 +1,5 @@
-#ifndef __SPINE_MESH_DATA_H__
-#define __SPINE_MESH_DATA_H__
+#pragma once
+
 #include <stdint.h>
 
 class SpineMeshData {
@@ -22,5 +22,3 @@ private:
     static uint8_t *vEnd;
     static uint16_t *iEnd;
 };
-
-#endif

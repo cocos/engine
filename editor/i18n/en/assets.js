@@ -8,6 +8,20 @@ module.exports = {
     inspector: {
         cloneToEdit: 'Clone it. Use and go into edit.',
         cloneToDirectoryIllegal: 'Please limit the saved path to the current project assets path',
+        preview: {
+            header: 'Preview',
+        },
+        spine: {
+            skin: 'Skin',
+            animation: 'Animation',
+            loop: 'Loop',
+            timeScale: 'Rate',
+            premultipliedAlpha: 'Premultiplied Alpha',
+            useTint: 'Use Tint',
+            debugSlots: 'Debug Slots',
+            debugBones: 'Debug Bones',
+            debugMesh: 'Debug Mesh',
+        },
     },
 
     assets: {

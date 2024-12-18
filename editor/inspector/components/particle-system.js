@@ -162,7 +162,21 @@ exports.template = /* html*/`
             <ui-prop type="dump" key="trailModule.value.colorOverTrail"></ui-prop>
             <ui-prop type="dump" key="trailModule.value.colorOvertime"></ui-prop>
         </ui-section>
-        <ui-prop type="dump" key="renderer"></ui-prop>
+        <ui-section empty="true" key="renderer" expand>
+            <div slot="header" style="overflow: hidden;">
+                <ui-label name style="white-space: nowrap;" value="Renderer"></ui-label>
+                <ui-label type style="white-space: nowrap;opacity: 0.55;margin-left: 4px;flex:auto;font-weight:normal;" value=": cc.ParticleSystemRenderer"></ui-label>
+            </div>
+            <ui-prop type="dump" key="renderer.value.renderMode"></ui-prop>
+            <ui-prop type="dump" key="renderer.value.velocityScale"></ui-prop>
+            <ui-prop type="dump" key="renderer.value.lengthScale"></ui-prop>
+            <ui-prop type="dump" key="renderer.value.mesh"></ui-prop>
+            <ui-prop class="cpu-material" type="dump" key="renderer.value.cpuMaterial"></ui-prop>
+            <ui-prop class="trail-material" type="dump" key="renderer.value.trailMaterial"></ui-prop>
+            <ui-prop class="gpu-material" type="dump" key="renderer.value.gpuMaterial"></ui-prop>
+            <ui-prop id="use-gpu" type="dump" key="renderer.value.useGPU"></ui-prop>
+            <ui-prop type="dump" key="renderer.value.alignSpace"></ui-prop>
+        </ui-section>
     </div>
 </div>
 
@@ -486,6 +500,7 @@ const uiElements = {
                 const dump = this.getObjectByKey(this.dump.value, key);
                 const showflag = element.getAttribute('showflag');
                 const disableflag = element.getAttribute('disableflag');
+                let isDisable = false;
                 if (typeof showflag === 'string') {
                     // only update the elements relate to eventInstigator
                     if (eventInstigatorKey) {
@@ -628,6 +643,27 @@ const uiElements = {
             context.putImageData(imageData, 0, 0);
         },
     },
+    useGPU: {
+        changeState(useGPU) {
+            if (useGPU) {
+                this.$.cpuMaterial.setAttribute('state-disabled', '');
+                this.$.trailMaterial.setAttribute('state-disabled', '');
+                this.$.gpuMaterial.removeAttribute('state-disabled');
+            } else {
+                this.$.cpuMaterial.removeAttribute('state-disabled');
+                this.$.trailMaterial.removeAttribute('state-disabled');
+                this.$.gpuMaterial.setAttribute('state-disabled', '');
+            }
+        },
+        ready() {
+            this.$.useGPU.addEventListener('change', (event) => {
+                uiElements.useGPU.changeState(event.target.value);
+            });
+        },
+        update() {
+            uiElements.useGPU.changeState.call(this, this.dump.value.renderer.value.useGPU.value);
+        },
+    },
 };
 exports.$ = {
     customProps: '#customProps',
@@ -635,7 +671,10 @@ exports.$ = {
     showBounds: '#showBounds',
     resetBounds: '#resetBounds',
     noisePreview: '#noisePreview',
-
+    useGPU: '#use-gpu',
+    cpuMaterial: '.cpu-material',
+    gpuMaterial: '.gpu-material',
+    trailMaterial: '.trail-material',
 };
 exports.ready = function() {
     for (const key in uiElements) {
@@ -660,6 +699,15 @@ exports.style = /* css */`
     }
     .particle-system-component ui-section .header ui-checkbox {
         margin-right: 4px;
+    }
+    .trail-material[state-disabled] {
+        opacity: 0.5;
+    }
+    .gpu-material[state-disabled] {
+        opacity: 0.5;
+    }
+    .cpu-material[state-disabled] {
+        opacity: 0.5;
     }
 `;
 
@@ -697,7 +745,6 @@ exports.listeners = {
             textureAnimationModule: 'A100007',
             'limitVelocityOvertimeModule.enable':'A100008',
             'trailModule.enable': 'A100009',
-            'renderer.useGPU': 'A100010',
         };
 
         const dumpKey = Object.keys(trackMap).find(key => dump.path.endsWith(key));

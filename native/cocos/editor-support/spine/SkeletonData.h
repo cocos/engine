@@ -103,12 +103,12 @@ public:
     void setName(const String &inValue);
 
     /// The skeleton's bones, sorted parent first. The root bone is always the first bone.
-    Vector<BoneData *> &getBones();
+    inline Vector<BoneData *> &getBones() { return _bones; }
 
-    Vector<SlotData *> &getSlots();
+    inline Vector<SlotData *> &getSlots() { return _slots; }
 
     /// All skins, including the default skin.
-    Vector<Skin *> &getSkins();
+    inline Vector<Skin *> &getSkins() { return _skins; }
 
     /// The skeleton's default skin.
     /// By default this skin contains all attachments that were not in a skin in Spine.
@@ -117,15 +117,15 @@ public:
 
     void setDefaultSkin(Skin *inValue);
 
-    Vector<spine::EventData *> &getEvents();
+    inline Vector<EventData *> &getEvents() { return _events; }
 
-    Vector<Animation *> &getAnimations();
+    inline Vector<Animation *> &getAnimations() { return _animations; }
 
-    Vector<IkConstraintData *> &getIkConstraints();
+    inline Vector<IkConstraintData *> &getIkConstraints() { return _ikConstraints; }
 
-    Vector<TransformConstraintData *> &getTransformConstraints();
+    inline Vector<TransformConstraintData *> &getTransformConstraints() { return _transformConstraints; }
 
-    Vector<PathConstraintData *> &getPathConstraints();
+    inline Vector<PathConstraintData *> &getPathConstraints() { return _pathConstraints; }
 
     float getX();
 
@@ -164,8 +164,9 @@ public:
     float getFps();
 
     void setFps(float inValue);
-
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     String _name;
     Vector<BoneData *> _bones; // Ordered parents first
     Vector<SlotData *> _slots; // Setup pose draw order.

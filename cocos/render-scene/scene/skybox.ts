@@ -318,7 +318,7 @@ export class Skybox {
         this._default = builtinResMgr.get<TextureCube>('default-cube-texture');
 
         if (!this._model) {
-            this._model = cclegacy.director.root.createModel(cclegacy.renderer.scene.Model) as Model;
+            this._model = (cclegacy.director.root as Root).createModel(cclegacy.renderer.scene.Model as typeof Model);
             //The skybox material has added properties of 'environmentMap' that need local ubo
             //this._model._initLocalDescriptors = () => {};
             //this._model._initWorldBoundDescriptors = () => {};

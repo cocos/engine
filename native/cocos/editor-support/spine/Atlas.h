@@ -111,7 +111,7 @@ public:
     /// @return The region, or NULL.
     AtlasRegion *findRegion(const String &name);
 
-    Vector<AtlasPage *> &getPages();
+    inline Vector<AtlasPage *> &getPages() { return _pages; }
 
 private:
     Vector<AtlasPage *> _pages;

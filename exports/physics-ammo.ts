@@ -24,3 +24,5 @@
  */
 
 import '../cocos/physics/bullet/instantiate';
+
+export { loadWasmModuleBullet } from '../cocos/physics/bullet/instantiate';

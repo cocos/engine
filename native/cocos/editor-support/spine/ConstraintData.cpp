@@ -35,6 +35,8 @@
 
 using namespace spine;
 
+RTTI_IMPL_NOPARENT(ConstraintData)
+
 ConstraintData::ConstraintData(const String& name) : _name(name), _order(0), _skinRequired(false) {
 }
 

@@ -71,22 +71,23 @@ public:
     float getTranslateMix();
     void setTranslateMix(float inValue);
 
-    Vector<Bone*>& getBones();
+    inline Vector<Bone*>& getBones() { return _bones; }
 
     Slot* getTarget();
     void setTarget(Slot* inValue);
 
     PathConstraintData& getData();
 
-    bool isActive();
+    virtual bool isActive();
 
-    void setActive(bool inValue);
-
+    virtual void setActive(bool inValue);;
+#ifndef __EMSCRIPTEN__
 private:
-    static const float EPSILON;
-    static const int NONE;
-    static const int BEFORE;
-    static const int AFTER;
+#endif
+    static constexpr float EPSILON = 0.00001f;
+    static constexpr int NONE = -1;
+    static constexpr int BEFORE = -2;
+    static constexpr int AFTER = -3;
 
     PathConstraintData& _data;
     Vector<Bone*> _bones;

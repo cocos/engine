@@ -637,6 +637,10 @@ exports.ready = function() {
     this.$.materialDump.addEventListener('change-dump', async (event) => {
         const dump = event.target.dump;
 
+        if (!event.path) {
+            event.path = event.composedPath();
+        }
+
         let passIndex = 0;
         for (let element of event.path) {
             if (element instanceof HTMLElement && element.hasAttribute('pass-index')) {

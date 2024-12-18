@@ -440,6 +440,11 @@ struct RenderGraphVisitor : boost::dfs_visitor<> {
         }
         // scissor
         gfx::Rect scissor{vp.left, vp.top, vp.width, vp.height};
+        // Do not across framebuffer boundary, otherwise vulkan will be device lost.
+        scissor.x = std::max(scissor.x, 0);
+        scissor.y = std::max(scissor.y, 0);
+        scissor.width = std::min(scissor.width, pass.width - scissor.x);
+        scissor.height = std::min(scissor.height, pass.height - scissor.y);
 
         // render pass
         {
@@ -453,6 +458,12 @@ struct RenderGraphVisitor : boost::dfs_visitor<> {
                 scissor, data.clearColors.data(),
                 data.clearDepth, data.clearStencil);
             ctx.currentPass = data.renderPass.get();
+        }
+
+        // Set viewport
+        {
+            ctx.cmdBuff->setViewport(vp);
+            ctx.viewportStack.emplace_back(vp);
         }
 
         // PerPass DescriptorSet
@@ -477,7 +488,6 @@ struct RenderGraphVisitor : boost::dfs_visitor<> {
         if (subpass.subpassID) {
             ctx.cmdBuff->nextSubpass();
         }
-        // ctx.cmdBuff->setViewport(subpass);
         tryBindPassDescriptorSet(vertID);
         ctx.subpassIndex = subpass.subpassID;
         // noop
@@ -663,8 +673,12 @@ struct RenderGraphVisitor : boost::dfs_visitor<> {
                 return;
             }
         }
+
         if (queue.viewport.width != 0 && queue.viewport.height != 0) {
             ctx.cmdBuff->setViewport(queue.viewport);
+            ctx.viewportStack.emplace_back(queue.viewport);
+        } else {
+            ctx.viewportStack.emplace_back();
         }
 
         tryBindQueueDescriptorSets(vertID);
@@ -807,6 +821,8 @@ struct RenderGraphVisitor : boost::dfs_visitor<> {
     void begin(const gfx::Viewport& pass, RenderGraph::vertex_descriptor vertID) const {
     }
     void end(const RasterPass& pass, RenderGraph::vertex_descriptor vertID) const {
+        CC_EXPECTS(ctx.viewportStack.size() == 1);
+
         const auto& renderData = get(RenderGraph::DataTag{}, ctx.g, vertID);
         if (!renderData.custom.empty()) {
             const auto& passes = ctx.ppl->custom.renderPasses;
@@ -822,6 +838,8 @@ struct RenderGraphVisitor : boost::dfs_visitor<> {
         }
         ctx.cmdBuff->endRenderPass();
         ctx.currentPass = nullptr;
+        ctx.viewportStack.pop_back();
+        CC_ENSURES(ctx.viewportStack.empty());
     }
     void end(const RasterSubpass& subpass, RenderGraph::vertex_descriptor vertID) const { // NOLINT(readability-convert-member-functions-to-static)
         const auto& renderData = get(RenderGraph::DataTag{}, ctx.g, vertID);
@@ -891,6 +909,20 @@ struct RenderGraphVisitor : boost::dfs_visitor<> {
                 return;
             }
         }
+
+        // Revert viewport
+        CC_EXPECTS(ctx.viewportStack.size() > 1);
+        if (ctx.viewportStack.back()) {
+            for (size_t i = ctx.viewportStack.size() - 1; i-- > 0;) {
+                const auto& vp = ctx.viewportStack[i];
+                if (vp) {
+                    ctx.cmdBuff->setViewport(*vp);
+                    break;
+                }
+            }
+        }
+        ctx.viewportStack.pop_back();
+
 #if CC_DEBUG
         ctx.cmdBuff->endMarker();
 #endif
@@ -1346,6 +1378,9 @@ void NativePipeline::executeRenderGraph(const RenderGraph& rg) {
             gfx::DescriptorSet*>
             perInstanceDescriptorSets(scratch);
 
+        ccstd::pmr::vector<ccstd::optional<gfx::Viewport>> viewportStack(scratch);
+        viewportStack.reserve(4);
+
         // submit commands
         RenderGraphVisitorContext ctx{
             ppl.nativeContext,
@@ -1360,6 +1395,7 @@ void NativePipeline::executeRenderGraph(const RenderGraph& rg) {
             profilerPerPassDescriptorSets,
             perInstanceDescriptorSets,
             programLibrary,
+            viewportStack,
             CustomRenderGraphContext{
                 custom.currentContext,
                 &rg,

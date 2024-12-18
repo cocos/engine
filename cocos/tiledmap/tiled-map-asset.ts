@@ -40,6 +40,9 @@ import { TextAsset } from '../asset/assets';
  */
 @ccclass('cc.TiledMapAsset')
 export class TiledMapAsset extends Asset {
+    constructor () {
+        super();
+    }
     @serializable
     tmxXmlStr = '';
 
@@ -70,7 +73,7 @@ export class TiledMapAsset extends Asset {
      */
     @serializable
     @type([SpriteFrame])
-    imageLayerSpriteFrame: SpriteFrame[] = []
+    imageLayerSpriteFrame: SpriteFrame[] = [];
 
     /**
      * @en

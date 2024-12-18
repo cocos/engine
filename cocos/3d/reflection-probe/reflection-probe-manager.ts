@@ -74,7 +74,7 @@ export class ReflectionProbeManager {
      */
     public registerEvent (): void {
         if (!this._registeredEvent) {
-            cclegacy.director.on(cclegacy.Director.EVENT_BEFORE_UPDATE, this.onUpdateProbes, this);
+            cclegacy.director.on(cclegacy.DirectorEvent.BEFORE_UPDATE, this.onUpdateProbes, this);
             this._registeredEvent = true;
         }
     }

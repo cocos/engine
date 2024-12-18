@@ -60,6 +60,10 @@ export class AudioClip extends Asset {
 
     private _player: AudioPlayer | null = null;
 
+    constructor () {
+        super();
+    }
+
     public destroy (): boolean {
         const destroyResult = super.destroy();
         this._player?.destroy();
@@ -97,7 +101,7 @@ export class AudioClip extends Asset {
         audioLoadMode: AudioType;
         ext: string;
         __isNative__: boolean;
-    } {
+        } {
         return {
             uuid: this._uuid,
             audioLoadMode: this.loadMode,

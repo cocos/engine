@@ -22,6 +22,7 @@
  THE SOFTWARE.
 */
 
+import { BUILD, LOAD_PHYSX_MANUALLY } from 'internal:constants';
 import { selector } from '../framework/physics-selector';
 
 import { PhysXWorld } from './physx-world';
@@ -45,6 +46,8 @@ import { PhysXBoxCharacterController } from './character-controllers/physx-box-c
 import { PhysXCapsuleCharacterController } from './character-controllers/physx-capsule-character-controller';
 
 import { Game, game } from '../../game';
+import { initPhysXLibs } from './physx-adapter';
+import { PhysicsSystem } from '../framework/physics-system';
 
 game.once(Game.EVENT_PRE_SUBSYSTEM_INIT, () => {
     selector.register('physx', {
@@ -69,3 +72,17 @@ game.once(Game.EVENT_PRE_SUBSYSTEM_INIT, () => {
         CapsuleCharacterController: PhysXCapsuleCharacterController,
     });
 });
+
+let loadPhysXPromise: Promise<void> | undefined;
+
+export function loadWasmModulePhysX (): Promise<void> {
+    if (BUILD && LOAD_PHYSX_MANUALLY) {
+        if (loadPhysXPromise) return loadPhysXPromise;
+        loadPhysXPromise = Promise.resolve()
+            .then(() => initPhysXLibs())
+            .then(() => PhysicsSystem.constructAndRegisterManually());
+        return loadPhysXPromise;
+    } else {
+        return Promise.resolve();
+    }
+}

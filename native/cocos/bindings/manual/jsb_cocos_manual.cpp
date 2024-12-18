@@ -738,19 +738,21 @@ static bool js_readFile_doJob(const ccstd::string &fullPath, typename ReadFileDo
         return false;
     }
 
-    // TODO(cjh): OpenHarmony NAPI support
-#if SCRIPT_ENGINE_TYPE != SCRIPT_ENGINE_NAPI
+
     if constexpr (std::is_same_v<T, ccstd::string> && isJson) {
+// TODO(cjh): OpenHarmony NAPI support
+#if SCRIPT_ENGINE_TYPE != SCRIPT_ENGINE_NAPI
         auto u16str = std::make_shared<std::u16string>();
         if (!cc::StringUtils::UTF8ToUTF16(*content, *u16str)) {
             CC_LOG_ERROR("UTF8ToUTF16 failed, file: %s", fullPath.c_str());
             return false;
         }
         outValue = u16str;
+#endif
     } else {
         outValue = content;
     }
-#endif
+
     return true;
 }
 

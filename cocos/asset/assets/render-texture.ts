@@ -60,7 +60,7 @@ const _windowInfo: IRenderWindowInfo = {
  */
 @ccclass('cc.RenderTexture')
 export class RenderTexture extends TextureBase {
-    private _window$: RenderWindow | null = null;
+    private _window: RenderWindow | null = null;
     constructor () {
         super();
     }
@@ -70,7 +70,7 @@ export class RenderTexture extends TextureBase {
      * @zh 渲染管线所使用的渲染窗口，内部逻辑创建，无法被修改。
      */
     get window (): RenderWindow | null {
-        return this._window$;
+        return this._window;
     }
 
     /**
@@ -99,10 +99,10 @@ export class RenderTexture extends TextureBase {
      * @zh 销毁渲染贴图。
      */
     public destroy (): boolean {
-        if (this._window$) {
+        if (this._window) {
             const root = cclegacy.director.root as Root;
-            root?.destroyWindow(this._window$);
-            this._window$ = null;
+            root?.destroyWindow(this._window);
+            this._window = null;
         }
 
         return super.destroy();
@@ -117,10 +117,10 @@ export class RenderTexture extends TextureBase {
     public resize (width: number, height: number): void {
         this._width = Math.floor(clamp(width, 1, 2048));
         this._height = Math.floor(clamp(height, 1, 2048));
-        if (this._window$) {
-            this._window$.resize(this._width, this._height);
+        if (this._window) {
+            this._window.resize(this._width, this._height);
         }
-        this.emit('resize', this._window$);
+        this.emit('resize', this._window);
     }
 
     /**
@@ -151,7 +151,7 @@ export class RenderTexture extends TextureBase {
      * @return @en The low level gfx texture. @zh 底层的 gfx 贴图。
      */
     public getGFXTexture (): Texture | null {
-        return this._window$ && this._window$.framebuffer.colorTextures[0];
+        return this._window && this._window.framebuffer.colorTextures[0];
     }
 
     /**
@@ -187,11 +187,11 @@ export class RenderTexture extends TextureBase {
             AccessFlagBit.FRAGMENT_SHADER_READ_TEXTURE,
         ));
 
-        if (this._window$) {
-            this._window$.destroy();
-            this._window$.initialize(deviceManager.gfxDevice, _windowInfo);
+        if (this._window) {
+            this._window.destroy();
+            this._window.initialize(deviceManager.gfxDevice, _windowInfo);
         } else {
-            this._window$ = root.createWindow(_windowInfo);
+            this._window = root.createWindow(_windowInfo);
         }
     }
 

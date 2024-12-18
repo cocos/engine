@@ -43,6 +43,7 @@ import { getPhaseID } from '../../rendering/pass-phase';
 import { SubModel } from '../../render-scene/scene';
 import { isEnableEffect } from '../../rendering/define';
 import type { Model } from '../../render-scene/scene';
+import type { ReflectionProbeManager } from '../reflection-probe';
 
 const { ccclass, help, executeInEditMode, executionOrder, menu, visible, type,
     formerlySerializedAs, serializable, editable, disallowAnimation } = _decorator;
@@ -646,7 +647,7 @@ export class MeshRenderer extends ModelRenderer {
 
     public onDestroy (): void {
         if (this._model) {
-            cclegacy.director.root.destroyModel(this._model);
+            (cclegacy.director.root as Root).destroyModel(this._model);
             this._model = null;
             this._models.length = 0;
         }
@@ -979,7 +980,7 @@ export class MeshRenderer extends ModelRenderer {
         model.visFlags = this.visibility;
         model.node = model.transform = this.node;
         this._models.length = 0;
-        this._models.push(this._model);
+        this._models.push(model);
         if (this._morphInstance && model instanceof MorphModel) {
             model.setMorphRendering(this._morphInstance);
         }
@@ -1167,16 +1168,18 @@ export class MeshRenderer extends ModelRenderer {
     protected onReflectionProbeChanged (): void {
         this._updateUseReflectionProbe();
         this._onUpdateLocalShadowBiasAndProbeId();
+        const reflectionProbeManager = cclegacy.internal.reflectionProbeManager as ReflectionProbeManager;
+        const model = this._model!;
         if (this.bakeSettings.reflectionProbe === ReflectionProbeType.BAKED_CUBEMAP
             || this.bakeSettings.reflectionProbe === ReflectionProbeType.BLEND_PROBES
             || this.bakeSettings.reflectionProbe === ReflectionProbeType.BLEND_PROBES_AND_SKYBOX) {
-            cclegacy.internal.reflectionProbeManager.selectReflectionProbe(this._model);
-            if (!cclegacy.internal.reflectionProbeManager.getUsedReflectionProbe(this._model, false)) {
+            reflectionProbeManager.selectReflectionProbe(model);
+            if (!reflectionProbeManager.getUsedReflectionProbe(model, false)) {
                 warnID(16302);
             }
         } else if (this.bakeSettings.reflectionProbe === ReflectionProbeType.PLANAR_REFLECTION) {
-            cclegacy.internal.reflectionProbeManager.selectPlanarReflectionProbe(this._model);
-            if (!cclegacy.internal.reflectionProbeManager.getUsedReflectionProbe(this._model, true)) {
+            reflectionProbeManager.selectPlanarReflectionProbe(model);
+            if (!reflectionProbeManager.getUsedReflectionProbe(model, true)) {
                 warnID(16302);
             }
         }

@@ -56,7 +56,7 @@ public:
 
     TransformConstraintData& getData();
 
-    Vector<Bone*>& getBones();
+    inline Vector<Bone*>& getBones() { return _bones; }
 
     Bone* getTarget();
     void setTarget(Bone* inValue);
@@ -73,11 +73,13 @@ public:
     float getShearMix();
     void setShearMix(float inValue);
 
-    bool isActive();
+    virtual bool isActive();
 
-    void setActive(bool inValue);
+    virtual void setActive(bool inValue);;
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     TransformConstraintData& _data;
     Vector<Bone*> _bones;
     Bone* _target;

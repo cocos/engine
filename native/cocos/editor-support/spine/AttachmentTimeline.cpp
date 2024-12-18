@@ -114,14 +114,6 @@ void AttachmentTimeline::setSlotIndex(size_t inValue) {
     _slotIndex = inValue;
 }
 
-const Vector<float> &AttachmentTimeline::getFrames() {
-    return _frames;
-}
-
-const Vector<String> &AttachmentTimeline::getAttachmentNames() {
-    return _attachmentNames;
-}
-
 size_t AttachmentTimeline::getFrameCount() {
     return _frames.size();
 }

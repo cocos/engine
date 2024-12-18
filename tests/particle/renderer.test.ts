@@ -10,15 +10,15 @@ test('recycle pool release', () => {
     scene.addChild(node);
     game.step();
     // @ts-expect-error access private property 
-    const beforeLength = scalableContainerManager._pools$.length;
+    const beforeLength = scalableContainerManager._pools.length;
     const comp = node.addComponent(ParticleSystem);
     game.step();
     // @ts-expect-error access private property  
-    const currentLength = scalableContainerManager._pools$.length;
+    const currentLength = scalableContainerManager._pools.length;
     expect(currentLength).toBeGreaterThan(beforeLength);
     comp.destroy();
     game.step();
 
     // @ts-expect-error
-    expect(scalableContainerManager._pools$.length).toBeLessThan(currentLength);
+    expect(scalableContainerManager._pools.length).toBeLessThan(currentLength);
 });

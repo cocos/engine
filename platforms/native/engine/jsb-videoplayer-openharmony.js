@@ -23,20 +23,17 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-'use strict';
-
 if (cc.internal.VideoPlayer) {
-
     const { EventType } = cc.internal.VideoPlayer;
 
-    let vec3 = cc.Vec3;
-    let mat4 = cc.Mat4;
-    let _mat4_temp = new mat4();
+    const vec3 = cc.Vec3;
+    const mat4 = cc.Mat4;
+    const _mat4_temp = new mat4();
 
-    let _topLeft = new vec3();
-    let _bottomRight = new vec3();
-    let kWebViewTag = 0;
-    let videoPlayers = [];
+    const _topLeft = new vec3();
+    const _bottomRight = new vec3();
+    let kVideoTag = 0;
+    const videoPlayers = [];
     const VideoEvent = {
         PLAYING: 0,
         PAUSED: 1,
@@ -44,121 +41,138 @@ if (cc.internal.VideoPlayer) {
         COMPLETED: 3,
         META_LOADED: 4,
         CLICKED: 5,
-        READY_TO_PLAY:6,
-        UPDATE:7,
-        QUIT_FULLSCREEN:1000
+        READY_TO_PLAY: 6,
+        UPDATE: 7,
+        QUIT_FULLSCREEN: 1000,
     };
 
-    cc.internal.VideoPlayerImplManager.getImpl = function(componenet) {
+    cc.internal.VideoPlayerImplManager.getImpl = function (componenet) {
         return new VideoPlayerImplOpenHarmony(componenet);
     };
-    window.oh.onVideoEvent = (tag, ev, args) => {
-        videoPlayers.forEach(player => {
-            if (player.index == tag) {
-                player.dispatchEvent(ev, args);
-            } 
+    window.oh.onVideoEvent = (args) => {
+        const data = JSON.parse(args);
+        videoPlayers.forEach((player) => {
+            if (player.index === data.videoTag) {
+                player.dispatchEvent(data.videoEvent, data.args);
+            }
         });
     };
     class VideoPlayer {
-        constructor() {
+        constructor () {
             this._events = {};
             this._currentTime = 0;
             this._duration = 0;
-            this._videoIndex = kWebViewTag++;
+            this._videoIndex = kVideoTag++;
             this._matViewProj_temp = new mat4();
-            window.oh.postMessage("createVideo", this._videoIndex);
+            window.oh.postMessage('createVideo', this._videoIndex);
             videoPlayers.push(this);
         }
-        get index() {
+        get index () {
             return this._videoIndex;
         }
-        play() {
-            window.oh.postMessage("startVideo", this._videoIndex);
+        play () {
+            window.oh.postMessage('startVideo', this._videoIndex);
         }
-        setURL(url) {
-            window.oh.postMessage("setVideoUrl", {tag:this._videoIndex, url:url});
+
+        // private function
+        _isURL (url) {
+            const regexp = /((http|https):\/\/([\w\-]+\.)+[\w\-]+(\/[\w\u4e00-\u9fa5\-\.\/?\@\%\!\&=\+\~\:\#\;\,]*)?)/ig;
+            if (regexp.test(url)) {
+              return true;
+            } else {
+              return false;
+            }
         }
-        pause() {
-            window.oh.postMessage("pauseVideo", this._videoIndex);
+
+        setURL (url) {
+            if (this._isURL(url)) {
+                window.oh.postMessage('setVideoUrl', { tag: this._videoIndex, resourceType: 0, url });
+            } else {
+                window.oh.postMessage('setVideoUrl', { tag: this._videoIndex, resourceType: 1, url });
+            }
         }
-        setVisible(visible) {
-            window.oh.postMessage("setVideoVisible", {tag:this._videoIndex, visible:visible});
+
+        pause () {
+            window.oh.postMessage('pauseVideo', this._videoIndex);
         }
-        resume() {
-            window.oh.postMessage("resumeVideo", this._videoIndex);
+        setVisible (visible) {
+            window.oh.postMessage('setVideoVisible', { tag: this._videoIndex, visible });
         }
-        currentTime() {
-            window.oh.postSyncMessage("currentTime", this._videoIndex).then((result) => {
+        resume () {
+            window.oh.postMessage('resumeVideo', this._videoIndex);
+        }
+        currentTime () {
+            window.oh.postSyncMessage('currentTime', this._videoIndex).then((result) => {
                 this._currentTime = result;
             });
             return this._currentTime;
         }
-        stop() {
-            window.oh.postMessage("stopVideo", this._videoIndex);
+        stop () {
+            window.oh.postMessage('stopVideo', this._videoIndex);
         }
-        seekTo(val) {
-            window.oh.postMessage("seekVideoTo", {tag:this._videoIndex, time:val});
+        seekTo (val) {
+            window.oh.postMessage('seekVideoTo', { tag: this._videoIndex, time: val });
         }
-        duration() {
-            window.oh.postSyncMessage("getVideoDuration", this._videoIndex).then((result) => {
+        duration () {
+            window.oh.postSyncMessage('getVideoDuration', this._videoIndex).then((result) => {
                 this._duration = result;
             });
             return this._duration;
         }
-        destroy() {
-            window.oh.postMessage("removeVideo", this._videoIndex);
+        destroy () {
+            window.oh.postMessage('removeVideo', this._videoIndex);
         }
-        setFullScreenEnabled(enable) {
-            window.oh.postMessage("setFullScreenEnabled", {tag:this._videoIndex, fullScreen:enable});
+        setFullScreenEnabled (enable) {
+            window.oh.postMessage('setFullScreenEnabled', { tag: this._videoIndex, fullScreen: enable });
         }
-        setKeepAspectRatioEnabled(enable) {
+        setKeepAspectRatioEnabled (enable) {
             cc.warn('The platform does not support');
         }
-        setFrame(x, y, w, h){
-            window.oh.postMessage("setVideoRect", {tag:this._videoIndex, x:x, y:y, w:w, h:h});
+        setFrame (x, y, w, h) {
+            window.oh.postMessage('setVideoRect', { tag: this._videoIndex, x, y, w, h });
         }
 
-        eventTypeToEventName(ev) {
+        eventTypeToEventName (ev) {
             let evString;
             switch (ev) {
                 case VideoEvent.PLAYING:
-                    evString = "play";
+                    evString = 'play';
                     break;
                 case VideoEvent.PAUSED:
-                    evString = "pause";
+                    evString = 'pause';
                     break;
                 case VideoEvent.STOPPED:
-                    evString = "stoped";
+                    evString = 'stoped';
                     break;
                 case VideoEvent.COMPLETED:
-                    evString = "ended";
+                    evString = 'ended';
                     break;
                 case VideoEvent.META_LOADED:
-                    evString = "loadedmetadata";
+                    evString = 'loadedmetadata';
                     break;
                 case VideoEvent.CLICKED:
-                    evString = "click";
+                    evString = 'click';
                     break;
                 case VideoEvent.READY_TO_PLAY:
-                    evString = "suspend";
+                    evString = 'suspend';
                     break;
                 case VideoEvent.UPDATE:
-                    evString = "update";
+                    evString = 'update';
                     break;
                 case VideoEvent.QUIT_FULLSCREEN:
-                    evString = "suspend";
+                    evString = 'suspend';
                     break;
                 default:
-                    evString = "none";
+                    evString = 'none';
                     break;
             }
             return evString;
         }
 
-        dispatchEvent(type, args) {
-            let eventName = this.eventTypeToEventName(type);
+        dispatchEvent (type, args) {
+            const eventName = this.eventTypeToEventName(type);
             const listeners = this._events[eventName];
-    
+
             if (listeners) {
                 for (let i = 0; i < listeners.length; i++) {
                     listeners[i](args);
@@ -166,16 +180,16 @@ if (cc.internal.VideoPlayer) {
             }
         }
 
-        addEventListener(name, listener) {
+        addEventListener (name, listener) {
             if (!this._events[name]) {
                 this._events[name] = [];
             }
             this._events[name].push(listener);
         }
 
-        removeEventListener(name, listener) {
+        removeEventListener (name, listener) {
             const listeners = this._events[name];
-    
+
             if (listeners && listeners.length > 0) {
                 for (let i = listeners.length; i--; i > 0) {
                     if (listeners[i] === listener) {
@@ -188,13 +202,13 @@ if (cc.internal.VideoPlayer) {
     }
 
     class VideoPlayerImplOpenHarmony extends cc.internal.VideoPlayerImpl {
-
-        constructor(componenet) {
+        constructor (componenet) {
             super(componenet);
             this._matViewProj_temp = new mat4();
+            this._loaded = false;
         }
 
-        syncClip(clip) {
+        syncClip (clip) {
             this.removeVideoPlayer();
             if (!clip) {
                 return;
@@ -202,7 +216,7 @@ if (cc.internal.VideoPlayer) {
             this.createVideoPlayer(clip._nativeAsset);
         }
 
-        syncURL(url) {
+        syncURL (url) {
             this.removeVideoPlayer();
             if (!url) {
                 return;
@@ -210,17 +224,24 @@ if (cc.internal.VideoPlayer) {
             this.createVideoPlayer(url);
         }
 
-        onCanplay () {
+        onCanPlay (args = 0) {
             if (this._loaded) {
                 return;
             }
+            this._video._duration = args;
             this._loaded = true;
             this.video.setVisible(this._visible);
             this.dispatchEvent(EventType.READY_TO_PLAY);
-            this.delayedPlay();
+            //this.delayedPlay();
         }
 
-        _bindEvent() {
+        onUpdate (args = 0) {
+          if (this.video) {
+            this.video._currentTime = args;
+          }
+        }
+
+        _bindEvent () {
             this.video.addEventListener('loadedmetadata', this.onLoadedMetadata.bind(this));
             this.video.addEventListener('suspend', this.onCanPlay.bind(this));
             this.video.addEventListener('play', this.onPlay.bind(this));
@@ -228,9 +249,21 @@ if (cc.internal.VideoPlayer) {
             this.video.addEventListener('stoped', this.onStoped.bind(this));
             this.video.addEventListener('click', this.onClick.bind(this));
             this.video.addEventListener('ended', this.onEnded.bind(this));
+            this.video.addEventListener('update', this.onUpdate.bind(this));
         }
 
-        onLoadedMetadata() {
+        _unBindEvent () {
+            this.video.removeEventListener('loadedmetadata', this.onLoadedMetadata.bind(this));
+            this.video.removeEventListener('suspend', this.onCanPlay.bind(this));
+            this.video.removeEventListener('play', this.onPlay.bind(this));
+            this.video.removeEventListener('pause', this.onPause.bind(this));
+            this.video.removeEventListener('stoped', this.onStoped.bind(this));
+            this.video.removeEventListener('click', this.onClick.bind(this));
+            this.video.removeEventListener('ended', this.onEnded.bind(this));
+            this.video.removeEventListener('update', this.onUpdate.bind(this));
+        }
+
+        onLoadedMetadata () {
             this._loadedMeta = true;
             this._forceUpdate = true;
             if (this._visible) {
@@ -243,7 +276,7 @@ if (cc.internal.VideoPlayer) {
             this.delayedPlay();
         }
 
-        createVideoPlayer(url) {
+        createVideoPlayer (url) {
             this._video = new VideoPlayer();
             this._bindEvent();
             this._video.setVisible(this._visible);
@@ -251,12 +284,13 @@ if (cc.internal.VideoPlayer) {
             this._forceUpdate = true;
         }
 
-        removeVideoPlayer() {
-            let video = this.video;
+        removeVideoPlayer () {
+            const video = this.video;
             if (video) {
                 video.stop();
                 video.setVisible(false);
                 video.destroy();
+                this._unBindEvent();
                 this._playing = false;
                 this._loaded = false;
                 this._loadedMeta = false;
@@ -273,27 +307,27 @@ if (cc.internal.VideoPlayer) {
             return this.video.duration();
         }
 
-        syncPlaybackRate() {
+        syncPlaybackRate () {
             cc.warn('The platform does not support');
         }
 
-        syncVolume() {
+        syncVolume () {
             cc.warn('The platform does not support');
         }
 
-        syncMute() {
+        syncMute () {
             cc.warn('The platform does not support');
         }
 
-        syncLoop() {
+        syncLoop () {
             cc.warn('The platform does not support');
         }
 
-        syncStayOnBottom() {
+        syncStayOnBottom () {
             cc.warn('The platform does not support');
         }
 
-        getCurrentTime() {
+        getCurrentTime () {
             if (this.video) {
                 this._cachedCurrentTime = this.video.currentTime();
                 return this._cachedCurrentTime;
@@ -302,13 +336,13 @@ if (cc.internal.VideoPlayer) {
         }
 
         seekTo (val) {
-            let video = this._video;
+            const video = this._video;
             if (!video) return;
             video.seekTo(val);
             this._cachedCurrentTime = val;
         }
 
-        disable(noPause) {
+        disable (noPause) {
             if (this.video) {
                 if (!noPause) {
                     this.video.pause();
@@ -318,7 +352,7 @@ if (cc.internal.VideoPlayer) {
             }
         }
 
-        enable() {
+        enable () {
             if (this.video) {
                 this.video.setVisible(true);
                 this._visible = true;
@@ -330,7 +364,7 @@ if (cc.internal.VideoPlayer) {
             this.syncCurrentTime();
         }
 
-        resume() {
+        resume () {
             if (this.video) {
                 this.video.resume();
                 this.syncCurrentTime();
@@ -338,35 +372,35 @@ if (cc.internal.VideoPlayer) {
             }
         }
 
-        pause() {
+        pause () {
             if (this.video) {
                 this._cachedCurrentTime = this.video.currentTime();
                 this.video.pause();
             }
         }
 
-        stop() {
+        stop () {
             if (this.video) {
-                this._ignorePause = true;
+                //this._ignorePause = true;
                 this.video.seekTo(0);
                 this._cachedCurrentTime = 0;
                 this.video.stop();
             }
         }
 
-        canFullScreen(enabled) {
+        canFullScreen (enabled) {
             if (this.video) {
                 this.video.setFullScreenEnabled(enabled);
             }
         }
 
-        syncKeepAspectRatio(enabled) {
+        syncKeepAspectRatio (enabled) {
             if (this.video) {
                 this.video.setKeepAspectRatioEnabled(enabled);
             }
         }
 
-        syncMatrix() {
+        syncMatrix () {
             if (!this._video || !this._component || !this._uiTrans) return;
 
             const camera = this.UICamera;
@@ -376,12 +410,12 @@ if (cc.internal.VideoPlayer) {
 
             this._component.node.getWorldMatrix(_mat4_temp);
             const { width, height } = this._uiTrans.contentSize;
-            if (!this._forceUpdate &&
-                camera.matViewProj.equals(this._matViewProj_temp) &&
-                this._m00 === _mat4_temp.m00 && this._m01 === _mat4_temp.m01 &&
-                this._m04 === _mat4_temp.m04 && this._m05 === _mat4_temp.m05 &&
-                this._m12 === _mat4_temp.m12 && this._m13 === _mat4_temp.m13 &&
-                this._w === width && this._h === height) {
+            if (!this._forceUpdate
+                && camera.matViewProj.equals(this._matViewProj_temp)
+                && this._m00 === _mat4_temp.m00 && this._m01 === _mat4_temp.m01
+                && this._m04 === _mat4_temp.m04 && this._m05 === _mat4_temp.m05
+                && this._m12 === _mat4_temp.m12 && this._m13 === _mat4_temp.m13
+                && this._w === width && this._h === height) {
                 return;
             }
 
@@ -396,10 +430,10 @@ if (cc.internal.VideoPlayer) {
             this._w = width;
             this._h = height;
 
-            let canvas_width = cc.game.canvas.width;
-            let canvas_height = cc.game.canvas.height;
+            const canvas_width = cc.game.canvas.width;
+            const canvas_height = cc.game.canvas.height;
 
-            let ap = this._uiTrans.anchorPoint;
+            const ap = this._uiTrans.anchorPoint;
             // Vectors in node space
             vec3.set(_topLeft, -ap.x * this._w, (1.0 - ap.y) * this._h, 0);
             vec3.set(_bottomRight, (1 - ap.x) * this._w, -ap.y * this._h, 0);
@@ -412,8 +446,8 @@ if (cc.internal.VideoPlayer) {
             camera.worldToScreen(_topLeft, _topLeft);
             camera.worldToScreen(_bottomRight, _bottomRight);
 
-            let finalWidth = _bottomRight.x - _topLeft.x;
-            let finalHeight = _topLeft.y - _bottomRight.y;
+            const finalWidth = _bottomRight.x - _topLeft.x;
+            const finalHeight = _topLeft.y - _bottomRight.y;
             this._video.setFrame(_topLeft.x, canvas_height - _topLeft.y, finalWidth, finalHeight);
             this._forceUpdate = false;
         }

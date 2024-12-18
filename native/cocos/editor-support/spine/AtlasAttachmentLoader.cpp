@@ -56,7 +56,7 @@ RegionAttachment *AtlasAttachmentLoader::newRegionAttachment(Skin &skin, const S
 
     AtlasRegion &region = *regionP;
 
-    RegionAttachment *attachmentP = new (__FILE__, __LINE__) RegionAttachment(name);
+    RegionAttachment *attachmentP = spine_new RegionAttachment(name);
 
     RegionAttachment &attachment = *attachmentP;
     attachment.setRendererObject(regionP);
@@ -78,7 +78,7 @@ MeshAttachment *AtlasAttachmentLoader::newMeshAttachment(Skin &skin, const Strin
 
     AtlasRegion &region = *regionP;
 
-    MeshAttachment *attachmentP = new (__FILE__, __LINE__) MeshAttachment(name);
+    MeshAttachment *attachmentP = spine_new MeshAttachment(name);
 
     MeshAttachment &attachment = *attachmentP;
     attachment.setRendererObject(regionP);
@@ -100,22 +100,22 @@ MeshAttachment *AtlasAttachmentLoader::newMeshAttachment(Skin &skin, const Strin
 
 BoundingBoxAttachment *AtlasAttachmentLoader::newBoundingBoxAttachment(Skin &skin, const String &name) {
     SP_UNUSED(skin);
-    return new (__FILE__, __LINE__) BoundingBoxAttachment(name);
+    return spine_new BoundingBoxAttachment(name);
 }
 
 PathAttachment *AtlasAttachmentLoader::newPathAttachment(Skin &skin, const String &name) {
     SP_UNUSED(skin);
-    return new (__FILE__, __LINE__) PathAttachment(name);
+    return spine_new PathAttachment(name);
 }
 
 PointAttachment *AtlasAttachmentLoader::newPointAttachment(Skin &skin, const String &name) {
     SP_UNUSED(skin);
-    return new (__FILE__, __LINE__) PointAttachment(name);
+    return spine_new PointAttachment(name);
 }
 
 ClippingAttachment *AtlasAttachmentLoader::newClippingAttachment(Skin &skin, const String &name) {
     SP_UNUSED(skin);
-    return new (__FILE__, __LINE__) ClippingAttachment(name);
+    return spine_new ClippingAttachment(name);
 }
 
 void AtlasAttachmentLoader::configureAttachment(Attachment *attachment) {

@@ -60,11 +60,13 @@ public:
 
     size_t getSlotIndex();
     void setSlotIndex(size_t inValue);
-    const Vector<float>& getFrames();
-    const Vector<String>& getAttachmentNames();
+    inline const Vector<float>& getFrames() const { return _frames; }
+    inline const Vector<String>& getAttachmentNames() const { return _attachmentNames; }
     size_t getFrameCount();
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     size_t _slotIndex;
     Vector<float> _frames;
     Vector<String> _attachmentNames;

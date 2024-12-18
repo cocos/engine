@@ -25,7 +25,7 @@ import {
     ccclass, visible, type, displayOrder, readOnly, slide, range, rangeStep,
     editable, serializable, rangeMin, tooltip, formerlySerializedAs, displayName,
 } from 'cc.decorator';
-import { BAIDU } from 'internal:constants';
+
 import { TextureCube } from '../asset/assets/texture-cube';
 import { CCFloat, CCInteger } from '../core/data/utils/attribute';
 import { Color, Quat, Vec3, Vec2, Vec4 } from '../core/math';
@@ -862,11 +862,6 @@ export class ShadowsInfo {
         }
     }
     get enabled (): boolean {
-        if (BAIDU) {
-            if (this._type !== ShadowType.Planar) {
-                this._enabled = false;
-            }
-        }
         return this._enabled;
     }
 
@@ -1438,15 +1433,15 @@ export class LightProbeInfo {
     }
 
     public onProbeBakeFinished (): void {
-        this.onProbeBakingChanged$(this._scene);
+        this.onProbeBakingChanged(this._scene);
     }
 
     public onProbeBakeCleared (): void {
         this.clearSHCoefficients();
-        this.onProbeBakingChanged$(this._scene);
+        this.onProbeBakingChanged(this._scene);
     }
 
-    private onProbeBakingChanged$ (node: Node | null): void {
+    private onProbeBakingChanged (node: Node | null): void {
         if (!node) {
             return;
         }
@@ -1455,7 +1450,7 @@ export class LightProbeInfo {
 
         for (let i = 0; i < node.children.length; i++) {
             const child = node.children[i];
-            this.onProbeBakingChanged$(child);
+            this.onProbeBakingChanged(child);
         }
     }
 
@@ -1469,7 +1464,7 @@ export class LightProbeInfo {
             probes[i].coefficients.length = 0;
         }
 
-        this.clearAllSHUBOs$();
+        this.clearAllSHUBOs();
     }
 
     public isUniqueNode (): boolean {
@@ -1547,7 +1542,7 @@ export class LightProbeInfo {
 
         const pointCount = points.length;
         if (pointCount < 4) {
-            this.resetAllTetraIndices$();
+            this.resetAllTetraIndices();
             this._data!.reset();
             return;
         }
@@ -1555,12 +1550,12 @@ export class LightProbeInfo {
         this._data!.updateProbes(points);
 
         if (updateTet) {
-            this.resetAllTetraIndices$();
+            this.resetAllTetraIndices();
             this._data!.updateTetrahedrons();
         }
     }
 
-    private clearAllSHUBOs$ (): void {
+    private clearAllSHUBOs (): void {
         if (!this._scene) {
             return;
         }
@@ -1576,7 +1571,7 @@ export class LightProbeInfo {
         }
     }
 
-    private resetAllTetraIndices$ (): void {
+    private resetAllTetraIndices (): void {
         if (!this._scene) {
             return;
         }
@@ -1708,7 +1703,7 @@ export class SceneGlobals {
         this.skin.activate(sceneData.skin);
         this.postSettings.activate(sceneData.postSettings);
         if (this.lightProbeInfo && sceneData.lightProbes) {
-            this.lightProbeInfo.activate(scene, sceneData.lightProbes as LightProbes);
+            this.lightProbeInfo.activate(scene, sceneData.lightProbes);
         }
 
         const root = legacyCC.director.root as Root;

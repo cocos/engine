@@ -24,7 +24,7 @@
 
 #pragma once
 
-#include <map>
+#include <unordered_map>
 #include <vector>
 #include "MeshBuffer.h"
 #include "MiddlewareMacro.h"
@@ -83,13 +83,13 @@ public:
     void render(float dt);
 
     /**
-     * @brief Third party module add in _updateMap,it will update perframe.
+     * @brief Mark the add flag to _operateCacheMap, and perform the update in the next frame
      * @param[in] editor Module must implement IMiddleware interface.
      */
     void addTimer(IMiddleware *editor);
 
     /**
-     * @brief Third party module remove from _updateMap,it will stop update.
+     * @brief Mark the remove flag to _operateCacheMap, and perform the update in the next frame
      * @param[in] editor Module must implement IMiddleware interface.
      */
     void removeTimer(IMiddleware *editor);
@@ -108,16 +108,12 @@ public:
     MiddlewareManager();
     ~MiddlewareManager();
 
-    // If manager is traversing _updateMap, will set the flag untill traverse is finished.
-    bool isRendering = false;
-    bool isUpdating = false;
-
 private:
-    void clearRemoveList();
+    void updateOperateCache();
 
     ccstd::vector<IMiddleware *> _updateList;
-    ccstd::vector<IMiddleware *> _removeList;
-    std::map<int, MeshBuffer *> _mbMap;
+    ccstd::unordered_map<IMiddleware *, bool> _operateCacheMap;
+    ccstd::unordered_map<int, MeshBuffer *> _mbMap;
 
     SharedBufferManager _renderInfo;
     SharedBufferManager _attachInfo;

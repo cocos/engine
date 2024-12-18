@@ -46,11 +46,6 @@ using namespace spine;
 
 RTTI_IMPL(PathConstraint, Updatable)
 
-const float PathConstraint::EPSILON = 0.00001f;
-const int PathConstraint::NONE = -1;
-const int PathConstraint::BEFORE = -2;
-const int PathConstraint::AFTER = -3;
-
 PathConstraint::PathConstraint(PathConstraintData &data, Skeleton &skeleton) : Updatable(),
                                                                                _data(data),
                                                                                _target(skeleton.findSlot(
@@ -239,10 +234,6 @@ float PathConstraint::getTranslateMix() {
 
 void PathConstraint::setTranslateMix(float inValue) {
     _translateMix = inValue;
-}
-
-Vector<Bone *> &PathConstraint::getBones() {
-    return _bones;
 }
 
 Slot *PathConstraint::getTarget() {

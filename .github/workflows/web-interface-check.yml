@@ -20,15 +20,43 @@ jobs:
         with:
           node-version: '18.x'
 
+      - name: Setup emsdk
+        uses: dumganhar/setup-emsdk@997d2cde2deabda085a11f98e86e842915b0e846
+        with:
+          version: 3.1.41
+          actions-cache-folder: 'emsdk-cache-3.1.41'
+
+      - name: Verify
+        run: |
+          which emcc
+          emcc -v
+
+      - name: Install ninja
+        run: |
+          if ! command -v ninja &> /dev/null; then
+              echo "Ninja not found, installing..."
+              # sudo apt update
+              sudo apt install ninja-build
+          else
+              echo "Ninja is already installed."
+          fi
+          which ninja
+
       - uses: actions/checkout@v4
         name: Checkout Base Ref
         with:
           repository: ${{ github.event.pull_request.base.repo.full_name }}
           ref: ${{ github.base_ref }}
           path: './engine'
+
+      - name: Get Base Ref
+        working-directory: ./engine
+        run: |
+          echo "BASE_REF=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
       - run: |
-          "EXT_VERSION=$(node ./engine/.github/workflows/get-native-external-version.js)" >> $env:GITHUB_ENV
-        shell: pwsh
+          echo "EXT_VERSION=$(node ./engine/.github/workflows/get-native-external-version.js)" >> $GITHUB_ENV
+
       - uses: actions/checkout@v4
         name: Download external
         with:
@@ -36,6 +64,51 @@ jobs:
           path: './engine/native/external'
           ref: "${{ env.EXT_VERSION }}"
           fetch-depth: 1
+
+      - name: Apply emscripten patches (BASE)
+        run: |
+          echo "--------------------------------- Save bind.cpp ---------------------------------"
+          cp $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp.bak
+          echo "--------------------------------- Apply embind bind.cpp patches ---------------------------------"
+          cp -f ./engine/.github/workflows/emscripten-patches/embind/bind.cpp $EMSDK/upstream/emscripten/system/lib/embind/
+          echo "--------------------------------- Apply patches DONE! ---------------------------------"
+          cat $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+
+      - name: Build Spine WASM (BASE)
+        run: |
+          cd ./engine/native/cocos/editor-support/spine-wasm
+          mkdir build-wasm
+          cd build-wasm
+          emcmake cmake .. -GNinja
+          ninja
+          ls -l
+
+      - name: Build Spine ASMJS (BASE)
+        run: |
+          cd ./engine/native/cocos/editor-support/spine-wasm
+          sed -i 's/set(BUILD_WASM 1)/set(BUILD_WASM 0)/g' CMakeLists.txt
+          mkdir build-asmjs
+          cd build-asmjs
+          emcmake cmake .. -GNinja
+          ninja
+          ls -l
+          
+      - name: Copy files to external directory (BASE)
+        run: |
+          rm -rf dist
+          mkdir dist
+          cp ./engine/native/cocos/editor-support/spine-wasm/build-wasm/spine.wasm ./dist/
+          cp ./engine/native/cocos/editor-support/spine-wasm/build-wasm/spine.js ./dist/spine.wasm.js
+          cp ./engine/native/cocos/editor-support/spine-wasm/build-asmjs/spine.js.mem ./dist/
+          cp ./engine/native/cocos/editor-support/spine-wasm/build-asmjs/spine.js ./dist/spine.asm.js
+          echo "-------- Before replace spine wasm -----------"
+          ls -l ./engine/native/external/emscripten/spine/
+          cp -f ./dist/* ./engine/native/external/emscripten/spine/
+          echo "-------- After replace spine wasm ------------"
+          ls -l ./engine/native/external/emscripten/spine/
+          echo "-----------------------------------------------"
+          cd ./engine/native/external
+          git status
 
       - name: Build Base Declarations
         working-directory: ./engine
@@ -45,6 +118,14 @@ jobs:
             node ./.github/workflows/package-size-check.js
           fi
 
+      - name: Restore patches (BASE)
+        run: |
+          echo "-------------------------- Restore patches ---------------------------------"
+          rm $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+          mv $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp.bak $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+          echo "-------------------------- Restore patches DONE! ---------------------------------"
+          cat $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+
       - name: Clear npm Cache
         run: |
           npm cache clean --force
@@ -52,12 +133,38 @@ jobs:
       - uses: actions/checkout@v4
         name: Checkout Head Ref
         with:
-          ref: 'refs/pull/${{ github.event.pull_request.number }}/merge' # Don't check out the head commit, checkout the "merge commit" instead
+          ref: 'refs/pull/${{ github.event.pull_request.number }}/head'
           path: './engine-HEAD'
+          fetch-depth: 0
+
+      - name: Head merges base
+        working-directory: ./engine-HEAD
+        run: |
+          git config user.name "Cocos CI"
+          git config user.email "cocos-ci@cocos.com"
+          echo "BASE_REF: ${{ env.BASE_REF }}"
+          HEAD_REF=$(git rev-parse HEAD)
+          echo "HEAD_REF: $HEAD_REF"
+          echo "--------------------------------------------------------"
+          echo "HEAD LOG:"
+          git --no-pager log -3
+          echo "--------------------------------------------------------"
+          git fetch origin ${{ env.BASE_REF }}
+          git reset --hard ${{ env.BASE_REF }}
+          echo "--------------------------------------------------------"
+          echo "BASE LOG:"
+          git --no-pager log -3
+          echo "--------------------------------------------------------"
+          CURRENT_REF=$(git rev-parse HEAD)
+          echo "---- $CURRENT_REF merges $HEAD_REF ----"
+          git merge $HEAD_REF
+          echo "--------------------------------------------------------"
+          echo "MERGED LOG:"
+          git --no-pager log -5
+          echo "--------------------------------------------------------"
 
       - run: |
-          "EXT_VERSION_HEAD=$(node ./engine-HEAD/.github/workflows/get-native-external-version.js)" >> $env:GITHUB_ENV
-        shell: pwsh
+          echo "EXT_VERSION_HEAD=$(node ./engine-HEAD/.github/workflows/get-native-external-version.js)" >> $GITHUB_ENV
 
       - uses: actions/checkout@v4
         name: Download external
@@ -67,11 +174,70 @@ jobs:
           ref: "${{ env.EXT_VERSION_HEAD }}"
           fetch-depth: 1
 
+      - name: Apply emscripten patches (HEAD)
+        run: |
+          echo "--------------------------------- Save bind.cpp ---------------------------------"
+          cp $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp.bak
+          echo "--------------------------------- Apply embind bind.cpp patches ---------------------------------"
+          cp -f ./engine-HEAD/.github/workflows/emscripten-patches/embind/bind.cpp $EMSDK/upstream/emscripten/system/lib/embind/
+          echo "--------------------------------- Apply patches DONE! ---------------------------------"
+          cat $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+
+      - name: Build Spine WASM (HEAD)
+        run: |
+          cd ./engine-HEAD/native/cocos/editor-support/spine-wasm
+          mkdir build-wasm
+          cd build-wasm
+          emcmake cmake .. -GNinja
+          ninja
+          ls -l
+
+      - name: Build Spine ASMJS (HEAD)
+        run: |
+          cd ./engine-HEAD/native/cocos/editor-support/spine-wasm
+          sed -i 's/set(BUILD_WASM 1)/set(BUILD_WASM 0)/g' CMakeLists.txt
+          mkdir build-asmjs
+          cd build-asmjs
+          emcmake cmake .. -GNinja
+          ninja
+          ls -l
+          
+      - name: Copy files to external directory (HEAD)
+        run: |
+          rm -rf dist
+          mkdir dist
+          cp ./engine-HEAD/native/cocos/editor-support/spine-wasm/build-wasm/spine.wasm ./dist/
+          cp ./engine-HEAD/native/cocos/editor-support/spine-wasm/build-wasm/spine.js ./dist/spine.wasm.js
+          cp ./engine-HEAD/native/cocos/editor-support/spine-wasm/build-asmjs/spine.js.mem ./dist/
+          cp ./engine-HEAD/native/cocos/editor-support/spine-wasm/build-asmjs/spine.js ./dist/spine.asm.js
+          echo "-------- Before replace spine wasm -----------"
+          ls -l ./engine-HEAD/native/external/emscripten/spine/
+          cp -f ./dist/* ./engine-HEAD/native/external/emscripten/spine/
+          echo "-------- After replace spine wasm ------------"
+          ls -l ./engine-HEAD/native/external/emscripten/spine/
+          echo "-----------------------------------------------"
+          cd ./engine-HEAD/native/external
+          git status
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: spine-emscripten
+          path: dist
+
       - name: Build Head Declarations
         working-directory: ./engine-HEAD
         run: |
           npm install
           node ./.github/workflows/package-size-check.js
+
+      - name: Restore patches (HEAD)
+        run: |
+          echo "-------------------------- Restore patches ---------------------------------"
+          rm $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+          mv $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp.bak $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+          echo "-------------------------- Restore patches DONE! ---------------------------------"
+          cat $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
 
       - uses: LouisBrunner/diff-action@v2.0.0
         with:

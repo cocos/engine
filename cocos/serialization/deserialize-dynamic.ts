@@ -385,37 +385,37 @@ class _Deserializer {
     public declare customEnv: unknown;
     public deserializedList: Array<Record<PropertyKey, unknown> | undefined> = [];
     public deserializedData: any = null;
-    private declare _classFinder$: ClassFinder;
-    private declare _reportMissingClass$: ReportMissingClass;
-    private declare _onDereferenced$: ClassFinder['onDereferenced'];
+    private declare _classFinder: ClassFinder;
+    private declare _reportMissingClass: ReportMissingClass;
+    private declare _onDereferenced: ClassFinder['onDereferenced'];
     /**
      * @engineInternal
      */
-    public get ignoreEditorOnly (): unknown { return this._ignoreEditorOnly$; }
-    private declare _ignoreEditorOnly$: unknown;
-    private declare _mainBinChunk$: Uint8Array;
-    private declare _serializedData$: SerializedObject | SerializedObject[];
-    private declare _context$: DeserializationContext;
+    public get ignoreEditorOnly (): unknown { return this._ignoreEditorOnly; }
+    private declare _ignoreEditorOnly: unknown;
+    private declare _mainBinChunk: Uint8Array;
+    private declare _serializedData: SerializedObject | SerializedObject[];
+    private declare _context: DeserializationContext;
 
     constructor (result: Details, classFinder: ClassFinder, reportMissingClass: ReportMissingClass, customEnv: unknown, ignoreEditorOnly: unknown) {
         this.result = result;
         this.customEnv = customEnv;
-        this._classFinder$ = classFinder;
-        this._reportMissingClass$ = reportMissingClass;
-        this._onDereferenced$ = classFinder?.onDereferenced;
+        this._classFinder = classFinder;
+        this._reportMissingClass = reportMissingClass;
+        this._onDereferenced = classFinder?.onDereferenced;
         if (DEV) {
-            this._ignoreEditorOnly$ = ignoreEditorOnly;
+            this._ignoreEditorOnly = ignoreEditorOnly;
         }
     }
 
     public reset (result: Details, classFinder: ClassFinder, reportMissingClass: ReportMissingClass, customEnv: unknown, ignoreEditorOnly: unknown): void {
         this.result = result;
         this.customEnv = customEnv;
-        this._classFinder$ = classFinder;
-        this._reportMissingClass$ = reportMissingClass;
-        this._onDereferenced$ = classFinder?.onDereferenced;
+        this._classFinder = classFinder;
+        this._reportMissingClass = reportMissingClass;
+        this._onDereferenced = classFinder?.onDereferenced;
         if (DEV) {
-            this._ignoreEditorOnly$ = ignoreEditorOnly;
+            this._ignoreEditorOnly = ignoreEditorOnly;
         }
     }
 
@@ -424,9 +424,9 @@ class _Deserializer {
         this.customEnv = null;
         this.deserializedList.length = 0;
         this.deserializedData = null;
-        this._classFinder$ = null!;
-        this._reportMissingClass$ = null!;
-        this._onDereferenced$ = null!;
+        this._classFinder = null!;
+        this._reportMissingClass = null!;
+        this._onDereferenced = null!;
     }
 
     public deserialize (serializedData: SerializedData | CCON): any {
@@ -437,28 +437,28 @@ class _Deserializer {
             jsonObj = serializedData.document as SerializedData;
             if (serializedData.chunks.length > 0) {
                 assertIsTrue(serializedData.chunks.length === 1);
-                this._mainBinChunk$ = serializedData.chunks[0];
+                this._mainBinChunk = serializedData.chunks[0];
             }
         } else {
             jsonObj = serializedData;
         }
 
-        this._serializedData$ = jsonObj;
-        this._context$ = {
+        this._serializedData = jsonObj;
+        this._context = {
             fromCCON,
         };
 
         const serializedRootObject = Array.isArray(jsonObj) ? jsonObj[0] : jsonObj;
 
         if (EDITOR || TEST) {
-            this.deserializedData = this._deserializeObject$(serializedRootObject, 0, this.deserializedList, `${0}`);
+            this.deserializedData = this._deserializeObject(serializedRootObject, 0, this.deserializedList, `${0}`);
         } else {
-            this.deserializedData = this._deserializeObject$(serializedRootObject, 0);
+            this.deserializedData = this._deserializeObject(serializedRootObject, 0);
         }
 
-        this._serializedData$ = undefined!;
-        this._mainBinChunk$ = undefined!;
-        this._context$ = undefined!;
+        this._serializedData = undefined!;
+        this._mainBinChunk = undefined!;
+        this._context = undefined!;
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return this.deserializedData;
@@ -470,7 +470,7 @@ class _Deserializer {
      * @param owner - Tracing purpose.
      * @param propName - Tracing purpose.
      */
-    private _deserializeObject$ (
+    private _deserializeObject (
         serialized: SerializedObject,
         globalIndex: number,
         owner?: Record<PropertyKey, unknown> | unknown[],
@@ -478,36 +478,36 @@ class _Deserializer {
     ): Record<string, any> | null {
         switch (serialized.__type__) {
         case 'TypedArray':
-            return this._deserializeTypedArrayView$(serialized);
+            return this._deserializeTypedArrayView(serialized);
         case 'TypedArrayRef':
-            return this._deserializeTypedArrayViewRef$(serialized);
+            return this._deserializeTypedArrayViewRef(serialized);
         default:
             // NOTE: when 'strictNullCheck' is false, TS can't infer serialized as SerializedGeneralTypedObject
             if ((serialized as unknown as SerializedGeneralTypedObject).__type__) { // Typed object (including CCClass)
-                return this._deserializeTypeTaggedObject$(serialized, globalIndex, owner, propName);
+                return this._deserializeTypeTaggedObject(serialized, globalIndex, owner, propName);
             } else if (!Array.isArray(serialized)) { // Embedded primitive javascript object
-                return this._deserializePlainObject$(serialized);
+                return this._deserializePlainObject(serialized);
             } else { // Array
-                return this._deserializeArray$(serialized);
+                return this._deserializeArray(serialized);
             }
         }
     }
 
-    private _deserializeTypedArrayView$ (value: SerializedTypedArray): Uint8Array | Int8Array | Uint16Array | Int16Array | Uint32Array | Int32Array | Float32Array | Float64Array {
+    private _deserializeTypedArrayView (value: SerializedTypedArray): Uint8Array | Int8Array | Uint16Array | Int16Array | Uint32Array | Int32Array | Float32Array | Float64Array {
         return globalThis[value.ctor].from(value.array);
     }
 
-    private _deserializeTypedArrayViewRef$ (value: SerializedTypedArrayRef): Uint8Array | Int8Array | Uint16Array | Int16Array | Uint32Array | Int32Array | Float32Array | Float64Array {
+    private _deserializeTypedArrayViewRef (value: SerializedTypedArrayRef): Uint8Array | Int8Array | Uint16Array | Int16Array | Uint32Array | Int32Array | Float32Array | Float64Array {
         const { offset, length, ctor: constructorName } = value;
         const obj = new globalThis[constructorName](
-            this._mainBinChunk$.buffer,
-            this._mainBinChunk$.byteOffset + offset,
+            this._mainBinChunk.buffer,
+            this._mainBinChunk.byteOffset + offset,
             length,
         );
         return obj;
     }
 
-    private _deserializeArray$ (value: SerializedValue[]): unknown[] {
+    private _deserializeArray (value: SerializedValue[]): unknown[] {
         const obj = new Array<unknown>(value.length);
         let prop: unknown;
         for (let i = 0; i < value.length; i++) {
@@ -525,13 +525,13 @@ class _Deserializer {
         return obj;
     }
 
-    private _deserializePlainObject$ (value: Record<string, unknown>): Record<string, any> {
+    private _deserializePlainObject (value: Record<string, unknown>): Record<string, any> {
         const obj = {};
         this._fillPlainObject(obj, value);
         return obj;
     }
 
-    private _deserializeTypeTaggedObject$ (
+    private _deserializeTypeTaggedObject (
         value: SerializedGeneralTypedObject,
         globalIndex: number,
         owner?: Record<PropertyKey, unknown> | unknown[],
@@ -539,11 +539,11 @@ class _Deserializer {
     ): Record<string, unknown> | null {
         const type = value.__type__ as unknown as string;
 
-        const klass = this._classFinder$(type, value, owner, propName);
+        const klass = this._classFinder(type, value, owner, propName);
         if (!klass) {
-            const notReported = this._classFinder$ === js.getClassById;
+            const notReported = this._classFinder === js.getClassById;
             if (notReported) {
-                this._reportMissingClass$(type);
+                this._reportMissingClass(type);
             }
             return null;
         }
@@ -559,32 +559,32 @@ class _Deserializer {
 
         if (!(EDITOR && js.isChildClassOf(klass, cclegacy.Component))) {
             const obj = createObject(klass);
-            this._deserializeInto$(value, obj, klass);
+            this._deserializeInto(value, obj, klass);
             return obj;
         } else {
             try {
                 const obj = createObject(klass);
-                this._deserializeInto$(value, obj, klass);
+                this._deserializeInto(value, obj, klass);
                 return obj;
             } catch (e: unknown) {
                 if (DEBUG) {
                     error(`Deserialize ${klass.name} failed, ${(e as { stack: string; }).stack}`);
                 }
                 const obj = createObject(MissingScript);
-                this._deserializeInto$(value, obj, MissingScript);
+                this._deserializeInto(value, obj, MissingScript);
                 return obj;
             }
         }
     }
 
-    private _deserializeInto$ (
+    private _deserializeInto (
         value: SerializedGeneralTypedObject,
         object: Record<PropertyKey, unknown>,
         constructor: deserialize.SerializableClassConstructor,
         skipCustomized = false,
     ): void {
         if (!skipCustomized && (object as Partial<CustomSerializable>)[deserializeTag]) {
-            this._runCustomizedDeserialize$(
+            this._runCustomizedDeserialize(
                 value,
                 object as Record<PropertyKey, unknown> & CustomSerializable,
                 constructor,
@@ -600,13 +600,13 @@ class _Deserializer {
         }
 
         if (cclegacy.Class._isCCClass(constructor)) {
-            this._deserializeFireClass$(object, value, constructor as CCClassConstructor<unknown>);
+            this._deserializeFireClass(object, value, constructor as CCClassConstructor<unknown>);
         } else {
             this._deserializeFastDefinedObject(object, value, constructor);
         }
     }
 
-    private _runCustomizedDeserialize$ (
+    private _runCustomizedDeserialize (
         value: SerializedGeneralTypedObject,
         object: Record<PropertyKey, unknown> & CustomSerializable,
         constructor: deserialize.SerializableClassConstructor,
@@ -617,26 +617,26 @@ class _Deserializer {
                 if (typeof serializedField !== 'object' || !serializedField) {
                     return serializedField as unknown;
                 } else {
-                    return this._deserializeObjectField$(serializedField) as unknown;
+                    return this._deserializeObjectField(serializedField) as unknown;
                 }
             },
 
             readThis: () => {
-                this._deserializeInto$(value, object, constructor, true);
+                this._deserializeInto(value, object, constructor, true);
             },
 
             readSuper: () => {
                 const superConstructor = js.getSuper(constructor);
                 if (superConstructor) {
-                    this._deserializeInto$(value, object, superConstructor);
+                    this._deserializeInto(value, object, superConstructor);
                 }
             },
         };
 
-        object[deserializeTag]!(serializationInput, this._context$);
+        object[deserializeTag]!(serializationInput, this._context);
     }
 
-    private _deserializeFireClass$ (obj: Record<PropertyKey, unknown>, serialized: SerializedGeneralTypedObject, klass: CCClassConstructor<unknown>): void {
+    private _deserializeFireClass (obj: Record<PropertyKey, unknown>, serialized: SerializedGeneralTypedObject, klass: CCClassConstructor<unknown>): void {
         let deserialize: CompiledDeserializeFn;
         // eslint-disable-next-line no-prototype-builtins
         if (klass.hasOwnProperty('__deserialize__')) {
@@ -691,13 +691,13 @@ class _Deserializer {
                 obj[propName] = field;
             } else {
                 // TODO: assertion
-                const source = (this._serializedData$ as SerializedObject[])[id];
+                const source = (this._serializedData as SerializedObject[])[id];
                 if (EDITOR || TEST) {
-                    obj[propName] = this._deserializeObject$(source, id, obj, propName);
+                    obj[propName] = this._deserializeObject(source, id, obj, propName);
                 } else {
-                    obj[propName] = this._deserializeObject$(source, id, undefined, propName);
+                    obj[propName] = this._deserializeObject(source, id, undefined, propName);
                 }
-                this._onDereferenced$?.(this.deserializedList, id, obj, propName);
+                this._onDereferenced?.(this.deserializedList, id, obj, propName);
             }
         } else {
             const uuid = (serializedField as Partial<SerializedUUIDReference>).__uuid__;
@@ -705,15 +705,15 @@ class _Deserializer {
                 const expectedType = (serializedField as SerializedUUIDReference).__expectedType__;
                 this.result.push(obj, propName, uuid, expectedType);
             } else if (EDITOR || TEST) {
-                obj[propName] = this._deserializeObject$(serializedField as SerializedObject, -1, obj, propName);
+                obj[propName] = this._deserializeObject(serializedField as SerializedObject, -1, obj, propName);
             } else {
-                obj[propName] = this._deserializeObject$(serializedField as SerializedObject, -1);
+                obj[propName] = this._deserializeObject(serializedField as SerializedObject, -1);
             }
         }
         return false;
     }
 
-    private _deserializeObjectField$ (serializedField: SerializedFieldObjectValue): Record<string, any> | null {
+    private _deserializeObjectField (serializedField: SerializedFieldObjectValue): Record<string, any> | null {
         const id = (serializedField as Partial<SerializedObjectReference>).__id__;
         if (typeof id === 'number') {
             const field = this.deserializedList[id];
@@ -721,8 +721,8 @@ class _Deserializer {
                 return field;
             } else {
                 // TODO: assertion
-                const source = (this._serializedData$ as SerializedObject[])[id];
-                const field = this._deserializeObject$(source, id, undefined, undefined);
+                const source = (this._serializedData as SerializedObject[])[id];
+                const field = this._deserializeObject(source, id, undefined, undefined);
                 return field;
             }
         } else {
@@ -731,7 +731,7 @@ class _Deserializer {
                 const _expectedType = (serializedField as SerializedUUIDReference).__expectedType__;
                 throw new Error(`Asset reference field serialization is currently not supported in custom serialization.`);
             } else {
-                return this._deserializeObject$(serializedField as SerializedObject, -1);
+                return this._deserializeObject(serializedField as SerializedObject, -1);
             }
         }
     }

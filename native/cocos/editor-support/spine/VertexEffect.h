@@ -32,6 +32,7 @@
 
 #include <spine/MathUtil.h>
 #include <spine/SpineObject.h>
+#include <spine/RTTI.h>
 
 namespace spine {
 
@@ -39,6 +40,7 @@ class Skeleton;
 class Color;
 
 class SP_API VertexEffect : public SpineObject {
+    RTTI_DECL
 public:
     virtual void begin(Skeleton &skeleton) = 0;
     virtual void transform(float &x, float &y) = 0;
@@ -46,6 +48,7 @@ public:
 };
 
 class SP_API JitterVertexEffect : public VertexEffect {
+    RTTI_DECL
 public:
     JitterVertexEffect(float jitterX, float jitterY);
 
@@ -59,12 +62,15 @@ public:
     void setJitterY(float jitterY);
     float getJitterY();
 
+#ifndef __EMSCRIPTEN__
 protected:
+#endif
     float _jitterX;
     float _jitterY;
 };
 
 class SP_API SwirlVertexEffect : public VertexEffect {
+    RTTI_DECL
 public:
     SwirlVertexEffect(float radius, Interpolation &interpolation);
 
@@ -90,7 +96,9 @@ public:
     void setWorldY(float worldY);
     float getWorldY();
 
+#ifndef __EMSCRIPTEN__
 protected:
+#endif
     float _centerX;
     float _centerY;
     float _radius;

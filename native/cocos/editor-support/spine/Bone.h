@@ -112,118 +112,203 @@ public:
 
     Bone *getParent();
 
-    Vector<Bone *> &getChildren();
+    inline Vector<Bone *> &getChildren() { return _children; }
 
     /// The local X translation.
-    float getX();
+    inline float getX() const {
+        return _x;
+    }
 
-    void setX(float inValue);
+    inline void setX(float inValue) {
+        _x = inValue;
+    }
 
     /// The local Y translation.
-    float getY();
+    inline float getY() const {
+        return _y;
+    }
 
-    void setY(float inValue);
+    inline void setY(float inValue) {
+        _y = inValue;
+    }
 
     /// The local rotation.
-    float getRotation();
+    inline float getRotation() const {
+        return _rotation;
+    }
 
-    void setRotation(float inValue);
+    inline void setRotation(float inValue) {
+        _rotation = inValue;
+    }
 
     /// The local scaleX.
-    float getScaleX();
+    inline float getScaleX() const {
+        return _scaleX;
+    }
 
-    void setScaleX(float inValue);
+    inline void setScaleX(float inValue) {
+        _scaleX = inValue;
+    }
 
     /// The local scaleY.
-    float getScaleY();
+    inline float getScaleY() const {
+        return _scaleY;
+    }
 
-    void setScaleY(float inValue);
+    inline void setScaleY(float inValue) {
+        _scaleY = inValue;
+    }
 
     /// The local shearX.
-    float getShearX();
+    inline float getShearX() const {
+        return _shearX;
+    }
 
-    void setShearX(float inValue);
+    inline void setShearX(float inValue) {
+        _shearX = inValue;
+    }
 
     /// The local shearY.
-    float getShearY();
+    inline float getShearY() const {
+        return _shearY;
+    }
 
-    void setShearY(float inValue);
+    inline void setShearY(float inValue) {
+        _shearY = inValue;
+    }
 
     /// The rotation, as calculated by any constraints.
-    float getAppliedRotation();
+    inline float getAppliedRotation() const {
+        return _arotation;
+    }
 
-    void setAppliedRotation(float inValue);
+    inline void setAppliedRotation(float inValue) {
+        _arotation = inValue;
+    }
 
     /// The applied local x translation.
-    float getAX();
+    inline float getAX() const {
+        return _ax;
+    }
 
-    void setAX(float inValue);
+    inline void setAX(float inValue) {
+        _ax = inValue;
+    }
 
     /// The applied local y translation.
-    float getAY();
+    inline float getAY() const {
+        return _ay;
+    }
 
-    void setAY(float inValue);
+    inline void setAY(float inValue) {
+        _ay = inValue;
+    }
 
     /// The applied local scaleX.
-    float getAScaleX();
+    inline float getAScaleX() const {
+        return _ascaleX;
+    }
 
-    void setAScaleX(float inValue);
+    inline void setAScaleX(float inValue) {
+        _ascaleX = inValue;
+    }
 
     /// The applied local scaleY.
-    float getAScaleY();
+    inline float getAScaleY() const {
+        return _ascaleY;
+    }
 
-    void setAScaleY(float inValue);
+    inline void setAScaleY(float inValue) {
+        _ascaleY = inValue;
+    }
 
     /// The applied local shearX.
-    float getAShearX();
+    inline float getAShearX() const {
+        return _ashearX;
+    }
 
-    void setAShearX(float inValue);
+    inline void setAShearX(float inValue) {
+        _ashearX = inValue;
+    }
 
     /// The applied local shearY.
-    float getAShearY();
+    inline float getAShearY() const {
+        return _ashearY;
+    }
 
-    void setAShearY(float inValue);
+    inline void setAShearY(float inValue) {
+        _ashearY = inValue;
+    }
 
-    float getA();
+    inline float getA() const {
+        return _a;
+    }
 
-    void setA(float inValue);
+    inline void setA(float inValue) {
+        _a = inValue;
+    }
 
-    float getB();
+    inline float getB() const {
+        return _b;
+    }
 
-    void setB(float inValue);
+    inline void setB(float inValue) {
+        _b = inValue;
+    }
 
-    float getC();
+    inline float getC() const {
+        return _c;
+    }
 
-    void setC(float inValue);
+    inline void setC(float inValue) {
+        _c = inValue;
+    }
 
-    float getD();
+    inline float getD() const {
+        return _d;
+    }
 
-    void setD(float inValue);
+    inline void setD(float inValue) {
+        _d = inValue;
+    }
 
-    float getWorldX();
+    inline float getWorldX() const {
+        return _worldX;
+    }
 
-    void setWorldX(float inValue);
+    inline void setWorldX(float inValue) {
+        _worldX = inValue;
+    }
 
-    float getWorldY();
+    inline float getWorldY() const {
+        return _worldY;
+    }
 
-    void setWorldY(float inValue);
+    inline void setWorldY(float inValue) {
+        _worldY = inValue;
+    }
 
-    float getWorldRotationX();
+    float getWorldRotationX() const;
 
-    float getWorldRotationY();
+    float getWorldRotationY() const;
 
     /// Returns the magnitide (always positive) of the world scale X.
-    float getWorldScaleX();
+    float getWorldScaleX() const;
 
     /// Returns the magnitide (always positive) of the world scale Y.
-    float getWorldScaleY();
+    float getWorldScaleY() const;
 
-    bool isAppliedValid();
-    void setAppliedValid(bool valid);
+    inline bool isAppliedValid() const {
+        return _appliedValid;
+    }
 
-    bool isActive();
+    void setAppliedValid(bool valid) {
+        _appliedValid = valid;
+    }
 
-    void setActive(bool inValue);
+    virtual bool isActive();
+
+    virtual void setActive(bool inValue);;
 
 private:
     static bool yDown;
@@ -232,6 +317,10 @@ private:
     Skeleton &_skeleton;
     Bone *_parent;
     Vector<Bone *> _children;
+
+#ifdef __EMSCRIPTEN__
+public:
+#endif
     float _x, _y, _rotation, _scaleX, _scaleY, _shearX, _shearY;
     float _ax, _ay, _arotation, _ascaleX, _ascaleY, _ashearX, _ashearY;
     bool _appliedValid;
@@ -246,6 +335,7 @@ private:
     /// Some information is ambiguous in the world transform, such as -1,-1 scale versus 180 rotation.
     void updateAppliedTransform();
 };
+
 } // namespace spine
 
 #endif /* Spine_Bone_h */

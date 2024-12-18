@@ -35,6 +35,8 @@ export class AudioManager {
     private _oneShotAudioInfoList: AudioInfo<OneShotAudio>[] = [];
     private _audioPlayerInfoList: AudioInfo<AudioPlayer>[] = [];
 
+    constructor () {}
+
     private _findIndex (audioInfoList: AudioInfo<ManagedAudio>[], audio: ManagedAudio): number {
         return audioInfoList.findIndex((item) => item.audio === audio);
     }

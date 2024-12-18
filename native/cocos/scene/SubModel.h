@@ -66,7 +66,7 @@ public:
     void setSubMesh(RenderingSubMesh *subMesh);
     inline void setInstancedWorldMatrixIndex(int32_t worldMatrixIndex) { _instancedWorldMatrixIndex = worldMatrixIndex; }
     inline void setInstancedSHIndex(int32_t index) { _instancedSHIndex = index; }
-    void setInstancedAttribute(const ccstd::string &name, const float *value, uint32_t byteLength);
+    void setInstancedAttribute(const ccstd::string &name, const TypedArray &value);
 
     inline gfx::DescriptorSet *getDescriptorSet() const { return _descriptorSet; }
     inline gfx::DescriptorSet *getWorldBoundDescriptorSet() const { return _worldBoundDescriptorSet; }

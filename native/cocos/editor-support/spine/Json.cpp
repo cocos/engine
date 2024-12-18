@@ -41,9 +41,38 @@ THE SOFTWARE.
 #include <spine/Extension.h>
 #include <spine/Json.h>
 #include <spine/SpineString.h>
+#include <spine/MathUtil.h>
 
 #include <assert.h>
 #include <math.h>
+#ifndef __EMSCRIPTEN__
+#include <stdio.h>
+#endif
+
+#ifdef __EMSCRIPTEN__
+static bool parseHex(const char *str, unsigned int *result_) {
+    auto &result = *result_;
+    result = 0;
+    for (int i = 0; i < 4; ++i) {
+        char c = str[i];
+        if ((c < '0' || c > '9') && (c < 'A' || c > 'F') && (c < 'a' || c > 'f')) {
+            result = 0;
+            return false;
+        }
+
+        result <<= 4;
+        if (c >= '0' && c <= '9') {
+            result |= (c - '0');
+        } else if (c >= 'A' && c <= 'F') {
+            result |= (c - 'A' + 10);
+        } else if (c >= 'a' && c <= 'f') {
+            result |= (c - 'a' + 10);
+        }
+    }
+    return true;
+}
+
+#endif
 
 using namespace spine;
 
@@ -132,11 +161,11 @@ Json::~Json() {
     } while (next);
 
     if (_valueString) {
-        SpineExtension::free(_valueString, __FILE__, __LINE__);
+        SpineExtension::free(_valueString, __SPINE_FILE__, __SPINE_LINE__);
     }
 
     if (_name) {
-        SpineExtension::free(_name, __FILE__, __LINE__);
+        SpineExtension::free(_name, __SPINE_FILE__, __SPINE_LINE__);
     }
 }
 
@@ -233,7 +262,7 @@ const char *Json::parseString(Json *item, const char *str) {
         }
     }
 
-    out = SpineExtension::alloc<char>(len + 1, __FILE__, __LINE__); /* The length needed for the string, roughly. */
+    out = SpineExtension::alloc<char>(len + 1, __SPINE_FILE__, __SPINE_LINE__); /* The length needed for the string, roughly. */
     if (!out) {
         return 0;
     }
@@ -263,7 +292,11 @@ const char *Json::parseString(Json *item, const char *str) {
                     break;
                 case 'u': {
                     /* transcode utf16 to utf8. */
+#ifdef __EMSCRIPTEN__
+                    parseHex(ptr + 1, &uc);
+#else
                     sscanf(ptr + 1, "%4x", &uc);
+#endif
                     ptr += 4; /* get the unicode char. */
 
                     if ((uc >= 0xDC00 && uc <= 0xDFFF) || uc == 0) {
@@ -275,7 +308,11 @@ const char *Json::parseString(Json *item, const char *str) {
                         if (ptr[1] != '\\' || ptr[2] != 'u') {
                             break; /* missing second-half of surrogate.	*/
                         }
+#ifdef __EMSCRIPTEN__
+                        parseHex(ptr + 3, &uc2);                        
+#else
                         sscanf(ptr + 3, "%4x", &uc2);
+#endif
                         ptr += 6;
                         if (uc2 < 0xDC00 || uc2 > 0xDFFF) {
                             break; /* invalid second-half of surrogate.	*/
@@ -357,7 +394,7 @@ const char *Json::parseNumber(Json *item, const char *num) {
             ++ptr;
             ++n;
         }
-        result += fraction / pow(10.0, n);
+        result += fraction / MathUtil::ipow(10, n);
     }
 
     if (negative) {
@@ -365,7 +402,7 @@ const char *Json::parseNumber(Json *item, const char *num) {
     }
 
     if (*ptr == 'e' || *ptr == 'E') {
-        double exponent = 0;
+        uint32_t exponent = 0;
         int expNegative = 0;
         int n = 0;
         ++ptr;
@@ -378,15 +415,15 @@ const char *Json::parseNumber(Json *item, const char *num) {
         }
 
         while (*ptr >= '0' && *ptr <= '9') {
-            exponent = (exponent * 10.0) + (*ptr - '0');
+            exponent = (exponent * 10) + (*ptr - '0');
             ++ptr;
             ++n;
         }
 
         if (expNegative) {
-            result = result / pow(10, exponent);
+            result = result / MathUtil::ipow(10, exponent);
         } else {
-            result = result * pow(10, exponent);
+            result = result * MathUtil::ipow(10, exponent);
         }
     }
 

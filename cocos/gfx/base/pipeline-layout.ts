@@ -31,10 +31,10 @@ import { GFXObject, ObjectType, PipelineLayoutInfo } from './define';
  */
 export abstract class PipelineLayout extends GFXObject {
     get setLayouts (): DescriptorSetLayout[] {
-        return this._setLayouts$;
+        return this._setLayouts;
     }
 
-    protected _setLayouts$: DescriptorSetLayout[] = [];
+    protected _setLayouts: DescriptorSetLayout[] = [];
 
     constructor () {
         super(ObjectType.PIPELINE_LAYOUT);

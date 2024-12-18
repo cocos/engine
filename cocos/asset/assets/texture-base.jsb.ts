@@ -29,6 +29,7 @@ import { Filter, PixelFormat, WrapMode } from './asset-enum';
 import './asset';
 import { patch_cc_TextureBase } from '../../native-binding/decorators';
 import type { TextureBase as JsbTextureBase } from './texture-base';
+import type { Batcher2D } from '../../2d/renderer/batcher-2d';
 
 declare const jsb: any;
 
@@ -126,7 +127,7 @@ const oldDestroy = textureBaseProto.destroy;
 textureBaseProto.destroy = function () {
     if (cclegacy.director.root?.batcher2D) {
         // legacyCC.director.root.batcher2D._releaseDescriptorSetCache(this.getHash());
-        cclegacy.director.root.batcher2D._releaseDescriptorSetCache(this.getGFXTexture(), this.getGFXSampler());
+        (cclegacy.director.root.batcher2D as Batcher2D)._releaseDescriptorSetCache(this.getGFXTexture(), this.getGFXSampler());
     }
     // dispatch into C++ virtual function CCObject::destroy
     return oldDestroy.call(this);

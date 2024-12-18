@@ -168,47 +168,71 @@ public:
 
     SkeletonData *getData();
 
-    Vector<Bone *> &getBones();
+    inline Vector<Bone *> &getBones() { return _bones; }
 
-    Vector<Updatable *> &getUpdateCacheList();
+    inline Vector<Updatable *> &getUpdateCacheList() { return _updateCache; }
 
-    Vector<Slot *> &getSlots();
+    inline Vector<Slot *> &getSlots() { return _slots; }
 
-    Vector<Slot *> &getDrawOrder();
+    inline Vector<Slot *> &getDrawOrder() { return _drawOrder; }
 
-    Vector<IkConstraint *> &getIkConstraints();
+    inline Vector<IkConstraint *> &getIkConstraints() { return _ikConstraints; }
 
-    Vector<PathConstraint *> &getPathConstraints();
+    inline Vector<PathConstraint *> &getPathConstraints() { return _pathConstraints; }
 
-    Vector<TransformConstraint *> &getTransformConstraints();
+    inline Vector<TransformConstraint *> &getTransformConstraints() { return _transformConstraints; }
 
     Skin *getSkin();
 
     Color &getColor();
 
-    float getTime();
+    inline float getTime() const {
+        return _time;
+    }
 
-    void setTime(float inValue);
+    inline void setTime(float inValue) {
+        _time = inValue;
+    }
 
-    void setPosition(float x, float y);
+    inline void setPosition(float x, float y) {
+        _x = x;
+        _y = y;
+    }
 
-    float getX();
+    inline float getX() const {
+        return _x;
+    }
 
-    void setX(float inValue);
+    inline void setX(float inValue) {
+        _x = inValue;
+    }
 
-    float getY();
+    inline float getY() const {
+        return _y;
+    }
 
-    void setY(float inValue);
+    inline void setY(float inValue) {
+        _y = inValue;
+    }
 
-    float getScaleX();
+    inline float getScaleX() const {
+        return _scaleX;
+    }
 
-    void setScaleX(float inValue);
+    inline void setScaleX(float inValue) {
+        _scaleX = inValue;
+    }
 
-    float getScaleY();
+    inline float getScaleY() const {
+        return _scaleY;
+    }
 
-    void setScaleY(float inValue);
-
+    inline void setScaleY(float inValue) {
+        _scaleY = inValue;
+    }
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     SkeletonData *_data;
     Vector<Bone *> _bones;
     Vector<Slot *> _slots;

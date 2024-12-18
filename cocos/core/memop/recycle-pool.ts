@@ -38,9 +38,9 @@ import { ScalableContainer } from './scalable-container';
 export class RecyclePool<T = any> extends ScalableContainer {
     private declare _fn: () => T;
     private declare _dtor: ((obj: T) => void) | null;
-    private _count$ = 0;
-    private declare _data$: T[];
-    private declare _initSize$: number;
+    private _count = 0;
+    private declare _data: T[];
+    private declare _initSize: number;
 
     /**
      * @en Constructor with the allocator of elements and initial pool size, all elements will be pre-allocated.
@@ -53,11 +53,11 @@ export class RecyclePool<T = any> extends ScalableContainer {
         super();
         this._fn = fn;
         this._dtor = dtor || null;
-        this._data$ = new Array(size);
-        this._initSize$ = size;
+        this._data = new Array(size);
+        this._initSize = size;
 
         for (let i = 0; i < size; ++i) {
-            this._data$[i] = fn();
+            this._data[i] = fn();
         }
     }
 
@@ -66,7 +66,7 @@ export class RecyclePool<T = any> extends ScalableContainer {
      * @zh 对象池大小。
      */
     get length (): number {
-        return this._count$;
+        return this._count;
     }
 
     /**
@@ -74,7 +74,7 @@ export class RecyclePool<T = any> extends ScalableContainer {
      * @zh 实际对象池数组。
      */
     get data (): T[] {
-        return this._data$;
+        return this._data;
     }
 
     /**
@@ -82,7 +82,7 @@ export class RecyclePool<T = any> extends ScalableContainer {
      * @zh 清空对象池。目前仅仅会设置尺寸为 0。
      */
     public reset (): void {
-        this._count$ = 0;
+        this._count = 0;
     }
 
     /**
@@ -91,23 +91,23 @@ export class RecyclePool<T = any> extends ScalableContainer {
      * @param size @en The new size of the pool. @zh 新的对象池大小。
      */
     public resize (size: number): void {
-        if (size > this._data$.length) {
-            for (let i = this._data$.length; i < size; ++i) {
-                this._data$[i] = this._fn();
+        if (size > this._data.length) {
+            for (let i = this._data.length; i < size; ++i) {
+                this._data[i] = this._fn();
             }
         }
     }
 
     /**
-     * @en Expand the array size to 2 times the original size, and fills with new created elements.
-     * @zh 扩充对象池容量，会自动扩充尺寸到原来的 2 倍，并填充新的元素。
+     * @en Adds a new element. If the capacity is insufficient, it will automatically expand to twice its original size.
+     * @zh 添加一个新元素，如果容量不足，会自动扩充尺寸到原来的 2 倍。
      */
     public add (): T {
-        if (this._count$ >= this._data$.length) {
-            this.resize(this._data$.length << 1);
+        if (this._count >= this._data.length) {
+            this.resize(this._data.length << 1);
         }
 
-        return this._data$[this._count$++];
+        return this._data[this._count++];
     }
 
     /**
@@ -116,12 +116,12 @@ export class RecyclePool<T = any> extends ScalableContainer {
      */
     public destroy (): void {
         if (this._dtor) {
-            for (let i = 0; i < this._data$.length; i++) {
-                this._dtor(this._data$[i]);
+            for (let i = 0; i < this._data.length; i++) {
+                this._dtor(this._data[i]);
             }
         }
-        this._data$.length = 0;
-        this._count$ = 0;
+        this._data.length = 0;
+        this._count = 0;
         super.destroy();
     }
 
@@ -130,14 +130,14 @@ export class RecyclePool<T = any> extends ScalableContainer {
      * @zh 尝试回收没用的对象，释放内存。
      */
     public tryShrink (): void {
-        if (this._data$.length >> 2 > this._count$) {
-            const length = Math.max(this._initSize$, this._data$.length >> 1);
+        if (this._data.length >> 2 > this._count) {
+            const length = Math.max(this._initSize, this._data.length >> 1);
             if (this._dtor) {
-                for (let i = length; i < this._data$.length; i++) {
-                    this._dtor(this._data$[i]);
+                for (let i = length; i < this._data.length; i++) {
+                    this._dtor(this._data[i]);
                 }
             }
-            this._data$.length = length;
+            this._data.length = length;
         }
     }
 
@@ -147,14 +147,14 @@ export class RecyclePool<T = any> extends ScalableContainer {
      * @param idx @en The index of the element to remove. @zh 被移除的元素的索引。
      */
     public removeAt (idx: number): void {
-        if (idx >= this._count$) {
+        if (idx >= this._count) {
             return;
         }
 
-        const last = this._count$ - 1;
-        const tmp = this._data$[idx];
-        this._data$[idx] = this._data$[last];
-        this._data$[last] = tmp;
-        this._count$ -= 1;
+        const last = this._count - 1;
+        const tmp = this._data[idx];
+        this._data[idx] = this._data[last];
+        this._data[last] = tmp;
+        this._count -= 1;
     }
 }

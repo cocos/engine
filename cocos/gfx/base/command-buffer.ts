@@ -53,7 +53,7 @@ export abstract class CommandBuffer extends GFXObject {
      * @zh 命令缓冲类型。
      */
     get type (): CommandBufferType {
-        return this._type$;
+        return this._type;
     }
 
     /**
@@ -61,7 +61,7 @@ export abstract class CommandBuffer extends GFXObject {
      * @zh 命令缓冲类型。
      */
     get queue (): Queue {
-        return this._queue$!;
+        return this._queue!;
     }
 
     /**
@@ -69,7 +69,7 @@ export abstract class CommandBuffer extends GFXObject {
      * @zh 绘制调用次数。
      */
     get numDrawCalls (): number {
-        return this._numDrawCalls$;
+        return this._numDrawCalls;
     }
 
     /**
@@ -77,7 +77,7 @@ export abstract class CommandBuffer extends GFXObject {
      * @zh 绘制 Instance 数量。
      */
     get numInstances (): number {
-        return this._numInstances$;
+        return this._numInstances;
     }
 
     /**
@@ -85,14 +85,14 @@ export abstract class CommandBuffer extends GFXObject {
      * @zh 绘制三角形数量。
      */
     get numTris (): number {
-        return this._numTris$;
+        return this._numTris;
     }
 
-    protected _queue$: Queue | null = null;
-    protected _type$: CommandBufferType = CommandBufferType.PRIMARY;
-    protected _numDrawCalls$ = 0;
-    protected _numInstances$ = 0;
-    protected _numTris$ = 0;
+    protected _queue: Queue | null = null;
+    protected _type: CommandBufferType = CommandBufferType.PRIMARY;
+    protected _numDrawCalls = 0;
+    protected _numInstances = 0;
+    protected _numTris = 0;
 
     constructor () {
         super(ObjectType.COMMAND_BUFFER);

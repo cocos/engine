@@ -280,14 +280,6 @@ void DeformTimeline::setSlotIndex(int inValue) {
     _slotIndex = inValue;
 }
 
-Vector<float> &DeformTimeline::getFrames() {
-    return _frames;
-}
-
-Vector<Vector<float> > &DeformTimeline::getVertices() {
-    return _frameVertices;
-}
-
 VertexAttachment *DeformTimeline::getAttachment() {
     return _attachment;
 }

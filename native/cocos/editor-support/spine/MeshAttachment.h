@@ -54,12 +54,12 @@ public:
     int getHullLength();
     void setHullLength(int inValue);
 
-    Vector<float>& getRegionUVs();
+    inline Vector<float>& getRegionUVs() { return _regionUVs; }
 
     /// The UV pair for each vertex, normalized within the entire texture. See also MeshAttachment::updateUVs
-    Vector<float>& getUVs();
+    inline Vector<float>& getUVs() { return _uvs; }
 
-    Vector<unsigned short>& getTriangles();
+    inline Vector<unsigned short>& getTriangles() { return _triangles; }
 
     Color& getColor();
 
@@ -109,7 +109,7 @@ public:
     void setParentMesh(MeshAttachment* inValue);
 
     // Nonessential.
-    Vector<unsigned short>& getEdges();
+    inline Vector<unsigned short>& getEdges() { return _edges; }
     float getWidth();
     void setWidth(float inValue);
     float getHeight();
@@ -119,7 +119,9 @@ public:
 
     MeshAttachment* newLinkedMesh();
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     float _regionOffsetX, _regionOffsetY, _regionWidth, _regionHeight, _regionOriginalWidth, _regionOriginalHeight;
     MeshAttachment* _parentMesh;
     Vector<float> _uvs;

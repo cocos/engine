@@ -32,20 +32,20 @@ const CHUNK_ALIGN_AS = 8;
 
 export class CCON {
     constructor (document: unknown, chunks: Uint8Array[]) {
-        this._document$ = document;
-        this._chunks$ = chunks;
+        this._document = document;
+        this._chunks = chunks;
     }
 
     get document (): unknown {
-        return this._document$;
+        return this._document;
     }
 
     get chunks (): Uint8Array[] {
-        return this._chunks$;
+        return this._chunks;
     }
 
-    private declare _document$: unknown;
-    private declare _chunks$: Uint8Array[];
+    private declare _document: unknown;
+    private declare _chunks: Uint8Array[];
 }
 
 interface CCONPreface {
@@ -214,20 +214,20 @@ function decodeJson (data: Uint8Array): string {
 export class InvalidCCONError extends Error { }
 
 export class BufferBuilder {
-    private _viewOrPaddings$: (ArrayBufferView | number)[] = [];
-    private _length$ = 0;
+    private _viewOrPaddings: (ArrayBufferView | number)[] = [];
+    private _length = 0;
 
     get byteLength (): number {
-        return this._length$;
+        return this._length;
     }
 
     public alignAs (align: number): number {
         if (align !== 0) {
-            const remainder = this._length$ % align;
+            const remainder = this._length % align;
             if (remainder !== 0) {
                 const padding = align - remainder;
-                this._viewOrPaddings$.push(padding);
-                this._length$ += padding;
+                this._viewOrPaddings.push(padding);
+                this._length += padding;
                 return padding;
             }
         }
@@ -235,16 +235,16 @@ export class BufferBuilder {
     }
 
     public append (view: ArrayBufferView): number {
-        const result = this._length$;
-        this._viewOrPaddings$.push(view);
-        this._length$ += view.byteLength;
+        const result = this._length;
+        this._viewOrPaddings.push(view);
+        this._length += view.byteLength;
         return result;
     }
 
     public get (): Uint8Array {
-        const result = new Uint8Array(this._length$);
+        const result = new Uint8Array(this._length);
         let counter = 0;
-        this._viewOrPaddings$.forEach((viewOrPadding) => {
+        this._viewOrPaddings.forEach((viewOrPadding) => {
             if (typeof viewOrPadding === 'number') {
                 counter += viewOrPadding;
             } else {

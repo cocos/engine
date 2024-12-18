@@ -14,6 +14,7 @@ declare module 'pal/input' {
          * Register the touch event callback.
          */
         public on (eventType: import('cocos/input/types/event-enum').InputEventType, callback: TouchCallback, target?: any);
+        public dispatchEventsInCache (): void;
     }
 
     type MouseCallback = (res: import('cocos/input/types').EventMouse) => void;
@@ -30,6 +31,8 @@ declare module 'pal/input' {
         public dispatchMouseMoveEvent? (nativeMouseEvent: any);
         public dispatchMouseUpEvent? (nativeMouseEvent: any);
         public dispatchScrollEvent? (nativeMouseEvent: any);
+
+        public dispatchEventsInCache (): void
     }
 
     type KeyboardCallback = (res: import('cocos/input/types').EventKeyboard) => void;

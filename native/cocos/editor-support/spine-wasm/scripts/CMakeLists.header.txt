@@ -1,0 +1,7 @@
+
+cmake_minimum_required(VERSION 3.8)
+project(spine_wasm_header CXX)
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -D__EMSCRIPTEN__=1")
+
+include(${CMAKE_CURRENT_LIST_DIR}/../../CMakeLists.txt)

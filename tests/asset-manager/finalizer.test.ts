@@ -28,7 +28,7 @@ describe('releaseManager', () => {
         assetManager.assets.add('AAA', tex);
         expect(isValid(tex, true)).toBeTruthy();
         // @ts-ignore
-        releaseManager._free$(tex, false);
+        releaseManager._free(tex, false);
         expect(assetManager.assets.count).toBe(1);
         expect(isValid(tex, true)).toBeTruthy();
         assetManager.releaseAsset(tex);
@@ -46,7 +46,7 @@ describe('releaseManager', () => {
         assetManager.assets.add('BBB', texB);
         assetManager.dependUtil._depends.add('AAA', {deps: ['BBB']});
         // @ts-ignore
-        releaseManager._free$(texA);
+        releaseManager._free(texA);
         expect(assetManager.assets.count).toBe(0);
     });
 
@@ -73,7 +73,7 @@ describe('releaseManager', () => {
         assetManager.dependUtil._depends.add('CCC', {deps: ['AAA', 'DDD']});
         assetManager.dependUtil._depends.add('DDD', {deps: ['BBB']});
         // @ts-ignore
-        releaseManager._free$(texA);
+        releaseManager._free(texA);
         expect(assetManager.assets.count).toBe(0);
     });
 
@@ -101,7 +101,7 @@ describe('releaseManager', () => {
         assetManager.dependUtil._depends.add('CCC', {deps: ['AAA', 'DDD']});
         assetManager.dependUtil._depends.add('DDD', {deps: ['BBB']});
         // @ts-ignore
-        releaseManager._free$(texA);
+        releaseManager._free(texA);
         expect(assetManager.assets.count).toBe(4);
         assetManager.releaseAll();
     });
@@ -128,7 +128,7 @@ describe('releaseManager', () => {
         assetManager.dependUtil._depends.add('CCC', {deps: ['AAA', 'BBB']});
         assetManager.dependUtil._depends.add('DDD', {deps: ['AAA']});
         // @ts-ignore
-        releaseManager._free$(texA);
+        releaseManager._free(texA);
         expect(assetManager.assets.count).toBe(0);
     });
 
@@ -154,7 +154,7 @@ describe('releaseManager', () => {
         assetManager.dependUtil._depends.add('CCC', {deps: ['AAA', 'BBB']});
         assetManager.dependUtil._depends.add('DDD', {deps: ['AAA']});
         // @ts-ignore
-        releaseManager._free$(texA);
+        releaseManager._free(texA);
         expect(assetManager.assets.count).toBe(4);
         assetManager.releaseAll();
     });
@@ -181,7 +181,7 @@ describe('releaseManager', () => {
         assetManager.dependUtil._depends.add('CCC', {deps: ['DDD']});
         assetManager.dependUtil._depends.add('DDD', {deps: ['AAA']});
         // @ts-ignore
-        releaseManager._free$(texA);
+        releaseManager._free(texA);
         
         expect(assetManager.assets.count).toBe(0);
         assetManager.releaseAll();
@@ -215,7 +215,7 @@ describe('releaseManager', () => {
         assetManager.dependUtil._depends.add('scene 2', {deps: ['BBB', 'CCC']});
         releaseManager._autoRelease(scene1, scene2, {});
         // @ts-expect-error set private property
-        releaseManager._freeAssets$();
+        releaseManager._freeAssets();
         expect(assetManager.assets.count).toBe(2);
         expect(texB.refCount).toBe(1);
         expect(texC.refCount).toBe(1);
@@ -236,7 +236,7 @@ describe('releaseManager', () => {
         expect(assetManager.assets.count).toBe(1);
         releaseManager._autoRelease(scene1, scene2, {});
         // @ts-expect-error set private property
-        releaseManager._freeAssets$();
+        releaseManager._freeAssets();
         expect(assetManager.assets.count).toBe(0);
     });
 
@@ -266,7 +266,7 @@ describe('releaseManager', () => {
         assetManager.dependUtil._depends.add('scene 2', {deps: []});
         releaseManager._autoRelease(scene1, scene2, persistNodes);
         // @ts-expect-error set private property
-        releaseManager._freeAssets$();
+        releaseManager._freeAssets();
         expect(assetManager.assets.count).toBe(1);
         expect(assetManager.assets.get('AAA')).toBe(sp);
         expect(sp.refCount).toBe(2);
@@ -274,7 +274,7 @@ describe('releaseManager', () => {
         expect(sp.refCount).toBe(1);
         releaseManager._autoRelease(scene2, scene3, {});
         // @ts-expect-error set private property
-        releaseManager._freeAssets$();
+        releaseManager._freeAssets();
         expect(assetManager.assets.count).toBe(0);
     });
 
@@ -285,7 +285,7 @@ describe('releaseManager', () => {
         assetManager.assets.add('TestDontDestroy', tex);
         expect(isValid(tex, true)).toBeTruthy();
         // @ts-ignore
-        releaseManager._free$(tex, false);
+        releaseManager._free(tex, false);
         expect(assetManager.assets.count).toBe(1);
         expect(isValid(tex, true)).toBeTruthy();
         assetManager.releaseAsset(tex);

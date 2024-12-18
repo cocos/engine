@@ -36,6 +36,7 @@ import { Space, TextureMode, TrailMode } from '../enum';
 import { Particle } from '../particle';
 import { TransformBit } from '../../scene-graph/node-enum';
 import type { ParticleSystem } from '../particle-system';
+import type { Root } from '../../root';
 
 const PRE_TRIANGLE_INDEX = 1;
 const NEXT_TRIANGLE_INDEX = 1 << 2;
@@ -669,7 +670,7 @@ export default class TrailModule {
             return;
         }
 
-        this._trailModel = cclegacy.director.root.createModel(scene.Model);
+        this._trailModel = (cclegacy.director.root as Root).createModel(scene.Model);
     }
 
     private rebuild (): void {

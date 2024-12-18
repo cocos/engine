@@ -271,7 +271,7 @@ export class AnimationCurve {
         if (wrappedTime >= cachedKey.time && wrappedTime < cachedKey.endTime) {
             return cachedKey.evaluate(wrappedTime);
         }
-        const leftIndex = this.findIndex$(cachedKey, wrappedTime);
+        const leftIndex = this.findIndex(cachedKey, wrappedTime);
         const rightIndex = Math.min(leftIndex + 1, lastKeyframeIndex);
         this.calcOptimizedKey(cachedKey, leftIndex, rightIndex);
         return cachedKey.evaluate(wrappedTime);
@@ -309,7 +309,7 @@ export class AnimationCurve {
      * @param optKey
      * @param t
      */
-    private findIndex$ (optKey: OptimizedKey, t: number): number {
+    private findIndex (optKey: OptimizedKey, t: number): number {
         const { _curve: curve } = this;
         const nKeyframes = curve.keyFramesCount;
         const cachedIndex = optKey.index;

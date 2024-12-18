@@ -2,32 +2,36 @@
 
 
 exports.template = /* html */`
-<div class="preview">
-    <div class="info">
-        <ui-label value="Vertices:0" class="vertices"></ui-label>
-        <ui-label value="Triangles:0" class="triangles"></ui-label>
-        <div class="select-box">
-            <ui-select class="preview-channel">
-            </ui-select>
-            <ui-select class="preview-type">
-            </ui-select>
+<ui-section header="i18n:ENGINE.inspector.preview.header" class="preview-section config no-padding" expand>
+    <div class="preview">
+        <div class="info">
+            <ui-label value="Vertices:0" class="vertices"></ui-label>
+            <ui-label value="Triangles:0" class="triangles"></ui-label>
+            <div class="select-box">
+                <ui-select class="preview-channel">
+                </ui-select>
+                <ui-select class="preview-type">
+                </ui-select>
+            </div>
+            <div>
+                <ui-label value="" class="minPosLabel"></ui-label>
+            </div>
+            <div>
+                <ui-label value="" class="maxPosLabel"></ui-label>
+            </div>
         </div>
-        <div>
-            <ui-label value="" class="minPosLabel"></ui-label>
-        </div>
-        <div>
-            <ui-label value="" class="maxPosLabel"></ui-label>
+        <div class="image">
+            <canvas class="canvas"></canvas>
         </div>
     </div>
-    <div class="image">
-        <canvas class="canvas"></canvas>
-    </div>
-</div>
+</ui-section>
 `;
 
 exports.style = /* css */`
+.preview-section {
+    margin-top: 0px;
+}
 .preview {
-
     border-top: 1px solid var(--color-normal-border);
 }
 .preview > .info {
@@ -291,6 +295,13 @@ exports.update = function(assetList, metaList) {
     this.metaList = metaList;
     this.asset = assetList[0];
     this.meta = metaList[0];
+
+    // 如何多选就隐藏预览
+    if (assetList.length > 1) {
+        this.$.container.style.display = 'none';
+    } else {
+        this.$.container.style.display = 'block';
+    }
 
     for (const prop in Elements) {
         const element = Elements[prop];

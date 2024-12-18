@@ -1,291 +1,106 @@
 // Copyright (c) 2017-2023 Xiamen Yaji Software Co., Ltd.
 CCEffect %{
-
-  techniques:
+techniques:
   - passes:
-    - vert: dof-vs
-      frag: dof-coc-fs
-      pass: cc-dof-coc
-      depthStencilState:
-        depthTest: false
-        depthWrite: false
-    - vert: dof-vs
-      frag: dof-prefilter-fs
-      pass: cc-dof-prefilter
-      depthStencilState:
-        depthTest: false
-        depthWrite: false
-    - vert: dof-vs
-      frag: dof-bokeh-fs
-      pass: cc-dof-bokeh
-      depthStencilState:
-        depthTest: false
-        depthWrite: false
-    - vert: dof-vs
-      frag: dof-filter-fs
-      pass: cc-dof-filter
-      depthStencilState:
-        depthTest: false
-        depthWrite: false
-    - vert: dof-vs
-      frag: dof-combine-fs
-      pass: cc-dof-combine
-      depthStencilState:
-        depthTest: false
-        depthWrite: false
-    blendState:
-      targets:
-      - blend: true
-        blendSrc: zero
-        blendDst: src_alpha
-        blendSrcAlpha: zero
-        blendDstAlpha: one
+      - vert: dof-vs
+        frag: dof-blur-fs
+        pass: cc-dof-blur
+        depthStencilState:
+          depthTest: false
+          depthWrite: false
+      - vert: dof-vs
+        frag: dof-coc-fs
+        pass: cc-dof-coc
+        depthStencilState:
+          depthTest: false
+          depthWrite: false
+
 }%
 
 CCProgram ubo %{
-    #include <common/common-define>
+#include <common/common-define>
 
-    #define focusDistance       cocParams.x
-    #define focusRange          cocParams.y
-    #define bokehRadius         cocParams.z
-
-    float FloatToUint8(float v) {
-      return (v * 127.0 + 128.0 + 0.5) / 255.0;
-    }
-
-    float Uint8ToFloat(float v) {
-      v *= 255.0;
-      return ((v - 128.0) / 127.0);
-    }
+#define focusDistance params.x
+#define focusRange params.y
+#define blurRadius params.z
+}%
+CCProgram dof-vs %{
+#include <./chunks/vs1>
 }%
 
-CCProgram dof-vs %{
-  #include <./chunks/vs1>
+CCProgram dof-blur-fs %{
+precision highp float;
+#pragma rate DofUBO pass
+uniform DofUBO {
+  vec4 blurParams;
+  vec4 mainTexTexelSize;
+};
+layout(location = 0)out vec4 fragColor;
+#pragma rate screenTex pass
+uniform sampler2D screenTex;
+in vec2 v_uv;
+vec4 blur(sampler2D image, vec2 uv) {
+  vec4 color = vec4(0.0);
+  vec2 resolution = mainTexTexelSize.zw;
+  vec2 off1 = vec2(1.411764705882353);
+  vec2 off2 = vec2(3.2941176470588234);
+  vec2 off3 = vec2(5.176470588235294);
+  color += texture(image, uv) * 0.1964825501511404;
+  color += texture(image, uv + (off1 / resolution)) * 0.2969069646728344;
+  color += texture(image, uv - (off1 / resolution)) * 0.2969069646728344;
+  color += texture(image, uv + (off2 / resolution)) * 0.09447039785044732;
+  color += texture(image, uv - (off2 / resolution)) * 0.09447039785044732;
+  color += texture(image, uv + (off3 / resolution)) * 0.010381362401148057;
+  color += texture(image, uv - (off3 / resolution)) * 0.010381362401148057;
+  return color;
+}
+void main() {
+  vec4 pixelOffset = vec4(-1.0, - 1.0, 1.0, 1.0);
+  vec4 offsets = mainTexTexelSize.xyxy * pixelOffset * blurParams.z;
+  vec4 outColor = blur(screenTex, v_uv + offsets.xy);
+  outColor += blur(screenTex, v_uv + offsets.zy);
+  outColor += blur(screenTex, v_uv + offsets.xw);
+  outColor += blur(screenTex, v_uv + offsets.zw);
+  fragColor = outColor * blurParams.w * 0.25;
+}
 }%
 
 CCProgram dof-coc-fs %{
-  precision highp float;
-  #include <ubo>
-  #include <./chunks/depth>
+precision highp float;
+#include <./chunks/depth>
 
-  #pragma rate DofCocUBO pass
-  uniform DofCocUBO {
-      mat4 proj;
-      vec4 cocParams;
-  };
-
-  in vec2 v_uv;
-  layout(location = 0) out vec4 fragColor;
-
-  void main () {
-      float depth = GetLinearDepthWithProj(v_uv, proj);
-      //get circle of confusion
-      float coc = (depth - focusDistance) / focusRange;
-      coc = clamp(coc, -1.0, 1.0);
-      fragColor = vec4(FloatToUint8(coc), 0.0, 0.0, 1.0);
-  }
-}%
-
-CCProgram dof-prefilter-fs %{
-  precision highp float;
-  #include <ubo>
-
-  #pragma rate DofPrefilterUBO pass
-  uniform DofPrefilterUBO {
-      vec4 mainTexTexelSize;
-  };
- 
-  #pragma rate colorTex pass
-  uniform sampler2D colorTex;
-
-  #pragma rate cocTex pass
-  uniform sampler2D cocTex;
-
-  in vec2 v_uv;
-  layout(location = 0) out vec4 fragColor;
-
-  float Weigh (vec3 c) {
-    return 1.0 / (1.0 + max(max(c.r, c.g), c.b));
-  }
+layout(location = 0)out vec4 fragColor;
+in vec2 v_uv;
+#pragma rate screenTex pass
+uniform sampler2D screenTex;
+#pragma rate colorTex pass
+uniform sampler2D colorTex;
+#pragma rate DofCocUBO pass
+uniform DofCocUBO {
+  mat4 proj;
+  mat4 invProj;
+  mat4 viewMatInv;
+  vec4 focus;
+  vec4 cocParams;
+};
+void main() {
+  vec4 blurPixel = texture(colorTex, v_uv);
+  vec4 screenPixel = texture(screenTex, v_uv);
+  float depth = GetDepthFromTex(v_uv);
+  #if __VERSION__ < 450
+    depth = 2.0 * depth - 1.0;
+  #endif
+  vec4 screenPos = vec4(v_uv.x * 2.0 - 1.0, v_uv.y * 2.0 - 1.0, depth, 1.0);
+  vec4 viewPos = invProj * screenPos;
+  viewPos /= viewPos.w;
+  vec4 worldPos = viewMatInv * viewPos;
+  float blur =
+  smoothstep
+  (cocParams.x
+    , cocParams.y
+    , length(worldPos - vec4(focus.xyz, 1.0))
+  );
+  fragColor = mix(screenPixel, blurPixel, blur);
   
-  void main () {
-    //use lower resolution in order to cover more area
-    //downsampling
-    vec4 o = mainTexTexelSize.xyxy * vec2(-0.5, 0.5).xxyy;
-    vec2 uv0 = v_uv + o.xy;
-    vec2 uv1 = v_uv + o.zy;
-    vec2 uv2 = v_uv + o.xw;
-    vec2 uv3 = v_uv + o.zw;
-
-    vec3 s0 = texture(colorTex, uv0).rgb;
-    vec3 s1 = texture(colorTex, uv1).rgb;
-    vec3 s2 = texture(colorTex, uv2).rgb;
-    vec3 s3 = texture(colorTex, uv3).rgb;
-
-    float w0 = Weigh(s0);
-    float w1 = Weigh(s1);
-    float w2 = Weigh(s2);
-    float w3 = Weigh(s3);
-
-    // get the weighted average
-    vec3 avg = s0 * w0 + s1 * w1 + s2 * w2 + s3 * w3;
-    avg /= max(w0 + w1 + w2 + s3, 0.00001);
-
-    float coc0 = Uint8ToFloat(texture(cocTex, uv0).r);
-    float coc1 = Uint8ToFloat(texture(cocTex, uv1).r);
-    float coc2 = Uint8ToFloat(texture(cocTex, uv2).r);
-    float coc3 = Uint8ToFloat(texture(cocTex, uv3).r);
-
-    //get the largest CoC value of the four texture pixels
-    float cocMin = min(min(min(coc0, coc1), coc2), coc3);
-    float cocMax = max(max(max(coc0, coc1), coc2), coc3);
-    float coc = cocMax >= -cocMin ? cocMax : cocMin;
-
-    fragColor = vec4(avg, FloatToUint8(coc));
-  }
-
-}%
-
-CCProgram dof-bokeh-fs %{
-  precision highp float;
-  #include <ubo>
-
-  #pragma rate DofBokehUBO pass
-  uniform DofBokehUBO {
-      vec4 mainTexTexelSize;
-      vec4 cocParams;
-  };
-
-  #pragma rate prefilterTex pass
-  uniform sampler2D prefilterTex;
-
-  in vec2 v_uv;
-  layout(location = 0) out vec4 fragColor;
-
-  const int SAMPLE_COUNT = 16;
-  vec2 bokehKernel[SAMPLE_COUNT];
-  void initKernel()
-  {
-      bokehKernel[0] = vec2(0.0, 0.0);
-      bokehKernel[1] = vec2(0.54545456, 0.0);
-      bokehKernel[2] = vec2(0.16855472, 0.5187581);
-      bokehKernel[3] = vec2(-0.44128203, 0.3206101);
-      bokehKernel[4] = vec2(-0.44128197, -0.3206102);
-      bokehKernel[5] = vec2(0.1685548, -0.5187581);
-      bokehKernel[6] = vec2(1.0, 0.0);
-      bokehKernel[7] = vec2(0.809017, 0.58778524);
-      bokehKernel[8] = vec2(0.30901697, 0.95105654);
-      bokehKernel[9] = vec2(-0.30901703, 0.9510565);
-      bokehKernel[10] = vec2(-0.80901706, 0.5877852);
-      bokehKernel[11] = vec2(-1.0, 0.0);
-      bokehKernel[12] = vec2(-0.80901694, -0.58778536);
-      bokehKernel[13] = vec2(-0.30901664, -0.9510566);
-      bokehKernel[14] = vec2(0.30901712, -0.9510565);
-      bokehKernel[15] = vec2(0.80901694, -0.5877853);
-  }
-
-
-  //smooth transition between focal areas and boken areas
-  float Weigh (float coc, float dist) {
-    return saturate((abs(coc) - dist + 2.0) / 2.0);
-  }
-
-  void Accumulate(float coc, vec2 displacement, inout vec4 farAcc, inout vec4 nearAcc) {
-    float dist = length(displacement);
-    vec2 offset = displacement * mainTexTexelSize.xy * 2.0;
-
-    vec4 prefilterColor = texture(prefilterTex, v_uv + offset);
-    prefilterColor.a = Uint8ToFloat(prefilterColor.a) * bokehRadius;
-
-    float fw = Weigh(max(0.0, min(prefilterColor.a, coc)), dist);
-    farAcc.rgb += prefilterColor.rgb * fw;
-    farAcc.a += fw;
-
-    float nw = Weigh(-prefilterColor.a, dist);
-    nearAcc.rgb += prefilterColor.rgb * nw;
-    nearAcc.a += nw;
-  }
-
-  void main () {
-    initKernel();
-    
-    float coc = Uint8ToFloat(texture(prefilterTex, v_uv).a) * bokehRadius;
-
-    vec4 farAcc = vec4(0.0);  // background
-    vec4 nearAcc = vec4(0.0); // foreground
-
-    for (int k = 0; k < SAMPLE_COUNT; k++) {
-      vec2 displacement = bokehKernel[k] * bokehRadius;
-      Accumulate(coc, displacement, farAcc, nearAcc);
-    }
-
-    farAcc.rgb *= 1.0 / (farAcc.a + (farAcc.a == 0.0 ? 1.0 : 0.0));
-    nearAcc.rgb *= 1.0 / (nearAcc.a + (nearAcc.a == 0.0 ? 1.0 : 0.0));
-
-    //enhance foreground effects with a factor
-    float alpha = min(1.0, nearAcc.a * PI / float(SAMPLE_COUNT));
-
-    vec3 rgb = lerp(farAcc.rgb, nearAcc.rgb, alpha);
-    fragColor = vec4(rgb, alpha);
-  }
-}%
-
-CCProgram dof-filter-fs %{
-  precision highp float;
-  #include <ubo>
-
-  #pragma rate DofFilterUBO pass
-  uniform DofFilterUBO {
-      vec4 mainTexTexelSize;
-  };
-
-  #pragma rate bokehTex pass
-  uniform sampler2D bokehTex;
-
-  in vec2 v_uv;
-  layout(location = 0) out vec4 fragColor;
-
-  void main () {
-    //use tent filter,reduce the gap between sampling points
-    vec4 o = mainTexTexelSize.xyxy * 2.0 * vec2(-0.5, 0.5).xxyy;
-    vec4 s =
-      texture(bokehTex, v_uv + o.xy) +
-      texture(bokehTex, v_uv + o.zy) +
-      texture(bokehTex, v_uv + o.xw) +
-      texture(bokehTex, v_uv + o.zw);
-    fragColor = s * 0.25;
-  }
-}%
-
-CCProgram dof-combine-fs %{
-  precision highp float;
-  #include <ubo>
-  #include <common/common-define>
-
-  #pragma rate DofCombineUBO pass
-  uniform DofCombineUBO {
-      vec4 cocParams;
-  };
-
-  #pragma rate colorTex pass
-  uniform sampler2D colorTex;
-
-  #pragma rate cocTex pass
-  uniform sampler2D cocTex;
-
-  #pragma rate filterTex pass
-  uniform sampler2D filterTex;
-
-  in vec2 v_uv;
-  layout(location = 0) out vec4 fragColor;
-
-  void main () {
-    vec4 source = texture(colorTex, v_uv);
-    float coc = Uint8ToFloat(texture(cocTex, v_uv).r) * bokehRadius;
-    vec4 dof = texture(filterTex, v_uv);
-
-    float dofStrength = smoothstep(0.1, 1.0, abs(coc));
-    vec3 color = lerp(source.rgb, dof.rgb, dofStrength + dof.a - dofStrength * dof.a);
-    fragColor = vec4(color.rgb, source.a);
-  }
+}
 }%

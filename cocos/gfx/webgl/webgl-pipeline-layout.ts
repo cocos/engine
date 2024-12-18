@@ -28,24 +28,24 @@ import { WebGLDescriptorSetLayout } from './webgl-descriptor-set-layout';
 import { PipelineLayoutInfo } from '../base/define';
 
 export class WebGLPipelineLayout extends PipelineLayout {
-    get gpuPipelineLayout (): IWebGLGPUPipelineLayout { return this._gpuPipelineLayout$!; }
+    get gpuPipelineLayout (): IWebGLGPUPipelineLayout { return this._gpuPipelineLayout!; }
 
-    private _gpuPipelineLayout$: IWebGLGPUPipelineLayout | null = null;
+    private _gpuPipelineLayout: IWebGLGPUPipelineLayout | null = null;
     constructor () {
         super();
     }
 
     public initialize (info: Readonly<PipelineLayoutInfo>): void {
-        Array.prototype.push.apply(this._setLayouts$, info.setLayouts);
+        Array.prototype.push.apply(this._setLayouts, info.setLayouts);
 
         const dynamicOffsetIndices: number[][] = [];
 
         const gpuSetLayouts: IWebGLGPUDescriptorSetLayout[] = [];
         let dynamicOffsetCount = 0;
         const dynamicOffsetOffsets: number[] = [];
-        for (let i = 0; i < this._setLayouts$.length; i++) {
-            const setLayout = this._setLayouts$[i] as WebGLDescriptorSetLayout;
-            const dynamicBindings = setLayout.gpuDescriptorSetLayout.dynamicBindings$;
+        for (let i = 0; i < this._setLayouts.length; i++) {
+            const setLayout = this._setLayouts[i] as WebGLDescriptorSetLayout;
+            const dynamicBindings = setLayout.gpuDescriptorSetLayout.dynamicBindings;
             const indices = Array<number>(setLayout.bindingIndices.length).fill(-1);
             for (let j = 0; j < dynamicBindings.length; j++) {
                 const binding = dynamicBindings[j];
@@ -58,15 +58,15 @@ export class WebGLPipelineLayout extends PipelineLayout {
             dynamicOffsetCount += dynamicBindings.length;
         }
 
-        this._gpuPipelineLayout$ = {
-            gpuSetLayouts$: gpuSetLayouts,
-            dynamicOffsetIndices$: dynamicOffsetIndices,
-            dynamicOffsetCount$: dynamicOffsetCount,
-            dynamicOffsetOffsets$: dynamicOffsetOffsets,
+        this._gpuPipelineLayout = {
+            gpuSetLayouts,
+            dynamicOffsetIndices,
+            dynamicOffsetCount,
+            dynamicOffsetOffsets,
         };
     }
 
     public destroy (): void {
-        this._setLayouts$.length = 0;
+        this._setLayouts.length = 0;
     }
 }

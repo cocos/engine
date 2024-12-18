@@ -35,7 +35,7 @@ export class WebGPUQueue extends Queue {
     private _nativeQueue: GPUQueue | null = null;
     private _isAsync = false;
     public initialize (info: QueueInfo): boolean {
-        this._type$ = info.type;
+        this._type = info.type;
 
         return true;
     }

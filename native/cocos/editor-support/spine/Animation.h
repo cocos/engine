@@ -93,7 +93,7 @@ public:
 
     const String &getName();
 
-    Vector<Timeline *> &getTimelines();
+    inline Vector<Timeline *> &getTimelines() { return _timelines; }
 
     bool hasTimeline(int id);
 
@@ -101,7 +101,9 @@ public:
 
     void setDuration(float inValue);
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     Vector<Timeline *> _timelines;
     HashMap<int, bool> _timelineIds;
     float _duration;

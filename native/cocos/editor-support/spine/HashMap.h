@@ -111,7 +111,7 @@ public:
             entry->_key = key;
             entry->_value = value;
         } else {
-            entry = new (__FILE__, __LINE__) Entry();
+            entry = spine_new Entry();
             entry->_key = key;
             entry->_value = value;
 

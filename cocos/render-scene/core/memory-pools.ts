@@ -65,90 +65,90 @@ class BufferPool<P extends PoolType, E extends BufferManifest> implements IMemor
     // naming convension:
     // this._bufferViews[chunk][entry][element]
 
-    private declare _dataType$: BufferDataTypeManifest<E>;
-    private declare _dataMembers$: BufferDataMembersManifest<E>;
-    private declare _elementCount$: number;
-    private declare _entryBits$: number;
-    private declare _stride$: number;
-    private declare _entriesPerChunk$: number;
-    private declare _entryMask$: number;
-    private declare _chunkMask$: number;
-    private declare _poolFlag$: number;
-    private _arrayBuffers$: ArrayBuffer[] = [];
-    private _freeLists$: number[][] = [];
-    private _uint32BufferViews$: Uint32Array[][] = [];
-    private _float32BufferViews$: Float32Array[][] = [];
-    private _hasUint32$ = false;
-    private _hasFloat32$ = false;
-    private declare _nativePool$: NativeBufferPool;
+    private declare _dataType: BufferDataTypeManifest<E>;
+    private declare _dataMembers: BufferDataMembersManifest<E>;
+    private declare _elementCount: number;
+    private declare _entryBits: number;
+    private declare _stride: number;
+    private declare _entriesPerChunk: number;
+    private declare _entryMask: number;
+    private declare _chunkMask: number;
+    private declare _poolFlag: number;
+    private _arrayBuffers: ArrayBuffer[] = [];
+    private _freeLists: number[][] = [];
+    private _uint32BufferViews: Uint32Array[][] = [];
+    private _float32BufferViews: Float32Array[][] = [];
+    private _hasUint32 = false;
+    private _hasFloat32 = false;
+    private declare _nativePool: NativeBufferPool;
 
     constructor (poolType: P, dataType: BufferDataTypeManifest<E>, dataMembers: BufferDataMembersManifest<E>, enumType: E, entryBits = 8) {
-        this._elementCount$ = enumType.COUNT;
-        this._entryBits$ = entryBits;
-        this._dataType$ = dataType;
-        this._dataMembers$ = dataMembers;
+        this._elementCount = enumType.COUNT;
+        this._entryBits = entryBits;
+        this._dataType = dataType;
+        this._dataMembers = dataMembers;
 
         const bytesPerElement = 4;
-        this._stride$ = bytesPerElement * this._elementCount$;
-        this._entriesPerChunk$ = 1 << entryBits;
-        this._entryMask$ = this._entriesPerChunk$ - 1;
-        this._poolFlag$ = 1 << 30;
-        this._chunkMask$ = ~(this._entryMask$ | this._poolFlag$);
-        this._nativePool$ = new NativeBufferPool(poolType, entryBits, this._stride$);
+        this._stride = bytesPerElement * this._elementCount;
+        this._entriesPerChunk = 1 << entryBits;
+        this._entryMask = this._entriesPerChunk - 1;
+        this._poolFlag = 1 << 30;
+        this._chunkMask = ~(this._entryMask | this._poolFlag);
+        this._nativePool = new NativeBufferPool(poolType, entryBits, this._stride);
 
         let type: BufferDataType = BufferDataType.NEVER;
         let hasFloat32 = false; let hasUint32 = false;
         for (const e in dataType) {
-            hasFloat32 = this._hasFloat32$;
-            hasUint32 = this._hasUint32$;
+            hasFloat32 = this._hasFloat32;
+            hasUint32 = this._hasUint32;
             if (hasUint32 && hasFloat32) {
                 break;
             }
 
             type = dataType[e as E[keyof E]];
             if (!hasFloat32 && type === BufferDataType.FLOAT32) {
-                this._hasFloat32$ = true;
+                this._hasFloat32 = true;
             } else if (!hasUint32 && type === BufferDataType.UINT32) {
-                this._hasUint32$ = true;
+                this._hasUint32 = true;
             }
         }
     }
 
     public alloc (): IHandle<P> {
         let i = 0;
-        for (; i < this._freeLists$.length; i++) {
-            const list = this._freeLists$[i];
+        for (; i < this._freeLists.length; i++) {
+            const list = this._freeLists[i];
             if (list.length) {
                 const j = list[list.length - 1]; list.length--;
-                return (i << this._entryBits$) + j + this._poolFlag$ as unknown as IHandle<P>;
+                return (i << this._entryBits) + j + this._poolFlag as unknown as IHandle<P>;
             }
         }
         // add a new chunk
-        const buffer = this._nativePool$.allocateNewChunk();
+        const buffer = this._nativePool.allocateNewChunk();
         const float32BufferViews: Float32Array[] = [];
         const uint32BufferViews: Uint32Array[] = [];
         const freeList: number[] = [];
-        const hasFloat32 = this._hasFloat32$;
-        const hasUint32 = this._hasUint32$;
-        for (let j = 0; j < this._entriesPerChunk$; j++) {
-            if (hasFloat32) { float32BufferViews.push(new Float32Array(buffer, this._stride$ * j, this._elementCount$)); }
-            if (hasUint32) { uint32BufferViews.push(new Uint32Array(buffer, this._stride$ * j, this._elementCount$)); }
+        const hasFloat32 = this._hasFloat32;
+        const hasUint32 = this._hasUint32;
+        for (let j = 0; j < this._entriesPerChunk; j++) {
+            if (hasFloat32) { float32BufferViews.push(new Float32Array(buffer, this._stride * j, this._elementCount)); }
+            if (hasUint32) { uint32BufferViews.push(new Uint32Array(buffer, this._stride * j, this._elementCount)); }
             if (j) { freeList.push(j); }
         }
-        if (hasUint32) { this._uint32BufferViews$.push(uint32BufferViews); }
-        if (hasFloat32) { this._float32BufferViews$.push(float32BufferViews); }
-        this._freeLists$.push(freeList);
-        this._arrayBuffers$.push(buffer);
-        const handle = (i << this._entryBits$) + this._poolFlag$ as unknown as IHandle<P>;
+        if (hasUint32) { this._uint32BufferViews.push(uint32BufferViews); }
+        if (hasFloat32) { this._float32BufferViews.push(float32BufferViews); }
+        this._freeLists.push(freeList);
+        this._arrayBuffers.push(buffer);
+        const handle = (i << this._entryBits) + this._poolFlag as unknown as IHandle<P>;
         return handle; // guarantees the handle is always not zero
     }
 
     public getBuffer (handle: IHandle<P>): BufferArrayType {
-        const chunk = (this._chunkMask$ & handle as unknown as number) >> this._entryBits$;
-        const entry = this._entryMask$ & handle as unknown as number;
-        const bufferViews = this._hasFloat32$ ? this._float32BufferViews$ : this._uint32BufferViews$;
+        const chunk = (this._chunkMask & handle as unknown as number) >> this._entryBits;
+        const entry = this._entryMask & handle as unknown as number;
+        const bufferViews = this._hasFloat32 ? this._float32BufferViews : this._uint32BufferViews;
         if (DEBUG && (!handle || chunk < 0 || chunk >= bufferViews.length
-           || entry < 0 || entry >= this._entriesPerChunk$ || contains(this._freeLists$[chunk], entry))) {
+           || entry < 0 || entry >= this._entriesPerChunk || contains(this._freeLists[chunk], entry))) {
             warn('invalid buffer pool handle');
             return [] as unknown as BufferArrayType;
         }
@@ -157,32 +157,32 @@ class BufferPool<P extends PoolType, E extends BufferManifest> implements IMemor
     }
 
     public getTypedArray<K extends E[keyof E]> (handle: IHandle<P>, element: K): BufferArrayType {
-        const chunk = (this._chunkMask$ & handle as unknown as number) >> this._entryBits$;
-        const entry = this._entryMask$ & handle as unknown as number;
-        const bufferViews = this._dataType$[element] === BufferDataType.UINT32 ? this._uint32BufferViews$ : this._float32BufferViews$;
+        const chunk = (this._chunkMask & handle as unknown as number) >> this._entryBits;
+        const entry = this._entryMask & handle as unknown as number;
+        const bufferViews = this._dataType[element] === BufferDataType.UINT32 ? this._uint32BufferViews : this._float32BufferViews;
         if (DEBUG && (!handle || chunk < 0 || chunk >= bufferViews.length
-             || entry < 0 || entry >= this._entriesPerChunk$ || contains(this._freeLists$[chunk], entry))) {
+             || entry < 0 || entry >= this._entriesPerChunk || contains(this._freeLists[chunk], entry))) {
             warn('invalid buffer pool handle');
             return [] as unknown as BufferArrayType;
         }
         const index = element as unknown as number;
         const view = bufferViews[chunk][entry];
-        const count = this._dataMembers$[element];
+        const count = this._dataMembers[element];
 
         return view.subarray(index, index + count);
     }
 
     public free (handle: IHandle<P>): void {
-        const chunk = (this._chunkMask$ & handle as unknown as number) >> this._entryBits$;
-        const entry = this._entryMask$ & handle as unknown as number;
-        if (DEBUG && (!handle || chunk < 0 || chunk >= this._freeLists$.length
-             || entry < 0 || entry >= this._entriesPerChunk$ || contains(this._freeLists$[chunk], entry))) {
+        const chunk = (this._chunkMask & handle as unknown as number) >> this._entryBits;
+        const entry = this._entryMask & handle as unknown as number;
+        if (DEBUG && (!handle || chunk < 0 || chunk >= this._freeLists.length
+             || entry < 0 || entry >= this._entriesPerChunk || contains(this._freeLists[chunk], entry))) {
             warn('invalid buffer pool handle');
             return;
         }
-        const bufferViews = this._hasUint32$ ? this._uint32BufferViews$ : this._float32BufferViews$;
+        const bufferViews = this._hasUint32 ? this._uint32BufferViews : this._float32BufferViews;
         bufferViews[chunk][entry].fill(0);
-        this._freeLists$[chunk].push(entry);
+        this._freeLists[chunk].push(entry);
     }
 }
 

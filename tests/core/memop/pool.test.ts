@@ -57,7 +57,7 @@ test('shrink', () => {
     // Pool available size is 10, less than 30, so will not free any object.
     pool.tryShrink();
     // @ts-expect-error
-    expect(pool._nextAvail$).toEqual(9);
+    expect(pool._nextAvail).toEqual(9);
     calledTimes = 0;
 
 
@@ -69,7 +69,7 @@ test('shrink', () => {
     pool.freeArray(test);
     pool.tryShrink();
     // @ts-expect-error
-    expect(pool._nextAvail$).toEqual(29);
+    expect(pool._nextAvail).toEqual(29);
     calledTimes = 30;
 
     // Pool available size is 50, but its length is 60, so it will shrink 10 elements.
@@ -83,7 +83,7 @@ test('shrink', () => {
     pool.tryShrink();
     calledTimes = 10;
     // @ts-expect-error
-    expect(pool._nextAvail$).toEqual(39);
+    expect(pool._nextAvail).toEqual(39);
 
     // No matter shrink how many times, pool size will not less then shrinkThreshold.
     pool.tryShrink();
@@ -91,21 +91,21 @@ test('shrink', () => {
     pool.tryShrink();
     pool.tryShrink();
     // @ts-expect-error
-    expect(pool._nextAvail$).toEqual(29);
+    expect(pool._nextAvail).toEqual(29);
 });
 
 test('destroy', () => {
     calledTimes = 0;
     // @ts-expect-error
-    const beforeDestroy = pool._nextAvail$;
+    const beforeDestroy = pool._nextAvail;
     // @ts-expect-error
-    expect(pool._nextAvail$).toBeGreaterThan(0);
+    expect(pool._nextAvail).toBeGreaterThan(0);
 
     pool.destroy();
 
     expect(calledTimes).toBe(beforeDestroy + 1);
     // @ts-expect-error
-    expect(pool._nextAvail$).toBe(-1);
+    expect(pool._nextAvail).toBe(-1);
     // @ts-expect-error
-    expect(pool._freePool$.length).toBe(0);
+    expect(pool._freePool.length).toBe(0);
 });

@@ -1,16 +1,15 @@
-#ifndef __SPINE_ATLAS_ATTACHMENT_LOADER_EXT_H
-#define __SPINE_ATLAS_ATTACHMENT_LOADER_EXT_H
+#pragma once
 
 #include "mesh-type-define.h"
 #include "spine/spine.h"
 
 class AttachmentVertices {
 public:
-    AttachmentVertices(int verticesCount, uint16_t *triangles, int trianglesCount, uint32_t textureId);
+    AttachmentVertices(int verticesCount, uint16_t *triangles, int trianglesCount, const spine::String& textureUUID);
     virtual ~AttachmentVertices();
     AttachmentVertices *copy();
     Triangles *_triangles = nullptr;
-    uint32_t _textureId = 0;
+    spine::String _textureId;
 };
 
 class AtlasAttachmentLoaderExtension : public spine::AtlasAttachmentLoader {
@@ -22,5 +21,3 @@ public:
 private:
     spine::Atlas *_atlasCache;
 };
-
-#endif

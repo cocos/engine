@@ -86,22 +86,22 @@ export enum WebGL2EXT {
 }
 
 export interface IWebGL2Extensions {
-    EXT_texture_filter_anisotropic$: EXT_texture_filter_anisotropic | null;
-    EXT_color_buffer_half_float$: EXT_color_buffer_half_float | null;
-    EXT_color_buffer_float$: EXT_color_buffer_float | null;
-    WEBGL_multi_draw$: WEBGL_multi_draw | null;
-    WEBGL_compressed_texture_etc1$: WEBGL_compressed_texture_etc1 | null;
-    WEBGL_compressed_texture_etc$: WEBGL_compressed_texture_etc | null;
-    WEBGL_compressed_texture_pvrtc$: WEBGL_compressed_texture_pvrtc | null;
-    WEBGL_compressed_texture_astc$: WEBGL_compressed_texture_astc | null;
-    WEBGL_compressed_texture_s3tc$: WEBGL_compressed_texture_s3tc | null;
-    WEBGL_compressed_texture_s3tc_srgb$: WEBGL_compressed_texture_s3tc_srgb | null;
-    WEBGL_debug_shaders$: WEBGL_debug_shaders | null;
-    WEBGL_lose_context$: WEBGL_lose_context | null;
-    WEBGL_debug_renderer_info$: WEBGL_debug_renderer_info | null;
-    OES_texture_half_float_linear$: OES_texture_half_float_linear | null;
-    OES_texture_float_linear$: OES_texture_float_linear | null;
-    useVAO$: boolean;
+    EXT_texture_filter_anisotropic: EXT_texture_filter_anisotropic | null;
+    EXT_color_buffer_half_float: EXT_color_buffer_half_float | null;
+    EXT_color_buffer_float: EXT_color_buffer_float | null;
+    WEBGL_multi_draw: WEBGL_multi_draw | null;
+    WEBGL_compressed_texture_etc1: WEBGL_compressed_texture_etc1 | null;
+    WEBGL_compressed_texture_etc: WEBGL_compressed_texture_etc | null;
+    WEBGL_compressed_texture_pvrtc: WEBGL_compressed_texture_pvrtc | null;
+    WEBGL_compressed_texture_astc: WEBGL_compressed_texture_astc | null;
+    WEBGL_compressed_texture_s3tc: WEBGL_compressed_texture_s3tc | null;
+    WEBGL_compressed_texture_s3tc_srgb: WEBGL_compressed_texture_s3tc_srgb | null;
+    WEBGL_debug_shaders: WEBGL_debug_shaders | null;
+    WEBGL_lose_context: WEBGL_lose_context | null;
+    WEBGL_debug_renderer_info: WEBGL_debug_renderer_info | null;
+    OES_texture_half_float_linear: OES_texture_half_float_linear | null;
+    OES_texture_float_linear: OES_texture_float_linear | null;
+    useVAO: boolean;
 }
 
 // put the global instance here so that we won't have circular dependencies

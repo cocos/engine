@@ -43,6 +43,7 @@ class BoneData;
 class SlotData;
 
 class SP_API PathConstraintData : public ConstraintData {
+    RTTI_DECL
     friend class SkeletonBinary;
     friend class SkeletonJson;
 
@@ -55,7 +56,7 @@ class SP_API PathConstraintData : public ConstraintData {
 public:
     explicit PathConstraintData(const String& name);
 
-    Vector<BoneData*>& getBones();
+    inline Vector<BoneData*>& getBones() { return _bones; }
 
     SlotData* getTarget();
     void setTarget(SlotData* inValue);
@@ -84,7 +85,9 @@ public:
     float getTranslateMix();
     void setTranslateMix(float inValue);
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     Vector<BoneData*> _bones;
     SlotData* _target;
     PositionMode _positionMode;

@@ -77,10 +77,6 @@ const String &Animation::getName() {
     return _name;
 }
 
-Vector<Timeline *> &Animation::getTimelines() {
-    return _timelines;
-}
-
 float Animation::getDuration() {
     return _duration;
 }

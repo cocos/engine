@@ -59,12 +59,12 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
             clearDepth,
             clearStencil,
         );
-        this._isInRenderPass$ = true;
+        this._isInRenderPass = true;
     }
 
     public draw (infoOrAssembler: DrawInfo | InputAssembler): void {
-        if (this._isInRenderPass$) {
-            if (this._isStateInvalied$) {
+        if (this._isInRenderPass) {
+            if (this._isStateInvalied) {
                 this.bindStates();
             }
 
@@ -72,19 +72,19 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
 
             WebGLCmdFuncDraw(WebGLDeviceManager.instance, info);
 
-            ++this._numDrawCalls$;
-            this._numInstances$ += info.instanceCount;
+            ++this._numDrawCalls;
+            this._numInstances += info.instanceCount;
             const indexCount = info.indexCount || info.vertexCount;
-            if (this._curGPUPipelineState$) {
-                const glPrimitive = this._curGPUPipelineState$.glPrimitive$;
+            if (this._curGPUPipelineState) {
+                const glPrimitive = this._curGPUPipelineState.glPrimitive;
                 switch (glPrimitive) {
                 case WebGLConstants.TRIANGLES: {
-                    this._numTris$ += indexCount / 3 * Math.max(info.instanceCount, 1);
+                    this._numTris += indexCount / 3 * Math.max(info.instanceCount, 1);
                     break;
                 }
                 case WebGLConstants.TRIANGLE_STRIP:
                 case WebGLConstants.TRIANGLE_FAN: {
-                    this._numTris$ += (indexCount - 2) * Math.max(info.instanceCount, 1);
+                    this._numTris += (indexCount - 2) * Math.max(info.instanceCount, 1);
                     break;
                 }
                 default:
@@ -98,37 +98,37 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
     public setViewport (viewport: Readonly<Viewport>): void {
         const { stateCache: cache, gl } = WebGLDeviceManager.instance;
 
-        if (cache.viewport$.left !== viewport.left
-            || cache.viewport$.top !== viewport.top
-            || cache.viewport$.width !== viewport.width
-            || cache.viewport$.height !== viewport.height) {
+        if (cache.viewport.left !== viewport.left
+            || cache.viewport.top !== viewport.top
+            || cache.viewport.width !== viewport.width
+            || cache.viewport.height !== viewport.height) {
             gl.viewport(viewport.left, viewport.top, viewport.width, viewport.height);
 
-            cache.viewport$.left = viewport.left;
-            cache.viewport$.top = viewport.top;
-            cache.viewport$.width = viewport.width;
-            cache.viewport$.height = viewport.height;
+            cache.viewport.left = viewport.left;
+            cache.viewport.top = viewport.top;
+            cache.viewport.width = viewport.width;
+            cache.viewport.height = viewport.height;
         }
     }
 
     public setScissor (scissor: Readonly<Rect>): void {
         const { stateCache: cache, gl } = WebGLDeviceManager.instance;
 
-        if (cache.scissorRect$.x !== scissor.x
-            || cache.scissorRect$.y !== scissor.y
-            || cache.scissorRect$.width !== scissor.width
-            || cache.scissorRect$.height !== scissor.height) {
+        if (cache.scissorRect.x !== scissor.x
+            || cache.scissorRect.y !== scissor.y
+            || cache.scissorRect.width !== scissor.width
+            || cache.scissorRect.height !== scissor.height) {
             gl.scissor(scissor.x, scissor.y, scissor.width, scissor.height);
 
-            cache.scissorRect$.x = scissor.x;
-            cache.scissorRect$.y = scissor.y;
-            cache.scissorRect$.width = scissor.width;
-            cache.scissorRect$.height = scissor.height;
+            cache.scissorRect.x = scissor.x;
+            cache.scissorRect.y = scissor.y;
+            cache.scissorRect.width = scissor.width;
+            cache.scissorRect.height = scissor.height;
         }
     }
 
     public updateBuffer (buffer: Buffer, data: Readonly<BufferSource>, size?: number): void {
-        if (!this._isInRenderPass$) {
+        if (!this._isInRenderPass) {
             const gpuBuffer = (buffer as WebGLBuffer).gpuBuffer;
             if (gpuBuffer) {
                 let buffSize: number;
@@ -148,7 +148,7 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
     }
 
     public copyBuffersToTexture (buffers: Readonly<ArrayBufferView[]>, texture: Texture, regions: Readonly<BufferTextureCopy[]>): void {
-        if (!this._isInRenderPass$) {
+        if (!this._isInRenderPass) {
             const gpuTexture = (texture as WebGLTexture).gpuTexture;
             if (gpuTexture) {
                 WebGLCmdFuncCopyBuffersToTexture(WebGLDeviceManager.instance, buffers, gpuTexture, regions);
@@ -165,13 +165,13 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
     protected bindStates (): void {
         WebGLCmdFuncBindStates(
             WebGLDeviceManager.instance,
-            this._curGPUPipelineState$,
-            this._curGPUInputAssembler$,
-            this._curGPUDescriptorSets$,
-            this._curDynamicOffsets$,
-            this._curDynamicStates$,
+            this._curGPUPipelineState,
+            this._curGPUInputAssembler,
+            this._curGPUDescriptorSets,
+            this._curDynamicOffsets,
+            this._curDynamicStates,
         );
-        this._isStateInvalied$ = false;
+        this._isStateInvalied = false;
     }
 
     public blitTexture (srcTexture: Readonly<Texture>, dstTexture: Texture, regions: Readonly<TextureBlit []>, filter: Filter): void {

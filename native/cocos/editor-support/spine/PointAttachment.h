@@ -65,7 +65,9 @@ public:
 
     virtual Attachment* copy();
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     float _x, _y, _rotation;
 };
 } // namespace spine

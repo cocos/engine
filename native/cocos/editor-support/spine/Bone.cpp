@@ -102,10 +102,11 @@ void Bone::updateWorldTransform(float x, float y, float rotation, float scaleX, 
     _ashearY = shearY;
     _appliedValid = true;
 
+    float sx = _skeleton.getScaleX();
+    float sy = _skeleton.getScaleY();
+
     if (!parent) { /* Root bone. */
         float rotationY = rotation + 90 + shearY;
-        float sx = _skeleton.getScaleX();
-        float sy = _skeleton.getScaleY();
         _a = MathUtil::cosDeg(rotation + shearX) * scaleX * sx;
         _b = MathUtil::cosDeg(rotationY) * scaleY * sx;
         _c = MathUtil::sinDeg(rotation + shearX) * scaleX * sy;
@@ -123,7 +124,8 @@ void Bone::updateWorldTransform(float x, float y, float rotation, float scaleX, 
     _worldX = pa * x + pb * y + parent->_worldX;
     _worldY = pc * x + pd * y + parent->_worldY;
 
-    switch (_data.getTransformMode()) {
+    const TransformMode mode = _data.getTransformMode();
+    switch (mode) {
         case TransformMode_Normal: {
             float rotationY = rotation + 90 + shearY;
             float la = MathUtil::cosDeg(rotation + shearX) * scaleX;
@@ -175,14 +177,14 @@ void Bone::updateWorldTransform(float x, float y, float rotation, float scaleX, 
             float r, zb, zd, la, lb, lc, ld;
             cosine = MathUtil::cosDeg(rotation);
             sine = MathUtil::sinDeg(rotation);
-            za = (pa * cosine + pb * sine) / _skeleton.getScaleX();
-            zc = (pc * cosine + pd * sine) / _skeleton.getScaleY();
+            za = (pa * cosine + pb * sine) / sx;
+            zc = (pc * cosine + pd * sine) / sy;
             s = MathUtil::sqrt(za * za + zc * zc);
             if (s > 0.00001f) s = 1 / s;
             za *= s;
             zc *= s;
             s = MathUtil::sqrt(za * za + zc * zc);
-            if (_data.getTransformMode() == TransformMode_NoScale && (pa * pd - pb * pc < 0) != (_skeleton.getScaleX() < 0 != _skeleton.getScaleY() < 0))
+            if (mode == TransformMode_NoScale && (pa * pd - pb * pc < 0) != (sx < 0 != sy < 0))
                 s = -s;
             r = MathUtil::Pi / 2 + MathUtil::atan2(zc, za);
             zb = MathUtil::cos(r) * s;
@@ -198,10 +200,10 @@ void Bone::updateWorldTransform(float x, float y, float rotation, float scaleX, 
             break;
         }
     }
-    _a *= _skeleton.getScaleX();
-    _b *= _skeleton.getScaleX();
-    _c *= _skeleton.getScaleY();
-    _d *= _skeleton.getScaleY();
+    _a *= sx;
+    _b *= sx;
+    _c *= sy;
+    _d *= sy;
 }
 
 void Bone::setToSetupPose() {
@@ -310,191 +312,20 @@ Bone *Bone::getParent() {
     return _parent;
 }
 
-Vector<Bone *> &Bone::getChildren() {
-    return _children;
-}
-
-float Bone::getX() {
-    return _x;
-}
-
-void Bone::setX(float inValue) {
-    _x = inValue;
-}
-
-float Bone::getY() {
-    return _y;
-}
-
-void Bone::setY(float inValue) {
-    _y = inValue;
-}
-
-float Bone::getRotation() {
-    return _rotation;
-}
-
-void Bone::setRotation(float inValue) {
-    _rotation = inValue;
-}
-
-float Bone::getScaleX() {
-    return _scaleX;
-}
-
-void Bone::setScaleX(float inValue) {
-    _scaleX = inValue;
-}
-
-float Bone::getScaleY() {
-    return _scaleY;
-}
-
-void Bone::setScaleY(float inValue) {
-    _scaleY = inValue;
-}
-
-float Bone::getShearX() {
-    return _shearX;
-}
-
-void Bone::setShearX(float inValue) {
-    _shearX = inValue;
-}
-
-float Bone::getShearY() {
-    return _shearY;
-}
-
-void Bone::setShearY(float inValue) {
-    _shearY = inValue;
-}
-
-float Bone::getAppliedRotation() {
-    return _arotation;
-}
-
-void Bone::setAppliedRotation(float inValue) {
-    _arotation = inValue;
-}
-
-float Bone::getAX() {
-    return _ax;
-}
-
-void Bone::setAX(float inValue) {
-    _ax = inValue;
-}
-
-float Bone::getAY() {
-    return _ay;
-}
-
-void Bone::setAY(float inValue) {
-    _ay = inValue;
-}
-
-float Bone::getAScaleX() {
-    return _ascaleX;
-}
-
-void Bone::setAScaleX(float inValue) {
-    _ascaleX = inValue;
-}
-
-float Bone::getAScaleY() {
-    return _ascaleY;
-}
-
-void Bone::setAScaleY(float inValue) {
-    _ascaleY = inValue;
-}
-
-float Bone::getAShearX() {
-    return _ashearX;
-}
-
-void Bone::setAShearX(float inValue) {
-    _ashearX = inValue;
-}
-
-float Bone::getAShearY() {
-    return _ashearY;
-}
-
-void Bone::setAShearY(float inValue) {
-    _ashearY = inValue;
-}
-
-float Bone::getA() {
-    return _a;
-}
-
-void Bone::setA(float inValue) {
-    _a = inValue;
-}
-
-float Bone::getB() {
-    return _b;
-}
-
-void Bone::setB(float inValue) {
-    _b = inValue;
-}
-
-float Bone::getC() {
-    return _c;
-}
-
-void Bone::setC(float inValue) {
-    _c = inValue;
-}
-
-float Bone::getD() {
-    return _d;
-}
-
-void Bone::setD(float inValue) {
-    _d = inValue;
-}
-
-float Bone::getWorldX() {
-    return _worldX;
-}
-
-void Bone::setWorldX(float inValue) {
-    _worldX = inValue;
-}
-
-float Bone::getWorldY() {
-    return _worldY;
-}
-
-void Bone::setWorldY(float inValue) {
-    _worldY = inValue;
-}
-
-float Bone::getWorldRotationX() {
+float Bone::getWorldRotationX() const {
     return MathUtil::atan2(_c, _a) * MathUtil::MathUtil::Rad_Deg;
 }
 
-float Bone::getWorldRotationY() {
+float Bone::getWorldRotationY() const {
     return MathUtil::atan2(_d, _b) * MathUtil::Rad_Deg;
 }
 
-float Bone::getWorldScaleX() {
+float Bone::getWorldScaleX() const {
     return MathUtil::sqrt(_a * _a + _c * _c);
 }
 
-float Bone::getWorldScaleY() {
+float Bone::getWorldScaleY() const {
     return MathUtil::sqrt(_b * _b + _d * _d);
-}
-
-bool Bone::isAppliedValid() {
-    return _appliedValid;
-}
-void Bone::setAppliedValid(bool valid) {
-    _appliedValid = valid;
 }
 
 void Bone::updateAppliedTransform() {

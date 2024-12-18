@@ -37,6 +37,8 @@
 
 using namespace spine;
 
+RTTI_IMPL(IkConstraintData, ConstraintData)
+
 IkConstraintData::IkConstraintData(const String &name) : ConstraintData(name),
                                                          _target(NULL),
                                                          _bendDirection(1),
@@ -45,10 +47,6 @@ IkConstraintData::IkConstraintData(const String &name) : ConstraintData(name),
                                                          _uniform(false),
                                                          _mix(1),
                                                          _softness(0) {
-}
-
-Vector<BoneData *> &IkConstraintData::getBones() {
-    return _bones;
 }
 
 BoneData *IkConstraintData::getTarget() {

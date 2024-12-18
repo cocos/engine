@@ -23,7 +23,6 @@
 */
 
 /* eslint-disable @typescript-eslint/no-namespace */
-
 import type { Color, Vec2 } from '../core';
 
 export * from 'internal:native';
@@ -1436,7 +1435,9 @@ export declare namespace native {
      */
     const adpf: {
         /**
-         * @en Provides an estimate of how much thermal headroom the device currently has before hitting severe throttling. The value range is a non-negative float, where 0.0 represents a fixed distance from overheating, 1.0 indicates the device will be severely throttled, and values greater than 1.0 may imply even heavier throttling.
+         * @en Provides an estimate of how much thermal headroom the device currently has before hitting severe throttling.
+         *     The value range is a non-negative float, where 0.0 represents a fixed distance from overheating, 1.0 indicates
+         *     the device will be severely throttled, and values greater than 1.0 may imply even heavier throttling.
          * @zh 提供设备在达到严重节流之前当前有多少热余量的估计值。值的范围是非负浮点数，其中0.0表示距离过热的固定距离，1.0表示设备将被严重限制，而大于1.0的值可能表示更重的限制。
          * @see https://developer.android.com/ndk/reference/group/thermal#group___thermal_1ga1055f6c8d5910a1904162bea75807314
          */

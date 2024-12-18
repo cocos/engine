@@ -69,7 +69,7 @@ public:
 
     IkConstraintData &getData();
 
-    Vector<Bone *> &getBones();
+    inline Vector<Bone *> &getBones() { return _bones; }
 
     Bone *getTarget();
 
@@ -95,11 +95,13 @@ public:
 
     void setSoftness(float inValue);
 
-    bool isActive();
+    virtual bool isActive();
 
-    void setActive(bool inValue);
+    virtual void setActive(bool inValue);;
 
+#ifndef __EMSCRIPTEN__
 private:
+#endif
     IkConstraintData &_data;
     Vector<Bone *> _bones;
     int _bendDirection;

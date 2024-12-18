@@ -24,6 +24,7 @@
 
 package com.cocos.lib;
 
+import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -58,19 +59,19 @@ public class CocosActivity extends GameActivity {
 
 
 
-    private native void onCreateNative();
+    private native void onCreateNative(Context applicationContext);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         onLoadNativeLibraries();
-        onCreateNative();
+        onCreateNative(this.getApplicationContext());
 
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
 
         // GlobalObject.init should be initialized at first.
-        GlobalObject.init(this, this);
+        GlobalObject.init(this.getApplicationContext(), this);
 
         CocosHelper.registerBatteryLevelReceiver(this);
         CocosHelper.init();

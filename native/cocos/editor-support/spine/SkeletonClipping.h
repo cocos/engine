@@ -53,9 +53,9 @@ public:
 
     bool isClipping();
 
-    Vector<float>& getClippedVertices();
-    Vector<unsigned short>& getClippedTriangles();
-    Vector<float>& getClippedUVs();
+    inline Vector<float>& getClippedVertices() { return _clippedVertices; }
+    inline Vector<unsigned short>& getClippedTriangles() { return _clippedTriangles; }
+    inline Vector<float>& getClippedUVs() { return _clippedUVs; }
 
 private:
     Triangulator _triangulator;

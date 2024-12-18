@@ -37,6 +37,10 @@
 
 using namespace spine;
 
+RTTI_IMPL_NOPARENT(VertexEffect)
+
+RTTI_IMPL(JitterVertexEffect, VertexEffect)
+
 JitterVertexEffect::JitterVertexEffect(float jitterX, float jitterY) : _jitterX(jitterX), _jitterY(jitterY) {
 }
 
@@ -73,6 +77,8 @@ void JitterVertexEffect::setJitterY(float jitterY) {
 float JitterVertexEffect::getJitterY() {
     return _jitterY;
 }
+
+RTTI_IMPL(SwirlVertexEffect, VertexEffect)
 
 SwirlVertexEffect::SwirlVertexEffect(float radius, Interpolation &interpolation) : _centerX(0),
                                                                                    _centerY(0),

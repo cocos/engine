@@ -45,10 +45,10 @@ class TouchManager {
      * - If the number of touches doesn't exceed the max count, we create a touch object.
      * - If the number of touches exceeds the max count, we discard the timeout touch to create a new one.
      * - If the number of touches exceeds the max count and there is no timeout touch, we can't create any touch object.
-     * @param touchID
-     * @param x
-     * @param y
-     * @returns
+     * @param touchID The touch identifier
+     * @param x The x-axis coordinate of the current touch point.
+     * @param y The y-axis coordinate of the current touch point.
+     * @return The Touch instance or undefined.
      */
     private _createTouch (touchID: number, x: number, y: number): Touch | undefined {
         if (this._touchMap.has(touchID)) {
@@ -120,7 +120,7 @@ class TouchManager {
      * Get the number of touches.
      */
     public getTouchCount (): number {
-        return touchManager._touchMap.size;
+        return this._touchMap.size;
     }
 
     /**

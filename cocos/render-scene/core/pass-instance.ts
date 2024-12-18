@@ -36,27 +36,27 @@ export class PassInstance extends Pass {
      * @en The parent pass
      * @zh 相关联的原始 Pass
      */
-    get parent (): Pass { return this._parent$; }
+    get parent (): Pass { return this._parent; }
 
-    private declare _parent$: Pass;
+    private declare _parent: Pass;
 
-    private declare _owner$: MaterialInstance;
+    private declare _owner: MaterialInstance;
 
-    private _dontNotify$ = false;
+    private _dontNotify = false;
 
     constructor (parent: Pass, owner: MaterialInstance) {
         super(parent.root);
-        this._parent$ = parent;
-        this._owner$ = owner;
-        this._doInit(this._parent$, true); // defines may change now
+        this._parent = parent;
+        this._owner = owner;
+        this._doInit(this._parent, true); // defines may change now
         for (let i = 0; i < this._shaderInfo.blocks.length; i++) {
             const u = this._shaderInfo.blocks[i];
             const block = this._blocks[u.binding];
-            const parentBlock = this._parent$.blocks[u.binding];
+            const parentBlock = this._parent.blocks[u.binding];
             block.set(parentBlock);
         }
         this._rootBufferDirty = true;
-        const paren = this._parent$ as PassInstance;
+        const paren = this._parent as PassInstance;
         for (let i = 0; i < this._shaderInfo.samplerTextures.length; i++) {
             const u = this._shaderInfo.samplerTextures[i];
             for (let j = 0; j < u.count; j++) {
@@ -102,7 +102,7 @@ export class PassInstance extends Pass {
      * @zh 开始静默修改 Pass 相关状态，不会通知材质去重新构建管线状态对象。
      */
     public beginChangeStatesSilently (): void {
-        this._dontNotify$ = true;
+        this._dontNotify = true;
     }
 
     /**
@@ -110,7 +110,7 @@ export class PassInstance extends Pass {
      * @zh 结束静默状态修改，所有修改将会开始通知材质。
      */
     public endChangeStatesSilently (): void {
-        this._dontNotify$ = false;
+        this._dontNotify = false;
     }
 
     protected _syncBatchingScheme (): void {
@@ -120,6 +120,6 @@ export class PassInstance extends Pass {
 
     protected _onStateChange (): void {
         this._hash = Pass.getPassHash(this);
-        this._owner$.onPassStateChange(this._dontNotify$);
+        this._owner.onPassStateChange(this._dontNotify);
     }
 }

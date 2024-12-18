@@ -57,6 +57,8 @@ constexpr ccstd::array<ccstd::array<float, 4>, 4> PRE_TRANSFORMS = {{
     {{0, -1, 1, 0}}   // SurfaceTransform.ROTATE_270
 }};
 
+std::atomic<uint32_t> sCameraId{0};
+
 } // namespace
 
 const ccstd::vector<float> Camera::FSTOPS{1.8F, 2.0F, 2.2F, 2.5F, 2.8F, 3.2F, 3.5F, 4.0F, 4.5F, 5.0F, 5.6F, 6.3F, 7.1F, 8.0F, 9.0F, 10.0F, 11.0F, 13.0F, 14.0F, 16.0F, 18.0F, 20.0F, 22.0F};
@@ -65,7 +67,8 @@ const ccstd::vector<float> Camera::SHUTTERS{1.0F, 1.0F / 2.0F, 1.0F / 4.0F, 1.0F
 const ccstd::vector<float> Camera::ISOS{100.0F, 200.0F, 400.0F, 800.0F};
 
 Camera::Camera(gfx::Device *device)
-: _device(device) {
+: _device(device)
+, _cameraId(sCameraId++) {
     _apertureValue = Camera::FSTOPS.at(static_cast<int>(_aperture));
     _shutterValue = Camera::SHUTTERS.at(static_cast<int>(_shutter));
     _isoValue = Camera::ISOS[static_cast<int>(_iso)];

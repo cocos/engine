@@ -404,6 +404,8 @@ void DevicePass::begin(gfx::CommandBuffer *cmdBuff) {
     _fbo.createTransient();
 
     cmdBuff->beginRenderPass(_renderPass.get(), _fbo.get(), _scissor, clearColors.data(), clearDepth, clearStencil);
+    cmdBuff->setViewport(_viewport);
+    cmdBuff->setScissor(_scissor);
     _curViewport = _viewport;
     _curScissor = _scissor;
 }

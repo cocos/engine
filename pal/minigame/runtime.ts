@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-import { COCOSPLAY, HUAWEI, LINKSURE, OPPO, QTT, VIVO } from 'internal:constants';
+import { VIVO } from 'internal:constants';
 import { SystemInfo, IMiniGame } from 'pal/minigame';
 import { checkPalIntegrity, withImpl } from '../integrity-check';
 
@@ -66,17 +66,6 @@ Object.defineProperty(minigame, 'orientation', {
     },
 });
 
-if (LINKSURE || COCOSPLAY) {
-    // TODO: update system info when view resized, currently the resize callback is not supported.
-    let cachedSystemInfo = ral.getSystemInfoSync() as SystemInfo;
-    minigame.onWindowResize?.(() => {
-        // update cached system info
-        cachedSystemInfo = ral.getSystemInfoSync() as SystemInfo;
-    });
-    minigame.getSystemInfoSync = function (): SystemInfo {
-        return cachedSystemInfo;
-    };
-}
 // #endregion SystemInfo
 
 // #region Accelerometer
@@ -115,22 +104,12 @@ minigame.offAccelerometerChange = function (cb): void {
 };
 // #endregion Accelerometer
 
-// NOTE: Audio playing crash on COCOSPLAY, need to play audio asynchronously.
-if (COCOSPLAY) {
-    minigame.createInnerAudioContext = createInnerAudioContextPolyfill(ral, {
-        onPlay: true,  // polyfill for vivo
-        onPause: true,
-        onStop: true,
-        onSeek: true,
-    }, true);
-} else {
-    minigame.createInnerAudioContext = createInnerAudioContextPolyfill(ral, {
-        onPlay: true,  // polyfill for vivo
-        onPause: true,
-        onStop: true,
-        onSeek: true,
-    });
-}
+minigame.createInnerAudioContext = createInnerAudioContextPolyfill(ral, {
+    onPlay: true,  // polyfill for vivo
+    onPause: true,
+    onStop: true,
+    onSeek: true,
+});
 
 // #region SafeArea
 minigame.getSafeArea = function (): SafeArea {

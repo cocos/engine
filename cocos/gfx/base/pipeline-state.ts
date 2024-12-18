@@ -65,7 +65,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 着色器。
      */
     get shader (): Shader {
-        return this._shader$!;
+        return this._shader!;
     }
 
     /**
@@ -73,7 +73,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 管线布局。
      */
     get pipelineLayout (): PipelineLayout {
-        return this._pipelineLayout$!;
+        return this._pipelineLayout!;
     }
 
     /**
@@ -81,7 +81,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 图元模式。
      */
     get primitive (): PrimitiveMode {
-        return this._primitive$;
+        return this._primitive;
     }
 
     /**
@@ -89,7 +89,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 光栅化状态。
      */
     get rasterizerState (): RasterizerState {
-        return this._rs$;
+        return this._rs;
     }
 
     /**
@@ -97,7 +97,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 深度模板状态。
      */
     get depthStencilState (): DepthStencilState {
-        return this._dss$;
+        return this._dss;
     }
 
     /**
@@ -105,7 +105,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 混合状态。
      */
     get blendState (): BlendState {
-        return this._bs$;
+        return this._bs;
     }
 
     /**
@@ -113,7 +113,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 输入状态。
      */
     get inputState (): InputState {
-        return this._is$ as InputState;
+        return this._is as InputState;
     }
 
     /**
@@ -121,7 +121,7 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 动态状态数组。
      */
     get dynamicStates (): DynamicStateFlags {
-        return this._dynamicStates$;
+        return this._dynamicStates;
     }
 
     /**
@@ -129,18 +129,18 @@ export abstract class PipelineState extends GFXObject {
      * @zh GFX 渲染过程。
      */
     get renderPass (): RenderPass {
-        return this._renderPass$ as RenderPass;
+        return this._renderPass as RenderPass;
     }
 
-    protected _shader$: Shader | null = null;
-    protected _pipelineLayout$: PipelineLayout | null = null;
-    protected _primitive$: PrimitiveMode = PrimitiveMode.TRIANGLE_LIST;
-    protected _is$: InputState | null = null;
-    protected _rs$: RasterizerState = new RasterizerState();
-    protected _dss$: DepthStencilState = new DepthStencilState();
-    protected _bs$: BlendState = new BlendState();
-    protected _dynamicStates$: DynamicStateFlags = DynamicStateFlagBit.NONE;
-    protected _renderPass$: RenderPass | null = null;
+    protected _shader: Shader | null = null;
+    protected _pipelineLayout: PipelineLayout | null = null;
+    protected _primitive: PrimitiveMode = PrimitiveMode.TRIANGLE_LIST;
+    protected _is: InputState | null = null;
+    protected _rs: RasterizerState = new RasterizerState();
+    protected _dss: DepthStencilState = new DepthStencilState();
+    protected _bs: BlendState = new BlendState();
+    protected _dynamicStates: DynamicStateFlags = DynamicStateFlagBit.NONE;
+    protected _renderPass: RenderPass | null = null;
 
     constructor () {
         super(ObjectType.PIPELINE_STATE);

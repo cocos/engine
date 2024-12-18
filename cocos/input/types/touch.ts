@@ -24,6 +24,7 @@
 */
 
 import { Vec2, cclegacy } from '../../core';
+import type { View } from '../../ui/view';
 
 const _vec2 = new Vec2();
 /**
@@ -31,15 +32,15 @@ const _vec2 = new Vec2();
  * @zh 封装了触点相关的信息。
  */
 export class Touch {
-    private _point$: Vec2 = new Vec2();
-    private _prevPoint$: Vec2 = new Vec2();
-    private _lastModified$ = 0;
+    private _point: Vec2 = new Vec2();
+    private _prevPoint: Vec2 = new Vec2();
+    private _lastModified = 0;
     private _id = 0;
-    private _startPoint$: Vec2 = new Vec2();
-    private _startPointCaptured$ = false;
+    private _startPoint: Vec2 = new Vec2();
+    private _startPointCaptured = false;
 
     get lastModified (): number {
-        return this._lastModified$;
+        return this._lastModified;
     }
 
     /**
@@ -61,7 +62,7 @@ export class Touch {
             out = new Vec2();
         }
 
-        out.set(this._point$.x, this._point$.y);
+        out.set(this._point.x, this._point.y);
         return out;
     }
 
@@ -70,7 +71,7 @@ export class Touch {
      * @zh 获取当前触点 X 轴位置。
      */
     public getLocationX (): number {
-        return this._point$.x;
+        return this._point.x;
     }
 
     /**
@@ -78,7 +79,7 @@ export class Touch {
      * @zh 获取当前触点 Y 轴位置。
      */
     public getLocationY (): number {
-        return this._point$.y;
+        return this._point.y;
     }
 
     /**
@@ -91,8 +92,8 @@ export class Touch {
             out = new Vec2();
         }
 
-        out.set(this._point$.x, this._point$.y);
-        cclegacy.view._convertToUISpace(out);
+        out.set(this._point.x, this._point.y);
+        (cclegacy.view as View)._convertToUISpace(out);
         return out;
     }
 
@@ -101,8 +102,9 @@ export class Touch {
      * @zh 获取当前触点在 UI 坐标系中 X 轴位置。
      */
     public getUILocationX (): number {
-        const viewport = cclegacy.view.getViewportRect();
-        return (this._point$.x - viewport.x) / cclegacy.view.getScaleX();
+        const view = cclegacy.view as View;
+        const viewport = view.getViewportRect();
+        return (this._point.x - viewport.x) / view.getScaleX();
     }
 
     /**
@@ -110,8 +112,9 @@ export class Touch {
      * @zh 获取当前触点在 UI 坐标系中 Y 轴位置。
      */
     public getUILocationY (): number {
-        const viewport = cclegacy.view.getViewportRect();
-        return (this._point$.y - viewport.y) / cclegacy.view.getScaleY();
+        const view = cclegacy.view as View;
+        const viewport = view.getViewportRect();
+        return (this._point.y - viewport.y) / view.getScaleY();
     }
 
     /**
@@ -124,7 +127,7 @@ export class Touch {
             out = new Vec2();
         }
 
-        out.set(this._prevPoint$.x, this._prevPoint$.y);
+        out.set(this._prevPoint.x, this._prevPoint.y);
         return out;
     }
 
@@ -138,8 +141,8 @@ export class Touch {
             out = new Vec2();
         }
 
-        out.set(this._prevPoint$.x, this._prevPoint$.y);
-        cclegacy.view._convertToUISpace(out);
+        out.set(this._prevPoint.x, this._prevPoint.y);
+        (cclegacy.view as View)._convertToUISpace(out);
         return out;
     }
 
@@ -153,7 +156,7 @@ export class Touch {
             out = new Vec2();
         }
 
-        out.set(this._startPoint$.x, this._startPoint$.y);
+        out.set(this._startPoint.x, this._startPoint.y);
         return out;
     }
 
@@ -167,8 +170,8 @@ export class Touch {
             out = new Vec2();
         }
 
-        out.set(this._startPoint$.x, this._startPoint$.y);
-        cclegacy.view._convertToUISpace(out);
+        out.set(this._startPoint.x, this._startPoint.y);
+        (cclegacy.view as View)._convertToUISpace(out);
         return out;
     }
 
@@ -182,8 +185,8 @@ export class Touch {
             out = new Vec2();
         }
 
-        out.set(this._point$);
-        out.subtract(this._prevPoint$);
+        out.set(this._point);
+        out.subtract(this._prevPoint);
         return out;
     }
 
@@ -197,9 +200,10 @@ export class Touch {
             out = new Vec2();
         }
 
-        _vec2.set(this._point$);
-        _vec2.subtract(this._prevPoint$);
-        out.set(cclegacy.view.getScaleX() as number, cclegacy.view.getScaleY() as number);
+        _vec2.set(this._point);
+        _vec2.subtract(this._prevPoint);
+        const view = cclegacy.view as View;
+        out.set(view.getScaleX(), view.getScaleY());
         Vec2.divide(out, _vec2, out);
         return out;
     }
@@ -214,7 +218,7 @@ export class Touch {
             out = new Vec2();
         }
 
-        out.set(this._point$.x, cclegacy.view._designResolutionSize.height - this._point$.y);
+        out.set(this._point.x, (cclegacy.view as View)._designResolutionSize.height - this._point.y);
         return out;
     }
 
@@ -228,7 +232,7 @@ export class Touch {
             out = new Vec2();
         }
 
-        out.set(this._prevPoint$.x, cclegacy.view._designResolutionSize.height - this._prevPoint$.y);
+        out.set(this._prevPoint.x, (cclegacy.view as View)._designResolutionSize.height - this._prevPoint.y);
         return out;
     }
 
@@ -242,7 +246,7 @@ export class Touch {
             out = new Vec2();
         }
 
-        out.set(this._startPoint$.x, cclegacy.view._designResolutionSize.height - this._startPoint$.y);
+        out.set(this._startPoint.x, (cclegacy.view as View)._designResolutionSize.height - this._startPoint.y);
         return out;
     }
 
@@ -262,13 +266,12 @@ export class Touch {
      * @param y - y position of the touch point
      */
     public setTouchInfo (id: number = 0, x: number = 0, y: number = 0): void {
-        this._prevPoint$ = this._point$;
-        this._point$ = new Vec2(x || 0, y || 0);
+        this._prevPoint = this._point;
+        this._point = new Vec2(x || 0, y || 0);
         this._id = id;
-        if (!this._startPointCaptured$) {
-            this._startPoint$ = new Vec2(this._point$);
-            // cc.view._convertToUISpace(this._startPoint);
-            this._startPointCaptured$ = true;
+        if (!this._startPointCaptured) {
+            this._startPoint = new Vec2(this._point);
+            this._startPointCaptured = true;
         }
     }
 
@@ -289,13 +292,13 @@ export class Touch {
 
     public setPoint (x: number | Vec2, y?: number): void {
         if (typeof x === 'object') {
-            this._point$.x = x.x;
-            this._point$.y = x.y;
+            this._point.x = x.x;
+            this._point.y = x.y;
         } else {
-            this._point$.x = x || 0;
-            this._point$.y = y || 0;
+            this._point.x = x || 0;
+            this._point.y = y || 0;
         }
-        this._lastModified$ = cclegacy.game.frameStartTime;
+        this._lastModified = cclegacy.game.frameStartTime;
     }
 
     /**
@@ -315,11 +318,11 @@ export class Touch {
 
     public setPrevPoint (x: number | Vec2, y?: number): void {
         if (typeof x === 'object') {
-            this._prevPoint$ = new Vec2(x.x, x.y);
+            this._prevPoint = new Vec2(x.x, x.y);
         } else {
-            this._prevPoint$ = new Vec2(x || 0, y || 0);
+            this._prevPoint = new Vec2(x || 0, y || 0);
         }
-        this._lastModified$ = cclegacy.game.frameStartTime;
+        this._lastModified = cclegacy.game.frameStartTime;
     }
 
     /**

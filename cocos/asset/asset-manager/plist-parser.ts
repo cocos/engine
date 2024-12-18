@@ -32,10 +32,10 @@ import { warnID } from '../../core';
  * @class saxParser
  */
 export class SAXParser {
-    private _parser$: DOMParser | null = null;
+    private _parser: DOMParser | null = null;
     constructor () {
         if (globalThis.DOMParser) {
-            this._parser$ = new DOMParser();
+            this._parser = new DOMParser();
         }
     }
 
@@ -50,8 +50,8 @@ export class SAXParser {
 
     protected _parseXML (textxml: string): Document {
         // get a reference to the requested corresponding xml file
-        if (this._parser$) {
-            return this._parser$.parseFromString(textxml, 'text/xml');
+        if (this._parser) {
+            return this._parser.parseFromString(textxml, 'text/xml');
         }
         throw new Error('Dom parser is not supported in this platform!');
     }
@@ -86,16 +86,16 @@ class PlistParser extends SAXParser {
                 break;
             }
         }
-        return this._parseNode$(node!);
+        return this._parseNode(node!);
     }
 
-    private _parseNode$ (node: HTMLElement): unknown {
+    private _parseNode (node: HTMLElement): unknown {
         let data: any = null;
         const tagName = node.tagName;
         if (tagName === 'dict') {
-            data = this._parseDict$(node);
+            data = this._parseDict(node);
         } else if (tagName === 'array') {
-            data = this._parseArray$(node);
+            data = this._parseArray(node);
         } else if (tagName === 'string') {
             if (node.childNodes.length === 1) {
                 data = node.firstChild!.nodeValue;
@@ -118,19 +118,19 @@ class PlistParser extends SAXParser {
         return data;
     }
 
-    private _parseArray$ (node: HTMLElement): unknown[] {
+    private _parseArray (node: HTMLElement): unknown[] {
         const data: any[] = [];
         for (let i = 0, len = node.childNodes.length; i < len; i++) {
             const child = node.childNodes[i];
             if (child.nodeType !== 1) {
                 continue;
             }
-            data.push(this._parseNode$(child as HTMLElement));
+            data.push(this._parseNode(child as HTMLElement));
         }
         return data;
     }
 
-    private _parseDict$ (node: HTMLElement): Record<string, any> {
+    private _parseDict (node: HTMLElement): Record<string, any> {
         const data = {};
         let key = '';
         for (let i = 0, len = node.childNodes.length; i < len; i++) {
@@ -143,7 +143,7 @@ class PlistParser extends SAXParser {
             if (child.tagName === 'key') {
                 key = child.firstChild!.nodeValue!;
             } else {
-                data[key] = this._parseNode$(child);
+                data[key] = this._parseNode(child);
             }                 // Parse the value node
         }
         return data;

@@ -222,6 +222,7 @@ export class B2RigidBody2D implements IRigidBody2D {
     }
 
     setType (v: ERigidBody2DType): void {
+        (PhysicsSystem2D.instance.physicsWorld as B2PhysicsWorld)._updateBodyType(this);
         if (v === ERigidBody2DType.Dynamic) {
             this._body!.SetType(B2.BodyType.b2_dynamicBody as B2.BodyType);
         } else if (v === ERigidBody2DType.Kinematic) {

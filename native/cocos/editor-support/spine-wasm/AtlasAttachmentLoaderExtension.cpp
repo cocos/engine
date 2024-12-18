@@ -5,13 +5,13 @@ using namespace spine;
 
 static uint16_t quadTriangles[6] = {0, 1, 2, 2, 3, 0};
 
-AttachmentVertices::AttachmentVertices(int verticesCount, uint16_t *triangles, int trianglesCount, uint32_t textureId) {
+AttachmentVertices::AttachmentVertices(int verticesCount, uint16_t *triangles, int trianglesCount, const spine::String& textureUUID) {
     _triangles = new Triangles();
     _triangles->verts = new V3F_T2F_C4B[verticesCount];
     _triangles->vertCount = verticesCount;
     _triangles->indices = triangles;
     _triangles->indexCount = trianglesCount;
-    _textureId = textureId;
+    _textureId = textureUUID;
 }
 
 AttachmentVertices::~AttachmentVertices() {
@@ -38,11 +38,12 @@ void AtlasAttachmentLoaderExtension::configureAttachment(Attachment *attachment)
         auto *regionAttachment = static_cast<RegionAttachment *>(attachment);
         auto &pages = _atlasCache->getPages();
         auto *region = static_cast<AtlasRegion *>(regionAttachment->getRendererObject());
-        auto *attachmentVertices = new AttachmentVertices(4, quadTriangles, 6, pages.indexOf(region->page));
+        auto *attachmentVertices = new AttachmentVertices(4, quadTriangles, 6, region->page->name);
         V3F_T2F_C4B *vertices = attachmentVertices->_triangles->verts;
+        const auto &uvs = regionAttachment->getUVs();
         for (int i = 0, ii = 0; i < 4; ++i, ii += 2) {
-            vertices[i].texCoord.u = regionAttachment->getUVs()[ii];
-            vertices[i].texCoord.v = regionAttachment->getUVs()[ii + 1];
+            vertices[i].texCoord.u = uvs[ii];
+            vertices[i].texCoord.v = uvs[ii + 1];
         }
         regionAttachment->setRendererObject(attachmentVertices, deleteAttachmentVertices);
     } else if (attachment->getRTTI().isExactly(MeshAttachment::rtti)) {
@@ -50,11 +51,12 @@ void AtlasAttachmentLoaderExtension::configureAttachment(Attachment *attachment)
         auto &pages = _atlasCache->getPages();
         auto *region = static_cast<AtlasRegion *>(meshAttachment->getRendererObject());
         auto *attachmentVertices = new AttachmentVertices(
-            static_cast<int32_t>(meshAttachment->getWorldVerticesLength() >> 1), meshAttachment->getTriangles().buffer(), static_cast<int32_t>(meshAttachment->getTriangles().size()), pages.indexOf(region->page));
+            static_cast<int32_t>(meshAttachment->getWorldVerticesLength() >> 1), meshAttachment->getTriangles().buffer(), static_cast<int32_t>(meshAttachment->getTriangles().size()), region->page->name);
         V3F_T2F_C4B *vertices = attachmentVertices->_triangles->verts;
+        const auto &uvs = meshAttachment->getUVs();
         for (size_t i = 0, ii = 0, nn = meshAttachment->getWorldVerticesLength(); ii < nn; ++i, ii += 2) {
-            vertices[i].texCoord.u = meshAttachment->getUVs()[ii];
-            vertices[i].texCoord.v = meshAttachment->getUVs()[ii + 1];
+            vertices[i].texCoord.u = uvs[ii];
+            vertices[i].texCoord.v = uvs[ii + 1];
         }
         meshAttachment->setRendererObject(attachmentVertices, deleteAttachmentVertices);
     }
