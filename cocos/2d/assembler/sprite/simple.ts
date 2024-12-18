@@ -66,7 +66,8 @@ export const simple: IAssembler = {
     },
 
     updateWorldVerts (sprite: Sprite, chunk: StaticVBChunk) {
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const vData = chunk.vb;
 
         const dataList: IRenderData[] = renderData.data;
@@ -99,7 +100,8 @@ export const simple: IAssembler = {
             return;
         }
 
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const chunk = renderData.chunk;
         if (sprite._flagChangedVersion !== sprite.node.flagChangedVersion || renderData.vertDirty) {
             // const vb = chunk.vertexAccessor.getVertexBuffer(chunk.bufferId);
@@ -187,8 +189,8 @@ export const simple: IAssembler = {
     },
 
     updateUVs (sprite: Sprite) {
-        if (!sprite.spriteFrame) return;
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!sprite.spriteFrame || !renderData) return;
         const vData = renderData.chunk.vb;
         const uv = sprite.spriteFrame.uv;
         vData[3] = uv[0];
@@ -202,7 +204,8 @@ export const simple: IAssembler = {
     },
 
     updateColor (sprite: Sprite) {
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const vData = renderData.chunk.vb;
         let colorOffset = 5;
         const color = sprite.color;
