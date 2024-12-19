@@ -203,24 +203,27 @@ static bool JavaScriptArkTsBridge_callStaticMethod(se::State& s) {
     const auto& args = s.args();
     int argc = (int)args.size();
 
-    if (argc == 4) {
+    if (argc == 3 || argc == 4) {
         bool ok = false;
-        bool isSyn;
+        bool isSync = true;
         std::string clsPath, methodName, paramStr;
-        ok = args[0].isBoolean();
-        SE_PRECONDITION2(ok, false, "isSyn must be boolean type");
-        isSyn = args[0].toBoolean();
 
-        clsPath = seval_to_type<std::string>(args[1], ok);
+        clsPath = seval_to_type<std::string>(args[0], ok);
         SE_PRECONDITION2(ok, false, "Converting clsPath failed!");
 
-        methodName = seval_to_type<std::string>(args[2], ok);
+        methodName = seval_to_type<std::string>(args[1], ok);
         SE_PRECONDITION2(ok, false, "Converting methodName failed!");
 
-        paramStr = seval_to_type<std::string>(args[3], ok);
+        paramStr = seval_to_type<std::string>(args[2], ok);
         SE_PRECONDITION2(ok, false, "Converting paramStr failed!");
+        
+        if(argc == 4) {
+            ok = args[3].isBoolean();
+            SE_PRECONDITION2(ok, false, "isSync must be boolean type");
+            isSync = args[3].toBoolean();    
+        }
 
-        JavaScriptArkTsBridge::CallInfo call(isSyn, clsPath.c_str(), methodName.c_str(), paramStr.c_str());
+        JavaScriptArkTsBridge::CallInfo call(isSync, clsPath.c_str(), methodName.c_str(), paramStr.c_str());
         ok = call.execute(s.rval());
         if (!ok) {
             s.rval().setUndefined();

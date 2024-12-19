@@ -1262,23 +1262,20 @@ export declare namespace native {
          * @en call Objective-C/Java static methods
          * @zh 调用 Objective-C/Java 静态方法
          *
-         * @param className : @en the class name of the Objective-C/Java class @zh Objective-C/Java 类的类名
-         * @param methodName : @en the method name of the Objective-C/Java class @zh Objective-C/Java 类的方法名
-         * @param methodSignature : @en the method signature of the Objective-C/Java class @zh Objective-C/Java 方法签名
-         * @param parameters : @en the parameters of the Objective-C/Java class to translate @zh 传递至该 Objective-C/Java 方法的参数
+         * @param className : @en the class name of the Objective-C/Java/ArkTs class @zh Objective-C/Java/ArkTs 类的类名
+         * @param methodName : @en the method name of the Objective-C/Java/ArkT class @zh Objective-C/Java/ArkT 类的方法名
+         * @param methodSignature : @en the method signature of the Objective-C/Java class.
+         *                              On the HarmonyOS Next platform this represents the input parameter.
+         *                              If more than one parameter, it can be converted to a json string.
+         *                          @zh Objective-C/Java/ArkT 方法签名。在HarmonyOS Next平台这个代表输入参数。如果有多个参数，可以转成json字符串。
+         * @param parameters : @en the parameters of the Objective-C/Java class to translate.
+         *                         On the HarmonyOS Next platform, this means that the function call is either synchronous or asynchronous.
+         *                         The default is true, which means that the synchronization method is called.
+         *                         Calling an asynchronous method blocks, waiting for the asynchronous result.
+         *                     @zh 传递至该 Objective-C/Java 方法的参数。在harmonyOS平台这个代表调用函数是同步的或是异步。
+         *                         默认是true代表调用的是同步方法。调用异步方法会阻塞，等待异步结果。
          */
         export function callStaticMethod(className: string, methodName: string, methodSignature: string, ...parameters: any): any;
-
-        /**
-         * @en call ArkTs static methods. Only valid on HarmonyOS Next platform.
-         * @zh 调用 ArkTs 静态方法。仅在HarmonyOS Next平台上有效。
-         *
-         * @param isSyn : @en Call synchronous or asynchronous method @zh 调用同步或异步方法
-         * @param className : @en the class name of the ArkTs class @zh ArkTs 类的类名
-         * @param methodName : @en the method name of the ArkTs class @zh ArkTs 类的方法名
-         * @param parame : @en the parameters of the ArkTs class to translate. Use json for multiple parameters @zh 传递至该 ArkTs 方法的参数。使用JSON可以传递多个参数
-         */
-        export function callStaticMethod(isSyn: boolean, className: string, methodName: string, parame: string): any;
     }
 
     /**
