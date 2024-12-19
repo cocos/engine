@@ -138,4 +138,20 @@ describe('Test Mat3', () => {
         log('toEuler: ', v0);
         expect(Vec3.equals(v0, expect0)).toBe(true);
     });
+
+    test('toString', () => {
+        const m = new Mat3(
+12.1234, 0, 44.123433,
+55.12234, 6.1230835, 12384.126,
+7348.12237, 1283.8, 0.000009
+);
+        const expect0 = `[
+12.1234, 0, 44.123433,
+55.12234, 6.1230835, 12384.126,
+7348.12237, 1283.8, 0.000009
+]`;
+        const s = m.toString();
+        log('toString: ', s);
+        expect(s).toBe(expect0);
+    });
 });

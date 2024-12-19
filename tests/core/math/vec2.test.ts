@@ -118,6 +118,11 @@ describe('Test Vec2', () => {
         expect(vec3.y).toBe(2);
         expect(vec3.z).toBe(0);
     });
+
+    test('toString', () => {
+        const v = new Vec2(100, 100);
+        expect(v.toString()).toBe('(100, 100)');
+    });
 });
 
 function polar(angle: number, length: number) {
