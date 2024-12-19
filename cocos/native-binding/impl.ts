@@ -35,6 +35,8 @@ if (NATIVE) {
                 globalJsb.__bridge = new globalThis.JavascriptJavaBridge();
             } else if (globalThis.JavaScriptObjCBridge && (sys.os === sys.OS.IOS || sys.os === sys.OS.OSX)) {
                 globalJsb.__bridge = new globalThis.JavaScriptObjCBridge();
+            } else if (globalThis.JavaScriptArkTsBridge && (sys.os === sys.OS.OPENHARMONY)) {
+                globalJsb.__bridge = new globalThis.JavaScriptArkTsBridge();
             } else {
                 globalJsb.__bridge = null;
             }

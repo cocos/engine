@@ -207,9 +207,9 @@ static bool JavaScriptArkTsBridge_callStaticMethod(se::State& s) {
         bool ok = false;
         bool isSyn;
         std::string clsPath, methodName, paramStr;
-
-        isSyn = seval_to_type<bool>(args[0], ok);
-        SE_PRECONDITION2(ok, false, "Converting isSyn failed!");
+        ok = args[0].isBoolean();
+        SE_PRECONDITION2(ok, false, "isSyn must be boolean type");
+        isSyn = args[0].toBoolean();
 
         clsPath = seval_to_type<std::string>(args[1], ok);
         SE_PRECONDITION2(ok, false, "Converting clsPath failed!");

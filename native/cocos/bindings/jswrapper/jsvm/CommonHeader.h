@@ -48,26 +48,26 @@
     } while (0)
 
 // Returns nullptr if the_call doesn't return JSVM_OK.
-#define NODE_API_CALL(status, env, the_call)                                        \
-    status = the_call;                                                              \
-    if (status != JSVM_OK) {                                                        \
-        bool isPending = false;                                                     \
-        if (JSVM_OK == OH_JSVM_IsExceptionPending((env), &isPending) && isPending) {    \
-            JSVM_Value error;                                                       \
-            if (JSVM_OK == OH_JSVM_GetAndClearLastException((env), &error)) {       \
-                JSVM_Value stack;                                                   \
-                OH_JSVM_GetNamedProperty((env), error, "stack", &stack);            \
-                JSVM_Value message;                                                 \
-                OH_JSVM_GetNamedProperty((env), error, "message", &message);        \
-                char stackstr[256];                                                 \
-                OH_JSVM_GetValueStringUtf8(env, stack, stackstr, 256, nullptr);     \
-                SE_LOGE("JSVM error stack: %{public}s", stackstr);                  \
-                char messagestr[256];                                               \
-                OH_JSVM_GetValueStringUtf8(env, message, messagestr, 256, nullptr); \
-                SE_LOGE("JSVM error message: %{public}s", messagestr);              \
-            }                                                                       \
-        }                                                                           \
-    }                                                                               \
+#define NODE_API_CALL(status, env, the_call)                                         \
+    status = the_call;                                                               \
+    if (status != JSVM_OK) {                                                         \
+        bool isPending = false;                                                      \
+        if (JSVM_OK == OH_JSVM_IsExceptionPending((env), &isPending) && isPending) { \
+            JSVM_Value error;                                                        \
+            if (JSVM_OK == OH_JSVM_GetAndClearLastException((env), &error)) {        \
+                JSVM_Value stack;                                                    \
+                OH_JSVM_GetNamedProperty((env), error, "stack", &stack);             \
+                JSVM_Value message;                                                  \
+                OH_JSVM_GetNamedProperty((env), error, "message", &message);         \
+                char stackstr[256];                                                  \
+                OH_JSVM_GetValueStringUtf8(env, stack, stackstr, 256, nullptr);      \
+                SE_LOGE("JSVM error stack: %s", stackstr);                           \
+                char messagestr[256];                                                \
+                OH_JSVM_GetValueStringUtf8(env, message, messagestr, 256, nullptr);  \
+                SE_LOGE("JSVM error message: %s", messagestr);                       \
+            }                                                                        \
+        }                                                                            \
+    }                                                                                \
     NODE_API_CALL_BASE(env, status, nullptr)
 
 // Returns empty if the_call doesn't return JSVM_OK.

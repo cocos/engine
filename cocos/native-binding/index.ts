@@ -1268,6 +1268,17 @@ export declare namespace native {
          * @param parameters : @en the parameters of the Objective-C/Java class to translate @zh 传递至该 Objective-C/Java 方法的参数
          */
         export function callStaticMethod(className: string, methodName: string, methodSignature: string, ...parameters: any): any;
+
+        /**
+         * @en call ArkTs static methods. Only valid on HarmonyOS Next platform.
+         * @zh 调用 ArkTs 静态方法。仅在HarmonyOS Next平台上有效。
+         *
+         * @param isSyn : @en Call synchronous or asynchronous method @zh 调用同步或异步方法
+         * @param className : @en the class name of the ArkTs class @zh ArkTs 类的类名
+         * @param methodName : @en the method name of the ArkTs class @zh ArkTs 类的方法名
+         * @param parame : @en the parameters of the ArkTs class to translate. Use json for multiple parameters @zh 传递至该 ArkTs 方法的参数。使用JSON可以传递多个参数
+         */
+        export function callStaticMethod(isSyn: boolean, className: string, methodName: string, parame: string): any;
     }
 
     /**
