@@ -715,7 +715,7 @@ export class Vec4 extends ValueType {
      * @returns The string with vector information
      */
     public toString (): string {
-        return `(${this.x.toFixed(2)}, ${this.y.toFixed(2)}, ${this.z.toFixed(2)}, ${this.w.toFixed(2)})`;
+        return `(${this.x}, ${this.y}, ${this.z}, ${this.w})`;
     }
 
     /**

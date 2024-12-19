@@ -165,7 +165,7 @@ export class Size extends ValueType {
      * @returns The information of the current size in string
      */
     public toString (): string {
-        return `(${this.width.toFixed(2)}, ${this.height.toFixed(2)})`;
+        return `(${this.width}, ${this.height})`;
     }
 }
 

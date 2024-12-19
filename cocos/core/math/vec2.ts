@@ -561,7 +561,7 @@ export class Vec2 extends ValueType {
      * @returns The string with vector information
      */
     public toString (): string {
-        return `(${this.x.toFixed(2)}, ${this.y.toFixed(2)})`;
+        return `(${this.x}, ${this.y})`;
     }
 
     /**
