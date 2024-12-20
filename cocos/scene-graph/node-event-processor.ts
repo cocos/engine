@@ -497,13 +497,14 @@ export class NodeEventProcessor {
 
     private _handleMouseDown (event: EventMouse): boolean {
         const node = this._node;
-        if (!node || !node._uiProps.uiTransformComp) {
+        const uiTransformComp = node._uiProps.uiTransformComp;
+        if (!node || !uiTransformComp) {
             return false;
         }
 
         event.getLocation(pos);
 
-        if (node._uiProps.uiTransformComp.hitTest(pos, event.windowId)) {
+        if (uiTransformComp.hitTest(pos, event.windowId)) {
             event.type = NodeEventType.MOUSE_DOWN;
             event.bubbles = true;
             node.dispatchEvent(event);
@@ -515,13 +516,14 @@ export class NodeEventProcessor {
 
     private _handleMouseMove (event: EventMouse): boolean {
         const node = this._node;
-        if (!node || !node._uiProps.uiTransformComp || this._isMouseLeaveWindow) {
+        const uiTransformComp = node._uiProps.uiTransformComp;
+        if (!node || !uiTransformComp || this._isMouseLeaveWindow) {
             return false;
         }
 
         event.getLocation(pos);
 
-        const hit = node._uiProps.uiTransformComp.hitTest(pos, event.windowId);
+        const hit = uiTransformComp.hitTest(pos, event.windowId);
         if (hit) {
             if (!this.previousMouseIn) {
                 // Fix issue when hover node switched, previous hovered node won't get MOUSE_LEAVE notification
@@ -551,13 +553,14 @@ export class NodeEventProcessor {
 
     private _handleMouseUp (event: EventMouse): boolean {
         const node = this._node;
-        if (!node || !node._uiProps.uiTransformComp) {
+        const uiTransformComp = node._uiProps.uiTransformComp;
+        if (!node || !uiTransformComp) {
             return false;
         }
 
         event.getLocation(pos);
 
-        if (node._uiProps.uiTransformComp.hitTest(pos, event.windowId)) {
+        if (uiTransformComp.hitTest(pos, event.windowId)) {
             event.type = NodeEventType.MOUSE_UP;
             event.bubbles = true;
             node.dispatchEvent(event);
@@ -569,13 +572,14 @@ export class NodeEventProcessor {
 
     private _handleMouseWheel (event: EventMouse): boolean {
         const node = this._node;
-        if (!node || !node._uiProps.uiTransformComp) {
+        const uiTransformComp = node._uiProps.uiTransformComp;
+        if (!node || !uiTransformComp) {
             return false;
         }
 
         event.getLocation(pos);
 
-        if (node._uiProps.uiTransformComp.hitTest(pos, event.windowId)) {
+        if (uiTransformComp.hitTest(pos, event.windowId)) {
             event.type = NodeEventType.MOUSE_WHEEL;
             event.bubbles = true;
             node.dispatchEvent(event);
@@ -631,13 +635,14 @@ export class NodeEventProcessor {
 
     private _handleTouchStart (event: EventTouch): boolean {
         const node = this.node;
-        if (!node || !node._uiProps.uiTransformComp) {
+        const uiTransformComp = node._uiProps.uiTransformComp;
+        if (!node || !uiTransformComp) {
             return false;
         }
 
         event.getLocation(pos);
 
-        if (node._uiProps.uiTransformComp.hitTest(pos, event.windowId)) {
+        if (uiTransformComp.hitTest(pos, event.windowId)) {
             event.type = NodeEventType.TOUCH_START;
             event.bubbles = true;
             this._dispatchingTouch = event.touch;
@@ -663,13 +668,14 @@ export class NodeEventProcessor {
 
     private _handleTouchEnd (event: EventTouch): void {
         const node = this.node;
-        if (!node || !node._uiProps.uiTransformComp) {
+        const uiTransformComp = node._uiProps.uiTransformComp;
+        if (!node || !uiTransformComp) {
             return;
         }
 
         event.getLocation(pos);
 
-        if (node._uiProps.uiTransformComp.hitTest(pos, event.windowId)) {
+        if (uiTransformComp.hitTest(pos, event.windowId)) {
             event.type = NodeEventType.TOUCH_END;
         } else {
             event.type = NodeEventType.TOUCH_CANCEL;

@@ -159,3 +159,5 @@ rules:
     '@typescript-eslint/explicit-function-return-type': [error, {
       allowIIFEs: true, # IIFEs are widely used, writing their signature twice is painful
     }]
+
+    '@typescript-eslint/no-this-alias': off

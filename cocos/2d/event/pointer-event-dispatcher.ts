@@ -251,8 +251,8 @@ class PointerEventDispatcher implements IEventDispatcher {
             }
         }
 
-        const priority1 = n1 ? n1.getSiblingIndex() : 0;
-        const priority2 = n2 ? n2.getSiblingIndex() : 0;
+        const priority1 = n1 ? n1.siblingIndex : 0;
+        const priority2 = n2 ? n2.siblingIndex : 0;
 
         return ex ? priority1 - priority2 : priority2 - priority1;
     }

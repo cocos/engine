@@ -1763,17 +1763,19 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
      */
     @editable
     set layer (l: number) {
-        if (this._layer === l) {
+        const self = this;
+        if (self._layer === l) {
             return;
         }
 
-        this._layer = l;
+        self._layer = l;
 
-        if (this._uiProps && this._uiProps.uiComp) {
-            this._uiProps.uiComp.setNodeDirty();
-            this._uiProps.uiComp.markForUpdateRenderData();
+        const uiComp = self._uiProps && self._uiProps.uiComp;
+        if (uiComp) {
+            uiComp.setNodeDirty();
+            uiComp.markForUpdateRenderData();
         }
-        this.emit(NodeEventType.LAYER_CHANGED, this._layer);
+        self.emit(NodeEventType.LAYER_CHANGED, self._layer);
     }
 
     get layer (): number {
@@ -1933,8 +1935,9 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
      */
     public _onPostActivated (active: boolean): void {
-        if (this._eventMask & ACTIVE_ON) {
-            this.emit(NodeEventType.ACTIVE_CHANGED, this, active);
+        const self = this;
+        if (self._eventMask & ACTIVE_ON) {
+            self.emit(NodeEventType.ACTIVE_CHANGED, self, active);
         }
 
         const eventProcessor = this._eventProcessor;
@@ -1957,12 +1960,13 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
         if (active) { // activated
             // in case transform updated during deactivated period
-            this.invalidateChildren(TransformBit.TRS);
+            self.invalidateChildren(TransformBit.TRS);
             // ALL Node renderData dirty flag will set on here
-            if (this._uiProps && this._uiProps.uiComp) {
-                this._uiProps.uiComp.setNodeDirty();
-                this._uiProps.uiComp.setTextureDirty(); // for dynamic atlas
-                this._uiProps.uiComp.markForUpdateRenderData();
+            const uiComp = self._uiProps && self._uiProps.uiComp;
+            if (uiComp) {
+                uiComp.setNodeDirty();
+                uiComp.setTextureDirty(); // for dynamic atlas
+                uiComp.markForUpdateRenderData();
             }
         }
     }

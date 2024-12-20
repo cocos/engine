@@ -1655,19 +1655,23 @@ export class Skeleton extends UIRenderer {
      * @engineInternal
      */
     public _updateColor (): void {
-        const a = this.node._uiProps.opacity;
-        // eslint-disable-next-line max-len
-        if (this._tempColor.r === this._color.r && this._tempColor.g === this._color.g && this._tempColor.b === this._color.b && this._tempColor.a === a) {
+        const self = this;
+        const uiProps = self.node._uiProps;
+        const a = uiProps.opacity;
+        const tempColor = self._tempColor;
+        const color = self._color;
+
+        if (tempColor.r === color.r && tempColor.g === color.g && tempColor.b === color.b && tempColor.a === a) {
             return;
         }
-        this.node._uiProps.colorDirty = true;
-        this._tempColor.r = this._color.r;
-        this._tempColor.g = this._color.g;
-        this._tempColor.b = this._color.b;
-        this._tempColor.a = a;
-        const r = this._color.r / 255.0;
-        const g = this._color.g / 255.0;
-        const b = this._color.b / 255.0;
+        uiProps.colorDirty = true;
+        tempColor.r = color.r;
+        tempColor.g = color.g;
+        tempColor.b = color.b;
+        tempColor.a = a;
+        const r = color.r / 255.0;
+        const g = color.g / 255.0;
+        const b = color.b / 255.0;
         this._instance!.setColor(r, g, b, a);
     }
 
