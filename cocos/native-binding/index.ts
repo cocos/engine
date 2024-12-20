@@ -1265,15 +1265,18 @@ export declare namespace native {
          * @param className : @en the class name of the Objective-C/Java/ArkTs class @zh Objective-C/Java/ArkTs 类的类名
          * @param methodName : @en the method name of the Objective-C/Java/ArkT class @zh Objective-C/Java/ArkT 类的方法名
          * @param methodSignature : @en the method signature of the Objective-C/Java class.
-         *                              On the HarmonyOS Next platform this represents the input parameter.
+         *                              The HarmonyOS Next platform represents an input parameter that can only have one and must be of type string
          *                              If more than one parameter, it can be converted to a json string.
-         *                          @zh Objective-C/Java/ArkT 方法签名。在HarmonyOS Next平台这个代表输入参数。如果有多个参数，可以转成json字符串。
+         *                          @zh Objective-C/Java/ArkT 方法签名。
+         *                              HarmonyOS Next平台这个代表输入参数并且只能有一个，类型必须是string类型。如果有多个参数，可以转成json字符串。
          * @param parameters : @en the parameters of the Objective-C/Java class to translate.
-         *                         On the HarmonyOS Next platform, this means that the function call is either synchronous or asynchronous.
+         *                         On the HarmonyOS Next platform this means that the function call is either synchronous or asynchronous.
+         *                         This parameter only works on the HarmonyOS Next platform.
          *                         The default is true, which means that the synchronization method is called.
-         *                         Calling an asynchronous method blocks, waiting for the asynchronous result.
-         *                     @zh 传递至该 Objective-C/Java 方法的参数。在harmonyOS平台这个代表调用函数是同步的或是异步。
-         *                         默认是true代表调用的是同步方法。调用异步方法会阻塞，等待异步结果。
+         *                         Calling asynchronous methods may block waiting for asynchronous results.
+         *                     @zh 传递至该 Objective-C/Java 方法的参数。
+         *                         HarmonyOS Next 平台这个代表调用函数是同步的或是异步。此参数仅在HarmonyOS Next平台上有效。
+         *                         默认是true代表调用的是同步方法。调用异步方法时可能会阻塞等待异步结果。
          */
         export function callStaticMethod(className: string, methodName: string, methodSignature: string, ...parameters: any): any;
     }
