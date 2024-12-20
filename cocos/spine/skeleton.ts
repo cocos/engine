@@ -500,6 +500,7 @@ export class Skeleton extends UIRenderer {
      * @en Whether play animations in loop mode.
      * @zh 是否循环播放当前骨骼动画。
      */
+    @visible(true)
     @serializable
     public loop = true;
 
