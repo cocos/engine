@@ -67,8 +67,7 @@
                 SE_LOGE("JSVM error message: %s", messagestr);                       \
             }                                                                        \
         }                                                                            \
-    }                                                                                \
-    NODE_API_CALL_BASE(env, status, nullptr)
+    }
 
 // Returns empty if the_call doesn't return JSVM_OK.
 #define NODE_API_CALL_RETURN_VOID(env, the_call) \
