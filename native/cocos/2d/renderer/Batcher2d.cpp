@@ -334,7 +334,7 @@ void Batcher2d::generateBatch(RenderEntity* entity, RenderDrawInfo* drawInfo) {
         return;
     }
     gfx::InputAssembler* ia = nullptr;
-
+    
     uint32_t indexOffset = 0;
     uint32_t indexCount = 0;
     if (drawInfo->getIsMeshBuffer()) {
@@ -345,9 +345,9 @@ void Batcher2d::generateBatch(RenderEntity* entity, RenderDrawInfo* drawInfo) {
         _meshRenderDrawInfo.emplace_back(drawInfo);
     } else {
         UIMeshBuffer* currMeshBuffer = drawInfo->getMeshBuffer();
-
+        
         currMeshBuffer->setDirty(true);
-
+        
         ia = currMeshBuffer->requireFreeIA(getDevice());
         indexCount = currMeshBuffer->getIndexOffset() - _indexStart;
         if (ia == nullptr) {
@@ -356,31 +356,33 @@ void Batcher2d::generateBatch(RenderEntity* entity, RenderDrawInfo* drawInfo) {
         indexOffset = _indexStart;
         _indexStart = currMeshBuffer->getIndexOffset();
     }
-
+    
     _currMeshBuffer = nullptr;
-
+    
     // stencilStage
     gfx::DepthStencilState* depthStencil = nullptr;
     ccstd::hash_t dssHash = 0;
     StencilStage entityStage = entity->getEnumStencilStage();
     depthStencil = _stencilManager->getDepthStencilState(entityStage, _currMaterial);
     dssHash = _stencilManager->getStencilHash(entityStage);
-
+    
     auto* curdrawBatch = _drawBatchPool.alloc();
     curdrawBatch->setVisFlags(_currLayer);
     curdrawBatch->setInputAssembler(ia);
     curdrawBatch->setFirstIndex(indexOffset);
     curdrawBatch->setIndexCount(indexCount);
     curdrawBatch->fillPass(_currMaterial, depthStencil, dssHash);
-    const auto& pass = curdrawBatch->getPasses().at(0);
-
-    if (entity->getUseLocal()) {
-        drawInfo->updateLocalDescriptorSet(entity->getRenderTransform(), pass->getLocalSetLayout());
-        curdrawBatch->setDescriptorSet(drawInfo->getLocalDes());
-    } else {
-        curdrawBatch->setDescriptorSet(getDescriptorSet(_currTexture, _currSampler, pass->getLocalSetLayout()));
+    const auto &passes = curdrawBatch->getPasses();
+    if (!passes.empty())
+        const auto& pass = passes.at(0);
+        if (entity->getUseLocal()) {
+            drawInfo->updateLocalDescriptorSet(entity->getRenderTransform(), pass->getLocalSetLayout());
+            curdrawBatch->setDescriptorSet(drawInfo->getLocalDes());
+        } else {
+            curdrawBatch->setDescriptorSet(getDescriptorSet(_currTexture, _currSampler, pass->getLocalSetLayout()));
+        }
+        _batches.push_back(curdrawBatch);
     }
-    _batches.push_back(curdrawBatch);
 }
 
 void Batcher2d::generateBatchForMiddleware(RenderEntity* entity, RenderDrawInfo* drawInfo) {
