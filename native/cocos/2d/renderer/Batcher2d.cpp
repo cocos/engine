@@ -334,7 +334,7 @@ void Batcher2d::generateBatch(RenderEntity* entity, RenderDrawInfo* drawInfo) {
         return;
     }
     gfx::InputAssembler* ia = nullptr;
-    
+
     uint32_t indexOffset = 0;
     uint32_t indexCount = 0;
     if (drawInfo->getIsMeshBuffer()) {
@@ -345,9 +345,9 @@ void Batcher2d::generateBatch(RenderEntity* entity, RenderDrawInfo* drawInfo) {
         _meshRenderDrawInfo.emplace_back(drawInfo);
     } else {
         UIMeshBuffer* currMeshBuffer = drawInfo->getMeshBuffer();
-        
+
         currMeshBuffer->setDirty(true);
-        
+
         ia = currMeshBuffer->requireFreeIA(getDevice());
         indexCount = currMeshBuffer->getIndexOffset() - _indexStart;
         if (ia == nullptr) {
@@ -356,16 +356,16 @@ void Batcher2d::generateBatch(RenderEntity* entity, RenderDrawInfo* drawInfo) {
         indexOffset = _indexStart;
         _indexStart = currMeshBuffer->getIndexOffset();
     }
-    
+
     _currMeshBuffer = nullptr;
-    
+
     // stencilStage
     gfx::DepthStencilState* depthStencil = nullptr;
     ccstd::hash_t dssHash = 0;
     StencilStage entityStage = entity->getEnumStencilStage();
     depthStencil = _stencilManager->getDepthStencilState(entityStage, _currMaterial);
     dssHash = _stencilManager->getStencilHash(entityStage);
-    
+
     auto* curdrawBatch = _drawBatchPool.alloc();
     curdrawBatch->setVisFlags(_currLayer);
     curdrawBatch->setInputAssembler(ia);
