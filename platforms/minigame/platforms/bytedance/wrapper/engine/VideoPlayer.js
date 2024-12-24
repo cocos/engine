@@ -43,6 +43,7 @@ if (cc.internal.VideoPlayer) {
             super(componenet);
             this.videoNode = new cc.Node();
             this.videoNode.addComponent(cc.Sprite);
+            this.videoNode.layer = this._node.layer;
             this._node.insertChild(this.videoNode, 0);
         }
 
@@ -166,12 +167,15 @@ if (cc.internal.VideoPlayer) {
             if (!video || video.src === path) {
                 return;
             }
-            video.stop();
+            const self = this;
+            if (self._playing) {
+                video.stop();
+            }
             this._unbindEvent();
             video.autoplay = true;
             video.src = path;
             video.muted = true;
-            const self = this;
+
             this._loaded = false;
             function loadedCallback () {
                 self._bindEvent();
