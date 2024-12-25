@@ -39,7 +39,7 @@ const QUAD_INDICES = Uint16Array.from([0, 1, 2, 1, 3, 2]);
  * 可通过 `UI.barFilled` 获取该组装器。
  */
 export const barFilled: IAssembler = {
-    updateRenderData(sprite: Sprite) {
+    updateRenderData (sprite: Sprite) {
         const frame = sprite.spriteFrame;
         dynamicAtlasManager.packToDynamicAtlas(sprite, frame);
         // TODO update material and uv
@@ -74,7 +74,7 @@ export const barFilled: IAssembler = {
         }
     },
 
-    updateUVs(sprite: Sprite, fillStart: number, fillEnd: number) {
+    updateUVs (sprite: Sprite, fillStart: number, fillEnd: number) {
         const spriteFrame = sprite.spriteFrame!;
         const renderData = sprite.renderData!;
         const vData = renderData.chunk.vb;
@@ -121,39 +121,39 @@ export const barFilled: IAssembler = {
         const stride = renderData.floatStride;
         let uvOffset = 3;
         switch (sprite.fillType) {
-            case FillType.HORIZONTAL:
-                vData[uvOffset] = quadUV0 + (quadUV2 - quadUV0) * fillStart;
-                vData[uvOffset + 1] = quadUV1 + (quadUV3 - quadUV1) * fillStart;
-                uvOffset += stride;
-                vData[uvOffset] = quadUV0 + (quadUV2 - quadUV0) * fillEnd;
-                vData[uvOffset + 1] = quadUV1 + (quadUV3 - quadUV1) * fillEnd;
-                uvOffset += stride;
-                vData[uvOffset] = quadUV4 + (quadUV6 - quadUV4) * fillStart;
-                vData[uvOffset + 1] = quadUV5 + (quadUV7 - quadUV5) * fillStart;
-                uvOffset += stride;
-                vData[uvOffset] = quadUV4 + (quadUV6 - quadUV4) * fillEnd;
-                vData[uvOffset + 1] = quadUV5 + (quadUV7 - quadUV5) * fillEnd;
-                break;
-            case FillType.VERTICAL:
-                vData[uvOffset] = quadUV0 + (quadUV4 - quadUV0) * fillStart;
-                vData[uvOffset + 1] = quadUV1 + (quadUV5 - quadUV1) * fillStart;
-                uvOffset += stride;
-                vData[uvOffset] = quadUV2 + (quadUV6 - quadUV2) * fillStart;
-                vData[uvOffset + 1] = quadUV3 + (quadUV7 - quadUV3) * fillStart;
-                uvOffset += stride;
-                vData[uvOffset] = quadUV0 + (quadUV4 - quadUV0) * fillEnd;
-                vData[uvOffset + 1] = quadUV1 + (quadUV5 - quadUV1) * fillEnd;
-                uvOffset += stride;
-                vData[uvOffset] = quadUV2 + (quadUV6 - quadUV2) * fillEnd;
-                vData[uvOffset + 1] = quadUV3 + (quadUV7 - quadUV3) * fillEnd;
-                break;
-            default:
-                errorID(2626);
-                break;
+        case FillType.HORIZONTAL:
+            vData[uvOffset] = quadUV0 + (quadUV2 - quadUV0) * fillStart;
+            vData[uvOffset + 1] = quadUV1 + (quadUV3 - quadUV1) * fillStart;
+            uvOffset += stride;
+            vData[uvOffset] = quadUV0 + (quadUV2 - quadUV0) * fillEnd;
+            vData[uvOffset + 1] = quadUV1 + (quadUV3 - quadUV1) * fillEnd;
+            uvOffset += stride;
+            vData[uvOffset] = quadUV4 + (quadUV6 - quadUV4) * fillStart;
+            vData[uvOffset + 1] = quadUV5 + (quadUV7 - quadUV5) * fillStart;
+            uvOffset += stride;
+            vData[uvOffset] = quadUV4 + (quadUV6 - quadUV4) * fillEnd;
+            vData[uvOffset + 1] = quadUV5 + (quadUV7 - quadUV5) * fillEnd;
+            break;
+        case FillType.VERTICAL:
+            vData[uvOffset] = quadUV0 + (quadUV4 - quadUV0) * fillStart;
+            vData[uvOffset + 1] = quadUV1 + (quadUV5 - quadUV1) * fillStart;
+            uvOffset += stride;
+            vData[uvOffset] = quadUV2 + (quadUV6 - quadUV2) * fillStart;
+            vData[uvOffset + 1] = quadUV3 + (quadUV7 - quadUV3) * fillStart;
+            uvOffset += stride;
+            vData[uvOffset] = quadUV0 + (quadUV4 - quadUV0) * fillEnd;
+            vData[uvOffset + 1] = quadUV1 + (quadUV5 - quadUV1) * fillEnd;
+            uvOffset += stride;
+            vData[uvOffset] = quadUV2 + (quadUV6 - quadUV2) * fillEnd;
+            vData[uvOffset + 1] = quadUV3 + (quadUV7 - quadUV3) * fillEnd;
+            break;
+        default:
+            errorID(2626);
+            break;
         }
     },
 
-    updateVertexData(sprite: Sprite, fillStart: number, fillEnd: number) {
+    updateVertexData (sprite: Sprite, fillStart: number, fillEnd: number) {
         const renderData: RenderData | null = sprite.renderData;
         const dataList: IRenderData[] = renderData!.data;
         const uiTrans = sprite.node._uiProps.uiTransformComp!;
@@ -170,23 +170,23 @@ export const barFilled: IAssembler = {
         let progressStart = 0;
         let progressEnd = 0;
         switch (sprite.fillType) {
-            case FillType.HORIZONTAL:
-                progressStart = l + (r - l) * fillStart;
-                progressEnd = l + (r - l) * fillEnd;
+        case FillType.HORIZONTAL:
+            progressStart = l + (r - l) * fillStart;
+            progressEnd = l + (r - l) * fillEnd;
 
-                l = progressStart;
-                r = progressEnd;
-                break;
-            case FillType.VERTICAL:
-                progressStart = b + (t - b) * fillStart;
-                progressEnd = b + (t - b) * fillEnd;
+            l = progressStart;
+            r = progressEnd;
+            break;
+        case FillType.VERTICAL:
+            progressStart = b + (t - b) * fillStart;
+            progressEnd = b + (t - b) * fillEnd;
 
-                b = progressStart;
-                t = progressEnd;
-                break;
-            default:
-                errorID(2626);
-                break;
+            b = progressStart;
+            t = progressEnd;
+            break;
+        default:
+            errorID(2626);
+            break;
         }
 
         dataList[0].x = l;
@@ -199,7 +199,7 @@ export const barFilled: IAssembler = {
         dataList[3].y = t;
     },
 
-    createData(sprite: Sprite) {
+    createData (sprite: Sprite) {
         const renderData: RenderData | null = sprite.requestRenderData();
         // 0-4 for local vertex
         renderData.dataLength = 4;
@@ -215,7 +215,7 @@ export const barFilled: IAssembler = {
         return renderData;
     },
 
-    updateWorldVertexData(sprite: Sprite, chunk: StaticVBChunk) {
+    updateWorldVertexData (sprite: Sprite, chunk: StaticVBChunk) {
         const node = sprite.node;
         node.getWorldMatrix(m);
 
@@ -239,7 +239,7 @@ export const barFilled: IAssembler = {
         }
     },
 
-    fillBuffers(sprite: Sprite, renderer: IBatcher) {
+    fillBuffers (sprite: Sprite, renderer: IBatcher) {
         const renderData: RenderData = sprite.renderData!;
         const chunk = renderData.chunk;
         if (sprite._flagChangedVersion !== sprite.node.flagChangedVersion || renderData.vertDirty) {
@@ -262,7 +262,7 @@ export const barFilled: IAssembler = {
         meshBuffer.indexOffset += 6;
     },
 
-    updateColor(sprite: Sprite) {
+    updateColor (sprite: Sprite) {
         const renderData = sprite.renderData!;
         const vData = renderData.chunk.vb;
         const stride = renderData.floatStride;
