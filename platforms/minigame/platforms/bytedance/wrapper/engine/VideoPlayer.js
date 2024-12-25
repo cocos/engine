@@ -163,20 +163,21 @@ if (cc.internal.VideoPlayer) {
         }
 
         setURL (path) {
-            const video = this._video;
+            const self = this;
+            const video = self._video;
             if (!video || video.src === path) {
                 return;
             }
-            const self = this;
+
             if (self._playing) {
                 video.stop();
             }
-            this._unbindEvent();
+            self._unbindEvent();
             video.autoplay = true;
             video.src = path;
             video.muted = true;
 
-            this._loaded = false;
+            self._loaded = false;
             function loadedCallback () {
                 self._bindEvent();
                 video.muted = false;
