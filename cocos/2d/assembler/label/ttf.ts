@@ -54,11 +54,16 @@ export const ttf: IAssembler = {
         const vData = renderData.chunk.vb;
 
         const stride = renderData.floatStride;
+        const uvs = [
+            { u: 0, v: 1 },
+            { u: 1, v: 1 },
+            { u: 0, v: 0 },
+            { u: 1, v: 0 },
+        ];
         let uvOffset = 3;
-        const uvs = [0, 1, 1, 1, 0, 0, 1, 0];
-        for (let i = 0; i < 8; i += 2) {
-            vData[uvOffset] = uvs[i];
-            vData[uvOffset + 1] = uvs[i + 1];
+        for (let i = 0, len = renderData.dataLength; i < len; ++i) {
+            vData[uvOffset] = uvs[i].u;
+            vData[uvOffset + 1] = uvs[i].v;
             uvOffset += stride;
         }
         let offset = 5;
@@ -144,7 +149,7 @@ export const ttf: IAssembler = {
         const uv = comp.ttfSpriteFrame.uv;
         const stride = renderData.floatStride;
         let uvOffset = 3;
-        for (let i = 0; i < renderData.vertexCount; ++i) {
+        for (let i = 0; i < renderData.dataLength; ++i) {
             const index = i * 2;
             vData[uvOffset] = uv[index];
             vData[uvOffset + 1] = uv[index + 1];
