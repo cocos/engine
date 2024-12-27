@@ -105,6 +105,9 @@
         "physics-2d-box2d-wasm": {
             "modules": ["physics-2d-box2d-wasm", "physics-2d-framework"]
         },
+        "physics-2d-box2d-jsb": {
+            "modules": ["physics-2d-box2d-jsb", "physics-2d-framework"]
+        },
         "intersection-2d": {
             "modules": ["intersection-2d"]
         },
