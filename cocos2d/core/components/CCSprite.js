@@ -469,6 +469,7 @@ var Sprite = cc.Class({
             let textureImpl = texture && texture.getImpl();
             if (material.getProperty('texture') !== textureImpl) {
                 material.setProperty('texture', texture);
+                this.setVertsDirty();
             }
         }
 
