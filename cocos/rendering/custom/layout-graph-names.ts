@@ -27,7 +27,7 @@
  * The following section is auto-generated.
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
-import { DescriptorTypeOrder } from './layout-graph'
+import { DescriptorTypeOrder } from './layout-graph';
 
 export function getDescriptorTypeOrderName (e: DescriptorTypeOrder): string {
     switch (e) {

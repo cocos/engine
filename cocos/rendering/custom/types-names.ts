@@ -27,7 +27,7 @@
  * The following section is auto-generated.
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
-import { UpdateFrequency } from './types'
+import { UpdateFrequency } from './types';
 
 export function getUpdateFrequencyName (e: UpdateFrequency): string {
     switch (e) {
