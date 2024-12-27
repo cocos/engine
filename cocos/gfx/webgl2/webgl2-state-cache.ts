@@ -25,12 +25,12 @@
 import { Rect, Viewport } from '../base/define';
 import { BlendState, DepthStencilState, RasterizerState } from '../base/pipeline-state';
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2TexUnit {
     glTexture: WebGLTexture | null;
 }
 
-/** mangle */
+/** @mangle */
 export class WebGL2StateCache {
     public glArrayBuffer: WebGLBuffer | null = null;
     public glElementArrayBuffer: WebGLBuffer | null = null;

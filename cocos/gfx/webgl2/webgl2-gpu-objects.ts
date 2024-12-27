@@ -99,14 +99,14 @@ export class WebGL2IndirectDrawInfos {
     }
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2BindingMapping {
     blockOffsets: number[];
     samplerTextureOffsets: number[];
     flexibleSet: number;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUUniformInfo {
     name: string;
     type: Type;
@@ -116,9 +116,10 @@ export interface IWebGL2GPUUniformInfo {
     isDirty: boolean;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUBuffer {
     usage: BufferUsage;
+    /** @mangle */
     memUsage: MemoryUsage;
     size: number;
     stride: number;
@@ -131,7 +132,7 @@ export interface IWebGL2GPUBuffer {
     indirects: WebGL2IndirectDrawInfos;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUTexture {
     type: TextureType;
     format: Format;
@@ -161,7 +162,7 @@ export interface IWebGL2GPUTexture {
     isSwapchainTexture: boolean;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUTextureView {
     gpuTexture: IWebGL2GPUTexture;
     type: TextureType;
@@ -170,13 +171,13 @@ export interface IWebGL2GPUTextureView {
     levelCount: number;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPURenderPass {
     colorAttachments: ColorAttachment[];
     depthStencilAttachment: DepthStencilAttachment | null;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUFramebuffer {
     gpuRenderPass: IWebGL2GPURenderPass;
     gpuColorViews: IWebGL2GPUTextureView[];
@@ -187,7 +188,7 @@ export interface IWebGL2GPUFramebuffer {
     height: number;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUSampler {
     glSamplers: Map<number, WebGLSampler>;
 
@@ -207,7 +208,7 @@ export interface IWebGL2GPUSampler {
     getGLSampler (device: WebGL2Device, minLod: number, maxLod: number): WebGLSampler;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUInput {
     name: string;
     type: Type;
@@ -219,7 +220,7 @@ export interface IWebGL2GPUInput {
     glLoc: GLint;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUUniform {
     binding: number;
     name: string;
@@ -235,7 +236,7 @@ export interface IWebGL2GPUUniform {
     begin: number;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUUniformBlock {
     set: number;
     binding: number;
@@ -245,7 +246,7 @@ export interface IWebGL2GPUUniformBlock {
     glBinding: number;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUUniformSamplerTexture {
     set: number;
     binding: number;
@@ -259,14 +260,14 @@ export interface IWebGL2GPUUniformSamplerTexture {
     glLoc: WebGLUniformLocation;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUShaderStage {
     type: ShaderStageFlagBit;
     source: string;
     glShader: WebGLShader | null;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUShader {
     name: string;
     blocks: UniformBlock[];
@@ -281,7 +282,7 @@ export interface IWebGL2GPUShader {
     glSamplerTextures: IWebGL2GPUUniformSamplerTexture[];
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUDescriptorSetLayout {
     bindings: DescriptorSetLayoutBinding[];
     dynamicBindings: number[];
@@ -289,7 +290,7 @@ export interface IWebGL2GPUDescriptorSetLayout {
     descriptorCount: number;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUPipelineLayout {
     gpuSetLayouts: IWebGL2GPUDescriptorSetLayout[];
     dynamicOffsetCount: number;
@@ -297,7 +298,7 @@ export interface IWebGL2GPUPipelineLayout {
     dynamicOffsetIndices: number[][];
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUPipelineState {
     glPrimitive: GLenum;
     gpuShader: IWebGL2GPUShader | null;
@@ -309,7 +310,7 @@ export interface IWebGL2GPUPipelineState {
     gpuRenderPass: IWebGL2GPURenderPass | null;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUDescriptor {
     type: DescriptorType;
     gpuBuffer: IWebGL2GPUBuffer | null;
@@ -317,13 +318,13 @@ export interface IWebGL2GPUDescriptor {
     gpuSampler: IWebGL2GPUSampler | null;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUDescriptorSet {
     gpuDescriptors: IWebGL2GPUDescriptor[];
     descriptorIndices: number[];
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2Attrib {
     name: string;
     glBuffer: WebGLBuffer | null;
@@ -337,7 +338,7 @@ export interface IWebGL2Attrib {
     offset: number;
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2GPUInputAssembler {
     attributes: Attribute[];
     gpuVertexBuffers: IWebGL2GPUBuffer[];
@@ -349,7 +350,7 @@ export interface IWebGL2GPUInputAssembler {
     glVAOs: Map<WebGLProgram, WebGLVertexArrayObject>;
 }
 
-/** mangle */
+/** @mangle */
 export class IWebGL2BlitManager {
     private _srcFramebuffer: WebGLFramebuffer | null;
     private _dstFramebuffer: WebGLFramebuffer | null;

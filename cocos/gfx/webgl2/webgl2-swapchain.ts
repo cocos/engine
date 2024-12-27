@@ -157,7 +157,7 @@ export function getContext (canvas: HTMLCanvasElement): WebGL2RenderingContext |
     return context;
 }
 
-/** mangle */
+/** @mangle */
 export class WebGL2Swapchain extends Swapchain {
     constructor () {
         super();

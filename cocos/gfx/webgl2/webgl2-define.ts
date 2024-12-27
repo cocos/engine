@@ -85,7 +85,7 @@ export enum WebGL2EXT {
     COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR = 0x93DD,
 }
 
-/** mangle */
+/** @mangle */
 export interface IWebGL2Extensions {
     EXT_texture_filter_anisotropic: EXT_texture_filter_anisotropic | null;
     EXT_color_buffer_half_float: EXT_color_buffer_half_float | null;

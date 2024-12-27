@@ -28,7 +28,7 @@ import { WebGL2CmdFuncCreateShader, WebGL2CmdFuncDestroyShader } from './webgl2-
 import { WebGL2DeviceManager } from './webgl2-define';
 import { IWebGL2GPUShader, IWebGL2GPUShaderStage } from './webgl2-gpu-objects';
 
-/** mangle */
+/** @mangle */
 export class WebGL2Shader extends Shader {
     constructor () {
         super();

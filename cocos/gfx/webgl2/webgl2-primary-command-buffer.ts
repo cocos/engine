@@ -40,7 +40,7 @@ import { WebGL2RenderPass } from './webgl2-render-pass';
 import { WebGL2DeviceManager } from './webgl2-define';
 import { errorID } from '../../core/platform/debug';
 
-/** mangle */
+/** @mangle */
 export class WebGL2PrimaryCommandBuffer extends WebGL2CommandBuffer {
     constructor () {
         super();

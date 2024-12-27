@@ -46,7 +46,7 @@ import { BufferBarrier } from '../base/states/buffer-barrier';
 import { WebGL2DeviceManager } from './webgl2-define';
 import { errorID } from '../../core/platform/debug';
 
-/** mangle */
+/** @mangle */
 export class WebGL2CommandBuffer extends CommandBuffer {
     protected _isInRenderPass = false;
     protected _curGPUPipelineState: IWebGL2GPUPipelineState | null = null;

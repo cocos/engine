@@ -30,7 +30,7 @@ import { WebGL2Texture } from './webgl2-texture';
 import { WebGL2DescriptorSetLayout } from './webgl2-descriptor-set-layout';
 import { DescriptorSetInfo, DESCRIPTOR_BUFFER_TYPE, DESCRIPTOR_SAMPLER_TYPE } from '../base/define';
 
-/** mangle */
+/** @mangle */
 export class WebGL2DescriptorSet extends DescriptorSet {
     constructor () {
         super();

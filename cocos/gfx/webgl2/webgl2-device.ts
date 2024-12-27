@@ -71,7 +71,7 @@ import { BrowserType, OS } from '../../../pal/system-info/enum-type';
 import type { WebGL2StateCache } from './webgl2-state-cache';
 import { WebGLConstants } from '../gl-constants';
 
-/** mangle */
+/** @mangle */
 export class WebGL2Device extends Device {
     constructor () {
         super();
