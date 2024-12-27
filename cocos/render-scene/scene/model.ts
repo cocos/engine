@@ -1278,11 +1278,11 @@ export class Model {
     }
 
     protected _updateLocalDescriptors (subModelIndex: number, descriptorSet: DescriptorSet): void {
-        if (this._localBuffer) descriptorSet.bindBuffer(UBOLocal.BINDING, this._localBuffer);
+        if (this._localBuffer) descriptorSet.bindBuffer(UBOLocalEnum.BINDING, this._localBuffer);
     }
 
     protected _updateLocalSHDescriptors (subModelIndex: number, descriptorSet: DescriptorSet): void {
-        if (this._localSHBuffer) descriptorSet.bindBuffer(UBOSH.BINDING, this._localSHBuffer);
+        if (this._localSHBuffer) descriptorSet.bindBuffer(UBOSHEnum.BINDING, this._localSHBuffer);
     }
 
     protected _updateWorldBoundDescriptors (subModelIndex: number, descriptorSet: DescriptorSet): void {

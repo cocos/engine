@@ -29,6 +29,7 @@ export interface IWebGLTexUnit {
     glTexture: WebGLTexture | null;
 }
 
+/** @mangle */
 export class WebGLStateCache {
     public glArrayBuffer: WebGLBuffer | null = null;
     public glElementArrayBuffer: WebGLBuffer | null = null;
@@ -48,7 +49,10 @@ export class WebGLStateCache {
     public texUnitCacheMap: Record<string, number> = {};
 
     initialize (texUnit: number, vertexAttributes: number): void {
-        for (let i = 0; i < texUnit; ++i) this.glTexUnits.push({ glTexture: null });
+        for (let i = 0; i < texUnit; ++i) {
+            const glTexUnit: IWebGLTexUnit = { glTexture: null };
+            this.glTexUnits.push(glTexUnit);
+        }
 
         this.glEnabledAttribLocs.length = vertexAttributes;
         this.glEnabledAttribLocs.fill(false);

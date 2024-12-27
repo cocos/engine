@@ -289,7 +289,7 @@ export class LightingStage extends RenderStage {
             UBOLocalEnum.SIZE,
             UBOLocalEnum.SIZE,
         ));
-        this._descriptorSet.bindBuffer(UBOLocal.BINDING, _localUBO);
+        this._descriptorSet.bindBuffer(UBOLocalEnum.BINDING, _localUBO);
     }
 
     public activate (pipeline: DeferredPipeline, flow: MainFlow): void {

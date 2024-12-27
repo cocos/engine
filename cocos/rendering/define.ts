@@ -449,6 +449,7 @@ export enum UBOLocalEnum {
     REFLECTION_PROBE_BLEND_DATA2 = REFLECTION_PROBE_BLEND_DATA1 + 4,
     COUNT = REFLECTION_PROBE_BLEND_DATA2 + 4,
     SIZE = COUNT * 4,
+    BINDING = ModelLocalBindings.UBO_LOCAL,
 }
 
 /**
@@ -468,9 +469,9 @@ export class UBOLocal {
     public static readonly SIZE = UBOLocalEnum.SIZE;
 
     public static readonly NAME = 'CCLocal';
-    public static readonly BINDING = ModelLocalBindings.UBO_LOCAL;
-    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOLocal.BINDING, DescriptorType.UNIFORM_BUFFER, 1, ShaderStageFlagBit.VERTEX | ShaderStageFlagBit.FRAGMENT | ShaderStageFlagBit.COMPUTE);
-    public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOLocal.BINDING, UBOLocal.NAME, [
+    public static readonly BINDING = UBOLocalEnum.BINDING;
+    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOLocalEnum.BINDING, DescriptorType.UNIFORM_BUFFER, 1, ShaderStageFlagBit.VERTEX | ShaderStageFlagBit.FRAGMENT | ShaderStageFlagBit.COMPUTE);
+    public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOLocalEnum.BINDING, UBOLocal.NAME, [
         new Uniform('cc_matWorld', Type.MAT4, 1),
         new Uniform('cc_matWorldIT', Type.MAT4, 1),
         new Uniform('cc_lightingMapUVParam', Type.FLOAT4, 1),
@@ -482,7 +483,7 @@ export class UBOLocal {
     ], 1);
 }
 localDescriptorSetLayout.layouts[UBOLocal.NAME] = UBOLocal.LAYOUT;
-localDescriptorSetLayout.bindings[UBOLocal.BINDING] = UBOLocal.DESCRIPTOR;
+localDescriptorSetLayout.bindings[UBOLocalEnum.BINDING] = UBOLocal.DESCRIPTOR;
 
 /**
  * @en The world bound uniform buffer object
@@ -696,6 +697,7 @@ export enum UBOSHEnum {
     SH_QUADRATIC_A_OFFSET = SH_QUADRATIC_B_OFFSET + 4,
     COUNT = SH_QUADRATIC_A_OFFSET + 4,
     SIZE = COUNT * 4,
+    BINDING = ModelLocalBindings.UBO_SH,
 }
 
 /**
@@ -715,8 +717,8 @@ export class UBOSH {
 
     public static readonly NAME = 'CCSH';
     public static readonly BINDING = ModelLocalBindings.UBO_SH;
-    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOSH.BINDING, DescriptorType.UNIFORM_BUFFER, 1, ShaderStageFlagBit.FRAGMENT);
-    public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOSH.BINDING, UBOSH.NAME, [
+    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOSHEnum.BINDING, DescriptorType.UNIFORM_BUFFER, 1, ShaderStageFlagBit.FRAGMENT);
+    public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOSHEnum.BINDING, UBOSH.NAME, [
         new Uniform('cc_sh_linear_const_r', Type.FLOAT4, 1),
         new Uniform('cc_sh_linear_const_g', Type.FLOAT4, 1),
         new Uniform('cc_sh_linear_const_b', Type.FLOAT4, 1),
@@ -727,7 +729,7 @@ export class UBOSH {
     ], 1);
 }
 localDescriptorSetLayout.layouts[UBOSH.NAME] = UBOSH.LAYOUT;
-localDescriptorSetLayout.bindings[UBOSH.BINDING] = UBOSH.DESCRIPTOR;
+localDescriptorSetLayout.bindings[UBOSHEnum.BINDING] = UBOSH.DESCRIPTOR;
 
 /**
  * @en The sampler for joint texture

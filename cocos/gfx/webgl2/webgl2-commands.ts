@@ -1101,7 +1101,7 @@ export function WebGL2CmdFuncDestroyTexture (device: WebGL2Device, gpuTexture: I
     }
 
     if (gpuTexture.glRenderbuffer) {
-        let glRenderbuffer = cache.glRenderbuffer;
+        const glRenderbuffer = cache.glRenderbuffer;
         gl.deleteRenderbuffer(gpuTexture.glRenderbuffer);
         if (glRenderbuffer === gpuTexture.glRenderbuffer) {
             gl.bindRenderbuffer(WebGLConstants.RENDERBUFFER, null);
@@ -1551,13 +1551,13 @@ export function WebGL2CmdFuncCreateShader (device: WebGL2Device, gpuShader: IWeb
 
             gpuShader.glInputs[i] = {
                 name: varName,
-                type: type,
-                stride: stride,
+                type,
+                stride,
                 count: attribInfo.size,
                 size: stride * attribInfo.size,
 
                 glType: attribInfo.type,
-                glLoc: glLoc,
+                glLoc,
             };
         }
     }
@@ -1607,7 +1607,7 @@ export function WebGL2CmdFuncCreateShader (device: WebGL2Device, gpuShader: IWeb
                     idx: blockIdx,
                     name: blockName,
                     size: blockSize,
-                    glBinding: glBinding,
+                    glBinding,
                 };
             }
         }
@@ -1776,8 +1776,8 @@ export function WebGL2CmdFuncCreateInputAssember (device: WebGL2Device, gpuInput
         gpuInputAssembler.glAttribs[i] = {
             name: attrib.name,
             glBuffer: gpuBuffer.glBuffer,
-            glType: glType,
-            size: size,
+            glType,
+            size,
             count: FormatInfos[attrib.format].count,
             stride: gpuBuffer.stride,
             componentCount: WebGLGetComponentCount(glType, gl),

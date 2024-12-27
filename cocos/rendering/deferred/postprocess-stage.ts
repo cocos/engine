@@ -28,8 +28,8 @@
  */
 import { ccclass, displayOrder, type, serializable } from 'cc.decorator';
 import { Camera } from '../../render-scene/scene';
-import { SetIndex, UBOLocal, UBOLocalEnum } from '../define';
-import { Color, Rect, PipelineState, ClearFlagBit, DescriptorSetInfo, BufferInfo, BufferUsageBit, MemoryUsageBit } from '../../gfx';
+import { SetIndex, UBOLocalEnum } from '../define';
+import { Color, Rect, PipelineState, ClearFlagBit, DescriptorSetInfo, BufferInfo, BufferUsageBit, MemoryUsageBit, DescriptorSet, Buffer } from '../../gfx';
 import { IRenderStageInfo, RenderStage } from '../render-stage';
 import { CommonStagePriority } from '../enum';
 import { Material } from '../../asset/assets/material';
@@ -67,8 +67,8 @@ export class PostProcessStage extends RenderStage {
 
     private _renderArea = new Rect();
     private declare _uiPhase: UIPhase;
-    private _stageDesc;
-    private _localUBO;
+    private _stageDesc: DescriptorSet | null = null;
+    private _localUBO: Buffer | null = null;
     constructor () {
         super();
         this._uiPhase = new UIPhase();
@@ -149,7 +149,7 @@ export class PostProcessStage extends RenderStage {
                     UBOLocalEnum.SIZE,
                     UBOLocalEnum.SIZE,
                 ));
-                this._stageDesc.bindBuffer(UBOLocal.BINDING, this._localUBO);
+                this._stageDesc.bindBuffer(UBOLocalEnum.BINDING, this._localUBO);
             }
             this._stageDesc.update();
             cmdBuff.bindPipelineState(pso);

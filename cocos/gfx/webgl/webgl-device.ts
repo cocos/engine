@@ -134,8 +134,8 @@ export class WebGLDevice extends Device {
             samplerTextureOffsets[curSet] -= mapping.maxBlockCounts[curSet];
         }
         this._bindingMappings = {
-            blockOffsets: blockOffsets,
-            samplerTextureOffsets: samplerTextureOffsets,
+            blockOffsets,
+            samplerTextureOffsets,
             flexibleSet: mapping.setIndices[mapping.setIndices.length - 1],
         };
 

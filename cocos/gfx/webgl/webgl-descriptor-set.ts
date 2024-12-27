@@ -55,12 +55,13 @@ export class WebGLDescriptorSet extends DescriptorSet {
         for (let i = 0; i < bindings.length; ++i) {
             const binding = bindings[i];
             for (let j = 0; j < binding.count; j++) {
-                gpuDescriptors.push({
+                const gpuDescriptor: IWebGLGPUDescriptor = {
                     type: binding.descriptorType,
                     gpuBuffer: null,
                     gpuTexture: null,
                     gpuSampler: null,
-                });
+                };
+                gpuDescriptors.push(gpuDescriptor);
             }
         }
     }
