@@ -20,6 +20,7 @@ Thumbs.db
 *.csproj.user
 *.vspscc
 *_i.c
+*.i
 *.icf
 *_p.c
 *.ncb
