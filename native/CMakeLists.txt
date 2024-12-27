@@ -2026,7 +2026,6 @@ if(USE_PHYSICS_PHYSX)
 endif()
 
 ##### 2d
-if(USE_BOX2D_JSB)
 cocos_source_files(
     cocos/2d/renderer/Batcher2d.h
     cocos/2d/renderer/Batcher2d.cpp
@@ -2041,7 +2040,6 @@ cocos_source_files(
     cocos/2d/renderer/StencilManager.h
     cocos/2d/renderer/StencilManager.cpp
 )
-endif()
 
 ##### box2d
 if(USE_BOX2D_JSB)
