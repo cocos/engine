@@ -40,6 +40,8 @@ bool nativevalue_to_se(const cc::render::DescriptorBlockFlattened &from, se::Val
 
 bool nativevalue_to_se(const cc::render::DescriptorBlockIndex &from, se::Value &to, se::Object *ctx); // NOLINT
 
+bool nativevalue_to_se(const cc::render::DescriptorGroupBlockIndex &from, se::Value &to, se::Object *ctx); // NOLINT
+
 bool nativevalue_to_se(const cc::render::ResolvePair &from, se::Value &to, se::Object *ctx); // NOLINT
 
 bool nativevalue_to_se(const cc::render::CopyPair &from, se::Value &to, se::Object *ctx); // NOLINT
@@ -60,6 +62,9 @@ bool sevalue_to_native(const se::Value &from, cc::render::DescriptorBlockFlatten
 
 template <>
 bool sevalue_to_native(const se::Value &from, cc::render::DescriptorBlockIndex *to, se::Object *ctx); // NOLINT
+
+template <>
+bool sevalue_to_native(const se::Value &from, cc::render::DescriptorGroupBlockIndex *to, se::Object *ctx); // NOLINT
 
 template <>
 bool sevalue_to_native(const se::Value &from, cc::render::ResolvePair *to, se::Object *ctx); // NOLINT

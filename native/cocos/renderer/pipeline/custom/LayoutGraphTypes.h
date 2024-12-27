@@ -67,6 +67,7 @@ struct DescriptorDB {
     DescriptorDB& operator=(DescriptorDB const& rhs) = default;
 
     ccstd::pmr::map<DescriptorBlockIndex, DescriptorBlock> blocks;
+    ccstd::pmr::map<DescriptorGroupBlockIndex, DescriptorGroupBlock> groupBlocks;
 };
 
 struct RenderStageTag {};
@@ -397,6 +398,74 @@ struct DescriptorSetData {
     IntrusivePtr<gfx::DescriptorSet> descriptorSet;
 };
 
+struct DescriptorGroupBlockData {
+    using allocator_type = boost::container::pmr::polymorphic_allocator<char>;
+    allocator_type get_allocator() const noexcept { // NOLINT
+        return {descriptors.get_allocator().resource()};
+    }
+
+    DescriptorGroupBlockData(const allocator_type& alloc) noexcept; // NOLINT
+    DescriptorGroupBlockData(DescriptorTypeOrder typeIn, gfx::ShaderStageFlagBit visibilityIn, AccessType accessTypeIn, ViewDimension viewDimensionIn, gfx::Format formatIn, uint32_t capacityIn, const allocator_type& alloc) noexcept;
+    DescriptorGroupBlockData(DescriptorGroupBlockData&& rhs, const allocator_type& alloc);
+    DescriptorGroupBlockData(DescriptorGroupBlockData const& rhs, const allocator_type& alloc);
+
+    DescriptorGroupBlockData(DescriptorGroupBlockData&& rhs) noexcept = default;
+    DescriptorGroupBlockData(DescriptorGroupBlockData const& rhs) = delete;
+    DescriptorGroupBlockData& operator=(DescriptorGroupBlockData&& rhs) = default;
+    DescriptorGroupBlockData& operator=(DescriptorGroupBlockData const& rhs) = default;
+
+    DescriptorTypeOrder type{DescriptorTypeOrder::UNIFORM_BUFFER};
+    gfx::ShaderStageFlagBit visibility{gfx::ShaderStageFlagBit::NONE};
+    AccessType accessType{AccessType::READ};
+    ViewDimension viewDimension{ViewDimension::TEX2D};
+    gfx::Format format{gfx::Format::UNKNOWN};
+    uint32_t offset{0};
+    uint32_t capacity{0};
+    ccstd::pmr::vector<DescriptorData> descriptors;
+};
+
+struct DescriptorGroupLayoutData {
+    using allocator_type = boost::container::pmr::polymorphic_allocator<char>;
+    allocator_type get_allocator() const noexcept { // NOLINT
+        return {descriptorGroupBlocks.get_allocator().resource()};
+    }
+
+    DescriptorGroupLayoutData(const allocator_type& alloc) noexcept; // NOLINT
+    DescriptorGroupLayoutData(uint32_t slotIn, uint32_t capacityIn, ccstd::pmr::vector<DescriptorGroupBlockData> descriptorGroupBlocksIn, PmrUnorderedMap<NameLocalID, gfx::UniformBlock> uniformBlocksIn, PmrFlatMap<NameLocalID, uint32_t> bindingMapIn, const allocator_type& alloc) noexcept;
+    DescriptorGroupLayoutData(DescriptorGroupLayoutData&& rhs, const allocator_type& alloc);
+
+    DescriptorGroupLayoutData(DescriptorGroupLayoutData&& rhs) noexcept = default;
+    DescriptorGroupLayoutData(DescriptorGroupLayoutData const& rhs) = delete;
+    DescriptorGroupLayoutData& operator=(DescriptorGroupLayoutData&& rhs) = default;
+    DescriptorGroupLayoutData& operator=(DescriptorGroupLayoutData const& rhs) = delete;
+
+    uint32_t slot{0xFFFFFFFF};
+    uint32_t capacity{0};
+    uint32_t uniformBlockCapacity{0};
+    uint32_t samplerTextureCapacity{0};
+    ccstd::pmr::vector<DescriptorGroupBlockData> descriptorGroupBlocks;
+    PmrUnorderedMap<NameLocalID, gfx::UniformBlock> uniformBlocks;
+    PmrFlatMap<NameLocalID, uint32_t> bindingMap;
+};
+
+struct DescriptorGroupData {
+    using allocator_type = boost::container::pmr::polymorphic_allocator<char>;
+    allocator_type get_allocator() const noexcept { // NOLINT
+        return {descriptorGroupLayoutData.get_allocator().resource()};
+    }
+
+    DescriptorGroupData(const allocator_type& alloc) noexcept; // NOLINT
+    DescriptorGroupData(DescriptorGroupLayoutData descriptorGroupLayoutDataIn, const allocator_type& alloc) noexcept;
+    DescriptorGroupData(DescriptorGroupData&& rhs, const allocator_type& alloc);
+
+    DescriptorGroupData(DescriptorGroupData&& rhs) noexcept = default;
+    DescriptorGroupData(DescriptorGroupData const& rhs) = delete;
+    DescriptorGroupData& operator=(DescriptorGroupData&& rhs) = default;
+    DescriptorGroupData& operator=(DescriptorGroupData const& rhs) = delete;
+
+    DescriptorGroupLayoutData descriptorGroupLayoutData;
+};
+
 struct PipelineLayoutData {
     using allocator_type = boost::container::pmr::polymorphic_allocator<char>;
     allocator_type get_allocator() const noexcept { // NOLINT
@@ -412,6 +481,7 @@ struct PipelineLayoutData {
     PipelineLayoutData& operator=(PipelineLayoutData const& rhs) = delete;
 
     ccstd::pmr::map<UpdateFrequency, DescriptorSetData> descriptorSets;
+    ccstd::pmr::map<UpdateFrequency, DescriptorGroupData> descriptorGroups;
 };
 
 struct ShaderBindingData {

@@ -105,6 +105,40 @@ void load(InputArchive& ar, DescriptorBlockIndex& v) {
     load(ar, v.visibility);
 }
 
+void save(OutputArchive& ar, const DescriptorGroupBlockIndex& v) {
+    save(ar, v.updateFrequency);
+    save(ar, v.parameterType);
+    save(ar, v.descriptorType);
+    save(ar, v.visibility);
+    save(ar, v.accessType);
+    save(ar, v.viewDimension);
+    save(ar, v.format);
+}
+
+void load(InputArchive& ar, DescriptorGroupBlockIndex& v) {
+    load(ar, v.updateFrequency);
+    load(ar, v.parameterType);
+    load(ar, v.descriptorType);
+    load(ar, v.visibility);
+    load(ar, v.accessType);
+    load(ar, v.viewDimension);
+    load(ar, v.format);
+}
+
+void save(OutputArchive& ar, const DescriptorGroupBlock& v) {
+    save(ar, v.descriptors);
+    save(ar, v.uniformBlocks);
+    save(ar, v.capacity);
+    save(ar, v.count);
+}
+
+void load(InputArchive& ar, DescriptorGroupBlock& v) {
+    load(ar, v.descriptors);
+    load(ar, v.uniformBlocks);
+    load(ar, v.capacity);
+    load(ar, v.count);
+}
+
 void save(OutputArchive& ar, const ResolvePair& v) {
     save(ar, v.source);
     save(ar, v.target);

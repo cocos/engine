@@ -92,6 +92,23 @@ inline const char* getName(ResourceDimension e) noexcept {
     }
     return "";
 }
+inline const char* getName(ViewDimension e) noexcept {
+    switch (e) {
+        case ViewDimension::UNKNOWN: return "UNKNOWN";
+        case ViewDimension::BUFFER: return "BUFFER";
+        case ViewDimension::TEX1D: return "TEX1D";
+        case ViewDimension::TEX1DARRAY: return "TEX1DARRAY";
+        case ViewDimension::TEX2D: return "TEX2D";
+        case ViewDimension::TEX2DARRAY: return "TEX2DARRAY";
+        case ViewDimension::TEX2DMS: return "TEX2DMS";
+        case ViewDimension::TEX2DMSARRAY: return "TEX2DMSARRAY";
+        case ViewDimension::TEX3D: return "TEX3D";
+        case ViewDimension::TEXCUBE: return "TEXCUBE";
+        case ViewDimension::TEXCUBEARRAY: return "TEXCUBEARRAY";
+        case ViewDimension::RAYTRACING_ACCELERATION_STRUCTURE: return "RAYTRACING_ACCELERATION_STRUCTURE";
+    }
+    return "";
+}
 inline const char* getName(const BufferTag& /*v*/) noexcept { return "Buffer"; }
 inline const char* getName(const TextureTag& /*v*/) noexcept { return "Texture"; }
 inline const char* getName(TaskType e) noexcept {
@@ -152,6 +169,8 @@ inline const char* getName(const Descriptor& /*v*/) noexcept { return "Descripto
 inline const char* getName(const DescriptorBlock& /*v*/) noexcept { return "DescriptorBlock"; }
 inline const char* getName(const DescriptorBlockFlattened& /*v*/) noexcept { return "DescriptorBlockFlattened"; }
 inline const char* getName(const DescriptorBlockIndex& /*v*/) noexcept { return "DescriptorBlockIndex"; }
+inline const char* getName(const DescriptorGroupBlockIndex& /*v*/) noexcept { return "DescriptorGroupBlockIndex"; }
+inline const char* getName(const DescriptorGroupBlock& /*v*/) noexcept { return "DescriptorGroupBlock"; }
 inline const char* getName(const ResolvePair& /*v*/) noexcept { return "ResolvePair"; }
 inline const char* getName(const CopyPair& /*v*/) noexcept { return "CopyPair"; }
 inline const char* getName(const UploadPair& /*v*/) noexcept { return "UploadPair"; }

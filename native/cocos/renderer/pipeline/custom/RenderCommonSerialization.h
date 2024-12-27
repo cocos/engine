@@ -50,6 +50,12 @@ void load(InputArchive& ar, DescriptorBlockFlattened& v);
 void save(OutputArchive& ar, const DescriptorBlockIndex& v);
 void load(InputArchive& ar, DescriptorBlockIndex& v);
 
+void save(OutputArchive& ar, const DescriptorGroupBlockIndex& v);
+void load(InputArchive& ar, DescriptorGroupBlockIndex& v);
+
+void save(OutputArchive& ar, const DescriptorGroupBlock& v);
+void load(InputArchive& ar, DescriptorGroupBlock& v);
+
 void save(OutputArchive& ar, const ResolvePair& v);
 void load(InputArchive& ar, ResolvePair& v);
 

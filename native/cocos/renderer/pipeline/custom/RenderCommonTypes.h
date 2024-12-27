@@ -102,6 +102,21 @@ enum class ResourceDimension {
     TEXTURE3D,
 };
 
+enum class ViewDimension {
+    UNKNOWN,
+    BUFFER,
+    TEX1D,
+    TEX1DARRAY,
+    TEX2D,
+    TEX2DARRAY,
+    TEX2DMS,
+    TEX2DMSARRAY,
+    TEX3D,
+    TEXCUBE,
+    TEXCUBEARRAY,
+    RAYTRACING_ACCELERATION_STRUCTURE,
+};
+
 enum class ResourceFlags : uint32_t {
     NONE = 0,
     UNIFORM = 0x1,
@@ -300,6 +315,38 @@ inline bool operator<(const DescriptorBlockIndex& lhs, const DescriptorBlockInde
     return std::forward_as_tuple(lhs.updateFrequency, lhs.parameterType, lhs.descriptorType, lhs.visibility) <
            std::forward_as_tuple(rhs.updateFrequency, rhs.parameterType, rhs.descriptorType, rhs.visibility);
 }
+
+struct DescriptorGroupBlockIndex {
+    DescriptorGroupBlockIndex() = default;
+    DescriptorGroupBlockIndex(UpdateFrequency updateFrequencyIn, ParameterType parameterTypeIn, DescriptorTypeOrder descriptorTypeIn, gfx::ShaderStageFlagBit visibilityIn, AccessType accessTypeIn, ViewDimension viewDimensionIn, gfx::Format formatIn) noexcept
+    : updateFrequency(updateFrequencyIn),
+      parameterType(parameterTypeIn),
+      descriptorType(descriptorTypeIn),
+      visibility(visibilityIn),
+      accessType(accessTypeIn),
+      viewDimension(viewDimensionIn),
+      format(formatIn) {}
+
+    UpdateFrequency updateFrequency{UpdateFrequency::PER_INSTANCE};
+    ParameterType parameterType{ParameterType::CONSTANTS};
+    DescriptorTypeOrder descriptorType{DescriptorTypeOrder::UNIFORM_BUFFER};
+    gfx::ShaderStageFlagBit visibility{gfx::ShaderStageFlagBit::NONE};
+    AccessType accessType{AccessType::READ};
+    ViewDimension viewDimension{ViewDimension::TEX2D};
+    gfx::Format format{gfx::Format::UNKNOWN};
+};
+
+inline bool operator<(const DescriptorGroupBlockIndex& lhs, const DescriptorGroupBlockIndex& rhs) noexcept {
+    return std::forward_as_tuple(lhs.updateFrequency, lhs.parameterType, lhs.descriptorType, lhs.visibility, lhs.accessType, lhs.viewDimension, lhs.format) <
+           std::forward_as_tuple(rhs.updateFrequency, rhs.parameterType, rhs.descriptorType, rhs.visibility, rhs.accessType, rhs.viewDimension, rhs.format);
+}
+
+struct DescriptorGroupBlock {
+    ccstd::map<ccstd::string, Descriptor> descriptors;
+    ccstd::map<ccstd::string, gfx::UniformBlock> uniformBlocks;
+    uint32_t capacity{0};
+    uint32_t count{0};
+};
 
 enum class ResolveFlags : uint32_t {
     NONE = 0,

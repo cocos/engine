@@ -114,6 +114,35 @@ bool nativevalue_to_se(const cc::render::DescriptorBlockIndex &from, se::Value &
     return true;
 }
 
+bool nativevalue_to_se(const cc::render::DescriptorGroupBlockIndex &from, se::Value &to, se::Object *ctx) { // NOLINT
+    se::HandleObject obj(se::Object::createPlainObject());
+    se::Value        tmp;
+
+    nativevalue_to_se(from.updateFrequency, tmp, ctx);
+    obj->setProperty("updateFrequency", tmp);
+
+    nativevalue_to_se(from.parameterType, tmp, ctx);
+    obj->setProperty("parameterType", tmp);
+
+    nativevalue_to_se(from.descriptorType, tmp, ctx);
+    obj->setProperty("descriptorType", tmp);
+
+    nativevalue_to_se(from.visibility, tmp, ctx);
+    obj->setProperty("visibility", tmp);
+
+    nativevalue_to_se(from.accessType, tmp, ctx);
+    obj->setProperty("accessType", tmp);
+
+    nativevalue_to_se(from.viewDimension, tmp, ctx);
+    obj->setProperty("viewDimension", tmp);
+
+    nativevalue_to_se(from.format, tmp, ctx);
+    obj->setProperty("format", tmp);
+
+    to.setObject(obj);
+    return true;
+}
+
 bool nativevalue_to_se(const cc::render::ResolvePair &from, se::Value &to, se::Object *ctx) { // NOLINT
     se::HandleObject obj(se::Object::createPlainObject());
     se::Value        tmp;
@@ -333,6 +362,44 @@ bool sevalue_to_native<cc::render::DescriptorBlockIndex>(const se::Value &from, 
     obj->getProperty("visibility", &field, true);
     if(!field.isNullOrUndefined()) {
         ok &= sevalue_to_native(field, &(to->visibility), ctx);
+    }
+    return ok;
+}
+
+template <>
+bool sevalue_to_native<cc::render::DescriptorGroupBlockIndex>(const se::Value &from, cc::render::DescriptorGroupBlockIndex *to, se::Object *ctx) { // NOLINT
+    SE_PRECONDITION2(from.isObject(), false, " Convert parameter to DescriptorGroupBlockIndex failed !");
+
+    auto *obj = const_cast<se::Object *>(from.toObject());
+    bool ok = true;
+    se::Value field;
+    obj->getProperty("updateFrequency", &field, true);
+    if(!field.isNullOrUndefined()) {
+        ok &= sevalue_to_native(field, &(to->updateFrequency), ctx);
+    }
+    obj->getProperty("parameterType", &field, true);
+    if(!field.isNullOrUndefined()) {
+        ok &= sevalue_to_native(field, &(to->parameterType), ctx);
+    }
+    obj->getProperty("descriptorType", &field, true);
+    if(!field.isNullOrUndefined()) {
+        ok &= sevalue_to_native(field, &(to->descriptorType), ctx);
+    }
+    obj->getProperty("visibility", &field, true);
+    if(!field.isNullOrUndefined()) {
+        ok &= sevalue_to_native(field, &(to->visibility), ctx);
+    }
+    obj->getProperty("accessType", &field, true);
+    if(!field.isNullOrUndefined()) {
+        ok &= sevalue_to_native(field, &(to->accessType), ctx);
+    }
+    obj->getProperty("viewDimension", &field, true);
+    if(!field.isNullOrUndefined()) {
+        ok &= sevalue_to_native(field, &(to->viewDimension), ctx);
+    }
+    obj->getProperty("format", &field, true);
+    if(!field.isNullOrUndefined()) {
+        ok &= sevalue_to_native(field, &(to->format), ctx);
     }
     return ok;
 }

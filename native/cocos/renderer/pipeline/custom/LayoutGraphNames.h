@@ -56,6 +56,9 @@ inline const char* getName(const DescriptorData& /*v*/) noexcept { return "Descr
 inline const char* getName(const DescriptorBlockData& /*v*/) noexcept { return "DescriptorBlockData"; }
 inline const char* getName(const DescriptorSetLayoutData& /*v*/) noexcept { return "DescriptorSetLayoutData"; }
 inline const char* getName(const DescriptorSetData& /*v*/) noexcept { return "DescriptorSetData"; }
+inline const char* getName(const DescriptorGroupBlockData& /*v*/) noexcept { return "DescriptorGroupBlockData"; }
+inline const char* getName(const DescriptorGroupLayoutData& /*v*/) noexcept { return "DescriptorGroupLayoutData"; }
+inline const char* getName(const DescriptorGroupData& /*v*/) noexcept { return "DescriptorGroupData"; }
 inline const char* getName(const PipelineLayoutData& /*v*/) noexcept { return "PipelineLayoutData"; }
 inline const char* getName(const ShaderBindingData& /*v*/) noexcept { return "ShaderBindingData"; }
 inline const char* getName(const ShaderLayoutData& /*v*/) noexcept { return "ShaderLayoutData"; }

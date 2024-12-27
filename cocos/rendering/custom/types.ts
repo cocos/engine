@@ -28,7 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 /* eslint-disable max-len */
-import { ResolveMode, ShaderStageFlagBit, Type, UniformBlock } from '../../gfx';
+import { Format, ResolveMode, ShaderStageFlagBit, Type, UniformBlock } from '../../gfx';
 import type { ReflectionProbe } from '../../render-scene/scene/reflection-probe';
 import type { Light } from '../../render-scene/scene';
 import { RecyclePool } from '../../core/memop';
@@ -75,6 +75,21 @@ export enum ResourceDimension {
     TEXTURE1D,
     TEXTURE2D,
     TEXTURE3D,
+}
+
+export enum ViewDimension {
+    UNKNOWN,
+    BUFFER,
+    TEX1D,
+    TEX1DARRAY,
+    TEX2D,
+    TEX2DARRAY,
+    TEX2DMS,
+    TEX2DMSARRAY,
+    TEX3D,
+    TEXCUBE,
+    TEXCUBEARRAY,
+    RAYTRACING_ACCELERATION_STRUCTURE,
 }
 
 export enum ResourceFlags {
@@ -228,6 +243,46 @@ export class DescriptorBlockIndex {
     declare parameterType: ParameterType;
     declare descriptorType: DescriptorTypeOrder;
     declare visibility: ShaderStageFlagBit;
+}
+
+export class DescriptorGroupBlockIndex {
+    constructor (
+        updateFrequency: UpdateFrequency = UpdateFrequency.PER_INSTANCE,
+        parameterType: ParameterType = ParameterType.CONSTANTS,
+        descriptorType: DescriptorTypeOrder = DescriptorTypeOrder.UNIFORM_BUFFER,
+        visibility: ShaderStageFlagBit = ShaderStageFlagBit.NONE,
+        accessType: AccessType = AccessType.READ,
+        viewDimension: ViewDimension = ViewDimension.TEX2D,
+        format: Format = Format.UNKNOWN,
+    ) {
+        this.updateFrequency = updateFrequency;
+        this.parameterType = parameterType;
+        this.descriptorType = descriptorType;
+        this.visibility = visibility;
+        this.accessType = accessType;
+        this.viewDimension = viewDimension;
+        this.format = format;
+    }
+    declare updateFrequency: UpdateFrequency;
+    declare parameterType: ParameterType;
+    declare descriptorType: DescriptorTypeOrder;
+    declare visibility: ShaderStageFlagBit;
+    declare accessType: AccessType;
+    declare viewDimension: ViewDimension;
+    declare format: Format;
+}
+
+export class DescriptorGroupBlock {
+    reset (): void {
+        this.descriptors.clear();
+        this.uniformBlocks.clear();
+        this.capacity = 0;
+        this.count = 0;
+    }
+    readonly descriptors: Map<string, Descriptor> = new Map<string, Descriptor>();
+    readonly uniformBlocks: Map<string, UniformBlock> = new Map<string, UniformBlock>();
+    capacity = 0;
+    count = 0;
 }
 
 export const enum ResolveFlags {
@@ -457,6 +512,8 @@ export class RenderCommonObjectPool {
         this.db.reset(); // DescriptorBlock
         this.dbf.reset(); // DescriptorBlockFlattened
         this.dbi.reset(); // DescriptorBlockIndex
+        this.dgbi.reset(); // DescriptorGroupBlockIndex
+        this.dgb.reset(); // DescriptorGroupBlock
         this.rp.reset(); // ResolvePair
         this.cp.reset(); // CopyPair
         this.up.reset(); // UploadPair
@@ -501,6 +558,30 @@ export class RenderCommonObjectPool {
         v.parameterType = parameterType;
         v.descriptorType = descriptorType;
         v.visibility = visibility;
+        return v;
+    }
+    createDescriptorGroupBlockIndex (
+        updateFrequency: UpdateFrequency = UpdateFrequency.PER_INSTANCE,
+        parameterType: ParameterType = ParameterType.CONSTANTS,
+        descriptorType: DescriptorTypeOrder = DescriptorTypeOrder.UNIFORM_BUFFER,
+        visibility: ShaderStageFlagBit = ShaderStageFlagBit.NONE,
+        accessType: AccessType = AccessType.READ,
+        viewDimension: ViewDimension = ViewDimension.TEX2D,
+        format: Format = Format.UNKNOWN,
+    ): DescriptorGroupBlockIndex {
+        const v = this.dgbi.add(); // DescriptorGroupBlockIndex
+        v.updateFrequency = updateFrequency;
+        v.parameterType = parameterType;
+        v.descriptorType = descriptorType;
+        v.visibility = visibility;
+        v.accessType = accessType;
+        v.viewDimension = viewDimension;
+        v.format = format;
+        return v;
+    }
+    createDescriptorGroupBlock (): DescriptorGroupBlock {
+        const v = this.dgb.add(); // DescriptorGroupBlock
+        v.reset();
         return v;
     }
     createResolvePair (
@@ -565,6 +646,8 @@ export class RenderCommonObjectPool {
     private readonly db: RecyclePool<DescriptorBlock> = createPool(DescriptorBlock);
     private readonly dbf: RecyclePool<DescriptorBlockFlattened> = createPool(DescriptorBlockFlattened);
     private readonly dbi: RecyclePool<DescriptorBlockIndex> = createPool(DescriptorBlockIndex);
+    private readonly dgbi: RecyclePool<DescriptorGroupBlockIndex> = createPool(DescriptorGroupBlockIndex);
+    private readonly dgb: RecyclePool<DescriptorGroupBlock> = createPool(DescriptorGroupBlock);
     private readonly rp: RecyclePool<ResolvePair> = createPool(ResolvePair);
     private readonly cp: RecyclePool<CopyPair> = createPool(CopyPair);
     private readonly up: RecyclePool<UploadPair> = createPool(UploadPair);
@@ -694,6 +777,61 @@ export function loadDescriptorBlockIndex (a: InputArchive, v: DescriptorBlockInd
     v.parameterType = a.n();
     v.descriptorType = a.n();
     v.visibility = a.n();
+}
+
+export function saveDescriptorGroupBlockIndex (a: OutputArchive, v: DescriptorGroupBlockIndex): void {
+    a.n(v.updateFrequency);
+    a.n(v.parameterType);
+    a.n(v.descriptorType);
+    a.n(v.visibility);
+    a.n(v.accessType);
+    a.n(v.viewDimension);
+    a.n(v.format);
+}
+
+export function loadDescriptorGroupBlockIndex (a: InputArchive, v: DescriptorGroupBlockIndex): void {
+    v.updateFrequency = a.n();
+    v.parameterType = a.n();
+    v.descriptorType = a.n();
+    v.visibility = a.n();
+    v.accessType = a.n();
+    v.viewDimension = a.n();
+    v.format = a.n();
+}
+
+export function saveDescriptorGroupBlock (a: OutputArchive, v: DescriptorGroupBlock): void {
+    a.n(v.descriptors.size); // Map<string, Descriptor>
+    for (const [k1, v1] of v.descriptors) {
+        a.s(k1);
+        saveDescriptor(a, v1);
+    }
+    a.n(v.uniformBlocks.size); // Map<string, UniformBlock>
+    for (const [k1, v1] of v.uniformBlocks) {
+        a.s(k1);
+        saveUniformBlock(a, v1);
+    }
+    a.n(v.capacity);
+    a.n(v.count);
+}
+
+export function loadDescriptorGroupBlock (a: InputArchive, v: DescriptorGroupBlock): void {
+    let sz = 0;
+    sz = a.n(); // Map<string, Descriptor>
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        const k1 = a.s();
+        const v1 = new Descriptor();
+        loadDescriptor(a, v1);
+        v.descriptors.set(k1, v1);
+    }
+    sz = a.n(); // Map<string, UniformBlock>
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        const k1 = a.s();
+        const v1 = new UniformBlock();
+        loadUniformBlock(a, v1);
+        v.uniformBlocks.set(k1, v1);
+    }
+    v.capacity = a.n();
+    v.count = a.n();
 }
 
 export function saveResolvePair (a: OutputArchive, v: ResolvePair): void {
