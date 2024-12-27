@@ -215,6 +215,7 @@ export function getContext (canvas: HTMLCanvasElement): WebGLRenderingContext | 
     return context;
 }
 
+/** @mangle */
 export class WebGLSwapchain extends Swapchain {
     get extensions (): IWebGLExtensions {
         return this._extensions as IWebGLExtensions;

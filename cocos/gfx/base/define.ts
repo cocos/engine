@@ -2017,8 +2017,11 @@ export class GFXObject extends GCObject {
         return this._typedID;
     }
 
+    /** @mangle */
     protected _objectType = ObjectType.UNKNOWN;
+    /** @mangle */
     protected _objectID = 0;
+    /** @mangle */
     protected _typedID = 0;
 
     private static _idTable = Array(ObjectType.COUNT).fill(1 << 16);

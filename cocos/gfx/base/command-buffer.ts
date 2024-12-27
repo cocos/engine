@@ -88,10 +88,15 @@ export abstract class CommandBuffer extends GFXObject {
         return this._numTris;
     }
 
+    /** @mangle */
     protected _queue: Queue | null = null;
+    /** @mangle */
     protected _type: CommandBufferType = CommandBufferType.PRIMARY;
+    /** @mangle */
     protected _numDrawCalls = 0;
+    /** @mangle */
     protected _numInstances = 0;
+    /** @mangle */
     protected _numTris = 0;
 
     constructor () {

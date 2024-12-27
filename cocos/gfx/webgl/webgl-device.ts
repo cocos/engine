@@ -109,6 +109,7 @@ export class WebGLDevice extends Device {
     private _context: WebGLRenderingContext | null = null;
     private _bindingMappings: IWebGLBindingMapping | null = null;
 
+    /** @mangle */
     protected _textureExclusive = new Array<boolean>(Format.COUNT);
 
     public initialize (info: Readonly<DeviceInfo>): boolean {
@@ -267,6 +268,7 @@ export class WebGLDevice extends Device {
         queue.clear();
     }
 
+    /** @mangle */
     protected initFormatFeatures (exts: IWebGLExtensions): void {
         const formatFeatures = this._formatFeatures;
         const textureExclusive = this._textureExclusive;

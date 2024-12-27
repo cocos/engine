@@ -42,6 +42,7 @@ import { BufferBarrier } from '../base/states/buffer-barrier';
 import { WebGLDeviceManager } from './webgl-define';
 import { errorID } from '../../core/platform/debug';
 
+/** @mangle */
 export class WebGLCommandBuffer extends CommandBuffer {
     protected _isInRenderPass = false;
     protected _curGPUPipelineState: IWebGLGPUPipelineState | null = null;
@@ -55,7 +56,7 @@ export class WebGLCommandBuffer extends CommandBuffer {
         super();
     }
 
-    public initialize (info: Readonly<CommandBufferInfo>): void {
+    public override initialize (info: Readonly<CommandBufferInfo>): void {
         this._type = info.type;
         this._queue = info.queue;
 
@@ -65,10 +66,10 @@ export class WebGLCommandBuffer extends CommandBuffer {
         }
     }
 
-    public destroy (): void {
+    public override destroy (): void {
     }
 
-    public begin (renderPass?: RenderPass, subpass?: number, frameBuffer?: Framebuffer): void {
+    public override begin (renderPass?: RenderPass, subpass?: number, frameBuffer?: Framebuffer): void {
         this._curGPUPipelineState = null;
         this._curGPUInputAssembler = null;
         this._curGPUDescriptorSets.length = 0;
@@ -77,7 +78,7 @@ export class WebGLCommandBuffer extends CommandBuffer {
         this._numTris = 0;
     }
 
-    public end (): void {
+    public override end (): void {
         if (this._isStateInvalied) {
             this.bindStates();
         }
@@ -85,7 +86,7 @@ export class WebGLCommandBuffer extends CommandBuffer {
         this._isInRenderPass = false;
     }
 
-    public beginRenderPass (
+    public override beginRenderPass (
         renderPass: RenderPass,
         framebuffer: Framebuffer,
         renderArea: Readonly<Rect>,
@@ -97,11 +98,11 @@ export class WebGLCommandBuffer extends CommandBuffer {
         this._isInRenderPass = true;
     }
 
-    public endRenderPass (): void {
+    public override endRenderPass (): void {
         this._isInRenderPass = false;
     }
 
-    public bindPipelineState (pipelineState: PipelineState): void {
+    public override bindPipelineState (pipelineState: PipelineState): void {
         const gpuPipelineState = (pipelineState as WebGLPipelineState).gpuPipelineState;
         if (gpuPipelineState !== this._curGPUPipelineState) {
             this._curGPUPipelineState = gpuPipelineState;
@@ -109,7 +110,7 @@ export class WebGLCommandBuffer extends CommandBuffer {
         }
     }
 
-    public bindDescriptorSet (set: number, descriptorSet: DescriptorSet, dynamicOffsets?: Readonly<number[]>): void {
+    public override bindDescriptorSet (set: number, descriptorSet: DescriptorSet, dynamicOffsets?: Readonly<number[]>): void {
         const gpuDescriptorSet = (descriptorSet as WebGLDescriptorSet).gpuDescriptorSet;
         if (gpuDescriptorSet !== this._curGPUDescriptorSets[set]) {
             this._curGPUDescriptorSets[set] = gpuDescriptorSet;
@@ -126,13 +127,13 @@ export class WebGLCommandBuffer extends CommandBuffer {
         }
     }
 
-    public bindInputAssembler (inputAssembler: InputAssembler): void {
-        const gpuInputAssembler = (inputAssembler as WebGLInputAssembler).gpuInputAssembler;
+    public override bindInputAssembler (inputAssembler: InputAssembler): void {
+        const gpuInputAssembler = (inputAssembler as WebGLInputAssembler).getGpuInputAssembler();
         this._curGPUInputAssembler = gpuInputAssembler;
         this._isStateInvalied = true;
     }
 
-    public setViewport (viewport: Readonly<Viewport>): void {
+    public override setViewport (viewport: Readonly<Viewport>): void {
         const cache = this._curDynamicStates.viewport;
         if (cache.left !== viewport.left
             || cache.top !== viewport.top
@@ -150,7 +151,7 @@ export class WebGLCommandBuffer extends CommandBuffer {
         }
     }
 
-    public setScissor (scissor: Readonly<Rect>): void {
+    public override setScissor (scissor: Readonly<Rect>): void {
         const cache = this._curDynamicStates.scissor;
         if (cache.x !== scissor.x
             || cache.y !== scissor.y
@@ -164,14 +165,14 @@ export class WebGLCommandBuffer extends CommandBuffer {
         }
     }
 
-    public setLineWidth (lineWidth: number): void {
+    public override setLineWidth (lineWidth: number): void {
         if (this._curDynamicStates.lineWidth !== lineWidth) {
             this._curDynamicStates.lineWidth = lineWidth;
             this._isStateInvalied = true;
         }
     }
 
-    public setDepthBias (depthBiasConstantFactor: number, depthBiasClamp: number, depthBiasSlopeFactor: number): void {
+    public override setDepthBias (depthBiasConstantFactor: number, depthBiasClamp: number, depthBiasSlopeFactor: number): void {
         const cache = this._curDynamicStates;
         if (cache.depthBiasConstant !== depthBiasConstantFactor
             || cache.depthBiasClamp !== depthBiasClamp
@@ -183,7 +184,7 @@ export class WebGLCommandBuffer extends CommandBuffer {
         }
     }
 
-    public setBlendConstants (blendConstants: Readonly<Color>): void {
+    public override setBlendConstants (blendConstants: Readonly<Color>): void {
         const cache = this._curDynamicStates.blendConstant;
         if (cache.x !== blendConstants.x
             || cache.y !== blendConstants.y
@@ -194,7 +195,7 @@ export class WebGLCommandBuffer extends CommandBuffer {
         }
     }
 
-    public setDepthBound (minDepthBounds: number, maxDepthBounds: number): void {
+    public override setDepthBound (minDepthBounds: number, maxDepthBounds: number): void {
         const cache = this._curDynamicStates;
         if (cache.depthMinBounds !== minDepthBounds
             || cache.depthMaxBounds !== maxDepthBounds) {
@@ -204,7 +205,7 @@ export class WebGLCommandBuffer extends CommandBuffer {
         }
     }
 
-    public setStencilWriteMask (face: StencilFace, writeMask: number): void {
+    public override setStencilWriteMask (face: StencilFace, writeMask: number): void {
         const front = this._curDynamicStates.stencilStatesFront;
         const back = this._curDynamicStates.stencilStatesBack;
         if (face & StencilFace.FRONT) {
@@ -221,7 +222,7 @@ export class WebGLCommandBuffer extends CommandBuffer {
         }
     }
 
-    public setStencilCompareMask (face: StencilFace, reference: number, compareMask: number): void {
+    public override setStencilCompareMask (face: StencilFace, reference: number, compareMask: number): void {
         const front = this._curDynamicStates.stencilStatesFront;
         const back = this._curDynamicStates.stencilStatesBack;
         if (face & StencilFace.FRONT) {
@@ -242,23 +243,23 @@ export class WebGLCommandBuffer extends CommandBuffer {
         }
     }
 
-    public draw (infoOrAssembler: Readonly<DrawInfo> | Readonly<InputAssembler>): void {
+    public override draw (infoOrAssembler: Readonly<DrawInfo> | Readonly<InputAssembler>): void {
         errorID(16328);
     }
 
-    public updateBuffer (buffer: Buffer, data: Readonly<BufferSource>, size?: number): void {
+    public override updateBuffer (buffer: Buffer, data: Readonly<BufferSource>, size?: number): void {
         errorID(16329);
     }
 
-    public copyBuffersToTexture (buffers: Readonly<ArrayBufferView[]>, texture: Texture, regions: Readonly<BufferTextureCopy[]>): void {
+    public override copyBuffersToTexture (buffers: Readonly<ArrayBufferView[]>, texture: Texture, regions: Readonly<BufferTextureCopy[]>): void {
         errorID(16330);
     }
 
-    public execute (cmdBuffs: Readonly<CommandBuffer[]>, count: number): void {
+    public override execute (cmdBuffs: Readonly<CommandBuffer[]>, count: number): void {
         errorID(16402);
     }
 
-    public pipelineBarrier (
+    public override pipelineBarrier (
         GeneralBarrier: Readonly<GeneralBarrier>,
         bufferBarriers?: Readonly<BufferBarrier[]>,
         buffers?: Readonly<Buffer[]>,
@@ -272,7 +273,7 @@ export class WebGLCommandBuffer extends CommandBuffer {
         errorID(16401);
     }
 
-    public blitTexture (srcTexture: Readonly<Texture>, dstTexture: Texture, regions: Readonly<TextureBlit []>, filter: Filter): void {
+    public override blitTexture (srcTexture: Readonly<Texture>, dstTexture: Texture, regions: Readonly<TextureBlit []>, filter: Filter): void {
         errorID(16401);
     }
 }
