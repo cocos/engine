@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-//cjh import b2 from '@cocos/box2d';
+
 import { EDITOR_NOT_IN_PREVIEW, TEST } from 'internal:constants';
 
 import { IPhysicsWorld } from '../spec/i-physics-world';

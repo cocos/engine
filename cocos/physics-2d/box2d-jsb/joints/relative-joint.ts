@@ -22,7 +22,6 @@
  THE SOFTWARE.
 */
 
-//cjh import b2, { MotorJointDef, Vec2 } from '@cocos/box2d';
 import { IRelativeJoint } from '../../spec/i-physics-joint';
 import { b2Joint } from './joint-2d';
 import { RelativeJoint2D } from '../../framework';

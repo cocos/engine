@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-//cjh import b2 from '@cocos/box2d';
+
 import { ISliderJoint } from '../../spec/i-physics-joint';
 import { b2Joint } from './joint-2d';
 import { SliderJoint2D } from '../../framework';

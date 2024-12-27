@@ -22,8 +22,6 @@
  THE SOFTWARE.
 */
 
-//cjh import b2, { Vec2 } from '@cocos/box2d'; //cjh
-
 import { IBaseShape } from '../../spec/i-physics-shape';
 import { Collider2D, PhysicsSystem2D, RigidBody2D, PHYSICS_2D_PTM_RATIO } from '../../../../exports/physics-2d-framework';
 import { Rect, Vec3 } from '../../../core';
@@ -31,8 +29,8 @@ import { b2PhysicsWorld } from '../physics-world';
 import { PhysicsGroup } from '../../../physics/framework/physics-enum';
 
 const tempFilter = new b2.Filter();
-const lowerBound = { x: 0, y: 0};
-const upperBound = { x: 0, y: 0};
+const lowerBound = { x: 0, y: 0 };
+const upperBound = { x: 0, y: 0 };
 
 function getFilter (shape: b2Shape2D): any {
     const comp = shape.collider;
@@ -179,7 +177,7 @@ export class b2Shape2D implements IBaseShape {
             const shape = shapes[i];
 
             const fixDef = new b2.FixtureDef();
-            
+
             fixDef.density = comp.density;
             fixDef.isSensor = comp.sensor;
             fixDef.friction = comp.friction;

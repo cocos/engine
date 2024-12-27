@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-//cjh import b2 from '@cocos/box2d';
+
 import { IMouseJoint } from '../../spec/i-physics-joint';
 import { b2Joint } from './joint-2d';
 import { MouseJoint2D, PhysicsSystem2D, Joint2D } from '../../framework';

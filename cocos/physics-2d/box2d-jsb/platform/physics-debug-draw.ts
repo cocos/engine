@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2023 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2024 Xiamen Yaji Software Co., Ltd.
 
  https://www.cocos.com/
 
@@ -22,7 +22,6 @@
  THE SOFTWARE.
 */
 
-//cjh import b2, { Vec2 } from '@cocos/box2d';
 import { Color } from '../../../core';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework';
 import { Graphics } from '../../../2d';
@@ -34,12 +33,12 @@ const GREEN_COLOR = Color.GREEN;
 const RED_COLOR = Color.RED;
 
 b2.Transform.MulXV = function (T, v, out) {
-    const T_q_c = T.q.c, T_q_s = T.q.s;
-    const v_x = v.x, v_y = v.y;
+    const T_q_c = T.q.c; const T_q_s = T.q.s;
+    const v_x = v.x; const v_y = v.y;
     out.x = (T_q_c * v_x - T_q_s * v_y) + T.p.x;
     out.y = (T_q_s * v_x + T_q_c * v_y) + T.p.y;
     return out;
-}
+};
 export class PhysicsDebugDraw extends b2.Draw {
     _drawer: Graphics | null = null;
 

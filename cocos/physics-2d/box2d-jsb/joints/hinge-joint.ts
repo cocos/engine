@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-//cjh import b2 from '@cocos/box2d';
+
 import { IHingeJoint } from '../../spec/i-physics-joint';
 import { HingeJoint2D } from '../../framework';
 import { b2Joint } from './joint-2d';

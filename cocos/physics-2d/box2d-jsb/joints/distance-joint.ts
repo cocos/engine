@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-//cjh import b2 from '@cocos/box2d';
+
 import { IDistanceJoint } from '../../spec/i-physics-joint';
 import { b2Joint } from './joint-2d';
 import { DistanceJoint2D } from '../../framework';

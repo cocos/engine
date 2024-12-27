@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2017-2023 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2024 Xiamen Yaji Software Co., Ltd.
 
  https://www.cocos.com/
 
@@ -22,7 +22,6 @@
  THE SOFTWARE.
 */
 
-//cjh import b2 from '@cocos/box2d';
 import { Vec2 } from '../../core';
 import { PHYSICS_2D_PTM_RATIO } from '../framework/physics-types';
 import { Collider2D, Contact2DType, PhysicsSystem2D } from '../framework';
@@ -42,8 +41,8 @@ const pointCache = [new Vec2(), new Vec2()];
 
 const b2worldmanifold = {
     normal: { x: 0, y: 0 },							///< world vector pointing from A to B
-    points: [{ x: 0, y: 0 }, { x: 0, y: 0 }],//b2_maxManifoldPoints];		///< world contact point (point of intersection)
-    separations: [ 0, 0 ],  //[b2_maxManifoldPoints];	///< a negative value indicates overlap, in meters
+    points: [{ x: 0, y: 0 }, { x: 0, y: 0 }], //b2_maxManifoldPoints];		///< world contact point (point of intersection)
+    separations: [0, 0],  //[b2_maxManifoldPoints];	///< a negative value indicates overlap, in meters
 };
 
 const worldmanifold: IPhysics2DWorldManifold = {
@@ -129,7 +128,7 @@ export class PhysicsContact implements IPhysics2DContact {
         this.disabled = false;
         this._impulse = null;
 
-        this._b2contact!.m_userData = null;
+        this._b2contact.m_userData = null;
         this._b2contact = null;
     }
 
@@ -138,11 +137,11 @@ export class PhysicsContact implements IPhysics2DContact {
         const separations = worldmanifold.separations;
         const normal = worldmanifold.normal;
 
-        this._b2contact!.GetWorldManifold(b2worldmanifold);
+        this._b2contact.GetWorldManifold(b2worldmanifold);
         const b2points = b2worldmanifold.points;
         const b2separations = b2worldmanifold.separations;
 
-        const count = this._b2contact!.GetManifold().pointCount;
+        const count = this._b2contact.GetManifold().pointCount;
         points.length = separations.length = count;
 
         for (let i = 0; i < count; i++) {
@@ -170,7 +169,7 @@ export class PhysicsContact implements IPhysics2DContact {
         const localNormal = manifold.localNormal;
         const localPoint = manifold.localPoint;
 
-        const b2manifold = this._b2contact!.GetManifold();
+        const b2manifold = this._b2contact.GetManifold();
         const b2points = b2manifold.points;
         const count = points.length = b2manifold.pointCount;
 
@@ -260,42 +259,42 @@ export class PhysicsContact implements IPhysics2DContact {
     }
 
     setEnabled (value): void {
-        this._b2contact!.SetEnabled(value);
+        this._b2contact.SetEnabled(value);
     }
 
     isTouching (): boolean {
-        return this._b2contact!.IsTouching();
+        return this._b2contact.IsTouching();
     }
 
     setTangentSpeed (value): void {
-        this._b2contact!.SetTangentSpeed(value);
+        this._b2contact.SetTangentSpeed(value);
     }
 
     getTangentSpeed (): number {
-        return this._b2contact!.GetTangentSpeed();
+        return this._b2contact.GetTangentSpeed();
     }
 
     setFriction (value): void {
-        this._b2contact!.SetFriction(value);
+        this._b2contact.SetFriction(value);
     }
 
     getFriction (): number {
-        return this._b2contact!.GetFriction();
+        return this._b2contact.GetFriction();
     }
 
     resetFriction (): void {
-        return this._b2contact!.ResetFriction();
+        return this._b2contact.ResetFriction();
     }
 
     setRestitution (value): void {
-        this._b2contact!.SetRestitution(value);
+        this._b2contact.SetRestitution(value);
     }
 
     getRestitution (): number {
-        return this._b2contact!.GetRestitution();
+        return this._b2contact.GetRestitution();
     }
 
     resetRestitution (): void {
-        return this._b2contact!.ResetRestitution();
+        return this._b2contact.ResetRestitution();
     }
 }
