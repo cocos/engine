@@ -1827,9 +1827,6 @@ bool nativevalue_to_se(const b2Vec2 &from, se::Value &to, se::Object * /*ctx*/) 
     to.setObject(obj, true);
     obj->setPrivateData(ccnew b2Vec2(from));
     obj->getPrivateObject()->tryAllowDestroyInGC();
-//    obj->setProperty("x", se::Value(from.x));
-//    obj->setProperty("y", se::Value(from.y));
-//    to.setObject(obj);
     return true;
 }
 //
@@ -1838,12 +1835,6 @@ bool nativevalue_to_se(const b2Vec3 &from, se::Value &to, se::Object * /*ctx*/) 
     to.setObject(obj, true);
     obj->setPrivateData(ccnew b2Vec3(from));
     obj->getPrivateObject()->tryAllowDestroyInGC();
-    
-//    se::HandleObject obj(se::Object::createPlainObject());
-//    obj->setProperty("x", se::Value(from.x));
-//    obj->setProperty("y", se::Value(from.y));
-//    obj->setProperty("z", se::Value(from.z));
-//    to.setObject(obj);
     return true;
 }
 bool nativevalue_to_se(const b2Color &from, se::Value &to, se::Object * /*ctx*/) { // NOLINT(readability-identifier-naming)
