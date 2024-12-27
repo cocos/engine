@@ -716,7 +716,7 @@ export class UBOSH {
     public static readonly SIZE = UBOSHEnum.SIZE;
 
     public static readonly NAME = 'CCSH';
-    public static readonly BINDING = ModelLocalBindings.UBO_SH;
+    public static readonly BINDING = UBOSHEnum.BINDING;
     public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOSHEnum.BINDING, DescriptorType.UNIFORM_BUFFER, 1, ShaderStageFlagBit.FRAGMENT);
     public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOSHEnum.BINDING, UBOSH.NAME, [
         new Uniform('cc_sh_linear_const_r', Type.FLOAT4, 1),
