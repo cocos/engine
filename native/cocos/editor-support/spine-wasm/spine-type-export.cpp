@@ -719,7 +719,6 @@ EMSCRIPTEN_BINDINGS(spine) {
         .property("height", &RegionAttachment::_height)
         .property("color", GETTER_RVAL_TO_PTR(RegionAttachment, getColor, Color*))
         .property("path", &RegionAttachment::_path)
-        //FIXME(cjh): .function("getRendererObject", &RegionAttachment::getRendererObject, allow_raw_pointers())
         .function("getOffset", optional_override([](RegionAttachment &obj) {
             return &obj.getOffset(); }), allow_raw_pointer<SPVectorFloat>())
         .function("setUVs", &RegionAttachment::setUVs)

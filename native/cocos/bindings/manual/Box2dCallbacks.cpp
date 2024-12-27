@@ -95,10 +95,6 @@ float JSBRayCastCallback::ReportFixture(b2Fixture* fixture, const b2Vec2& point,
     if (_cbReportFixture == nullptr) {
         return 0.F;
     }
-
-//        //FIXME(cjh)
-//        b2Vec2 *point = new b2Vec2(point_.x, point_.y);
-//        b2Vec2 *normal = new b2Vec2(normal_.x, normal_.y);
     
     bool ok = nativevalue_to_se(fixture, _args[0]);
     SE_PRECONDITION2(ok, 0.F, "Error processing arguments");
@@ -184,9 +180,6 @@ void JSBB2Draw::DrawCircle(const b2Vec2& center, float radius, const b2Color& co
     }
 
     se::AutoHandleScope hs;
-
-    //FIXME(cjh)
-//        b2Vec2 *center = new b2Vec2(center_.x, center_.y);
     
     bool ok = nativevalue_to_se(center, _args3[0]);
     SE_PRECONDITION2_VOID(ok, "Error processing arguments");
@@ -206,10 +199,6 @@ void JSBB2Draw::DrawSolidCircle(const b2Vec2& center, float radius, const b2Vec2
 
     se::AutoHandleScope hs;
 
-    //FIXME(cjh)
-//        b2Vec2 *center = new b2Vec2(center_.x, center_.y);
-//        b2Vec2 *axis = new b2Vec2(axis_.x, axis_.y);
-    
     bool ok = nativevalue_to_se(center, _args4[0]);
     SE_PRECONDITION2_VOID(ok, "Error processing arguments");
     ok = nativevalue_to_se(radius, _args4[1]);
@@ -230,10 +219,6 @@ void JSBB2Draw::DrawSegment(const b2Vec2& p1, const b2Vec2& p2, const b2Color& c
 
     se::AutoHandleScope hs;
 
-    //FIXME(cjh)
-//        b2Vec2 *p1 = new b2Vec2(p1_.x, p1_.y);
-//        b2Vec2 *p2 = new b2Vec2(p2_.x, p2_.y);
-    
     bool ok = nativevalue_to_se(p1, _args3[0]);
     SE_PRECONDITION2_VOID(ok, "Error processing arguments");
     ok = nativevalue_to_se(p2, _args3[1]);
@@ -266,9 +251,6 @@ void JSBB2Draw::DrawPoint(const b2Vec2& p, float size, const b2Color& color) {
     }
 
     se::AutoHandleScope hs;
-
-    //FIXME(cjh)
-//        b2Vec2 *p = new b2Vec2(p_.x, p_.y);
     
     bool ok = nativevalue_to_se(p, _args3[0]);
     SE_PRECONDITION2_VOID(ok, "Error processing arguments");
