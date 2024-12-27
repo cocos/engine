@@ -41,6 +41,7 @@ import { WebGLDeviceManager } from './webgl-define';
 import { error, errorID } from '../../core/platform/debug';
 import { WebGLConstants } from '../gl-constants';
 
+/** @mangle */
 export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
     public override beginRenderPass (
         renderPass: RenderPass,

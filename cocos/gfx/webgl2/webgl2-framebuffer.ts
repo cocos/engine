@@ -30,6 +30,7 @@ import { IWebGL2GPUFramebuffer, IWebGL2GPUTextureView } from './webgl2-gpu-objec
 import { WebGL2RenderPass } from './webgl2-render-pass';
 import { WebGL2Texture } from './webgl2-texture';
 
+/** mangle */
 export class WebGL2Framebuffer extends Framebuffer {
     constructor () {
         super();
@@ -81,8 +82,8 @@ export class WebGL2Framebuffer extends Framebuffer {
         let height = Number.MAX_SAFE_INTEGER;
         this._gpuFramebuffer = {
             gpuRenderPass: (info.renderPass as WebGL2RenderPass).getGpuRenderPass(),
-            gpuColorViews: gpuColorViews,
-            gpuDepthStencilView: gpuDepthStencilView,
+            gpuColorViews,
+            gpuDepthStencilView,
             glFramebuffer: null,
             isOffscreen: true,
             get width (): number {

@@ -32,6 +32,7 @@ import { WebGL2CmdFuncCreateTexture, WebGL2CmdFuncDestroyTexture, WebGL2CmdFuncR
 import { WebGL2DeviceManager } from './webgl2-define';
 import { IWebGL2GPUTexture, IWebGL2GPUTextureView } from './webgl2-gpu-objects';
 
+/** mangle */
 export class WebGL2Texture extends Texture {
     private _gpuTexture: IWebGL2GPUTexture | null = null;
     private _gpuTextureView: IWebGL2GPUTextureView | null = null;

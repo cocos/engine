@@ -71,6 +71,7 @@ import { BrowserType, OS } from '../../../pal/system-info/enum-type';
 import type { WebGL2StateCache } from './webgl2-state-cache';
 import { WebGLConstants } from '../gl-constants';
 
+/** mangle */
 export class WebGL2Device extends Device {
     constructor () {
         super();
@@ -137,8 +138,8 @@ export class WebGL2Device extends Device {
             samplerTextureOffsets[curSet] -= mapping.maxBlockCounts[curSet];
         }
         this._bindingMappings = {
-            blockOffsets: blockOffsets,
-            samplerTextureOffsets: samplerTextureOffsets,
+            blockOffsets,
+            samplerTextureOffsets,
             flexibleSet: mapping.setIndices[mapping.setIndices.length - 1],
         };
 

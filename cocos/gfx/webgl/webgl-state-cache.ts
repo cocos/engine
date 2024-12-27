@@ -25,6 +25,7 @@
 import { Rect, Viewport } from '../base/define';
 import { BlendState, DepthStencilState, RasterizerState } from '../base/pipeline-state';
 
+/** @mangle */
 export interface IWebGLTexUnit {
     glTexture: WebGLTexture | null;
 }

@@ -68,6 +68,7 @@ import type { WebGLStateCache } from './webgl-state-cache';
 import { WebGLConstants } from '../gl-constants';
 import { debug, errorID } from '../../core/platform/debug';
 
+/** @mangle */
 export class WebGLDevice extends Device {
     constructor () {
         super();

@@ -30,6 +30,7 @@ import { WebGLTexture } from './webgl-texture';
 import { WebGLDescriptorSetLayout } from './webgl-descriptor-set-layout';
 import { DescriptorSetInfo, DESCRIPTOR_SAMPLER_TYPE, DESCRIPTOR_BUFFER_TYPE } from '../base/define';
 
+/** @mangle */
 export class WebGLDescriptorSet extends DescriptorSet {
     get gpuDescriptorSet (): IWebGLGPUDescriptorSet {
         return this._gpuDescriptorSet as IWebGLGPUDescriptorSet;

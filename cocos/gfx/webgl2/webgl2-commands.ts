@@ -1810,16 +1810,15 @@ export function WebGL2CmdFuncDestroyInputAssembler (device: WebGL2Device, gpuInp
     gpuInputAssembler.glVAOs.clear();
 }
 
+/** mangle */
 interface IWebGL2StateCache {
-    /** mangle */
     gpuPipelineState: IWebGL2GPUPipelineState | null;
-    /** mangle */
     gpuInputAssembler: IWebGL2GPUInputAssembler | null;
-    /** mangle */
     glPrimitive: number;
-    /** mangle */
     invalidateAttachments: GLenum[];
 }
+
+/** mangle */
 const gfxStateCache: IWebGL2StateCache = {
     gpuPipelineState: null,
     gpuInputAssembler: null,

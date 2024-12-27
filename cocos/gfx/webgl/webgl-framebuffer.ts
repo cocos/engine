@@ -31,6 +31,7 @@ import { WebGLRenderPass } from './webgl-render-pass';
 
 import { WebGLTexture as CCWebGLTexture } from './webgl-texture';
 
+/** @mangle */
 export class WebGLFramebuffer extends Framebuffer {
     getGpuFramebuffer (): IWebGLGPUFramebuffer {
         return  this._gpuFramebuffer!;

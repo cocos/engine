@@ -28,6 +28,7 @@ import { WebGLCmdFuncCreateTexture, WebGLCmdFuncDestroyTexture, WebGLCmdFuncResi
 import { WebGLDeviceManager } from './webgl-define';
 import { IWebGLGPUTexture } from './webgl-gpu-objects';
 
+/** @mangle */
 export class WebGLTexture extends Texture {
     get gpuTexture (): IWebGLGPUTexture {
         return this._gpuTexture!;
