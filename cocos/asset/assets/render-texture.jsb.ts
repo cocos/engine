@@ -23,7 +23,7 @@
 */
 import { EDITOR, TEST } from 'internal:constants';
 import { cclegacy } from '../../core';
-import { Filter, PixelFormat, WrapMode } from './asset-enum';
+import { TextureFilter, PixelFormat, WrapMode } from './asset-enum';
 import './asset';
 import { patch_cc_RenderTexture } from '../../native-binding/decorators';
 import type { RenderTexture as JsbRenderTexture } from './render-texture';
@@ -37,7 +37,7 @@ renderTextureProto.createNode = null!;
 export type RenderTexture = JsbRenderTexture;
 export const RenderTexture: typeof JsbRenderTexture = jsb.RenderTexture;
 
-RenderTexture.Filter = Filter;
+RenderTexture.Filter = TextureFilter;
 RenderTexture.PixelFormat = PixelFormat;
 RenderTexture.WrapMode = WrapMode;
 

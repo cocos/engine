@@ -27,7 +27,7 @@ import { ImageAsset } from './image-asset';
 import { SimpleTexture } from './simple-texture';
 import { TextureBase } from './texture-base.jsb';
 import { js, cclegacy } from '../../core';
-import { Filter, PixelFormat, WrapMode } from './asset-enum';
+import { TextureFilter, PixelFormat, WrapMode } from './asset-enum';
 import './simple-texture';
 import { patch_cc_Texture2D } from '../../native-binding/decorators';
 import type { Texture2D as JsbTexture2D } from './texture-2d';
@@ -40,7 +40,7 @@ texture2DProto.createNode = null!;
 export type Texture2D = JsbTexture2D;
 export const Texture2D: typeof JsbTexture2D = jsb.Texture2D;
 
-Texture2D.Filter = Filter;
+Texture2D.Filter = TextureFilter;
 Texture2D.PixelFormat = PixelFormat;
 Texture2D.WrapMode = WrapMode;
 
