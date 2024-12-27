@@ -256,6 +256,7 @@ void CCMTLDevice::onPresentCompleted(uint32_t index) {
         CCMTLGPUStagingBufferPool *bufferPool = _gpuStagingBufferPools[index];
         if (bufferPool) {
             bufferPool->reset();
+            bufferPool->shrinkSize();
             CCMTLGPUGarbageCollectionPool::getInstance()->clear(index);
             static_cast<CCMTLCommandBuffer*>(_cmdBuff)->signalFence();
         }

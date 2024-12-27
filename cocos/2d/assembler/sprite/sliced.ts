@@ -105,7 +105,8 @@ export const sliced: IAssembler = {
     },
 
     updateVertexData (sprite: Sprite) {
-        const renderData: RenderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const dataList: IRenderData[] = renderData.data;
         const uiTrans = sprite.node._uiProps.uiTransformComp!;
         const width = uiTrans.width;
@@ -151,7 +152,8 @@ export const sliced: IAssembler = {
     },
 
     fillBuffers (sprite: Sprite, renderer: IBatcher) {
-        const renderData: RenderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const chunk = renderData.chunk;
         if (sprite._flagChangedVersion !== sprite.node.flagChangedVersion || renderData.vertDirty) {
             this.updateWorldVertexData(sprite, chunk);
@@ -179,7 +181,8 @@ export const sliced: IAssembler = {
     },
 
     updateWorldVertexData (sprite: Sprite, chunk: StaticVBChunk) {
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const stride = renderData.floatStride;
         const dataList: IRenderData[] = renderData.data;
         const vData = chunk.vb;
@@ -209,8 +212,8 @@ export const sliced: IAssembler = {
     },
 
     updateUVs (sprite: Sprite) {
-        if (!sprite.spriteFrame) return;
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!sprite.spriteFrame || !renderData) return;
         const vData = renderData.chunk.vb;
         const stride = renderData.floatStride;
         const uv = sprite.spriteFrame.uvSliced;
@@ -223,7 +226,8 @@ export const sliced: IAssembler = {
     },
 
     updateColor (sprite: Sprite) {
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const vData = renderData.chunk.vb;
         const stride = renderData.floatStride;
 

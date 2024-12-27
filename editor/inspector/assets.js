@@ -16,6 +16,7 @@ module.exports = {
     'render-pipeline': join(__dirname, './assets/render-pipeline.js'),
     'render-texture': join(__dirname, './assets/render-texture.js'),
     'sprite-frame': join(__dirname, './assets/sprite-frame.js'),
+    'spine-data': join(__dirname, './assets/spine-data.js'),
     'texture-cube': join(__dirname, './assets/texture-cube.js'),
     'video-clip': join(__dirname, './assets/video-clip.js'),
     effect: join(__dirname, './assets/effect.js'),

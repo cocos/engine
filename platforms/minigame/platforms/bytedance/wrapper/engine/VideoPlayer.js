@@ -43,6 +43,7 @@ if (cc.internal.VideoPlayer) {
             super(componenet);
             this.videoNode = new cc.Node();
             this.videoNode.addComponent(cc.Sprite);
+            this.videoNode.layer = this._node.layer;
             this._node.insertChild(this.videoNode, 0);
         }
 
@@ -162,17 +163,21 @@ if (cc.internal.VideoPlayer) {
         }
 
         setURL (path) {
-            const video = this._video;
+            const self = this;
+            const video = self._video;
             if (!video || video.src === path) {
                 return;
             }
-            video.stop();
-            this._unbindEvent();
+
+            if (self._playing) {
+                video.stop();
+            }
+            self._unbindEvent();
             video.autoplay = true;
             video.src = path;
             video.muted = true;
-            const self = this;
-            this._loaded = false;
+
+            self._loaded = false;
             function loadedCallback () {
                 self._bindEvent();
                 video.muted = false;

@@ -217,12 +217,6 @@ for (const key in jsbWindow) {
     }
 }
 
-// In the openharmony platform, XMLHttpRequest is not undefined, but there are problems to using it.
-// So the native implementation is forced to be used.
-if (window.oh && typeof globalThis.XMLHttpRequest !== 'undefined') {
-    globalThis.XMLHttpRequest = jsbWindow.XMLHttpRequest;
-}
-
 if (typeof globalThis.window === 'undefined') {
     globalThis.window = globalThis;
 }

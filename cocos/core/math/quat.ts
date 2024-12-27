@@ -917,6 +917,14 @@ export class Quat extends ValueType {
         const { x, y, z, w } = self;
         return x * x + y * y + z * z + w * w;
     }
+
+    /**
+     * @en Return the information of the quaternion in string.
+     * @zh 返回当前四元数的字符串表示。
+     */
+    public toString (): string {
+        return `(${this.x}, ${this.y}, ${this.z}, ${this.w})`;
+    }
 }
 
 const qt_1 = new Quat();

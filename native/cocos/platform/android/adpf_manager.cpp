@@ -19,8 +19,8 @@
 
 #if CC_PLATFORM == CC_PLATFORM_ANDROID && __ANDROID_API__ >= 30
 
-    #include <algorithm>
     #include <unistd.h>
+    #include <algorithm>
     #include <chrono>
     #include <cstdio>
     #include <cstdlib>
@@ -104,7 +104,7 @@ bool ADPFManager::initializePowerManager() {
     #endif
 
     JNIEnv *env = cc::JniHelper::getEnv();
-    auto *javaGameActivity = cc::JniHelper::getActivity();
+    auto *applicationContext = cc::JniHelper::getContext();
 
     // Retrieve class information
     jclass context = env->FindClass("android/content/Context");
@@ -117,7 +117,7 @@ bool ADPFManager::initializePowerManager() {
     // Get the method 'getSystemService' and call it
     jmethodID mid_getss = env->GetMethodID(
         context, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;");
-    jobject obj_power_service = env->CallObjectMethod(javaGameActivity, mid_getss, str_svc);
+    jobject obj_power_service = env->CallObjectMethod(applicationContext, mid_getss, str_svc);
 
     // Add global reference to the power service object.
     obj_power_service_ = env->NewGlobalRef(obj_power_service);
@@ -175,11 +175,11 @@ float ADPFManager::updateThermalStatusHeadRoom() {
 
 // Initialize JNI calls for the PowerHintManager.
 bool ADPFManager::initializePerformanceHintManager() {
-#if __ANDROID_API__ >= 33
-    if ( hint_manager_ == nullptr ) {
+    #if __ANDROID_API__ >= 33
+    if (hint_manager_ == nullptr) {
         hint_manager_ = APerformanceHint_getManager();
     }
-    if ( hint_session_ == nullptr && hint_manager_ != nullptr ) {
+    if (hint_session_ == nullptr && hint_manager_ != nullptr) {
         int32_t tid = gettid();
         thread_ids_.push_back(tid);
         int32_t tids[1];
@@ -187,9 +187,9 @@ bool ADPFManager::initializePerformanceHintManager() {
         hint_session_ = APerformanceHint_createSession(hint_manager_, tids, 1, last_target_);
     }
     return true;
-#else
+    #elif __ANDROID_API__ >= 31
     JNIEnv *env = cc::JniHelper::getEnv();
-    auto *javaGameActivity = cc::JniHelper::getActivity();
+    auto *applicationContext = cc::JniHelper::getContext();
 
     // Retrieve class information
     jclass context = env->FindClass("android/content/Context");
@@ -203,7 +203,7 @@ bool ADPFManager::initializePerformanceHintManager() {
     jmethodID mid_getss = env->GetMethodID(
         context, "getSystemService", "(Ljava/lang/String;)Ljava/lang/Object;");
     jobject obj_perfhint_service = env->CallObjectMethod(
-        javaGameActivity, mid_getss, str_svc);
+        applicationContext, mid_getss, str_svc);
 
     // Add global reference to the power service object.
     obj_perfhint_service_ = env->NewGlobalRef(obj_perfhint_service);
@@ -243,7 +243,7 @@ bool ADPFManager::initializePerformanceHintManager() {
         set_threads_ = env->GetMethodID(
             cls_perfhint_session, "setThreads", "([I)V");
         check = env->ExceptionCheck();
-        if ( check ) {
+        if (check) {
             env->ExceptionDescribe();
             env->ExceptionClear();
             set_threads_ = nullptr;
@@ -264,7 +264,9 @@ bool ADPFManager::initializePerformanceHintManager() {
     }
 
     return true;
-#endif
+    #else
+    return false;
+    #endif
 }
 
 thermalStateChangeListener ADPFManager::thermalListener = NULL;
@@ -290,13 +292,13 @@ void ADPFManager::beginPerfHintSession() {
 }
 
 void ADPFManager::endPerfHintSession(jlong target_duration_ns) {
-#if __ANDROID_API__ >= 33
+    #if __ANDROID_API__ >= 33
     auto perf_end = std::chrono::steady_clock::now();
     auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(perf_end - perf_start_).count();
     int64_t actual_duration_ns = static_cast<int64_t>(dur);
     APerformanceHint_reportActualWorkDuration(hint_session_, actual_duration_ns);
     APerformanceHint_updateTargetWorkDuration(hint_session_, target_duration_ns);
-#else
+    #else
     auto perf_end = std::chrono::steady_clock::now();
     auto dur = std::chrono::duration_cast<std::chrono::nanoseconds>(perf_end - perf_start_).count();
     jlong actual_duration_ns = static_cast<jlong>(dur);
@@ -309,7 +311,7 @@ void ADPFManager::endPerfHintSession(jlong target_duration_ns) {
         env->CallVoidMethod(obj_perfhint_session_, update_target_work_duration_,
                             target_duration_ns);
     }
-#endif
+    #endif
 }
 void ADPFManager::addThreadIdToHintSession(int32_t tid) {
     thread_ids_.push_back(tid);
@@ -324,27 +326,27 @@ void ADPFManager::removeThreadIdFromHintSession(int32_t tid) {
 }
 
 void ADPFManager::registerThreadIdsToHintSession() {
-#if __ANDROID_API__ >= 34
+    #if __ANDROID_API__ >= 34
     auto data = thread_ids_.data();
     std::size_t size = thread_ids_.size();
     APerformanceHint_setThreads(hint_session_, data, size);
-#elif __ANDROID_API__ >= 33
+    #elif __ANDROID_API__ >= 33
     auto data = thread_ids_.data();
     std::size_t size = thread_ids_.size();
-    if ( hint_session_ != nullptr ) {
+    if (hint_session_ != nullptr) {
         APerformanceHint_closeSession(hint_session_);
     }
     hint_session_ = APerformanceHint_createSession(hint_manager_, data, size, last_target_);
-#else
+    #elif __ANDROID_API__ >= 31
     JNIEnv *env = cc::JniHelper::getEnv();
     std::size_t size = thread_ids_.size();
     jintArray array = env->NewIntArray(size);
     auto data = thread_ids_.data();
     env->SetIntArrayRegion(array, 0, size, data);
-    if ( set_threads_ == nullptr ) {
+    if (set_threads_ == nullptr) {
         // we have to recreate the hint session
-        if ( obj_perfhint_session_ ) {
-            env->DeleteGlobalRef(obj_perfhint_session_ );
+        if (obj_perfhint_session_) {
+            env->DeleteGlobalRef(obj_perfhint_session_);
         }
         const jlong DEFAULT_TARGET_NS = 16666666;
         jobject obj_hintsession = env->CallObjectMethod(obj_perfhint_service_, create_hint_session_, array, DEFAULT_TARGET_NS);
@@ -353,12 +355,12 @@ void ADPFManager::registerThreadIdsToHintSession() {
         // API Level 34
         env->CallVoidMethod(obj_perfhint_session_, set_threads_, array);
         jboolean check = env->ExceptionCheck();
-        if ( check ) {
+        if (check) {
             env->ExceptionDescribe();
             env->ExceptionClear();
         }
     }
-#endif
+    #endif
 }
 
 #endif

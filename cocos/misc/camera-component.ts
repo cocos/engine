@@ -23,7 +23,7 @@
  THE SOFTWARE.
 */
 
-import { EDITOR } from 'internal:constants';
+import { EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
 import { ccclass, help, executeInEditMode, menu, tooltip, displayOrder, type, serializable, visible, range, rangeMin } from 'cc.decorator';
 import { RenderTexture } from '../asset/assets/render-texture';
 import { UITransform } from '../2d/framework';
@@ -497,7 +497,7 @@ export class Camera extends Component {
         this._updateTargetTexture();
 
         if (!value && this._camera) {
-            this._camera.changeTargetWindow(EDITOR ? (cclegacy.director.root as Root).tempWindow : null);
+            this._camera.changeTargetWindow(EDITOR_NOT_IN_PREVIEW ? (cclegacy.director.root as Root).tempWindow : null);
             this._camera.isWindowSize = true;
         }
         this.node.emit(CameraEvent.TARGET_TEXTURE_CHANGE, this);

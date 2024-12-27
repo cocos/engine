@@ -1516,7 +1516,8 @@ export class WebPipeline implements BasicPipeline {
         );
     }
     beginFrame (): void {
-        // noop
+        const director: Director = cclegacy.director;
+        director.buildRenderPipeline();
     }
     update (camera: Camera): void {
         // noop

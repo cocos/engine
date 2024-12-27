@@ -46,13 +46,13 @@ Object::~Object() {
 
 Object* Object::createObjectWithClass(Class* cls) {
     JSVM_Value jsobj = Class::_createJSObjectWithClass(cls);
-    Object*    obj   = Object::_createJSObject(ScriptEngine::getEnv(), jsobj, cls);
+    Object* obj = Object::_createJSObject(ScriptEngine::getEnv(), jsobj, cls);
     return obj;
 }
 
 bool Object::setProperty(const char* name, const Value& data) {
     JSVM_Status status;
-    JSVM_Value  jsVal;
+    JSVM_Value jsVal;
     internal::seToJsValue(data, &jsVal);
     NODE_API_CALL(status, _env, OH_JSVM_SetNamedProperty(_env, _objRef.getValue(_env), name, jsVal));
     return status == JSVM_OK;
@@ -60,8 +60,8 @@ bool Object::setProperty(const char* name, const Value& data) {
 
 bool Object::getProperty(const char* name, Value* d) {
     JSVM_Status status;
-    JSVM_Value  jsVal;
-    Value       data;
+    JSVM_Value jsVal;
+    Value data;
     NODE_API_CALL(status, _env, OH_JSVM_GetNamedProperty(_env, _objRef.getValue(_env), name, &jsVal));
     if (status == JSVM_OK) {
         internal::jsToSeValue(jsVal, &data);
@@ -93,7 +93,7 @@ void Object::setPrivateObject(PrivateObjectBase* data) {
             });
     }
 #endif
-    
+
     if (data) {
         _privateData = data->getRaw();
         _privateObject = data;
@@ -104,36 +104,35 @@ void Object::setPrivateObject(PrivateObjectBase* data) {
     auto tmpThis = _objRef.getValue(_env);
     JSVM_Ref result = nullptr;
     NODE_API_CALL(status, _env,
-                  OH_JSVM_Wrap(_env, tmpThis, this, sendWeakCallback,
-                            (void*)this /* finalize_hint */, &result));
+                  OH_JSVM_Wrap(_env, tmpThis, this, weakCallback,
+                               (void*)this /* finalize_hint */, &result));
     //_objRef.setWeakref(_env, result);
     setProperty("__native_ptr__", se::Value(static_cast<uint64_t>(reinterpret_cast<uintptr_t>(data))));
     return;
 }
 
-
-bool Object::deleteProperty(const char *name) {
+bool Object::deleteProperty(const char* name) {
     JSVM_Status status;
     JSVM_Value key;
     NODE_API_CALL(status, _env, OH_JSVM_GetNamedProperty(_env, _objRef.getValue(_env), name, &key));
     if (status != JSVM_OK) {
         return false;
     }
-    bool        ret = false;
+    bool ret = false;
     NODE_API_CALL(status, _env, OH_JSVM_DeleteProperty(_env, _objRef.getValue(_env), key, &ret));
     return ret;
 }
 
 bool Object::isArray() const {
     JSVM_Status status;
-    bool        ret = false;
+    bool ret = false;
     NODE_API_CALL(status, _env, OH_JSVM_IsArray(_env, _objRef.getValue(_env), &ret));
     return ret;
 }
 
 bool Object::getArrayLength(uint32_t* length) const {
     JSVM_Status status;
-    uint32_t    len = 0;
+    uint32_t len = 0;
     NODE_API_CALL(status, _env, OH_JSVM_GetArrayLength(_env, _objRef.getValue(_env), &len));
     if (length) {
         *length = len;
@@ -143,7 +142,7 @@ bool Object::getArrayLength(uint32_t* length) const {
 
 bool Object::getArrayElement(uint32_t index, Value* data) const {
     JSVM_Status status;
-    JSVM_Value  val;
+    JSVM_Value val;
     NODE_API_CALL(status, _env, OH_JSVM_GetElement(_env, _objRef.getValue(_env), index, &val));
     internal::jsToSeValue(val, data);
     return true;
@@ -151,7 +150,7 @@ bool Object::getArrayElement(uint32_t index, Value* data) const {
 
 bool Object::setArrayElement(uint32_t index, const Value& data) {
     JSVM_Status status;
-    JSVM_Value  val;
+    JSVM_Value val;
     internal::seToJsValue(data, &val);
     NODE_API_CALL(status, _env, OH_JSVM_SetElement(_env, _objRef.getValue(_env), index, val));
     return true;
@@ -159,7 +158,7 @@ bool Object::setArrayElement(uint32_t index, const Value& data) {
 
 bool Object::isTypedArray() const {
     JSVM_Status status;
-    bool        ret = false;
+    bool ret = false;
     NODE_API_CALL(status, _env, OH_JSVM_IsTypedarray(_env, _objRef.getValue(_env), &ret));
     return ret;
 }
@@ -171,11 +170,11 @@ bool Object::isProxy() const {
 }
 
 Object::TypedArrayType Object::getTypedArrayType() const {
-    JSVM_Status          status;
+    JSVM_Status status;
     JSVM_TypedarrayType type;
-    JSVM_Value           inputBuffer;
-    size_t               byteOffset;
-    size_t               length;
+    JSVM_Value inputBuffer;
+    size_t byteOffset;
+    size_t length;
     NODE_API_CALL(status, _env, OH_JSVM_GetTypedarrayInfo(_env, _objRef.getValue(_env), &type, &length, NULL, &inputBuffer, &byteOffset));
 
     TypedArrayType ret = TypedArrayType::NONE;
@@ -220,33 +219,33 @@ Object::TypedArrayType Object::getTypedArrayType() const {
 }
 
 bool Object::getTypedArrayData(uint8_t** ptr, size_t* length) const {
-    JSVM_Status          status;
+    JSVM_Status status;
     JSVM_TypedarrayType type;
-    JSVM_Value           inputBuffer;
-    size_t               byteOffset;
-    size_t               arrayLength;
-    void*                data = nullptr;
+    JSVM_Value inputBuffer;
+    size_t byteOffset;
+    size_t arrayLength;
+    void* data = nullptr;
     NODE_API_CALL(status, _env, OH_JSVM_GetTypedarrayInfo(_env, _objRef.getValue(_env), &type, &arrayLength, &data, &inputBuffer, &byteOffset));
     *ptr = (uint8_t*)(data);
     if (length) {
         size_t bytesOfElement = 1;
         switch (type) {
-        case JSVM_INT16_ARRAY:
-        case JSVM_UINT16_ARRAY:
-            bytesOfElement = 2;
-            break;
-        case JSVM_INT32_ARRAY:
-        case JSVM_UINT32_ARRAY:
-        case JSVM_FLOAT32_ARRAY:
-            bytesOfElement = 4;
-            break;
-        case JSVM_FLOAT64_ARRAY:
-        case JSVM_BIGINT64_ARRAY:
-        case JSVM_BIGUINT64_ARRAY:
-            bytesOfElement = 8;
-            break;            
-        default:
-            break;
+            case JSVM_INT16_ARRAY:
+            case JSVM_UINT16_ARRAY:
+                bytesOfElement = 2;
+                break;
+            case JSVM_INT32_ARRAY:
+            case JSVM_UINT32_ARRAY:
+            case JSVM_FLOAT32_ARRAY:
+                bytesOfElement = 4;
+                break;
+            case JSVM_FLOAT64_ARRAY:
+            case JSVM_BIGINT64_ARRAY:
+            case JSVM_BIGUINT64_ARRAY:
+                bytesOfElement = 8;
+                break;
+            default:
+                break;
         }
         *length = arrayLength * bytesOfElement;
     }
@@ -254,7 +253,7 @@ bool Object::getTypedArrayData(uint8_t** ptr, size_t* length) const {
 }
 
 bool Object::isArrayBuffer() const {
-    bool        ret = false;
+    bool ret = false;
     JSVM_Status status;
     NODE_API_CALL(status, _env, OH_JSVM_IsArraybuffer(_env, _objRef.getValue(_env), &ret));
     return ret;
@@ -262,7 +261,7 @@ bool Object::isArrayBuffer() const {
 
 bool Object::getArrayBufferData(uint8_t** ptr, size_t* length) const {
     JSVM_Status status;
-    size_t      len = 0;
+    size_t len = 0;
     NODE_API_CALL(status, _env, OH_JSVM_GetArraybufferInfo(_env, _objRef.getValue(_env), reinterpret_cast<void**>(ptr), &len));
     if (length) {
         *length = len;
@@ -277,9 +276,9 @@ Object* Object::createTypedArray(Object::TypedArrayType type, const void* data, 
         return nullptr;
     }
 
-    JSVM_TypedarrayType  jsvmType;
-    JSVM_Value           outputBuffer;
-    void*                outputPtr = nullptr;
+    JSVM_TypedarrayType jsvmType;
+    JSVM_Value outputBuffer;
+    void* outputPtr = nullptr;
     NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateArraybuffer(ScriptEngine::getEnv(), byteLength, &outputPtr, &outputBuffer));
     if (outputPtr && data && byteLength > 0) {
         memcpy(outputPtr, data, byteLength);
@@ -287,11 +286,11 @@ Object* Object::createTypedArray(Object::TypedArrayType type, const void* data, 
     size_t sizeOfEle = 0;
     switch (type) {
         case TypedArrayType::INT8:
-            jsvmType  = JSVM_INT8_ARRAY;
+            jsvmType = JSVM_INT8_ARRAY;
             sizeOfEle = 1;
             break;
         case TypedArrayType::UINT8:
-            jsvmType  = JSVM_UINT8_ARRAY;
+            jsvmType = JSVM_UINT8_ARRAY;
             sizeOfEle = 1;
             break;
         case TypedArrayType::UINT8_CLAMPED:
@@ -299,42 +298,42 @@ Object* Object::createTypedArray(Object::TypedArrayType type, const void* data, 
             sizeOfEle = 1;
             break;
         case TypedArrayType::INT16:
-            jsvmType  = JSVM_INT16_ARRAY;
+            jsvmType = JSVM_INT16_ARRAY;
             sizeOfEle = 2;
             break;
         case TypedArrayType::UINT16:
-            jsvmType  = JSVM_UINT16_ARRAY;
+            jsvmType = JSVM_UINT16_ARRAY;
             sizeOfEle = 2;
             break;
         case TypedArrayType::INT32:
-            jsvmType  = JSVM_INT32_ARRAY;
+            jsvmType = JSVM_INT32_ARRAY;
             sizeOfEle = 4;
             break;
         case TypedArrayType::UINT32:
-            jsvmType  = JSVM_UINT32_ARRAY;
+            jsvmType = JSVM_UINT32_ARRAY;
             sizeOfEle = 4;
             break;
         case TypedArrayType::FLOAT32:
-            jsvmType  = JSVM_FLOAT32_ARRAY;
+            jsvmType = JSVM_FLOAT32_ARRAY;
             sizeOfEle = 4;
             break;
         case TypedArrayType::FLOAT64:
-            jsvmType  = JSVM_FLOAT64_ARRAY;
+            jsvmType = JSVM_FLOAT64_ARRAY;
             sizeOfEle = 8;
             break;
         case TypedArrayType::BIGINT64:
-            jsvmType  = JSVM_BIGINT64_ARRAY;
+            jsvmType = JSVM_BIGINT64_ARRAY;
             sizeOfEle = 8;
             break;
         case TypedArrayType::BIGUINT64:
-            jsvmType  = JSVM_BIGUINT64_ARRAY;
+            jsvmType = JSVM_BIGUINT64_ARRAY;
             sizeOfEle = 8;
             break;
         default:
             assert(false); // Should never go here.
             break;
     }
-    size_t     eleCounts = byteLength / sizeOfEle;
+    size_t eleCounts = byteLength / sizeOfEle;
     JSVM_Value outputArray;
     NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateTypedarray(ScriptEngine::getEnv(), jsvmType, eleCounts, outputBuffer, 0, &outputArray));
 
@@ -342,13 +341,13 @@ Object* Object::createTypedArray(Object::TypedArrayType type, const void* data, 
     return obj;
 }
 
-Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object *obj) {
+Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object* obj) {
     return Object::createTypedArrayWithBuffer(type, obj, 0);
 }
 
-Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object *obj, size_t offset) {
+Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object* obj, size_t offset) {
     size_t byteLength{0};
-    uint8_t *skip{nullptr};
+    uint8_t* skip{nullptr};
 
     if (obj->getArrayBufferData(&skip, &byteLength)) {
         return Object::createTypedArrayWithBuffer(type, obj, offset, byteLength - offset);
@@ -358,12 +357,11 @@ Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object *ob
     return nullptr;
 }
 
-Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object *obj, size_t offset, size_t byteLength) {
+Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object* obj, size_t offset, size_t byteLength) {
     if (type == TypedArrayType::NONE) {
         SE_LOGE("Don't pass se::Object::TypedArrayType::NONE to createTypedArray API!");
         return nullptr;
     }
-
 
     assert(obj->isArrayBuffer());
     JSVM_Status status;
@@ -373,47 +371,50 @@ Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object *ob
     size_t sizeOfEle = 0;
     switch (type) {
         case TypedArrayType::INT8:
-            jsvmType  = JSVM_INT8_ARRAY;
+            jsvmType = JSVM_INT8_ARRAY;
             sizeOfEle = 1;
             break;
         case TypedArrayType::UINT8:
-            jsvmType  = JSVM_UINT8_ARRAY;
+            jsvmType = JSVM_UINT8_ARRAY;
             sizeOfEle = 1;
             break;
         case TypedArrayType::INT16:
-            jsvmType  = JSVM_INT8_ARRAY;
+            jsvmType = JSVM_INT8_ARRAY;
             sizeOfEle = 2;
+            break;
         case TypedArrayType::UINT16:
-            jsvmType  = JSVM_UINT8_ARRAY;
+            jsvmType = JSVM_UINT8_ARRAY;
             sizeOfEle = 2;
             break;
         case TypedArrayType::INT32:
-            jsvmType  = JSVM_INT32_ARRAY;
+            jsvmType = JSVM_INT32_ARRAY;
             sizeOfEle = 4;
+            break;
         case TypedArrayType::UINT32:
-            jsvmType  = JSVM_UINT32_ARRAY;
+            jsvmType = JSVM_UINT32_ARRAY;
             sizeOfEle = 4;
+            break;
         case TypedArrayType::FLOAT32:
-            jsvmType  = JSVM_FLOAT32_ARRAY;
+            jsvmType = JSVM_FLOAT32_ARRAY;
             sizeOfEle = 4;
             break;
         case TypedArrayType::FLOAT64:
-            jsvmType  = JSVM_FLOAT64_ARRAY;
+            jsvmType = JSVM_FLOAT64_ARRAY;
             sizeOfEle = 8;
             break;
         case TypedArrayType::BIGINT64:
-            jsvmType  = JSVM_BIGINT64_ARRAY;
+            jsvmType = JSVM_BIGINT64_ARRAY;
             sizeOfEle = 8;
             break;
         case TypedArrayType::BIGUINT64:
-            jsvmType  = JSVM_BIGUINT64_ARRAY;
+            jsvmType = JSVM_BIGUINT64_ARRAY;
             sizeOfEle = 8;
             break;
         default:
             assert(false); // Should never go here.
             break;
     }
-    size_t     eleCounts = byteLength / sizeOfEle;
+    size_t eleCounts = byteLength / sizeOfEle;
     JSVM_Value outputArray;
     NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateTypedarray(ScriptEngine::getEnv(), jsvmType, eleCounts, outputBuffer, offset, &outputArray));
 
@@ -423,33 +424,21 @@ Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object *ob
 Object* Object::createExternalArrayBufferObject(void* contents, size_t byteLength, BufferContentsFreeFunc freeFunc, void* freeUserData) {
     JSVM_Status status;
     JSVM_Value result;
-    if (freeFunc) {
-        struct ExternalArrayBufferCallbackParams* param = new (struct ExternalArrayBufferCallbackParams);
-        param->func = freeFunc;
-        param->contents = contents;
-        param->byteLength = byteLength;
-        param->userData = freeUserData;
-        NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateArraybuffer(ScriptEngine::getEnv(), byteLength, &contents,  &result));
-        param->func(param->contents, param->byteLength, param->userData);
-        delete param;
-    } else {
-        NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateArraybuffer(ScriptEngine::getEnv(), byteLength, &contents,  &result));
-    }
-
+    // JSVM does not support the napi_create_external_arraybuffer interface like in NAPI.
+    NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateArrayBufferFromBackingStoreData(ScriptEngine::getEnv(), contents, byteLength, 0, byteLength, &result));
     Object* obj = Object::_createJSObject(ScriptEngine::getEnv(), result, nullptr);
     return obj;
 }
 
-
 bool Object::isFunction() const {
     JSVM_ValueType valuetype0;
-    JSVM_Status    status;
+    JSVM_Status status;
     NODE_API_CALL(status, _env, OH_JSVM_Typeof(_env, _objRef.getValue(_env), &valuetype0));
     return (valuetype0 == JSVM_ValueType::JSVM_FUNCTION);
 }
 
 bool Object::defineFunction(const char* funcName, JSVM_Callback func) {
-    JSVM_Value  fn;
+    JSVM_Value fn;
     JSVM_Status status;
     NODE_API_CALL(status, _env, OH_JSVM_CreateFunction(_env, funcName, JSVM_AUTO_LENGTH, func, &fn));
     NODE_API_CALL(status, _env, OH_JSVM_SetNamedProperty(_env, _objRef.getValue(_env), funcName, fn));
@@ -457,7 +446,7 @@ bool Object::defineFunction(const char* funcName, JSVM_Callback func) {
 }
 
 bool Object::defineProperty(const char* name, JSVM_Callback getter, JSVM_Callback setter) {
-    JSVM_Status              status;
+    JSVM_Status status;
     JSVM_PropertyDescriptor properties[] = {{name, nullptr, nullptr, getter, setter, 0, JSVM_DEFAULT}};
     status = OH_JSVM_DefineProperties(_env, _objRef.getValue(_env), sizeof(properties) / sizeof(JSVM_PropertyDescriptor), properties);
     if (status == JSVM_OK) {
@@ -476,7 +465,7 @@ Object* Object::_createJSObject(JSVM_Env env, JSVM_Value js_object, Class* cls) 
 }
 
 Object* Object::createPlainObject() {
-    JSVM_Value  result;
+    JSVM_Value result;
     JSVM_Status status;
     NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateObject(ScriptEngine::getEnv(), &result));
     Object* obj = _createJSObject(ScriptEngine::getEnv(), result, nullptr);
@@ -484,7 +473,7 @@ Object* Object::createPlainObject() {
 }
 
 Object* Object::createArrayObject(size_t length) {
-    JSVM_Value  result;
+    JSVM_Value result;
     JSVM_Status status;
     NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateArrayWithLength(ScriptEngine::getEnv(), length, &result));
     Object* obj = _createJSObject(ScriptEngine::getEnv(), result, nullptr);
@@ -492,10 +481,10 @@ Object* Object::createArrayObject(size_t length) {
 }
 
 Object* Object::createArrayBufferObject(const void* data, size_t byteLength) {
-    JSVM_Value  result;
+    JSVM_Value result;
     JSVM_Status status;
-    void*       retData;
-    Object*     obj = nullptr;
+    void* retData;
+    Object* obj = nullptr;
     NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateArraybuffer(ScriptEngine::getEnv(), byteLength, &retData, &result));
     if (status == JSVM_OK) {
         if (data) {
@@ -508,7 +497,7 @@ Object* Object::createArrayBufferObject(const void* data, size_t byteLength) {
 
 bool Object::getAllKeys(std::vector<std::string>* allKeys) const {
     JSVM_Status status;
-    JSVM_Value  names;
+    JSVM_Value names;
 
     NODE_API_CALL(status, _env, OH_JSVM_GetPropertyNames(_env, _objRef.getValue(_env), &names));
     if (status != JSVM_OK) {
@@ -520,7 +509,7 @@ bool Object::getAllKeys(std::vector<std::string>* allKeys) const {
         JSVM_Value val;
         NODE_API_CALL(status, _env, OH_JSVM_GetElement(_env, names, i, &val));
         if (status == JSVM_OK) {
-            char   buffer[MAX_STRING_LEN];
+            char buffer[MAX_STRING_LEN];
             size_t result = 0;
             NODE_API_CALL(status, _env, OH_JSVM_GetValueStringUtf8(_env, val, buffer, MAX_STRING_LEN, &result));
             if (result > 0) {
@@ -546,12 +535,12 @@ bool Object::init(JSVM_Env env, JSVM_Value js_object, Class* cls) {
 }
 
 bool Object::call(const ValueArray& args, Object* thisObject, Value* rval) {
-    size_t                  argc = 0;
+    size_t argc = 0;
     std::vector<JSVM_Value> argv;
     argv.reserve(10);
     argc = args.size();
     internal::seToJsArgs(_env, args, &argv);
-    JSVM_Value  return_val;
+    JSVM_Value return_val;
     JSVM_Status status;
     assert(isFunction());
     JSVM_Value thisObj = thisObject ? thisObject->_getJSObject() : ({
@@ -560,7 +549,7 @@ bool Object::call(const ValueArray& args, Object* thisObject, Value* rval) {
         undefinedValue;
     });
     NODE_API_CALL(status, _env,
-        OH_JSVM_CallFunction(_env, thisObj, _getJSObject(), argc, argv.data(), &return_val));
+                  OH_JSVM_CallFunction(_env, thisObj, _getJSObject(), argc, argv.data(), &return_val));
     if (rval) {
         internal::jsToSeValue(return_val, rval);
     }
@@ -588,7 +577,7 @@ void Object::_setFinalizeCallback(JSVM_Finalize finalizeCb) {
 //     setProperty("__native_ptr__", se::Value(static_cast<long>(reinterpret_cast<uintptr_t>(data))));
 // }
 
-void* Object::getPrivateData() const{
+void* Object::getPrivateData() const {
     return _privateData;
 }
 
@@ -596,7 +585,7 @@ bool Object::attachObject(Object* obj) {
     assert(obj);
 
     Object* global = ScriptEngine::getInstance()->getGlobalObject();
-    Value   jsbVal;
+    Value jsbVal;
     if (!global->getProperty("jsb", &jsbVal)) {
         return false;
     }
@@ -619,7 +608,7 @@ bool Object::detachObject(Object* obj) {
     assert(obj);
 
     Object* global = ScriptEngine::getInstance()->getGlobalObject();
-    Value   jsbVal;
+    Value jsbVal;
     if (!global->getProperty("jsb", &jsbVal)) {
         return false;
     }
@@ -644,7 +633,7 @@ std::string Object::toString() const {
     if (isFunction() || isArray() || isTypedArray()) {
         JSVM_Value result;
         NODE_API_CALL(status, _env, OH_JSVM_CoerceToString(_env, _objRef.getValue(_env), &result));
-        char   buffer[MAX_STRING_LEN];
+        char buffer[MAX_STRING_LEN];
         size_t result_t = 0;
         NODE_API_CALL(status, _env, OH_JSVM_GetValueStringUtf8(_env, result, buffer, MAX_STRING_LEN, &result_t));
         ret = buffer;
@@ -684,8 +673,8 @@ Class* Object::_getClass() const {
 }
 
 Object* Object::getObjectWithPtr(void* ptr) {
-    Object* obj  = nullptr;
-    auto    iter = NativePtrToObjectMap::find(ptr);
+    Object* obj = nullptr;
+    auto iter = NativePtrToObjectMap::find(ptr);
     if (iter != NativePtrToObjectMap::end()) {
         obj = iter->second;
         obj->incRef();
@@ -707,12 +696,9 @@ void Object::weakCallback(JSVM_Env env, void* nativeObject, void* finalizeHint /
         if (nativeObject == nullptr) {
             return;
         }
-        void *rawPtr = reinterpret_cast<Object*>(finalizeHint)->_privateData;
+        void* rawPtr = reinterpret_cast<Object*>(finalizeHint)->_privateData;
         Object* seObj = reinterpret_cast<Object*>(finalizeHint);
         Object* rawPtrObj = reinterpret_cast<Object*>(rawPtr);
-        if(rawPtrObj->getRefCount() == 0) {
-            return;
-        }
         if (seObj->_onCleaingPrivateData) { //called by cleanPrivateData, not release seObj;
             return;
         }
@@ -726,11 +712,11 @@ void Object::weakCallback(JSVM_Env env, void* nativeObject, void* finalizeHint /
         }
 
         if (seObj->_finalizeCb != nullptr) {
-            seObj->_finalizeCb(env, rawPtr, rawPtr);
+            seObj->_finalizeCb(env, finalizeHint, finalizeHint);
         } else {
             assert(seObj->_getClass() != nullptr);
             if (seObj->_getClass()->_getFinalizeFunction() != nullptr) {
-                seObj->_getClass()->_getFinalizeFunction()(env, rawPtr, rawPtr);
+                seObj->_getClass()->_getFinalizeFunction()(env, finalizeHint, finalizeHint);
             }
         }
         seObj->decRef();
@@ -742,14 +728,14 @@ void Object::setup() {
 }
 
 void Object::cleanup() {
-    void*   nativeObj = nullptr;
-    Object* obj       = nullptr;
-    Class*  cls       = nullptr;
+    void* nativeObj = nullptr;
+    Object* obj = nullptr;
+    Class* cls = nullptr;
 
     const auto& nativePtrToObjectMap = NativePtrToObjectMap::instance();
     for (const auto& e : nativePtrToObjectMap) {
         nativeObj = e.first;
-        obj       = e.second;
+        obj = e.second;
 
         if (obj->_finalizeCb != nullptr) {
             obj->_finalizeCb(ScriptEngine::getEnv(), nativeObj, nullptr);
@@ -770,7 +756,6 @@ void Object::cleanup() {
             obj = e.first;
             cls = obj->_getClass();
             obj->_rootCount = 0;
-
         }
     }
 
@@ -799,14 +784,14 @@ Object* Object::createJSONObject(const std::string& jsonStr) {
 
     // 调用js中的JSON.parse将jsJsonStr转换成js对象
     JSVM_Value jsObj;
-    NODE_API_CALL(status, _env, OH_JSVM_CallFunction(_env, globalJsonObj, parseFunc, 1, &jsJsonStr ,&jsObj));
+    NODE_API_CALL(status, _env, OH_JSVM_CallFunction(_env, globalJsonObj, parseFunc, 1, &jsJsonStr, &jsObj));
 
-    Object *obj = nullptr;
+    Object* obj = nullptr;
     obj = Object::_createJSObject(_env, jsObj, nullptr);
     return obj;
 }
 
-Object *Object::createJSONObject(std::u16string &&jsonStr) {
+Object* Object::createJSONObject(std::u16string&& jsonStr) {
     auto _env = ScriptEngine::getEnv();
     JSVM_Status status;
     JSVM_Value global;
@@ -828,9 +813,9 @@ Object *Object::createJSONObject(std::u16string &&jsonStr) {
 
     // 调用js中的JSON.parse将jsJsonStr转换成js对象
     JSVM_Value jsObj;
-    NODE_API_CALL(status, _env, OH_JSVM_CallFunction(_env, globalJsonObj, parseFunc, 1, &jsJsonStr ,&jsObj));
+    NODE_API_CALL(status, _env, OH_JSVM_CallFunction(_env, globalJsonObj, parseFunc, 1, &jsJsonStr, &jsObj));
 
-    Object *obj = nullptr;
+    Object* obj = nullptr;
     obj = Object::_createJSObject(_env, jsObj, nullptr);
     return obj;
 }
@@ -860,7 +845,7 @@ void Object::clearPrivateData(bool clearMapping) {
     }
 }
 
-Object* Object::createUTF8String(const std::string& str) { 
+Object* Object::createUTF8String(const std::string& str) {
     JSVM_Status status;
     JSVM_Value result;
     NODE_API_CALL(status, ScriptEngine::getEnv(), OH_JSVM_CreateStringUtf8(ScriptEngine::getEnv(), str.c_str(), JSVM_AUTO_LENGTH, &result));

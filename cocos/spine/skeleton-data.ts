@@ -212,19 +212,26 @@ export class SkeletonData extends Asset {
         const spData = spine.wasmUtil.querySpineSkeletonDataByUUID(uuid);
         if (spData) {
             this._skeletonCache = spData;
-        } else if (this._skeletonJson) {
-            this._skeletonCache = spine.wasmUtil.createSpineSkeletonDataWithJson(this.skeletonJsonStr, this._atlasText);
-            spine.wasmUtil.registerSpineSkeletonDataWithUUID(this._skeletonCache, uuid);
         } else {
-            const rawData = new Uint8Array(this._nativeAsset);
-            const byteSize = rawData.length;
-            const ptr = spine.wasmUtil.queryStoreMemory(byteSize);
-            const wasmMem = spine.wasmUtil.wasm.HEAPU8.subarray(ptr, ptr + byteSize);
-            wasmMem.set(rawData);
-            this._skeletonCache = spine.wasmUtil.createSpineSkeletonDataWithBinary(byteSize, this._atlasText);
-            spine.wasmUtil.registerSpineSkeletonDataWithUUID(this._skeletonCache, uuid);
+            const size = this.textures.length;
+            const textureUUIDs: string[] = [];
+            for (let i = 0; i < size; ++i) {
+                textureUUIDs.push(this.textures[i].uuid);
+            }
+            if (this._skeletonJson) {
+                this._skeletonCache = spine.wasmUtil.createSpineSkeletonDataWithJson(this.skeletonJsonStr, this._atlasText, this.textureNames, textureUUIDs);
+                spine.wasmUtil.registerSpineSkeletonDataWithUUID(this._skeletonCache, uuid);
+            } else {
+                const rawData = new Uint8Array(this._nativeAsset);
+                const byteSize = rawData.length;
+                const ptr = spine.wasmUtil.createStoreMemory(byteSize);
+                const wasmMem = spine.wasmUtil.wasm.HEAPU8.subarray(ptr, ptr + byteSize);
+                wasmMem.set(rawData);
+                this._skeletonCache = spine.wasmUtil.createSpineSkeletonDataWithBinary(byteSize, this._atlasText, this.textureNames, textureUUIDs);
+                spine.wasmUtil.registerSpineSkeletonDataWithUUID(this._skeletonCache, uuid);
+                spine.wasmUtil.freeStoreMemory();
+            }
         }
-
         return this._skeletonCache;
     }
 

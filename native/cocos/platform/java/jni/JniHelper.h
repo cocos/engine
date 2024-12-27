@@ -74,6 +74,7 @@ public:
     static JavaVM *getJavaVM();
     static JNIEnv *getEnv();
     static jobject getActivity();
+    static void setActivity(jobject activity);
     static jobject getContext();
 
     static void init(JNIEnv *env, jobject context);
@@ -394,6 +395,7 @@ public:
 
 private:
     static jobject sContext;
+    static jobject sActivity;
     static JavaVM *sJavaVM;
 
     static JNIEnv *cacheEnv();

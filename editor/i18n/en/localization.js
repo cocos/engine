@@ -10,8 +10,8 @@ const url = 'https://docs.cocos.com/creator';
 module.exports = link(mixin({
     common: {
         'attribute': {
-            'title': 'Attribute: ',
-            'description': 'Description: ',
+            'title': 'Attribute:&nbsp;',
+            'description': 'Description:&nbsp;',
         },
     },
     classes: {
@@ -668,16 +668,6 @@ module.exports = link(mixin({
         design_size: 'Design resolution of the SubContextView, dynamic updates at runtime is not possible',
         fps: 'Update frame rate for the SubContextView',
     },
-    skeleton: {
-        skeleton_data: 'The skeleton data contains the skeleton information, <br>drag the json file exported from Spine to get started.',
-        default_skin: 'Choose the default skin.',
-        animation: 'The name of current playing animation.',
-        loop: 'Whether loop current animation',
-        time_scale: 'The time scale of animations of this skeleton',
-        debug_slots: 'Indicates whether show debug slots.',
-        debug_bones: 'Indicates whether show debug bones.',
-        premultipliedAlpha: 'Indicates whether to enable premultiplied alpha.',
-    },
     dragon_bones: {
         dragon_bones_asset:
             'The json data contains the DragonBones information, <br>drag the json file exported from DragonBones to get started.',
@@ -1052,6 +1042,10 @@ module.exports = link(mixin({
         tiled_map: {
             label: "Tiled Map",
             description: "Tiled map support.",
+        },
+        vendor_google: {
+            label: "Vendor Google",
+            description: "Vendor support.",
         },
         spine: {
             label: "Spine Animation",

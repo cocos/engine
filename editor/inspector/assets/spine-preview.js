@@ -14,11 +14,31 @@ exports.template = /* html */`
             </ui-prop>
             <ui-prop class="loop">
                 <ui-label slot="label" value="i18n:ENGINE.inspector.spine.loop"></ui-label>
-                <ui-checkbox slot="content" class="loop-check-box"></ui-checkbox>
+                <ui-checkbox slot="content" class="loop-checkbox"></ui-checkbox>
             </ui-prop>
             <ui-prop class="timeScale">
                 <ui-label slot="label" value="i18n:ENGINE.inspector.spine.timeScale"></ui-label>
                 <ui-slider slot="content" class="time-scale-slider" value="1"></ui-slider>
+            </ui-prop>
+            <ui-prop class="premultipliedAlpha">
+                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.premultipliedAlpha"></ui-label>
+                <ui-checkbox slot="content" class="premultiplied-alpha-checkbox"></ui-checkbox>
+            </ui-prop>
+            <ui-prop class="useTint">
+                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.useTint"></ui-label>
+                <ui-checkbox slot="content" class="use-tint-checkbox"></ui-checkbox>
+            </ui-prop>
+            <ui-prop class="debugSlots">
+                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.debugSlots"></ui-label>
+                <ui-checkbox slot="content" class="debug-slots-checkbox"></ui-checkbox>
+            </ui-prop>
+            <ui-prop class="debugBones">
+                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.debugBones"></ui-label>
+                <ui-checkbox slot="content" class="debug-bones-checkbox"></ui-checkbox>
+            </ui-prop>
+            <ui-prop class="debugMesh">
+                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.debugMesh"></ui-label>
+                <ui-checkbox slot="content" class="debug-mesh-checkbox"></ui-checkbox>
             </ui-prop>
         </div>
         <div class="image">
@@ -103,10 +123,37 @@ exports.$ = {
     pause: '.pause',
     stop: '.stop',
     duration: '.duration',
-    loop: '.loop-check-box',
+    loop: '.loop-checkbox',
+    useTint: '.use-tint-checkbox',
     timeScale: '.time-scale-slider',
+    debugSlots: '.debug-slots-checkbox',
+    debugBones: '.debug-bones-checkbox',
+    premultipliedAlpha: '.premultiplied-alpha-checkbox',
+    debugMesh: '.debug-mesh-checkbox',
     animationCtrl: '.anim-control',
 };
+
+const CheckBox = [
+    'loop',
+    'useTint',
+    'debugSlots',
+    'debugBones',
+    'debugMesh',
+    'premultipliedAlpha',
+];
+
+const Slider = [
+    'timeScale',
+];
+
+const Other = [
+    'play',
+    'stop',
+    'skinSelectPro',
+    'animationSelectPro',
+];
+
+const Properties = CheckBox.concat(Slider).concat(Other);
 
 async function callFunction(funcName, ...args) {
     return await Editor.Message.request('scene', 'call-preview-function', 'scene:spine-preview', funcName, ...args);
@@ -195,6 +242,7 @@ const Elements = {
             const panel = this;
 
             callFunction('stop');
+            callFunction('close');
             panel.resizeObserver.unobserve(panel.$.image);
         },
     },
@@ -232,21 +280,15 @@ const Elements = {
             const panel = this;
 
             if (!info) {
-                panel.$.loop.setAttribute('disabled', '');
-                panel.$.timeScale.setAttribute('disabled', '');
-                panel.$.play.setAttribute('disabled', '');
-                panel.$.stop.setAttribute('disabled', '');
-                panel.$.skinSelectPro.setAttribute('disabled', '');
-                panel.$.animationSelectPro.setAttribute('disabled', '');
+                Properties.forEach(property => {
+                    panel.$[property].setAttribute('disabled', '');
+                });
                 return;
             }
 
-            panel.$.loop.removeAttribute('disabled');
-            panel.$.timeScale.removeAttribute('disabled');
-            panel.$.play.removeAttribute('disabled');
-            panel.$.stop.removeAttribute('disabled');
-            panel.$.skinSelectPro.removeAttribute('disabled');
-            panel.$.animationSelectPro.removeAttribute('disabled');
+            Properties.forEach(property => {
+                panel.$[property].removeAttribute('disabled');
+            });
 
             Elements.spine.updateEnum.call(panel, panel.$.skinSelectPro, info.skin);
             Elements.spine.updateEnum.call(panel, panel.$.animationSelectPro, info.animation);
@@ -265,12 +307,20 @@ const Elements = {
         ready() {
             const panel = this;
 
-            panel.$.timeScale.addEventListener('change', (event) => {
-                callFunction('setTimeScale', Number(event.target.value));
+            Slider.forEach((key) => {
+                panel.$[key].addEventListener('change', (event) => {
+                    callFunction('setProperties', key, Number(event.target.value));
+                });
             });
-            panel.$.loop.addEventListener('confirm', (event) => {
-                callFunction('setLoop', Boolean(event.target.value));
+
+            CheckBox.forEach((key) => {
+                panel.$[key].addEventListener('confirm', (event) => {
+                    callFunction('setProperties', key, Boolean(event.target.value)).then((() => {
+                        this.isPreviewDataDirty = true;
+                    }));
+                });
             });
+
             panel.$.play.addEventListener('click', () => {
                 callFunction('play', panel.animationIndex);
             });
@@ -284,8 +334,12 @@ const Elements = {
         updateInfo(info) {
             const panel = this;
 
-            panel.$.loop.setAttribute('value', Boolean(info.loop));
-            panel.$.timeScale.setAttribute('value', Number(info.timeScale));
+            CheckBox.forEach((key) => {
+                panel.$[key].setAttribute('value', Boolean(info[key]));
+            });
+            Slider.forEach((key) => {
+                panel.$[key].setAttribute('value', Number(info[key]));
+            });
         },
         update(playing) {
             const panel = this;

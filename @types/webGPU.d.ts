@@ -68,15 +68,8 @@ type GPUColor =
     | GPUColorDict;
 type GPUColorWriteFlags =
   number;
-type GPUDepthBias =
-  number;
-type GPUExtent3D =
-
-    | Iterable<GPUIntegerCoordinate>
-    | GPUExtent3DDict;
-type GPUFlagsConstant =
-  number;
-type GPUImageCopyExternalImageSource =
+declare interface VideoFrame {}
+type GPUCopyExternalImageSource =
 
     | ImageBitmap
     | ImageData
@@ -85,6 +78,14 @@ type GPUImageCopyExternalImageSource =
     | VideoFrame
     | HTMLCanvasElement
     | OffscreenCanvas;
+type GPUDepthBias =
+  number;
+type GPUExtent3D =
+
+    | Iterable<GPUIntegerCoordinate>
+    | GPUExtent3DDict;
+type GPUFlagsConstant =
+  number;
 type GPUIndex32 =
   number;
 type GPUIntegerCoordinate =
@@ -142,7 +143,11 @@ type GPUBlendFactor =
     | 'one-minus-dst-alpha'
     | 'src-alpha-saturated'
     | 'constant'
-    | 'one-minus-constant';
+    | 'one-minus-constant'
+    | 'src1'
+    | 'one-minus-src1'
+    | 'src1-alpha'
+    | 'one-minus-src1-alpha';
 type GPUBlendOperation =
 
     | 'add'
@@ -164,6 +169,10 @@ type GPUCanvasAlphaMode =
 
     | 'opaque'
     | 'premultiplied';
+type GPUCanvasToneMappingMode =
+
+    | 'standard'
+    | 'extended';
 type GPUCompareFunction =
 
     | 'never'
@@ -198,14 +207,19 @@ type GPUFeatureName =
     | 'depth-clip-control'
     | 'depth32float-stencil8'
     | 'texture-compression-bc'
+    | 'texture-compression-bc-sliced-3d'
     | 'texture-compression-etc2'
     | 'texture-compression-astc'
+    | 'texture-compression-astc-sliced-3d'
     | 'timestamp-query'
     | 'indirect-first-instance'
     | 'shader-f16'
     | 'rg11b10ufloat-renderable'
     | 'bgra8unorm-storage'
-    | 'float32-filterable';
+    | 'float32-filterable'
+    | 'float32-blendable'
+    | 'clip-distances'
+    | 'dual-source-blending';
 type GPUFilterMode =
 
     | 'nearest'
@@ -393,22 +407,31 @@ type GPUTextureViewDimension =
     | '3d';
 type GPUVertexFormat =
 
+    | 'uint8'
     | 'uint8x2'
     | 'uint8x4'
+    | 'sint8'
     | 'sint8x2'
     | 'sint8x4'
+    | 'unorm8'
     | 'unorm8x2'
     | 'unorm8x4'
+    | 'snorm8'
     | 'snorm8x2'
     | 'snorm8x4'
+    | 'uint16'
     | 'uint16x2'
     | 'uint16x4'
+    | 'sint16'
     | 'sint16x2'
     | 'sint16x4'
+    | 'unorm16'
     | 'unorm16x2'
     | 'unorm16x4'
+    | 'snorm16'
     | 'snorm16x2'
     | 'snorm16x4'
+    | 'float16'
     | 'float16x2'
     | 'float16x4'
     | 'float32'
@@ -423,7 +446,8 @@ type GPUVertexFormat =
     | 'sint32x2'
     | 'sint32x3'
     | 'sint32x4'
-    | 'unorm10-10-10-2';
+    | 'unorm10-10-10-2'
+    | 'unorm8x4-bgra';
 type GPUVertexStepMode =
 
     | 'vertex'
@@ -458,6 +482,9 @@ interface GPUBindGroupEntry {
 
 interface GPUBindGroupLayoutDescriptor
   extends GPUObjectDescriptorBase {
+  /**
+   * A list of entries describing the shader resource bindings for a bind group.
+   */
   entries: Iterable<GPUBindGroupLayoutEntry>;
 }
 
@@ -574,7 +601,7 @@ interface GPUBufferBindingLayout {
    */
   minBindingSize?: GPUSize64;
 }
-type PredefinedGPUColorSpace = 'display-p3' | 'srgb';
+
 interface GPUBufferDescriptor
   extends GPUObjectDescriptorBase {
   /**
@@ -625,12 +652,36 @@ interface GPUCanvasConfiguration {
    * The color space that values written into textures returned by
    * {@link GPUCanvasContext#getCurrentTexture} should be displayed with.
    */
-  colorSpace?: PredefinedGPUColorSpace;
+  colorSpace?: PredefinedColorSpace;
+  /**
+   * The tone mapping determines how the content of textures returned by
+   * {@link GPUCanvasContext#getCurrentTexture} are to be displayed.
+   */
+  toneMapping?: GPUCanvasToneMapping;
   /**
    * Determines the effect that alpha values will have on the content of textures returned by
    * {@link GPUCanvasContext#getCurrentTexture} when read, displayed, or used as an image source.
    */
   alphaMode?: GPUCanvasAlphaMode;
+}
+
+interface GPUCanvasConfigurationOut
+  extends Required<
+    Omit<
+      GPUCanvasConfiguration,
+      'toneMapping'
+    >
+  > {
+  /** {@inheritDoc GPUCanvasConfiguration.viewFormats} */
+  viewFormats: GPUTextureFormat[];
+  /**
+   * {@inheritDoc GPUCanvasConfiguration.toneMapping}
+   */
+  toneMapping?: GPUCanvasToneMapping;
+}
+
+interface GPUCanvasToneMapping {
+  mode?: GPUCanvasToneMappingMode;
 }
 
 interface GPUColorDict {
@@ -709,6 +760,53 @@ interface GPUComputePipelineDescriptor
   compute: GPUProgrammableStage;
 }
 
+interface GPUCopyExternalImageDestInfo
+  extends GPUTexelCopyTextureInfo {
+  /**
+   * Describes the color space and encoding used to encode data into the destination texture.
+   * This [[#color-space-conversions|may result]] in values outside of the range [0, 1]
+   * being written to the target texture, if its format can represent them.
+   * Otherwise, the results are clamped to the target texture format's range.
+   * Note:
+   * If {@link GPUCopyExternalImageDestInfo#colorSpace} matches the source image,
+   * conversion may not be necessary. See [[#color-space-conversion-elision]].
+   */
+  colorSpace?: PredefinedColorSpace;
+  /**
+   * Describes whether the data written into the texture should have its RGB channels
+   * premultiplied by the alpha channel, or not.
+   * If this option is set to `true` and the {@link GPUCopyExternalImageSourceInfo#source} is also
+   * premultiplied, the source RGB values must be preserved even if they exceed their
+   * corresponding alpha values.
+   * Note:
+   * If {@link GPUCopyExternalImageDestInfo#premultipliedAlpha} matches the source image,
+   * conversion may not be necessary. See [[#color-space-conversion-elision]].
+   */
+  premultipliedAlpha?: boolean;
+}
+
+interface GPUCopyExternalImageSourceInfo {
+  /**
+   * The source of the texel copy. The copy source data is captured at the moment that
+   * {@link GPUQueue#copyExternalImageToTexture} is issued. Source size is determined as described
+   * by the external source dimensions table.
+   */
+  source: GPUCopyExternalImageSource;
+  /**
+   * Defines the origin of the copy - the minimum (top-left) corner of the source sub-region to copy from.
+   * Together with `copySize`, defines the full copy sub-region.
+   */
+  origin?: GPUOrigin2D;
+  /**
+   * Describes whether the source image is vertically flipped, or not.
+   * If this option is set to `true`, the copy is flipped vertically: the bottom row of the source
+   * region is copied into the first row of the destination region, and so on.
+   * The {@link GPUCopyExternalImageSourceInfo#origin} option is still relative to the top-left corner
+   * of the source image, increasing downward.
+   */
+  flipY?: boolean;
+}
+
 interface GPUDepthStencilState {
   /**
    * The {@link GPUTextureViewDescriptor#format} of {@link GPURenderPassDescriptor#depthStencilAttachment}
@@ -744,15 +842,15 @@ interface GPUDepthStencilState {
    */
   stencilWriteMask?: GPUStencilValue;
   /**
-   * Constant depth bias added to each fragment. See [$biased fragment depth$] for details.
+   * Constant depth bias added to each triangle fragment. See [$biased fragment depth$] for details.
    */
   depthBias?: GPUDepthBias;
   /**
-   * Depth bias that scales with the fragment’s slope. See [$biased fragment depth$] for details.
+   * Depth bias that scales with the triangle fragment’s slope. See [$biased fragment depth$] for details.
    */
   depthBiasSlopeScale?: number;
   /**
-   * The maximum depth bias of a fragment. See [$biased fragment depth$] for details.
+   * The maximum depth bias of a triangle fragment. See [$biased fragment depth$] for details.
    */
   depthBiasClamp?: number;
 }
@@ -769,9 +867,9 @@ interface GPUDeviceDescriptor
   /**
    * Specifies the limits that are required by the device request.
    * The request will fail if the adapter cannot provide these limits.
-   * Each key must be the name of a member of supported limits.
-   * Exactly the specified limits, and no limit/better or worse,
-   * will be allowed in validation of API calls on the resulting device.
+   * Each key with a non-`undefined` value must be the name of a member of supported limits.
+   * API calls on the resulting device perform validation according to the exact limits of the
+   * device (not the adapter; see [[#limits]]).
    * <!-- If we ever need limit types other than GPUSize32/GPUSize64, we can change the value
    * type to `double` or `any` in the future and write out the type conversion explicitly (by
    * reference to WebIDL spec). Or change the entire type to `any` and add back a `dictionary
@@ -779,7 +877,8 @@ interface GPUDeviceDescriptor
    */
   requiredLimits?: Record<
     string,
-    GPUSize64
+    | GPUSize64
+    | undefined
   >;
   /**
    * The descriptor for the default {@link GPUQueue}.
@@ -809,10 +908,18 @@ interface GPUExternalTextureBindingLayout {}
 
 interface GPUExternalTextureDescriptor
   extends GPUObjectDescriptorBase {
+  /**
+   * The video source to import the external texture from. Source size is determined as described
+   * by the external source dimensions table.
+   */
   source:
     | HTMLVideoElement
     | VideoFrame;
-  colorSpace?: PredefinedGPUColorSpace;
+  /**
+   * The color space the image contents of {@link GPUExternalTextureDescriptor#source} will be
+   * converted into when reading.
+   */
+  colorSpace?: PredefinedColorSpace;
 }
 
 interface GPUFragmentState
@@ -822,134 +929,6 @@ interface GPUFragmentState
    * this pipeline writes to.
    */
   targets: Iterable<GPUColorTargetState | null>;
-}
-
-interface GPUImageCopyBuffer
-  extends GPUImageDataLayout {
-  /**
-   * A buffer which either contains image data to be copied or will store the image data being
-   * copied, depending on the method it is being passed to.
-   */
-  buffer: GPUBuffer;
-}
-
-interface GPUImageCopyExternalImage {
-  /**
-   * The source of the image copy. The copy source data is captured at the moment that
-   * {@link GPUQueue#copyExternalImageToTexture} is issued. Source size is defined by source
-   * type, given by this table:
-   *
-   * <table class=data>
-   * <thead>
-   * <tr>
-   * <th>Source type
-   * <th>Width
-   * <th>Height
-   * </thead>
-   * <tbody>
-   * <tr>
-   * <td>{@link ImageBitmap}
-   * <td>{@link ImageBitmap#width|ImageBitmap.width}
-   * <td>{@link ImageBitmap#height|ImageBitmap.height}
-   * <tr>
-   * <td>{@link HTMLVideoElement}
-   * <td>video/intrinsic width|intrinsic width of the frame
-   * <td>video/intrinsic height|intrinsic height of the frame
-   * <tr>
-   * <td>{@link VideoFrame}
-   * <td>{@link VideoFrame#codedWidth|VideoFrame.codedWidth}
-   * <td>{@link VideoFrame#codedHeight|VideoFrame.codedHeight}
-   * <tr>
-   * <td>{@link HTMLCanvasElement}
-   * <td>{@link HTMLCanvasElement#width|HTMLCanvasElement.width}
-   * <td>{@link HTMLCanvasElement#height|HTMLCanvasElement.height}
-   * <tr>
-   * <td>{@link OffscreenCanvas}
-   * <td>{@link OffscreenCanvas#width|OffscreenCanvas.width}
-   * <td>{@link OffscreenCanvas#height|OffscreenCanvas.height}
-   * </tbody>
-   * </table>
-   */
-  source: GPUImageCopyExternalImageSource;
-  /**
-   * Defines the origin of the copy - the minimum (top-left) corner of the source sub-region to copy from.
-   * Together with `copySize`, defines the full copy sub-region.
-   */
-  origin?: GPUOrigin2DStrict;
-  /**
-   * Describes whether the source image is vertically flipped, or not.
-   * If this option is set to `true`, the copy is flipped vertically: the bottom row of the source
-   * region is copied into the first row of the destination region, and so on.
-   * The {@link GPUImageCopyExternalImage#origin} option is still relative to the top-left corner
-   * of the source image, increasing downward.
-   */
-  flipY?: boolean;
-}
-
-interface GPUImageCopyTexture {
-  /**
-   * Texture to copy to/from.
-   */
-  texture: GPUTexture;
-  /**
-   * Mip-map level of the {@link GPUImageCopyTexture#texture} to copy to/from.
-   */
-  mipLevel?: GPUIntegerCoordinate;
-  /**
-   * Defines the origin of the copy - the minimum corner of the texture sub-region to copy to/from.
-   * Together with `copySize`, defines the full copy sub-region.
-   */
-  origin?: GPUOrigin3D;
-  /**
-   * Defines which aspects of the {@link GPUImageCopyTexture#texture} to copy to/from.
-   */
-  aspect?: GPUTextureAspect;
-}
-
-interface GPUImageCopyTextureTagged
-  extends GPUImageCopyTexture {
-  /**
-   * Describes the color space and encoding used to encode data into the destination texture.
-   * This [[#color-space-conversions|may result]] in values outside of the range [0, 1]
-   * being written to the target texture, if its format can represent them.
-   * Otherwise, the results are clamped to the target texture format's range.
-   * Note:
-   * If {@link GPUImageCopyTextureTagged#colorSpace} matches the source image,
-   * conversion may not be necessary. See [[#color-space-conversion-elision]].
-   */
-  colorSpace?: PredefinedGPUColorSpace;
-  /**
-   * Describes whether the data written into the texture should have its RGB channels
-   * premultiplied by the alpha channel, or not.
-   * If this option is set to `true` and the {@link GPUImageCopyExternalImage#source} is also
-   * premultiplied, the source RGB values must be preserved even if they exceed their
-   * corresponding alpha values.
-   * Note:
-   * If {@link GPUImageCopyTextureTagged#premultipliedAlpha} matches the source image,
-   * conversion may not be necessary. See [[#color-space-conversion-elision]].
-   */
-  premultipliedAlpha?: boolean;
-}
-
-interface GPUImageDataLayout {
-  /**
-   * The offset, in bytes, from the beginning of the image data source (such as a
-   * {@link GPUImageCopyBuffer#buffer|GPUImageCopyBuffer.buffer}) to the start of the image data
-   * within that source.
-   */
-  offset?: GPUSize64;
-  /**
-   * The stride, in bytes, between the beginning of each block row and the subsequent block row.
-   * Required if there are multiple block rows (i.e. the copy height or depth is more than one block).
-   */
-  bytesPerRow?: GPUSize32;
-  /**
-   * Number of block rows per single image of the texture.
-   * {@link GPUImageDataLayout#rowsPerImage} &times;
-   * {@link GPUImageDataLayout#bytesPerRow} is the stride, in bytes, between the beginning of each image of data and the subsequent image.
-   * Required if there are multiple images (i.e. the copy depth is more than one).
-   */
-  rowsPerImage?: GPUSize32;
 }
 
 interface GPUMultisampleState {
@@ -1009,11 +988,11 @@ interface GPUPipelineErrorInit {
 interface GPUPipelineLayoutDescriptor
   extends GPUObjectDescriptorBase {
   /**
-   * A list of {@link GPUBindGroupLayout}s the pipeline will use. Each element corresponds to a
-   * @group attribute in the {@link GPUShaderModule}, with the `N`th element corresponding with
-   * `@group(N)`.
+   * A list of optional {@link GPUBindGroupLayout}s the pipeline will use. Each element corresponds
+   * to a @group attribute in the {@link GPUShaderModule}, with the `N`th element corresponding
+   * with `@group(N)`.
    */
-  bindGroupLayouts: Iterable<GPUBindGroupLayout>;
+  bindGroupLayouts: Iterable<GPUBindGroupLayout | null>;
 }
 
 interface GPUPrimitiveState {
@@ -1059,16 +1038,23 @@ interface GPUProgrammableStage {
   /**
    * The name of the function in {@link GPUProgrammableStage#module} that this stage will use to
    * perform its work.
+   * NOTE: Since the {@link GPUProgrammableStage#entryPoint} dictionary member is
+   * not required, methods which consume a {@link GPUProgrammableStage} must use the
+   * "[$get the entry point$]" algorithm to determine which entry point
+   * it refers to.
    */
   entryPoint?: string;
   /**
    * Specifies the values of pipeline-overridable constants in the shader module
    * {@link GPUProgrammableStage#module}.
    * Each such pipeline-overridable constant is uniquely identified by a single
-   * pipeline-overridable constant identifier string (representing the numeric ID of the
-   * constant, if one is specified, and otherwise the constant's identifier name).
-   * WGSL names (identifiers) in source maps follow the rules defined in WGSL identifier comparison.
-   * The key of each key-value pair must equal the identifier string of one such constant.
+   * pipeline-overridable constant identifier string, representing the pipeline
+   * constant ID of the constant if its declaration specifies one, and otherwise the
+   * constant's identifier name.
+   * The key of each key-value pair must equal the
+   * pipeline-overridable constant identifier string|identifier string
+   * of one such constant, with the comparison performed
+   * according to the rules for WGSL identifier comparison.
    * When the pipeline is executed, that constant will have the specified value.
    * Values are specified as <dfn typedef for="">GPUPipelineConstantValue</dfn>, which is a {@link double}.
    * They are converted [$to WGSL type$] of the pipeline-overridable constant (`bool`/`i32`/`u32`/`f32`/`f16`).
@@ -1103,12 +1089,14 @@ interface GPURenderBundleEncoderDescriptor
    * If `true`, indicates that the render bundle does not modify the depth component of the
    * {@link GPURenderPassDepthStencilAttachment} of any render pass the render bundle is executed
    * in.
+   * See read-only depth-stencil.
    */
   depthReadOnly?: boolean;
   /**
    * If `true`, indicates that the render bundle does not modify the stencil component of the
    * {@link GPURenderPassDepthStencilAttachment} of any render pass the render bundle is executed
    * in.
+   * See read-only depth-stencil.
    */
   stencilReadOnly?: boolean;
 }
@@ -1186,7 +1174,7 @@ interface GPURenderPassDepthStencilAttachment {
    * to prior to executing the render pass. Ignored if {@link GPURenderPassDepthStencilAttachment#stencilLoadOp}
    * is not {@link GPULoadOp#"clear"}.
    * The value will be converted to the type of the stencil aspect of `view` by taking the same
-   * number of LSBs as the number of bits in the stencil aspect of one texel block of `view`.
+   * number of LSBs as the number of bits in the stencil aspect of one texel block|texel of `view`.
    */
   stencilClearValue?: GPUStencilValue;
   /**
@@ -1300,6 +1288,18 @@ interface GPURenderPipelineDescriptor
 
 interface GPURequestAdapterOptions {
   /**
+   * "Feature level" for the adapter request.
+   * The allowed feature level string values are:
+   * - `"core"`
+   * No effect.
+   * - `"compatibility"`
+   * No effect.
+   * Note:
+   * This value is reserved for future use as a way to opt into additional validation restrictions.
+   * Applications should not use this value at this time.
+   */
+  featureLevel?: string;
+  /**
    * Optionally provides a hint indicating what class of adapter should be selected from
    * the system's available adapters.
    * The value of this hint may influence which adapter is chosen, but it must not
@@ -1353,12 +1353,12 @@ interface GPUSamplerDescriptor
    */
   addressModeW?: GPUAddressMode;
   /**
-   * Specifies the sampling behavior when the sample footprint is smaller than or equal to one
+   * Specifies the sampling behavior when the sampled area is smaller than or equal to one
    * texel.
    */
   magFilter?: GPUFilterMode;
   /**
-   * Specifies the sampling behavior when the sample footprint is larger than one texel.
+   * Specifies the sampling behavior when the sampled area is larger than one texel.
    */
   minFilter?: GPUFilterMode;
   /**
@@ -1381,10 +1381,17 @@ interface GPUSamplerDescriptor
    */
   compare?: GPUCompareFunction;
   /**
-   * Specifies the maximum anisotropy value clamp used by the sampler.
-   * Note: Most implementations support {@link GPUSamplerDescriptor#maxAnisotropy} values in range
-   * between 1 and 16, inclusive. The used value of {@link GPUSamplerDescriptor#maxAnisotropy} will
-   * be clamped to the maximum value that the platform supports.
+   * Specifies the maximum anisotropy value clamp used by the sampler. Anisotropic filtering is
+   * enabled when {@link GPUSamplerDescriptor#maxAnisotropy} is &gt; 1 and the implementation supports it.
+   * Anisotropic filtering improves the image quality of textures sampled at oblique viewing
+   * angles. Higher {@link GPUSamplerDescriptor#maxAnisotropy} values indicate the maximum ratio of
+   * anisotropy supported when filtering.
+   * <div class=note heading>
+   * Most implementations support {@link GPUSamplerDescriptor#maxAnisotropy} values in range
+   * between 1 and 16, inclusive. The used value of {@link GPUSamplerDescriptor#maxAnisotropy}
+   * will be clamped to the maximum value that the platform supports.
+   * The precise filtering behavior is implementation-dependent.
+   * </div>
    */
   maxAnisotropy?: number;
 }
@@ -1410,14 +1417,6 @@ interface GPUShaderModuleDescriptor
    */
   code: string;
   /**
-   * If defined MAY be interpreted as a source-map-v3 format.
-   * Source maps are optional, but serve as a standardized way to support dev-tool
-   * integration such as source-language debugging [[SourceMap]].
-   * WGSL names (identifiers) in source maps follow the rules defined in WGSL identifier
-   * comparison.
-   */
-  sourceMap?: any;
-  /**
    * A list of {@link GPUShaderModuleCompilationHint}s.
    * Any hint provided by an application **should** contain information about one entry point of
    * a pipeline that will eventually be created from the entry point.
@@ -1428,12 +1427,14 @@ interface GPUShaderModuleDescriptor
    * Supplying information in {@link GPUShaderModuleDescriptor#compilationHints} does not have any
    * observable effect, other than performance. It may be detrimental to performance to
    * provide hints for pipelines that never end up being created.
-   * Because a single shader module can hold
-   * multiple entry points, and multiple pipelines can be created from a single shader
-   * module, it can be more performant for an implementation to do as much compilation as
-   * possible once in {@link GPUDevice#createShaderModule} rather than multiple times in
-   * the multiple calls to {@link GPUDevice#createComputePipeline} or
-   * {@link GPUDevice#createRenderPipeline}.
+   * Because a single shader module can hold multiple entry points, and multiple pipelines
+   * can be created from a single shader module, it can be more performant for an
+   * implementation to do as much compilation as possible once in
+   * {@link GPUDevice#createShaderModule} rather than multiple times in the multiple calls to
+   * {@link GPUDevice#createComputePipeline()} or {@link GPUDevice#createRenderPipeline}.
+   * Hints are only applied to the entry points they explicitly name.
+   * Unlike {@link GPUProgrammableStage#entryPoint|GPUProgrammableStage.entryPoint},
+   * there is no default, even if only one entry point is present in the module.
    * </div>
    * Note:
    * Hints are not validated in an observable way, but user agents **may** surface identifiable
@@ -1445,8 +1446,8 @@ interface GPUShaderModuleDescriptor
 
 interface GPUStencilFaceState {
   /**
-   * The {@link GPUCompareFunction} used when testing fragments against
-   * {@link GPURenderPassDescriptor#depthStencilAttachment} stencil values.
+   * The {@link GPUCompareFunction} used when testing the {@link RenderState#[[stencilReference]]} value
+   * against the fragment's {@link GPURenderPassDescriptor#depthStencilAttachment} stencil values.
    */
   compare?: GPUCompareFunction;
   /**
@@ -1480,6 +1481,59 @@ interface GPUStorageTextureBindingLayout {
    * this binding.
    */
   viewDimension?: GPUTextureViewDimension;
+}
+
+interface GPUTexelCopyBufferInfo
+  extends GPUTexelCopyBufferLayout {
+  /**
+   * A buffer which either contains texel data to be copied or will store the texel data being
+   * copied, depending on the method it is being passed to.
+   */
+  buffer: GPUBuffer;
+}
+
+interface GPUTexelCopyBufferLayout {
+  /**
+   * The offset, in bytes, from the beginning of the texel data source (such as a
+   * {@link GPUTexelCopyBufferInfo#buffer|GPUTexelCopyBufferInfo.buffer}) to the start of the texel data
+   * within that source.
+   */
+  offset?: GPUSize64;
+  /**
+   * The stride, in bytes, between the beginning of each texel block row and the subsequent
+   * texel block row.
+   * Required if there are multiple texel block rows (i.e. the copy height or depth is more
+   * than one block).
+   */
+  bytesPerRow?: GPUSize32;
+  /**
+   * Number of texel block rows per single texel image of the texture.
+   * {@link GPUTexelCopyBufferLayout#rowsPerImage} &times;
+   * {@link GPUTexelCopyBufferLayout#bytesPerRow} is the stride, in bytes, between the beginning of each
+   * texel image of data and the subsequent texel image.
+   * Required if there are multiple texel images (i.e. the copy depth is more than one).
+   */
+  rowsPerImage?: GPUSize32;
+}
+
+interface GPUTexelCopyTextureInfo {
+  /**
+   * Texture to copy to/from.
+   */
+  texture: GPUTexture;
+  /**
+   * Mip-map level of the {@link GPUTexelCopyTextureInfo#texture} to copy to/from.
+   */
+  mipLevel?: GPUIntegerCoordinate;
+  /**
+   * Defines the origin of the copy - the minimum corner of the texture sub-region to copy to/from.
+   * Together with `copySize`, defines the full copy sub-region.
+   */
+  origin?: GPUOrigin3D;
+  /**
+   * Defines which aspects of the {@link GPUTexelCopyTextureInfo#texture} to copy to/from.
+   */
+  aspect?: GPUTextureAspect;
 }
 
 interface GPUTextureBindingLayout {
@@ -1541,7 +1595,7 @@ interface GPUTextureDescriptor
    * Similar caveats exist for other formats and pairs of formats on other systems.
    * </div>
    * Formats in this list must be texture view format compatible with the texture format.
-   * <div algorithm>
+   * <div algorithm data-timeline=const>
    * Two {@link GPUTextureFormat}s `format` and `viewFormat` are <dfn dfn for="">texture view format compatible</dfn> if:
    * - `format` equals `viewFormat`, or
    * - `format` and `viewFormat` differ only in whether they are `srgb` formats (have the `-srgb` suffix).
@@ -1561,6 +1615,15 @@ interface GPUTextureViewDescriptor
    * The dimension to view the texture as.
    */
   dimension?: GPUTextureViewDimension;
+  /**
+   * The allowed {@link GPUTextureUsage|usage(s)} for the texture view. Must be a subset of the
+   * {@link GPUTexture#usage} flags of the texture. If 0, defaults to the full set of
+   * {@link GPUTexture#usage} flags of the texture.
+   * Note: If the view's {@link GPUTextureViewDescriptor#format} doesn't support all of the
+   * texture's {@link GPUTextureDescriptor#usage}s, the default will fail,
+   * and the view's {@link GPUTextureViewDescriptor#usage} must be specified explicitly.
+   */
+  usage?: GPUTextureUsageFlags;
   /**
    * Which {@link GPUTextureAspect|aspect(s)} of the texture are accessible to the texture view.
    */
@@ -1625,8 +1688,8 @@ interface GPUVertexBufferLayout {
 interface GPUVertexState
   extends GPUProgrammableStage {
   /**
-   * A list of {@link GPUVertexBufferLayout}s defining the layout of the vertex attribute data in the
-   * vertex buffers used by this pipeline.
+   * A list of {@link GPUVertexBufferLayout}s, each defining the layout of vertex attribute data in a
+   * vertex buffer used by this pipeline.
    */
   buffers?: Iterable<GPUVertexBufferLayout | null>;
 }
@@ -1858,24 +1921,32 @@ interface GPUAdapter {
    */
   readonly limits: GPUSupportedLimits;
   /**
+   * Information about the physical adapter underlying this {@link GPUAdapter}.
+   * For a given {@link GPUAdapter}, the {@link GPUAdapterInfo} values exposed are constant over time.
+   * The same object is returned each time. To create that object for the first time:
+   * <div algorithm=GPUAdapter.info>
+   * <div data-timeline=content>
+   * **Called on:** {@link GPUAdapter} `this`.
+   * **Returns:** {@link GPUAdapterInfo}
+   * Content timeline steps:
+   * 1. Return a [$new adapter info$] for `this.adapter`.
+   * </div>
+   * </div>
+   */
+  readonly info: GPUAdapterInfo;
+  /**
    * Returns the value of {@link GPUAdapter#[[adapter]]}.{@link adapter#[[fallback]]}.
    */
   readonly isFallbackAdapter: boolean;
   /**
    * Requests a device from the adapter.
    * This is a one-time action: if a device is returned successfully,
-   * the adapter becomes invalid.
+   * the adapter becomes {@link adapter#[[state]]} "consumed".
    * @param descriptor - Description of the {@link GPUDevice} to request.
    */
   requestDevice(
     descriptor?: GPUDeviceDescriptor
   ): Promise<GPUDevice>;
-  /**
-   * Requests the {@link GPUAdapterInfo} for this {@link GPUAdapter}.
-   * Note: Adapter info values are returned with a Promise to give user agents an
-   * opportunity to perform potentially long-running checks in the future.
-   */
-  requestAdapterInfo(): Promise<GPUAdapterInfo>;
 }
 
 declare var GPUAdapter: {
@@ -1919,6 +1990,7 @@ interface GPUAdapterInfo {
 
 declare var GPUAdapterInfo: {
   prototype: GPUAdapterInfo;
+  new (): never;
 };
 
 interface GPUBindGroup
@@ -1993,7 +2065,7 @@ interface GPUBuffer
     size?: GPUSize64
   ): ArrayBuffer;
   /**
-   * Unmaps the mapped range of the {@link GPUBuffer} and makes it's contents available for use by the
+   * Unmaps the mapped range of the {@link GPUBuffer} and makes its contents available for use by the
    * GPU again.
    */
   unmap(): undefined;
@@ -2036,6 +2108,10 @@ interface GPUCanvasContext {
    * Removes the context configuration. Destroys any textures produced while configured.
    */
   unconfigure(): undefined;
+  /**
+   * Returns the context configuration.
+   */
+  getConfiguration(): GPUCanvasConfigurationOut | null;
   /**
    * Get the {@link GPUTexture} that will be composited to the document by the {@link GPUCanvasContext}
    * next.
@@ -2083,10 +2159,6 @@ interface GPUCommandEncoder
   beginRenderPass(
     descriptor: GPURenderPassDescriptor
   ): GPURenderPassEncoder;
-  /**
-   * Begins encoding a compute pass described by `descriptor`.
-   * 	descriptor:
-   */
   beginComputePass(
     descriptor?: GPUComputePassDescriptor
   ): GPUComputePassEncoder;
@@ -2114,8 +2186,8 @@ interface GPUCommandEncoder
    * 	`copySize`:
    */
   copyBufferToTexture(
-    source: GPUImageCopyBuffer,
-    destination: GPUImageCopyTexture,
+    source: GPUTexelCopyBufferInfo,
+    destination: GPUTexelCopyTextureInfo,
     copySize: GPUExtent3DStrict
   ): undefined;
   /**
@@ -2126,8 +2198,8 @@ interface GPUCommandEncoder
    * 	`copySize`:
    */
   copyTextureToBuffer(
-    source: GPUImageCopyTexture,
-    destination: GPUImageCopyBuffer,
+    source: GPUTexelCopyTextureInfo,
+    destination: GPUTexelCopyBufferInfo,
     copySize: GPUExtent3DStrict
   ): undefined;
   /**
@@ -2139,8 +2211,8 @@ interface GPUCommandEncoder
    * 	`copySize`:
    */
   copyTextureToTexture(
-    source: GPUImageCopyTexture,
-    destination: GPUImageCopyTexture,
+    source: GPUTexelCopyTextureInfo,
+    destination: GPUTexelCopyTextureInfo,
     copySize: GPUExtent3DStrict
   ): undefined;
   /**
@@ -2334,7 +2406,6 @@ declare var GPUComputePipeline: {
   new (): never;
 };
 
-declare interface VideoFrame {}
 interface GPUDevice
   extends EventTarget,
     GPUObjectBase {
@@ -2355,6 +2426,13 @@ interface GPUDevice
    */
   readonly limits: GPUSupportedLimits;
   /**
+   * Information about the physical adapter which created the device
+   * that this GPUDevice refers to.
+   * For a given GPUDevice, the GPUAdapterInfo values exposed are constant
+   * over time.
+   */
+  readonly adapterInfo: GPUAdapterInfo;
+  /**
    * The primary {@link GPUQueue} for this device.
    */
   readonly queue: GPUQueue;
@@ -2362,6 +2440,9 @@ interface GPUDevice
    * Destroys the device, preventing further operations on it.
    * Outstanding asynchronous operations will fail.
    * Note: It is valid to destroy a device multiple times.
+   * Note: Since no further operations can be enqueued on this device, implementations can abort
+   * outstanding asynchronous operations immediately and free resource allocations, including
+   * mapped memory that was just unmapped.
    */
   destroy(): undefined;
   /**
@@ -2439,6 +2520,7 @@ interface GPUDevice
    * The returned {@link Promise} resolves when the created pipeline
    * is ready to be used without additional delay.
    * If pipeline creation fails, the returned {@link Promise} rejects with an {@link GPUPipelineError}.
+   * (A {@link GPUError} is not dispatched to the device.)
    * Note: Use of this method is preferred whenever possible, as it prevents blocking the
    * queue timeline work on pipeline compilation.
    * @param descriptor - Description of the {@link GPUComputePipeline} to create.
@@ -2451,6 +2533,7 @@ interface GPUDevice
    * The returned {@link Promise} resolves when the created pipeline
    * is ready to be used without additional delay.
    * If pipeline creation fails, the returned {@link Promise} rejects with an {@link GPUPipelineError}.
+   * (A {@link GPUError} is not dispatched to the device.)
    * Note: Use of this method is preferred whenever possible, as it prevents blocking the
    * queue timeline work on pipeline compilation.
    * @param descriptor - Description of the {@link GPURenderPipeline} to create.
@@ -2725,18 +2808,18 @@ interface GPUQueue
    * @param size - Extents of the content to write from `data` to `destination`.
    */
   writeTexture(
-    destination: GPUImageCopyTexture,
+    destination: GPUTexelCopyTextureInfo,
     data:
       | BufferSource
       | SharedArrayBuffer,
-    dataLayout: GPUImageDataLayout,
+    dataLayout: GPUTexelCopyBufferLayout,
     size: GPUExtent3DStrict
   ): undefined;
   /**
    * Issues a copy operation of the contents of a platform image/canvas
    * into the destination texture.
    * This operation performs [[#color-space-conversions|color encoding]] into the destination
-   * encoding according to the parameters of {@link GPUImageCopyTextureTagged}.
+   * encoding according to the parameters of {@link GPUCopyExternalImageDestInfo}.
    * Copying into a `-srgb` texture results in the same texture bytes, not the same decoded
    * values, as copying into the corresponding non-`-srgb` format.
    * Thus, after a copy operation, sampling the destination texture has
@@ -2747,8 +2830,8 @@ interface GPUQueue
    * @param copySize - Extents of the content to write from `source` to `destination`.
    */
   copyExternalImageToTexture(
-    source: GPUImageCopyExternalImage,
-    destination: GPUImageCopyTextureTagged,
+    source: GPUCopyExternalImageSourceInfo,
+    destination: GPUCopyExternalImageDestInfo,
     copySize: GPUExtent3DStrict
   ): undefined;
 }
@@ -2935,7 +3018,7 @@ interface GPUShaderModule
   readonly __brand: 'GPUShaderModule';
   /**
    * Returns any messages generated during the {@link GPUShaderModule}'s compilation.
-   * The locations, order, and contents of messages are implementation-defined.
+   * The locations, order, and contents of messages are implementation-defined
    * In particular, messages may not be ordered by {@link GPUCompilationMessage#lineNum}.
    */
   getCompilationInfo(): Promise<GPUCompilationInfo>;
@@ -2978,7 +3061,6 @@ interface GPUSupportedLimits {
   readonly maxBufferSize: number;
   readonly maxVertexAttributes: number;
   readonly maxVertexBufferArrayStride: number;
-  readonly maxInterStageShaderComponents: number;
   readonly maxInterStageShaderVariables: number;
   readonly maxColorAttachments: number;
   readonly maxColorAttachmentBytesPerSample: number;
@@ -3116,27 +3198,7 @@ interface Navigator
 interface WorkerNavigator
   extends NavigatorGPU {}
 
-interface GPUBufferUsage {
-  /**
-   * Nominal type branding.
-   * https://github.com/microsoft/TypeScript/pull/33038
-   * @internal
-   */
-  readonly __brand: 'GPUBufferUsage';
-  readonly MAP_READ: GPUFlagsConstant;
-  readonly MAP_WRITE: GPUFlagsConstant;
-  readonly COPY_SRC: GPUFlagsConstant;
-  readonly COPY_DST: GPUFlagsConstant;
-  readonly INDEX: GPUFlagsConstant;
-  readonly VERTEX: GPUFlagsConstant;
-  readonly UNIFORM: GPUFlagsConstant;
-  readonly STORAGE: GPUFlagsConstant;
-  readonly INDIRECT: GPUFlagsConstant;
-  readonly QUERY_RESOLVE: GPUFlagsConstant;
-}
-
-declare var GPUBufferUsage: {
-  prototype: GPUBufferUsage;
+declare let GPUBufferUsage: {
   readonly MAP_READ: GPUFlagsConstant;
   readonly MAP_WRITE: GPUFlagsConstant;
   readonly COPY_SRC: GPUFlagsConstant;
@@ -3149,22 +3211,7 @@ declare var GPUBufferUsage: {
   readonly QUERY_RESOLVE: GPUFlagsConstant;
 };
 
-interface GPUColorWrite {
-  /**
-   * Nominal type branding.
-   * https://github.com/microsoft/TypeScript/pull/33038
-   * @internal
-   */
-  readonly __brand: 'GPUColorWrite';
-  readonly RED: GPUFlagsConstant;
-  readonly GREEN: GPUFlagsConstant;
-  readonly BLUE: GPUFlagsConstant;
-  readonly ALPHA: GPUFlagsConstant;
-  readonly ALL: GPUFlagsConstant;
-}
-
-declare var GPUColorWrite: {
-  prototype: GPUColorWrite;
+declare let GPUColorWrite: {
   readonly RED: GPUFlagsConstant;
   readonly GREEN: GPUFlagsConstant;
   readonly BLUE: GPUFlagsConstant;
@@ -3172,62 +3219,40 @@ declare var GPUColorWrite: {
   readonly ALL: GPUFlagsConstant;
 };
 
-interface GPUMapMode {
-  /**
-   * Nominal type branding.
-   * https://github.com/microsoft/TypeScript/pull/33038
-   * @internal
-   */
-  readonly __brand: 'GPUMapMode';
-  readonly READ: GPUFlagsConstant;
-  readonly WRITE: GPUFlagsConstant;
-}
-
-declare var GPUMapMode: {
-  prototype: GPUMapMode;
-  new (): never;
+declare let GPUMapMode: {
   readonly READ: GPUFlagsConstant;
   readonly WRITE: GPUFlagsConstant;
 };
 
-interface GPUShaderStage {
-  /**
-   * Nominal type branding.
-   * https://github.com/microsoft/TypeScript/pull/33038
-   * @internal
-   */
-  readonly __brand: 'GPUShaderStage';
-  readonly VERTEX: GPUFlagsConstant;
-  readonly FRAGMENT: GPUFlagsConstant;
-  readonly COMPUTE: GPUFlagsConstant;
-}
-
-declare var GPUShaderStage: {
-  prototype: GPUShaderStage;
+declare let GPUShaderStage: {
   readonly VERTEX: GPUFlagsConstant;
   readonly FRAGMENT: GPUFlagsConstant;
   readonly COMPUTE: GPUFlagsConstant;
 };
 
-interface GPUTextureUsage {
-  /**
-   * Nominal type branding.
-   * https://github.com/microsoft/TypeScript/pull/33038
-   * @internal
-   */
-  readonly __brand: 'GPUTextureUsage';
-  readonly COPY_SRC: GPUFlagsConstant;
-  readonly COPY_DST: GPUFlagsConstant;
-  readonly TEXTURE_BINDING: GPUFlagsConstant;
-  readonly STORAGE_BINDING: GPUFlagsConstant;
-  readonly RENDER_ATTACHMENT: GPUFlagsConstant;
-}
-
-declare var GPUTextureUsage: {
-  prototype: GPUTextureUsage;
+declare let GPUTextureUsage: {
   readonly COPY_SRC: GPUFlagsConstant;
   readonly COPY_DST: GPUFlagsConstant;
   readonly TEXTURE_BINDING: GPUFlagsConstant;
   readonly STORAGE_BINDING: GPUFlagsConstant;
   readonly RENDER_ATTACHMENT: GPUFlagsConstant;
 };
+
+/** @deprecated Use {@link GPUTexelCopyBufferLayout} */
+type GPUImageDataLayout =
+  GPUTexelCopyBufferLayout;
+/** @deprecated Use {@link GPUTexelCopyBufferInfo} */
+type GPUImageCopyBuffer =
+  GPUTexelCopyBufferInfo;
+/** @deprecated Use {@link GPUTexelCopyTextureInfo} */
+type GPUImageCopyTexture =
+  GPUTexelCopyTextureInfo;
+/** @deprecated Use {@link GPUCopyExternalImageDestInfo} */
+type GPUImageCopyTextureTagged =
+  GPUCopyExternalImageDestInfo;
+/** @deprecated Use {@link GPUCopyExternalImageSourceInfo} */
+type GPUImageCopyExternalImage =
+  GPUCopyExternalImageSourceInfo;
+/** @deprecated Use {@link GPUCopyExternalImageSource} */
+type GPUImageCopyExternalImageSource =
+  GPUCopyExternalImageSource;

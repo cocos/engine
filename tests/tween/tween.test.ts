@@ -6,8 +6,7 @@ import { game, director } from "../../cocos/game";
 import { UITransform } from "../../cocos/2d/framework/ui-transform";
 import { Canvas } from "../../cocos/2d/framework/canvas";
 import { Batcher2D } from "../../cocos/2d/renderer/batcher-2d";
-import { Label, UIOpacity } from "../../cocos/2d";
-import { Sprite } from "../../cocos/2d";
+import { UIOpacity, Sprite } from "../../cocos/2d";
 
 function isSizeEqualTo(a: Size, b: Size) {
     return approx(a.width, b.width) && approx(a.height, b.height);
@@ -234,6 +233,136 @@ test('Test different target in sequence', function() {
     
     game.step();
     expect(isContentSizeTweenComplete).toBeTruthy();
+
+    // test end
+    director.unregisterSystem(sys);
+});
+
+test('Test different target in sequence nesting parallel', function() {
+    const sys = new TweenSystem();
+    (TweenSystem.instance as any) = sys;
+    director.registerSystem(TweenSystem.ID, sys, System.Priority.MEDIUM);
+
+    const scene = new Scene('test');
+    director.runSceneImmediate(scene);
+
+    const node = new Node('TestNode');
+    const uiOpacity = node.addComponent(UIOpacity) as UIOpacity;
+    node.parent = scene;
+
+    tween(node)
+        .sequence(
+            tween(node)
+                .to(1, {scale: v3(2, 2, 2)}),
+            tween(node)
+                .parallel(
+                    tween(uiOpacity)
+                        .to(1, { opacity: 0 }),
+                    tween(node)
+                        .to(1, { scale: v3(1, 1, 1) })
+                )
+        )
+    .start();
+
+    runFrames(1); // Kick off
+
+    runFrames(30);
+    expect(node.scale.equals(new Vec3(1.5, 1.5, 1.5))).toBeTruthy();
+    expect(uiOpacity.opacity).toBeCloseTo(255);
+    runFrames(30);
+    expect(node.scale.equals(new Vec3(2, 2, 2))).toBeTruthy();
+    runFrames(30);
+    expect(node.scale.equals(new Vec3(1.5, 1.5, 1.5))).toBeTruthy();
+    expect(uiOpacity.opacity).toBeCloseTo(255/2);
+    runFrames(30);
+    expect(node.scale.equals(new Vec3(1, 1, 1))).toBeTruthy();
+    expect(uiOpacity.opacity).toBeCloseTo(0);
+
+    // test end
+    director.unregisterSystem(sys);
+});
+
+test('Test different target in parallel nesting sequence', function() {
+    const sys = new TweenSystem();
+    (TweenSystem.instance as any) = sys;
+    director.registerSystem(TweenSystem.ID, sys, System.Priority.MEDIUM);
+
+    const scene = new Scene('test');
+    director.runSceneImmediate(scene);
+
+    const node = new Node('TestNode');
+    const uiOpacity = node.addComponent(UIOpacity) as UIOpacity;
+    node.parent = scene;
+
+    tween(node)
+        .parallel(
+            tween(node).sequence(
+                tween(node)
+                    .to(1, { scale: v3(2, 2, 2) }),
+                tween(node)
+                    .to(1, { position: v3(100, 100, 0) })
+            ),
+            tween(uiOpacity)
+                .to(2, { opacity: 0 }),
+        )
+        .start();
+
+    runFrames(1); // Kick off
+
+    runFrames(30);
+    expect(node.scale.equals(new Vec3(1.5, 1.5, 1.5))).toBeTruthy();
+    expect(node.position.equals(new Vec3(0, 0, 0))).toBeTruthy();
+    runFrames(30);
+    expect(node.scale.equals(new Vec3(2, 2, 2))).toBeTruthy();
+    expect(node.position.equals(new Vec3(0, 0, 0))).toBeTruthy();
+
+    expect(uiOpacity.opacity).toBeCloseTo(255/2);
+
+    runFrames(60);
+    expect(node.scale.equals(new Vec3(2, 2, 2))).toBeTruthy();
+    expect(node.position.equals(new Vec3(100, 100, 0))).toBeTruthy();
+    expect(uiOpacity.opacity).toBeCloseTo(0);
+
+    // test end
+    director.unregisterSystem(sys);
+});
+
+test('Test different target in sequence nesting parallel and re-target', function() {
+    const sys = new TweenSystem();
+    (TweenSystem.instance as any) = sys;
+    director.registerSystem(TweenSystem.ID, sys, System.Priority.MEDIUM);
+
+    const scene = new Scene('test');
+    director.runSceneImmediate(scene);
+
+    const node1 = new Node('TestNode1');
+    node1.parent = scene;
+
+    const node2 = new Node('TestNode2');
+    node2.parent = scene;
+
+    const node3 = new Node('TestNode3');
+    node3.parent = scene;
+
+    tween(node1)
+        .sequence(
+            tween(node1)
+                .to(1, { position: v3(100, 100, 0) }).target(node3),
+        )
+        .target(node2)
+        .to(1, { position: v3(200, 200, 200) })
+        .start();
+
+    runFrames(1); // Kick off
+    runFrames(60);
+    expect(node1.position.equals(new Vec3(0, 0, 0))).toBeTruthy();
+    expect(node2.position.equals(new Vec3(0, 0, 0))).toBeTruthy();
+    expect(node3.position.equals(new Vec3(100, 100, 0))).toBeTruthy();
+
+    runFrames(60);
+    expect(node1.position.equals(new Vec3(0, 0, 0))).toBeTruthy();
+    expect(node2.position.equals(new Vec3(200, 200, 200))).toBeTruthy();
+    expect(node3.position.equals(new Vec3(100, 100, 0))).toBeTruthy();
 
     // test end
     director.unregisterSystem(sys);

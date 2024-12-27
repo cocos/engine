@@ -180,7 +180,11 @@ public class CocosDownloader {
 
                         host = domain.startsWith("www.") ? domain.substring(4) : domain;
                         if (fileLen > 0) {
-                            SharedPreferences sharedPreferences = GlobalObject.getContext().getSharedPreferences("breakpointDownloadSupport", Context.MODE_PRIVATE);
+                            Context ctx = GlobalObject.getContext();
+                            if (ctx == null) {
+                                return;
+                            }
+                            SharedPreferences sharedPreferences = ctx.getSharedPreferences("breakpointDownloadSupport", Context.MODE_PRIVATE);
                             if (sharedPreferences.contains(host) && sharedPreferences.getBoolean(host, false)) {
                                 downloadStart = fileLen;
                             } else {
@@ -246,6 +250,9 @@ public class CocosDownloader {
 
                                 // save breakpointDownloadSupport Data to SharedPreferences storage
                                 Context context = GlobalObject.getContext();
+                                if (context == null) {
+                                    return;
+                                }
                                 SharedPreferences sharedPreferences = context.getSharedPreferences("breakpointDownloadSupport", Context.MODE_PRIVATE);
                                 SharedPreferences.Editor editor = sharedPreferences.edit();
                                 long total = response.body().contentLength() + downloadStart;

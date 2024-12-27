@@ -159,6 +159,9 @@
             "modules": ["tiled-map"],
             "dependentModules": ["2d"]
         },
+        "vendor-google": {
+            "modules": ["vendor-google"]
+        },
         "spine": {
             "modules": ["spine"],
             "dependentAssets": [

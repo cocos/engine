@@ -312,6 +312,15 @@
                 "2d"
             ]
         },
+        "vendor-google": {
+            "default": false,
+            "label": "i18n:ENGINE.features.vendor_google.label",
+            "description": "i18n:ENGINE.features.vendor_google.description",
+            "enginePlugin": false,
+            "isNativeModule": true,
+            "cmakeConfig": "USE_VENDOR",
+            "hidden": true
+        },
         "spine": {
             "default": true,
             "label": "i18n:ENGINE.features.spine.label",

@@ -165,7 +165,6 @@ void SkeletonCacheAnimation::render(float /*dt*/) {
     if (segments.empty() || colors.empty()) return;
 
     auto *mgr = MiddlewareManager::getInstance();
-    if (!mgr->isRendering) return;
 
     _sharedBufferOffset->reset();
     _sharedBufferOffset->clear();

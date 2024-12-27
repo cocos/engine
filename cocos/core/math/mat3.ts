@@ -833,8 +833,8 @@ export class Mat3 extends ValueType {
         const t = this;
         return `[\n${
             t.m00}, ${t.m01}, ${t.m02},\n${
-            t.m03},\n${t.m04}, ${t.m05},\n${
-            t.m06}, ${t.m07},\n${t.m08}\n`
+            t.m03}, ${t.m04}, ${t.m05},\n${
+            t.m06}, ${t.m07}, ${t.m08}\n`
             + `]`;
     }
 

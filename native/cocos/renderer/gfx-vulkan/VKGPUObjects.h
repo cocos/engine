@@ -103,7 +103,7 @@ public:
     CCVKGPUDeviceObject() = default;
     ~CCVKGPUDeviceObject() = default;
 
-    virtual void shutdown(){};
+    virtual void shutdown() {};
 };
 
 template <typename T>
@@ -128,7 +128,7 @@ public:
     // helper storage
     ccstd::vector<VkClearValue> clearValues;
     ccstd::vector<VkSampleCountFlagBits> sampleCounts; // per subpass
-    ccstd::vector<bool> hasSelfDependency; // per subpass
+    ccstd::vector<bool> hasSelfDependency;             // per subpass
 
     const CCVKGPUGeneralBarrier *getBarrier(size_t index, CCVKGPUDevice *gpuDevice) const;
     bool hasShadingAttachment(uint32_t subPassId) const;
@@ -697,8 +697,8 @@ public:
                 vkDestroyCommandPool(_device->vkDevice, pool.vkCommandPool, nullptr);
                 pool.vkCommandPool = VK_NULL_HANDLE;
             }
-            for (auto &item: pool.usedCommandBuffers)item.clear();
-            for (auto &item: pool.commandBuffers)item.clear();
+            for (auto &item : pool.usedCommandBuffers) item.clear();
+            for (auto &item : pool.commandBuffers) item.clear();
         }
         _pools.clear();
     }
@@ -836,6 +836,22 @@ public:
     void reset() {
         for (Buffer &buffer : _pool) {
             buffer.curOffset = 0U;
+        }
+    }
+
+    void shrinkSize(size_t minimalSize = CHUNK_SIZE) {
+        size_t reservedSize = 0;
+        for (auto iter = _pool.begin(); iter != _pool.end() && _pool.size() > 1;) {
+            if (reservedSize < minimalSize) {
+                reservedSize += iter->gpuBuffer->size;
+                ++iter;
+                continue;
+            }
+            if (iter->curOffset == 0) {
+                iter = _pool.erase(iter);
+            } else {
+                ++iter;
+            }
         }
     }
 

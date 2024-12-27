@@ -63,7 +63,8 @@ export const tiled: IAssembler = {
     },
 
     updateRenderData (sprite: Sprite) {
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const frame = sprite.spriteFrame!;
         if (!frame || !renderData) {
             return;
@@ -140,14 +141,16 @@ export const tiled: IAssembler = {
     // dirty Mark
     // the real update uv is on updateWorldUVData
     updateUVs (sprite: Sprite) {
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         renderData.vertDirty = true;
         sprite.markForUpdateRenderData();
     },
 
     fillBuffers (sprite: Sprite, renderer: IBatcher) {
         const node = sprite.node;
-        const renderData: RenderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const chunk = renderData.chunk;
         if (chunk === null) {
             // If too many vertices are requested, this will result in a chunk of null.
@@ -182,7 +185,8 @@ export const tiled: IAssembler = {
     },
 
     updateWorldUVData (sprite: Sprite) {
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const stride = renderData.floatStride;
         const dataList: IRenderData[] = renderData.data;
         const vData = renderData.chunk.vb;
@@ -195,10 +199,11 @@ export const tiled: IAssembler = {
 
     // only for TS
     updateWorldVertexAndUVData (sprite: Sprite, chunk: StaticVBChunk) {
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const node = sprite.node;
         node.getWorldMatrix(m);
 
-        const renderData = sprite.renderData!;
         const stride = renderData.floatStride;
         const dataList: IRenderData[] = renderData.data;
         const vData = chunk.vb;
@@ -222,7 +227,8 @@ export const tiled: IAssembler = {
 
     updateVerts (sprite: Sprite, sizableWidth: number, sizableHeight: number, row: number, col: number) {
         const uiTrans = sprite.node._uiProps.uiTransformComp!;
-        const renderData: RenderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const dataList: IRenderData[] = renderData.data;
         const frame = sprite.spriteFrame!;
 
@@ -494,7 +500,8 @@ export const tiled: IAssembler = {
 
     // fill color here
     updateColorLate (sprite: Sprite) {
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const vData = renderData.chunk.vb;
         const stride = renderData.floatStride;
         const vertexCount = renderData.vertexCount;

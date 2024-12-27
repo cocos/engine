@@ -56,10 +56,10 @@ class PointerEventDispatcher implements IEventDispatcher {
 
     constructor () {
         input._registerEventDispatcher(this);
-
-        NodeEventProcessor.callbacksInvoker.on(DispatcherEventType.ADD_POINTER_EVENT_PROCESSOR, this.addPointerEventProcessor, this);
-        NodeEventProcessor.callbacksInvoker.on(DispatcherEventType.REMOVE_POINTER_EVENT_PROCESSOR, this.removePointerEventProcessor, this);
-        NodeEventProcessor.callbacksInvoker.on(DispatcherEventType.MARK_LIST_DIRTY, this._markListDirty, this);
+        const callbacksInvoker = NodeEventProcessor.callbacksInvoker;
+        callbacksInvoker.on(DispatcherEventType.ADD_POINTER_EVENT_PROCESSOR, this.addPointerEventProcessor, this);
+        callbacksInvoker.on(DispatcherEventType.REMOVE_POINTER_EVENT_PROCESSOR, this.removePointerEventProcessor, this);
+        callbacksInvoker.on(DispatcherEventType.MARK_LIST_DIRTY, this._markListDirty, this);
     }
 
     onThrowException (): void {
@@ -251,8 +251,8 @@ class PointerEventDispatcher implements IEventDispatcher {
             }
         }
 
-        const priority1 = n1 ? n1.getSiblingIndex() : 0;
-        const priority2 = n2 ? n2.getSiblingIndex() : 0;
+        const priority1 = n1 ? n1.siblingIndex : 0;
+        const priority2 = n2 ? n2.siblingIndex : 0;
 
         return ex ? priority1 - priority2 : priority2 - priority1;
     }

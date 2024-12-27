@@ -79,12 +79,16 @@ void MacPlatform::exit() {
 
 int32_t MacPlatform::loop(void) {
 #if CC_EDITOR
-    runTask();
+    @autoreleasepool {
+        runTask();
+    }
     return 1;
 #else
     while(!_readyToExit) {
-        pollEvent();
-        runTask();
+        @autoreleasepool {
+            pollEvent();
+            runTask();
+        }
     }
     onDestroy();
     return 0;
@@ -95,7 +99,9 @@ int32_t MacPlatform::run(int argc, const char **argv) {
 #if defined(CC_SERVER_MODE)
     cocos_main(argc, argv);
     while (true) {
-        runTask();
+        @autoreleasepool {
+            runTask();
+        }
     }
     return 0;
 #else

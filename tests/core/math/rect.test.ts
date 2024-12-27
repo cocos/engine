@@ -78,7 +78,7 @@ describe('Test Rect', () => {
     });
     test('toString', () => {
         const rect1 = new Rect(0, 0, 100, 100);
-        const res = '(0.00, 0.00, 100.00, 100.00)';
+        const res = '(0, 0, 100, 100)';
 
         expect(rect1.toString()).toBe(res);
     });

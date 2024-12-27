@@ -1,0 +1,8 @@
+{
+    "ndk_module_path" :[
+        "${COCOS_ROOT}",
+        "${COCOS_ROOT}/cocos",
+        "${COCOS_ROOT}/external"
+    ],
+    "copy_resources": []
+}

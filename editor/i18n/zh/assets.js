@@ -16,6 +16,11 @@ module.exports = {
             animation: '动画',
             loop: '循环',
             timeScale: '速率',
+            premultipliedAlpha: '启用贴图预乘',
+            useTint: '启用染色效果',
+            debugSlots: '调试槽',
+            debugBones: '调试骨骼',
+            debugMesh: '调试网格',
         },
     },
 
@@ -487,6 +492,10 @@ module.exports = {
             assetMessage: '${assetName} 修改的数据尚未保存，是否保存修改？',
             save: '保存',
             abort: '丢弃',
+        },
+        spine_data: {
+            atlas: '图集',
+            atlas_warn: '设置图集失败，需要后缀为 .atlas 的文本文件',
         },
     },
 

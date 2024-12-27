@@ -47,7 +47,8 @@ cc_set_if_undefined(USE_GEOMETRY_RENDERER    ON)
 cc_set_if_undefined(USE_WEBP                 ON)
 cc_set_if_undefined(NET_MODE                  0) # 0 is client
 cc_set_if_undefined(USE_REMOTE_LOG           OFF)
-
+cc_set_if_undefined(USE_ADPF                 OFF)
+cc_set_if_undefined(USE_GOOGLE_BILLING  OFF)
 
 if(ANDROID AND NOT DEFINED USE_CCACHE)
     if("$ENV{COCOS_USE_CCACHE}" STREQUAL "1")
@@ -565,8 +566,6 @@ elseif(ANDROID)
         cocos/platform/android/AndroidPlatform.cpp
         cocos/platform/android/AndroidPlatform.h
         cocos/platform/android/AndroidKeyCodes.cpp
-        cocos/platform/android/adpf_manager.h
-        cocos/platform/android/adpf_manager.cpp
     )
 elseif(OPENHARMONY)
     cocos_source_files(
@@ -598,6 +597,13 @@ elseif(IOS)
         cocos/platform/ios/IOSPlatform.h
         cocos/platform/ios/AppDelegateBridge.mm
         cocos/platform/ios/AppDelegateBridge.h
+    )
+endif()
+
+if(USE_ADPF) 
+    cocos_source_files(
+        cocos/platform/android/adpf_manager.h
+        cocos/platform/android/adpf_manager.cpp
     )
 endif()
 
@@ -754,6 +760,39 @@ elseif(ANDROID OR OHOS)
     endif()
 endif()
 
+if(USE_GOOGLE_BILLING)
+    cocos_source_files(
+        vendor/google/billing/GoogleBilling.cpp
+        vendor/google/billing/GoogleBilling.h
+        vendor/google/billing/GoogleBillingManager.h
+        vendor/google/billing/GoogleBillingHelper.cpp
+        vendor/google/billing/GoogleBillingHelper.h
+        vendor/google/billing/JniBilling.cpp
+        vendor/google/billing/JniBilling.h
+
+        vendor/google/billing/build-params/AcknowledgePurchaseParams.h
+        vendor/google/billing/build-params/BillingFlowParams.h
+        vendor/google/billing/build-params/ConsumeParams.h
+        vendor/google/billing/build-params/GetBillingConfigParams.h
+        vendor/google/billing/build-params/InAppMessageParams.h
+        vendor/google/billing/build-params/PendingPurchasesParams.h
+        vendor/google/billing/build-params/QueryProductDetailsParams.h
+        vendor/google/billing/build-params/QueryPurchasesParams.h
+        
+        vendor/google/billing/result-values/AccountIdentifiers.h
+        vendor/google/billing/result-values/AlternativeBillingOnlyReportingDetails.h
+        vendor/google/billing/result-values/BillingConfig.h
+        vendor/google/billing/result-values/BillingResult.h
+        vendor/google/billing/result-values/ExternalOfferReportingDetails.h
+        vendor/google/billing/result-values/InAppMessageResult.h
+        vendor/google/billing/result-values/Purchase.h
+        vendor/google/billing/result-values/Purchase.cpp
+        vendor/google/billing/result-values/ProductDetails.h
+        vendor/google/billing/result-values/ProductDetails.cpp
+        vendor/google/billing/result-values/UserChoiceDetails.h
+    )
+endif()
+
 if(ANDROID)
     cocos_source_files(
         cocos/platform/android/modules/Screen.cpp
@@ -761,6 +800,7 @@ if(ANDROID)
         cocos/platform/android/modules/System.cpp
         cocos/platform/android/modules/System.h
     )
+
 elseif(OPENHARMONY)
     # Because there will be a definition of OHOS in harmonyos, it is necessary to define the macro of OPENHARMONY.
 elseif(OHOS)
@@ -1058,6 +1098,9 @@ set(SWIG_OUTPUT_ROOT ${CMAKE_CURRENT_BINARY_DIR}/generated)
 set(SWIG_OUTPUT ${SWIG_OUTPUT_ROOT}/cocos/bindings/auto)
 cc_gen_swig_files(${CMAKE_CURRENT_LIST_DIR}/tools/swig-config ${SWIG_OUTPUT})
 
+if(USE_GOOGLE_BILLING) 
+    cc_gen_swig_files(${CMAKE_CURRENT_LIST_DIR}/tools/swig-config/android ${SWIG_OUTPUT})
+endif()
 
 ##### platform
 cocos_source_files(
@@ -1176,6 +1219,10 @@ elseif(LINUX)
         cocos/platform/linux/FileUtils-linux.cpp
         cocos/platform/linux/FileUtils-linux.h
     )
+endif()
+
+if(USE_GOOGLE_BILLING)
+    list(APPEND CC_JNI_SRC_FILES ${CWD}/cocos/platform/java/jni/JniGoogleBillingHandler.cpp)
 endif()
 
 ##### renderer
@@ -2215,6 +2262,13 @@ if(USE_WEBVIEW)
     )
 endif()
 
+if(USE_GOOGLE_BILLING)
+    cocos_source_files(
+        NO_WERROR   NO_UBUILD   ${SWIG_OUTPUT}/jsb_google_billing_auto.cpp
+                                ${SWIG_OUTPUT}/jsb_google_billing_auto.h
+    )
+endif()
+
 if(USE_XR_REMOTE_PREVIEW)
     cocos_source_files(
             NO_WERROR    cocos/xr/XRRemotePreviewManager.h
@@ -2559,7 +2613,6 @@ cocos_source_files(
             cocos/bindings/manual/jsb_xmlhttprequest.h
             cocos/bindings/manual/jsb_pipeline_manual.h
             cocos/bindings/manual/jsb_pipeline_manual.cpp
-            cocos/bindings/manual/jsb_adpf.cpp
 )
 if(USE_AUDIO)
     cocos_source_files(
@@ -2580,6 +2633,12 @@ if(USE_WEBSOCKET_SERVER)
     cocos_source_files(
                      cocos/bindings/manual/jsb_websocket_server.cpp
                      cocos/bindings/manual/jsb_websocket_server.h
+    )
+endif()
+
+if(USE_ADPF)
+    cocos_source_files(
+        cocos/bindings/manual/jsb_adpf.cpp
     )
 endif()
 
@@ -3114,6 +3173,8 @@ function(cc_apply_definations target)
         $<$<BOOL:${USE_SE_NAPI}>:SCRIPT_ENGINE_TYPE=5>
         $<$<BOOL:${USE_SE_JSVM}>:SCRIPT_ENGINE_TYPE=6>
         $<$<OR:$<CONFIG:Debug>,$<BOOL:${CC_DEBUG_FORCE}>>:CC_DEBUG=1>
+        $<IF:$<BOOL:${USE_ADPF}>,CC_USE_ADPF=1,CC_USE_ADPF=0>
+        $<IF:$<BOOL:${USE_GOOGLE_BILLING}>,CC_USE_GOOGLE_BILLING=1,CC_USE_GOOGLE_BILLING=0>
     )
 endfunction()
 

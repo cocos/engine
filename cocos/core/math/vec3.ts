@@ -955,7 +955,11 @@ export class Vec3 extends ValueType {
      * @returns Returns `true` when the components of both vectors are equal within the specified range of error; otherwise it returns `false`.
      */
     public equals (other: Vec3, epsilon = EPSILON): boolean {
-        return Vec3.equals(this, other, epsilon);
+        return (
+            abs(this.x - other.x) <= epsilon
+            && abs(this.y - other.y) <= epsilon
+            && abs(this.z - other.z) <= epsilon
+        );
     }
 
     /**
@@ -1003,7 +1007,7 @@ export class Vec3 extends ValueType {
      * @returns The string with vector information
      */
     public toString (): string {
-        return `(${this.x.toFixed(2)}, ${this.y.toFixed(2)}, ${this.z.toFixed(2)})`;
+        return `(${this.x}, ${this.y}, ${this.z})`;
     }
 
     /**
