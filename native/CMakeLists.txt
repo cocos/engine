@@ -2044,6 +2044,7 @@ cocos_source_files(
 endif()
 
 ##### box2d
+if(USE_BOX2D_JSB)
 cocos_source_files(
     NO_WERROR NO_UBUILD ${SWIG_OUTPUT}/jsb_box2d_auto.cpp
                         ${SWIG_OUTPUT}/jsb_box2d_auto.h
@@ -2053,6 +2054,7 @@ cocos_source_files(
               cocos/bindings/manual/Box2dCallbacks.cpp
               cocos/bindings/manual/Box2dCallbacks.h
 )
+endif()
 
 ##### 3d
 cocos_source_files(
