@@ -27,13 +27,27 @@ import { EffectAsset } from '../../asset/assets';
 import { assert, error, warn } from '../../core';
 import { ShaderStageFlagBit, Type, Uniform, UniformBlock } from '../../gfx';
 import { DefaultVisitor, depthFirstSearch, GraphColor, MutableVertexPropertyMap } from './graph';
-import { DescriptorBlockData, DescriptorData, DescriptorDB, DescriptorSetData, LayoutGraph, LayoutGraphData, LayoutGraphDataValue, LayoutGraphValue, PipelineLayoutData, RenderPassType, RenderPhase, RenderPhaseData, RenderStageData, ShaderProgramData } from './layout-graph';
+import {
+    Descriptor,
+    DescriptorBlock,
+    DescriptorBlockData,
+    DescriptorBlockFlattened,
+    DescriptorBlockIndex,
+    DescriptorData, DescriptorDB, DescriptorSetData,
+    DescriptorTypeOrder,
+    LayoutGraph, LayoutGraphData, LayoutGraphDataValue, LayoutGraphValue,
+    PipelineLayoutData, RenderPassType, RenderPhase, RenderPhaseData,
+    RenderStageData, ShaderProgramData,
+} from './layout-graph';
+import { getDescriptorTypeOrderName } from './layout-graph-names';
 import { ENABLE_SUBPASS, getOrCreateDescriptorID, sortDescriptorBlocks } from './layout-graph-utils';
-import { UpdateFrequency, Descriptor, DescriptorBlock, DescriptorBlockFlattened, DescriptorBlockIndex, DescriptorTypeOrder, ParameterType } from './types';
-import { getUpdateFrequencyName, getDescriptorTypeOrderName } from './types-names';
+import {
+    ParameterType, UpdateFrequency,
+} from './types';
+import { getUpdateFrequencyName } from './types-names';
 
 export function getLayoutGraphDataVersion (): number {
-    return 1;
+    return 0;
 }
 
 // get name of gfx.Type

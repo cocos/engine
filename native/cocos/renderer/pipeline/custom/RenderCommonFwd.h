@@ -65,15 +65,6 @@ enum class ClearValueType;
 
 struct LightInfo;
 
-enum class DescriptorTypeOrder;
-
-struct Descriptor;
-struct DescriptorBlock;
-struct DescriptorBlockFlattened;
-struct DescriptorBlockIndex;
-struct DescriptorGroupBlockIndex;
-struct DescriptorGroupBlock;
-
 enum class ResolveFlags : uint32_t;
 
 struct ResolvePair;
