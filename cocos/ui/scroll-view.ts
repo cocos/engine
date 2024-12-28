@@ -1006,7 +1006,7 @@ export class ScrollView extends ViewGroup {
         // eslint-disable-next-line @typescript-eslint/no-this-alias
         const self = this;
 
-        if (self.enabledInHierarchy) {
+        if (!self.enabledInHierarchy) {
             return;
         }
 
