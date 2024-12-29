@@ -180,20 +180,22 @@ export class WebGL2Swapchain extends Swapchain {
     private _blitManager: IWebGL2BlitManager | null = null;
 
     public initialize (info: Readonly<SwapchainInfo>): void {
-        this._canvas = info.windowHandle;
+        const self = this;
+        self._canvas = info.windowHandle;
 
-        this._webGL2ContextLostHandler = this._onWebGLContextLost.bind(this);
-        this._canvas.addEventListener(eventWebGLContextLost, this._onWebGLContextLost);
+        self._webGL2ContextLostHandler = self._onWebGLContextLost.bind(self);
+        self._canvas.addEventListener(eventWebGLContextLost, self._onWebGLContextLost);
 
-        const gl = WebGL2DeviceManager.instance.gl;
+        const { instance } = WebGL2DeviceManager;
+        const { gl, capabilities } = instance;
 
-        this.stateCache.initialize(
-            WebGL2DeviceManager.instance.capabilities.maxTextureUnits,
-            WebGL2DeviceManager.instance.capabilities.maxUniformBufferBindings,
-            WebGL2DeviceManager.instance.capabilities.maxVertexAttributes,
+        self.stateCache.initialize(
+            capabilities.maxTextureUnits,
+            capabilities.maxUniformBufferBindings,
+            capabilities.maxVertexAttributes,
         );
 
-        this._extensions = getExtensions(gl);
+        self._extensions = getExtensions(gl);
 
         // init states
         initStates(gl);
@@ -207,24 +209,24 @@ export class WebGL2Swapchain extends Swapchain {
         if (depthBits && stencilBits) depthStencilFmt = Format.DEPTH_STENCIL;
         else if (depthBits) depthStencilFmt = Format.DEPTH;
 
-        this._colorTexture = new WebGL2Texture();
-        this._colorTexture.initAsSwapchainTexture({
-            swapchain: this,
+        self._colorTexture = new WebGL2Texture();
+        self._colorTexture.initAsSwapchainTexture({
+            swapchain: self,
             format: colorFmt,
             width: info.width,
             height: info.height,
         });
 
-        this._depthStencilTexture = new WebGL2Texture();
-        this._depthStencilTexture.initAsSwapchainTexture({
-            swapchain: this,
+        self._depthStencilTexture = new WebGL2Texture();
+        self._depthStencilTexture.initAsSwapchainTexture({
+            swapchain: self,
             format: depthStencilFmt,
             width: info.width,
             height: info.height,
         });
 
         // create default null texture
-        this.nullTex2D = WebGL2DeviceManager.instance.createTexture(new TextureInfo(
+        self.nullTex2D = instance.createTexture(new TextureInfo(
             TextureType.TEX2D,
             TextureUsageBit.SAMPLED,
             Format.RGBA8,
@@ -233,7 +235,7 @@ export class WebGL2Swapchain extends Swapchain {
             TextureFlagBit.NONE,
         )) as WebGL2Texture;
 
-        this.nullTexCube = WebGL2DeviceManager.instance.createTexture(new TextureInfo(
+        self.nullTexCube = instance.createTexture(new TextureInfo(
             TextureType.CUBE,
             TextureUsageBit.SAMPLED,
             Format.RGBA8,
@@ -247,52 +249,54 @@ export class WebGL2Swapchain extends Swapchain {
         nullTexRegion.texExtent.width = 2;
         nullTexRegion.texExtent.height = 2;
 
-        const nullTexBuff = new Uint8Array(this.nullTex2D.size);
+        const nullTexBuff = new Uint8Array(self.nullTex2D.size);
         nullTexBuff.fill(0);
-        WebGL2DeviceManager.instance.copyBuffersToTexture([nullTexBuff], this.nullTex2D, [nullTexRegion]);
+        instance.copyBuffersToTexture([nullTexBuff], self.nullTex2D, [nullTexRegion]);
 
         nullTexRegion.texSubres.layerCount = 6;
-        WebGL2DeviceManager.instance.copyBuffersToTexture(
+        instance.copyBuffersToTexture(
             [nullTexBuff, nullTexBuff, nullTexBuff, nullTexBuff, nullTexBuff, nullTexBuff],
-            this.nullTexCube,
+            self.nullTexCube,
             [nullTexRegion],
         );
 
-        this._blitManager = new IWebGL2BlitManager();
+        self._blitManager = new IWebGL2BlitManager();
     }
 
     public destroy (): void {
-        if (this._canvas && this._webGL2ContextLostHandler) {
-            this._canvas.removeEventListener(eventWebGLContextLost, this._webGL2ContextLostHandler);
-            this._webGL2ContextLostHandler = null;
+        const self = this;
+        if (self._canvas && self._webGL2ContextLostHandler) {
+            self._canvas.removeEventListener(eventWebGLContextLost, self._webGL2ContextLostHandler);
+            self._webGL2ContextLostHandler = null;
         }
 
-        if (this.nullTex2D) {
-            this.nullTex2D.destroy();
-            this.nullTex2D = null!;
+        if (self.nullTex2D) {
+            self.nullTex2D.destroy();
+            self.nullTex2D = null!;
         }
 
-        if (this.nullTexCube) {
-            this.nullTexCube.destroy();
-            this.nullTexCube = null!;
+        if (self.nullTexCube) {
+            self.nullTexCube.destroy();
+            self.nullTexCube = null!;
         }
 
-        if (this._blitManager) {
-            this._blitManager.destroy();
-            this._blitManager = null;
+        if (self._blitManager) {
+            self._blitManager.destroy();
+            self._blitManager = null;
         }
 
-        this._extensions = null;
-        this._canvas = null;
+        self._extensions = null;
+        self._canvas = null;
     }
 
     public resize (width: number, height: number, surfaceTransform: SurfaceTransform): void {
-        if (this._colorTexture.width !== width || this._colorTexture.height !== height) {
+        const self = this;
+        if (self._colorTexture.width !== width || self._colorTexture.height !== height) {
             debug(`Resizing swapchain: ${width}x${height}`);
-            this._canvas!.width = width;
-            this._canvas!.height = height;
-            this._colorTexture.resize(width, height);
-            this._depthStencilTexture.resize(width, height);
+            self._canvas!.width = width;
+            self._canvas!.height = height;
+            self._colorTexture.resize(width, height);
+            self._depthStencilTexture.resize(width, height);
         }
     }
 
