@@ -555,13 +555,13 @@ export class Color extends ValueType implements Modifiable {
      * ```
      */
     public toHEX (fmt: '#rgb' | '#rrggbb' | '#rrggbbaa' = '#rrggbb'): string {
-        const data = this._data;
+        const thisData = this._data;
         const prefix = '0';
         // #rrggbb
         const hex = [
-            (data[R_INDEX] < 16 ? prefix : '') + (data[R_INDEX]).toString(16),
-            (data[G_INDEX] < 16 ? prefix : '') + (data[G_INDEX]).toString(16),
-            (data[B_INDEX] < 16 ? prefix : '') + (data[B_INDEX]).toString(16),
+            (thisData[R_INDEX] < 16 ? prefix : '') + (thisData[R_INDEX]).toString(16),
+            (thisData[G_INDEX] < 16 ? prefix : '') + (thisData[G_INDEX]).toString(16),
+            (thisData[B_INDEX] < 16 ? prefix : '') + (thisData[B_INDEX]).toString(16),
         ];
         const i = -1;
         if (fmt === '#rgb') {
@@ -569,7 +569,7 @@ export class Color extends ValueType implements Modifiable {
             hex[1] = hex[1][0];
             hex[2] = hex[2][0];
         } else if (fmt === '#rrggbbaa') {
-            hex.push((data[A_INDEX] < 16 ? prefix : '') + (data[A_INDEX]).toString(16));
+            hex.push((thisData[A_INDEX] < 16 ? prefix : '') + (thisData[A_INDEX]).toString(16));
         }
         return hex.join('');
     }
