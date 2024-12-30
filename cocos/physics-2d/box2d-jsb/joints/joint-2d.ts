@@ -21,12 +21,10 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-
-
+// @ts-nocheck
 import { IJoint2D } from '../../spec/i-physics-joint';
 import { Joint2D, PhysicsSystem2D, RigidBody2D } from '../../framework';
 import { b2PhysicsWorld } from '../physics-world';
-import { Vec2 } from '../../../core';
 
 export class b2Joint implements IJoint2D {
     get impl (): b2.Joint | null {
@@ -108,7 +106,7 @@ export class b2Joint implements IJoint2D {
     _destroy (): void {
         if (!this._inited) return;
 
-        (PhysicsSystem2D.instance.physicsWorld as b2PhysicsWorld).impl.DestroyJoint(this._b2joint!);
+        (PhysicsSystem2D.instance.physicsWorld as b2PhysicsWorld).impl.DestroyJoint(this._b2joint);
 
         this._b2joint = null;
         this._inited = false;

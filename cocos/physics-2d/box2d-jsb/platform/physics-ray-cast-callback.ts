@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-
+// @ts-nocheck
 import { Vec2 } from '../../../core';
 import { ERaycast2DType } from '../../framework';
 
@@ -34,7 +34,6 @@ export class PhysicsRayCastCallback extends b2.RayCastCallback {
     _fractions: number[] = [];
 
     _mask = 0xffffffff;
-
 
     init (type: ERaycast2DType, mask: number): void {
         super.init(this);

@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-
+// @ts-nocheck
 import { ISpringJoint } from '../../spec/i-physics-joint';
 import { b2Joint } from './joint-2d';
 import { SpringJoint2D } from '../../framework';

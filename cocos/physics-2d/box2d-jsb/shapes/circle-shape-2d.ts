@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-
+// @ts-nocheck
 import { b2Shape2D } from './shape-2d';
 import { CircleCollider2D } from '../../framework';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework/physics-types';

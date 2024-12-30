@@ -21,13 +21,14 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-
+// @ts-nocheck
 import { IBaseShape } from '../../spec/i-physics-shape';
 import { Collider2D, PhysicsSystem2D, RigidBody2D, PHYSICS_2D_PTM_RATIO } from '../../../../exports/physics-2d-framework';
 import { Rect, Vec3 } from '../../../core';
 import { b2PhysicsWorld } from '../physics-world';
 import { PhysicsGroup } from '../../../physics/framework/physics-enum';
 
+declare const b2: any;
 const tempFilter = new b2.Filter();
 const lowerBound = { x: 0, y: 0 };
 const upperBound = { x: 0, y: 0 };

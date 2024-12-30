@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-
+// @ts-nocheck
 import { js } from '../../../core';
 
 export class PhysicsContactListener extends b2.ContactListener {

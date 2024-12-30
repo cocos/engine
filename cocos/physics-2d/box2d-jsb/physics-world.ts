@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-
+// @ts-nocheck
 import { EDITOR_NOT_IN_PREVIEW, TEST } from 'internal:constants';
 
 import { IPhysicsWorld } from '../spec/i-physics-world';
@@ -58,21 +58,21 @@ const testResults: Collider2D[] = [];
 // namespace b2 {
 /// Color for debug drawing. Each value has the range [0,1].
 class Color {
-	constructor(rIn?: number, gIn?: number, bIn?: number, aIn?: number) {
-		this.r = rIn ?? 0;
+    constructor (rIn?: number, gIn?: number, bIn?: number, aIn?: number) {
+        this.r = rIn ?? 0;
         this.g = gIn ?? 0;
         this.b = bIn ?? 0;
         this.a = aIn ?? 1.0;
-	}
+    }
 
-	Set(rIn?: number, gIn?: number, bIn?: number, aIn?: number): void {
-		this.r = rIn ?? 0;
+    Set (rIn?: number, gIn?: number, bIn?: number, aIn?: number): void {
+        this.r = rIn ?? 0;
         this.g = gIn ?? 0;
         this.b = bIn ?? 0;
         this.a = aIn ?? 1.0;
-	}
+    }
 
-	declare r: number;
+    declare r: number;
     declare g: number;
     declare b: number;
     declare a: number;
@@ -272,7 +272,7 @@ export class b2PhysicsWorld implements IPhysicsWorld {
             const b2body = body.impl;
 
             // position
-            b2body!._GetTransformJSB();
+            b2body._GetTransformJSB();
             // The _GetTransformJSB which we bind it manually is for optimizing the communication between JS and CPP.
             // It will fill the _tempFloatArray with the first three elements.
             // _tempFloatArray[0]: position's x

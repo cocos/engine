@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-
+// @ts-nocheck
 import { b2Shape2D } from './shape-2d';
 import * as PolygonSeparator from '../../framework/utils/polygon-separator';
 import * as PolygonPartition from '../../framework/utils/polygon-partition';

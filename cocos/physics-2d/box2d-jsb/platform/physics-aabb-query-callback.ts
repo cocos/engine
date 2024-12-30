@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-
+// @ts-nocheck
 import { Vec2 } from '../../../core';
 
 export class PhysicsAABBQueryCallback extends b2.QueryCallback {

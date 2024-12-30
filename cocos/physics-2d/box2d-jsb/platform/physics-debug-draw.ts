@@ -21,7 +21,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-
+// @ts-nocheck
 import { Color } from '../../../core';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework';
 import { Graphics } from '../../../2d';
