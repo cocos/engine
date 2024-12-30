@@ -823,9 +823,7 @@ export class SpriteFrame extends Asset {
 
         if (info) {
             if (info.texture) {
-                self._rect.x = self._rect.y = 0;
-                self._rect.width = info.texture.width;
-                self._rect.height = info.texture.height;
+                self._rect.set(0, 0, info.texture.width, info.texture.height);
                 self._refreshTexture(info.texture);
                 self.checkRect(self._texture);
             }
