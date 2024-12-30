@@ -54,7 +54,7 @@ export class WebGLTexture extends Texture {
             texInfo = viewInfo.texture.info;
             self._isTextureView = true;
         }
-        const thisTextureInfo = this._info;
+        const thisTextureInfo = self._info;
         thisTextureInfo.copy(texInfo);
 
         const thisViewInfo = self._viewInfo;
