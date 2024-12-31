@@ -53,10 +53,10 @@ Mesh *MeshUtils::createMesh(const IGeometry &geometry, Mesh *out /*= nullptr*/, 
     return out;
 }
 
-Mesh::ICreateInfo MeshUtils::createMeshInfo(const IGeometry &geometry, const ccstd::optional<ICreateMeshOptions> &options_ /* = {} */) {
+Mesh::ICreateInfo MeshUtils::createMeshInfo(const IGeometry &geometry, const ccstd::optional<ICreateMeshOptions> &aOptions /* = {} */) {
     ICreateMeshOptions options;
-    if (options_.has_value()) {
-        options = options_.value();
+    if (aOptions.has_value()) {
+        options = aOptions.value();
     }
     // Collect attributes and calculate length of result vertex buffer.
     gfx::AttributeList attributes;
@@ -301,10 +301,10 @@ Mesh *MeshUtils::createDynamicMesh(index_t primitiveIndex, const IDynamicGeometr
     return out;
 }
 
-Mesh::ICreateInfo MeshUtils::createDynamicMeshInfo(const IDynamicGeometry &geometry, const ccstd::optional<ICreateDynamicMeshOptions> &options_ /* = {} */) {
+Mesh::ICreateInfo MeshUtils::createDynamicMeshInfo(const IDynamicGeometry &geometry, const ccstd::optional<ICreateDynamicMeshOptions> &aOptions /* = {} */) {
     ICreateDynamicMeshOptions options;
-    if (options_.has_value()) {
-        options = options_.value();
+    if (aOptions.has_value()) {
+        options = aOptions.value();
     }
     
     gfx::AttributeList attributes;
