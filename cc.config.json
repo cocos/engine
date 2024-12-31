@@ -561,7 +561,7 @@
             "internal": false
         },
         "HONOR": {
-            "comment": "Running in the linksure's quick game.",
+            "comment": "Running in the honor's quick game.",
             "type": "boolean",
             "value": false,
             "ccGlobal": true,
