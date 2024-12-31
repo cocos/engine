@@ -560,6 +560,13 @@
             "ccGlobal": true,
             "internal": false
         },
+        "HONOR": {
+            "comment": "Running in the linksure's quick game.",
+            "type": "boolean",
+            "value": false,
+            "ccGlobal": true,
+            "internal": false
+        },
 
         "EDITOR": {
             "comment": "Running in the editor.",
@@ -635,7 +642,7 @@
         "RUNTIME_BASED": {
             "comment": "Running in runtime based environment.",
             "type": "boolean",
-            "value": "$OPPO || $VIVO || $HUAWEI || $COCOSPLAY || $QTT || $LINKSURE",
+            "value": "$OPPO || $VIVO || $HUAWEI || $COCOSPLAY || $QTT || $LINKSURE || $HONOR",
             "ccGlobal": true,
             "internal": false
         },
