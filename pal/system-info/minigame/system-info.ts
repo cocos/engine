@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-import { ALIPAY, BAIDU, BYTEDANCE, COCOSPLAY, HUAWEI, LINKSURE, OPPO, QTT, VIVO, WECHAT, XIAOMI, DEBUG, TEST, TAOBAO, TAOBAO_MINIGAME, WECHAT_MINI_PROGRAM } from 'internal:constants';
+import { ALIPAY, BAIDU, BYTEDANCE, COCOSPLAY, HUAWEI, LINKSURE, OPPO, QTT, VIVO, HONOR, WECHAT, XIAOMI, DEBUG, TEST, TAOBAO, TAOBAO_MINIGAME, WECHAT_MINI_PROGRAM } from 'internal:constants';
 import { minigame } from 'pal/minigame';
 import { IFeatureMap } from 'pal/system-info';
 import { EventTarget } from '../../../cocos/core/event';
@@ -60,6 +60,8 @@ if (WECHAT) {
     currentPlatform = Platform.LINKSURE_MINI_GAME;
 } else if (QTT) {
     currentPlatform = Platform.QTT_MINI_GAME;
+} else if (HONOR) {
+    currentPlatform = Platform.HONOR_MINI_GAME;
 }
 
 let isVersionGreaterOrEqualTo;
