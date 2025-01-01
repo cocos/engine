@@ -1,7 +1,7 @@
 MIT License
 
 Copyright (c) 2013-2016 Chukong Technologies Inc.
-Copyright (c) 2017-2023 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2017-2025 Xiamen Yaji Software Co., Ltd.
 
 http://www.cocos.com
 
