@@ -237,7 +237,7 @@ public:
                     controllerEvent = true;
                 } else {
                     // Didn't belong to a game controller, process it ourselves if it is a touch event
-                    bool isMouseEvent = motionEvent->pointerCount > 0 && (motionEvent->pointers[0].toolType == AMOTION_EVENT_TOOL_TYPE_STYLUS || motionEvent->pointers[0].toolType == AMOTION_EVENT_TOOL_TYPE_MOUSE);
+                    bool isMouseEvent = motionEvent->pointerCount > 0 && motionEvent->pointers[0].toolType == AMOTION_EVENT_TOOL_TYPE_MOUSE;
                     if (isMouseEvent) {
                         cookGameActivityMouseEvent(motionEvent);
                     } else {
