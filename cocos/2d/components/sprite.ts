@@ -27,7 +27,7 @@ import { ccclass, help, executionOrder, menu, tooltip, displayOrder, type, range
 import { BUILD, EDITOR } from 'internal:constants';
 import { SpriteAtlas } from '../assets/sprite-atlas';
 import { SpriteFrame, SpriteFrameEvent } from '../assets/sprite-frame';
-import { Vec2, cclegacy, ccenum, clamp, warnID, warn } from '../../core';
+import { Vec2, cclegacy, ccenum, clamp, warnID } from '../../core';
 import { IBatcher } from '../renderer/i-batcher';
 import { UIRenderer, InstanceMaterialType } from '../framework/ui-renderer';
 import { PixelFormat } from '../../asset/assets/asset-enum';
