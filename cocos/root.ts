@@ -350,7 +350,9 @@ export class Root {
      * @param windowId The system window ID, optional for now.
      */
     public resize (width: number, height: number, windowId?: number): void {
-        for (const window of this._windows) {
+        const allWindows = this._windows;
+        for (let i = 0; i < allWindows.length; i++) {
+            const window = allWindows[i];
             if (window.swapchain) {
                 window.resize(width, height);
             }
