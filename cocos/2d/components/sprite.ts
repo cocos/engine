@@ -27,14 +27,13 @@ import { ccclass, help, executionOrder, menu, tooltip, displayOrder, type, range
 import { BUILD, EDITOR } from 'internal:constants';
 import { SpriteAtlas } from '../assets/sprite-atlas';
 import { SpriteFrame, SpriteFrameEvent } from '../assets/sprite-frame';
-import { Vec2, cclegacy, ccenum, clamp, warnID, error } from '../../core';
+import { Vec2, cclegacy, ccenum, clamp, warnID, warn } from '../../core';
 import { IBatcher } from '../renderer/i-batcher';
 import { UIRenderer, InstanceMaterialType } from '../framework/ui-renderer';
 import { PixelFormat } from '../../asset/assets/asset-enum';
 import { TextureBase } from '../../asset/assets/texture-base';
 import { Material, RenderTexture } from '../../asset/assets';
 import { NodeEventType } from '../../scene-graph/node-event';
-import assetManager from '../../asset/asset-manager/asset-manager';
 
 /**
  * @en
@@ -488,7 +487,6 @@ export class Sprite extends UIRenderer {
 
         if (EDITOR) {
             this._resized();
-            this._applyAtlas(this._spriteFrame);
             this.node.on(NodeEventType.SIZE_CHANGED, this._resized, this);
         }
     }
@@ -716,32 +714,6 @@ export class Sprite extends UIRenderer {
             if (self._type === SpriteType.SLICED) {
                 spriteFrame.on(SpriteFrameEvent.UV_UPDATED, self._updateUVs, self);
             }
-        }
-
-        if (EDITOR) {
-            self._applyAtlas(spriteFrame);
-        }
-    }
-
-    private _applyAtlas (spriteFrame: SpriteFrame | null): void {
-        if (!EDITOR) return;
-
-        if (!spriteFrame) return;
-
-        if (spriteFrame.atlasUuid.length === 0) {
-            this.spriteAtlas = null;
-            return;
-        }
-
-        if (!this.spriteAtlas || this.spriteAtlas.uuid !== spriteFrame.atlasUuid) {
-            assetManager.loadAny(spriteFrame.atlasUuid, (err: Error, asset: SpriteAtlas) => {
-                if (err) {
-                    this.spriteAtlas = null;
-                    error(err);
-                } else {
-                    this.spriteAtlas = asset;
-                }
-            });
         }
     }
 }
