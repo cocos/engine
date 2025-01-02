@@ -773,8 +773,10 @@ export class Skeleton extends UIRenderer {
         this._textures = skeletonData.textures;
 
         this._refreshInspector();
-        /* When adding a prefab asset to the node tree, the animation settings are applied before the skin settings.
-           This causes the animation to not be set correctly, as the animation depends on the skin.  */
+        /* The animation must be configured after the skin because the animation depends on the skin.
+           If the animation is set before the skin,
+           it will cause rendering issues when a prefab with Spine assets is added to the scene node tree.
+        */
         if (this.defaultSkin && this.defaultSkin !== '') this.setSkin(this.defaultSkin);
         if (this.defaultAnimation) this.animation = this.defaultAnimation.toString();
         this._updateUseTint();
