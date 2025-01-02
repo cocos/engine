@@ -773,8 +773,8 @@ export class Skeleton extends UIRenderer {
         this._textures = skeletonData.textures;
 
         this._refreshInspector();
-        if (this.defaultAnimation) this.animation = this.defaultAnimation.toString();
         if (this.defaultSkin && this.defaultSkin !== '') this.setSkin(this.defaultSkin);
+        if (this.defaultAnimation) this.animation = this.defaultAnimation.toString();
         this._updateUseTint();
         this._indexBoneSockets();
         this._updateSocketBindings();
