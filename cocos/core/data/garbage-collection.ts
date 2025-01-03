@@ -69,6 +69,7 @@ class GarbageCollectionManager {
     }
 
     private finalizationRegistryCallback (token: any): void {
+        if (!EDITOR) return;
         const gcObject = this._gcObjects.get(token);
         if (gcObject) {
             this._gcObjects.delete(token);
