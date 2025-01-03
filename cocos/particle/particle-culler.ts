@@ -55,7 +55,7 @@ export class ParticleCuller {
     private _particlesAll: Particle[];
     private _updateList: Map<string, IParticleModule> = new Map<string, IParticleModule>();
     private _animateList: Map<string, IParticleModule> = new Map<string, IParticleModule>();
-    private _runAnimateList: IParticleModule[] = new Array<IParticleModule>();
+    private _runAnimateList: IParticleModule[] = [];
     private _localMat: Mat4 = new Mat4();
     private _gravity: Vec4 = new Vec4();
 

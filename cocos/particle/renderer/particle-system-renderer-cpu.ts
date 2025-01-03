@@ -168,7 +168,7 @@ export default class ParticleSystemRendererCPU extends ParticleSystemRendererBas
     private _defaultTrailMat: Material | null = null;
     private _updateList: Map<string, IParticleModule> = new Map<string, IParticleModule>();
     private _animateList: Map<string, IParticleModule> = new Map<string, IParticleModule>();
-    private _runAnimateList: IParticleModule[] = new Array<IParticleModule>();
+    private _runAnimateList: IParticleModule[] = [];
     private _fillDataFunc: ((p: Particle, idx: number, fi: number) => void) | null = null;
     private _uScaleHandle = 0;
     private _uLenHandle = 0;

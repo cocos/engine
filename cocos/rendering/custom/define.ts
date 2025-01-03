@@ -288,8 +288,8 @@ export function buildReflectionProbePass (
 
 export class ShadowInfo {
     shadowEnabled = false;
-    mainLightShadowNames = new Array<string>();
-    spotLightShadowNames = new Array<string>();
+    mainLightShadowNames: string[] = [];
+    spotLightShadowNames: string[] = [];
     validLights: Light[] = [];
     reset (): void {
         this.shadowEnabled = false;

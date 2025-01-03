@@ -911,7 +911,7 @@ class LodStateCache {
       * @zh 上一帧添加的lodgroup
       * @en The lodgroup added in the previous frame.
       */
-    private _newAddedLodGroupVec: Array<LODGroup> = new Array<LODGroup>();
+    private _newAddedLodGroupVec: Array<LODGroup> = [];
 
     private _levelModels: Map<LODGroup, Map<number, Array<Model>>> = new Map<LODGroup, Map<number, Array<Model>>>();
 }
