@@ -713,21 +713,22 @@ class LodStateCache {
                 levelModels = new Map<number, Array<Model>>();
                 this._levelModels.set(addedLodGroup, levelModels);
             }
-            for (let index = 0; index < addedLodGroup.lodCount; index++) {
-                let lodModels = levelModels.get(index);
+            for (let i = 0; i < addedLodGroup.lodCount; i++) {
+                let lodModels = levelModels.get(i);
                 if (!lodModels) {
                     lodModels = [] as Model[];
                 }
-                const lod = addedLodGroup.lodDataArray[index];
-                lod.models.forEach((model): void => {
+                const models = addedLodGroup.lodDataArray[i].models;
+                for (let j = 0; j < models.length; j++) {
+                    const model = models[j];
                     let modelInfo = this._modelsInLODGroup.get(model);
                     if (!modelInfo) {
                         modelInfo = new Map<Camera, boolean>();
                     }
                     this._modelsInLODGroup.set(model, modelInfo);
                     lodModels.push(model);
-                });
-                levelModels.set(index, lodModels);
+                }
+                levelModels.set(i, lodModels);
             }
         });
         this._newAddedLodGroupVec.length = 0;
