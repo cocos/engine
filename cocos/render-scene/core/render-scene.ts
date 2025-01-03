@@ -716,7 +716,7 @@ class LodStateCache {
             for (let index = 0; index < addedLodGroup.lodCount; index++) {
                 let lodModels = levelModels.get(index);
                 if (!lodModels) {
-                    lodModels = [];
+                    lodModels = [] as Model[];
                 }
                 const lod = addedLodGroup.lodDataArray[index];
                 lod.models.forEach((model): void => {
