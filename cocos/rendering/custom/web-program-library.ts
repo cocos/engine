@@ -557,7 +557,7 @@ export function makeShaderInfo (
     const descriptorSets: Array<DescriptorSetLayoutData | null> = [null, null, null, null];
     let fixedInstanceDescriptorSetLayout: IDescriptorSetLayoutInfo | null = null;
     const shaderInfo = new ShaderInfo();
-    const blockSizes = new Array<number>();
+    const blockSizes: number[] = [];
     { // pass
         const passLayout = passLayouts.descriptorSets.get(UpdateFrequency.PER_PASS);
         if (passLayout) {
@@ -1015,10 +1015,10 @@ export class WebProgramLibrary implements ProgramLibrary {
                 // handle map
                 const handleMap = genHandles(shaderInfo);
                 // attributes
-                const attributes = new Array<Attribute>();
-                for (const attr of programInfo.attributes) {
+                const attributes: Attribute[] = [];
+                programInfo.attributes.forEach((attr) => {
                     attributes.push(new Attribute(attr.name, attr.format, attr.isNormalized, 0, attr.isInstanced, attr.location));
-                }
+                });
                 // create programInfo
                 const info = new ProgramInfo(programInfo, shaderInfo, attributes, blockSizes, handleMap);
                 phasePrograms.set(srcShaderInfo.name, info);
