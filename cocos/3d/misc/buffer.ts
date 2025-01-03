@@ -58,8 +58,12 @@ export function writeBuffer (target: DataView, data: number[], format: Format = 
     }
 }
 export function readBuffer (
-    target: DataView, format: Format = Format.R32F, offset = 0,
-    length: number = target.byteLength - offset, stride = 0, out: number[] = [],
+    target: DataView,
+    format: Format = Format.R32F,
+    offset = 0,
+    length: number = target.byteLength - offset,
+    stride = 0,
+    out: number[] = [],
 ): number[] {
     const info = FormatInfos[format];
     if (!stride) { stride = info.size; }
@@ -78,8 +82,13 @@ export function readBuffer (
     return out;
 }
 export function mapBuffer (
-    target: DataView, callback: (cur: number, idx: number, view: DataView) => number, format: Format = Format.R32F,
-    offset = 0, length: number = target.byteLength - offset, stride = 0, out?: DataView,
+    target: DataView,
+    callback: (cur: number, idx: number, view: DataView) => number,
+    format: Format = Format.R32F,
+    offset = 0,
+    length: number = target.byteLength - offset,
+    stride = 0,
+    out?: DataView,
 ): DataView {
     if (!out) { out = new DataView(target.buffer.slice(target.byteOffset, target.byteOffset + target.byteLength)); }
     const info = FormatInfos[format];
