@@ -1033,9 +1033,9 @@ export class ParticleSystem extends ModelRenderer {
         this._emitRateDistanceCounter = 0.0;
         this._resetPosition();
 
-        for (const burst of this.bursts) {
+        this.bursts.forEach((burst) => {
             burst.reset();
-        }
+        });
     }
 
     /**

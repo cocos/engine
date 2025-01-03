@@ -39,9 +39,9 @@ const NORMALIZE_RE = /[^\.\/]+\/\.\.\//;
  */
 export function join (...segments: string[]): string {
     let result = '';
-    for (const segment of segments) {
+    segments.forEach((segment) => {
         result = (result + (result === '' ? '' : '/') + segment).replace(/(\/|\\\\)$/, '');
-    }
+    });
     return result;
 }
 

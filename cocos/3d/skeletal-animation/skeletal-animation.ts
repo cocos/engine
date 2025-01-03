@@ -237,7 +237,7 @@ export class SkeletalAnimation extends Animation {
      * @zh 重建动画并立即同步所有挂点的转换矩阵到它们的目标节点上。
      */
     public rebuildSocketAnimations (): void {
-        for (const socket of this._sockets) {
+        this._sockets.forEach((socket) => {
             const joint = this.node.getChildByPath(socket.path);
             const { target } = socket;
             if (joint && target) {
@@ -247,8 +247,8 @@ export class SkeletalAnimation extends Animation {
                 Mat4.fromRTS(m4_2, target.rotation, target.position, target.scale);
                 if (!Mat4.equals(m4_2, m4_1)) { target.matrix = m4_1; }
             }
-        }
-        for (const stateName of Object.keys(this._nameToState)) {
+        });
+        for (const stateName in this._nameToState) {
             const state = this._nameToState[stateName] as SkeletalAnimationState;
             state.rebuildSocketCurves(this._sockets);
         }

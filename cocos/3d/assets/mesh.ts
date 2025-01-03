@@ -658,13 +658,13 @@ export class Mesh extends Asset {
 
             const subMin = new Vec3();
             const subMax = new Vec3();
-            for (const bound of dynamic.bounds) {
+            dynamic.bounds.forEach((bound) => {
                 if (bound) {
                     bound.getBoundary(subMin, subMax);
                     Vec3.min(minPos, subMin, minPos);
                     Vec3.max(maxPos, subMax, maxPos);
                 }
-            }
+            });
 
             this._struct.minPosition = new Vec3(minPos.x, minPos.y, minPos.z);
             this._struct.maxPosition = new Vec3(maxPos.x, maxPos.y, maxPos.z);
@@ -1311,8 +1311,9 @@ export class Mesh extends Asset {
         if (primitiveIndex >= this._struct.primitives.length) {
             return;
         }
-        const primitive = this._struct.primitives[primitiveIndex];
-        for (const vertexBundleIndex of primitive.vertexBundelIndices) {
+        const vertexBundelIndices = this._struct.primitives[primitiveIndex].vertexBundelIndices;
+        for (let i = 0; i < vertexBundelIndices.length; i++) {
+            const vertexBundleIndex = vertexBundelIndices[i];
             const vertexBundle = this._struct.vertexBundles[vertexBundleIndex];
             const iAttribute = vertexBundle.attributes.findIndex((a) => a.name === (attributeName as string));
             if (iAttribute < 0) {

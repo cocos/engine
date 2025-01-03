@@ -154,9 +154,9 @@ export function createMesh (geometry: IGeometry, out?: Mesh, options?: ICreateMe
     // Fill vertex buffer.
     const vertexBuffer = new ArrayBuffer(vertCount * stride);
     const vertexBufferView = new DataView(vertexBuffer);
-    for (const channel of channels) {
+    channels.forEach((channel) => {
         writeBuffer(vertexBufferView, channel.data, channel.attribute.format, channel.offset, stride);
-    }
+    });
     bufferBlob.setNextAlignment(0);
     const vertexBundle: Mesh.IVertexBundle = {
         attributes,

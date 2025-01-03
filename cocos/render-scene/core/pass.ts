@@ -475,11 +475,11 @@ export class Pass {
     public resetTextures (): void {
         if (cclegacy.rendering) {
             const set = this._shaderInfo.descriptors[SetIndex.MATERIAL];
-            for (const combined of set.samplerTextures) {
+            set.samplerTextures.forEach((combined) => {
                 for (let j = 0; j < combined.count; ++j) {
                     this.resetTexture(combined.name, j);
                 }
-            }
+            });
         } else {
             for (let i = 0; i < this._shaderInfo.samplerTextures.length; i++) {
                 const u = this._shaderInfo.samplerTextures[i];

@@ -184,9 +184,9 @@ export class WebGL2Device extends Device {
         const extensions = gl.getSupportedExtensions();
         let extStr = '';
         if (extensions) {
-            for (const ext of extensions) {
+            extensions.forEach((ext) => {
                 extStr += `${ext} `;
-            }
+            });
         }
 
         const exts = getExtensions(gl);
