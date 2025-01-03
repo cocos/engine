@@ -38,6 +38,8 @@ class CallbackInfo {
     public target: unknown = undefined;
     public once = false;
 
+    constructor () {}
+
     public set (callback: AnyFunction, target?: unknown, once?: boolean): void {
         this.callback = callback || empty;
         this.target = target;
@@ -69,6 +71,8 @@ export class CallbackList {
     public callbackInfos: Array<CallbackInfo | null> = [];
     public isInvoking = false;
     public containCanceled = false;
+
+    constructor () {}
 
     /**
      * @zh 从列表中移除与指定目标相同回调函数的事件。
@@ -185,6 +189,8 @@ export class CallbacksInvoker<EventTypeClass extends EventType = EventType> {
      */
     public _callbackTable: ICallbackTable = createMap(true);
     private _offCallback?: () => void;
+
+    constructor () {}
 
     /**
      * @zh 向一个事件名注册一个新的事件监听器，包含回调函数和调用者

@@ -44,6 +44,7 @@ function compareStringArray (array1: string[] | undefined, array2: string[] | un
 
 @ccclass('cc.TargetInfo')
 export class TargetInfo {
+    constructor () {}
     // as the target's fileId in prefab asset,used to find the target when prefab expanded.
     @serializable
     @type([CCString])
@@ -51,6 +52,8 @@ export class TargetInfo {
 }
 @ccclass('cc.TargetOverrideInfo')
 export class TargetOverrideInfo {
+    constructor () {}
+
     @serializable
     @type(CCObject)
     public source: Component | Node | null = null;
@@ -72,6 +75,8 @@ export class TargetOverrideInfo {
 
 @ccclass('cc.CompPrefabInfo')
 export class CompPrefabInfo {
+    constructor () {}
+
     // To identify current component in a prefab asset, so only needs to be unique.
     @serializable
     @editable
@@ -80,6 +85,7 @@ export class CompPrefabInfo {
 
 @ccclass('CCPropertyOverrideInfo')
 export class PropertyOverrideInfo {
+    constructor () {}
     @serializable
     @type(TargetInfo)
     public targetInfo: TargetInfo | null = null;
@@ -100,6 +106,8 @@ export class PropertyOverrideInfo {
 
 @ccclass('cc.MountedChildrenInfo')
 export class MountedChildrenInfo {
+    constructor () {}
+
     @serializable
     @type(TargetInfo)
     public targetInfo: TargetInfo | null = null;
@@ -117,6 +125,8 @@ export class MountedChildrenInfo {
 
 @ccclass('cc.MountedComponentsInfo')
 export class MountedComponentsInfo {
+    constructor () {}
+
     @serializable
     @type(TargetInfo)
     public targetInfo: TargetInfo | null = null;
@@ -138,6 +148,8 @@ export class MountedComponentsInfo {
  */
 @ccclass('cc.PrefabInstance')
 export class PrefabInstance {
+    constructor () {}
+
     // Identify current prefabInstance;
     @serializable
     public fileId = '';
@@ -205,6 +217,8 @@ export interface TargetMap { [k: string]: TargetMap | Node | Component }
 
 @ccclass('cc.PrefabInfo')
 export class PrefabInfo {
+    constructor () {}
+
     // the most top node of this prefab in the scene
     @serializable
     @type(Node)

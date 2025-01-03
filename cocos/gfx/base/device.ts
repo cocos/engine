@@ -53,6 +53,9 @@ import { Swapchain } from './swapchain';
  * @zh GFX 设备。
  */
 export abstract class Device {
+
+    constructor () {}
+
     /**
      * @en Current rendering API.
      * @zh 当前 GFX 使用的渲染 API。

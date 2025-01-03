@@ -45,6 +45,9 @@ export class CanvasPool {
         }
         return _canvasPool;
     }
+
+    private constructor () {}
+
     public pool: ISharedLabelData[] = [];
     public get (): ISharedLabelData {
         let data = this.pool.pop();

@@ -79,6 +79,7 @@ export const FOG_TYPE_NONE = FogType.LAYERED + 1;
  * @zh 渲染场景中的全局雾效配置
  */
 export class Fog {
+    constructor () {}
     /**
      * @zh 是否启用全局雾效
      * @en Enable global fog

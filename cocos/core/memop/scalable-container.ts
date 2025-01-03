@@ -51,6 +51,8 @@ class ScalableContainerManager {
      */
     public shrinkTimeSpan = 5;
 
+    constructor () {}
+
     /**
      * @en Add a ScalableContainer. Will add the same ScalableContainer instance once.
      * @param pool @en The ScalableContainer to add.

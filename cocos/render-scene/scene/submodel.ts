@@ -66,6 +66,8 @@ export class SubModel {
     protected _instancedSHIndex = -1;
     protected _useReflectionProbeType = 0;
 
+    constructor () {}
+
     /**
      * @en
      * sub model's passes

@@ -33,6 +33,9 @@ import { cclegacy } from '../../core';
  */
 @ccclass('cc.Font')
 export class Font extends Asset {
+    constructor (name = '') {
+        super(name);
+    }
 }
 
 cclegacy.Font = Font;

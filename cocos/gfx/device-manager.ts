@@ -100,6 +100,9 @@ export class DeviceManager {
     private _swapchain!: Swapchain;
     private _renderType: RenderType = RenderType.UNKNOWN;
     private _deviceInitialized = false;
+
+    constructor () {}
+
     public get gfxDevice (): Device {
         return this._gfxDevice;
     }

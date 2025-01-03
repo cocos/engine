@@ -61,6 +61,8 @@ export enum SettingsCategory {
 export class Settings {
     static Category = SettingsCategory;
 
+    constructor () {}
+
     /**
      * Initialization
      * @internal
