@@ -18,6 +18,36 @@ files.forEach(file => {
 
 console.log(`features: [ ${features.join(', ')} ]`);
 
+const mangleProperties = {
+    mangleList: [
+        'SpriteFrame._rect',
+        'SpriteFrame._trimmedBorder',
+        'SpriteFrame._offset',
+        'SpriteFrame._originalSize',
+        'SpriteFrame._rotated',
+        'SpriteFrame._capInsets',
+        'SpriteFrame._atlasUuid',
+        'SpriteFrame._texture',
+        'SpriteFrame._isFlipUVY',
+        'SpriteFrame._isFlipUVX',
+        'SpriteFrame._original',
+        'SpriteFrame._packable',
+        'SpriteFrame._pixelsToUnit',
+        'SpriteFrame._pivot',
+        'SpriteFrame._meshType',
+        'SpriteFrame._extrude',
+        'SpriteFrame._customOutLine',
+        'SpriteFrame._mesh',
+        'SpriteFrame._minPos',
+        'SpriteFrame._maxPos',
+        'SpriteFrame._refreshTexture',
+        'SpriteFrame._initVertices',
+        'SpriteFrame._updateMeshVertices',
+        'SpriteFrame._createMesh',
+        'SpriteFrame._updateMesh',
+    ],
+};
+
 (async () => {
     const outDir = ps.join(engineRoot, 'build-cc-out');
 
@@ -42,7 +72,7 @@ console.log(`features: [ ${features.join(', ')} ]`);
         },
         wasmCompressionMode: 'brotli',
         inlineEnum: true,
-        mangleProperties: true,
+        mangleProperties,
     };
 
     await fs.ensureDir(outDir);
