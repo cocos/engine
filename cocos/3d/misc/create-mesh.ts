@@ -55,12 +55,7 @@ export function createMesh (geometry: IGeometry, out?: Mesh, options?: ICreateMe
     if (positions.length > 0) {
         attr = null;
         if (geometry.attributes) {
-            for (const att of geometry.attributes) {
-                if (att.name === (AttributeName.ATTR_POSITION as string)) {
-                    attr = att;
-                    break;
-                }
-            }
+            attr = geometry.attributes.find((att) => att.name === AttributeName.ATTR_POSITION) || null;
         }
 
         if (!attr) {
@@ -77,12 +72,7 @@ export function createMesh (geometry: IGeometry, out?: Mesh, options?: ICreateMe
     if (geometry.normals && geometry.normals.length > 0) {
         attr = null;
         if (geometry.attributes) {
-            for (const att of geometry.attributes) {
-                if (att.name === (AttributeName.ATTR_NORMAL as string)) {
-                    attr = att;
-                    break;
-                }
-            }
+            attr = geometry.attributes.find((att) => att.name === AttributeName.ATTR_NORMAL) || null;
         }
 
         if (!attr) {
@@ -99,12 +89,7 @@ export function createMesh (geometry: IGeometry, out?: Mesh, options?: ICreateMe
     if (geometry.uvs && geometry.uvs.length > 0) {
         attr = null;
         if (geometry.attributes) {
-            for (const att of geometry.attributes) {
-                if (att.name === (AttributeName.ATTR_TEX_COORD as string)) {
-                    attr = att;
-                    break;
-                }
-            }
+            attr = geometry.attributes.find((att) => att.name === AttributeName.ATTR_TEX_COORD) || null;
         }
 
         if (!attr) {
@@ -121,12 +106,7 @@ export function createMesh (geometry: IGeometry, out?: Mesh, options?: ICreateMe
     if (geometry.tangents && geometry.tangents.length > 0) {
         attr = null;
         if (geometry.attributes) {
-            for (const att of geometry.attributes) {
-                if (att.name === (AttributeName.ATTR_TANGENT as string)) {
-                    attr = att;
-                    break;
-                }
-            }
+            attr = geometry.attributes.find((att) => att.name === AttributeName.ATTR_TANGENT) || null;
         }
 
         if (!attr) {
@@ -143,12 +123,7 @@ export function createMesh (geometry: IGeometry, out?: Mesh, options?: ICreateMe
     if (geometry.colors && geometry.colors.length > 0) {
         attr = null;
         if (geometry.attributes) {
-            for (const att of geometry.attributes) {
-                if (att.name === (AttributeName.ATTR_COLOR as string)) {
-                    attr = att;
-                    break;
-                }
-            }
+            attr = geometry.attributes.find((att) => att.name === AttributeName.ATTR_COLOR) || null;
         }
 
         if (!attr) {
