@@ -516,9 +516,9 @@ export class Root {
      * @zh 销毁全部窗口
      */
     public destroyWindows (): void {
-        for (const window of this._windows) {
+        this._windows.forEach((window) => {
             window.destroy();
-        }
+        });
         this._windows.length = 0;
     }
 
@@ -554,9 +554,9 @@ export class Root {
      * @zh 销毁全部场景。
      */
     public destroyScenes (): void {
-        for (const scene of this._scenes) {
+        this._scenes.forEach((scene) => {
             scene.destroy();
-        }
+        });
         this._scenes.length = 0;
     }
 
@@ -697,11 +697,11 @@ export class Root {
             xr.webXRWindowMap = new Map<RenderWindow, number>();
         }
 
-        let allcameras: Camera[] = [];
+        let allCameras: Camera[] = [];
         const webxrHmdPoseInfos = xr.webxrHmdPoseInfos;
         for (let xrEye: XREye = 0; xrEye < viewCount; xrEye++) {
             for (const window of windows) {
-                allcameras = allcameras.concat(window.cameras);
+                allCameras = allCameras.concat(window.cameras);
                 if (window.swapchain) {
                     xr.webXRWindowMap.set(window, xrEye);
                 }
@@ -720,7 +720,7 @@ export class Root {
                     }
                 }
 
-                for (const cam of allcameras) {
+                allCameras.forEach((cam) => {
                     if (cam.trackingType !== TrackingType.NO_TRACKING && cam.node) {
                         const isTrackingRotation = cam.trackingType === TrackingType.ROTATION;
                         if (isTrackingRotation) {
@@ -728,9 +728,9 @@ export class Root {
                         }
                         cam.node.setPosition(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
                     }
-                }
+                });
             }
-            allcameras.length = 0;
+            allCameras.length = 0;
 
             this._frameMoveBegin();
 

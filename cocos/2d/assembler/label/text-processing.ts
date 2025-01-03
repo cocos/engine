@@ -389,14 +389,7 @@ export class TextProcessing {
     }
 
     private _calculateParagraphLength (paragraphedStrings: string[], ctx: CanvasRenderingContext2D, fontDesc: string): number[] {
-        const paragraphLength: number[] = [];
-
-        for (const para of paragraphedStrings) {
-            const width: number = safeMeasureText(ctx, para, fontDesc);
-            paragraphLength.push(width);
-        }
-
-        return paragraphLength;
+        return paragraphedStrings.map((para) => safeMeasureText(ctx, para, fontDesc));
     }
 
     private _updatePaddingRect (style: TextStyle, outputLayoutData: TextOutputLayoutData): void {

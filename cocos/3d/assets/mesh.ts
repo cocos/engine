@@ -458,8 +458,9 @@ export class Mesh extends Asset {
                 const attributes: Attribute[] = [];
                 for (let k = 0; k < primitive.vertexBundelIndices.length; k++) {
                     const idx = primitive.vertexBundelIndices[k];
-                    const vertexBundle = this._struct.vertexBundles[idx];
-                    for (const attr of vertexBundle.attributes) {
+                    const attributes = this._struct.vertexBundles[idx].attributes;
+                    for (let j = 0; j < attributes.length; j++) {
+                        const attr = attributes[j];
                         const attribute = new Attribute();
                         attribute.copy(attr);
                         attributes.push(attribute);

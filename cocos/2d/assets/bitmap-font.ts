@@ -64,7 +64,7 @@ export class FontAtlas {
 
     public cloneLetterDefinition (): ILetterDefinition {
         const copyLetterDefinitions: ILetterDefinition = {};
-        for (const key of Object.keys(this.letterDefinitions)) {
+        for (const key in this.letterDefinitions) {
             const value = new FontLetterDefinition();
             js.mixin(value, this.letterDefinitions[key]);
             copyLetterDefinitions[key] = value;

@@ -547,14 +547,14 @@ export class RichText extends Component {
     }
 
     public onDestroy (): void {
-        for (const seg of this._segments) {
+        this._segments.forEach((seg) => {
             seg.node.removeFromParent();
             if (seg.type === RichTextChildName) {
                 labelPool.put(seg);
             } else if (seg.type === RichTextChildImageName) {
                 imagePool.put(seg);
             }
-        }
+        });
 
         this.node.off(NodeEventType.ANCHOR_CHANGED, this._updateRichTextPosition, this);
         this.node.off(NodeEventType.LAYER_CHANGED, this._applyLayer, this);
@@ -766,7 +766,7 @@ export class RichText extends Component {
     protected _onTouchEnded (event: EventTouch): void {
         const components = this.node.getComponents(Component);
 
-        for (const seg of this._segments) {
+        this._segments.forEach((seg) => {
             const clickHandler = seg.clickHandler;
             const clickParam = seg.clickParam;
             if (clickHandler && this._containsTouchLocation(seg, event.touch!.getUILocation())) {
@@ -778,7 +778,7 @@ export class RichText extends Component {
                 });
                 event.propagationStopped = true;
             }
-        }
+        });
     }
 
     protected _containsTouchLocation (label: ISegment, point: Vec2): boolean {
@@ -1330,9 +1330,9 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
     }
 
     protected _applyLayer (): void {
-        for (const seg of this._segments) {
+        this._segments.forEach((seg) => {
             seg.node.layer = this.node.layer;
-        }
+        });
     }
 
     protected _resetLabelState (label: Label): void {

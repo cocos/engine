@@ -112,9 +112,9 @@ function _calculateVertices (sprite: Sprite): void {
     _vertPos[0].y = _vertPos[1].y = b;
     _vertPos[2].y = _vertPos[3].y = t;
 
-    for (const num of _triangles) {
+    _triangles.forEach((num) => {
         Vec2.set(num, 0, 0);
-    }
+    });
 
     if (cx !== vertices[0]) {
         Vec2.set(_triangles[0], 3, 0);

@@ -199,11 +199,7 @@ export const barFilled: IAssembler = {
         renderData.chunk.setIndexBuffer(QUAD_INDICES);
 
         // not need
-        const dataList = renderData.data;
-        for (const data of dataList) {
-            data.z = 0;
-        }
-
+        renderData.data.forEach((data) => { data.z = 0; });
         return renderData;
     },
 
