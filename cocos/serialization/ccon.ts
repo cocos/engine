@@ -91,11 +91,11 @@ export function encodeCCONBinary (ccon: CCON): Uint8Array {
     ccobBuilder.append(uint32Bytes(jsonBytes.byteLength));
     ccobBuilder.append(jsonBytes);
 
-    for (const chunk of chunks) {
+    chunks.forEach((chunk) => {
         ccobBuilder.alignAs(CHUNK_ALIGN_AS);
         ccobBuilder.append(uint32Bytes(chunk.byteLength));
         ccobBuilder.append(chunk);
-    }
+    });
 
     headerView.setUint32(8, ccobBuilder.byteLength, true);
     return ccobBuilder.get();

@@ -1216,15 +1216,15 @@ export class Model {
 
         const attributes: Attribute[] = [];
         const attributeSet = new Set<string>();
-        for (const pass of subModel.passes) {
+        subModel.passes.forEach((pass) => {
             const shader = pass.getShaderVariant(subModel.patches)!;
-            for (const attr of shader.attributes) {
+            shader.attributes.forEach((attr) => {
                 if (!attributeSet.has(attr.name)) {
                     attributes.push(attr);
                     attributeSet.add(attr.name);
                 }
-            }
-        }
+            });
+        });
         this._updateInstancedAttributes(attributes, subModel);
     }
 

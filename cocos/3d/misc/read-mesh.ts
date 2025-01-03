@@ -39,17 +39,17 @@ export function readMesh (mesh: Mesh, iPrimitive = 0): IGeometry {
     const dataView = new DataView(mesh.data.buffer, mesh.data.byteOffset, mesh.data.byteLength);
     const struct = mesh.struct;
     const primitive = struct.primitives[iPrimitive];
-    for (const idx of primitive.vertexBundelIndices) {
+    primitive.vertexBundelIndices.forEach((idx) => {
         const bundle = struct.vertexBundles[idx];
         let offset = bundle.view.offset;
         const { length, stride } = bundle.view;
-        for (const attr of bundle.attributes) {
+        bundle.attributes.forEach((attr) => {
             const name: AttributeName = _keyMap[attr.name];
             if (name) { out[name] = (out[name] || []).concat(readBuffer(dataView, attr.format, offset, length, stride)); }
             offset += FormatInfos[attr.format].size;
-        }
-    }
+        });
+    });
     const view = primitive.indexView!;
-    out.indices = readBuffer(dataView, Format[`R${view.stride * 8}UI`], view.offset, view.length);
+    out.indices = readBuffer(dataView, Format[`R${view.stride * 8}UI`] as Format, view.offset, view.length);
     return out;
 }

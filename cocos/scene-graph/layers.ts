@@ -91,11 +91,7 @@ export class Layers {
      * @return A filter which can detect all accepted layers
      */
     public static makeMaskInclude (includes: number[]): number {
-        let mask = 0;
-        for (const inc of includes) {
-            mask |= inc;
-        }
-        return mask;
+        return includes.reduce((mask, inc) => mask | inc, 0);
     }
 
     /**

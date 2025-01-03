@@ -347,7 +347,7 @@ export default class TrailModule {
     public get inited (): boolean {
         return this._inited;
     }
-    private _inited: boolean;
+    private declare _inited: boolean;
 
     constructor () {
         this._vertAttrs = [
@@ -357,13 +357,9 @@ export default class TrailModule {
             new Attribute(AttributeName.ATTR_TEX_COORD1, Format.RGB32F), // xyz:velocity
             new Attribute(AttributeName.ATTR_COLOR, Format.RGBA8, true),
         ];
-        this._vertSize = 0;
-        for (const a of this._vertAttrs) {
-            this._vertSize += FormatInfos[a.format].size;
-        }
+        this._vertSize = this._vertAttrs.reduce((size, attr) => size + FormatInfos[attr.format].size, 0);
 
         this._particleTrail = new Map<Particle, TrailSegment>();
-
         this._inited = false;
     }
 

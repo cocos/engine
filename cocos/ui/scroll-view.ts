@@ -1161,7 +1161,8 @@ export class ScrollView extends ViewGroup {
 
         if (captureListeners) {
             // captureListeners are arranged from child to parent
-            for (const listener of captureListeners) {
+            for (let i = 0; i < captureListeners.length; i++) {
+                const listener = captureListeners[i];
                 if (this.node === listener) {
                     if (event.target && (event.target as Node).getComponent(ViewGroup)) {
                         return true;
