@@ -81,7 +81,7 @@ export class SimpleTexture extends TextureBase {
      */
     protected _maxLevel = 1000;
 
-    constructor (name = '') {
+    constructor (name?: string) {
         super(name);
     }
 

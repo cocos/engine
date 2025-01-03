@@ -43,8 +43,8 @@ export class SceneAsset extends Asset {
     @serializable
     public scene: Scene | null = null;
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     public initDefault (uuid?: string): void {

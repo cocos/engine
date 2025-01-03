@@ -60,8 +60,8 @@ export class AudioClip extends Asset {
 
     private _player: AudioPlayer | null = null;
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     public destroy (): boolean {

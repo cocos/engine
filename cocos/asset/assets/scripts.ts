@@ -33,7 +33,7 @@ import { cclegacy } from '../../core';
  */
 @ccclass('cc.Script')
 export class Script extends Asset {
-    constructor (name = '') {
+    constructor (name?: string) {
         super(name);
     }
 }
@@ -45,7 +45,7 @@ cclegacy._Script = Script;
  */
 @ccclass('cc.JavaScript')
 export class JavaScript extends Script {
-    constructor (name = '') {
+    constructor (name?: string) {
         super(name);
     }
 }
@@ -57,7 +57,7 @@ cclegacy._JavaScript = JavaScript;
  */
 @ccclass('cc.TypeScript')
 export class TypeScript extends Script {
-    constructor (name = '') {
+    constructor (name?: string) {
         super(name);
     }
 }

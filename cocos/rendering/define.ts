@@ -677,6 +677,7 @@ localDescriptorSetLayout.bindings[UBOMorph.BINDING] = UBOMorph.DESCRIPTOR;
 
 // UI local uniform UBO
 export class UBOUILocal { // pre one vec4
+    private constructor () {}
     public static readonly NAME = 'CCUILocal';
     public static readonly BINDING = ModelLocalBindings.UBO_UI_LOCAL;
     public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOUILocal.BINDING, DescriptorType.DYNAMIC_UNIFORM_BUFFER, 1, ShaderStageFlagBit.VERTEX);

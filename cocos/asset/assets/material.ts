@@ -139,8 +139,8 @@ export class Material extends Asset {
      */
     protected _hash = 0;
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     /**

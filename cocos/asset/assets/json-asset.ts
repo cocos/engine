@@ -41,8 +41,8 @@ export default class JsonAsset extends Asset {
     @editable
     public json: Record<string, any> | null = null;
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 }
 
