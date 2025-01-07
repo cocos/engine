@@ -22,9 +22,7 @@
  THE SOFTWARE.
 */
 
-// @ts-nocheck
 import { b2Shape2D } from './shape-2d';
-import * as PolygonSeparator from '../../framework/utils/polygon-separator';
 import * as PolygonPartition from '../../framework/utils/polygon-partition';
 import { PolygonCollider2D } from '../../framework';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework/physics-types';
@@ -62,6 +60,7 @@ export class b2PolygonShape extends b2Shape2D implements IPolygonShape {
 
         const polys = PolygonPartition.ConvexPartition(points);
         if (!polys) {
+            // eslint-disable-next-line no-console
             console.log('[Physics2D] b2PolygonShape failed to decompose polygon into convex polygons, node name: ', comp.node.name);
             return shapes;
         }

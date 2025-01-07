@@ -21,12 +21,11 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-// @ts-nocheck
 import { IRelativeJoint } from '../../spec/i-physics-joint';
 import { b2Joint } from './joint-2d';
 import { RelativeJoint2D } from '../../framework';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework/physics-types';
-import { toRadian } from '../../../core';
+import { toRadian, Vec2 } from '../../../core';
 
 export class b2RelativeJoint extends b2Joint implements IRelativeJoint {
     setMaxForce (v: number): void {

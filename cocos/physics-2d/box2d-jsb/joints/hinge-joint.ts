@@ -22,7 +22,6 @@
  THE SOFTWARE.
 */
 
-// @ts-nocheck
 import { IHingeJoint } from '../../spec/i-physics-joint';
 import { HingeJoint2D } from '../../framework';
 import { b2Joint } from './joint-2d';

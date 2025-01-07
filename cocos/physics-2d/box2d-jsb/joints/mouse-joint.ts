@@ -22,7 +22,6 @@
  THE SOFTWARE.
 */
 
-// @ts-nocheck
 import { IMouseJoint } from '../../spec/i-physics-joint';
 import { b2Joint } from './joint-2d';
 import { MouseJoint2D, PhysicsSystem2D, Joint2D } from '../../framework';
@@ -65,7 +64,7 @@ export class b2MouseJoint extends b2Joint implements IMouseJoint {
     _createJointDef (): any {
         const def = new b2.MouseJointDef();
         const comp = this._jointComp as MouseJoint2D;
-        def.target = { x: this._touchPoint.x / PHYSICS_2D_PTM_RATIO, y: this._touchPoint.y / PHYSICS_2D_PTM_RATIO };
+        def.target = new b2.Vec2(this._touchPoint.x / PHYSICS_2D_PTM_RATIO, this._touchPoint.y / PHYSICS_2D_PTM_RATIO);
         def.maxForce = comp.maxForce;
         def.dampingRatio = comp.dampingRatio;
         def.frequencyHz = comp.frequency;

@@ -21,8 +21,6 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-
-// @ts-nocheck
 import { Vec2 } from '../../../core';
 
 export class PhysicsAABBQueryCallback extends b2.QueryCallback {
@@ -31,7 +29,7 @@ export class PhysicsAABBQueryCallback extends b2.QueryCallback {
     private _fixtures: b2.Fixture[] = [];
 
     init (point?: Vec2): void {
-        super.init(this);
+        this.initWithThis(this);
         if (point) {
             this._isPoint = true;
             this._point.x = point.x;

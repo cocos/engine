@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /*
  Copyright (c) 2022-2023 Xiamen Yaji Software Co., Ltd.
 
@@ -21,8 +22,6 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-
-// @ts-nocheck
 import { EDITOR_NOT_IN_PREVIEW, TEST } from 'internal:constants';
 
 import { IPhysicsWorld } from '../spec/i-physics-world';
@@ -42,7 +41,9 @@ import { PhysicsDebugDraw } from './platform/physics-debug-draw';
 import { Node, find, Layers } from '../../scene-graph';
 import { director } from '../../game';
 
+//@ts-ignore
 const _tempFloatArray = new Float32Array(jsb.createExternalArrayBuffer(5 * 4)); // 5 floats is enough for box2d jsb.
+//@ts-ignore
 b2._tempFloatArray = _tempFloatArray; // For other ts file in box2d-jsb module to access this arraybuffer.
 b2._setTempFloatArray(_tempFloatArray.buffer);
 
@@ -272,7 +273,7 @@ export class b2PhysicsWorld implements IPhysicsWorld {
             const b2body = body.impl;
 
             // position
-            b2body._GetTransformJSB();
+            b2body!._GetTransformJSB();
             // The _GetTransformJSB which we bind it manually is for optimizing the communication between JS and CPP.
             // It will fill the _tempFloatArray with the first three elements.
             // _tempFloatArray[0]: position's x
@@ -285,6 +286,7 @@ export class b2PhysicsWorld implements IPhysicsWorld {
             // rotation
             const angle = toDegree(_tempFloatArray[2]);
 
+            //@ts-ignore
             node.set2DTransform(tempVec3.x, tempVec3.y, angle);
         }
     }
@@ -315,7 +317,7 @@ export class b2PhysicsWorld implements IPhysicsWorld {
 
         const node = comp.node;
         const pos = node.worldPosition;
-        bodyDef.position = { x: pos.x / PHYSICS_2D_PTM_RATIO, y: pos.y / PHYSICS_2D_PTM_RATIO };
+        bodyDef.position = new b2.Vec2(pos.x / PHYSICS_2D_PTM_RATIO, pos.y / PHYSICS_2D_PTM_RATIO);
 
         tempVec3.z = Quat.getAxisAngle(this._rotationAxis, node.worldRotation);
         if (this._rotationAxis.z < 0.0) {
@@ -339,7 +341,7 @@ export class b2PhysicsWorld implements IPhysicsWorld {
         // read private property
         const compPrivate = comp as any;
         const linearVelocity = compPrivate._linearVelocity as Vec2;
-        bodyDef.linearVelocity = { x: linearVelocity.x, y: linearVelocity.y };
+        bodyDef.linearVelocity = new b2.Vec2(linearVelocity.x, linearVelocity.y);
 
         bodyDef.angularVelocity = compPrivate._angularVelocity;
 

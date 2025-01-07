@@ -8,7 +8,7 @@ public:
     JSBQueryCallback();
     ~JSBQueryCallback();
     
-    void init(se::Object *thisObject);
+    void initWithThis(se::Object *thisObject);
     
     bool ReportFixture(b2Fixture* fixture) override;
     
@@ -23,7 +23,7 @@ public:
     JSBRayCastCallback();
     ~JSBRayCastCallback();
     
-    void init(se::Object *thisObject);
+    void initWithThis(se::Object *thisObject);
     
     float ReportFixture(b2Fixture* fixture, const b2Vec2& point, const b2Vec2& normal, float fraction) override;
     
@@ -38,7 +38,7 @@ public:
     JSBB2Draw();
     ~JSBB2Draw();
     
-    void init(se::Object *thisObject);
+    void initWithThis(se::Object *thisObject);
     
 private:
     void DrawPolygonWithCallback(se::Object *cbObj, const b2Vec2* vertices, int32 vertexCount, const b2Color& color);
@@ -100,7 +100,7 @@ public:
     JSB_b2ContactListener();
     ~JSB_b2ContactListener();
     
-    void init(se::Object *thisObject);
+    void initWithThis(se::Object *thisObject);
 
     void BeginContact(b2Contact* contact) override;
     void EndContact(b2Contact* contact) override;

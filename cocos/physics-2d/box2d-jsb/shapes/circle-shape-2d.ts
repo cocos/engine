@@ -21,8 +21,6 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-
-// @ts-nocheck
 import { b2Shape2D } from './shape-2d';
 import { CircleCollider2D } from '../../framework';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework/physics-types';
@@ -51,7 +49,7 @@ export class b2CircleShape extends b2Shape2D implements ICircleShape {
 
         const shape = new b2.CircleShape();
         shape.m_radius = comp.radius / PHYSICS_2D_PTM_RATIO * scaleX;
-        shape.m_p = { x: offsetX, y: offsetY };
+        shape.m_p = new b2.Vec2(offsetX, offsetY);
 
         return [shape];
     }

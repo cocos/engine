@@ -22,16 +22,15 @@
  THE SOFTWARE.
 */
 
-// @ts-nocheck
 import { js } from '../../../core';
 
 export class PhysicsContactListener extends b2.ContactListener {
     _contactFixtures: b2.Fixture[] = [];
 
-    _BeginContact: Function | null = null;
-    _EndContact: Function | null = null;
-    _PreSolve: Function | null = null;
-    _PostSolve: Function | null = null;
+    _BeginContact: any = null;
+    _EndContact: any = null;
+    _PreSolve: any = null;
+    _PostSolve: any = null;
 
     setBeginContact (cb): void {
         this._BeginContact = cb;
@@ -84,7 +83,7 @@ export class PhysicsContactListener extends b2.ContactListener {
     }
 
     registerContactFixture (fixture): void {
-        this._contactFixtures.push(fixture);
+        this._contactFixtures.push(fixture as b2.Fixture);
     }
 
     unregisterContactFixture (fixture): void {

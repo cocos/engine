@@ -21,8 +21,6 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-
-// @ts-nocheck
 import { IDistanceJoint } from '../../spec/i-physics-joint';
 import { b2Joint } from './joint-2d';
 import { DistanceJoint2D } from '../../framework';

@@ -50,7 +50,7 @@ JSBQueryCallback::~JSBQueryCallback() {
     SAFE_RELEASE_CALLBACK(ReportFixture);
 }
 
-void JSBQueryCallback::init(se::Object *thisObject) {
+void JSBQueryCallback::initWithThis(se::Object *thisObject) {
     GET_THIS();
     GET_JS_PROPERTY(ReportFixture);
 }
@@ -79,7 +79,7 @@ JSBRayCastCallback::JSBRayCastCallback() {
     _args.resize(4);
 }
 
-void JSBRayCastCallback::init(se::Object *thisObject) {
+void JSBRayCastCallback::initWithThis(se::Object *thisObject) {
     GET_THIS();
     GET_JS_PROPERTY(ReportFixture);
 }
@@ -131,7 +131,7 @@ JSBB2Draw::~JSBB2Draw() {
     SAFE_RELEASE_CALLBACK(DrawPoint);
 }
 
-void JSBB2Draw::init(se::Object *thisObject) {
+void JSBB2Draw::initWithThis(se::Object *thisObject) {
     GET_THIS();
     GET_JS_PROPERTY(DrawPolygon);
     GET_JS_PROPERTY(DrawSolidPolygon);
@@ -278,7 +278,7 @@ JSB_b2ContactListener::~JSB_b2ContactListener() {
     SAFE_RELEASE_CALLBACK(PostSolve);
 }
 
-void JSB_b2ContactListener::init(se::Object *thisObject) {
+void JSB_b2ContactListener::initWithThis(se::Object *thisObject) {
     GET_THIS();
     GET_JS_PROPERTY(BeginContact);
     GET_JS_PROPERTY(EndContact);

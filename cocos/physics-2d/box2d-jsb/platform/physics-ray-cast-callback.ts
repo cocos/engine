@@ -21,8 +21,6 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-
-// @ts-nocheck
 import { Vec2 } from '../../../core';
 import { ERaycast2DType } from '../../framework';
 
@@ -36,7 +34,7 @@ export class PhysicsRayCastCallback extends b2.RayCastCallback {
     _mask = 0xffffffff;
 
     init (type: ERaycast2DType, mask: number): void {
-        super.init(this);
+        this.initWithThis(this);
         this._type = type;
         this._mask = mask;
         this._fixtures.length = 0;
@@ -52,6 +50,7 @@ export class PhysicsRayCastCallback extends b2.RayCastCallback {
 
         if (this._type === ERaycast2DType.Closest) {
             this._fixtures[0] = fixture;
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             this._points[0] = new Vec2(point.x, point.y);
             this._normals[0] = new Vec2(normal.x, normal.y);
             this._fractions[0] = fraction;
@@ -61,7 +60,7 @@ export class PhysicsRayCastCallback extends b2.RayCastCallback {
         this._fixtures.push(fixture);
         this._points.push(new Vec2(point.x, point.y));
         this._normals.push(new Vec2(normal.x, normal.y));
-        this._fractions.push(fraction);
+        this._fractions.push(fraction as number);
 
         if (this._type === ERaycast2DType.Any) {
             return 0;
