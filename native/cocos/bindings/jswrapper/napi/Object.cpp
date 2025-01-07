@@ -287,7 +287,6 @@ Object* Object::createTypedArrayWithBuffer(TypedArrayType type, const Object* ob
         return nullptr;
     }
 
-
     CC_ASSERT(obj->isArrayBuffer());
     napi_status status;
     napi_value outputBuffer = obj->_getJSObject();
@@ -662,11 +661,11 @@ void Object::weakCallback(napi_env env, void* nativeObject, void* finalizeHint /
         }
 
         if (seObj->_finalizeCb != nullptr) {
-            seObj->_finalizeCb(env, rawPtr, rawPtr);
+            seObj->_finalizeCb(env, finalizeHint, finalizeHint);
         } else {
             assert(seObj->_getClass() != nullptr);
             if (seObj->_getClass()->_getFinalizeFunction() != nullptr) {
-                seObj->_getClass()->_getFinalizeFunction()(env, rawPtr, rawPtr);
+                seObj->_getClass()->_getFinalizeFunction()(env, finalizeHint, finalizeHint);
             }
         }
         seObj->decRef();

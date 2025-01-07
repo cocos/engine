@@ -484,7 +484,9 @@ export class RenderData extends BaseRenderData {
         // Hack Do not update pre frame
         if (JSB && this.multiOwner === false) {
             if (DEBUG) {
-                assert(this._renderDrawInfo.render2dBuffer.length === this._floatStride * this._data.length, 'Vertex count doesn\'t match.');
+                if (this._renderDrawInfo && this._renderDrawInfo.render2dBuffer) {
+                    assert(this._renderDrawInfo.render2dBuffer.length === this._floatStride * this._data.length, 'Vertex count doesn\'t match.');
+                }
             }
             // sync shared buffer to native
             this._renderDrawInfo.fillRender2dBuffer(this._data);

@@ -372,15 +372,17 @@ void Batcher2d::generateBatch(RenderEntity* entity, RenderDrawInfo* drawInfo) {
     curdrawBatch->setFirstIndex(indexOffset);
     curdrawBatch->setIndexCount(indexCount);
     curdrawBatch->fillPass(_currMaterial, depthStencil, dssHash);
-    const auto& pass = curdrawBatch->getPasses().at(0);
-
-    if (entity->getUseLocal()) {
-        drawInfo->updateLocalDescriptorSet(entity->getRenderTransform(), pass->getLocalSetLayout());
-        curdrawBatch->setDescriptorSet(drawInfo->getLocalDes());
-    } else {
-        curdrawBatch->setDescriptorSet(getDescriptorSet(_currTexture, _currSampler, pass->getLocalSetLayout()));
+    const auto &passes = curdrawBatch->getPasses();
+    if (!passes.empty()) {
+        const auto& pass = passes.at(0);
+        if (entity->getUseLocal()) {
+            drawInfo->updateLocalDescriptorSet(entity->getRenderTransform(), pass->getLocalSetLayout());
+            curdrawBatch->setDescriptorSet(drawInfo->getLocalDes());
+        } else {
+            curdrawBatch->setDescriptorSet(getDescriptorSet(_currTexture, _currSampler, pass->getLocalSetLayout()));
+        }
+        _batches.push_back(curdrawBatch);
     }
-    _batches.push_back(curdrawBatch);
 }
 
 void Batcher2d::generateBatchForMiddleware(RenderEntity* entity, RenderDrawInfo* drawInfo) {

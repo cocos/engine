@@ -102,6 +102,21 @@ enum class ResourceDimension {
     TEXTURE3D,
 };
 
+enum class ViewDimension {
+    UNKNOWN,
+    BUFFER,
+    TEX1D,
+    TEX1DARRAY,
+    TEX2D,
+    TEX2DARRAY,
+    TEX2DMS,
+    TEX2DMSARRAY,
+    TEX3D,
+    TEXCUBE,
+    TEXCUBEARRAY,
+    RAYTRACING_ACCELERATION_STRUCTURE,
+};
+
 enum class ResourceFlags : uint32_t {
     NONE = 0,
     UNIFORM = 0x1,
@@ -244,62 +259,6 @@ struct LightInfo {
     uint32_t level{0};
     bool culledByLight{false};
 };
-
-enum class DescriptorTypeOrder {
-    UNIFORM_BUFFER,
-    DYNAMIC_UNIFORM_BUFFER,
-    SAMPLER_TEXTURE,
-    SAMPLER,
-    TEXTURE,
-    STORAGE_BUFFER,
-    DYNAMIC_STORAGE_BUFFER,
-    STORAGE_IMAGE,
-    INPUT_ATTACHMENT,
-};
-
-struct Descriptor {
-    Descriptor() = default;
-    Descriptor(gfx::Type typeIn) noexcept // NOLINT
-    : type(typeIn) {}
-
-    gfx::Type type{gfx::Type::UNKNOWN};
-    uint32_t count{1};
-};
-
-struct DescriptorBlock {
-    ccstd::map<ccstd::string, Descriptor> descriptors;
-    ccstd::map<ccstd::string, gfx::UniformBlock> uniformBlocks;
-    uint32_t capacity{0};
-    uint32_t count{0};
-};
-
-struct DescriptorBlockFlattened {
-    ccstd::vector<ccstd::string> descriptorNames;
-    ccstd::vector<ccstd::string> uniformBlockNames;
-    ccstd::vector<Descriptor> descriptors;
-    ccstd::vector<gfx::UniformBlock> uniformBlocks;
-    uint32_t capacity{0};
-    uint32_t count{0};
-};
-
-struct DescriptorBlockIndex {
-    DescriptorBlockIndex() = default;
-    DescriptorBlockIndex(UpdateFrequency updateFrequencyIn, ParameterType parameterTypeIn, DescriptorTypeOrder descriptorTypeIn, gfx::ShaderStageFlagBit visibilityIn) noexcept
-    : updateFrequency(updateFrequencyIn),
-      parameterType(parameterTypeIn),
-      descriptorType(descriptorTypeIn),
-      visibility(visibilityIn) {}
-
-    UpdateFrequency updateFrequency{UpdateFrequency::PER_INSTANCE};
-    ParameterType parameterType{ParameterType::CONSTANTS};
-    DescriptorTypeOrder descriptorType{DescriptorTypeOrder::UNIFORM_BUFFER};
-    gfx::ShaderStageFlagBit visibility{gfx::ShaderStageFlagBit::NONE};
-};
-
-inline bool operator<(const DescriptorBlockIndex& lhs, const DescriptorBlockIndex& rhs) noexcept {
-    return std::forward_as_tuple(lhs.updateFrequency, lhs.parameterType, lhs.descriptorType, lhs.visibility) <
-           std::forward_as_tuple(rhs.updateFrequency, rhs.parameterType, rhs.descriptorType, rhs.visibility);
-}
 
 enum class ResolveFlags : uint32_t {
     NONE = 0,

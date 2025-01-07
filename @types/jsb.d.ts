@@ -358,22 +358,18 @@ declare namespace jsb {
         onThermalStatusChanged?: (previousStatus: number, newStatus: number, statusMin: number, statusMax: number) => void;
     } | undefined;
 
-    /**
-     * @en Params containing the response code and the debug message from In-app Billing API response.
-     * @zh 包含应用内结算 API 响应代码和调试信息的参数
-     */
-    export interface BillingResult {
-        /**
-         * @en Debug message returned in In-app Billing API calls.
-         * @zh 应用内结算 API 调用中返回的调试消息。
-         */
-        readonly debugMessage: string;
-        /**
-         * @en Code returned in In-app Billing API calls.
-         * @zh 应用内结算 API 调用中返回的响应代码。
-         */
-        readonly responseCode: string;
-        readonly toStr: string;
+    export interface UserChoiceDetailsProduct {
+        hashCode(): number;
+        getId(): string;
+        getOfferToken(): string;
+        getType(): string;
+        toString(): string;
+        equals(product: UserChoiceDetailsProduct): boolean;
+    }
+    export class UserChoiceDetails {
+        getExternalTransactionToken(): string;
+        getOriginalExternalTransactionId(): string;
+        getProducts(): UserChoiceDetailsProduct[];
     }
 
     /**
@@ -385,17 +381,17 @@ declare namespace jsb {
          * @en The price for the payment in micro-units, where 1,000,000 micro-units equal one unit of the currency.
          * @zh 以微单位返回支付价格，其中 1,000,000 个微单位等于 1 个货币单位。
          */
-        readonly priceAmountMicros: number;
+        getPriceAmountMicros(): number;
         /**
          * @en Formatted price for the payment, including its currency sign.
          * @zh 支付的格式化价格，包括其货币单位。
          */
-        readonly formattedPrice: string;
+        getFormattedPrice(): string;
         /**
          * @en ISO 4217 currency code for price.
          * @zh 价格的 ISO 4217 货币代码。
          */
-        readonly priceCurrencyCode: string;
+        getPriceCurrencyCode(): string;
     }
 
     /**
@@ -407,12 +403,12 @@ declare namespace jsb {
          * @en Committed payments count after a user signs up for this subscription plan.
          * @zh 用户注册此订阅计划后承诺的付款数量。
          */
-        readonly installmentPlanCommitmentPaymentsCount: number;
+        getInstallmentPlanCommitmentPaymentsCount(): number;
         /**
          * @en Subsequent committed payments count after this subscription plan renews.
          * @zh 此订阅计划续订后的后续承诺付款数量。
          */
-        readonly subsequentInstallmentPlanCommitmentPaymentsCount: number;
+        getSubsequentInstallmentPlanCommitmentPaymentsCount(): number;
     }
 
     /**
@@ -424,32 +420,44 @@ declare namespace jsb {
          * @en Number of cycles for which the billing period is applied.
          * @zh 计费周期适用的周期数。
          */
-        readonly billingCycleCount: number;
+        getBillingCycleCount(): number;
         /**
          * @en The price for the payment cycle in micro-units, where 1,000,000 micro-units equal one unit of the currency.
          * @zh 微单位付款周期的价格，其中 1,000,000 个微单位等于 1 个货币单位。
          */
-        readonly priceAmountMicros: number;
+        getPriceAmountMicros(): number;
         /**
          * @en RecurrenceMode for the pricing phase.
          * @zh 定价阶段的RecurrenceMode。
          */
-        readonly recurrenceMode: number;
+        getRecurrenceMode(): number;
         /**
          * @en Billing period for which the given price applies, specified in ISO 8601 format.
          * @zh 给定价格适用的计费期，以 ISO 8601 格式指定。
          */
-        readonly billingPeriod: string;
+        getBillingPeriod(): string;
         /**
          * @en Formatted price for the payment cycle, including its currency sign.
          * @zh 付款周期的格式化价格，包括其货币符号。
          */
-        readonly formattedPrice: string;
+        getFormattedPrice(): string;
         /**
          * @en Returns ISO 4217 currency code for price.
          * @zh 返回价格的 ISO 4217 货币代码。
          */
-        readonly priceCurrencyCode: string;
+        getPriceCurrencyCode(): string;
+    }
+
+    /**
+     * @en Represents a pricing phase, describing how a user pays at a point in time.
+     * @zh 表示定价阶段，描述用户在某个时间点如何付款。
+     */
+    export interface PricingPhases {
+        /**
+         * @en Returns ISO 4217 currency code for price.
+         * @zh 返回价格的 ISO 4217 货币代码。
+         */
+        getPricingPhaseList(): PricingPhase[];
     }
 
     /**
@@ -461,83 +469,86 @@ declare namespace jsb {
          * @en The base plan id associated with the subscription product.
          * @zh 与订阅产品相关的基本计划 ID。
          */
-        readonly basePlanId: string;
+        getBasePlanId(): string;
         /**
         * @en The offer id associated with the subscription product.
         * @zh 与订阅产品相关的优惠 ID。
         */
-        readonly offerId: string;
+        getOfferId(): string;
         /**
         * @en The offer tags associated with this Subscription Offer.
         * @zh 与此订阅优惠相关的优惠标签。
         */
-        readonly offerTags: string[];
+        getOfferTags(): string[];
         /**
         * @en The offer token required to pass in launchBillingFlow to purchase the subscription product with these pricing phases.
         * @zh 在 launchBillingFlow 中传递以使用这些定价阶段购买订阅产品所需的优惠令牌。
         */
-        readonly offerToken: string;
+        getOfferToken(): string;
         /**
          * @en The pricing phases for the subscription product.
          * @zh 订阅产品的定价区间。
          */
-        readonly pricingPhaseList: PricingPhase[];
+        getPricingPhases(): PricingPhases;
         /**
         * @en The additional details of an installment plan.
         * @zh 分期付款计划的附加详细信息。
         */
-        readonly installmentPlanDetails: InstallmentPlanDetails;
+        getInstallmentPlanDetails(): InstallmentPlanDetails;
     }
     /**
      * @en Represents the details of a one time or subscription product.
      * @zh 代表一次性或订阅产品的详细信息。
      */
-    export interface ProductDetails {
+    export class ProductDetails {
+        static RecurrenceMode: typeof jsb.RecurrenceMode;
+
+        equals(other: ProductDetails): boolean;
         /**
          * @en Hash code
          * @zh hash值
          */
-        readonly hashCode: number;
+        hashCode(): number;
         /**
          * @en The description of the product.
          * @zh 产品的描述。
          */
-        readonly description: string;
+        getDescription(): string;
         /**
          * @en The name of the product being sold.
          * @zh 所售产品的名称。
          */
-        readonly name: string;
+        getName(): string;
         /**
          * @en The product's Id.
          * @zh 产品的 ID。
          */
-        readonly productId: string;
+        getProductId(): string;
         /**
          * @en The ProductType of the product.
          * @zh ProductType产品的。
          */
-        readonly productType: string;
+        getProductType(): string;
         /**
          * @en The title of the product being sold.
          * @zh 所售产品的标题。
          */
-        readonly title: string;
+        getTitle(): string;
         /**
          * @en To string
          * @zh 转换成字符串
          */
-        readonly toStr: string;
+        toString(): string;
         /**
          * @en The offer details of an one-time purchase product.
          * @zh 代表一次性购买产品的报价详情。
          */
-        readonly oneTimePurchaseOfferDetails: OneTimePurchaseOfferDetails;
+        getOneTimePurchaseOfferDetails(): OneTimePurchaseOfferDetails;
         /**
          * @en A list containing all available offers to purchase a subscription product.
          * @zh 返回包含购买订阅产品的所有可用优惠的列表。
          */
-        readonly subscriptionOfferDetails: SubscriptionOfferDetails[];
+        getSubscriptionOfferDetails(): SubscriptionOfferDetails[];
     }
 
     /**
@@ -549,12 +560,12 @@ declare namespace jsb {
          * @en The obfuscated account id specified in setObfuscatedAccountId.
          * @zh 在setObfuscatedAccountId中设置的混淆账户id
          */
-        readonly obfuscatedAccountId: string;
+        getObfuscatedAccountId(): string;
         /**
          * @en The obfuscated profile id specified in setObfuscatedProfileId.
          * @zh 在setObfuscatedProfileId中设置的混淆profile id
          */
-        readonly obfuscatedProfileId: string;
+        getObfuscatedProfileId(): string;
     }
 
     /**
@@ -566,101 +577,135 @@ declare namespace jsb {
          * @en A token that uniquely identifies this pending transaction.
          * @zh 唯一标识此待处理交易的令牌。
          */
-        readonly purchaseToken: string;
+        getPurchaseToken(): string;
         /**
          * @en The product ids.
          * @zh 产品 ID。
          */
-        readonly products: string[];
+        getProducts(): string[];
     }
 
+        /**
+         * @en
+         * Possible purchase states.
+         *
+         * @zh
+         * 可能的购买状态。
+         */
+        export enum PurchaseState {
+            /**
+             * @en
+             * Purchase is pending and not yet completed to be processed by your app.
+             *
+             * @zh
+             * 购买处于待处理状态且尚未完成，无法由您的应用程序处理。
+             */
+            PENDING = 2,
+            /**
+             * @en
+             * Purchase is completed..
+             *
+             * @zh
+             * 购买完成。
+             */
+            PURCHASED = 1,
+            /**
+             * @en
+             * Purchase with unknown state.
+             *
+             * @zh
+             * 未知状态
+             */
+            UNSPECIFIED_STATE = 0,
+        }
     /**
      * @en Represents an in-app billing purchase.
      * @zh 代表应用内billing购买。
      */
-    export interface Purchase {
+    export class Purchase {
+        static PurchaseState: typeof jsb.PurchaseState;
         /**
          * @en One of PurchaseState indicating the state of the purchase.
          * @zh PurchaseState表示购买状态的其中一个值。
          */
-        readonly purchaseState: number;
+        getPurchaseState(): number;
         /**
          * @en The time the product was purchased, in milliseconds since the epoch (Jan 1, 1970).
          * @zh 产品购买的时间，以纪元（1970 年 1 月 1 日）以来的毫秒数表示。
          */
-        readonly purchaseTime: number;
+        getPurchaseTime(): number;
         /**
          * @en Indicates whether the purchase has been acknowledged.
          * @zh 表示是否已确认购买。
          */
-        readonly isAcknowledged: number;
+        isAcknowledged(): number;
         /**
          * @en Indicates whether the subscription renews automatically.
          * @zh 指示订阅是否自动续订。
          */
-        readonly isAutoRenewing: number;
+        isAutoRenewing(): number;
         /**
          * @en Hash code
          * @zh hash值
          */
-        readonly hashCode: number;
+        hashCode(): number;
 
         /**
          * @en The quantity of the purchased product.
          * @zh 购买产品的数量。
          */
-        readonly quantity: number;
+        getQuantity(): number;
         /**
          * @en The payload specified when the purchase was acknowledged or consumed.
          * @zh 确认或消费购买时指定的有效负载。
          */
-        readonly developerPayload: string;
+        getDeveloperPayload(): string;
         /**
          * @en Returns a unique order identifier for the transaction.
          * @zh 交易的唯一订单标识符。
          */
-        readonly orderId: string;
+        getOrderId(): string;
         /**
          * @en Returns a String in JSON format that contains details about the purchase order.
          * @zh 包含有关采购订单详细信息的 JSON 格式的字符串。
          */
-        readonly originalJson: string;
+        getOriginalJson(): string;
         /**
          * @en The application package from which the purchase originated.
          * @zh 购买来源的应用程序包。
          */
-        readonly packageName: string;
+        getPackageName(): string;
         /**
          * @en A token that uniquely identifies a purchase for a given item and user pair.
          * @zh 唯一标识给定商品和用户对的购买的令牌。
          */
-        readonly purchaseToken: string;
+        getPurchaseToken(): string;
         /**
          * @en String containing the signature of the purchase data that was signed with the private key of the developer.
          * @zh 包含使用开发者私钥签名的购买数据签名的字符串。
          */
-        readonly signature: string;
+        getSignature(): string;
         /**
          * @en To string
          * @zh 转换成字符串
          */
-        readonly toStr: string;
+        toString(): string;
 
         /**
          * @en Returns account identifiers that were provided when the purchase was made.
          * @zh 返回购买时提供的帐户标识符。
          */
-        readonly accountIdentifiers: AccountIdentifiers;
+        getAccountIdentifiers(): AccountIdentifiers;
         /**
          * @en The PendingPurchaseUpdate for an uncommitted transaction.
          * @zh 返回PendingPurchaseUpdate未提交的事务。
          */
-        readonly pendingPurchaseUpdate: PendingPurchaseUpdate;
+        getPendingPurchaseUpdate(): PendingPurchaseUpdate;
         /**
          * @en the product Ids.
          * @zh 产品 ID。
          */
-        readonly products: string[];
+        getProducts(): string[];
     }
 
     export interface BillingConfig {
@@ -668,7 +713,7 @@ declare namespace jsb {
          * @en The customer's country code.
          * @zh 客户的国家代码。
          */
-        readonly countryCode: string;
+        getCountryCode(): string;
     }
 
     /**
@@ -681,7 +726,7 @@ declare namespace jsb {
          *     without user choice to use Google Play billing.
          * @zh 返回一个外部交易令牌，该令牌可用于报告通过替代付款方式进行的交易，而无需用户选择使用 Google Play 付款方式。
          */
-        readonly externalTransactionToken: string;
+        getExternalTransactionToken(): string;
     }
 
     /**
@@ -693,149 +738,683 @@ declare namespace jsb {
          * @en An external transaction token that can be used to report a transaction made via external offer.
          * @zh 可用于报告通过外部报价进行的交易的外部交易令牌。
          */
-        readonly externalTransactionToken: string;
+        getExternalTransactionToken(): string;
     }
 
     /**
      * @en Results related to in-app messaging.
      * @zh 与应用程序内消息相关的结果。
      */
-    export interface InAppMessageResult {
+    export class InAppMessageResult {
+        static InAppMessageResponseCode: typeof InAppMessageResponseCode;
         /**
          * @en Response code for the in-app messaging API call.
          * @zh 应用内消息传递 API 调用的响应代码。
          */
-        readonly responseCode: number;
+        getResponseCode(): number;
         /**
          * @en Token that identifies the purchase to be acknowledged, if any.
          * @zh 返回标识需要确认的购买的令牌。
          */
-        readonly purchaseToken: string;
+        getPurchaseToken(): string;
+    }
+
+    export interface BillingResultBuilder {
+        setDebugMessage(productType: string): BillingResultBuilder;
+        setResponseCode(productType: number): BillingResultBuilder;
+        build(): BillingResult;
+    }
+    export class BillingResult {
+        private constructor();
+        static Builder: BillingResultBuilder;
+        getResponseCode(): number;
+        getDebugMessage(): string;
+        toString(): string;
+        public static newBuilder(): BillingResultBuilder;
+    }
+
+    export namespace BillingResult {
+        type Builder = BillingResultBuilder;
+    }
+
+    export interface UserChoiceBillingListener {
+        userSelectedAlternativeBilling(userChoiceDetails: UserChoiceDetails): void;
+    }
+    export interface PurchasesUpdatedListener {
+        onPurchasesUpdated(billingResult: BillingResult, purchases: Purchase[]): void;
+    }
+    export interface BillingClientStateListener {
+        onBillingServiceDisconnected(): void;
+        onBillingSetupFinished(
+            billingResult: BillingResult,
+        ): void;
+    }
+
+    export interface PendingPurchasesParamsBuilder {
+        enableOneTimeProducts: () => PendingPurchasesParamsBuilder;
+        enablePrepaidPlans: () => PendingPurchasesParamsBuilder;
+        build: () => PendingPurchasesParams;
+    }
+
+    export class PendingPurchasesParams {
+        private constructor();
+        public static newBuilder(): PendingPurchasesParamsBuilder;
+    }
+
+    export interface QueryProductDetailsParamsProductBuilder {
+        setProductId: (productID: string) => QueryProductDetailsParamsProductBuilder;
+        setProductType: (productType: string) => QueryProductDetailsParamsProductBuilder;
+        build: () => QueryProductDetailsParamsProduct;
+    }
+    export class QueryProductDetailsParamsProduct {
+        private constructor();
+        public static newBuilder(): QueryProductDetailsParamsProductBuilder;
+    }
+
+    export interface QueryProductDetailsParamsBuilder {
+        setProductList: (products: QueryProductDetailsParamsProduct[]) => QueryProductDetailsParamsBuilder;
+        build: () => QueryProductDetailsParams;
+    }
+    export class QueryProductDetailsParams {
+        static Product: typeof jsb.QueryProductDetailsParamsProduct;
+        private constructor();
+        public static newBuilder(): QueryProductDetailsParamsBuilder;
+    }
+
+    export interface ProductDetailsResponseListener {
+        onProductDetailsResponse(billingResult: BillingResult, productDetailsList: ProductDetails[]): void;
+    }
+
+    export interface ConsumeResponseListener {
+        onConsumeResponse(billingResult: BillingResult, token: string): void
+    }
+
+    export interface AcknowledgePurchaseResponseListener {
+        onAcknowledgePurchaseResponse(
+            billingResult: BillingResult
+        ): void
+    }
+
+    export interface BillingClientBuilder {
+        enableAlternativeBillingOnly: () => BillingClientBuilder;
+        enableExternalOffer: () => BillingClientBuilder;
+        enablePendingPurchases: (params: PendingPurchasesParams) => BillingClientBuilder;
+        enableUserChoiceBilling: (userChoiceBillingListener: UserChoiceBillingListener) => BillingClientBuilder;
+        setListener: (listener: PurchasesUpdatedListener) => BillingClientBuilder;
+        build: () => BillingClient;
+    }
+
+    export interface PurchasesResponseListener {
+        onQueryPurchasesResponse(
+            billingResult: BillingResult,
+            purchase: Purchase[]
+        ): void
+    }
+
+    export interface BillingConfigResponseListener {
+        onBillingConfigResponse(
+            billingResult: BillingResult,
+            billingConfig: BillingConfig
+        ): void
+    }
+    export interface AlternativeBillingOnlyReportingDetailsListener {
+        onAlternativeBillingOnlyTokenResponse(
+            billingResult: BillingResult,
+            alternativeBillingOnlyReportingDetails: AlternativeBillingOnlyReportingDetails
+        ): void
+    }
+
+    export interface ExternalOfferReportingDetailsListener {
+        onExternalOfferReportingDetailsResponse(
+            billingResult: BillingResult,
+            externalOfferReportingDetails: ExternalOfferReportingDetails
+        ): void
+    }
+
+    export interface AlternativeBillingOnlyAvailabilityListener {
+        onAlternativeBillingOnlyAvailabilityResponse(
+            billingResult: BillingResult
+        ): void
+    }
+
+    export interface ExternalOfferAvailabilityListener {
+        onExternalOfferAvailabilityResponse(
+            billingResult: BillingResult
+        ): void
+    }
+    export interface AlternativeBillingOnlyInformationDialogListener {
+        onAlternativeBillingOnlyInformationDialogResponse(
+            billingResult: BillingResult
+        ): void
+    }
+    export interface ExternalOfferInformationDialogListener {
+        onExternalOfferInformationDialogResponse(
+            billingResult: BillingResult
+        ): void
+    }
+    export interface InAppMessageResponseListener {
+        onInAppMessageResponse(
+            inAppMessageResult: InAppMessageResult
+        ): void
     }
 
     /**
-     * @en Main interface for communication between the Google Play library and user application code.
-     * @zh 产品 ID。
+     * @en
+     * Connection state of billing client.
+     *
+     * @zh
+     * Billing client的连接状态
      */
-    const googleBilling: {
+    export enum ConnectionState {
         /**
-         * @en Starts up BillingClient setup process asynchronously.
-         * @zh 异步启动 BillingClient 设置过程。
+         * @en
+         * This client was not yet connected to billing service or was already closed.
+         *
+         * @zh
+         * 此客户端尚未连接到Billing服务或已关闭。
          */
-        startConnection(): void;
+        DISCONNECTED = 0,
+        /**
+         * @en
+         * This client is currently in process of connecting to billing service.
+         *
+         * @zh
+         * 此客户端目前正在连接到Billing服务。
+         */
+        CONNECTING = 1,
+        /**
+         * @en
+         * This client is currently connected to billing service.
+         *
+         * @zh
+         * 此客户端当前已连接到Billing服务。
+         */
+        CONNECTED = 2,
+        /**
+         * @en
+         * This client was already closed and shouldn't be used again.
+         *
+         * @zh
+         * 该客户端已关闭，不应再次使用。
+         */
+        CLOSED = 3,
+    }
+    /**
+     * @en
+     * Possible response codes.
+     *
+     * @zh
+     * 可能的响应代码。
+     */
+    export enum BillingResponseCode {
+        /**
+         * @en
+         * This field is deprecated.
+         * See SERVICE_UNAVAILABLE which will be used instead of this code.
+         *
+         * @zh
+         * 这个字段已经废弃。
+         * 看看SERVICE_UNAVAILABLE将使用哪一个来代替此代码。
+         */
+        SERVICE_TIMEOUT = -3,
+        /**
+         * @en
+         * The requested feature is not supported by the Play Store on the current device.
+         *
+         * @zh
+         * 当前设备上的 Play Store 不支持所请求的功能。
+         */
+        FEATURE_NOT_SUPPORTED = -2,
+        /**
+         * @en
+         * The app is not connected to the Play Store service via the Google Play Billing Library.
+         *
+         * @zh
+         * 该应用未通过 Google Play Billing库连接到 Play Store 服务。
+         */
+        SERVICE_DISCONNECTED = -1,
+        /**
+         * @en
+         * Success.
+         *
+         * @zh
+         * 成功。
+         */
+        OK = 0,
+        /**
+         * @en
+         * Transaction was canceled by the user.
+         *
+         * @zh
+         * 交易已被用户取消。
+         */
+        USER_CANCELED = 1,
+        /**
+         * @en
+         * The service is currently unavailable.
+         *
+         * @zh
+         * 当前设备上的 Play Store 不支持所请求的功能。
+         */
+        SERVICE_UNAVAILABLE = 2,
+        /**
+         * @en
+         * A user billing error occurred during processing.
+         *
+         * @zh
+         * 处理过程中出现用户billing错误。
+         */
+        BILLING_UNAVAILABLE = 3,
+        /**
+         * @en
+         * The requested product is not available for purchase.
+         *
+         * @zh
+         * 所请求的产品无法购买。
+         */
+        ITEM_UNAVAILABLE = 4,
+        /**
+         * @en
+         * Error resulting from incorrect usage of the API.
+         *
+         * @zh
+         * 由于错误使用 API 而导致的错误。
+         */
+        DEVELOPER_ERROR = 5,
+        /**
+         * @en
+         * Fatal error during the API action.
+         *
+         * @zh
+         * API 操作期间发生致命错误。
+         */
+        ERROR = 6,
+        /**
+         * @en
+         * The purchase failed because the item is already owned.
+         *
+         * @zh
+         * 购买失败，因为该物品已被拥有。
+         */
+        ITEM_ALREADY_OWNED = 7,
+        /**
+         * @en
+         * Requested action on the item failed since it is not owned by the user.
+         *
+         * @zh
+         * 由于该项目不属于用户，因此对该项目请求的操作失败。
+         */
+        ITEM_NOT_OWNED = 8,
+        /**
+         * @en
+         * A network error occurred during the operation.
+         *
+         * @zh
+         * 操作期间发生网络错误。
+         */
+        NETWORK_ERROR = 12,
+    }
+    /**
+     * @en
+     * Features/capabilities supported by isFeatureSupported.
+     *
+     * @zh
+     * 支持的特性/能力isFeatureSupported。
+     */
+    export enum FeatureType {
+        /**
+         * @en
+         * Purchase/query for subscriptions.
+         *
+         * @zh
+         * 购买/查询订阅。
+         */
+        SUBSCRIPTIONS = 'subscriptions',
+        /**
+         * @en
+         * Subscriptions update/replace.
+         *
+         * @zh
+         * 订阅更新/替换。
+         */
+        SUBSCRIPTIONS_UPDATE = 'subscriptionsUpdate',
+        /**
+         * @en
+         * Launch a price change confirmation flow.
+         *
+         * @zh
+         * 启动价格变动确认流程。
+         */
+        PRICE_CHANGE_CONFIRMATION = 'priceChangeConfirmation',
+        /**
+        * @en
+        * Show in-app messages.
+        *
+        * @zh
+        * 显示应用内消息。
+        */
+        IN_APP_MESSAGING = 'bbb',
+        /**
+         * @en
+         * Play billing library support for querying and purchasing.
+         *
+         * @zh
+         * Play Billing库支持查询、购买。
+         */
+        PRODUCT_DETAILS = 'fff',
+        /**
+         * @en
+         * Get billing config.
+         *
+         * @zh
+         * 获取计费配置。
+         */
+        BILLING_CONFIG = 'ggg',
+        /**
+         * @en
+         * Alternative billing only.
+         *
+         * @zh
+         * 仅限替代Billing。
+         */
+        ALTERNATIVE_BILLING_ONLY = 'jjj',
 
         /**
-         * @en Closes the connection and releases all held resources such as service connections.
-         * @zh 关闭连接并释放所有持有的资源，例如服务连接。
+         * @en
+         * Play billing library support for external offer.
+         *
+         * @zh
+         * Play billing库支持外部报价。
          */
-        endConnection(): void;
+        EXTERNAL_OFFER = 'kkk',
+    }
 
+    /**
+     * @en
+     * Supported Product types.
+     *
+     * @zh
+     * 支持的产品类型。
+     */
+    export enum ProductType {
         /**
-         * @en Get the current billing client connection state.
-         * @zh 获取当前计费客户端连接状态。
+         * @en
+         * A Product type for Android apps in-app products.
+         *
+         * @zh
+         * Android 应用内产品的产品类型。
          */
-        getConnectionState(): number;
+        INAPP = 'inapp',
+        /**
+         * @en
+         * A Product type for Android apps subscriptions.
+         *
+         * @zh
+         * Android 应用程序订阅的产品类型。
+         */
+        SUBS = 'subs'
+    }
 
+    /**
+     * @en
+     * A high-level category of the in-app message.
+     * One category can be mapped to multiple in-app messages.
+     *
+     * @zh
+     * 应用程序内信息的高级类别。
+     * 一个类别可映射到多个应用程序内信息。
+     */
+    export enum InAppMessageCategoryId {
         /**
-         * @en Checks if the client is currently connected to the service, so that requests to other methods will succeed.
-               Returns true if the client is currently connected to the service, false otherwise.
-         * @zh 检查客户端当前是否连接到服务，以便对其他方法的请求能够成功。
-               如果客户端当前已连接到服务，则返回 true，否则返回 false。
+         * @en
+         * A Product type for Android apps in-app products.
+         *
+         * @zh
+         * 应用程序中未知的消息类别 ID
          */
-        isReady(): boolean;
+        UNKNOWN_IN_APP_MESSAGE_CATEGORY_ID = 0,
+        /**
+         * @en
+         * The in-app messages of this category are for transactional purpose, such as payment issues.
+         *
+         * @zh
+         * 这类应用内信息用于交易目的，如支付问题。
+         */
+        TRANSACTIONAL = 2
+    }
 
+    /**
+     * @en
+     * Supported replacement modes to replace an existing subscription with a new one.
+     *
+     * @zh
+     * 支持替换模式，可将现有订购替换为新订购。
+     */
+    export enum ReplacementMode {
         /**
-         * @en Performs a network query the details of products available for sale in your app.
-         * @zh 执行网络查询您的应用中可供销售的产品的详细信息。
+         * @en
+         * Unknown replacement mode.
+         *
+         * @zh
+         * 未知替换模式
          */
-        queryProductDetailsParams(productId: string[], productType: string): void;
+        UNKNOWN_REPLACEMENT_MODE = 0,
         /**
-         * @en Initiates the billing flow for an in-app purchase or subscription.
-         * @zh 启动应用内购买或订阅的计费流程。
+         * @en
+         * The new plan takes effect immediately, and the remaining time will be prorated and credited to the user.
+         *
+         * @zh
+         * 新计划立即生效，剩余时间将按比例计入用户贷方。
          */
-        launchBillingFlow(productDetails: ProductDetails[], selectedOfferToken: string | null): void;
+        WITH_TIME_PRORATION = 1,
         /**
-         * @en Consumes a given in-app product.
-         * @zh 消费指定的应用内产品。
+         * @en
+         * The new plan takes effect immediately, and the billing cycle remains the same.
+         *
+         * @zh
+         * 新计划立即生效，计费周期保持不变。
          */
-        consumePurchases(purchases: Purchase[]): void;
+        CHARGE_PRORATED_PRICE = 2,
         /**
-         * @en Returns purchases details for currently owned items bought within your app.
-         * @zh 返回您应用内当前拥有的购买商品的购买详情。
+         * @en
+         * The new plan takes effect immediately, and the new price will be charged on next recurrence time.
+         *
+         * @zh
+         * 新计划立即生效，新价格将在下次复诊时收取。
          */
-        queryPurchasesAsync(productType: string): void;
+        WITHOUT_PRORATION = 3,
         /**
-         * @en Acknowledges in-app purchases..
-         * @zh 确认应用内购买。
+         * @en
+         * Replacement takes effect immediately, and the user is charged full price of new plan and
+         * is given a full billing cycle of subscription, plus remaining prorated time from the old plan.
+         *
+         * @zh
+         * 替换立即生效，用户将被收取新计划的全额费用，并获得一个完整的计费周期，加上旧计划按比例计算的剩余时间。
          */
-        acknowledgePurchase(purchases: Purchase[]): void;
+        CHARGE_FULL_PRICE = 5,
         /**
-         * @en Gets the billing config, which stores configuration used to perform billing operations.
-         * @zh 获取计费配置，其中存储用于执行计费操作的配置。
+         * @en
+         * The new purchase takes effect immediately, the new plan will take effect when the old item expires.
+         *
+         * @zh
+         * 新购买立即生效，新计划将在旧项目到期时生效。
          */
-        getBillingConfigAsync(): void;
+        DEFERRED = 6,
+    }
 
+    /**
+     * @en
+     * Possible response codes.
+     *
+     * @zh
+     * 可能的响应代码。
+     */
+    export enum InAppMessageResponseCode {
         /**
-         * @en Creates alternative billing only purchase details that can be used to report a transaction made via alternative billing without user choice to use Google Play billing.
-         * @zh 创建仅限替代结算的购买详情，可用于报告通过替代结算进行的交易，而无需用户选择使用 Google Play Billing。
+         * @en
+         * The flow has finished and there is no action needed from developers.
+         *
+         * @zh
+         * 流程已经结束，开发人员无需采取任何行动。
          */
-        createAlternativeBillingOnlyReportingDetailsAsync(): void;
+        NO_ACTION_NEEDED = 0,
         /**
-         * @en Checks the availability of offering alternative billing without user choice to use Google Play Billing.
-         * @zh 检查是否可以提供替代结算方式，而无需用户选择使用 Google Play Billing方式。
+         * @en
+         * The subscription status changed.
+         *
+         * @zh
+         * 订阅状态已更改。
          */
-        isAlternativeBillingOnlyAvailableAsync(): void;
+        SUBSCRIPTION_STATUS_UPDATED = 1
+    }
 
+    /**
+     * @en
+     * Recurrence mode of the pricing phase.
+     *
+     * @zh
+     * 定价阶段的复现模式。
+     */
+    export enum RecurrenceMode {
         /**
-         * @en Creates purchase details that can be used to report a transaction made via external offer.
-         * @zh 创建可用于报告通过外部报价进行的交易的购买详情。
+         * @en
+         * The billing plan payment recurs for infinite billing periods unless cancelled.
+         *
+         * @zh
+         * 除非取消，否则billing计划付款将无限期地重复。
          */
-        createExternalOfferReportingDetailsAsync(): void;
+        INFINITE_RECURRING = 1,
         /**
-         * @en Checks the availability of providing external offer.
-         * @zh 检查提供外部报价的可用性。
+         * @en
+         * The billing plan payment recurs for a fixed number of billing period set in billingCycleCount.
+         *
+         * @zh
+         * Billing计划付款将在 billingCycleCount 中设置的固定计费周期内重复发生。
          */
-        isExternalOfferAvailableAsync(): void;
+        FINITE_RECURRING = 2,
+        /**
+         * @en
+         * The billing plan payment is a one time charge that does not repeat.
+         *
+         * @zh
+         * Billing计划付款是一次性费用，不会重复。
+         */
+        NON_RECURRING = 3,
+    }
 
-        /**
-         * @en Checks if the specified feature or capability is supported by the Play Store.
-         * @zh 检查 Play Store 是否支持指定的功能。
-         */
-        isFeatureSupported(feature: string): BillingResult;
+    export interface ProductDetailsParamsBuilder {
+        setOfferToken: (offerToken: string) => ProductDetailsParamsBuilder;
+        setProductDetails: (productDetails: ProductDetails) => ProductDetailsParamsBuilder;
+        build: () => ProductDetailsParams;
+    }
+    export class ProductDetailsParams {
+        private constructor();
+        static Builder: ProductDetailsParamsBuilder;
+        static newBuilder: () => ProductDetailsParamsBuilder;
+    }
 
-        /**
-         * @en Shows the alternative billing only information dialog on top of the calling app.
-         * @zh 在调用应用程序顶部显示仅显示备用计费信息对话框。
-         */
-        showAlternativeBillingOnlyInformationDialog(): BillingResult;
+    export interface SubscriptionUpdateParamsBuilder {
+        setOldPurchaseToken: (purchaseToken: string) => SubscriptionUpdateParamsBuilder;
+        setOriginalExternalTransactionId: (externalTransactionId: string) => SubscriptionUpdateParamsBuilder;
+        setSubscriptionReplacementMode: (subscriptionReplacementMode: number) => SubscriptionUpdateParamsBuilder;
+        build: () => SubscriptionUpdateParams;
+    }
+    export class SubscriptionUpdateParams {
+        private constructor();
+        static Builder: SubscriptionUpdateParamsBuilder;
+        static newBuilder: () => SubscriptionUpdateParamsBuilder;
+        static ReplacementMode: typeof jsb.ReplacementMode;
+    }
 
-        /**
-         * @en Shows the external offer information dialog on top of the calling app.
-         * @zh 在调用应用程序顶部显示外部优惠信息对话框。
-         */
-        showExternalOfferInformationDialog(): BillingResult;
+    export class BillingFlowParams {
+        static ProductDetailsParams: typeof jsb.ProductDetailsParams;
+        static SubscriptionUpdateParams: typeof jsb.SubscriptionUpdateParams;
+        static Builder: BillingFlowParamsBuilder;
+        private constructor();
+        public static newBuilder(): BillingFlowParamsBuilder;
+    }
 
-        /**
-         * @en Overlays billing related messages on top of the calling app.
-         * @zh 在调用应用程序上叠加与计费相关的消息。
-         */
-        showInAppMessages(): BillingResult;
-    } | undefined;
-    export let onBillingSetupFinished: (result: BillingResult) => void | undefined;
-    export let onBillingServiceDisconnected: () => void | undefined;
-    export let onProductDetailsResponse: (result: BillingResult, productDetailsList: ProductDetails[]) => void | undefined;
-    export let onPurchasesUpdated: (result: BillingResult, purchaseList: Purchase[]) => void | undefined;
-    export let onConsumeResponse: (result: BillingResult, purchaseToken: string) => void | undefined;
-    export let onAcknowledgePurchaseResponse: (result: BillingResult) => void | undefined;
-    export let onQueryPurchasesResponse: (result: BillingResult, purchaseList: Purchase[]) => void | undefined;
-    export let onBillingConfigResponse: (result: BillingResult, config: BillingConfig) => void | undefined;
-    export let onAlternativeBillingOnlyTokenResponse: (result: BillingResult, details: AlternativeBillingOnlyReportingDetails) => void | undefined;
-    export let onExternalOfferReportingDetailsResponse: (result: BillingResult, details: ExternalOfferReportingDetails) => void | undefined;
-    export let onAlternativeBillingOnlyAvailabilityResponse: (result: BillingResult) => void | undefined;
-    export let onExternalOfferAvailabilityResponse: (result: BillingResult) => void | undefined;
-    export let onAlternativeBillingOnlyInformationDialogResponse: (result: BillingResult) => void | undefined;
-    export let onExternalOfferInformationDialogResponse: (result: BillingResult) => void | undefined;
-    export let onInAppMessageResponse: (result: InAppMessageResult) => void | undefined;
+    export interface BillingFlowParamsBuilder {
+        setIsOfferPersonalized: (isOfferPersonalized: boolean) => BillingFlowParamsBuilder;
+        setObfuscatedAccountId: (obfuscatedAccountid: string) => BillingFlowParamsBuilder;
+        setObfuscatedProfileId: (obfuscatedProfileId: string) => BillingFlowParamsBuilder;
+        setProductDetailsParamsList: (userChoiceBillingListener: ProductDetailsParams[]) => BillingFlowParamsBuilder;
+        setSubscriptionUpdateParams: (userChoiceBillingListener: SubscriptionUpdateParams) => BillingFlowParamsBuilder;
+        build: () => BillingFlowParams;
+    }
+
+    export interface ConsumeParamsBuilder {
+        setPurchaseToken: (purchaseToken: string) => ConsumeParamsBuilder;
+        build: () => ConsumeParams;
+    }
+    export class ConsumeParams {
+        private constructor();
+        public static newBuilder(): ConsumeParamsBuilder;
+    }
+    export interface AcknowledgePurchaseParamsBuilder {
+        setPurchaseToken: (purchaseToken: string) => AcknowledgePurchaseParamsBuilder;
+        build: () => AcknowledgePurchaseParams;
+    }
+    export class AcknowledgePurchaseParams {
+        private constructor();
+        public static newBuilder(): AcknowledgePurchaseParamsBuilder;
+    }
+
+    export interface QueryPurchasesParamsBuilder {
+        setProductType: (productType: string) => QueryPurchasesParamsBuilder;
+        build: () => QueryPurchasesParams;
+    }
+    export class QueryPurchasesParams {
+        private constructor();
+        public static newBuilder(): QueryPurchasesParamsBuilder;
+    }
+
+    export interface InAppMessageParamsBuilder {
+        addAllInAppMessageCategoriesToShow: () => InAppMessageParamsBuilder;
+        addInAppMessageCategoryToShow: (inAppMessageCategoryId: number) => InAppMessageParamsBuilder;
+        build: () => InAppMessageParams;
+    }
+    export class InAppMessageParams {
+        private constructor();
+        public static newBuilder(): InAppMessageParamsBuilder;
+        static InAppMessageCategoryId: typeof InAppMessageCategoryId;
+    }
+
+    export interface GetBillingConfigParamsBuilder {
+        build: () => GetBillingConfigParams;
+    }
+    export class GetBillingConfigParams {
+        private constructor();
+        public static newBuilder(): GetBillingConfigParamsBuilder;
+    }
+    export class BillingClient {
+        private constructor();
+        static Builder: BillingFlowParamsBuilder;
+        static ConnectionState: typeof jsb.ConnectionState;
+        static BillingResponseCode: typeof jsb.BillingResponseCode;
+        static FeatureType: typeof jsb.FeatureType;
+        static ProductType: typeof jsb.ProductType;
+        public static newBuilder(): BillingClientBuilder;
+        startConnection: (listener: BillingClientStateListener) => void;
+        endConnection: () => void;
+        getConnectionState: () => number;
+        isReady: () => void;
+        queryProductDetailsAsync: (params: QueryProductDetailsParams, listener: ProductDetailsResponseListener) => void;
+        launchBillingFlow: (params: BillingFlowParams) => void;
+        consumeAsync: (params: ConsumeParams, listener: ConsumeResponseListener) => void;
+        acknowledgePurchase: (params: AcknowledgePurchaseParams, listener: AcknowledgePurchaseResponseListener) => void;
+        queryPurchasesAsync: (params: QueryPurchasesParams, listener: PurchasesResponseListener) => void;
+        getBillingConfigAsync: (params: GetBillingConfigParams, listener: BillingConfigResponseListener) => void;
+        createAlternativeBillingOnlyReportingDetailsAsync: (listener: AlternativeBillingOnlyReportingDetailsListener) => void;
+        isAlternativeBillingOnlyAvailableAsync: (listener: AlternativeBillingOnlyAvailabilityListener) => void;
+        createExternalOfferReportingDetailsAsync: (listener: ExternalOfferReportingDetailsListener) => void;
+        isExternalOfferAvailableAsync: (listener: ExternalOfferAvailabilityListener) => void;
+
+        isFeatureSupported: (productType: string) => BillingResult;
+        showAlternativeBillingOnlyInformationDialog: (listener: AlternativeBillingOnlyInformationDialogListener) => void;
+        showExternalOfferInformationDialog: (listener: ExternalOfferInformationDialogListener) => void;
+        showInAppMessages: (params: InAppMessageParams, listener: InAppMessageResponseListener) => void;
+    }
 }
 
 declare namespace ns {

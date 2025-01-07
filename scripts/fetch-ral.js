@@ -95,8 +95,12 @@ function runCommand (cmd, cwd) {
                 console.error(stderr);
             }
         });
-        ls.stdout.on('close', () => {
+        ls.on('close', () => {
             resolve(ls.exitCode);
+        });
+
+        ls.stderr.on('data', (data) => {
+            console.error(data);
         });
     });
 }

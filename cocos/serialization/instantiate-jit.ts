@@ -100,15 +100,23 @@ function writeAssignment (codeArray, statement, expression): void {
 // -> 't.foo1 = bar1;'
 // -> 't.foo2 = bar2;'
 class Assignments {
-    public static pool: js.Pool<{}>;
+    public static pool: js.Pool<Assignments> = new js.Pool((obj: Assignments) => {
+        obj._exps.length = 0;
+        obj._targetExp = null;
+    }, 1);
 
     private declare _exps: any[];
     private declare _targetExp: any;
 
-    constructor (targetExpression?) {
+    constructor (targetExpression?: any) {
         this._exps = [];
         this._targetExp = targetExpression;
     }
+
+    setTargetExp (value: any): void {
+        this._targetExp = value;
+    }
+
     public append (key, expression): void {
         this._exps.push([key, expression]);
     }
@@ -130,15 +138,11 @@ class Assignments {
     }
 }
 
-Assignments.pool = new js.Pool((obj: any) => {
-    obj._exps.length = 0;
-    obj._targetExp = null;
-}, 1);
 // HACK: here we've changed the signature of get method
-(Assignments.pool.get as any) = function (this: any, targetExpression): Assignments {
-    const cache: any = this._get() || new Assignments();
-    cache._targetExp = targetExpression;
-    return cache as Assignments;
+(Assignments.pool.get as any) = function get (this: js.Pool<Assignments>, targetExpression: any): Assignments {
+    const cache: Assignments = this._get() || new Assignments();
+    cache.setTargetExp(targetExpression);
+    return cache;
 };
 
 // HELPER FUNCTIONS

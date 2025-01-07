@@ -25,7 +25,7 @@
 import { TEST, EDITOR } from 'internal:constants';
 import { deviceManager } from '../../gfx';
 import { cclegacy } from '../../core';
-import { Filter, PixelFormat, WrapMode } from './asset-enum';
+import { TextureFilter, PixelFormat, WrapMode } from './asset-enum';
 import './asset';
 import { patch_cc_TextureBase } from '../../native-binding/decorators';
 import type { TextureBase as JsbTextureBase } from './texture-base';
@@ -86,7 +86,7 @@ textureBaseProto.createNode = null!;
 export type TextureBase = JsbTextureBase;
 export const TextureBase: typeof JsbTextureBase = jsb.TextureBase;
 
-TextureBase.Filter = Filter;
+TextureBase.Filter = TextureFilter;
 TextureBase.PixelFormat = PixelFormat;
 TextureBase.WrapMode = WrapMode;
 
@@ -141,4 +141,4 @@ textureBaseProto._onGFXSamplerUpdated = function (gfxSampler, samplerInfo) {
 cclegacy.TextureBase = jsb.TextureBase;
 
 // handle meta data, it is generated automatically
-patch_cc_TextureBase({TextureBase, Filter, WrapMode, PixelFormat});
+patch_cc_TextureBase({TextureBase, TextureFilter, WrapMode, PixelFormat});

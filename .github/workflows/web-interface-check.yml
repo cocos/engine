@@ -20,6 +20,28 @@ jobs:
         with:
           node-version: '18.x'
 
+      - name: Setup emsdk
+        uses: dumganhar/setup-emsdk@997d2cde2deabda085a11f98e86e842915b0e846
+        with:
+          version: 3.1.41
+          actions-cache-folder: 'emsdk-cache-3.1.41'
+
+      - name: Verify
+        run: |
+          which emcc
+          emcc -v
+
+      - name: Install ninja
+        run: |
+          if ! command -v ninja &> /dev/null; then
+              echo "Ninja not found, installing..."
+              # sudo apt update
+              sudo apt install ninja-build
+          else
+              echo "Ninja is already installed."
+          fi
+          which ninja
+
       - uses: actions/checkout@v4
         name: Checkout Base Ref
         with:
@@ -43,6 +65,51 @@ jobs:
           ref: "${{ env.EXT_VERSION }}"
           fetch-depth: 1
 
+      - name: Apply emscripten patches (BASE)
+        run: |
+          echo "--------------------------------- Save bind.cpp ---------------------------------"
+          cp $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp.bak
+          echo "--------------------------------- Apply embind bind.cpp patches ---------------------------------"
+          cp -f ./engine/.github/workflows/emscripten-patches/embind/bind.cpp $EMSDK/upstream/emscripten/system/lib/embind/
+          echo "--------------------------------- Apply patches DONE! ---------------------------------"
+          cat $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+
+      - name: Build Spine WASM (BASE)
+        run: |
+          cd ./engine/native/cocos/editor-support/spine-wasm
+          mkdir build-wasm
+          cd build-wasm
+          emcmake cmake .. -GNinja
+          ninja
+          ls -l
+
+      - name: Build Spine ASMJS (BASE)
+        run: |
+          cd ./engine/native/cocos/editor-support/spine-wasm
+          sed -i 's/set(BUILD_WASM 1)/set(BUILD_WASM 0)/g' CMakeLists.txt
+          mkdir build-asmjs
+          cd build-asmjs
+          emcmake cmake .. -GNinja
+          ninja
+          ls -l
+          
+      - name: Copy files to external directory (BASE)
+        run: |
+          rm -rf dist
+          mkdir dist
+          cp ./engine/native/cocos/editor-support/spine-wasm/build-wasm/spine.wasm ./dist/
+          cp ./engine/native/cocos/editor-support/spine-wasm/build-wasm/spine.js ./dist/spine.wasm.js
+          cp ./engine/native/cocos/editor-support/spine-wasm/build-asmjs/spine.js.mem ./dist/
+          cp ./engine/native/cocos/editor-support/spine-wasm/build-asmjs/spine.js ./dist/spine.asm.js
+          echo "-------- Before replace spine wasm -----------"
+          ls -l ./engine/native/external/emscripten/spine/
+          cp -f ./dist/* ./engine/native/external/emscripten/spine/
+          echo "-------- After replace spine wasm ------------"
+          ls -l ./engine/native/external/emscripten/spine/
+          echo "-----------------------------------------------"
+          cd ./engine/native/external
+          git status
+
       - name: Build Base Declarations
         working-directory: ./engine
         run: |
@@ -50,6 +117,14 @@ jobs:
           if [ -e ./.github/workflows/package-size-check.js ]; then
             node ./.github/workflows/package-size-check.js
           fi
+
+      - name: Restore patches (BASE)
+        run: |
+          echo "-------------------------- Restore patches ---------------------------------"
+          rm $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+          mv $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp.bak $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+          echo "-------------------------- Restore patches DONE! ---------------------------------"
+          cat $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
 
       - name: Clear npm Cache
         run: |
@@ -99,18 +174,7 @@ jobs:
           ref: "${{ env.EXT_VERSION_HEAD }}"
           fetch-depth: 1
 
-      - name: Setup emsdk
-        uses: dumganhar/setup-emsdk@997d2cde2deabda085a11f98e86e842915b0e846
-        with:
-          version: 3.1.41
-          actions-cache-folder: 'emsdk-cache-3.1.41'
-
-      - name: Verify
-        run: |
-          which emcc
-          emcc -v
-
-      - name: Apply emscripten patches
+      - name: Apply emscripten patches (HEAD)
         run: |
           echo "--------------------------------- Save bind.cpp ---------------------------------"
           cp $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp.bak
@@ -119,18 +183,7 @@ jobs:
           echo "--------------------------------- Apply patches DONE! ---------------------------------"
           cat $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
 
-      - name: Install ninja
-        run: |
-          if ! command -v ninja &> /dev/null; then
-              echo "Ninja not found, installing..."
-              # sudo apt update
-              sudo apt install ninja-build
-          else
-              echo "Ninja is already installed."
-          fi
-          which ninja
-
-      - name: Build Spine WASM
+      - name: Build Spine WASM (HEAD)
         run: |
           cd ./engine-HEAD/native/cocos/editor-support/spine-wasm
           mkdir build-wasm
@@ -139,7 +192,7 @@ jobs:
           ninja
           ls -l
 
-      - name: Build Spine ASMJS
+      - name: Build Spine ASMJS (HEAD)
         run: |
           cd ./engine-HEAD/native/cocos/editor-support/spine-wasm
           sed -i 's/set(BUILD_WASM 1)/set(BUILD_WASM 0)/g' CMakeLists.txt
@@ -149,8 +202,9 @@ jobs:
           ninja
           ls -l
           
-      - name: Copy files to external directory
+      - name: Copy files to external directory (HEAD)
         run: |
+          rm -rf dist
           mkdir dist
           cp ./engine-HEAD/native/cocos/editor-support/spine-wasm/build-wasm/spine.wasm ./dist/
           cp ./engine-HEAD/native/cocos/editor-support/spine-wasm/build-wasm/spine.js ./dist/spine.wasm.js
@@ -162,6 +216,8 @@ jobs:
           echo "-------- After replace spine wasm ------------"
           ls -l ./engine-HEAD/native/external/emscripten/spine/
           echo "-----------------------------------------------"
+          cd ./engine-HEAD/native/external
+          git status
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
@@ -175,7 +231,7 @@ jobs:
           npm install
           node ./.github/workflows/package-size-check.js
 
-      - name: Restore patches
+      - name: Restore patches (HEAD)
         run: |
           echo "-------------------------- Restore patches ---------------------------------"
           rm $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp

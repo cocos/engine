@@ -30,14 +30,121 @@
 /* eslint-disable max-len */
 import { AddressableGraph, AdjI, AdjacencyGraph, BidirectionalGraph, ComponentGraph, ED, InEI, MutableGraph, MutableReferenceGraph, NamedGraph, OutE, OutEI, PolymorphicGraph, PropertyGraph, ReferenceGraph, VertexListGraph, findRelative, getPath } from './graph';
 import type { DescriptorSet, DescriptorSetLayout, PipelineLayout } from '../../gfx';
-import { DescriptorSetLayoutInfo, ShaderStageFlagBit, Type, UniformBlock } from '../../gfx';
-import { DescriptorBlock, saveDescriptorBlock, loadDescriptorBlock, DescriptorBlockIndex, saveDescriptorBlockIndex, loadDescriptorBlockIndex, DescriptorTypeOrder, UpdateFrequency, RenderCommonObjectPool } from './types';
+import { DescriptorSetLayoutInfo, Format, ShaderStageFlagBit, Type, UniformBlock } from '../../gfx';
+import { AccessType, ParameterType, UpdateFrequency, ViewDimension, RenderCommonObjectPool } from './types';
 import { RecyclePool } from '../../core/memop';
 import type { OutputArchive, InputArchive } from './archive';
 import { saveUniformBlock, loadUniformBlock, saveDescriptorSetLayoutInfo, loadDescriptorSetLayoutInfo } from './serialization';
 
 function resetDescriptorSetLayoutInfo (info: DescriptorSetLayoutInfo): void {
     info.bindings.length = 0;
+}
+
+export const enum DescriptorTypeOrder {
+    UNIFORM_BUFFER,
+    DYNAMIC_UNIFORM_BUFFER,
+    SAMPLER_TEXTURE,
+    SAMPLER,
+    TEXTURE,
+    STORAGE_BUFFER,
+    DYNAMIC_STORAGE_BUFFER,
+    STORAGE_IMAGE,
+    INPUT_ATTACHMENT,
+}
+
+export class Descriptor {
+    constructor (type: Type = Type.UNKNOWN) {
+        this.type = type;
+    }
+    reset (type: Type): void {
+        this.type = type;
+        this.count = 1;
+    }
+    declare type: Type;
+    count = 1;
+}
+
+export class DescriptorBlock {
+    reset (): void {
+        this.descriptors.clear();
+        this.uniformBlocks.clear();
+        this.capacity = 0;
+        this.count = 0;
+    }
+    readonly descriptors: Map<string, Descriptor> = new Map<string, Descriptor>();
+    readonly uniformBlocks: Map<string, UniformBlock> = new Map<string, UniformBlock>();
+    capacity = 0;
+    count = 0;
+}
+
+export class DescriptorBlockFlattened {
+    reset (): void {
+        this.descriptorNames.length = 0;
+        this.uniformBlockNames.length = 0;
+        this.descriptors.length = 0;
+        this.uniformBlocks.length = 0;
+        this.capacity = 0;
+        this.count = 0;
+    }
+    readonly descriptorNames: string[] = [];
+    readonly uniformBlockNames: string[] = [];
+    readonly descriptors: Descriptor[] = [];
+    readonly uniformBlocks: UniformBlock[] = [];
+    capacity = 0;
+    count = 0;
+}
+
+export class DescriptorBlockIndex {
+    constructor (updateFrequency: UpdateFrequency = UpdateFrequency.PER_INSTANCE, parameterType: ParameterType = ParameterType.CONSTANTS, descriptorType: DescriptorTypeOrder = DescriptorTypeOrder.UNIFORM_BUFFER, visibility: ShaderStageFlagBit = ShaderStageFlagBit.NONE) {
+        this.updateFrequency = updateFrequency;
+        this.parameterType = parameterType;
+        this.descriptorType = descriptorType;
+        this.visibility = visibility;
+    }
+    declare updateFrequency: UpdateFrequency;
+    declare parameterType: ParameterType;
+    declare descriptorType: DescriptorTypeOrder;
+    declare visibility: ShaderStageFlagBit;
+}
+
+export class DescriptorGroupBlockIndex {
+    constructor (
+        updateFrequency: UpdateFrequency = UpdateFrequency.PER_INSTANCE,
+        parameterType: ParameterType = ParameterType.CONSTANTS,
+        descriptorType: DescriptorTypeOrder = DescriptorTypeOrder.UNIFORM_BUFFER,
+        visibility: ShaderStageFlagBit = ShaderStageFlagBit.NONE,
+        accessType: AccessType = AccessType.READ,
+        viewDimension: ViewDimension = ViewDimension.TEX2D,
+        format: Format = Format.UNKNOWN,
+    ) {
+        this.updateFrequency = updateFrequency;
+        this.parameterType = parameterType;
+        this.descriptorType = descriptorType;
+        this.visibility = visibility;
+        this.accessType = accessType;
+        this.viewDimension = viewDimension;
+        this.format = format;
+    }
+    declare updateFrequency: UpdateFrequency;
+    declare parameterType: ParameterType;
+    declare descriptorType: DescriptorTypeOrder;
+    declare visibility: ShaderStageFlagBit;
+    declare accessType: AccessType;
+    declare viewDimension: ViewDimension;
+    declare format: Format;
+}
+
+export class DescriptorGroupBlock {
+    reset (): void {
+        this.descriptors.clear();
+        this.uniformBlocks.clear();
+        this.capacity = 0;
+        this.count = 0;
+    }
+    readonly descriptors: Map<string, Descriptor> = new Map<string, Descriptor>();
+    readonly uniformBlocks: Map<string, UniformBlock> = new Map<string, UniformBlock>();
+    capacity = 0;
+    count = 0;
 }
 
 export class DescriptorDB {
@@ -471,11 +578,101 @@ export class DescriptorSetData {
     declare /*refcount*/ descriptorSet: DescriptorSet | null;
 }
 
+export class DescriptorGroupBlockData {
+    constructor (
+        type: DescriptorTypeOrder = DescriptorTypeOrder.UNIFORM_BUFFER,
+        visibility: ShaderStageFlagBit = ShaderStageFlagBit.NONE,
+        accessType: AccessType = AccessType.READ,
+        viewDimension: ViewDimension = ViewDimension.TEX2D,
+        format: Format = Format.UNKNOWN,
+        capacity = 0,
+    ) {
+        this.type = type;
+        this.visibility = visibility;
+        this.accessType = accessType;
+        this.viewDimension = viewDimension;
+        this.format = format;
+        this.capacity = capacity;
+    }
+    reset (
+        type: DescriptorTypeOrder,
+        visibility: ShaderStageFlagBit,
+        accessType: AccessType,
+        viewDimension: ViewDimension,
+        format: Format,
+        capacity: number,
+    ): void {
+        this.type = type;
+        this.visibility = visibility;
+        this.accessType = accessType;
+        this.viewDimension = viewDimension;
+        this.format = format;
+        this.offset = 0;
+        this.capacity = capacity;
+        this.descriptors.length = 0;
+    }
+    declare type: DescriptorTypeOrder;
+    declare visibility: ShaderStageFlagBit;
+    declare accessType: AccessType;
+    declare viewDimension: ViewDimension;
+    declare format: Format;
+    offset = 0;
+    declare capacity: number;
+    readonly descriptors: DescriptorData[] = [];
+}
+
+export class DescriptorGroupLayoutData {
+    constructor (
+        slot = 0xFFFFFFFF,
+        capacity = 0,
+        descriptorGroupBlocks: DescriptorGroupBlockData[] = [],
+        uniformBlocks: Map<number, UniformBlock> = new Map<number, UniformBlock>(),
+        bindingMap: Map<number, number> = new Map<number, number>(),
+    ) {
+        this.slot = slot;
+        this.capacity = capacity;
+        this.descriptorGroupBlocks = descriptorGroupBlocks;
+        this.uniformBlocks = uniformBlocks;
+        this.bindingMap = bindingMap;
+    }
+    reset (
+        slot: number,
+        capacity: number,
+    ): void {
+        this.slot = slot;
+        this.capacity = capacity;
+        this.uniformBlockCapacity = 0;
+        this.samplerTextureCapacity = 0;
+        this.descriptorGroupBlocks.length = 0;
+        this.uniformBlocks.clear();
+        this.bindingMap.clear();
+    }
+    declare slot: number;
+    declare capacity: number;
+    uniformBlockCapacity = 0;
+    samplerTextureCapacity = 0;
+    declare readonly descriptorGroupBlocks: DescriptorGroupBlockData[];
+    declare readonly uniformBlocks: Map<number, UniformBlock>;
+    declare readonly bindingMap: Map<number, number>;
+}
+
+export class DescriptorGroupData {
+    constructor (descriptorGroupLayoutData: DescriptorGroupLayoutData = new DescriptorGroupLayoutData()) {
+        this.descriptorGroupLayoutData = descriptorGroupLayoutData;
+    }
+    reset (): void {
+        this.descriptorGroupLayoutData.reset(0xFFFFFFFF, 0);
+    }
+    declare readonly descriptorGroupLayoutData: DescriptorGroupLayoutData;
+}
+
 export class PipelineLayoutData {
     reset (): void {
         this.descriptorSets.clear();
+        this.descriptorGroups.clear();
     }
     readonly descriptorSets: Map<UpdateFrequency, DescriptorSetData> = new Map<UpdateFrequency, DescriptorSetData>();
+    readonly descriptorGroups: Map<UpdateFrequency, DescriptorGroupData> = new Map<UpdateFrequency, DescriptorGroupData>();
 }
 
 export class ShaderBindingData {
@@ -866,6 +1063,12 @@ export class LayoutGraphObjectPool {
         this.renderCommon = renderCommon;
     }
     reset (): void {
+        this.d.reset(); // Descriptor
+        this.db.reset(); // DescriptorBlock
+        this.dbf.reset(); // DescriptorBlockFlattened
+        this.dbi.reset(); // DescriptorBlockIndex
+        this.dgbi.reset(); // DescriptorGroupBlockIndex
+        this.dgb.reset(); // DescriptorGroupBlock
         this.dd.reset(); // DescriptorDB
         this.rp.reset(); // RenderPhase
         this.lg.reset(); // LayoutGraph
@@ -875,6 +1078,9 @@ export class LayoutGraphObjectPool {
         this.dbd.reset(); // DescriptorBlockData
         this.dsld.reset(); // DescriptorSetLayoutData
         this.dsd.reset(); // DescriptorSetData
+        this.dgbd.reset(); // DescriptorGroupBlockData
+        this.dgld.reset(); // DescriptorGroupLayoutData
+        this.dgd.reset(); // DescriptorGroupData
         this.pld.reset(); // PipelineLayoutData
         this.sbd.reset(); // ShaderBindingData
         this.sld.reset(); // ShaderLayoutData
@@ -884,6 +1090,60 @@ export class LayoutGraphObjectPool {
         this.rsd.reset(); // RenderStageData
         this.rpd.reset(); // RenderPhaseData
         this.lgd.reset(); // LayoutGraphData
+    }
+    createDescriptor (
+        type: Type = Type.UNKNOWN,
+    ): Descriptor {
+        const v = this.d.add(); // Descriptor
+        v.reset(type);
+        return v;
+    }
+    createDescriptorBlock (): DescriptorBlock {
+        const v = this.db.add(); // DescriptorBlock
+        v.reset();
+        return v;
+    }
+    createDescriptorBlockFlattened (): DescriptorBlockFlattened {
+        const v = this.dbf.add(); // DescriptorBlockFlattened
+        v.reset();
+        return v;
+    }
+    createDescriptorBlockIndex (
+        updateFrequency: UpdateFrequency = UpdateFrequency.PER_INSTANCE,
+        parameterType: ParameterType = ParameterType.CONSTANTS,
+        descriptorType: DescriptorTypeOrder = DescriptorTypeOrder.UNIFORM_BUFFER,
+        visibility: ShaderStageFlagBit = ShaderStageFlagBit.NONE,
+    ): DescriptorBlockIndex {
+        const v = this.dbi.add(); // DescriptorBlockIndex
+        v.updateFrequency = updateFrequency;
+        v.parameterType = parameterType;
+        v.descriptorType = descriptorType;
+        v.visibility = visibility;
+        return v;
+    }
+    createDescriptorGroupBlockIndex (
+        updateFrequency: UpdateFrequency = UpdateFrequency.PER_INSTANCE,
+        parameterType: ParameterType = ParameterType.CONSTANTS,
+        descriptorType: DescriptorTypeOrder = DescriptorTypeOrder.UNIFORM_BUFFER,
+        visibility: ShaderStageFlagBit = ShaderStageFlagBit.NONE,
+        accessType: AccessType = AccessType.READ,
+        viewDimension: ViewDimension = ViewDimension.TEX2D,
+        format: Format = Format.UNKNOWN,
+    ): DescriptorGroupBlockIndex {
+        const v = this.dgbi.add(); // DescriptorGroupBlockIndex
+        v.updateFrequency = updateFrequency;
+        v.parameterType = parameterType;
+        v.descriptorType = descriptorType;
+        v.visibility = visibility;
+        v.accessType = accessType;
+        v.viewDimension = viewDimension;
+        v.format = format;
+        return v;
+    }
+    createDescriptorGroupBlock (): DescriptorGroupBlock {
+        const v = this.dgb.add(); // DescriptorGroupBlock
+        v.reset();
+        return v;
     }
     createDescriptorDB (): DescriptorDB {
         const v = this.dd.add(); // DescriptorDB
@@ -948,6 +1208,31 @@ export class LayoutGraphObjectPool {
         v.reset(descriptorSetLayout, descriptorSet);
         return v;
     }
+    createDescriptorGroupBlockData (
+        type: DescriptorTypeOrder = DescriptorTypeOrder.UNIFORM_BUFFER,
+        visibility: ShaderStageFlagBit = ShaderStageFlagBit.NONE,
+        accessType: AccessType = AccessType.READ,
+        viewDimension: ViewDimension = ViewDimension.TEX2D,
+        format: Format = Format.UNKNOWN,
+        capacity = 0,
+    ): DescriptorGroupBlockData {
+        const v = this.dgbd.add(); // DescriptorGroupBlockData
+        v.reset(type, visibility, accessType, viewDimension, format, capacity);
+        return v;
+    }
+    createDescriptorGroupLayoutData (
+        slot = 0xFFFFFFFF,
+        capacity = 0,
+    ): DescriptorGroupLayoutData {
+        const v = this.dgld.add(); // DescriptorGroupLayoutData
+        v.reset(slot, capacity);
+        return v;
+    }
+    createDescriptorGroupData (): DescriptorGroupData {
+        const v = this.dgd.add(); // DescriptorGroupData
+        v.reset();
+        return v;
+    }
     createPipelineLayoutData (): PipelineLayoutData {
         const v = this.pld.add(); // PipelineLayoutData
         v.reset();
@@ -994,6 +1279,12 @@ export class LayoutGraphObjectPool {
         return v;
     }
     public readonly renderCommon: RenderCommonObjectPool;
+    private readonly d: RecyclePool<Descriptor> = createPool(Descriptor);
+    private readonly db: RecyclePool<DescriptorBlock> = createPool(DescriptorBlock);
+    private readonly dbf: RecyclePool<DescriptorBlockFlattened> = createPool(DescriptorBlockFlattened);
+    private readonly dbi: RecyclePool<DescriptorBlockIndex> = createPool(DescriptorBlockIndex);
+    private readonly dgbi: RecyclePool<DescriptorGroupBlockIndex> = createPool(DescriptorGroupBlockIndex);
+    private readonly dgb: RecyclePool<DescriptorGroupBlock> = createPool(DescriptorGroupBlock);
     private readonly dd: RecyclePool<DescriptorDB> = createPool(DescriptorDB);
     private readonly rp: RecyclePool<RenderPhase> = createPool(RenderPhase);
     private readonly lg: RecyclePool<LayoutGraph> = createPool(LayoutGraph);
@@ -1003,6 +1294,9 @@ export class LayoutGraphObjectPool {
     private readonly dbd: RecyclePool<DescriptorBlockData> = createPool(DescriptorBlockData);
     private readonly dsld: RecyclePool<DescriptorSetLayoutData> = createPool(DescriptorSetLayoutData);
     private readonly dsd: RecyclePool<DescriptorSetData> = createPool(DescriptorSetData);
+    private readonly dgbd: RecyclePool<DescriptorGroupBlockData> = createPool(DescriptorGroupBlockData);
+    private readonly dgld: RecyclePool<DescriptorGroupLayoutData> = createPool(DescriptorGroupLayoutData);
+    private readonly dgd: RecyclePool<DescriptorGroupData> = createPool(DescriptorGroupData);
     private readonly pld: RecyclePool<PipelineLayoutData> = createPool(PipelineLayoutData);
     private readonly sbd: RecyclePool<ShaderBindingData> = createPool(ShaderBindingData);
     private readonly sld: RecyclePool<ShaderLayoutData> = createPool(ShaderLayoutData);
@@ -1012,6 +1306,171 @@ export class LayoutGraphObjectPool {
     private readonly rsd: RecyclePool<RenderStageData> = createPool(RenderStageData);
     private readonly rpd: RecyclePool<RenderPhaseData> = createPool(RenderPhaseData);
     private readonly lgd: RecyclePool<LayoutGraphData> = createPool(LayoutGraphData);
+}
+
+export function saveDescriptor (a: OutputArchive, v: Descriptor): void {
+    a.n(v.type);
+    a.n(v.count);
+}
+
+export function loadDescriptor (a: InputArchive, v: Descriptor): void {
+    v.type = a.n();
+    v.count = a.n();
+}
+
+export function saveDescriptorBlock (a: OutputArchive, v: DescriptorBlock): void {
+    a.n(v.descriptors.size); // Map<string, Descriptor>
+    for (const [k1, v1] of v.descriptors) {
+        a.s(k1);
+        saveDescriptor(a, v1);
+    }
+    a.n(v.uniformBlocks.size); // Map<string, UniformBlock>
+    for (const [k1, v1] of v.uniformBlocks) {
+        a.s(k1);
+        saveUniformBlock(a, v1);
+    }
+    a.n(v.capacity);
+    a.n(v.count);
+}
+
+export function loadDescriptorBlock (a: InputArchive, v: DescriptorBlock): void {
+    let sz = 0;
+    sz = a.n(); // Map<string, Descriptor>
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        const k1 = a.s();
+        const v1 = new Descriptor();
+        loadDescriptor(a, v1);
+        v.descriptors.set(k1, v1);
+    }
+    sz = a.n(); // Map<string, UniformBlock>
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        const k1 = a.s();
+        const v1 = new UniformBlock();
+        loadUniformBlock(a, v1);
+        v.uniformBlocks.set(k1, v1);
+    }
+    v.capacity = a.n();
+    v.count = a.n();
+}
+
+export function saveDescriptorBlockFlattened (a: OutputArchive, v: DescriptorBlockFlattened): void {
+    a.n(v.descriptorNames.length); // string[]
+    for (const v1 of v.descriptorNames) {
+        a.s(v1);
+    }
+    a.n(v.uniformBlockNames.length); // string[]
+    for (const v1 of v.uniformBlockNames) {
+        a.s(v1);
+    }
+    a.n(v.descriptors.length); // Descriptor[]
+    for (const v1 of v.descriptors) {
+        saveDescriptor(a, v1);
+    }
+    a.n(v.uniformBlocks.length); // UniformBlock[]
+    for (const v1 of v.uniformBlocks) {
+        saveUniformBlock(a, v1);
+    }
+    a.n(v.capacity);
+    a.n(v.count);
+}
+
+export function loadDescriptorBlockFlattened (a: InputArchive, v: DescriptorBlockFlattened): void {
+    let sz = 0;
+    sz = a.n(); // string[]
+    v.descriptorNames.length = sz;
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        v.descriptorNames[i1] = a.s();
+    }
+    sz = a.n(); // string[]
+    v.uniformBlockNames.length = sz;
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        v.uniformBlockNames[i1] = a.s();
+    }
+    sz = a.n(); // Descriptor[]
+    v.descriptors.length = sz;
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        const v1 = new Descriptor();
+        loadDescriptor(a, v1);
+        v.descriptors[i1] = v1;
+    }
+    sz = a.n(); // UniformBlock[]
+    v.uniformBlocks.length = sz;
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        const v1 = new UniformBlock();
+        loadUniformBlock(a, v1);
+        v.uniformBlocks[i1] = v1;
+    }
+    v.capacity = a.n();
+    v.count = a.n();
+}
+
+export function saveDescriptorBlockIndex (a: OutputArchive, v: DescriptorBlockIndex): void {
+    a.n(v.updateFrequency);
+    a.n(v.parameterType);
+    a.n(v.descriptorType);
+    a.n(v.visibility);
+}
+
+export function loadDescriptorBlockIndex (a: InputArchive, v: DescriptorBlockIndex): void {
+    v.updateFrequency = a.n();
+    v.parameterType = a.n();
+    v.descriptorType = a.n();
+    v.visibility = a.n();
+}
+
+export function saveDescriptorGroupBlockIndex (a: OutputArchive, v: DescriptorGroupBlockIndex): void {
+    a.n(v.updateFrequency);
+    a.n(v.parameterType);
+    a.n(v.descriptorType);
+    a.n(v.visibility);
+    a.n(v.accessType);
+    a.n(v.viewDimension);
+    a.n(v.format);
+}
+
+export function loadDescriptorGroupBlockIndex (a: InputArchive, v: DescriptorGroupBlockIndex): void {
+    v.updateFrequency = a.n();
+    v.parameterType = a.n();
+    v.descriptorType = a.n();
+    v.visibility = a.n();
+    v.accessType = a.n();
+    v.viewDimension = a.n();
+    v.format = a.n();
+}
+
+export function saveDescriptorGroupBlock (a: OutputArchive, v: DescriptorGroupBlock): void {
+    a.n(v.descriptors.size); // Map<string, Descriptor>
+    for (const [k1, v1] of v.descriptors) {
+        a.s(k1);
+        saveDescriptor(a, v1);
+    }
+    a.n(v.uniformBlocks.size); // Map<string, UniformBlock>
+    for (const [k1, v1] of v.uniformBlocks) {
+        a.s(k1);
+        saveUniformBlock(a, v1);
+    }
+    a.n(v.capacity);
+    a.n(v.count);
+}
+
+export function loadDescriptorGroupBlock (a: InputArchive, v: DescriptorGroupBlock): void {
+    let sz = 0;
+    sz = a.n(); // Map<string, Descriptor>
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        const k1 = a.s();
+        const v1 = new Descriptor();
+        loadDescriptor(a, v1);
+        v.descriptors.set(k1, v1);
+    }
+    sz = a.n(); // Map<string, UniformBlock>
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        const k1 = a.s();
+        const v1 = new UniformBlock();
+        loadUniformBlock(a, v1);
+        v.uniformBlocks.set(k1, v1);
+    }
+    v.capacity = a.n();
+    v.count = a.n();
 }
 
 export function saveDescriptorDB (a: OutputArchive, v: DescriptorDB): void {
@@ -1253,11 +1712,105 @@ export function loadDescriptorSetData (a: InputArchive, v: DescriptorSetData): v
     // skip, v.descriptorSet: DescriptorSet
 }
 
+export function saveDescriptorGroupBlockData (a: OutputArchive, v: DescriptorGroupBlockData): void {
+    a.n(v.type);
+    a.n(v.visibility);
+    a.n(v.accessType);
+    a.n(v.viewDimension);
+    a.n(v.format);
+    a.n(v.offset);
+    a.n(v.capacity);
+    a.n(v.descriptors.length); // DescriptorData[]
+    for (const v1 of v.descriptors) {
+        saveDescriptorData(a, v1);
+    }
+}
+
+export function loadDescriptorGroupBlockData (a: InputArchive, v: DescriptorGroupBlockData): void {
+    v.type = a.n();
+    v.visibility = a.n();
+    v.accessType = a.n();
+    v.viewDimension = a.n();
+    v.format = a.n();
+    v.offset = a.n();
+    v.capacity = a.n();
+    let sz = 0;
+    sz = a.n(); // DescriptorData[]
+    v.descriptors.length = sz;
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        const v1 = new DescriptorData();
+        loadDescriptorData(a, v1);
+        v.descriptors[i1] = v1;
+    }
+}
+
+export function saveDescriptorGroupLayoutData (a: OutputArchive, v: DescriptorGroupLayoutData): void {
+    a.n(v.slot);
+    a.n(v.capacity);
+    a.n(v.uniformBlockCapacity);
+    a.n(v.samplerTextureCapacity);
+    a.n(v.descriptorGroupBlocks.length); // DescriptorGroupBlockData[]
+    for (const v1 of v.descriptorGroupBlocks) {
+        saveDescriptorGroupBlockData(a, v1);
+    }
+    a.n(v.uniformBlocks.size); // Map<number, UniformBlock>
+    for (const [k1, v1] of v.uniformBlocks) {
+        a.n(k1);
+        saveUniformBlock(a, v1);
+    }
+    a.n(v.bindingMap.size); // Map<number, number>
+    for (const [k1, v1] of v.bindingMap) {
+        a.n(k1);
+        a.n(v1);
+    }
+}
+
+export function loadDescriptorGroupLayoutData (a: InputArchive, v: DescriptorGroupLayoutData): void {
+    v.slot = a.n();
+    v.capacity = a.n();
+    v.uniformBlockCapacity = a.n();
+    v.samplerTextureCapacity = a.n();
+    let sz = 0;
+    sz = a.n(); // DescriptorGroupBlockData[]
+    v.descriptorGroupBlocks.length = sz;
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        const v1 = new DescriptorGroupBlockData();
+        loadDescriptorGroupBlockData(a, v1);
+        v.descriptorGroupBlocks[i1] = v1;
+    }
+    sz = a.n(); // Map<number, UniformBlock>
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        const k1 = a.n();
+        const v1 = new UniformBlock();
+        loadUniformBlock(a, v1);
+        v.uniformBlocks.set(k1, v1);
+    }
+    sz = a.n(); // Map<number, number>
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        const k1 = a.n();
+        const v1 = a.n();
+        v.bindingMap.set(k1, v1);
+    }
+}
+
+export function saveDescriptorGroupData (a: OutputArchive, v: DescriptorGroupData): void {
+    saveDescriptorGroupLayoutData(a, v.descriptorGroupLayoutData);
+}
+
+export function loadDescriptorGroupData (a: InputArchive, v: DescriptorGroupData): void {
+    loadDescriptorGroupLayoutData(a, v.descriptorGroupLayoutData);
+}
+
 export function savePipelineLayoutData (a: OutputArchive, v: PipelineLayoutData): void {
     a.n(v.descriptorSets.size); // Map<UpdateFrequency, DescriptorSetData>
     for (const [k1, v1] of v.descriptorSets) {
         a.n(k1);
         saveDescriptorSetData(a, v1);
+    }
+    a.n(v.descriptorGroups.size); // Map<UpdateFrequency, DescriptorGroupData>
+    for (const [k1, v1] of v.descriptorGroups) {
+        a.n(k1);
+        saveDescriptorGroupData(a, v1);
     }
 }
 
@@ -1269,6 +1822,13 @@ export function loadPipelineLayoutData (a: InputArchive, v: PipelineLayoutData):
         const v1 = new DescriptorSetData();
         loadDescriptorSetData(a, v1);
         v.descriptorSets.set(k1, v1);
+    }
+    sz = a.n(); // Map<UpdateFrequency, DescriptorGroupData>
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        const k1 = a.n();
+        const v1 = new DescriptorGroupData();
+        loadDescriptorGroupData(a, v1);
+        v.descriptorGroups.set(k1, v1);
     }
 }
 

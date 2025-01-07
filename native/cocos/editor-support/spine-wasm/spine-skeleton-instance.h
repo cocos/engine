@@ -54,7 +54,7 @@ public:
     void onTrackEntryEvent(spine::TrackEntry *entry, spine::EventType type, spine::Event *event);
     inline spine::Vector<SpineDebugShape> &getDebugShapes() { return _debugShapes; }
     void resizeSlotRegion(const spine::String &slotName, uint32_t width, uint32_t height, bool createNew = false);
-    void setSlotTexture(const spine::String &slotName, uint32_t index);
+    void setSlotTexture(const spine::String &slotName, const spine::String& textureUuid);
     void destroy();
     bool isCache{false};
     bool enable{true};
@@ -74,5 +74,5 @@ private:
     uint32_t _trackEntryListenerID = 0;
     UserData _userData;
     spine::Vector<SpineDebugShape> _debugShapes{};
-    spine::HashMap<spine::Slot*, uint32_t> _slotTextureSet{};
+    spine::HashMap<spine::Slot*, spine::String> _slotTextureSet{};
 };

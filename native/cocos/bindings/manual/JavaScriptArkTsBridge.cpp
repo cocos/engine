@@ -24,9 +24,9 @@
 #include "cocos/bindings/manual/JavaScriptArkTsBridge.h"
 #include <future>
 #include "bundle/native_interface_bundle.h"
-#include "cocos/platform/openharmony/napi/NapiHelper.h"
 #include "cocos/bindings/jswrapper/SeApi.h"
 #include "cocos/bindings/manual/jsb_conversions.h"
+#include "cocos/platform/openharmony/napi/NapiHelper.h"
 
 #define JSA_ERR_OK                 (0)
 #define JSA_ERR_TYPE_NOT_SUPPORT   (-1)
@@ -85,7 +85,8 @@ char* JavaScriptArkTsBridge::__getModuleInfo(const char* module_name) {
 se::Value convertToSeValue(const cc::CallbackParamType& value) {
     return std::visit([](auto&& arg) -> se::Value {
         return se::Value(arg);
-    }, value);
+    },
+                      value);
 }
 
 bool JavaScriptArkTsBridge::CallInfo::execute(se::Value& rval) {
@@ -203,24 +204,27 @@ static bool JavaScriptArkTsBridge_callStaticMethod(se::State& s) {
     const auto& args = s.args();
     int argc = (int)args.size();
 
-    if (argc == 4) {
+    if (argc == 3 || argc == 4) {
         bool ok = false;
-        bool isSyn;
+        bool isSync = true;
         std::string clsPath, methodName, paramStr;
 
-        isSyn = seval_to_type<bool>(args[0], ok);
-        SE_PRECONDITION2(ok, false, "Converting isSyn failed!");
-
-        clsPath = seval_to_type<std::string>(args[1], ok);
+        clsPath = seval_to_type<std::string>(args[0], ok);
         SE_PRECONDITION2(ok, false, "Converting clsPath failed!");
 
-        methodName = seval_to_type<std::string>(args[2], ok);
+        methodName = seval_to_type<std::string>(args[1], ok);
         SE_PRECONDITION2(ok, false, "Converting methodName failed!");
 
-        paramStr = seval_to_type<std::string>(args[3], ok);
+        paramStr = seval_to_type<std::string>(args[2], ok);
         SE_PRECONDITION2(ok, false, "Converting paramStr failed!");
 
-        JavaScriptArkTsBridge::CallInfo call(isSyn, clsPath.c_str(), methodName.c_str(), paramStr.c_str());
+        if (argc == 4) {
+            ok = args[3].isBoolean();
+            SE_PRECONDITION2(ok, false, "isSync must be boolean type");
+            isSync = args[3].toBoolean();
+        }
+
+        JavaScriptArkTsBridge::CallInfo call(isSync, clsPath.c_str(), methodName.c_str(), paramStr.c_str());
         ok = call.execute(s.rval());
         if (!ok) {
             s.rval().setUndefined();

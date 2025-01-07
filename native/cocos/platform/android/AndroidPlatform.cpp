@@ -158,7 +158,7 @@ public:
         }
         ABORT_IF(_jniEnv != nullptr)
 
-        Paddleboat_init(_jniEnv, platform->_app->activity->javaGameActivity);
+        Paddleboat_init(_jniEnv, cc::JniHelper::getContext());
         Paddleboat_setControllerStatusCallback(gameControllerStatusCallback, this);
         // This is needed to allow controller events through to us.
         // By default, only touch-screen events are passed through, to match the
@@ -237,7 +237,7 @@ public:
                     controllerEvent = true;
                 } else {
                     // Didn't belong to a game controller, process it ourselves if it is a touch event
-                    bool isMouseEvent = motionEvent->pointerCount > 0 && (motionEvent->pointers[0].toolType == AMOTION_EVENT_TOOL_TYPE_STYLUS || motionEvent->pointers[0].toolType == AMOTION_EVENT_TOOL_TYPE_MOUSE);
+                    bool isMouseEvent = motionEvent->pointerCount > 0 && motionEvent->pointers[0].toolType == AMOTION_EVENT_TOOL_TYPE_MOUSE;
                     if (isMouseEvent) {
                         cookGameActivityMouseEvent(motionEvent);
                     } else {
@@ -423,7 +423,7 @@ public:
             int actionMasked = action & AMOTION_EVENT_ACTION_MASK;
             int eventChangedIndex = -1;
 
-            bool isMouseEvent = motionEvent->pointerCount > 0 && (motionEvent->pointers[0].toolType == AMOTION_EVENT_TOOL_TYPE_STYLUS || motionEvent->pointers[0].toolType == AMOTION_EVENT_TOOL_TYPE_MOUSE);
+            bool isMouseEvent = motionEvent->pointerCount > 0 && motionEvent->pointers[0].toolType == AMOTION_EVENT_TOOL_TYPE_MOUSE;
 
             if (actionMasked == AMOTION_EVENT_ACTION_DOWN ||
                 actionMasked == AMOTION_EVENT_ACTION_POINTER_DOWN) {
@@ -849,13 +849,12 @@ void AndroidPlatform::exit() {
 int32_t AndroidPlatform::loop() {
     IXRInterface *xr = CC_GET_XR_INTERFACE();
     while (true) {
-        int events;
         struct android_poll_source *source;
 
         // suspend thread while _loopTimeOut set to -1
-        while ((ALooper_pollAll(_loopTimeOut, nullptr, &events,
-                                reinterpret_cast<void **>(&source))) >= 0) {
-            // process event
+        while (ALooper_pollOnce(_loopTimeOut, nullptr, nullptr,
+                                reinterpret_cast<void **>(&source)) >= 0) {
+            // Process event
             if (source != nullptr) {
                 source->process(_app, source);
             }

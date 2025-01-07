@@ -85,12 +85,19 @@ export abstract class Buffer extends GFXObject {
         return this._flags;
     }
 
+    /** @mangle */
     protected _usage: BufferUsage = BufferUsageBit.NONE;
+    /** @mangle */
     protected _memUsage: MemoryUsage = MemoryUsageBit.NONE;
+    /** @mangle */
     protected _size = 0;
+    /** @mangle */
     protected _stride = 1;
+    /** @mangle */
     protected _count = 0;
+    /** @mangle */
     protected _flags: BufferFlags = BufferFlagBit.NONE;
+    /** @mangle */
     protected _isBufferView = false;
 
     constructor () {

@@ -42,7 +42,7 @@ export class SetAction extends ActionInstant {
 
     update (): void {
         const props = this._props;
-        const target = this.target;
+        const target = this._getWorkerTarget();
         for (const name in props) {
             (target as any)[name] = props[name];
         }

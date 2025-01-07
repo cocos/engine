@@ -27,7 +27,7 @@ import { EDITOR } from 'internal:constants';
 import { builtinResMgr } from '../asset/asset-manager';
 import { ModelRenderer } from '../misc/model-renderer';
 import { EffectAsset, Texture2D } from '../asset/assets';
-import { Filter, PixelFormat, WrapMode } from '../asset/assets/asset-enum';
+import { TextureFilter, PixelFormat, WrapMode } from '../asset/assets/asset-enum';
 import { Material } from '../asset/assets/material';
 import { RenderingSubMesh } from '../asset/assets/rendering-sub-mesh';
 import { Component } from '../scene-graph/component';
@@ -926,7 +926,7 @@ export class TerrainBlock {
         if (this._weightMap == null) {
             this._weightMap = new Texture2D();
             this._weightMap.create(this._terrain.weightMapSize, this._terrain.weightMapSize, PixelFormat.RGBA8888);
-            this._weightMap.setFilters(Filter.LINEAR, Filter.LINEAR);
+            this._weightMap.setFilters(TextureFilter.LINEAR, TextureFilter.LINEAR);
             this._weightMap.setWrapMode(WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE);
         }
 

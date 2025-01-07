@@ -1194,12 +1194,12 @@ export function WebGLCmdFuncCreateShader (device: WebGLDevice, gpuShader: IWebGL
                 binding: glLoc,
                 name: varName,
                 type: gfxType,
-                stride: stride,
+                stride,
                 count: attribSize,
                 size: stride * attribSize,
 
                 glType: attribType,
-                glLoc: glLoc,
+                glLoc,
             };
         }
     }
@@ -1231,12 +1231,12 @@ export function WebGLCmdFuncCreateShader (device: WebGLDevice, gpuShader: IWebGL
                     binding: -1,
                     name: uniform.name,
                     type: uniform.type,
-                    stride: stride,
+                    stride,
                     count: uniform.count,
-                    size: size,
+                    size,
                     offset: 0,
 
-                    glType: glType,
+                    glType,
                     glLoc: null!,
                     array: null!,
                 };
@@ -1479,8 +1479,8 @@ export function WebGLCmdFuncCreateInputAssember (device: WebGLDevice, gpuInputAs
         gpuInputAssembler.glAttribs[i] = {
             name: attrib.name,
             glBuffer: gpuBuffer.glBuffer,
-            glType: glType,
-            size: size,
+            glType,
+            size,
             count: FormatInfos[attribFormat].count,
             stride: gpuBuffer.stride,
             componentCount: WebGLGetComponentCount(glType, gl),
@@ -2450,7 +2450,7 @@ export function WebGLCmdFuncBindStates (
 export function WebGLCmdFuncDraw (device: WebGLDevice, drawInfo: Readonly<DrawInfo>): void {
     const { gl } = device;
     const { ANGLE_instanced_arrays: ia, WEBGL_multi_draw: md } = device.extensions;
-    const { gpuInputAssembler: gpuInputAssembler, glPrimitive: glPrimitive } = gfxStateCache;
+    const { gpuInputAssembler, glPrimitive } = gfxStateCache;
 
     if (gpuInputAssembler) {
         const indexBuffer = gpuInputAssembler.gpuIndexBuffer;

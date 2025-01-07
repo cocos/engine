@@ -67,6 +67,8 @@
 %ignore cc::EffectAsset::_combinations;
 %ignore cc::IPassInfoFull::passID;
 %ignore cc::IPassInfoFull::phaseID;
+%ignore cc::MeshUtils::createMeshInfo;
+%ignore cc::MeshUtils::createDynamicMeshInfo;
 
 // ----- Rename Section ------
 // Brief: Classes, methods or attributes needs to be renamed

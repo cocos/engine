@@ -31,6 +31,7 @@ import { WebGL2CmdFuncCreateInputAssember, WebGL2CmdFuncDestroyInputAssembler } 
 import { WebGL2DeviceManager } from './webgl2-define';
 import { IWebGL2GPUInputAssembler, IWebGL2GPUBuffer } from './webgl2-gpu-objects';
 
+/** @mangle */
 export class WebGL2InputAssembler extends InputAssembler {
     constructor () {
         super();

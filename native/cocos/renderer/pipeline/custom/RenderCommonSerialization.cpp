@@ -49,62 +49,6 @@ void load(InputArchive& ar, LightInfo& v) {
     load(ar, v.culledByLight);
 }
 
-void save(OutputArchive& ar, const Descriptor& v) {
-    save(ar, v.type);
-    save(ar, v.count);
-}
-
-void load(InputArchive& ar, Descriptor& v) {
-    load(ar, v.type);
-    load(ar, v.count);
-}
-
-void save(OutputArchive& ar, const DescriptorBlock& v) {
-    save(ar, v.descriptors);
-    save(ar, v.uniformBlocks);
-    save(ar, v.capacity);
-    save(ar, v.count);
-}
-
-void load(InputArchive& ar, DescriptorBlock& v) {
-    load(ar, v.descriptors);
-    load(ar, v.uniformBlocks);
-    load(ar, v.capacity);
-    load(ar, v.count);
-}
-
-void save(OutputArchive& ar, const DescriptorBlockFlattened& v) {
-    save(ar, v.descriptorNames);
-    save(ar, v.uniformBlockNames);
-    save(ar, v.descriptors);
-    save(ar, v.uniformBlocks);
-    save(ar, v.capacity);
-    save(ar, v.count);
-}
-
-void load(InputArchive& ar, DescriptorBlockFlattened& v) {
-    load(ar, v.descriptorNames);
-    load(ar, v.uniformBlockNames);
-    load(ar, v.descriptors);
-    load(ar, v.uniformBlocks);
-    load(ar, v.capacity);
-    load(ar, v.count);
-}
-
-void save(OutputArchive& ar, const DescriptorBlockIndex& v) {
-    save(ar, v.updateFrequency);
-    save(ar, v.parameterType);
-    save(ar, v.descriptorType);
-    save(ar, v.visibility);
-}
-
-void load(InputArchive& ar, DescriptorBlockIndex& v) {
-    load(ar, v.updateFrequency);
-    load(ar, v.parameterType);
-    load(ar, v.descriptorType);
-    load(ar, v.visibility);
-}
-
 void save(OutputArchive& ar, const ResolvePair& v) {
     save(ar, v.source);
     save(ar, v.target);

@@ -50,6 +50,7 @@ struct RaytraceTag;
 enum class ResourceResidency;
 enum class QueueHint;
 enum class ResourceDimension;
+enum class ViewDimension;
 enum class ResourceFlags : uint32_t;
 
 struct BufferTag;
@@ -63,13 +64,6 @@ enum class AccessType;
 enum class ClearValueType;
 
 struct LightInfo;
-
-enum class DescriptorTypeOrder;
-
-struct Descriptor;
-struct DescriptorBlock;
-struct DescriptorBlockFlattened;
-struct DescriptorBlockIndex;
 
 enum class ResolveFlags : uint32_t;
 

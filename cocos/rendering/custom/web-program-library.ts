@@ -25,18 +25,23 @@
 
 /* eslint-disable max-len */
 import { EffectAsset } from '../../asset/assets';
-import { Attribute, DescriptorSetLayout, DescriptorType, DESCRIPTOR_BUFFER_TYPE, DESCRIPTOR_SAMPLER_TYPE, Device, MemoryAccessBit, PipelineLayout, PipelineLayoutInfo, Shader, ShaderInfo, ShaderStage, ShaderStageFlagBit, Type, Uniform, UniformBlock, UniformInputAttachment, UniformSampler, UniformSamplerTexture, UniformStorageBuffer, UniformStorageImage, UniformTexture, deviceManager, PipelineState, DescriptorSetLayoutInfo, DescriptorSetInfo } from '../../gfx';
-import { genHandles, getActiveAttributes, getCombinationDefines, getShaderInstanceName, getSize, getVariantKey, populateMacros, prepareDefines } from '../../render-scene/core/program-utils';
+import { assert, error, errorID } from '../../core/platform/debug';
+import { Attribute, DESCRIPTOR_BUFFER_TYPE, DESCRIPTOR_SAMPLER_TYPE, DescriptorSetInfo, DescriptorSetLayout, DescriptorSetLayoutInfo, DescriptorType, Device, deviceManager, MemoryAccessBit, PipelineLayout, PipelineLayoutInfo, PipelineState, Shader, ShaderInfo, ShaderStage, ShaderStageFlagBit, Type, Uniform, UniformBlock, UniformInputAttachment, UniformSampler, UniformSamplerTexture, UniformStorageBuffer, UniformStorageImage, UniformTexture } from '../../gfx';
 import { getDeviceShaderVersion, MacroRecord } from '../../render-scene';
 import { IProgramInfo } from '../../render-scene/core/program-lib';
-import { DescriptorBlockData, DescriptorData, DescriptorSetData, DescriptorSetLayoutData, LayoutGraphData, LayoutGraphDataValue, PipelineLayoutData, RenderPhaseData, ShaderProgramData } from './layout-graph';
-import { ProgramLibrary, ProgramProxy } from './private';
-import { DescriptorTypeOrder, UpdateFrequency } from './types';
-import { ProgramGroup, ProgramInfo } from './web-types';
-import { getCustomPassID, getCustomPhaseID, getOrCreateDescriptorSetLayout, getEmptyDescriptorSetLayout, getEmptyPipelineLayout, initializeDescriptorSetLayoutInfo, makeDescriptorSetLayoutData, getDescriptorSetLayout, getOrCreateDescriptorID, getDescriptorTypeOrder, getProgramID, getDescriptorNameID, getDescriptorName, INVALID_ID, ENABLE_SUBPASS, getCustomSubpassID, generateConstantMacros, populatePipelineLayoutInfo } from './layout-graph-utils';
-import { assert, error, errorID } from '../../core/platform/debug';
-import { IDescriptorSetLayoutInfo, UBOSkinning, localDescriptorSetLayout } from '../define';
+import { genHandles, getActiveAttributes, getCombinationDefines, getShaderInstanceName, getSize, getVariantKey, populateMacros, prepareDefines } from '../../render-scene/core/program-utils';
+import { IDescriptorSetLayoutInfo, localDescriptorSetLayout, UBOSkinning } from '../define';
+import {
+    DescriptorBlockData, DescriptorData, DescriptorSetData, DescriptorSetLayoutData,
+    DescriptorTypeOrder,
+    LayoutGraphData, LayoutGraphDataValue, PipelineLayoutData,
+    RenderPhaseData, ShaderProgramData,
+} from './layout-graph';
+import { ENABLE_SUBPASS, generateConstantMacros, getCustomPassID, getCustomPhaseID, getCustomSubpassID, getDescriptorName, getDescriptorNameID, getDescriptorSetLayout, getDescriptorTypeOrder, getEmptyDescriptorSetLayout, getEmptyPipelineLayout, getOrCreateDescriptorID, getOrCreateDescriptorSetLayout, getProgramID, initializeDescriptorSetLayoutInfo, INVALID_ID, makeDescriptorSetLayoutData, populatePipelineLayoutInfo } from './layout-graph-utils';
 import { PipelineRuntime } from './pipeline';
+import { ProgramLibrary, ProgramProxy } from './private';
+import { UpdateFrequency } from './types';
+import { ProgramGroup, ProgramInfo } from './web-types';
 
 const _setIndex = [2, 1, 3, 0];
 

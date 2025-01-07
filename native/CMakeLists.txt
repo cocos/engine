@@ -764,8 +764,32 @@ if(USE_GOOGLE_BILLING)
     cocos_source_files(
         vendor/google/billing/GoogleBilling.cpp
         vendor/google/billing/GoogleBilling.h
+        vendor/google/billing/GoogleBillingManager.h
         vendor/google/billing/GoogleBillingHelper.cpp
         vendor/google/billing/GoogleBillingHelper.h
+        vendor/google/billing/JniBilling.cpp
+        vendor/google/billing/JniBilling.h
+
+        vendor/google/billing/build-params/AcknowledgePurchaseParams.h
+        vendor/google/billing/build-params/BillingFlowParams.h
+        vendor/google/billing/build-params/ConsumeParams.h
+        vendor/google/billing/build-params/GetBillingConfigParams.h
+        vendor/google/billing/build-params/InAppMessageParams.h
+        vendor/google/billing/build-params/PendingPurchasesParams.h
+        vendor/google/billing/build-params/QueryProductDetailsParams.h
+        vendor/google/billing/build-params/QueryPurchasesParams.h
+        
+        vendor/google/billing/result-values/AccountIdentifiers.h
+        vendor/google/billing/result-values/AlternativeBillingOnlyReportingDetails.h
+        vendor/google/billing/result-values/BillingConfig.h
+        vendor/google/billing/result-values/BillingResult.h
+        vendor/google/billing/result-values/ExternalOfferReportingDetails.h
+        vendor/google/billing/result-values/InAppMessageResult.h
+        vendor/google/billing/result-values/Purchase.h
+        vendor/google/billing/result-values/Purchase.cpp
+        vendor/google/billing/result-values/ProductDetails.h
+        vendor/google/billing/result-values/ProductDetails.cpp
+        vendor/google/billing/result-values/UserChoiceDetails.h
     )
 endif()
 
@@ -1074,6 +1098,9 @@ set(SWIG_OUTPUT_ROOT ${CMAKE_CURRENT_BINARY_DIR}/generated)
 set(SWIG_OUTPUT ${SWIG_OUTPUT_ROOT}/cocos/bindings/auto)
 cc_gen_swig_files(${CMAKE_CURRENT_LIST_DIR}/tools/swig-config ${SWIG_OUTPUT})
 
+if(USE_GOOGLE_BILLING) 
+    cc_gen_swig_files(${CMAKE_CURRENT_LIST_DIR}/tools/swig-config/android ${SWIG_OUTPUT})
+endif()
 
 ##### platform
 cocos_source_files(
@@ -2235,6 +2262,13 @@ if(USE_WEBVIEW)
     )
 endif()
 
+if(USE_GOOGLE_BILLING)
+    cocos_source_files(
+        NO_WERROR   NO_UBUILD   ${SWIG_OUTPUT}/jsb_google_billing_auto.cpp
+                                ${SWIG_OUTPUT}/jsb_google_billing_auto.h
+    )
+endif()
+
 if(USE_XR_REMOTE_PREVIEW)
     cocos_source_files(
             NO_WERROR    cocos/xr/XRRemotePreviewManager.h
@@ -2606,13 +2640,6 @@ if(USE_ADPF)
     cocos_source_files(
         cocos/bindings/manual/jsb_adpf.cpp
     )
-endif()
-
-if(USE_GOOGLE_BILLING)
-    cocos_source_files(
-        cocos/bindings/manual/jsb_google_billing.cpp
-    )
-   
 endif()
 
 if(ANDROID)
@@ -3146,7 +3173,7 @@ function(cc_apply_definations target)
         $<$<BOOL:${USE_SE_NAPI}>:SCRIPT_ENGINE_TYPE=5>
         $<$<BOOL:${USE_SE_JSVM}>:SCRIPT_ENGINE_TYPE=6>
         $<$<OR:$<CONFIG:Debug>,$<BOOL:${CC_DEBUG_FORCE}>>:CC_DEBUG=1>
-        $<IF:$<BOOL:${USE_APDF}>,CC_USE_APDF=1,CC_USE_APDF=0>
+        $<IF:$<BOOL:${USE_ADPF}>,CC_USE_ADPF=1,CC_USE_ADPF=0>
         $<IF:$<BOOL:${USE_GOOGLE_BILLING}>,CC_USE_GOOGLE_BILLING=1,CC_USE_GOOGLE_BILLING=0>
     )
 endfunction()

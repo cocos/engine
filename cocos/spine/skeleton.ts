@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 import { EDITOR_NOT_IN_PREVIEW, JSB } from 'internal:constants';
-import { ccclass, executeInEditMode, help, menu, serializable, type, displayName, override, displayOrder, editable, tooltip } from 'cc.decorator';
+import { ccclass, executeInEditMode, help, menu, serializable, type, override, displayOrder, editable, visible } from 'cc.decorator';
 import { Material, Texture2D } from '../asset/assets';
 import { error, logID, warn } from '../core/platform/debug';
 import { Enum, EnumType, ccenum } from '../core/value-types/enum';
@@ -33,7 +33,7 @@ import { Graphics, UIRenderer } from '../2d';
 import { Batcher2D } from '../2d/renderer/batcher-2d';
 import { BlendFactor, BlendOp } from '../gfx';
 import { MaterialInstance } from '../render-scene';
-import { builtinResMgr } from '../asset/asset-manager';
+import { assetManager, builtinResMgr } from '../asset/asset-manager';
 import { legacyCC } from '../core/global-exports';
 import { SkeletonSystem } from './skeleton-system';
 import { RenderEntity, RenderEntityType } from '../2d/renderer/render-entity';
@@ -45,8 +45,6 @@ import { TrackEntryListeners } from './track-entry-listeners';
 import { setPropertyEnumType } from '../core/internal-index';
 
 const CachedFrameTime = 1 / 60;
-const CUSTOM_SLOT_TEXTURE_BEGIN = 10000;
-let _slotTextureID = CUSTOM_SLOT_TEXTURE_BEGIN;
 
 type TrackListener = (x: spine.TrackEntry) => void;
 type TrackListener2 = (x: spine.TrackEntry, ev: spine.Event | number) => void;
@@ -310,8 +308,7 @@ export class Skeleton extends UIRenderer {
      */
     public _endSlotIndex;
 
-    private _slotTextures: Map<number, Texture2D> | null = null;
-
+    private _customMaterialInstance: MaterialInstance | null = null;
     _vLength = 0;
     _vBuffer: Uint8Array | null = null;
     _iLength = 0;
@@ -373,6 +370,7 @@ export class Skeleton extends UIRenderer {
     /**
      * @engineInternal
      */
+    @visible(true)
     @type(DefaultSkinsEnum)
     get _defaultSkinIndex (): number {
         if (this.skeletonData) {
@@ -422,6 +420,7 @@ export class Skeleton extends UIRenderer {
     /**
      * @engineInternal
      */
+    @visible(true)
     @type(SpineDefaultAnimsEnum)
     get _animationIndex (): number {
         const animationName = EDITOR_NOT_IN_PREVIEW ? this.defaultAnimation : this.animation;
@@ -498,6 +497,7 @@ export class Skeleton extends UIRenderer {
      * @en Whether play animations in loop mode.
      * @zh 是否循环播放当前骨骼动画。
      */
+    @visible(true)
     @serializable
     public loop = true;
 
@@ -636,6 +636,21 @@ export class Skeleton extends UIRenderer {
         this.markForUpdateRenderData();
     }
 
+    get customMaterialInstance (): MaterialInstance | null {
+        if (!this._customMaterial) {
+            return null;
+        }
+        if (!this._customMaterialInstance) {
+            const matInfo = {
+                parent: this._customMaterial,
+                subModelIdx: 0,
+                owner: this,
+            };
+            this._customMaterialInstance = new MaterialInstance(matInfo);
+        }
+        return this._customMaterialInstance;
+    }
+
     public __preload (): void {
         super.__preload();
         if (EDITOR_NOT_IN_PREVIEW) {
@@ -698,9 +713,6 @@ export class Skeleton extends UIRenderer {
         this._vBuffer = null;
         this._iBuffer = null;
         this.attachUtil.reset();
-        //this._textures.length = 0;
-        this._slotTextures?.clear();
-        this._slotTextures = null;
         this._cachedSockets.clear();
         this._socketNodes.clear();
         //if (this._cacheMode == SpineAnimationCacheMode.PRIVATE_CACHE) this._animCache?.destroy();
@@ -761,8 +773,12 @@ export class Skeleton extends UIRenderer {
         this._textures = skeletonData.textures;
 
         this._refreshInspector();
-        if (this.defaultAnimation) this.animation = this.defaultAnimation.toString();
+        /* The animation must be configured after the skin because the animation depends on the skin.
+           If the animation is set before the skin,
+           it will cause rendering issues when a prefab with Spine assets is added to the scene node tree.
+        */
         if (this.defaultSkin && this.defaultSkin !== '') this.setSkin(this.defaultSkin);
+        if (this.defaultAnimation) this.animation = this.defaultAnimation.toString();
         this._updateUseTint();
         this._indexBoneSockets();
         this._updateSocketBindings();
@@ -1157,15 +1173,10 @@ export class Skeleton extends UIRenderer {
     /**
      * @engineInternal
      */
-    public requestDrawData (material: Material, textureID: number, indexOffset: number, indexCount: number): SkeletonDrawData {
+    public requestDrawData (material: Material, textureUUID: string, indexOffset: number, indexCount: number): SkeletonDrawData {
         const draw = this._drawList.add();
         draw.material = material;
-        if (textureID < CUSTOM_SLOT_TEXTURE_BEGIN) {
-            draw.texture = this._textures[textureID];
-        } else {
-            const texture = this._slotTextures?.get(textureID);
-            if (texture) draw.texture = texture;
-        }
+        draw.texture = assetManager.assets.get(textureUUID) as Texture2D;
         draw.indexOffset = indexOffset;
         draw.indexCount = indexCount;
         return draw;
@@ -1208,14 +1219,17 @@ export class Skeleton extends UIRenderer {
         if (inst) {
             return inst;
         }
-
-        const material = this.getMaterialTemplate();
-        const matInfo = {
-            parent: material,
-            subModelIdx: 0,
-            owner: this,
-        };
-        inst = new MaterialInstance(matInfo);
+        if (this._customMaterialInstance) {
+            inst = this._customMaterialInstance;
+        } else {
+            const material = this.getMaterialTemplate();
+            const matInfo = {
+                parent: material,
+                subModelIdx: 0,
+                owner: this,
+            };
+            inst = new MaterialInstance(matInfo);
+        }
         this._materialCache[key] = inst;
         inst.overridePipelineStates({
             blendState: {
@@ -1648,19 +1662,23 @@ export class Skeleton extends UIRenderer {
      * @engineInternal
      */
     public _updateColor (): void {
-        const a = this.node._uiProps.opacity;
-        // eslint-disable-next-line max-len
-        if (this._tempColor.r === this._color.r && this._tempColor.g === this._color.g && this._tempColor.b === this._color.b && this._tempColor.a === a) {
+        const self = this;
+        const uiProps = self.node._uiProps;
+        const a = uiProps.opacity;
+        const tempColor = self._tempColor;
+        const color = self._color;
+
+        if (tempColor.r === color.r && tempColor.g === color.g && tempColor.b === color.b && tempColor.a === a) {
             return;
         }
-        this.node._uiProps.colorDirty = true;
-        this._tempColor.r = this._color.r;
-        this._tempColor.g = this._color.g;
-        this._tempColor.b = this._color.b;
-        this._tempColor.a = a;
-        const r = this._color.r / 255.0;
-        const g = this._color.g / 255.0;
-        const b = this._color.b / 255.0;
+        uiProps.colorDirty = true;
+        tempColor.r = color.r;
+        tempColor.g = color.g;
+        tempColor.b = color.b;
+        tempColor.a = a;
+        const r = color.r / 255.0;
+        const g = color.g / 255.0;
+        const b = color.b / 255.0;
         this._instance!.setColor(r, g, b, a);
     }
 
@@ -1851,16 +1869,7 @@ export class Skeleton extends UIRenderer {
         const height = tex2d.height;
         const createNewAttachment = createNew || false;
         this._instance!.resizeSlotRegion(slotName, width, height, createNewAttachment);
-        if (!this._slotTextures) this._slotTextures = new Map<number, Texture2D>();
-        let textureID = 0;
-        this._slotTextures.forEach((value, key) => {
-            if (value === tex2d) textureID = key;
-        });
-        if (textureID === 0) {
-            textureID = ++_slotTextureID;
-            this._slotTextures.set(textureID, tex2d);
-        }
-        this._instance!.setSlotTexture(slotName, textureID);
+        this._instance!.setSlotTexture(slotName, tex2d.uuid);
     }
 
     private _destroySkeletonInfo (skeletonCache: SkeletonCache | null): void {

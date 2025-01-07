@@ -26,6 +26,7 @@ import { RenderPassInfo } from '../base/define';
 import { RenderPass } from '../base/render-pass';
 import { IWebGL2GPURenderPass } from './webgl2-gpu-objects';
 
+/** @mangle */
 export class WebGL2RenderPass extends RenderPass {
     constructor () {
         super();

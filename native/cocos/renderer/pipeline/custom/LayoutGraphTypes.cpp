@@ -166,11 +166,75 @@ DescriptorSetData::DescriptorSetData(DescriptorSetData&& rhs, const allocator_ty
   descriptorSetLayout(std::move(rhs.descriptorSetLayout)),
   descriptorSet(std::move(rhs.descriptorSet)) {}
 
+DescriptorGroupBlockData::DescriptorGroupBlockData(const allocator_type& alloc) noexcept
+: descriptors(alloc) {}
+
+DescriptorGroupBlockData::DescriptorGroupBlockData(DescriptorTypeOrder typeIn, gfx::ShaderStageFlagBit visibilityIn, AccessType accessTypeIn, ViewDimension viewDimensionIn, gfx::Format formatIn, uint32_t capacityIn, const allocator_type& alloc) noexcept // NOLINT
+: type(typeIn),
+  visibility(visibilityIn),
+  accessType(accessTypeIn),
+  viewDimension(viewDimensionIn),
+  format(formatIn),
+  capacity(capacityIn),
+  descriptors(alloc) {}
+
+DescriptorGroupBlockData::DescriptorGroupBlockData(DescriptorGroupBlockData&& rhs, const allocator_type& alloc)
+: type(rhs.type),
+  visibility(rhs.visibility),
+  accessType(rhs.accessType),
+  viewDimension(rhs.viewDimension),
+  format(rhs.format),
+  offset(rhs.offset),
+  capacity(rhs.capacity),
+  descriptors(std::move(rhs.descriptors), alloc) {}
+
+DescriptorGroupBlockData::DescriptorGroupBlockData(DescriptorGroupBlockData const& rhs, const allocator_type& alloc)
+: type(rhs.type),
+  visibility(rhs.visibility),
+  accessType(rhs.accessType),
+  viewDimension(rhs.viewDimension),
+  format(rhs.format),
+  offset(rhs.offset),
+  capacity(rhs.capacity),
+  descriptors(rhs.descriptors, alloc) {}
+
+DescriptorGroupLayoutData::DescriptorGroupLayoutData(const allocator_type& alloc) noexcept
+: descriptorGroupBlocks(alloc),
+  uniformBlocks(alloc),
+  bindingMap(alloc) {}
+
+DescriptorGroupLayoutData::DescriptorGroupLayoutData(uint32_t slotIn, uint32_t capacityIn, ccstd::pmr::vector<DescriptorGroupBlockData> descriptorGroupBlocksIn, PmrUnorderedMap<NameLocalID, gfx::UniformBlock> uniformBlocksIn, PmrFlatMap<NameLocalID, uint32_t> bindingMapIn, const allocator_type& alloc) noexcept // NOLINT
+: slot(slotIn),
+  capacity(capacityIn),
+  descriptorGroupBlocks(std::move(descriptorGroupBlocksIn), alloc),
+  uniformBlocks(std::move(uniformBlocksIn), alloc),
+  bindingMap(std::move(bindingMapIn), alloc) {}
+
+DescriptorGroupLayoutData::DescriptorGroupLayoutData(DescriptorGroupLayoutData&& rhs, const allocator_type& alloc)
+: slot(rhs.slot),
+  capacity(rhs.capacity),
+  uniformBlockCapacity(rhs.uniformBlockCapacity),
+  samplerTextureCapacity(rhs.samplerTextureCapacity),
+  descriptorGroupBlocks(std::move(rhs.descriptorGroupBlocks), alloc),
+  uniformBlocks(std::move(rhs.uniformBlocks), alloc),
+  bindingMap(std::move(rhs.bindingMap), alloc) {}
+
+DescriptorGroupData::DescriptorGroupData(const allocator_type& alloc) noexcept
+: descriptorGroupLayoutData(alloc) {}
+
+DescriptorGroupData::DescriptorGroupData(DescriptorGroupLayoutData descriptorGroupLayoutDataIn, const allocator_type& alloc) noexcept
+: descriptorGroupLayoutData(std::move(descriptorGroupLayoutDataIn), alloc) {}
+
+DescriptorGroupData::DescriptorGroupData(DescriptorGroupData&& rhs, const allocator_type& alloc)
+: descriptorGroupLayoutData(std::move(rhs.descriptorGroupLayoutData), alloc) {}
+
 PipelineLayoutData::PipelineLayoutData(const allocator_type& alloc) noexcept
-: descriptorSets(alloc) {}
+: descriptorSets(alloc),
+  descriptorGroups(alloc) {}
 
 PipelineLayoutData::PipelineLayoutData(PipelineLayoutData&& rhs, const allocator_type& alloc)
-: descriptorSets(std::move(rhs.descriptorSets), alloc) {}
+: descriptorSets(std::move(rhs.descriptorSets), alloc),
+  descriptorGroups(std::move(rhs.descriptorGroups), alloc) {}
 
 ShaderBindingData::ShaderBindingData(const allocator_type& alloc) noexcept
 : descriptorBindings(alloc) {}

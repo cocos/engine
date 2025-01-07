@@ -27,6 +27,7 @@ import { IWebGL2GPUPipelineLayout, IWebGL2GPUDescriptorSetLayout } from './webgl
 import { WebGL2DescriptorSetLayout } from './webgl2-descriptor-set-layout';
 import { PipelineLayoutInfo } from '../base/define';
 
+/** @mangle */
 export class WebGL2PipelineLayout extends PipelineLayout {
     constructor () {
         super();

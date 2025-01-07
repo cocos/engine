@@ -1825,11 +1825,12 @@ export class Mat4 extends ValueType {
      * @return 当前矩阵的字符串表示。
      */
     public toString (): string {
+        const t = this;
         return `[\n${
-            this.m00}, ${this.m01}, ${this.m02}, ${this.m03},\n${
-            this.m04}, ${this.m05}, ${this.m06}, ${this.m07},\n${
-            this.m08}, ${this.m09}, ${this.m10}, ${this.m11},\n${
-            this.m12}, ${this.m13}, ${this.m14}, ${this.m15}\n`
+            t.m00}, ${t.m01}, ${t.m02}, ${t.m03},\n${
+            t.m04}, ${t.m05}, ${t.m06}, ${t.m07},\n${
+            t.m08}, ${t.m09}, ${t.m10}, ${t.m11},\n${
+            t.m12}, ${t.m13}, ${t.m14}, ${t.m15}\n`
             + ']';
     }
 

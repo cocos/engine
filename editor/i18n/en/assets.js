@@ -508,6 +508,10 @@ module.exports = {
             save: 'Save',
             abort: 'Discard',
         },
+        spine_data: {
+            atlas: 'Atlas',
+            atlas_warn: 'Failed to set up the atlas and requires a text file with the .atlas suffix',
+        },
     },
 
     menu: {

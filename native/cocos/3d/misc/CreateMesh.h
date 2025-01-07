@@ -68,25 +68,25 @@ public:
      * @en create a static mesh.
      * @zh 创建一个静态网格。
      */
-    static Mesh *createMesh(const IGeometry &geometry, Mesh *out = nullptr, const ICreateMeshOptions &options = {});
+    static Mesh *createMesh(const IGeometry &geometry, Mesh *out = nullptr, const ccstd::optional<ICreateMeshOptions> &options = {});
 
     /**
      * @en create a static mesh ICreateInfo.
      * @zh 创建一个静态网格ICreateInfo。
      */
-    static Mesh::ICreateInfo createMeshInfo(const IGeometry &geometry, const ICreateMeshOptions &options = {});
+    static Mesh::ICreateInfo createMeshInfo(const IGeometry &geometry, const ccstd::optional<ICreateMeshOptions> &options = {});
 
     /**
      * @en create a dynamic mesh.
      * @zh 创建一个动态网格。
      */
-    static Mesh *createDynamicMesh(index_t primitiveIndex, const IDynamicGeometry &geometry, Mesh *out = nullptr, const ICreateDynamicMeshOptions &options = {});
+    static Mesh *createDynamicMesh(index_t primitiveIndex, const IDynamicGeometry &geometry, Mesh *out = nullptr, const ccstd::optional<ICreateDynamicMeshOptions> &options = {});
 
     /**
      * @en create a dynamic mesh ICreateInfo.
      * @zh 创建一个动态网格ICreateInfo。
      */
-    static Mesh::ICreateInfo createDynamicMeshInfo(const IDynamicGeometry &geometry, const ICreateDynamicMeshOptions &options = {});
+    static Mesh::ICreateInfo createDynamicMeshInfo(const IDynamicGeometry &geometry, const ccstd::optional<ICreateDynamicMeshOptions> &options = {});
 
     /**
      * 

@@ -40,6 +40,15 @@ jobs:
           fi
           which ninja
 
+      - name: Apply emscripten patches
+        run: |
+          echo "--------------------------------- Save bind.cpp ---------------------------------"
+          cp $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp.bak
+          echo "--------------------------------- Apply embind bind.cpp patches ---------------------------------"
+          cp -f .github/workflows/emscripten-patches/embind/bind.cpp $EMSDK/upstream/emscripten/system/lib/embind/
+          echo "--------------------------------- Apply patches DONE! ---------------------------------"
+          cat $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+
       - name: Build Spine WASM
         run: |
           cd ./native/cocos/editor-support/spine-wasm
@@ -72,3 +81,11 @@ jobs:
         with: 
           name: spine-emscripten
           path: dist
+
+      - name: Restore patches
+        run: |
+          echo "-------------------------- Restore patches ---------------------------------"
+          rm $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+          mv $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp.bak $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp
+          echo "-------------------------- Restore patches DONE! ---------------------------------"
+          cat $EMSDK/upstream/emscripten/system/lib/embind/bind.cpp

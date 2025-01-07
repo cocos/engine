@@ -41,8 +41,9 @@ import { WebGLDeviceManager } from './webgl-define';
 import { error, errorID } from '../../core/platform/debug';
 import { WebGLConstants } from '../gl-constants';
 
+/** @mangle */
 export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
-    public beginRenderPass (
+    public override beginRenderPass (
         renderPass: RenderPass,
         framebuffer: Framebuffer,
         renderArea: Readonly<Rect>,
@@ -53,7 +54,7 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
         WebGLCmdFuncBeginRenderPass(
             WebGLDeviceManager.instance,
             (renderPass as WebGLRenderPass).gpuRenderPass,
-            (framebuffer as WebGLFramebuffer).gpuFramebuffer,
+            (framebuffer as WebGLFramebuffer).getGpuFramebuffer(),
             renderArea,
             clearColors,
             clearDepth,
@@ -62,7 +63,7 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
         this._isInRenderPass = true;
     }
 
-    public draw (infoOrAssembler: DrawInfo | InputAssembler): void {
+    public override draw (infoOrAssembler: DrawInfo | InputAssembler): void {
         if (this._isInRenderPass) {
             if (this._isStateInvalied) {
                 this.bindStates();
@@ -95,7 +96,7 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
         }
     }
 
-    public setViewport (viewport: Readonly<Viewport>): void {
+    public override setViewport (viewport: Readonly<Viewport>): void {
         const { stateCache: cache, gl } = WebGLDeviceManager.instance;
 
         if (cache.viewport.left !== viewport.left
@@ -111,7 +112,7 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
         }
     }
 
-    public setScissor (scissor: Readonly<Rect>): void {
+    public override setScissor (scissor: Readonly<Rect>): void {
         const { stateCache: cache, gl } = WebGLDeviceManager.instance;
 
         if (cache.scissorRect.x !== scissor.x
@@ -127,7 +128,7 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
         }
     }
 
-    public updateBuffer (buffer: Buffer, data: Readonly<BufferSource>, size?: number): void {
+    public override updateBuffer (buffer: Buffer, data: Readonly<BufferSource>, size?: number): void {
         if (!this._isInRenderPass) {
             const gpuBuffer = (buffer as WebGLBuffer).gpuBuffer;
             if (gpuBuffer) {
@@ -147,7 +148,7 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
         }
     }
 
-    public copyBuffersToTexture (buffers: Readonly<ArrayBufferView[]>, texture: Texture, regions: Readonly<BufferTextureCopy[]>): void {
+    public override copyBuffersToTexture (buffers: Readonly<ArrayBufferView[]>, texture: Texture, regions: Readonly<BufferTextureCopy[]>): void {
         if (!this._isInRenderPass) {
             const gpuTexture = (texture as WebGLTexture).gpuTexture;
             if (gpuTexture) {
@@ -158,11 +159,11 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
         }
     }
 
-    public execute (cmdBuffs: Readonly<CommandBuffer[]>, count: number): void {
+    public override execute (cmdBuffs: Readonly<CommandBuffer[]>, count: number): void {
         errorID(16402);
     }
 
-    protected bindStates (): void {
+    protected override bindStates (): void {
         WebGLCmdFuncBindStates(
             WebGLDeviceManager.instance,
             this._curGPUPipelineState,
@@ -174,7 +175,7 @@ export class WebGLPrimaryCommandBuffer extends WebGLCommandBuffer {
         this._isStateInvalied = false;
     }
 
-    public blitTexture (srcTexture: Readonly<Texture>, dstTexture: Texture, regions: Readonly<TextureBlit []>, filter: Filter): void {
+    public override blitTexture (srcTexture: Readonly<Texture>, dstTexture: Texture, regions: Readonly<TextureBlit []>, filter: Filter): void {
         const gpuTextureSrc = (srcTexture as WebGLTexture).gpuTexture;
         const gpuTextureDst = (dstTexture as WebGLTexture).gpuTexture;
         WebGLCmdFuncBlitTexture(WebGLDeviceManager.instance, gpuTextureSrc, gpuTextureDst, regions, filter);

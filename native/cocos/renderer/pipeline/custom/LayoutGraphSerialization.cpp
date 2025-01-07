@@ -38,6 +38,96 @@ namespace cc {
 
 namespace render {
 
+void save(OutputArchive& ar, const Descriptor& v) {
+    save(ar, v.type);
+    save(ar, v.count);
+}
+
+void load(InputArchive& ar, Descriptor& v) {
+    load(ar, v.type);
+    load(ar, v.count);
+}
+
+void save(OutputArchive& ar, const DescriptorBlock& v) {
+    save(ar, v.descriptors);
+    save(ar, v.uniformBlocks);
+    save(ar, v.capacity);
+    save(ar, v.count);
+}
+
+void load(InputArchive& ar, DescriptorBlock& v) {
+    load(ar, v.descriptors);
+    load(ar, v.uniformBlocks);
+    load(ar, v.capacity);
+    load(ar, v.count);
+}
+
+void save(OutputArchive& ar, const DescriptorBlockFlattened& v) {
+    save(ar, v.descriptorNames);
+    save(ar, v.uniformBlockNames);
+    save(ar, v.descriptors);
+    save(ar, v.uniformBlocks);
+    save(ar, v.capacity);
+    save(ar, v.count);
+}
+
+void load(InputArchive& ar, DescriptorBlockFlattened& v) {
+    load(ar, v.descriptorNames);
+    load(ar, v.uniformBlockNames);
+    load(ar, v.descriptors);
+    load(ar, v.uniformBlocks);
+    load(ar, v.capacity);
+    load(ar, v.count);
+}
+
+void save(OutputArchive& ar, const DescriptorBlockIndex& v) {
+    save(ar, v.updateFrequency);
+    save(ar, v.parameterType);
+    save(ar, v.descriptorType);
+    save(ar, v.visibility);
+}
+
+void load(InputArchive& ar, DescriptorBlockIndex& v) {
+    load(ar, v.updateFrequency);
+    load(ar, v.parameterType);
+    load(ar, v.descriptorType);
+    load(ar, v.visibility);
+}
+
+void save(OutputArchive& ar, const DescriptorGroupBlockIndex& v) {
+    save(ar, v.updateFrequency);
+    save(ar, v.parameterType);
+    save(ar, v.descriptorType);
+    save(ar, v.visibility);
+    save(ar, v.accessType);
+    save(ar, v.viewDimension);
+    save(ar, v.format);
+}
+
+void load(InputArchive& ar, DescriptorGroupBlockIndex& v) {
+    load(ar, v.updateFrequency);
+    load(ar, v.parameterType);
+    load(ar, v.descriptorType);
+    load(ar, v.visibility);
+    load(ar, v.accessType);
+    load(ar, v.viewDimension);
+    load(ar, v.format);
+}
+
+void save(OutputArchive& ar, const DescriptorGroupBlock& v) {
+    save(ar, v.descriptors);
+    save(ar, v.uniformBlocks);
+    save(ar, v.capacity);
+    save(ar, v.count);
+}
+
+void load(InputArchive& ar, DescriptorGroupBlock& v) {
+    load(ar, v.descriptors);
+    load(ar, v.uniformBlocks);
+    load(ar, v.capacity);
+    load(ar, v.count);
+}
+
 void save(OutputArchive& ar, const DescriptorDB& v) {
     save(ar, v.blocks);
 }
@@ -229,12 +319,64 @@ void load(InputArchive& ar, DescriptorSetData& v) {
     // skip, descriptorSet: IntrusivePtr<gfx::DescriptorSet>
 }
 
+void save(OutputArchive& ar, const DescriptorGroupBlockData& v) {
+    save(ar, v.type);
+    save(ar, v.visibility);
+    save(ar, v.accessType);
+    save(ar, v.viewDimension);
+    save(ar, v.format);
+    save(ar, v.offset);
+    save(ar, v.capacity);
+    save(ar, v.descriptors);
+}
+
+void load(InputArchive& ar, DescriptorGroupBlockData& v) {
+    load(ar, v.type);
+    load(ar, v.visibility);
+    load(ar, v.accessType);
+    load(ar, v.viewDimension);
+    load(ar, v.format);
+    load(ar, v.offset);
+    load(ar, v.capacity);
+    load(ar, v.descriptors);
+}
+
+void save(OutputArchive& ar, const DescriptorGroupLayoutData& v) {
+    save(ar, v.slot);
+    save(ar, v.capacity);
+    save(ar, v.uniformBlockCapacity);
+    save(ar, v.samplerTextureCapacity);
+    save(ar, v.descriptorGroupBlocks);
+    save(ar, v.uniformBlocks);
+    save(ar, v.bindingMap);
+}
+
+void load(InputArchive& ar, DescriptorGroupLayoutData& v) {
+    load(ar, v.slot);
+    load(ar, v.capacity);
+    load(ar, v.uniformBlockCapacity);
+    load(ar, v.samplerTextureCapacity);
+    load(ar, v.descriptorGroupBlocks);
+    load(ar, v.uniformBlocks);
+    load(ar, v.bindingMap);
+}
+
+void save(OutputArchive& ar, const DescriptorGroupData& v) {
+    save(ar, v.descriptorGroupLayoutData);
+}
+
+void load(InputArchive& ar, DescriptorGroupData& v) {
+    load(ar, v.descriptorGroupLayoutData);
+}
+
 void save(OutputArchive& ar, const PipelineLayoutData& v) {
     save(ar, v.descriptorSets);
+    save(ar, v.descriptorGroups);
 }
 
 void load(InputArchive& ar, PipelineLayoutData& v) {
     load(ar, v.descriptorSets);
+    load(ar, v.descriptorGroups);
 }
 
 void save(OutputArchive& ar, const ShaderBindingData& v) {

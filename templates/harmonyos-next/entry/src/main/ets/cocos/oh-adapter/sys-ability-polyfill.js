@@ -182,11 +182,11 @@ globalThis.initScreenInfo = function () {
         if (data.boundingRects.length == 0) {
             return;
         }
-        const rc = data.boundingRects[0];
-        cutout.left = rc.left;
-        cutout.top = rc.top;
-        cutout.width = rc.width;
-        cutout.height = rc.height;
+
+        cutout.left = data.boundingRects[0].left;
+        cutout.top = data.boundingRects[0].top;
+        cutout.width = data.boundingRects[0].width;
+        cutout.height = data.boundingRects[0].height;
     }).catch((err) => {
         console.log("get cutout info error!");
     });

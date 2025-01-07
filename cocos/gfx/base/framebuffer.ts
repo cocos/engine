@@ -77,10 +77,15 @@ export abstract class Framebuffer extends GFXObject {
         return false;
     }
 
+    /** @mangle */
     protected _renderPass: RenderPass | null = null;
+    /** @mangle */
     protected _colorTextures: (Texture | null)[] = [];
+    /** @mangle */
     protected _depthStencilTexture: Texture | null = null;
+    /** @mangle */
     protected _width: number = 0;
+    /** @mangle */
     protected _height: number = 0;
 
     constructor () {

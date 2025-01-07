@@ -806,10 +806,11 @@ export class Director extends EventTarget {
     }
 
     /**
+     * @engineInternal
      * @en Build custom render pipeline
      * @zh 构建自定义渲染管线
      */
-    private buildRenderPipeline (): void {
+    public buildRenderPipeline (): void {
         if (!this._root) {
             return;
         }
@@ -831,11 +832,6 @@ export class Director extends EventTarget {
         // 2. cclegacy.rendering is available
         // 3. The root node is created and uses custom pipeline
         if (macro.CUSTOM_PIPELINE_NAME !== '' && cclegacy.rendering && this._root && this._root.usesCustomPipeline) {
-            this.on(
-                DirectorEvent.BEFORE_RENDER,
-                this.buildRenderPipeline,
-                this,
-            );
             this.on(
                 DirectorEvent.BEFORE_SCENE_LAUNCH,
                 cclegacy.rendering.forceResizeAllWindows,

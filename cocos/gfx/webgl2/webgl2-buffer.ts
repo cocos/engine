@@ -34,6 +34,7 @@ import {
 import { WebGL2DeviceManager } from './webgl2-define';
 import { IWebGL2GPUBuffer, WebGL2IndirectDrawInfos } from './webgl2-gpu-objects';
 
+/** @mangle */
 export class WebGL2Buffer extends Buffer {
     constructor () {
         super();

@@ -65,8 +65,9 @@ export const simple: IAssembler = {
         }
     },
 
-    updateWorldVerts(sprite: Sprite, chunk: StaticVBChunk) {
-        const renderData = sprite.renderData!;
+    updateWorldVerts (sprite: Sprite, chunk: StaticVBChunk) {
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const vData = chunk.vb;
 
         const dataList: IRenderData[] = renderData.data;
@@ -99,7 +100,8 @@ export const simple: IAssembler = {
             return;
         }
 
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const chunk = renderData.chunk;
         if (sprite._flagChangedVersion !== sprite.node.flagChangedVersion || renderData.vertDirty) {
             // const vb = chunk.vertexAccessor.getVertexBuffer(chunk.bufferId);
@@ -186,23 +188,24 @@ export const simple: IAssembler = {
         renderData.vertDirty = true;
     },
 
-    updateUVs(sprite: Sprite) {
-        if (!sprite.spriteFrame) return;
-        const renderData = sprite.renderData!;
+    updateUVs (sprite: Sprite) {
+        const renderData = sprite.renderData;
+        if (!sprite.spriteFrame || !renderData) return;
         const vData = renderData.chunk.vb;
         const uv = sprite.spriteFrame.uv;
         const stride = renderData.floatStride;
         let uvOffset = 3;
         for (let i = 0; i < renderData.dataLength; ++i) {
-            let index = i * 2;
+            const index = i * 2;
             vData[uvOffset] = uv[index];
             vData[uvOffset + 1] = uv[index + 1];
             uvOffset += stride;
         }
     },
 
-    updateColor(sprite: Sprite) {
-        const renderData = sprite.renderData!;
+    updateColor (sprite: Sprite) {
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const vData = renderData.chunk.vb;
         let colorOffset = 5;
         const color = sprite.color;

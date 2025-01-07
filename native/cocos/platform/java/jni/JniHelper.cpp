@@ -120,6 +120,7 @@ jmethodID JniHelper::loadclassMethodMethodId = nullptr;
 jobject JniHelper::classloader = nullptr;
 std::function<void()> JniHelper::classloaderCallback = nullptr;
 jobject JniHelper::sContext = nullptr;
+jobject JniHelper::sActivity = nullptr;
 JavaVM *JniHelper::sJavaVM = nullptr;
 
 JavaVM *JniHelper::getJavaVM() {
@@ -139,9 +140,13 @@ void JniHelper::init(JNIEnv *env, jobject context) {
 
 void JniHelper::onDestroy() {
     if (JniHelper::sJavaVM) {
-        if (JniHelper::sContext) {
-            cc::JniHelper::getEnv()->DeleteGlobalRef(JniHelper::sContext);
-            JniHelper::sContext = nullptr;
+        if (sContext) {
+            cc::JniHelper::getEnv()->DeleteGlobalRef(sContext);
+            sContext = nullptr;
+        }
+        if (sActivity) {
+            cc::JniHelper::getEnv()->DeleteGlobalRef(sActivity);
+            sActivity = nullptr;
         }
         LOGD("JniHelper::onDestroy");
     }
@@ -199,7 +204,15 @@ jobject JniHelper::getContext() {
 jobject JniHelper::getActivity() {
     // TODO(cjh): In normal mode, sContext is Activity itself, but in surface-less mode, we need to
     // returns nullptr.
-    return sContext;
+    return sActivity;
+}
+
+void JniHelper::setActivity(jobject activity) {
+    if (sActivity) {
+        cc::JniHelper::getEnv()->DeleteGlobalRef(sActivity);
+        sActivity = nullptr;
+    }
+    sActivity = cc::JniHelper::getEnv()->NewGlobalRef(activity);
 }
 
 #if CC_PLATFORM == CC_PLATFORM_OHOS

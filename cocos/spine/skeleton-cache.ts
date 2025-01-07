@@ -189,12 +189,13 @@ export class AnimationCache {
         modelData.iData = iUint16Buf;
 
         const data = model.getData();
+        const textures = model.getTextures();
         const count = data.size();
-        for (let i = 0; i < count; i += 6) {
+        for (let i = 0; i < count; i += 5) {
             const meshData = new SpineDrawItem();
             meshData.iCount = data.get(i + 3);
             meshData.blendMode = data.get(i + 4);
-            meshData.textureID = data.get(i + 5);
+            meshData.textureID = textures.get(i / 5);
             modelData.meshes.push(meshData);
         }
 
@@ -466,7 +467,7 @@ class SkeletonCache {
                     delete animationPool[key];
                 }
             }
-            let skeletonInfo = this._skeletonCache[uuid];
+            const skeletonInfo = this._skeletonCache[uuid];
             const skeleton = skeletonInfo && skeletonInfo.skeleton;
             if (skeleton) {
                 spine.wasmUtil.destroySpineSkeleton(skeleton);

@@ -23,13 +23,25 @@
 ****************************************************************************/
 
 /* eslint-disable max-len */
-import type { LayoutGraphData, PipelineLayoutData, RenderPhaseData } from './layout-graph';
-import { DescriptorBlockData, DescriptorData, DescriptorSetLayoutData, LayoutGraphDataValue } from './layout-graph';
 import { EffectAsset } from '../../asset/assets';
 import { assert, error, warn } from '../../core';
 import { DescriptorSetInfo, DescriptorSetLayout, DescriptorSetLayoutBinding, DescriptorSetLayoutInfo, DescriptorType, Device, Feature, Format, FormatFeatureBit, GetTypeSize, PipelineLayout, PipelineLayoutInfo, ShaderStageFlagBit, Type, Uniform, UniformBlock } from '../../gfx';
-import { UBOForwardLight, UBOForwardLightEnum, UBOSkinning } from '../define';
-import { UpdateFrequency, DescriptorBlockIndex, DescriptorTypeOrder, ParameterType } from './types';
+import { UBOForwardLightEnum, UBOSkinning } from '../define';
+import type {
+    LayoutGraphData,
+    PipelineLayoutData, RenderPhaseData,
+} from './layout-graph';
+import {
+    DescriptorBlockData,
+    DescriptorBlockIndex,
+    DescriptorData,
+    DescriptorSetLayoutData,
+    DescriptorTypeOrder,
+    LayoutGraphDataValue,
+} from './layout-graph';
+import {
+    ParameterType, UpdateFrequency,
+} from './types';
 
 export const INVALID_ID = 0xFFFFFFFF;
 export const ENABLE_SUBPASS = true;

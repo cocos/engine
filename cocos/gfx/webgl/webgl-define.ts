@@ -97,6 +97,7 @@ export enum WebGLEXT {
     COMPRESSED_SRGB8_ALPHA8_ASTC_12x12_KHR = 0x93DD,
 }
 
+/** @mangle */
 export interface IWebGLExtensions {
     EXT_texture_filter_anisotropic: EXT_texture_filter_anisotropic | null;
     EXT_blend_minmax: EXT_blend_minmax | null;

@@ -493,6 +493,10 @@ module.exports = {
             save: '保存',
             abort: '丢弃',
         },
+        spine_data: {
+            atlas: '图集',
+            atlas_warn: '设置图集失败，需要后缀为 .atlas 的文本文件',
+        },
     },
 
     menu: {

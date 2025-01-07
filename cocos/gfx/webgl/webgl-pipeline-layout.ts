@@ -27,6 +27,7 @@ import { IWebGLGPUPipelineLayout, IWebGLGPUDescriptorSetLayout } from './webgl-g
 import { WebGLDescriptorSetLayout } from './webgl-descriptor-set-layout';
 import { PipelineLayoutInfo } from '../base/define';
 
+/** @mangle */
 export class WebGLPipelineLayout extends PipelineLayout {
     get gpuPipelineLayout (): IWebGLGPUPipelineLayout { return this._gpuPipelineLayout!; }
 

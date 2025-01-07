@@ -26,7 +26,7 @@ import { ccclass, type, serializable, editable } from 'cc.decorator';
 import { createMesh } from '../3d/misc';
 import { Mesh } from '../3d/assets/mesh';
 import * as primitives from '.';
-import { ccenum, cclegacy } from '../core';
+import { Enum, cclegacy } from '../core';
 
 enum PrimitiveType {
     BOX = 0,
@@ -38,7 +38,7 @@ enum PrimitiveType {
     PLANE = 6,
     QUAD = 7,
 }
-ccenum(PrimitiveType);
+Enum(PrimitiveType); // Need reversed keys in Primitive.onLoaded, so use Enum to generate reversed keys.
 
 /**
  * @en
@@ -81,7 +81,8 @@ export class Primitive extends Mesh {
      * 根据`type`和`info`构建相应的网格。
      */
     public onLoaded (): void {
-        createMesh(primitives[PrimitiveType[this.type].toLowerCase()](this.info), this);
+        const factory = primitives[PrimitiveType[this.type].toLowerCase()] as (arg: typeof this.info) => primitives.IGeometry;
+        createMesh(factory(this.info), this);
     }
 }
 

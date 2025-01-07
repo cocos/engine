@@ -22,91 +22,98 @@
  THE SOFTWARE.
 ****************************************************************************/
 
-#include "platform/java/jni/JniHelper.h"
 #include <jni.h>
+#include "platform/java/jni/JniHelper.h"
 #include "vendor/google/billing/GoogleBillingHelper.h"
-
+#include "vendor/google/billing/GoogleBillingManager.h"
 extern "C" {
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onBillingSetupFinished(JNIEnv *env, jclass clazz, jobject billingResultObj) {
-    cc::GoogleBillingHelper::onBillingSetupFinished(env, clazz, billingResultObj);
+JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onBillingSetupFinished(JNIEnv *env, jclass clazz, jint tag, jint callbackID, jobject billingResultObj) {
+    cc::GoogleBillingHelper::onBillingSetupFinished(env, clazz, tag, callbackID, billingResultObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onBillingServiceDisconnected(JNIEnv *env, jclass clazz) {
-    cc::GoogleBillingHelper::onBillingServiceDisconnected(env, clazz);
+JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onBillingServiceDisconnected(JNIEnv *env, jclass clazz, jint tag, jint callbackID) {
+    cc::GoogleBillingHelper::onBillingServiceDisconnected(env, clazz, tag, callbackID);
 }
 
 // NOLINTNEXTLINE
 JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onProductDetailsResponse(JNIEnv *env, jclass clazz,
-                                                                                      jobject billingResultObj,
-                                                                                      jobject productDetailsListObj,
-                                                                                      jint startID) {
-    cc::GoogleBillingHelper::onProductDetailsResponse(env, clazz, billingResultObj, productDetailsListObj, startID);
+                                                                                        jint tag, jint callbackID,
+                                                                                        jobject billingResultObj,
+                                                                                        jobject productDetailsListObj,
+                                                                                        jint startID) {
+    cc::GoogleBillingHelper::onProductDetailsResponse(env, clazz, tag, callbackID, billingResultObj, productDetailsListObj, startID);
 }
 
 // NOLINTNEXTLINE
 JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onPurchasesUpdated(JNIEnv *env, jclass clazz,
-                                                                                jobject billingResultObj,
-                                                                                jobject purchaseListObj,
-                                                                                jint startID) {
-    cc::GoogleBillingHelper::onPurchasesUpdated(env, clazz, billingResultObj, purchaseListObj, startID);
+                                                                                  jint tag,
+                                                                                  jobject billingResultObj,
+                                                                                  jobject purchaseListObj,
+                                                                                  jint startID) {
+    cc::GoogleBillingHelper::onPurchasesUpdated(env, clazz, tag, billingResultObj, purchaseListObj, startID);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onConsumeResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jstring purchaseToken) {
-    cc::GoogleBillingHelper::onConsumeResponse(env, clazz, billingResultObj, purchaseToken);
+JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onConsumeResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj, jstring purchaseToken) {
+    cc::GoogleBillingHelper::onConsumeResponse(env, clazz, tag, callbackId, billingResultObj, purchaseToken);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onQueryPurchasesResponse(JNIEnv *env, jclass clazz, jobject billingResultObj,
-                                                                                      jobject purchaseListObj, jint startID) {
-    cc::GoogleBillingHelper::onQueryPurchasesResponse(env, clazz, billingResultObj, purchaseListObj, startID);
+JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onQueryPurchasesResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj,
+                                                                                        jobject purchaseListObj, jint startID) {
+    cc::GoogleBillingHelper::onQueryPurchasesResponse(env, clazz, tag, callbackId, billingResultObj, purchaseListObj, startID);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onAcknowledgePurchaseResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
-    cc::GoogleBillingHelper::onAcknowledgePurchaseResponse(env, clazz, billingResultObj);
+JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onAcknowledgePurchaseResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj) {
+    cc::GoogleBillingHelper::onAcknowledgePurchaseResponse(env, clazz, tag, callbackId, billingResultObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onBillingConfigResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject billingConfigObj) {
-    cc::GoogleBillingHelper::onBillingConfigResponse(env, clazz, billingResultObj, billingConfigObj);
+JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onBillingConfigResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj, jobject billingConfigObj) {
+    cc::GoogleBillingHelper::onBillingConfigResponse(env, clazz, tag, callbackId, billingResultObj, billingConfigObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onAlternativeBillingOnlyTokenResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject alternativeBillingOnlyReportingDetailsObj) {
-    cc::GoogleBillingHelper::onAlternativeBillingOnlyTokenResponse(env, clazz, billingResultObj, alternativeBillingOnlyReportingDetailsObj);
+JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onAlternativeBillingOnlyTokenResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj, jobject alternativeBillingOnlyReportingDetailsObj) {
+    cc::GoogleBillingHelper::onAlternativeBillingOnlyTokenResponse(env, clazz, tag, callbackId, billingResultObj, alternativeBillingOnlyReportingDetailsObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onExternalOfferReportingDetailsResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject externalOfferReportingDetailsObj) {
-    cc::GoogleBillingHelper::onExternalOfferReportingDetailsResponse(env, clazz, billingResultObj, externalOfferReportingDetailsObj);
+JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onExternalOfferReportingDetailsResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj, jobject externalOfferReportingDetailsObj) {
+    cc::GoogleBillingHelper::onExternalOfferReportingDetailsResponse(env, clazz, tag, callbackId, billingResultObj, externalOfferReportingDetailsObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onAlternativeBillingOnlyAvailabilityResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
-    cc::GoogleBillingHelper::onAlternativeBillingOnlyAvailabilityResponse(env, clazz, billingResultObj);
+JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onAlternativeBillingOnlyAvailabilityResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj) {
+    cc::GoogleBillingHelper::onAlternativeBillingOnlyAvailabilityResponse(env, clazz, tag, callbackId, billingResultObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onExternalOfferAvailabilityResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
-    cc::GoogleBillingHelper::onExternalOfferAvailabilityResponse(env, clazz, billingResultObj);
+JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onExternalOfferAvailabilityResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj) {
+    cc::GoogleBillingHelper::onExternalOfferAvailabilityResponse(env, clazz, tag, callbackId, billingResultObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onAlternativeBillingOnlyInformationDialogResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
-    cc::GoogleBillingHelper::onAlternativeBillingOnlyInformationDialogResponse(env, clazz, billingResultObj);
+JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onAlternativeBillingOnlyInformationDialogResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj) {
+    cc::GoogleBillingHelper::onAlternativeBillingOnlyInformationDialogResponse(env, clazz, tag, callbackId, billingResultObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onExternalOfferInformationDialogResponse(JNIEnv *env, jclass clazz, jobject billingResultObj) {
-    cc::GoogleBillingHelper::onExternalOfferInformationDialogResponse(env, clazz, billingResultObj);
+JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onExternalOfferInformationDialogResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj) {
+    cc::GoogleBillingHelper::onExternalOfferInformationDialogResponse(env, clazz, tag, callbackId, billingResultObj);
 }
 
 // NOLINTNEXTLINE
-JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onInAppMessageResponse(JNIEnv *env, jclass clazz, jobject inAppMessageResultObj) {
-    cc::GoogleBillingHelper::onInAppMessageResponse(env, clazz, inAppMessageResultObj);
+JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_onInAppMessageResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject inAppMessageResultObj) {
+    cc::GoogleBillingHelper::onInAppMessageResponse(env, clazz, tag, callbackId, inAppMessageResultObj);
+}
+
+// NOLINTNEXTLINE
+JNIEXPORT void JNICALL Java_google_billing_GoogleBillingHelper_userSelectedAlternativeBilling(JNIEnv *env, jclass clazz, jint tag, jobject userChoiceDetailsObj) {
+    cc::GoogleBillingHelper::userSelectedAlternativeBilling(env, clazz, tag, userChoiceDetailsObj);
 }
 }

@@ -26,11 +26,11 @@
 
 #include <ace/xcomponent/native_interface_xcomponent.h>
 
+#include "bindings/jswrapper/SeApi.h"
+#include "platform/interfaces//modules/IScreen.h"
+#include "platform/openharmony/FileUtils-OpenHarmony.h"
 #include "platform/openharmony/OpenHarmonyPlatform.h"
 #include "platform/openharmony/modules/SystemWindow.h"
-#include "platform/openharmony/FileUtils-OpenHarmony.h"
-#include "platform/interfaces//modules/IScreen.h"
-#include "bindings/jswrapper/SeApi.h"
 
 #if CC_USE_EDITBOX
     #include "ui/edit-box/EditBox-openharmony.h"
@@ -52,7 +52,6 @@ enum ContextType {
     ENGINE_UTILS,
     EDITBOX_UTILS,
     WEBVIEW_UTILS,
-    SYSTEM_UTILS,
     DISPLAY_UTILS,
     UV_ASYNC_SEND,
     VIDEO_UTILS
@@ -61,31 +60,31 @@ enum ContextType {
 #define KEYCODE_BACK_OH 6
 
 static Napi::Env gWorkerEnv(nullptr);
-static Napi::FunctionReference* gPostMessageToUIThreadFunc = nullptr;
-static Napi::FunctionReference* gPostSyncMessageToUIThreadFunc = nullptr;
+static Napi::FunctionReference *gPostMessageToUIThreadFunc = nullptr;
+static Napi::FunctionReference *gPostSyncMessageToUIThreadFunc = nullptr;
 
-#define DEFINE_FUNCTION_CALLBACK(functionName, cachedFunctionRefPtr) \
-static void functionName(const Napi::CallbackInfo &info) { \
-    Napi::Env env = info.Env(); \
-    if (info.Length() != 1) { \
-        Napi::Error::New(env, "setPostMessageFunction, 1 argument expected").ThrowAsJavaScriptException(); \
-        return; \
-    } \
-    \
-    if (!info[0].IsFunction()) { \
-        Napi::TypeError::New(env, "setPostMessageFunction, function expected").ThrowAsJavaScriptException(); \
-        return; \
-    } \
-    \
-    delete cachedFunctionRefPtr; \
-    cachedFunctionRefPtr = new Napi::FunctionReference(Napi::Persistent(info[0].As<Napi::Function>())); \
-}
+#define DEFINE_FUNCTION_CALLBACK(functionName, cachedFunctionRefPtr)                                             \
+    static void functionName(const Napi::CallbackInfo &info) {                                                   \
+        Napi::Env env = info.Env();                                                                              \
+        if (info.Length() != 1) {                                                                                \
+            Napi::Error::New(env, "setPostMessageFunction, 1 argument expected").ThrowAsJavaScriptException();   \
+            return;                                                                                              \
+        }                                                                                                        \
+                                                                                                                 \
+        if (!info[0].IsFunction()) {                                                                             \
+            Napi::TypeError::New(env, "setPostMessageFunction, function expected").ThrowAsJavaScriptException(); \
+            return;                                                                                              \
+        }                                                                                                        \
+                                                                                                                 \
+        delete cachedFunctionRefPtr;                                                                             \
+        cachedFunctionRefPtr = new Napi::FunctionReference(Napi::Persistent(info[0].As<Napi::Function>()));      \
+    }
 
 DEFINE_FUNCTION_CALLBACK(js_set_PostMessage2UIThreadCallback, gPostMessageToUIThreadFunc)
 DEFINE_FUNCTION_CALLBACK(js_set_PostSyncMessage2UIThreadCallback, gPostSyncMessageToUIThreadFunc)
 
 /* static */
-void NapiHelper::postMessageToUIThread(const std::string& type, Napi::Value param) {
+void NapiHelper::postMessageToUIThread(const std::string &type, Napi::Value param) {
     if (gPostMessageToUIThreadFunc == nullptr) {
         CC_LOG_ERROR("callback was not set %s, type: %s", __FUNCTION__, type.c_str());
         return;
@@ -94,7 +93,7 @@ void NapiHelper::postMessageToUIThread(const std::string& type, Napi::Value para
 }
 
 /* static */
-Napi::Value NapiHelper::postSyncMessageToUIThread(const std::string& type, Napi::Value param) {
+Napi::Value NapiHelper::postSyncMessageToUIThread(const std::string &type, Napi::Value param) {
     if (gPostSyncMessageToUIThreadFunc == nullptr) {
         CC_LOG_ERROR("callback was not set %s, type: %s", __FUNCTION__, type.c_str());
         return getWorkerEnv().Undefined();
@@ -105,7 +104,7 @@ Napi::Value NapiHelper::postSyncMessageToUIThread(const std::string& type, Napi:
 }
 
 /* static */
-Napi::Value NapiHelper::napiCallFunction(const char* functionName) {
+Napi::Value NapiHelper::napiCallFunction(const char *functionName) {
     auto env = getWorkerEnv();
     auto funcVal = env.Global().Get(functionName);
     if (!funcVal.IsFunction()) {
@@ -121,7 +120,7 @@ Napi::Value NapiHelper::napiCallFunction(const char *functionName, float duratio
     if (!funcVal.IsFunction()) {
         return {};
     }
-    const std::initializer_list<napi_value> args = { Napi::Number::New(env, duration) };
+    const std::initializer_list<napi_value> args = {Napi::Number::New(env, duration)};
     return funcVal.As<Napi::Function>().Call(env.Global(), args);
 }
 
@@ -133,7 +132,7 @@ static bool exportFunctions(Napi::Object exports) {
         return false;
     }
 
-    auto* nativeXComponent = Napi::ObjectWrap<OH_NativeXComponent>::Unwrap(xcomponentObject.As<Napi::Object>());
+    auto *nativeXComponent = Napi::ObjectWrap<OH_NativeXComponent>::Unwrap(xcomponentObject.As<Napi::Object>());
     if (nativeXComponent == nullptr) {
         CC_LOG_ERROR("nativeXComponent is nullptr");
         return false;
@@ -155,7 +154,6 @@ static void napiOnShow(const Napi::CallbackInfo &info) {
     CC_LOG_INFO("napiOnShow");
     cc::WorkerMessageData data{cc::MessageType::WM_APP_SHOW, nullptr, nullptr};
     OpenHarmonyPlatform::getInstance()->enqueue(data);
-
 }
 
 static void napiOnHide(const Napi::CallbackInfo &info) {
@@ -188,9 +186,9 @@ static void napiOnPageHide(const Napi::CallbackInfo &info) {
 }
 
 static void napiNativeEngineInit(const Napi::CallbackInfo &info) {
-    #if SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_NAPI
-        se::ScriptEngine::setEnv(info.Env());
-    #endif
+#if SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_NAPI
+    se::ScriptEngine::setEnv(info.Env());
+#endif
     CC_LOG_INFO("napiNativeEngineInit before run");
     OpenHarmonyPlatform::getInstance()->run(0, nullptr);
     CC_LOG_INFO("napiNativeEngineInit after run");
@@ -203,7 +201,7 @@ static void napiNativeEngineStart(const Napi::CallbackInfo &info) {
 static void napiWorkerInit(const Napi::CallbackInfo &info) {
     CC_LOG_INFO("napiWorkerInit ...");
     Napi::Env env = info.Env();
-    uv_loop_t* loop = nullptr;
+    uv_loop_t *loop = nullptr;
     napi_status status = napi_get_uv_event_loop(napi_env(env), &loop);
     if (status != napi_ok) {
         CC_LOG_ERROR("napi_get_uv_event_loop failed!");
@@ -218,22 +216,22 @@ static void napiOnDisplayChange(const Napi::CallbackInfo &info) {
         return;
     }
 
-     int32_t rotation = info[0].As<Napi::Number>().Int32Value();
+    int32_t rotation = info[0].As<Napi::Number>().Int32Value();
 
     int orientation = static_cast<int>(cc::IScreen::Orientation::PORTRAIT);
     switch (rotation) {
         case 0: // ROTATION_0
             orientation = static_cast<int>(cc::IScreen::Orientation::PORTRAIT);
-        break;
+            break;
         case 1: // ROTATION_90
-            orientation = static_cast<int>(cc::IScreen::Orientation::LANDSCAPE_RIGHT);
-        break;
+            orientation = static_cast<int>(cc::IScreen::Orientation::LANDSCAPE_LEFT);
+            break;
         case 2: // ROTATION_180
             orientation = static_cast<int>(cc::IScreen::Orientation::PORTRAIT_UPSIDE_DOWN);
-        break;
+            break;
         case 3: // ROTATION_270
-            orientation = static_cast<int>(cc::IScreen::Orientation::LANDSCAPE_LEFT);
-        break;
+            orientation = static_cast<int>(cc::IScreen::Orientation::LANDSCAPE_RIGHT);
+            break;
     }
     cc::events::Orientation::broadcast(orientation);
 }
@@ -263,21 +261,21 @@ static void napiWritablePathInit(const Napi::CallbackInfo &info) {
 
 static void registerFunction(const Napi::CallbackInfo &info) {
     Napi::Env env = info.Env();
-    if(info.Length() != 2) {
+    if (info.Length() != 2) {
         Napi::Error::New(info.Env(), "2 argument expected").ThrowAsJavaScriptException();
         return;
     }
     std::string functionName = info[0].As<Napi::String>().Utf8Value();
-    if(!info[1].IsFunction()) {
+    if (!info[1].IsFunction()) {
         Napi::Error::New(info.Env(), "Function expected").ThrowAsJavaScriptException();
         return;
     }
     Napi::Function jsFunction = info[1].As<Napi::Function>();
     napi_ref fucRef;
     napi_create_reference(env, jsFunction, 1, &fucRef);
-    char* name = new char[functionName.length() + 1];
+    char *name = new char[functionName.length() + 1];
     strcpy(name, functionName.c_str());
-    JSFunction* jsFunctionPtr = new JSFunction(name, env, fucRef);
+    JSFunction *jsFunctionPtr = new JSFunction(name, env, fucRef);
     JSFunction::addFunction(name, jsFunctionPtr);
     return;
 }
@@ -347,16 +345,15 @@ static Napi::Value getContext(const Napi::CallbackInfo &info) {
             exports["onPageHide"] = Napi::Function::New(env, napiOnPageHide);
         } break;
         case XCOMPONENT_REGISTER_LIFECYCLE_CALLBACK: {
-
         } break;
         case NATIVE_RENDER_API: {
             exports["nativeEngineInit"] = Napi::Function::New(env, napiNativeEngineInit);
             exports["nativeEngineStart"] = Napi::Function::New(env, napiNativeEngineStart);
         } break;
         case WORKER_INIT: {
-            #if SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_NAPI
-                se::ScriptEngine::setEnv(env);
-            #endif
+#if SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_NAPI
+            se::ScriptEngine::setEnv(env);
+#endif
 
             gWorkerEnv = env;
             exports["workerInit"] = Napi::Function::New(env, napiWorkerInit);
@@ -370,27 +367,27 @@ static Napi::Value getContext(const Napi::CallbackInfo &info) {
             exports["registerFunction"] = Napi::Function::New(env, registerFunction);
         } break;
         case EDITBOX_UTILS: {
-        #if CC_USE_EDITBOX
+#if CC_USE_EDITBOX
             exports["onTextChange"] = Napi::Function::New(env, OpenHarmonyEditBox::napiOnTextChange);
             exports["onComplete"] = Napi::Function::New(env, OpenHarmonyEditBox::napiOnComplete);
             exports["onConfirm"] = Napi::Function::New(env, OpenHarmonyEditBox::napiOnConfirm);
-        #endif
+#endif
         } break;
         case WEBVIEW_UTILS: {
-        #if CC_USE_WEBVIEW
+#if CC_USE_WEBVIEW
             exports["shouldStartLoading"] = Napi::Function::New(env, OpenHarmonyWebView::napiShouldStartLoading);
             exports["finishLoading"] = Napi::Function::New(env, OpenHarmonyWebView::napiFinishLoading);
             exports["failLoading"] = Napi::Function::New(env, OpenHarmonyWebView::napiFailLoading);
             exports["jsCallback"] = Napi::Function::New(env, OpenHarmonyWebView::napiJsCallback);
-        #endif
+#endif
         } break;
-		case DISPLAY_UTILS: {
+        case DISPLAY_UTILS: {
             exports["onDisplayChange"] = Napi::Function::New(env, napiOnDisplayChange);
         } break;
         case UV_ASYNC_SEND: {
             exports["send"] = Napi::Function::New(env, napiASend);
         } break;
-    case VIDEO_UTILS: {
+        case VIDEO_UTILS: {
             exports["onVideoEvent"] = Napi::Function::New(env, napiOnVideoEvent);
         } break;
         default:

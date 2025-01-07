@@ -31,7 +31,7 @@ THE SOFTWARE.
 #include "audio/android/utils/Compat.h"
 namespace cc {
 
-static ccstd::vector<char> __silenceData;//NOLINT(bugprone-reserved-identifier, readability-identifier-naming)
+static ccstd::vector<char> __silenceData; //NOLINT(bugprone-reserved-identifier, readability-identifier-naming)
 
 PcmAudioService::PcmAudioService()
 : _controller(nullptr) {
@@ -149,4 +149,4 @@ void PcmAudioService::resume() {
         OH_AudioRenderer_Start(_audioRenderer);
     }
 }
-} // namespace cocos2d
+} // namespace cc
