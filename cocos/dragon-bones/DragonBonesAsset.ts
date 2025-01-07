@@ -64,7 +64,8 @@ export class DragonBonesAsset extends Asset {
 
     private _armaturesEnum: any = null;
 
-    constructctor (): void {
+    constructor (name?: string) {
+        super(name);
         this.reset();
     }
     /**
