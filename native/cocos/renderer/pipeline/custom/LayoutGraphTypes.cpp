@@ -35,13 +35,16 @@ namespace cc {
 namespace render {
 
 DescriptorDB::DescriptorDB(const allocator_type& alloc) noexcept
-: blocks(alloc) {}
+: blocks(alloc),
+  groupBlocks(alloc) {}
 
 DescriptorDB::DescriptorDB(DescriptorDB&& rhs, const allocator_type& alloc)
-: blocks(std::move(rhs.blocks), alloc) {}
+: blocks(std::move(rhs.blocks), alloc),
+  groupBlocks(std::move(rhs.groupBlocks), alloc) {}
 
 DescriptorDB::DescriptorDB(DescriptorDB const& rhs, const allocator_type& alloc)
-: blocks(rhs.blocks, alloc) {}
+: blocks(rhs.blocks, alloc),
+  groupBlocks(rhs.groupBlocks, alloc) {}
 
 RenderPhase::RenderPhase(const allocator_type& alloc) noexcept
 : shaders(alloc) {}

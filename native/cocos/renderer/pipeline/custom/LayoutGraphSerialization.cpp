@@ -130,10 +130,12 @@ void load(InputArchive& ar, DescriptorGroupBlock& v) {
 
 void save(OutputArchive& ar, const DescriptorDB& v) {
     save(ar, v.blocks);
+    save(ar, v.groupBlocks);
 }
 
 void load(InputArchive& ar, DescriptorDB& v) {
     load(ar, v.blocks);
+    load(ar, v.groupBlocks);
 }
 
 void save(OutputArchive& ar, const RenderPhase& v) {

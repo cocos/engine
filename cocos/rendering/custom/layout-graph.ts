@@ -150,8 +150,10 @@ export class DescriptorGroupBlock {
 export class DescriptorDB {
     reset (): void {
         this.blocks.clear();
+        this.groupBlocks.clear();
     }
     readonly blocks: Map<string, DescriptorBlock> = new Map<string, DescriptorBlock>();
+    readonly groupBlocks: Map<string, DescriptorGroupBlock> = new Map<string, DescriptorGroupBlock>();
 }
 
 export class RenderPhase {
@@ -1479,6 +1481,11 @@ export function saveDescriptorDB (a: OutputArchive, v: DescriptorDB): void {
         saveDescriptorBlockIndex(a, JSON.parse(k1) as DescriptorBlockIndex);
         saveDescriptorBlock(a, v1);
     }
+    a.n(v.groupBlocks.size); // Map<string, DescriptorGroupBlock>
+    for (const [k1, v1] of v.groupBlocks) {
+        saveDescriptorGroupBlockIndex(a, JSON.parse(k1) as DescriptorGroupBlockIndex);
+        saveDescriptorGroupBlock(a, v1);
+    }
 }
 
 export function loadDescriptorDB (a: InputArchive, v: DescriptorDB): void {
@@ -1490,6 +1497,14 @@ export function loadDescriptorDB (a: InputArchive, v: DescriptorDB): void {
         const v1 = new DescriptorBlock();
         loadDescriptorBlock(a, v1);
         v.blocks.set(JSON.stringify(k1), v1);
+    }
+    sz = a.n(); // Map<string, DescriptorGroupBlock>
+    for (let i1 = 0; i1 !== sz; ++i1) {
+        const k1 = new DescriptorGroupBlockIndex();
+        loadDescriptorGroupBlockIndex(a, k1);
+        const v1 = new DescriptorGroupBlock();
+        loadDescriptorGroupBlock(a, v1);
+        v.groupBlocks.set(JSON.stringify(k1), v1);
     }
 }
 

@@ -155,6 +155,7 @@ struct DescriptorDB {
     DescriptorDB& operator=(DescriptorDB const& rhs) = default;
 
     ccstd::pmr::map<DescriptorBlockIndex, DescriptorBlock> blocks;
+    ccstd::pmr::map<DescriptorGroupBlockIndex, DescriptorGroupBlock> groupBlocks;
 };
 
 struct RenderStageTag {};
