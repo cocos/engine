@@ -47,7 +47,7 @@ import {
 import { getUpdateFrequencyName } from './types-names';
 
 export function getLayoutGraphDataVersion (): number {
-    return 0;
+    return 1;
 }
 
 // get name of gfx.Type
