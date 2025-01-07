@@ -653,6 +653,104 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     }
 
     /**
+     * @en Batch update the children's sibling index to the index of in children, and emit events.
+     * @zh 批量更新当前节点子节点的sibling index为其在children数组中的下标，并触发事件。
+     */
+    private batchUpdateSiblingIndices (): void {
+        const changed: number[] = [];
+        for (let i = 0; i < this._children.length; ++i) {
+            const node = this._children[i];
+            if (node._siblingIndex !== i) {
+                node._siblingIndex = i;
+                changed.push(i);
+            }
+        }
+        if (changed.length > 0) {
+            this.emit(NodeEventType.CHILDREN_ORDER_CHANGED);
+            for (const i of changed) {
+                const node = this._children[i];
+                if (node._onSiblingIndexChanged) {
+                    node._onSiblingIndexChanged(i);
+                }
+                node._eventProcessor.onUpdatingSiblingIndex();
+            }
+        }
+    }
+
+    /**
+     * @en Set the children's sibling index in a batch.
+     * @zh 批量设置当前节点子节点的sibling index。
+     * @param indices @en New sibling indeces for all children.
+     * @zh 所有子节点的新索引值。
+     * @return True if indices set, false if parameter not valid.
+     */
+    public setChildrenIndices (indices: number[]): boolean {
+        if (this._objFlags & Deactivating) {
+            errorID(3821);
+            return false;
+        }
+        //check indices length
+        const length = indices.length;
+        if (length !== this._children.length) {
+            return false;
+        }
+        //check if indices contains all value in [0,length)
+        const checks: boolean[] = [];
+        for (let i = 0; i < length; i++) {
+            checks.push(false);
+        }
+        for (const ni of indices) {
+            if (ni >= 0 && ni < length) {
+                checks[ni] = true;
+            }
+        }
+        let valid = true;
+        for (const check of checks) {
+            if (!check) {
+                valid = false;
+                break;
+            }
+        }
+        if (!valid) {
+            return false;
+        }
+        //set the indeces
+        let i = 0;
+        while (i < indices.length) {
+            const ni = indices[i];
+            if (ni === i) {
+                i++;
+            } else {
+                //swap indices
+                indices[i] = indices[ni];
+                indices[ni] = ni;
+                //swap node
+                const node = this._children[i];
+                this._children[i] = this._children[ni];
+                this.children[ni] = node;
+            }
+        }
+        this.batchUpdateSiblingIndices();
+        return true;
+    }
+
+    /**
+     * @en Sort the children according to the comparator.
+     * @zh 根据比较器对当前节点的子节点全排序
+     * @param comp @en A comparator that return negtive value / 0 value / positive value
+     * when the first node is less than / equals to / greater than the second node.
+     * @zh 一个比较器，当第一个节点小于/等于/大于第二个节点时，返回负值/0值/正值。
+     */
+    public sortChildren (comp: (n1: Node, n2: Node) => number): void {
+        if (this._objFlags & Deactivating) {
+            errorID(3821);
+            return;
+        }
+        this._children.sort(comp);
+        this.batchUpdateSiblingIndices();
+    }
+
+    /**
      * @en Walk though the sub children tree of the current node.
      * Each node, including the current node, in the sub tree will be visited two times,
      * before all children and after all children.
