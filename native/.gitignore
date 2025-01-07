@@ -132,6 +132,7 @@ project.properties
 *.iml
 
 # Ignore prebuilt libraries folder
+/external/*
 !/external/config.json
 /v*-deps-*.zip
 /new-renderer-*.zip
