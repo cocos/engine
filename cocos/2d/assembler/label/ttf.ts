@@ -67,7 +67,7 @@ export const ttf: IAssembler = {
             uvOffset += stride;
         }
         let offset = 5;
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < renderData.dataLength; i++) {
             Color.toArray(vData, WHITE, offset);
             offset += stride;
         }
