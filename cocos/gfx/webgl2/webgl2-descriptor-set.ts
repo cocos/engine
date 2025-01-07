@@ -30,6 +30,7 @@ import { WebGL2Texture } from './webgl2-texture';
 import { WebGL2DescriptorSetLayout } from './webgl2-descriptor-set-layout';
 import { DescriptorSetInfo, DESCRIPTOR_BUFFER_TYPE, DESCRIPTOR_SAMPLER_TYPE } from '../base/define';
 
+/** @mangle */
 export class WebGL2DescriptorSet extends DescriptorSet {
     constructor () {
         super();
@@ -55,12 +56,13 @@ export class WebGL2DescriptorSet extends DescriptorSet {
         for (let i = 0; i < bindings.length; ++i) {
             const binding = bindings[i];
             for (let j = 0; j < binding.count; j++) {
-                gpuDescriptors.push({
+                const gpuDescriptor: IWebGL2GPUDescriptor = {
                     type: binding.descriptorType,
                     gpuBuffer: null,
                     gpuTextureView: null,
                     gpuSampler: null,
-                });
+                };
+                gpuDescriptors.push(gpuDescriptor);
             }
         }
     }

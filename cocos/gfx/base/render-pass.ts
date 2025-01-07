@@ -37,9 +37,13 @@ import {
  * @zh GFX 渲染过程。
  */
 export abstract class RenderPass extends GFXObject {
+    /** @mangle */
     protected _colorInfos: ColorAttachment[] = [];
+    /** @mangle */
     protected _depthStencilInfo: DepthStencilAttachment | null = null;
+    /** @mangle */
     protected _subpasses: SubpassInfo[] = [];
+    /** @mangle */
     protected _hash = 0;
 
     get colorAttachments (): Readonly<ColorAttachment[]> { return this._colorInfos; }

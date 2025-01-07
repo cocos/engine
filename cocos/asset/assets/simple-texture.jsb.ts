@@ -21,7 +21,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-import { Filter, PixelFormat, WrapMode } from './asset-enum';
+import { TextureFilter, PixelFormat, WrapMode } from './asset-enum';
 import dependUtil from '../asset-manager/depend-util';
 import { js, macro, cclegacy } from '../../core';
 import './texture-base';
@@ -35,7 +35,7 @@ export const SimpleTexture: typeof JsbSimpleTexture = jsb.SimpleTexture;
 
 const jsbWindow = jsb.window;
 
-SimpleTexture.Filter = Filter;
+SimpleTexture.Filter = TextureFilter;
 SimpleTexture.PixelFormat = PixelFormat;
 SimpleTexture.WrapMode = WrapMode;
 

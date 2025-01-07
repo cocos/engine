@@ -68,6 +68,7 @@ import type { WebGLStateCache } from './webgl-state-cache';
 import { WebGLConstants } from '../gl-constants';
 import { debug, errorID } from '../../core/platform/debug';
 
+/** @mangle */
 export class WebGLDevice extends Device {
     constructor () {
         super();
@@ -109,6 +110,7 @@ export class WebGLDevice extends Device {
     private _context: WebGLRenderingContext | null = null;
     private _bindingMappings: IWebGLBindingMapping | null = null;
 
+    /** @mangle */
     protected _textureExclusive = new Array<boolean>(Format.COUNT);
 
     public initialize (info: Readonly<DeviceInfo>): boolean {
@@ -134,8 +136,8 @@ export class WebGLDevice extends Device {
             samplerTextureOffsets[curSet] -= mapping.maxBlockCounts[curSet];
         }
         this._bindingMappings = {
-            blockOffsets: blockOffsets,
-            samplerTextureOffsets: samplerTextureOffsets,
+            blockOffsets,
+            samplerTextureOffsets,
             flexibleSet: mapping.setIndices[mapping.setIndices.length - 1],
         };
 
@@ -267,6 +269,7 @@ export class WebGLDevice extends Device {
         queue.clear();
     }
 
+    /** @mangle */
     protected initFormatFeatures (exts: IWebGLExtensions): void {
         const formatFeatures = this._formatFeatures;
         const textureExclusive = this._textureExclusive;

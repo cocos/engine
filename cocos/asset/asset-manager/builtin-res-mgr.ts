@@ -34,7 +34,7 @@ import Bundle from './bundle';
 import { settings, cclegacy, SettingsCategory } from '../../core';
 import { releaseManager } from './release-manager';
 import { Material } from '../assets';
-import { Filter, PixelFormat } from '../assets/asset-enum';
+import { TextureFilter, PixelFormat } from '../assets/asset-enum';
 
 export class BuiltinResMgr {
     protected _resources: Record<string, Asset> = {};
@@ -190,7 +190,7 @@ export class BuiltinResMgr {
         // black cube texture
         const blackCubeTexture = new TextureCube();
         blackCubeTexture._uuid = 'black-cube-texture';
-        blackCubeTexture.setMipFilter(Filter.NEAREST);
+        blackCubeTexture.setMipFilter(TextureFilter.NEAREST);
         blackCubeTexture.image = {
             front: new ImageAsset(blackMemImageSource),
             back: new ImageAsset(blackMemImageSource),
@@ -211,7 +211,7 @@ export class BuiltinResMgr {
         // grey cube texture
         const greyCubeTexture = new TextureCube();
         greyCubeTexture._uuid = 'grey-cube-texture';
-        greyCubeTexture.setMipFilter(Filter.NEAREST);
+        greyCubeTexture.setMipFilter(TextureFilter.NEAREST);
         greyCubeTexture.image = {
             front: new ImageAsset(greyMemImageSource),
             back: new ImageAsset(greyMemImageSource),
@@ -232,7 +232,7 @@ export class BuiltinResMgr {
         // white cube texture
         const whiteCubeTexture = new TextureCube();
         whiteCubeTexture._uuid = 'white-cube-texture';
-        whiteCubeTexture.setMipFilter(Filter.NEAREST);
+        whiteCubeTexture.setMipFilter(TextureFilter.NEAREST);
         whiteCubeTexture.image = {
             front: new ImageAsset(whiteMemImageSource),
             back: new ImageAsset(whiteMemImageSource),
@@ -259,7 +259,7 @@ export class BuiltinResMgr {
 
         // default cube texture
         const defaultCubeTexture = new TextureCube();
-        defaultCubeTexture.setMipFilter(Filter.NEAREST);
+        defaultCubeTexture.setMipFilter(TextureFilter.NEAREST);
         defaultCubeTexture._uuid = 'default-cube-texture';
         defaultCubeTexture.image = {
             front: new ImageAsset(defaultMemImageSource),

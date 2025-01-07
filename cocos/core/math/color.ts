@@ -39,6 +39,9 @@ const G_INDEX = 1;
 const B_INDEX = 2;
 const A_INDEX = 3;
 
+const mathAbs = Math.abs;
+const mathMax = Math.max;
+
 /**
  * @en Representation of RGBA colors.<br/>
  * Each color component is an integer value with a range from 0 to 255.<br/>
@@ -104,11 +107,12 @@ export class Color extends ValueType implements Modifiable {
      * ```
      */
     public static toVec4 (color: Color, out?: Vec4): Vec4 {
+        const sourceData = color._data;
         out = out !== undefined ?  out : new Vec4();
-        out.x = color._data[R_INDEX] * toFloat;
-        out.y = color._data[G_INDEX] * toFloat;
-        out.z = color._data[B_INDEX] * toFloat;
-        out.w = color._data[A_INDEX] * toFloat;
+        out.x = sourceData[R_INDEX] * toFloat;
+        out.y = sourceData[G_INDEX] * toFloat;
+        out.z = sourceData[B_INDEX] * toFloat;
+        out.w = sourceData[A_INDEX] * toFloat;
         return out;
     }
     /**
@@ -122,10 +126,11 @@ export class Color extends ValueType implements Modifiable {
      */
     public static fromVec4 (value: Vec4, out?: Color): Color {
         out = out === undefined ? new Color() : out;
-        out._data[R_INDEX] = value.x / toFloat;
-        out._data[G_INDEX] = value.y / toFloat;
-        out._data[B_INDEX] = value.z / toFloat;
-        out._data[A_INDEX] = value.w / toFloat;
+        const outData = out._data;
+        outData[R_INDEX] = value.x / toFloat;
+        outData[G_INDEX] = value.y / toFloat;
+        outData[B_INDEX] = value.z / toFloat;
+        outData[A_INDEX] = value.w / toFloat;
         return out;
     }
     /**
@@ -313,11 +318,11 @@ export class Color extends ValueType implements Modifiable {
      * @zh 排除浮点数误差的颜色近似等价判断
      */
     public static equals<Out extends IColorLike> (a: Out, b: Out, epsilon = EPSILON): boolean {
-        const hasInf = Math.abs(a.r) === Infinity || Math.abs(a.g) === Infinity || Math.abs(a.b) === Infinity || Math.abs(a.a) === Infinity;
-        return !hasInf && (Math.abs(a.r - b.r) <= epsilon * Math.max(1.0, Math.abs(a.r), Math.abs(b.r))
-            && Math.abs(a.g - b.g) <= epsilon * Math.max(1.0, Math.abs(a.g), Math.abs(b.g))
-            && Math.abs(a.b - b.b) <= epsilon * Math.max(1.0, Math.abs(a.b), Math.abs(b.b))
-            && Math.abs(a.a - b.a) <= epsilon * Math.max(1.0, Math.abs(a.a), Math.abs(b.a)));
+        const hasInf = mathAbs(a.r) === Infinity || mathAbs(a.g) === Infinity || mathAbs(a.b) === Infinity || mathAbs(a.a) === Infinity;
+        return !hasInf && (mathAbs(a.r - b.r) <= epsilon * mathMax(1.0, mathAbs(a.r), mathAbs(b.r))
+            && mathAbs(a.g - b.g) <= epsilon * mathMax(1.0, mathAbs(a.g), mathAbs(b.g))
+            && mathAbs(a.b - b.b) <= epsilon * mathMax(1.0, mathAbs(a.b), mathAbs(b.b))
+            && mathAbs(a.a - b.a) <= epsilon * mathMax(1.0, mathAbs(a.a), mathAbs(b.a)));
     }
 
     /**
@@ -442,11 +447,12 @@ export class Color extends ValueType implements Modifiable {
      */
     public equals (other: Readonly<Color>): boolean {
         const otherColor = other as Color;
+        const thisData = this._data;
         // otherColor may not be Color instance if invoked by tween action, so use getter to get property values.
-        return other && this._data[R_INDEX] === otherColor.r
-                     && this._data[G_INDEX] === otherColor.g
-                     && this._data[B_INDEX] === otherColor.b
-                     && this._data[A_INDEX] === otherColor.a;
+        return other && thisData[R_INDEX] === otherColor.r
+                     && thisData[G_INDEX] === otherColor.g
+                     && thisData[B_INDEX] === otherColor.b
+                     && thisData[A_INDEX] === otherColor.a;
     }
 
     /**
@@ -549,12 +555,13 @@ export class Color extends ValueType implements Modifiable {
      * ```
      */
     public toHEX (fmt: '#rgb' | '#rrggbb' | '#rrggbbaa' = '#rrggbb'): string {
+        const thisData = this._data;
         const prefix = '0';
         // #rrggbb
         const hex = [
-            (this._data[R_INDEX] < 16 ? prefix : '') + (this._data[R_INDEX]).toString(16),
-            (this._data[G_INDEX] < 16 ? prefix : '') + (this._data[G_INDEX]).toString(16),
-            (this._data[B_INDEX] < 16 ? prefix : '') + (this._data[B_INDEX]).toString(16),
+            (thisData[R_INDEX] < 16 ? prefix : '') + (thisData[R_INDEX]).toString(16),
+            (thisData[G_INDEX] < 16 ? prefix : '') + (thisData[G_INDEX]).toString(16),
+            (thisData[B_INDEX] < 16 ? prefix : '') + (thisData[B_INDEX]).toString(16),
         ];
         const i = -1;
         if (fmt === '#rgb') {
@@ -562,7 +569,7 @@ export class Color extends ValueType implements Modifiable {
             hex[1] = hex[1][0];
             hex[2] = hex[2][0];
         } else if (fmt === '#rrggbbaa') {
-            hex.push((this._data[A_INDEX] < 16 ? prefix : '') + (this._data[A_INDEX]).toString(16));
+            hex.push((thisData[A_INDEX] < 16 ? prefix : '') + (thisData[A_INDEX]).toString(16));
         }
         return hex.join('');
     }
@@ -651,9 +658,10 @@ export class Color extends ValueType implements Modifiable {
                 break;
             }
         }
-        this._data[R_INDEX] = r * 255;
-        this._data[G_INDEX] = g * 255;
-        this._data[B_INDEX] = b * 255;
+        const thisData = this._data;
+        thisData[R_INDEX] = r * 255;
+        thisData[G_INDEX] = g * 255;
+        thisData[B_INDEX] = b * 255;
         return this;
     }
 
@@ -707,23 +715,24 @@ export class Color extends ValueType implements Modifiable {
     public set(other: Readonly<Color>): Color;
     public set(r?: number, g?: number, b?: number, a?: number): Color;
     public set (r?: number | Readonly<Color>, g?: number, b?: number, a?: number): Color {
+        const thisData = this._data;
         if (typeof r === 'object') {
             const other = r as Color;
             if (other._data) {
                 // Tween action uses reflection to set color, so other may be just a IColorLike object.
                 // So should check _data property.
-                this._data.set(other._data);
+                thisData.set(other._data);
             } else {
-                this._data[R_INDEX] = other.r ?? 0;
-                this._data[G_INDEX] = other.g ?? 0;
-                this._data[B_INDEX] = other.b ?? 0;
-                this._data[A_INDEX] = other.a ?? 255;
+                thisData[R_INDEX] = other.r ?? 0;
+                thisData[G_INDEX] = other.g ?? 0;
+                thisData[B_INDEX] = other.b ?? 0;
+                thisData[A_INDEX] = other.a ?? 255;
             }
         } else {
-            this._data[R_INDEX] = r ?? 0;
-            this._data[G_INDEX] = g ?? 0;
-            this._data[B_INDEX] = b ?? 0;
-            this._data[A_INDEX] = a ?? 255;
+            thisData[R_INDEX] = r ?? 0;
+            thisData[G_INDEX] = g ?? 0;
+            thisData[B_INDEX] = b ?? 0;
+            thisData[A_INDEX] = a ?? 255;
         }
         return this;
     }
@@ -734,11 +743,12 @@ export class Color extends ValueType implements Modifiable {
      * @param other The specified color.
      */
     public multiply (other: Color): Color {
+        const thisData = this._data;
         // FIXME: not sure if other is really Color, so use getter.
-        this._data[R_INDEX] *= other.r / 255;
-        this._data[G_INDEX] *= other.g / 255;
-        this._data[B_INDEX] *= other.b / 255;
-        this._data[A_INDEX] *= other.a / 255;
+        thisData[R_INDEX] *= other.r / 255;
+        thisData[G_INDEX] *= other.g / 255;
+        thisData[B_INDEX] *= other.b / 255;
+        thisData[A_INDEX] *= other.a / 255;
         return this;
     }
 

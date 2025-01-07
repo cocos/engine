@@ -171,7 +171,7 @@ module.exports = {
                             '3. CHAR: 将文本拆分为字符并且把字符纹理缓存到一张字符图集中进行复用，适用于字符内容重复并且频繁更新的文本内容。',
                     },
                     'maxWidth': {
-                        displayName: '缓存模式',
+                        displayName: '最大宽度',
                         tooltip: '富文本的最大宽度, 传 0 的话意味着必须手动换行。',
                     },
                     'lineHeight': {

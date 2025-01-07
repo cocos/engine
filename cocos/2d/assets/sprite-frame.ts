@@ -810,68 +810,68 @@ export class SpriteFrame extends Asset {
      * @param clearData @en Clear Data before initialization. @zh 是否在初始化前清空原有数据。
      */
     public reset (info?: ISpriteFrameInitInfo, clearData = false): void {
+        const self = this;
         let calUV = false;
         if (clearData) {
-            this._originalSize.set(0, 0);
-            this._rect.set(0, 0, 0, 0);
-            this._offset.set(0, 0);
-            this._capInsets = [0, 0, 0, 0];
-            this._rotated = false;
+            self._originalSize.set(0, 0);
+            self._rect.set(0, 0, 0, 0);
+            self._offset.set(0, 0);
+            self._capInsets = [0, 0, 0, 0];
+            self._rotated = false;
             calUV = true;
         }
 
         if (info) {
             if (info.texture) {
-                this._rect.x = this._rect.y = 0;
-                this._rect.width = info.texture.width;
-                this._rect.height = info.texture.height;
-                this._refreshTexture(info.texture);
-                this.checkRect(this._texture);
+                self._rect.set(0, 0, info.texture.width, info.texture.height);
+                self._refreshTexture(info.texture);
+                self.checkRect(self._texture);
             }
 
             if (info.originalSize) {
-                this._originalSize.set(info.originalSize);
+                self._originalSize.set(info.originalSize);
             }
 
             if (info.rect) {
-                this._rect.set(info.rect);
+                self._rect.set(info.rect);
             }
 
             if (info.offset) {
-                this._offset.set(info.offset);
+                self._offset.set(info.offset);
             }
 
+            const thisCapInsets = self._capInsets;
             if (info.borderTop !== undefined) {
-                this._capInsets[INSET_TOP] = info.borderTop;
+                thisCapInsets[INSET_TOP] = info.borderTop;
             }
 
             if (info.borderBottom !== undefined) {
-                this._capInsets[INSET_BOTTOM] = info.borderBottom;
+                thisCapInsets[INSET_BOTTOM] = info.borderBottom;
             }
 
             if (info.borderLeft !== undefined) {
-                this._capInsets[INSET_LEFT] = info.borderLeft;
+                thisCapInsets[INSET_LEFT] = info.borderLeft;
             }
 
             if (info.borderRight !== undefined) {
-                this._capInsets[INSET_RIGHT] = info.borderRight;
+                thisCapInsets[INSET_RIGHT] = info.borderRight;
             }
 
             if (info.isRotate !== undefined) {
-                this._rotated = !!info.isRotate;
+                self._rotated = !!info.isRotate;
             }
 
             if (info.isFlipUv !== undefined) {
-                this._isFlipUVY = !!info.isFlipUv;
+                self._isFlipUVY = !!info.isFlipUv;
             }
 
             calUV = true;
         }
 
-        if (calUV && this.texture) {
-            this._calculateUV();
+        if (calUV && self.texture) {
+            self._calculateUV();
         }
-        this._calcTrimmedBorder();
+        self._calcTrimmedBorder();
     }
 
     /**
@@ -906,20 +906,23 @@ export class SpriteFrame extends Asset {
     }
 
     private _calcTrimmedBorder (): void {
-        const ow = this._originalSize.width;
-        const oh = this._originalSize.height;
-        const rw = this._rect.width;
-        const rh = this._rect.height;
+        const self = this;
+        const ow = self._originalSize.width;
+        const oh = self._originalSize.height;
+        const rw = self._rect.width;
+        const rh = self._rect.height;
         const halfTrimmedWidth = (ow - rw) * 0.5;
         const halfTrimmedHeight = (oh - rh) * 0.5;
+        const thisOffset = self._offset;
+        const thisTrimmedBorder = self._trimmedBorder;
         // left
-        this._trimmedBorder.x = this._offset.x + halfTrimmedWidth;
+        thisTrimmedBorder.x = thisOffset.x + halfTrimmedWidth;
         // right
-        this._trimmedBorder.y = this._offset.x - halfTrimmedWidth;
+        thisTrimmedBorder.y = thisOffset.x - halfTrimmedWidth;
         // bottom
-        this._trimmedBorder.z = this._offset.y + halfTrimmedHeight;
+        thisTrimmedBorder.z = thisOffset.y + halfTrimmedHeight;
         // top
-        this._trimmedBorder.w = this._offset.y - halfTrimmedHeight;
+        thisTrimmedBorder.w = thisOffset.y - halfTrimmedHeight;
     }
 
     /**
@@ -1011,224 +1014,114 @@ export class SpriteFrame extends Asset {
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
      */
     public _calculateUV (): void {
-        const rect = this._rect;
-        const uv = this.uv;
-        const unbiasUV = this.unbiasUV;
-        const tex = this.texture;
+        const arrayFill = js.array.fillItems;
+        const self = this;
+        const rect = self._rect;
+        const uv = self.uv;
+        const unbiasUV = self.unbiasUV;
+        const tex = self.texture;
         const texw = tex.width;
         const texh = tex.height;
 
-        if (this._rotated) {
+        if (self._rotated) {
             const l = texw === 0 ? 0 : rect.x / texw;
             const r = texw === 0 ? 1 : (rect.x + rect.height) / texw;
             const t = texh === 0 ? 0 : rect.y / texh;
             const b = texh === 0 ? 1 : (rect.y + rect.width) / texh;
 
-            if (this._isFlipUVX && this._isFlipUVY) {
+            if (self._isFlipUVX && self._isFlipUVY) {
                 /*
                 3 - 1
                 |   |
                 2 - 0
                 */
-                uv[0] = r;
-                uv[1] = b;
-                uv[2] = r;
-                uv[3] = t;
-                uv[4] = l;
-                uv[5] = b;
-                uv[6] = l;
-                uv[7] = t;
-            } else if (this._isFlipUVX) {
+                arrayFill(uv, r, b, r, t, l, b, l, t);
+            } else if (self._isFlipUVX) {
                 /*
                 2 - 0
                 |   |
                 3 - 1
                 */
-                uv[0] = r;
-                uv[1] = t;
-                uv[2] = r;
-                uv[3] = b;
-                uv[4] = l;
-                uv[5] = t;
-                uv[6] = l;
-                uv[7] = b;
-            } else if (this._isFlipUVY) {
+                arrayFill(uv, r, t, r, b, l, t, l, b);
+            } else if (self._isFlipUVY) {
                 /*
                 1 - 3
                 |   |
                 0 - 2
                 */
-                uv[0] = l;
-                uv[1] = b;
-                uv[2] = l;
-                uv[3] = t;
-                uv[4] = r;
-                uv[5] = b;
-                uv[6] = r;
-                uv[7] = t;
+                arrayFill(uv, l, b, l, t, r, b, r, t);
             } else {
                 /*
                 0 - 2
                 |   |
                 1 - 3
                 */
-                uv[0] = l;
-                uv[1] = t;
-                uv[2] = l;
-                uv[3] = b;
-                uv[4] = r;
-                uv[5] = t;
-                uv[6] = r;
-                uv[7] = b;
+                arrayFill(uv, l, t, l, b, r, t, r, b);
             }
 
             const ul = texw === 0 ? 0 : rect.x / texw;
             const ur = texw === 0 ? 1 : (rect.x + rect.height) / texw;
             const ut = texh === 0 ? 0 : rect.y / texh;
             const ub = texh === 0 ? 1 : (rect.y + rect.width) / texh;
-            if (this._isFlipUVX && this._isFlipUVY) {
-                unbiasUV[0] = ur;
-                unbiasUV[1] = ub;
-                unbiasUV[2] = ur;
-                unbiasUV[3] = ut;
-                unbiasUV[4] = ul;
-                unbiasUV[5] = ub;
-                unbiasUV[6] = ul;
-                unbiasUV[7] = ut;
-            } else if (this._isFlipUVX) {
-                unbiasUV[0] = ur;
-                unbiasUV[1] = ut;
-                unbiasUV[2] = ur;
-                unbiasUV[3] = ub;
-                unbiasUV[4] = ul;
-                unbiasUV[5] = ut;
-                unbiasUV[6] = ul;
-                unbiasUV[7] = ub;
-            } else if (this._isFlipUVY) {
-                unbiasUV[0] = ul;
-                unbiasUV[1] = ub;
-                unbiasUV[2] = ul;
-                unbiasUV[3] = ut;
-                unbiasUV[4] = ur;
-                unbiasUV[5] = ub;
-                unbiasUV[6] = ur;
-                unbiasUV[7] = ut;
+            if (self._isFlipUVX && self._isFlipUVY) {
+                arrayFill(unbiasUV, ur, ub, ur, ut, ul, ub, ul, ut);
+            } else if (self._isFlipUVX) {
+                arrayFill(unbiasUV, ur, ut, ur, ub, ul, ut, ul, ub);
+            } else if (self._isFlipUVY) {
+                arrayFill(unbiasUV, ul, ub, ul, ut, ur, ub, ur, ut);
             } else {
-                unbiasUV[0] = ul;
-                unbiasUV[1] = ut;
-                unbiasUV[2] = ul;
-                unbiasUV[3] = ub;
-                unbiasUV[4] = ur;
-                unbiasUV[5] = ut;
-                unbiasUV[6] = ur;
-                unbiasUV[7] = ub;
+                arrayFill(unbiasUV, ul, ut, ul, ub, ur, ut, ur, ub);
             }
         } else {
             const l = texw === 0 ? 0 : rect.x / texw;
             const r = texw === 0 ? 1 : (rect.x + rect.width) / texw;
             const b = texh === 0 ? 1 : (rect.y + rect.height) / texh;
             const t = texh === 0 ? 0 : rect.y / texh;
-            if (this._isFlipUVX && this._isFlipUVY) {
+            if (self._isFlipUVX && self._isFlipUVY) {
                 /*
                 1 - 0
                 |   |
                 3 - 2
                 */
-                uv[0] = r;
-                uv[1] = t;
-                uv[2] = l;
-                uv[3] = t;
-                uv[4] = r;
-                uv[5] = b;
-                uv[6] = l;
-                uv[7] = b;
-            } else if (this._isFlipUVX) {
+                arrayFill(uv, r, t, l, t, r, b, l, b);
+            } else if (self._isFlipUVX) {
                 /*
                 3 - 2
                 |   |
                 1 - 0
                 */
-                uv[0] = r;
-                uv[1] = b;
-                uv[2] = l;
-                uv[3] = b;
-                uv[4] = r;
-                uv[5] = t;
-                uv[6] = l;
-                uv[7] = t;
-            } else if (this._isFlipUVY) {
+                arrayFill(uv, r, b, l, b, r, t, l, t);
+            } else if (self._isFlipUVY) {
                 /*
                 0 - 1
                 |   |
                 2 - 3
                 */
-                uv[0] = l;
-                uv[1] = t;
-                uv[2] = r;
-                uv[3] = t;
-                uv[4] = l;
-                uv[5] = b;
-                uv[6] = r;
-                uv[7] = b;
+                arrayFill(uv, l, t, r, t, l, b, r, b);
             } else {
                 /*
                 2 - 3
                 |   |
                 0 - 1
                 */
-                uv[0] = l;
-                uv[1] = b;
-                uv[2] = r;
-                uv[3] = b;
-                uv[4] = l;
-                uv[5] = t;
-                uv[6] = r;
-                uv[7] = t;
+                arrayFill(uv, l, b, r, b, l, t, r, t);
             }
             const ul = texw === 0 ? 0 : rect.x / texw;
             const ur = texw === 0 ? 1 : (rect.x + rect.width) / texw;
             const ub = texh === 0 ? 1 : (rect.y + rect.height) / texh;
             const ut = texh === 0 ? 0 : rect.y / texh;
-            if (this._isFlipUVX && this._isFlipUVY) {
-                unbiasUV[0] = ur;
-                unbiasUV[1] = ut;
-                unbiasUV[2] = ul;
-                unbiasUV[3] = ut;
-                unbiasUV[4] = ur;
-                unbiasUV[5] = ub;
-                unbiasUV[6] = ul;
-                unbiasUV[7] = ub;
-            } else if (this._isFlipUVX) {
-                unbiasUV[0] = ur;
-                unbiasUV[1] = ub;
-                unbiasUV[2] = ul;
-                unbiasUV[3] = ub;
-                unbiasUV[4] = ur;
-                unbiasUV[5] = ut;
-                unbiasUV[6] = ul;
-                unbiasUV[7] = ut;
-            } else if (this._isFlipUVY) {
-                unbiasUV[0] = ul;
-                unbiasUV[1] = ut;
-                unbiasUV[2] = ur;
-                unbiasUV[3] = ut;
-                unbiasUV[4] = ul;
-                unbiasUV[5] = ub;
-                unbiasUV[6] = ur;
-                unbiasUV[7] = ub;
+            if (self._isFlipUVX && self._isFlipUVY) {
+                arrayFill(unbiasUV, ur, ut, ul, ut, ur, ub, ul, ub);
+            } else if (self._isFlipUVX) {
+                arrayFill(unbiasUV, ur, ub, ul, ub, ur, ut, ul, ut);
+            } else if (self._isFlipUVY) {
+                arrayFill(unbiasUV, ul, ut, ur, ut, ul, ub, ur, ub);
             } else {
-                unbiasUV[0] = ul;
-                unbiasUV[1] = ub;
-                unbiasUV[2] = ur;
-                unbiasUV[3] = ub;
-                unbiasUV[4] = ul;
-                unbiasUV[5] = ut;
-                unbiasUV[6] = ur;
-                unbiasUV[7] = ut;
+                arrayFill(unbiasUV, ul, ub, ur, ub, ul, ut, ur, ut);
             }
         }
 
-        this._calculateSlicedUV();
+        self._calculateSlicedUV();
     }
 
     /**
@@ -1347,55 +1240,57 @@ export class SpriteFrame extends Asset {
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
      */
     public _deserialize (serializeData: any, handle: any): void {
+        const self = this;
         const data = serializeData as ISpriteFramesSerializeData;
         const rect = data.rect;
         if (rect) {
-            this._rect = new Rect(rect.x, rect.y, rect.width, rect.height);
+            self._rect = new Rect(rect.x, rect.y, rect.width, rect.height);
         }
 
         const offset = data.offset;
         if (data.offset) {
-            this._offset = v2(offset.x, offset.y);
+            self._offset = v2(offset.x, offset.y);
         }
 
         const originalSize = data.originalSize;
         if (data.originalSize) {
-            this._originalSize = size(originalSize.width, originalSize.height);
+            self._originalSize = size(originalSize.width, originalSize.height);
         }
-        this._rotated = !!data.rotated;
-        this._name = data.name;
-        this._packable = !!data.packable;
+        self._rotated = !!data.rotated;
+        self._name = data.name;
+        self._packable = !!data.packable;
 
-        this._pixelsToUnit = data.pixelsToUnit;
+        self._pixelsToUnit = data.pixelsToUnit;
         const pivot = data.pivot;
         if (pivot) {
-            this._pivot = v2(pivot.x, pivot.y);
+            self._pivot = v2(pivot.x, pivot.y);
         }
-        this._meshType = data.meshType;
+        self._meshType = data.meshType;
 
         const capInsets = data.capInsets;
         if (capInsets) {
-            this._capInsets[INSET_LEFT] = capInsets[INSET_LEFT];
-            this._capInsets[INSET_TOP] = capInsets[INSET_TOP];
-            this._capInsets[INSET_RIGHT] = capInsets[INSET_RIGHT];
-            this._capInsets[INSET_BOTTOM] = capInsets[INSET_BOTTOM];
+            const thisCapInsets = self._capInsets;
+            thisCapInsets[INSET_LEFT] = capInsets[INSET_LEFT];
+            thisCapInsets[INSET_TOP] = capInsets[INSET_TOP];
+            thisCapInsets[INSET_RIGHT] = capInsets[INSET_RIGHT];
+            thisCapInsets[INSET_BOTTOM] = capInsets[INSET_BOTTOM];
         }
 
         if (!BUILD) {
             // manually load texture via _textureSetter
             if (data.texture) {
-                handle.result.push(this, '_textureSource', data.texture, js.getClassId(Texture2D));
+                handle.result.push(self, '_textureSource', data.texture, js.getClassId(Texture2D));
             }
         }
 
         if (EDITOR) {
-            this._atlasUuid = data.atlas ? data.atlas : '';
+            self._atlasUuid = data.atlas ? data.atlas : '';
         }
 
         const vertices = data.vertices;
         if (vertices) {
-            if (!this.vertices) {
-                this.vertices = {
+            if (!self.vertices) {
+                self.vertices = {
                     rawPosition: [],
                     positions: [],
                     indexes: vertices.indexes,
@@ -1405,12 +1300,12 @@ export class SpriteFrame extends Asset {
                     maxPos: v3(vertices.maxPos.x, vertices.maxPos.y, vertices.maxPos.z),
                 };
             }
-            this.vertices.rawPosition.length = 0;
+            self.vertices.rawPosition.length = 0;
             const rawPosition = vertices.rawPosition;
             for (let i = 0; i < rawPosition.length; i += 3) {
-                this.vertices.rawPosition.push(v3(rawPosition[i], rawPosition[i + 1], rawPosition[i + 2]));
+                self.vertices.rawPosition.push(v3(rawPosition[i], rawPosition[i + 1], rawPosition[i + 2]));
             }
-            this._updateMeshVertices();
+            self._updateMeshVertices();
         }
     }
 
@@ -1419,8 +1314,9 @@ export class SpriteFrame extends Asset {
      * @zh 克隆当前 sprite frame。
      */
     public clone (): SpriteFrame {
+        const self = this;
         const sp = new SpriteFrame();
-        const v = this.vertices;
+        const v = self.vertices;
         sp.vertices = v ? {
             rawPosition: v.rawPosition.slice(0),
             positions: v.positions.slice(0),
@@ -1430,37 +1326,37 @@ export class SpriteFrame extends Asset {
             minPos: v.minPos.clone(),
             maxPos: v.maxPos.clone(),
         } : null as any;
-        sp.uv.splice(0, sp.uv.length, ...this.uv);
-        sp.unbiasUV.splice(0, sp.unbiasUV.length, ...this.unbiasUV);
-        sp.uvSliced.splice(0, sp.uvSliced.length, ...this.uvSliced);
-        sp._rect.set(this._rect);
-        sp._trimmedBorder.set(this._trimmedBorder);
-        sp._offset.set(this._offset);
-        sp._originalSize.set(this._originalSize);
-        sp._rotated = this._rotated;
-        sp._capInsets.splice(0, sp._capInsets.length, ...this._capInsets);
-        sp._atlasUuid = this._atlasUuid;
-        sp._texture = this._texture;
-        sp._isFlipUVX = this._isFlipUVX;
-        sp._isFlipUVY = this._isFlipUVY;
-        if (this._original) {
+        sp.uv.splice(0, sp.uv.length, ...self.uv);
+        sp.unbiasUV.splice(0, sp.unbiasUV.length, ...self.unbiasUV);
+        sp.uvSliced.splice(0, sp.uvSliced.length, ...self.uvSliced);
+        sp._rect.set(self._rect);
+        sp._trimmedBorder.set(self._trimmedBorder);
+        sp._offset.set(self._offset);
+        sp._originalSize.set(self._originalSize);
+        sp._rotated = self._rotated;
+        sp._capInsets.splice(0, sp._capInsets.length, ...self._capInsets);
+        sp._atlasUuid = self._atlasUuid;
+        sp._texture = self._texture;
+        sp._isFlipUVX = self._isFlipUVX;
+        sp._isFlipUVY = self._isFlipUVY;
+        if (self._original) {
             sp._original = {
-                _texture: this._original._texture,
-                _x: this._original._x,
-                _y: this._original._y,
+                _texture: self._original._texture,
+                _x: self._original._x,
+                _y: self._original._y,
             };
         } else {
             sp._original = null;
         }
-        sp._packable = this._packable;
-        sp._pixelsToUnit = this._pixelsToUnit;
-        sp._pivot.set(this._pivot);
-        sp._meshType = this._meshType;
-        sp._extrude = this._extrude;
-        sp._customOutLine.splice(0, sp._customOutLine.length, ...this._customOutLine);
-        sp._minPos = this._minPos;
-        sp._maxPos = this._maxPos;
-        if (this._mesh) {
+        sp._packable = self._packable;
+        sp._pixelsToUnit = self._pixelsToUnit;
+        sp._pivot.set(self._pivot);
+        sp._meshType = self._meshType;
+        sp._extrude = self._extrude;
+        sp._customOutLine.splice(0, sp._customOutLine.length, ...self._customOutLine);
+        sp._minPos = self._minPos;
+        sp._maxPos = self._maxPos;
+        if (self._mesh) {
             // Creates a new mesh, and 'this' creates the mesh in the same way. So we can make a copy like this.
             // It must be placed last because the mesh will depend on some of its members when it is created.
             sp._createMesh();
@@ -1469,18 +1365,19 @@ export class SpriteFrame extends Asset {
     }
 
     protected _refreshTexture (texture: TextureBase): void {
-        this._texture = texture;
-        const tex = this._texture;
+        const self = this;
+        self._texture = texture;
+        const tex = self._texture;
         const config: ISpriteFrameInitInfo = {};
         let isReset = false;
-        if (this._rect.width === 0 || this._rect.height === 0 || !this.checkRect(tex)) {
+        if (self._rect.width === 0 || self._rect.height === 0 || !self.checkRect(tex)) {
             config.rect = rect(0, 0, tex.width, tex.height);
             isReset = true;
         }
 
         // If original size is not set or rect check failed, we should reset the original size
-        if (this._originalSize.width === 0
-            || this._originalSize.height === 0
+        if (self._originalSize.width === 0
+            || self._originalSize.height === 0
             || isReset
         ) {
             config.originalSize = size(tex.width, tex.height);
@@ -1488,12 +1385,12 @@ export class SpriteFrame extends Asset {
         }
 
         if (isReset) {
-            this.reset(config);
+            self.reset(config);
         }
 
-        this._checkPackable();
-        if (this._mesh) {
-            this._updateMesh();
+        self._checkPackable();
+        if (self._mesh) {
+            self._updateMesh();
         }
     }
 
@@ -1531,8 +1428,9 @@ export class SpriteFrame extends Asset {
     }
 
     protected _initVertices (): void {
-        if (!this.vertices) {
-            this.vertices = {
+        const self = this;
+        if (!self.vertices) {
+            self.vertices = {
                 rawPosition: [],
                 positions: [],
                 indexes: [],
@@ -1542,22 +1440,26 @@ export class SpriteFrame extends Asset {
                 maxPos: v3(),
             };
         } else {
-            this.vertices.rawPosition.length = 0;
-            this.vertices.positions.length = 0;
-            this.vertices.indexes.length = 0;
-            this.vertices.uv.length = 0;
-            this.vertices.nuv.length = 0;
-            this.vertices.minPos.set(0, 0, 0);
-            this.vertices.maxPos.set(0, 0, 0);
+            const vertices = self.vertices;
+            vertices.rawPosition.length = 0;
+            vertices.positions.length = 0;
+            vertices.indexes.length = 0;
+            vertices.uv.length = 0;
+            vertices.nuv.length = 0;
+            vertices.minPos.set(0, 0, 0);
+            vertices.maxPos.set(0, 0, 0);
         }
-        if (this._meshType === MeshType.POLYGON) {
+
+        const thisVertices = self.vertices;
+
+        if (self._meshType === MeshType.POLYGON) {
             // Use Bayazit to generate vertices and assign values
         } else { // Rect mode
             // default center is 0.5，0.5
-            const tex = this.texture;
+            const tex = self.texture;
             const texw = tex.width;
             const texh = tex.height;
-            const rect = this.rect;
+            const rect = self.rect;
             const width = rect.width;
             const height = rect.height;
             const rectX = rect.x;
@@ -1570,43 +1472,35 @@ export class SpriteFrame extends Asset {
             const t = texh === 0 ? 1 : (rectY + height) / texh;
             const b = texh === 0 ? 0 : rectY / texh;
 
+            const uv = thisVertices.uv;
+            const nuv = thisVertices.nuv;
+            const rawPosition = thisVertices.rawPosition;
+            const indexes = thisVertices.indexes;
+
             // left bottom
             temp_vec3.set(-halfWidth, -halfHeight, 0);
-            this.vertices.rawPosition.push(temp_vec3.clone());
-            this.vertices.uv.push(rectX);
-            this.vertices.uv.push(rectY + height);
-            this.vertices.nuv.push(l);
-            this.vertices.nuv.push(b);
-            this.vertices.minPos.set(temp_vec3);
+            rawPosition.push(temp_vec3.clone());
+            uv.push(rectX, rectY + height);
+            nuv.push(l, b);
+            thisVertices.minPos.set(temp_vec3);
             // right bottom
             temp_vec3.set(halfWidth, -halfHeight, 0);
-            this.vertices.rawPosition.push(temp_vec3.clone());
-            this.vertices.uv.push(rectX + width);
-            this.vertices.uv.push(rectY + height);
-            this.vertices.nuv.push(r);
-            this.vertices.nuv.push(b);
+            rawPosition.push(temp_vec3.clone());
+            uv.push(rectX + width, rectY + height);
+            nuv.push(r, b);
             // left top
             temp_vec3.set(-halfWidth, halfHeight, 0);
-            this.vertices.rawPosition.push(temp_vec3.clone());
-            this.vertices.uv.push(rectX);
-            this.vertices.uv.push(rectY);
-            this.vertices.nuv.push(l);
-            this.vertices.nuv.push(t);
+            rawPosition.push(temp_vec3.clone());
+            uv.push(rectX, rectY);
+            nuv.push(l, t);
             // right top
             temp_vec3.set(halfWidth, halfHeight, 0);
-            this.vertices.rawPosition.push(temp_vec3.clone());
-            this.vertices.uv.push(rectX + width);
-            this.vertices.uv.push(rectY);
-            this.vertices.nuv.push(r);
-            this.vertices.nuv.push(t);
-            this.vertices.maxPos.set(temp_vec3);
+            rawPosition.push(temp_vec3.clone());
+            uv.push(rectX + width, rectY);
+            nuv.push(r, t);
+            thisVertices.maxPos.set(temp_vec3);
 
-            this.vertices.indexes.push(0);
-            this.vertices.indexes.push(1);
-            this.vertices.indexes.push(2);
-            this.vertices.indexes.push(2);
-            this.vertices.indexes.push(1);
-            this.vertices.indexes.push(3);
+            indexes.push(0, 1, 2, 2, 1, 3);
         }
         this._updateMeshVertices();
     }

@@ -1324,15 +1324,15 @@ export function patch_cc_Texture2D(ctx: cc_Texture2D_Context_Args, apply = defau
 interface cc_TextureBase_Context_Args {
    TextureBase: any;
    PixelFormat: any;
-   Filter: any;
+   TextureFilter: any;
    WrapMode: any;
 }
 export function patch_cc_TextureBase(ctx: cc_TextureBase_Context_Args, apply = defaultExec) {
-  const { TextureBase, PixelFormat, Filter, WrapMode } = { ...ctx };
+  const { TextureBase, PixelFormat, TextureFilter, WrapMode } = { ...ctx };
   apply(() => { $.serializable(TextureBase.prototype, '_format',  () => { return PixelFormat.RGBA8888; }); }, 'serializable', '_format');
-  apply(() => { $.serializable(TextureBase.prototype, '_minFilter',  () => { return Filter.LINEAR; }); }, 'serializable', '_minFilter');
-  apply(() => { $.serializable(TextureBase.prototype, '_magFilter',  () => { return Filter.LINEAR; }); }, 'serializable', '_magFilter');
-  apply(() => { $.serializable(TextureBase.prototype, '_mipFilter',  () => { return Filter.NONE; }); }, 'serializable', '_mipFilter');
+  apply(() => { $.serializable(TextureBase.prototype, '_minFilter',  () => { return TextureFilter.LINEAR; }); }, 'serializable', '_minFilter');
+  apply(() => { $.serializable(TextureBase.prototype, '_magFilter',  () => { return TextureFilter.LINEAR; }); }, 'serializable', '_magFilter');
+  apply(() => { $.serializable(TextureBase.prototype, '_mipFilter',  () => { return TextureFilter.NONE; }); }, 'serializable', '_mipFilter');
   apply(() => { $.serializable(TextureBase.prototype, '_wrapS',  () => { return WrapMode.REPEAT; }); }, 'serializable', '_wrapS');
   apply(() => { $.serializable(TextureBase.prototype, '_wrapT',  () => { return WrapMode.REPEAT; }); }, 'serializable', '_wrapT');
   apply(() => { $.serializable(TextureBase.prototype, '_wrapR',  () => { return WrapMode.REPEAT; }); }, 'serializable', '_wrapR');

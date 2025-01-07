@@ -27,7 +27,7 @@ import {
     ccclass, help, executeInEditMode, executionOrder, menu, tooltip, type, visible, override, serializable, editable,
 } from 'cc.decorator';
 import { getWorldTransformUntilRoot } from '../../animation/transform-utils';
-import { Filter, PixelFormat } from '../../asset/assets/asset-enum';
+import { TextureFilter, PixelFormat } from '../../asset/assets/asset-enum';
 import { Material } from '../../asset/assets/material';
 import { Mesh } from '../assets/mesh';
 import { Skeleton } from '../assets/skeleton';
@@ -489,8 +489,8 @@ export class SkinnedMeshBatchRenderer extends SkinnedMeshRenderer {
 
     protected createTexture (prop: string): Texture2D {
         const tex = new Texture2D();
-        tex.setFilters(Filter.LINEAR, Filter.LINEAR);
-        tex.setMipFilter(Filter.NEAREST);
+        tex.setFilters(TextureFilter.LINEAR, TextureFilter.LINEAR);
+        tex.setMipFilter(TextureFilter.NEAREST);
         tex.reset({
             width: this.atlasSize,
             height: this.atlasSize,

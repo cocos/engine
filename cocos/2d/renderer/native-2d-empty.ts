@@ -22,7 +22,6 @@
  THE SOFTWARE.
 */
 
-
 export const NativeRenderDrawInfo = undefined;
 export const NativeBatcher2d = undefined;
 export const NativeUIMeshBuffer = undefined;

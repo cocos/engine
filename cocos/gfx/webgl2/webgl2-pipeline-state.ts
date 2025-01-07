@@ -47,6 +47,7 @@ const WebGLPrimitives: GLenum[] = [
     WebGLConstants.NONE,
 ];
 
+/** @mangle */
 export class WebGL2PipelineState extends PipelineState {
     constructor () {
         super();

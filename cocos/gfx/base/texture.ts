@@ -153,11 +153,15 @@ export abstract class Texture extends GFXObject {
         return this._isTextureView;
     }
 
+    /** @mangle */
     protected _info: TextureInfo = new TextureInfo();
+    /** @mangle */
     protected _viewInfo: TextureViewInfo = new TextureViewInfo();
-
+    /** @mangle */
     protected _isPowerOf2 = false;
+    /** @mangle */
     protected _isTextureView = false;
+    /** @mangle */
     protected _size = 0;
 
     constructor () {

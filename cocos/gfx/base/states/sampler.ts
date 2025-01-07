@@ -32,7 +32,9 @@ export class Sampler extends GFXObject {
     get info (): Readonly<SamplerInfo> { return this._info; }
     get hash (): number { return this._hash; }
 
+    /** @mangle */
     protected _info: SamplerInfo = new SamplerInfo();
+    /** @mangle */
     protected _hash = 0;
 
     constructor (info: Readonly<SamplerInfo>, hash: number) {

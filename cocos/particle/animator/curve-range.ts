@@ -25,7 +25,7 @@
 import { ccclass } from 'cc.decorator';
 import { EDITOR } from 'internal:constants';
 import { lerp, RealCurve, CCClass, geometry, Enum, approx, EPSILON } from '../../core';
-import { PixelFormat, Filter, WrapMode } from '../../asset/assets/asset-enum';
+import { PixelFormat, TextureFilter, WrapMode } from '../../asset/assets/asset-enum';
 import { Texture2D, ImageAsset } from '../../asset/assets';
 import { setPropertyEnumType } from '../../core/internal-index';
 
@@ -341,8 +341,8 @@ function packTexture (data, width, height): Texture2D {
     });
 
     const texture = new Texture2D();
-    texture.setFilters(Filter.NEAREST, Filter.NEAREST);
-    texture.setMipFilter(Filter.NONE);
+    texture.setFilters(TextureFilter.NEAREST, TextureFilter.NEAREST);
+    texture.setMipFilter(TextureFilter.NONE);
     texture.setWrapMode(WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE);
     texture.image = image;
 

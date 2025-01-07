@@ -132,14 +132,23 @@ export abstract class PipelineState extends GFXObject {
         return this._renderPass as RenderPass;
     }
 
+    /** @mangle */
     protected _shader: Shader | null = null;
+    /** @mangle */
     protected _pipelineLayout: PipelineLayout | null = null;
+    /** @mangle */
     protected _primitive: PrimitiveMode = PrimitiveMode.TRIANGLE_LIST;
+    /** @mangle */
     protected _is: InputState | null = null;
+    /** @mangle */
     protected _rs: RasterizerState = new RasterizerState();
+    /** @mangle */
     protected _dss: DepthStencilState = new DepthStencilState();
+    /** @mangle */
     protected _bs: BlendState = new BlendState();
+    /** @mangle */
     protected _dynamicStates: DynamicStateFlags = DynamicStateFlagBit.NONE;
+    /** @mangle */
     protected _renderPass: RenderPass | null = null;
 
     constructor () {

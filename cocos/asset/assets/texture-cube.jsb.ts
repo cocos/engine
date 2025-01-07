@@ -21,7 +21,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-import { Filter, PixelFormat, WrapMode } from './asset-enum';
+import { TextureFilter, PixelFormat, WrapMode } from './asset-enum';
 import { js, cclegacy } from '../../core';
 import './simple-texture';
 import { EDITOR, TEST } from 'internal:constants';
@@ -72,7 +72,7 @@ declare const jsb: any;
 export type TextureCube = JsbTextureCube;
 export const TextureCube: typeof JsbTextureCube = jsb.TextureCube;
 
-TextureCube.Filter = Filter;
+TextureCube.Filter = TextureFilter;
 TextureCube.PixelFormat = PixelFormat;
 TextureCube.WrapMode = WrapMode;
 

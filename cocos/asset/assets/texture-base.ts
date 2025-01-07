@@ -26,7 +26,7 @@
 import { EDITOR, TEST } from 'internal:constants';
 import { ccclass, serializable } from 'cc.decorator';
 import { Asset } from './asset';
-import { Filter, PixelFormat, WrapMode } from './asset-enum';
+import { TextureFilter, PixelFormat, WrapMode } from './asset-enum';
 import { Sampler, Texture, Device, Format, SamplerInfo, Address, Filter as GFXFilter, deviceManager } from '../../gfx';
 import { errorID, murmurhash2_32_gc, ccenum, cclegacy, js } from '../../core';
 import type { Batcher2D } from '../../2d/renderer/batcher-2d';
@@ -81,7 +81,7 @@ export class TextureBase extends Asset {
      * @en The texture filter mode enum.
      * @zh 纹理过滤模式枚举类型。
      */
-    public static Filter = Filter;
+    public static Filter = TextureFilter;
 
     /**
      * @engineInternal
@@ -93,19 +93,19 @@ export class TextureBase extends Asset {
      * @engineInternal
      */
     @serializable
-    protected _minFilter = Filter.LINEAR;
+    protected _minFilter = TextureFilter.LINEAR;
 
     /**
      * @engineInternal
      */
     @serializable
-    protected _magFilter = Filter.LINEAR;
+    protected _magFilter = TextureFilter.LINEAR;
 
     /**
      * @engineInternal
      */
     @serializable
-    protected _mipFilter = Filter.NONE;
+    protected _mipFilter = TextureFilter.NONE;
 
     /**
      * @engineInternal
@@ -213,7 +213,7 @@ export class TextureBase extends Asset {
      * @param minFilter @en Filter mode for scale down. @zh 贴图缩小时使用的过滤模式。
      * @param magFilter @en Filter mode for scale up. @zh 贴图放大时使用的过滤模式。
      */
-    public setFilters (minFilter: Filter, magFilter: Filter): void {
+    public setFilters (minFilter: TextureFilter, magFilter: TextureFilter): void {
         this._minFilter = minFilter;
         this._samplerInfo.minFilter = minFilter as unknown as GFXFilter;
         this._magFilter = magFilter;
@@ -229,7 +229,7 @@ export class TextureBase extends Asset {
      * @zh 设置此贴图的多层 mip 过滤算法。
      * @param mipFilter @en Filter mode for multiple mip level. @zh 多层 mip 过滤模式。
      */
-    public setMipFilter (mipFilter: Filter): void {
+    public setMipFilter (mipFilter: TextureFilter): void {
         this._mipFilter = mipFilter;
         this._samplerInfo.mipFilter = mipFilter as unknown as GFXFilter;
 

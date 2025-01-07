@@ -646,7 +646,7 @@ export class EditBoxImpl extends EditBoxImplBase {
             const delegate = this._delegate;
             // input of number type doesn't support maxLength attribute
             const maxLength = delegate!.maxLength;
-            if (maxLength >= 0) {
+            if (maxLength >= 0 && elem.type !== 'number') {
                 elem.value = elem.value.slice(0, maxLength);
             }
             delegate!._editBoxTextChanged(elem.value);
