@@ -102,7 +102,7 @@ enum class ResourceDimension {
     TEXTURE3D,
 };
 
-enum class ViewDimension {
+enum class ViewDimension : uint8_t {
     UNKNOWN,
     BUFFER,
     TEX1D,
@@ -231,10 +231,18 @@ enum class AttachmentType {
     SHADING_RATE,
 };
 
-enum class AccessType {
+enum class AccessType : uint8_t {
     READ,
     READ_WRITE,
     WRITE,
+};
+
+enum class SampleType : uint8_t {
+    FLOAT,
+    UINT,
+    SINT,
+    UNFILTERABLE_FLOAT,
+    DEPTH,
 };
 
 enum class ClearValueType {

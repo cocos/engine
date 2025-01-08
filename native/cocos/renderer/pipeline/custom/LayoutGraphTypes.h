@@ -109,13 +109,14 @@ inline bool operator<(const DescriptorBlockIndex& lhs, const DescriptorBlockInde
 
 struct DescriptorGroupBlockIndex {
     DescriptorGroupBlockIndex() = default;
-    DescriptorGroupBlockIndex(UpdateFrequency updateFrequencyIn, ParameterType parameterTypeIn, DescriptorTypeOrder descriptorTypeIn, gfx::ShaderStageFlagBit visibilityIn, AccessType accessTypeIn, ViewDimension viewDimensionIn, gfx::Format formatIn) noexcept
+    DescriptorGroupBlockIndex(UpdateFrequency updateFrequencyIn, ParameterType parameterTypeIn, DescriptorTypeOrder descriptorTypeIn, gfx::ShaderStageFlagBit visibilityIn, AccessType accessTypeIn, ViewDimension viewDimensionIn, SampleType sampleTypeIn, gfx::Format formatIn) noexcept
     : updateFrequency(updateFrequencyIn),
       parameterType(parameterTypeIn),
       descriptorType(descriptorTypeIn),
       visibility(visibilityIn),
       accessType(accessTypeIn),
       viewDimension(viewDimensionIn),
+      sampleType(sampleTypeIn),
       format(formatIn) {}
 
     UpdateFrequency updateFrequency{UpdateFrequency::PER_INSTANCE};
@@ -124,12 +125,13 @@ struct DescriptorGroupBlockIndex {
     gfx::ShaderStageFlagBit visibility{gfx::ShaderStageFlagBit::NONE};
     AccessType accessType{AccessType::READ};
     ViewDimension viewDimension{ViewDimension::TEX2D};
+    SampleType sampleType{SampleType::FLOAT};
     gfx::Format format{gfx::Format::UNKNOWN};
 };
 
 inline bool operator<(const DescriptorGroupBlockIndex& lhs, const DescriptorGroupBlockIndex& rhs) noexcept {
-    return std::forward_as_tuple(lhs.updateFrequency, lhs.parameterType, lhs.descriptorType, lhs.visibility, lhs.accessType, lhs.viewDimension, lhs.format) <
-           std::forward_as_tuple(rhs.updateFrequency, rhs.parameterType, rhs.descriptorType, rhs.visibility, rhs.accessType, rhs.viewDimension, rhs.format);
+    return std::forward_as_tuple(lhs.updateFrequency, lhs.parameterType, lhs.descriptorType, lhs.visibility, lhs.accessType, lhs.viewDimension, lhs.sampleType, lhs.format) <
+           std::forward_as_tuple(rhs.updateFrequency, rhs.parameterType, rhs.descriptorType, rhs.visibility, rhs.accessType, rhs.viewDimension, rhs.sampleType, rhs.format);
 }
 
 struct DescriptorGroupBlock {

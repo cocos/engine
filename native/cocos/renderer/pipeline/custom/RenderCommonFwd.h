@@ -50,7 +50,7 @@ struct RaytraceTag;
 enum class ResourceResidency;
 enum class QueueHint;
 enum class ResourceDimension;
-enum class ViewDimension;
+enum class ViewDimension : uint8_t;
 enum class ResourceFlags : uint32_t;
 
 struct BufferTag;
@@ -60,7 +60,8 @@ enum class TaskType;
 enum class SceneFlags : uint32_t;
 enum class LightingMode : uint32_t;
 enum class AttachmentType;
-enum class AccessType;
+enum class AccessType : uint8_t;
+enum class SampleType : uint8_t;
 enum class ClearValueType;
 
 struct LightInfo;

@@ -101,6 +101,7 @@ void save(OutputArchive& ar, const DescriptorGroupBlockIndex& v) {
     save(ar, v.visibility);
     save(ar, v.accessType);
     save(ar, v.viewDimension);
+    save(ar, v.sampleType);
     save(ar, v.format);
 }
 
@@ -111,6 +112,7 @@ void load(InputArchive& ar, DescriptorGroupBlockIndex& v) {
     load(ar, v.visibility);
     load(ar, v.accessType);
     load(ar, v.viewDimension);
+    load(ar, v.sampleType);
     load(ar, v.format);
 }
 

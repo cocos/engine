@@ -31,7 +31,7 @@
 import { AddressableGraph, AdjI, AdjacencyGraph, BidirectionalGraph, ComponentGraph, ED, InEI, MutableGraph, MutableReferenceGraph, NamedGraph, OutE, OutEI, PolymorphicGraph, PropertyGraph, ReferenceGraph, VertexListGraph, findRelative, getPath } from './graph';
 import type { DescriptorSet, DescriptorSetLayout, PipelineLayout } from '../../gfx';
 import { DescriptorSetLayoutInfo, Format, ShaderStageFlagBit, Type, UniformBlock } from '../../gfx';
-import { AccessType, ParameterType, UpdateFrequency, ViewDimension, RenderCommonObjectPool } from './types';
+import { AccessType, ParameterType, SampleType, UpdateFrequency, ViewDimension, RenderCommonObjectPool } from './types';
 import { RecyclePool } from '../../core/memop';
 import type { OutputArchive, InputArchive } from './archive';
 import { saveUniformBlock, loadUniformBlock, saveDescriptorSetLayoutInfo, loadDescriptorSetLayoutInfo } from './serialization';
@@ -115,6 +115,7 @@ export class DescriptorGroupBlockIndex {
         visibility: ShaderStageFlagBit = ShaderStageFlagBit.NONE,
         accessType: AccessType = AccessType.READ,
         viewDimension: ViewDimension = ViewDimension.TEX2D,
+        sampleType: SampleType = SampleType.FLOAT,
         format: Format = Format.UNKNOWN,
     ) {
         this.updateFrequency = updateFrequency;
@@ -123,6 +124,7 @@ export class DescriptorGroupBlockIndex {
         this.visibility = visibility;
         this.accessType = accessType;
         this.viewDimension = viewDimension;
+        this.sampleType = sampleType;
         this.format = format;
     }
     declare updateFrequency: UpdateFrequency;
@@ -131,6 +133,7 @@ export class DescriptorGroupBlockIndex {
     declare visibility: ShaderStageFlagBit;
     declare accessType: AccessType;
     declare viewDimension: ViewDimension;
+    declare sampleType: SampleType;
     declare format: Format;
 }
 
@@ -1130,6 +1133,7 @@ export class LayoutGraphObjectPool {
         visibility: ShaderStageFlagBit = ShaderStageFlagBit.NONE,
         accessType: AccessType = AccessType.READ,
         viewDimension: ViewDimension = ViewDimension.TEX2D,
+        sampleType: SampleType = SampleType.FLOAT,
         format: Format = Format.UNKNOWN,
     ): DescriptorGroupBlockIndex {
         const v = this.dgbi.add(); // DescriptorGroupBlockIndex
@@ -1139,6 +1143,7 @@ export class LayoutGraphObjectPool {
         v.visibility = visibility;
         v.accessType = accessType;
         v.viewDimension = viewDimension;
+        v.sampleType = sampleType;
         v.format = format;
         return v;
     }
@@ -1427,6 +1432,7 @@ export function saveDescriptorGroupBlockIndex (a: OutputArchive, v: DescriptorGr
     a.n(v.visibility);
     a.n(v.accessType);
     a.n(v.viewDimension);
+    a.n(v.sampleType);
     a.n(v.format);
 }
 
@@ -1437,6 +1443,7 @@ export function loadDescriptorGroupBlockIndex (a: InputArchive, v: DescriptorGro
     v.visibility = a.n();
     v.accessType = a.n();
     v.viewDimension = a.n();
+    v.sampleType = a.n();
     v.format = a.n();
 }
 
