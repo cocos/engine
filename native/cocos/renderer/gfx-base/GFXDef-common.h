@@ -350,6 +350,14 @@ enum class FormatType : uint32_t {
 };
 CC_ENUM_CONVERSION_OPERATOR(FormatType);
 
+enum class SampleType: uint32_t {
+    FLOAT,
+    UNFILTERABLE_FLOAT,
+    SINT,
+    UINT,
+};
+CC_ENUM_CONVERSION_OPERATOR(SampleType);
+
 enum class Type : uint32_t {
     UNKNOWN,
     BOOL,

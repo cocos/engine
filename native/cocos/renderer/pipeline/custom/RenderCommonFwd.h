@@ -61,7 +61,6 @@ enum class SceneFlags : uint32_t;
 enum class LightingMode : uint32_t;
 enum class AttachmentType;
 enum class AccessType : uint8_t;
-enum class SampleType : uint8_t;
 enum class ClearValueType;
 
 struct LightInfo;

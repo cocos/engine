@@ -109,7 +109,7 @@ inline bool operator<(const DescriptorBlockIndex& lhs, const DescriptorBlockInde
 
 struct DescriptorGroupBlockIndex {
     DescriptorGroupBlockIndex() = default;
-    DescriptorGroupBlockIndex(UpdateFrequency updateFrequencyIn, ParameterType parameterTypeIn, DescriptorTypeOrder descriptorTypeIn, gfx::ShaderStageFlagBit visibilityIn, AccessType accessTypeIn, ViewDimension viewDimensionIn, SampleType sampleTypeIn, gfx::Format formatIn) noexcept
+    DescriptorGroupBlockIndex(UpdateFrequency updateFrequencyIn, ParameterType parameterTypeIn, DescriptorTypeOrder descriptorTypeIn, gfx::ShaderStageFlagBit visibilityIn, AccessType accessTypeIn, ViewDimension viewDimensionIn, gfx::SampleType sampleTypeIn, gfx::Format formatIn) noexcept
     : updateFrequency(updateFrequencyIn),
       parameterType(parameterTypeIn),
       descriptorType(descriptorTypeIn),
@@ -125,7 +125,7 @@ struct DescriptorGroupBlockIndex {
     gfx::ShaderStageFlagBit visibility{gfx::ShaderStageFlagBit::NONE};
     AccessType accessType{AccessType::READ};
     ViewDimension viewDimension{ViewDimension::TEX2D};
-    SampleType sampleType{SampleType::FLOAT};
+    gfx::SampleType sampleType{gfx::SampleType::FLOAT};
     gfx::Format format{gfx::Format::UNKNOWN};
 };
 

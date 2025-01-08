@@ -237,14 +237,6 @@ enum class AccessType : uint8_t {
     WRITE,
 };
 
-enum class SampleType : uint8_t {
-    FLOAT,
-    UINT,
-    SINT,
-    UNFILTERABLE_FLOAT,
-    DEPTH,
-};
-
 enum class ClearValueType {
     NONE,
     FLOAT_TYPE,

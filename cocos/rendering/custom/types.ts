@@ -153,14 +153,6 @@ export enum AccessType {
     WRITE,
 }
 
-export const enum SampleType {
-    FLOAT,
-    UINT,
-    SINT,
-    UNFILTERABLE_FLOAT,
-    DEPTH,
-}
-
 export const enum ClearValueType {
     NONE,
     FLOAT_TYPE,

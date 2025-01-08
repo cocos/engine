@@ -142,16 +142,6 @@ inline const char* getName(AccessType e) noexcept {
     }
     return "";
 }
-inline const char* getName(SampleType e) noexcept {
-    switch (e) {
-        case SampleType::FLOAT: return "FLOAT";
-        case SampleType::UINT: return "UINT";
-        case SampleType::SINT: return "SINT";
-        case SampleType::UNFILTERABLE_FLOAT: return "UNFILTERABLE_FLOAT";
-        case SampleType::DEPTH: return "DEPTH";
-    }
-    return "";
-}
 inline const char* getName(ClearValueType e) noexcept {
     switch (e) {
         case ClearValueType::NONE: return "NONE";

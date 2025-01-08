@@ -284,6 +284,13 @@ export enum FormatType {
     FLOAT,
 }
 
+export enum SampleType {
+    FLOAT,
+    UNFILTERABLE_FLOAT,
+    SINT,
+    UINT,
+}
+
 export enum Type {
     UNKNOWN,
     BOOL,
