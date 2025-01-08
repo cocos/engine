@@ -1372,6 +1372,7 @@ export function WebGPUCmdFuncCopyTexImagesToTexture (
 }
 
 export function TextureSampleTypeTrait (format: Format): GPUTextureSampleType {
+    // See https://gpuweb.github.io/gpuweb/#texture-format-caps
     switch (format) {
     case Format.R8:
     case Format.R8SN:
