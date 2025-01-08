@@ -24,6 +24,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include "base/std/container/string.h"
 
 namespace cc {

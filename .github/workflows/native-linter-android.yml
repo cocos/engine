@@ -90,7 +90,7 @@ jobs:
           if [[ "$FILTERED-xxx" == "-xxx" ]]; then
             echo "no source files match"
           else
-            clang-tidy-11 --format-style=file --export-fixes=clang-fixes.yaml $FILTERED
+            clang-tidy --format-style=file --export-fixes=clang-fixes.yaml $FILTERED
           fi
       - name: clang-tidy-action
         uses: PatriceJiang/clang-tidy-action@master
