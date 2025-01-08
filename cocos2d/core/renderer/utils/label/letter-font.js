@@ -131,7 +131,7 @@ function LetterAtlas (width, height) {
     texture.update();
 
     this._fontDefDictionary = new FontAtlas(texture);
-    
+
     this._x = space;
     this._y = space;
     this._nexty = space;
@@ -145,7 +145,7 @@ function LetterAtlas (width, height) {
 cc.js.mixin(LetterAtlas.prototype, {
     insertLetterTexture (letterTexture) {
         let texture = letterTexture._texture;
-        let width = texture.width, height = texture.height;        
+        let width = texture.width, height = texture.height;
 
         if ((this._x + width + space) > this._width) {
             this._x = space;
@@ -163,7 +163,7 @@ cc.js.mixin(LetterAtlas.prototype, {
         this._fontDefDictionary._texture.drawTextureAt(texture, this._x, this._y);
 
         this._dirty = true;
-        
+
         let letter = new FontLetterDefinition();
         letter.u = this._x + bleed/2;
         letter.v = this._y + bleed/2;
@@ -177,7 +177,7 @@ cc.js.mixin(LetterAtlas.prototype, {
         this._x += width + space;
 
         this._fontDefDictionary.addLetterDefinitions(letterTexture._hash, letter);
-        
+
         return letter
     },
 
@@ -220,7 +220,7 @@ cc.js.mixin(LetterAtlas.prototype, {
         let texture = new RenderTexture();
         texture.initWithSize(this._width, this._height);
         texture.update();
-        
+
         this._fontDefDictionary._texture = texture;
     },
 
@@ -248,12 +248,12 @@ cc.js.mixin(LetterAtlas.prototype, {
 
 function computeHash (labelInfo) {
     let hashData = '';
-    let color = labelInfo.color.toHEX();
+    let color = labelInfo.color.toHEX('#rrggbbaa');
     let out = '';
     if (labelInfo.isOutlined && labelInfo.margin > 0) {
-        out = out + labelInfo.margin + labelInfo.out.toHEX();
+        out = out + labelInfo.margin + labelInfo.out.toHEX('#rrggbbaa');
     }
-    
+
     return hashData + labelInfo.fontSize + labelInfo.fontFamily + color + out;
 }
 
@@ -269,7 +269,7 @@ export default class LetterFontAssembler extends WebglBmfontAssembler {
             _shareAtlas = new LetterAtlas(_atlasWidth, _atlasHeight);
             cc.Label._shareAtlas = _shareAtlas;
         }
-        
+
         return _shareAtlas.getTexture();
     }
 
