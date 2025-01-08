@@ -29,6 +29,10 @@ jobs:
       - name: Install CMake & Clang Tidy
         run: |
           sudo apt update --fix-missing
+          sudo apt install -y wget gnupg
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          sudo add-apt-repository "deb http://apt.llvm.org/focal/ llvm-toolchain-focal-11 main"
+          sudo apt update
           sudo apt install -y cmake llvm clang-tidy-11 ninja-build
       - name: Download external
         run: |
