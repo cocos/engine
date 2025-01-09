@@ -20,7 +20,7 @@ jobs:
     # Set the type of machine to run on
     if: 
       (! contains(github.event.pull_request.body, '[X] does not change any runtime related code or build configuration'))
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       # Checks out a copy of your repository on the ubuntu-latest machine
@@ -28,7 +28,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Install CMake & Clang Tidy
         run: |
-          sudo bash -c "$(wget -O - https://apt.llvm.org/llvm.sh)"
           sudo apt update --fix-missing
           sudo apt install -y cmake llvm clang-tidy-11 ninja-build
       - name: Download external
