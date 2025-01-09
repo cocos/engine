@@ -27,22 +27,13 @@
  * The following section is auto-generated.
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
-#include "cocos/base/std/container/string.h"
 #include "cocos/renderer/pipeline/custom/ArchiveTypes.h"
 #include "cocos/renderer/pipeline/custom/LayoutGraphGraphs.h"
 #include "cocos/renderer/pipeline/custom/LayoutGraphSerialization.h"
 #include "cocos/renderer/pipeline/custom/LayoutGraphTypes.h"
 #include "cocos/renderer/pipeline/custom/RenderCommonSerialization.h"
-#include "cocos/renderer/pipeline/custom/RenderCommonTypes.h"
-#include "cocos/renderer/pipeline/custom/details/Overload.h"
 #include "cocos/renderer/pipeline/custom/details/Range.h"
 #include "cocos/renderer/pipeline/custom/details/SerializationUtils.h"
-
-#include <boost/property_map/property_map.hpp>
-#include <limits>
-#include <stdexcept>
-#include <type_traits>
-#include <utility>
 
 namespace cc {
 

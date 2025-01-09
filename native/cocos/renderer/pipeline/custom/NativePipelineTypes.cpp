@@ -30,7 +30,6 @@
 // clang-format off
 // NOLINTBEGIN(misc-include-cleaner)
 #include "NativePipelineTypes.h"
-#include "cocos/base/Ptr.h"
 
 namespace cc {
 

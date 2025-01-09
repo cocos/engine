@@ -30,7 +30,6 @@
 // clang-format off
 // NOLINTBEGIN(misc-include-cleaner)
 #include "RenderGraphTypes.h"
-#include "cocos/base/Ptr.h"
 
 namespace cc {
 

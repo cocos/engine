@@ -30,7 +30,6 @@
 // clang-format off
 // NOLINTBEGIN(misc-include-cleaner)
 #include "LayoutGraphTypes.h"
-#include "cocos/base/Ptr.h"
 
 namespace cc {
 
