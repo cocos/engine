@@ -163,7 +163,7 @@ function getPropAccessor (key): string {
 class Parser {
     public declare parent: any;
     public objsToClear_iN$t: any[] = []; // used to reset _iN$t variable
-    public codeArray: any[] = [];
+    public codeArray: string[] = [];
     // datas for generated code
     public objs: any[] = [];
     public funcs: any[] = [];
@@ -210,7 +210,7 @@ class Parser {
         // }
 
         // generate code
-        let globalVariablesDeclaration;
+        let globalVariablesDeclaration: string | string[] | undefined;
         if (this.globalVariables.length > 0) {
             globalVariablesDeclaration = `${VAR + this.globalVariables.join(',')};`;
         }
@@ -221,6 +221,7 @@ class Parser {
             '})']);
 
         // generate method and bind with objs
+        // eslint-disable-next-line no-new-func, @typescript-eslint/no-implied-eval
         this.result = Function('O', 'F', code)(this.objs, this.funcs);
 
         // if (TEST && !isPhantomJS) {
