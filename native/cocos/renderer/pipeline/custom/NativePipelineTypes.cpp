@@ -28,7 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
-// NOLINTBEGIN(misc-include-cleaner)
+// NOLINTBEGIN(misc-include-cleaner, bugprone-easily-swappable-parameters)
 #include "NativePipelineTypes.h"
 
 namespace cc {
@@ -256,5 +256,5 @@ PipelineCustomization::PipelineCustomization(PipelineCustomization const& rhs, c
 
 } // namespace cc
 
-// NOLINTEND(misc-include-cleaner)
+// NOLINTEND(misc-include-cleaner, bugprone-easily-swappable-parameters)
 // clang-format on

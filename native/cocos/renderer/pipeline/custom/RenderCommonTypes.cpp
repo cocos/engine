@@ -28,7 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
-// NOLINTBEGIN(misc-include-cleaner)
+// NOLINTBEGIN(misc-include-cleaner, bugprone-easily-swappable-parameters)
 #include "RenderCommonTypes.h"
 
 namespace cc {
@@ -156,5 +156,5 @@ MovePair::MovePair(MovePair const& rhs, const allocator_type& alloc)
 
 } // namespace cc
 
-// NOLINTEND(misc-include-cleaner)
+// NOLINTEND(misc-include-cleaner, bugprone-easily-swappable-parameters)
 // clang-format on
