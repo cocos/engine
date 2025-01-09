@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /*
- Copyright (c) 2022-2023 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2024 Xiamen Yaji Software Co., Ltd.
 
  https://www.cocos.com/
 
@@ -30,10 +31,11 @@ import { PHYSICS_2D_PTM_RATIO, ERigidBody2DType } from '../framework/physics-typ
 
 import { Node } from '../../scene-graph/node';
 import { Collider2D } from '../framework';
+import { NodeEventType } from '../../scene-graph/node-event';
 
 const tempVec3 = new Vec3();
 
-const tempVec2_1 = new b2.Vec2(0, 0);
+const tempVec2_1 = { x: 0, y: 0 };
 
 export class b2RigidBody2D implements IRigidBody2D {
     get impl (): b2.Body | null {
@@ -179,6 +181,7 @@ export class b2RigidBody2D implements IRigidBody2D {
         const timeStep = 1 / dt;
         tempVec2_1.x = (this._animatedPos.x - b2Pos.x) * timeStep;
         tempVec2_1.y = (this._animatedPos.y - b2Pos.y) * timeStep;
+        // @ts-ignore
         b2body.SetLinearVelocity(tempVec2_1);
 
         //convert b2Rotation to [-PI~PI], which is the same as this._animatedAngle
@@ -224,6 +227,7 @@ export class b2RigidBody2D implements IRigidBody2D {
         if (bodyType === ERigidBody2DType.Animated && enableAnimated) {
             this._animatedPos.set(temp.x, temp.y);
         } else {
+            // @ts-ignore
             b2body.SetTransform(temp, b2body.GetAngle());
         }
     }
@@ -251,6 +255,7 @@ export class b2RigidBody2D implements IRigidBody2D {
 
         tempVec2_1.x = 0;
         tempVec2_1.y = 0;
+        // @ts-ignore
         b2body.SetLinearVelocity(tempVec2_1);
 
         b2body.SetAngularVelocity(0);
@@ -301,6 +306,7 @@ export class b2RigidBody2D implements IRigidBody2D {
     getLinearVelocityFromWorldPoint<Out extends IVec2Like> (worldPoint: IVec2Like, out: Out): Out {
         tempVec2_1.x = worldPoint.x / PHYSICS_2D_PTM_RATIO;
         tempVec2_1.y = worldPoint.y / PHYSICS_2D_PTM_RATIO;
+        // @ts-ignore
         const p = this._body!.GetLinearVelocityFromWorldPoint(tempVec2_1);//FIXME(cjh):, out as any);
         out.x = p.x;
         out.y = p.y;
@@ -319,6 +325,7 @@ export class b2RigidBody2D implements IRigidBody2D {
         out = out || new Vec2();
         tempVec2_1.x = worldVector.x / PHYSICS_2D_PTM_RATIO;
         tempVec2_1.y = worldVector.y / PHYSICS_2D_PTM_RATIO;
+        // @ts-ignore
         const p = this._body!.GetLocalVector(tempVec2_1);//FIXME(cjh), out as any);
         out.x = p.x;
         out.y = p.y;
@@ -329,6 +336,7 @@ export class b2RigidBody2D implements IRigidBody2D {
     getWorldVector<Out extends IVec2Like> (localVector: IVec2Like, out: Out): Out {
         tempVec2_1.x = localVector.x / PHYSICS_2D_PTM_RATIO;
         tempVec2_1.y = localVector.y / PHYSICS_2D_PTM_RATIO;
+        // @ts-ignore
         const p = this._body!.GetWorldVector(tempVec2_1);//FIXME(cjh):, out as any);
         out.x = p.x;
         out.y = p.y;
@@ -341,6 +349,7 @@ export class b2RigidBody2D implements IRigidBody2D {
         out = out || new Vec2();
         tempVec2_1.x = worldPoint.x / PHYSICS_2D_PTM_RATIO;
         tempVec2_1.y = worldPoint.y / PHYSICS_2D_PTM_RATIO;
+        // @ts-ignore
         const p = this._body!.GetLocalPoint(tempVec2_1);//FIXME(cjh):, out as any);
         out.x = p.x;
         out.y = p.y;
@@ -353,6 +362,7 @@ export class b2RigidBody2D implements IRigidBody2D {
         out = out || new Vec2();
         tempVec2_1.x = localPoint.x / PHYSICS_2D_PTM_RATIO;
         tempVec2_1.y = localPoint.y / PHYSICS_2D_PTM_RATIO;
+        // @ts-ignore
         const p = this._body!.GetWorldPoint(tempVec2_1);//FIXME(cjh):, out as any);
         out.x = p.x;
         out.y = p.y;
@@ -384,6 +394,7 @@ export class b2RigidBody2D implements IRigidBody2D {
         if (this._body) {
             tempVec2_1.x = point.x / PHYSICS_2D_PTM_RATIO;
             tempVec2_1.y = point.y / PHYSICS_2D_PTM_RATIO;
+            // @ts-ignore
             this._body.ApplyForce(force as b2.Vec2, tempVec2_1, wake);
         }
     }
@@ -404,6 +415,7 @@ export class b2RigidBody2D implements IRigidBody2D {
         if (this._body) {
             tempVec2_1.x = point.x / PHYSICS_2D_PTM_RATIO;
             tempVec2_1.y = point.y / PHYSICS_2D_PTM_RATIO;
+            // @ts-ignore
             this._body.ApplyLinearImpulse(impulse as b2.Vec2, tempVec2_1, wake);
         }
     }

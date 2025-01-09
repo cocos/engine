@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /*
- Copyright (c) 2022-2023 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2024 Xiamen Yaji Software Co., Ltd.
 
  https://www.cocos.com/
 
@@ -107,7 +108,7 @@ export class b2PhysicsWorld implements IPhysicsWorld {
         //tempBodyDef.position.Set(480 / PHYSICS_2D_PTM_RATIO, 320 / PHYSICS_2D_PTM_RATIO);//temporary
         this._physicsGroundBody = this._world.CreateBody(tempBodyDef);
         const listener = new PhysicsContactListener();
-        listener.init(listener);
+        listener.initWithThis(listener);
         listener.setBeginContact(this._onBeginContact);
         listener.setEndContact(this._onEndContact);
         listener.setPreSolve(this._onPreSolve);
@@ -166,7 +167,7 @@ export class b2PhysicsWorld implements IPhysicsWorld {
 
             // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             const debugDraw = new PhysicsDebugDraw(this._debugGraphics);
-            debugDraw.init(debugDraw);
+            debugDraw.initWithThis(debugDraw);
             this._b2DebugDrawer = debugDraw;
             this._world.SetDebugDraw(debugDraw);
         }
@@ -317,7 +318,8 @@ export class b2PhysicsWorld implements IPhysicsWorld {
 
         const node = comp.node;
         const pos = node.worldPosition;
-        bodyDef.position = new b2.Vec2(pos.x / PHYSICS_2D_PTM_RATIO, pos.y / PHYSICS_2D_PTM_RATIO);
+        //@ts-ignore
+        bodyDef.position = { x: pos.x / PHYSICS_2D_PTM_RATIO, y: pos.y / PHYSICS_2D_PTM_RATIO };
 
         tempVec3.z = Quat.getAxisAngle(this._rotationAxis, node.worldRotation);
         if (this._rotationAxis.z < 0.0) {
@@ -341,7 +343,8 @@ export class b2PhysicsWorld implements IPhysicsWorld {
         // read private property
         const compPrivate = comp as any;
         const linearVelocity = compPrivate._linearVelocity as Vec2;
-        bodyDef.linearVelocity = new b2.Vec2(linearVelocity.x, linearVelocity.y);
+        //@ts-ignore
+        bodyDef.linearVelocity = { x: linearVelocity.x, y: linearVelocity.y };
 
         bodyDef.angularVelocity = compPrivate._angularVelocity;
 

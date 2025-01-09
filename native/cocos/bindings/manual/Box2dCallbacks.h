@@ -101,7 +101,6 @@ public:
     ~JSB_b2ContactListener();
     
     void initWithThis(se::Object *thisObject);
-
     void BeginContact(b2Contact* contact) override;
     void EndContact(b2Contact* contact) override;
     void PreSolve(b2Contact* contact, const b2Manifold* oldManifold) override;

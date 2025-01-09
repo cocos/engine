@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2017-2023 Xiamen Yaji Software Co., Ltd.
 
  https://www.cocos.com/
 
@@ -39,12 +39,12 @@ const pointCache = [new Vec2(), new Vec2()];
 // const b2worldmanifold = new b2.WorldManifold();
 
 const b2worldmanifold = {
-    // eslint-disable-next-line no-tabs
-    normal: { x: 0, y: 0 },							///< world vector pointing from A to B
-    // eslint-disable-next-line no-tabs
-    points: [{ x: 0, y: 0 }, { x: 0, y: 0 }], //b2_maxManifoldPoints];		///< world contact point (point of intersection)
-    // eslint-disable-next-line no-tabs
-    separations: [0, 0],  //[b2_maxManifoldPoints];	///< a negative value indicates overlap, in meters
+    ///< world vector pointing from A to B
+    normal: { x: 0, y: 0 },
+    points: [{ x: 0, y: 0 }, { x: 0, y: 0 }],
+    //b2_maxManifoldPoints];///< world contact point (point of intersection)
+    separations: [0, 0],
+    //[b2_maxManifoldPoints];///< a negative value indicates overlap, in meters
 };
 
 const worldmanifold: IPhysics2DWorldManifold = {
@@ -260,7 +260,7 @@ export class PhysicsContact implements IPhysics2DContact {
         }
     }
 
-    setEnabled (value: boolean): void {
+    setEnabled (value): void {
         this._b2contact!.SetEnabled(value);
     }
 
@@ -268,7 +268,7 @@ export class PhysicsContact implements IPhysics2DContact {
         return this._b2contact!.IsTouching();
     }
 
-    setTangentSpeed (value: number): void {
+    setTangentSpeed (value): void {
         this._b2contact!.SetTangentSpeed(value);
     }
 
@@ -276,7 +276,7 @@ export class PhysicsContact implements IPhysics2DContact {
         return this._b2contact!.GetTangentSpeed();
     }
 
-    setFriction (value: number): void {
+    setFriction (value): void {
         this._b2contact!.SetFriction(value);
     }
 
@@ -288,7 +288,7 @@ export class PhysicsContact implements IPhysics2DContact {
         return this._b2contact!.ResetFriction();
     }
 
-    setRestitution (value: number): void {
+    setRestitution (value): void {
         this._b2contact!.SetRestitution(value);
     }
 

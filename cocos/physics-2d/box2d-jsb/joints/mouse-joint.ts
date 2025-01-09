@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2022-2023 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2024 Xiamen Yaji Software Co., Ltd.
 
  https://www.cocos.com/
 
@@ -64,7 +64,8 @@ export class b2MouseJoint extends b2Joint implements IMouseJoint {
     _createJointDef (): any {
         const def = new b2.MouseJointDef();
         const comp = this._jointComp as MouseJoint2D;
-        def.target = new b2.Vec2(this._touchPoint.x / PHYSICS_2D_PTM_RATIO, this._touchPoint.y / PHYSICS_2D_PTM_RATIO);
+        //@ts-ignore
+        def.target = { x: this._touchPoint.x / PHYSICS_2D_PTM_RATIO, y: this._touchPoint.y / PHYSICS_2D_PTM_RATIO };
         def.maxForce = comp.maxForce;
         def.dampingRatio = comp.dampingRatio;
         def.frequencyHz = comp.frequency;

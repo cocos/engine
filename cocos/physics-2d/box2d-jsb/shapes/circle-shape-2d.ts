@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2022-2023 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2024 Xiamen Yaji Software Co., Ltd.
 
  https://www.cocos.com/
 
@@ -49,7 +49,7 @@ export class b2CircleShape extends b2Shape2D implements ICircleShape {
 
         const shape = new b2.CircleShape();
         shape.m_radius = comp.radius / PHYSICS_2D_PTM_RATIO * scaleX;
-        shape.m_p = new b2.Vec2(offsetX, offsetY);
+        shape.m_p = { x: offsetX, y: offsetY };
 
         return [shape];
     }

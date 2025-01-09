@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2022-2023 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2024 Xiamen Yaji Software Co., Ltd.
 
  https://www.cocos.com/
 
@@ -24,6 +24,7 @@
 import { IJoint2D } from '../../spec/i-physics-joint';
 import { Joint2D, PhysicsSystem2D, RigidBody2D } from '../../framework';
 import { b2PhysicsWorld } from '../physics-world';
+import { Vec2 } from '../../../core';
 
 export class b2Joint implements IJoint2D {
     get impl (): b2.Joint | null {
@@ -105,6 +106,8 @@ export class b2Joint implements IJoint2D {
     _destroy (): void {
         if (!this._inited) return;
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        //@ts-ignore
         (PhysicsSystem2D.instance.physicsWorld as b2PhysicsWorld).impl.DestroyJoint(this._b2joint);
 
         this._b2joint = null;

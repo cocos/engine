@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2017-2023 Xiamen Yaji Software Co., Ltd.
 
  https://www.cocos.com/
 
@@ -83,7 +83,8 @@ export class PhysicsContactListener extends b2.ContactListener {
     }
 
     registerContactFixture (fixture): void {
-        this._contactFixtures.push(fixture as b2.Fixture);
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        this._contactFixtures.push(fixture);
     }
 
     unregisterContactFixture (fixture): void {

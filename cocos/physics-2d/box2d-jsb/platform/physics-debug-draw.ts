@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2024 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2017-2023 Xiamen Yaji Software Co., Ltd.
 
  https://www.cocos.com/
 
@@ -21,7 +21,7 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-import { Color } from '../../../core';
+import { Color, Vec2 } from '../../../core';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework';
 import { Graphics } from '../../../2d';
 
@@ -31,7 +31,8 @@ const _tmp_color = new Color();
 const GREEN_COLOR = Color.GREEN;
 const RED_COLOR = Color.RED;
 
-b2.Transform.MulXV = function MulXV (T: b2.Transform, v: b2.Vec2, out: b2.Vec2): b2.Vec2 {
+// eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+b2.Transform.MulXV = function (T, v, out): any {
     const T_q_c = T.q.c; const T_q_s = T.q.s;
     const v_x = v.x; const v_y = v.y;
     out.x = (T_q_c * v_x - T_q_s * v_y) + T.p.x;
@@ -53,7 +54,7 @@ export class PhysicsDebugDraw extends b2.Draw {
         const drawer = this._drawer!;
 
         for (let i = 0; i < vertexCount; i++) {
-            b2.Transform.MulXV(this._xf, vertices[i] as b2.Vec2, _tmp_vec2);
+            b2.Transform.MulXV(this._xf, vertices[i] as Vec2, _tmp_vec2);
             const x = _tmp_vec2.x * PHYSICS_2D_PTM_RATIO;
             const y = _tmp_vec2.y * PHYSICS_2D_PTM_RATIO;
             if (i === 0) drawer.moveTo(x, y);

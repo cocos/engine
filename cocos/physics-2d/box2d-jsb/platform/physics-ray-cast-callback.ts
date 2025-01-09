@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
 /*
- Copyright (c) 2024 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2017-2023 Xiamen Yaji Software Co., Ltd.
 
  https://www.cocos.com/
 
@@ -34,7 +35,7 @@ export class PhysicsRayCastCallback extends b2.RayCastCallback {
     _mask = 0xffffffff;
 
     init (type: ERaycast2DType, mask: number): void {
-        this.initWithThis(this);
+        super.initWithThis(this);
         this._type = type;
         this._mask = mask;
         this._fixtures.length = 0;
@@ -50,7 +51,6 @@ export class PhysicsRayCastCallback extends b2.RayCastCallback {
 
         if (this._type === ERaycast2DType.Closest) {
             this._fixtures[0] = fixture;
-            // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
             this._points[0] = new Vec2(point.x, point.y);
             this._normals[0] = new Vec2(normal.x, normal.y);
             this._fractions[0] = fraction;
@@ -60,7 +60,7 @@ export class PhysicsRayCastCallback extends b2.RayCastCallback {
         this._fixtures.push(fixture);
         this._points.push(new Vec2(point.x, point.y));
         this._normals.push(new Vec2(normal.x, normal.y));
-        this._fractions.push(fraction as number);
+        this._fractions.push(fraction);
 
         if (this._type === ERaycast2DType.Any) {
             return 0;

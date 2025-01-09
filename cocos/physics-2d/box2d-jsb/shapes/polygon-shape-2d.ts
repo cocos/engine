@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2022-2023 Xiamen Yaji Software Co., Ltd.
+ Copyright (c) 2024 Xiamen Yaji Software Co., Ltd.
 
  https://www.cocos.com/
 
@@ -60,7 +60,6 @@ export class b2PolygonShape extends b2Shape2D implements IPolygonShape {
 
         const polys = PolygonPartition.ConvexPartition(points);
         if (!polys) {
-            // eslint-disable-next-line no-console
             console.log('[Physics2D] b2PolygonShape failed to decompose polygon into convex polygons, node name: ', comp.node.name);
             return shapes;
         }

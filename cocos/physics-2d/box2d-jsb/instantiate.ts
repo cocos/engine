@@ -40,7 +40,7 @@ import { b2HingeJoint } from './joints/hinge-joint';
 import { Game, game } from '../../game';
 
 game.once(Game.EVENT_PRE_SUBSYSTEM_INIT, () => {
-    selector.register('box2d', {
+    selector.register('box2d-jsb', {
         PhysicsWorld: b2PhysicsWorld,
         RigidBody: b2RigidBody2D,
 
