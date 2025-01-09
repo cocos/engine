@@ -44,7 +44,7 @@ public:
     ccstd::string getNewId();
 
 private:
-    uint32_t _id = 0;
+    uint32_t _id{0};
 
     ccstd::string _prefix;
 };
