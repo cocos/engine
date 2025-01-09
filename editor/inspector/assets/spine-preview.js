@@ -1,60 +1,84 @@
 'use strict';
 
+const { PreviewControl, hideElement } = require('../utils/preview');
+
 exports.template = /* html */`
 <ui-section header="i18n:ENGINE.inspector.preview.header" class="preview-section config no-padding" expand>
     <div class="preview">
-        <div class="control">
-            <ui-prop class="skin">
-                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.skin"></ui-label>
-                <ui-select-pro slot="content" class="skin-select-pro"></ui-select-pro>
-            </ui-prop>
-            <ui-prop class="animation">
-                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.animation"></ui-label>
-                <ui-select-pro slot="content" class="animation-select-pro"></ui-select-pro>
-            </ui-prop>
-            <ui-prop class="loop">
-                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.loop"></ui-label>
-                <ui-checkbox slot="content" class="loop-checkbox"></ui-checkbox>
-            </ui-prop>
-            <ui-prop class="timeScale">
-                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.timeScale"></ui-label>
-                <ui-slider slot="content" class="time-scale-slider" value="1"></ui-slider>
-            </ui-prop>
-            <ui-prop class="premultipliedAlpha">
-                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.premultipliedAlpha"></ui-label>
-                <ui-checkbox slot="content" class="premultiplied-alpha-checkbox"></ui-checkbox>
-            </ui-prop>
-            <ui-prop class="useTint">
-                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.useTint"></ui-label>
-                <ui-checkbox slot="content" class="use-tint-checkbox"></ui-checkbox>
-            </ui-prop>
-            <ui-prop class="debugSlots">
-                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.debugSlots"></ui-label>
-                <ui-checkbox slot="content" class="debug-slots-checkbox"></ui-checkbox>
-            </ui-prop>
-            <ui-prop class="debugBones">
-                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.debugBones"></ui-label>
-                <ui-checkbox slot="content" class="debug-bones-checkbox"></ui-checkbox>
-            </ui-prop>
-            <ui-prop class="debugMesh">
-                <ui-label slot="label" value="i18n:ENGINE.inspector.spine.debugMesh"></ui-label>
-                <ui-checkbox slot="content" class="debug-mesh-checkbox"></ui-checkbox>
-            </ui-prop>
+        <div class="content">
+            <div class="attribute">
+                <ui-prop>
+                    <ui-label slot="label" value="i18n:ENGINE.inspector.spine.skin"></ui-label>
+                    <ui-select-pro slot="content" class="skin"></ui-select-pro>
+                </ui-prop>
+                <ui-prop>
+                    <ui-label slot="label" value="i18n:ENGINE.inspector.spine.animation"></ui-label>
+                    <ui-select-pro slot="content" class="animation"></ui-select-pro>
+                </ui-prop>
+                <ui-prop>
+                    <ui-label slot="label" value="i18n:ENGINE.inspector.spine.loop"></ui-label>
+                    <ui-checkbox slot="content" class="loop"></ui-checkbox>
+                </ui-prop>
+                <ui-prop>
+                    <ui-label slot="label" value="i18n:ENGINE.inspector.spine.enable"></ui-label>
+                    <div slot="content">
+                        <ui-checkbox class="premultipliedAlpha">
+                            <ui-label value="i18n:ENGINE.inspector.spine.premultipliedAlpha"></ui-label>
+                        </ui-checkbox>
+                        <ui-checkbox class="useTint">
+                            <ui-label value="i18n:ENGINE.inspector.spine.useTint"></ui-label>
+                        </ui-checkbox>
+                    </div>
+                </ui-prop>
+                <ui-prop>
+                    <ui-label slot="label" value="i18n:ENGINE.inspector.spine.debug"></ui-label>
+                    <div slot="content">
+                        <ui-checkbox class="debugSlots">
+                            <ui-label value="i18n:ENGINE.inspector.spine.debugSlots"></ui-label>
+                        </ui-checkbox>
+                        <ui-checkbox class="debugBones">
+                            <ui-label value="i18n:ENGINE.inspector.spine.debugBones"></ui-label>
+                        </ui-checkbox>
+                        <ui-checkbox class="debugMesh">
+                            <ui-label value="i18n:ENGINE.inspector.spine.debugMesh"></ui-label>
+                        </ui-checkbox>
+                    </div>
+                </ui-prop>
+            </div>
+            <inspector-resize-preview></inspector-resize-preview>
+            <div class="buttons-group">
+                <div class="play-buttons">
+                    <ui-button class="transparent rewind" type="icon">
+                        <ui-icon value="rewind"></ui-icon>
+                    </ui-button>
+                    <ui-button class="transparent prevPlay" type="icon">
+                        <ui-icon value="prev-play"></ui-icon>
+                    </ui-button>
+                    <ui-button class="transparent play" disabled type="icon">
+                        <ui-icon value="play"></ui-icon>
+                    </ui-button>
+                    <ui-button class="transparent pause" type="icon" hidden>
+                        <ui-icon value="pause"></ui-icon>
+                    </ui-button>
+                    <ui-button class="transparent stop" type="icon">
+                        <ui-icon value="stop"></ui-icon>
+                    </ui-button>
+                    <ui-button class="transparent nextPlay" type="icon">
+                        <ui-icon value="next-play"></ui-icon>
+                    </ui-button>
+                    <ui-button class="transparent forward" type="icon">
+                        <ui-icon value="forward"></ui-icon>
+                    </ui-button>
+                </div>
+                <ui-prop>
+                    <ui-label slot="label" value="i18n:ENGINE.inspector.spine.timeScale"></ui-label>
+                    <ui-slider slot="content" class="timeScale" value="1"></ui-slider>
+                </ui-prop>
+            </div>
+            <ui-scale-plate class="duration"></ui-scale-plate>    
         </div>
         <div class="image">
             <canvas class="canvas"></canvas>
-            <div class="anim-control">
-                <ui-button class="play" type="icon">
-                    <ui-icon class="play-state" value="play"></ui-icon>
-                </ui-button>
-                <ui-button class="pause" type="icon" hidden>
-                    <ui-icon class="play-state" value="pause"></ui-icon>
-                </ui-button>
-                <ui-button class="stop" type="icon">
-                    <ui-icon class="play-state" value="stop"></ui-icon>
-                </ui-button>
-            </div>
-            <ui-label class="duration" outline></ui-label>
         </div>
     </div>
 </ui-section>
@@ -63,193 +87,100 @@ exports.template = /* html */`
 exports.style = /* css */`
 .preview-section {
     margin-top: 0px;
-}
-.preview {
-    border-top: 1px solid var(--color-normal-border);
-}
-.preview > .control {
-    padding-top: 8px;
-    padding-bottom: 8px;
-    padding-right: 8px;
-    display: flex;
-    flex-direction: column;
-}
-.preview > .control[hidden] {
-    display: none;
-}
-.preview > .control > ui-prop {
-}
-.preview > .image {
-    height: var(--inspector-footer-preview-height, 200px);
-    overflow: hidden;
-    display: flex;
-    flex: 1;
-}
-.preview > .image > .anim-control {
-    position: absolute;
-    right: 15px;
-    bottom: 15px;
-    height: 25px;
-}
-.preview > .image > .anim-control[hidden] {
-    display: none;
-}
-.preview > .image .play[hidden] {
-    display: none;
-}
-.preview > .image .pause[hidden] {
-    display: none;
-}
-.preview > .image .duration {
-    position: absolute;
-    left: 50%;
-    bottom: 4px;
-    transform: translate(-50%);
-}
-.preview >.image > .canvas {
-    flex: 1;
+    .preview {
+        border-top: 1px solid var(--color-normal-border);
+        
+        & > .content {
+            display: flex;
+            padding-top: 4px;
+            padding-bottom: 8px;
+            padding-right: 8px;
+            padding-left: 8px;
+            flex-direction: column;
+            
+            & > .content[hidden] {
+               display: none;
+            }
+            
+            & > .attribute {
+               padding-bottom: 4px;
+            }
+            
+            & > .duration[disabled] {
+                pointer-events: none;
+            }
+            
+            & > .buttons-group {
+                padding: 6px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                    
+                & > .play-buttons {
+                    & > ui-button[disabled] {
+                       pointer-events: none;
+                    }
+                    & > ui-button[hidden] {
+                       display: none;
+                    }
+                }
+            }
+        }
+        & > .image {
+            height: var(--inspector-footer-preview-height, 200px);
+            overflow: hidden;
+            display: flex;
+            flex: 1;
+            position: relative;
+            
+            & > .canvas {
+                position: absolute;
+                inset: 0;
+            }
+        }
+    }
 }
 `;
+
+const Config = {
+    CHECKBOX: ['loop', 'useTint', 'debugSlots', 'debugBones', 'debugMesh', 'premultipliedAlpha'],
+    SLIDER: ['timeScale'],
+    PLAY_CONTROL: ['rewind', 'prevPlay', 'play', 'nextPlay', 'pause', 'stop', 'forward'],
+    OTHER: ['skin', 'animation', 'duration'],
+};
+
+const Properties = [...Config.CHECKBOX, ...Config.SLIDER, ...Config.OTHER, ...Config.PLAY_CONTROL];
 
 exports.$ = {
     container: '.preview',
     canvas: '.canvas',
     image: '.image',
-    skinSelectPro: '.skin-select-pro',
-    animationSelectPro: '.animation-select-pro',
-    control: '.control',
-    playState: '.play-state',
-    play: '.play',
-    pause: '.pause',
-    stop: '.stop',
-    duration: '.duration',
-    loop: '.loop-checkbox',
-    useTint: '.use-tint-checkbox',
-    timeScale: '.time-scale-slider',
-    debugSlots: '.debug-slots-checkbox',
-    debugBones: '.debug-bones-checkbox',
-    premultipliedAlpha: '.premultiplied-alpha-checkbox',
-    debugMesh: '.debug-mesh-checkbox',
-    animationCtrl: '.anim-control',
+
+    ...Object.fromEntries(Properties.map((key) => [key, `.${key}`])),
+
+    buttonsGroup: '.buttons-group',
 };
-
-const CheckBox = [
-    'loop',
-    'useTint',
-    'debugSlots',
-    'debugBones',
-    'debugMesh',
-    'premultipliedAlpha',
-];
-
-const Slider = [
-    'timeScale',
-];
-
-const Other = [
-    'play',
-    'stop',
-    'skinSelectPro',
-    'animationSelectPro',
-];
-
-const Properties = CheckBox.concat(Slider).concat(Other);
-
-async function callFunction(funcName, ...args) {
-    return await Editor.Message.request('scene', 'call-preview-function', 'scene:spine-preview', funcName, ...args);
-}
 
 const Elements = {
     preview: {
-        ready() {
-            const panel = this;
-
-            let _isPreviewDataDirty = false;
-            Object.defineProperty(panel, 'isPreviewDataDirty', {
-                get() {
-                    return _isPreviewDataDirty;
-                },
-                set(value) {
-                    if (value !== _isPreviewDataDirty) {
-                        _isPreviewDataDirty = value;
-                        value && panel.refreshPreview();
-                    }
-                },
-            });
-            panel.$.canvas.addEventListener('mousedown', async (event) => {
-                await callFunction('onMouseDown', { x: event.x, y: event.y, button: event.button });
-
-                async function mousemove(event) {
-                    await callFunction('onMouseMove', {
-                        movementX: event.movementX,
-                        movementY: event.movementY,
-                    });
-
-                    panel.isPreviewDataDirty = true;
-                }
-
-                async function mouseup(event) {
-                    await callFunction('onMouseUp', {
-                        x: event.x,
-                        y: event.y,
-                    });
-
-                    document.removeEventListener('mousemove', mousemove);
-                    document.removeEventListener('mouseup', mouseup);
-
-                    panel.isPreviewDataDirty = false;
-                }
-
-                document.addEventListener('mousemove', mousemove);
-                document.addEventListener('mouseup', mouseup);
-
-                panel.isPreviewDataDirty = true;
-            });
-
-            panel.$.canvas.addEventListener('wheel', async (event) => {
-                await callFunction('onMouseWheel', {
-                    wheelDeltaY: event.wheelDeltaY,
-                    wheelDeltaX: event.wheelDeltaX,
-                });
-                panel.isPreviewDataDirty = true;
-            });
-
-
-            const GlPreview = Editor._Module.require('PreviewExtends').default;
-            panel.glPreview = new GlPreview('scene:spine-preview', 'query-spine-preview-data');
-
-            function observer() {
-                panel.isPreviewDataDirty = true;
-            }
-
-            panel.resizeObserver = new window.ResizeObserver(observer);
-            panel.resizeObserver.observe(panel.$.image);
-            observer();
+        ready(panel) {
+            panel.preview.init();
         },
-        async update() {
-            const panel = this;
+        async update(panel) {
+            if (!panel.$.canvas) { return; }
 
-            if (!panel.$.canvas) {
-                return;
-            }
-
-            await panel.glPreview.init({ width: panel.$.canvas.clientWidth, height: panel.$.canvas.clientHeight });
-            const spineData = await callFunction('setSpine', panel.asset.uuid);
-            panel.spinUpdate(spineData);
-            this.isPreviewDataDirty = true;
+            const spineData = await panel.preview.callPreviewFunction('setSpine', panel.asset.uuid);
+            panel.spinUpdate(panel, spineData);
+            panel.preview.doRefreshDirty();
         },
-        close() {
-            const panel = this;
-
-            callFunction('stop');
-            callFunction('close');
-            panel.resizeObserver.unobserve(panel.$.image);
+        close(panel) {
+            panel.preview.callPreviewFunction('stop');
+            panel.preview.callPreviewFunction('close');
+            panel.preview.close();
         },
     },
     spine: {
-        updateEnum($selectPro, info) {
-            const panel = this;
-
+        updateEnum($selectPro, info, cb) {
             $selectPro.innerHTML = '';
             for (const key in info.list) {
                 const value = info.list[key];
@@ -257,164 +188,120 @@ const Elements = {
                 option.setAttribute('label', key);
                 option.setAttribute('value', value);
                 if (info.index === value) {
-                    panel.animationIndex = Number(value);
+                    cb && cb(Number(value));
                     option.setAttribute('selected', '');
                 }
                 $selectPro.appendChild(option);
             }
         },
-        ready() {
-            const panel = this;
-
+        ready(panel) {
             panel.animationIndex = 0;
-            panel.$.skinSelectPro.addEventListener('confirm', (event) => {
-                callFunction('setSkinIndex', Number(event.detail));
+            panel.$.skin.addEventListener('confirm', (event) => {
+                panel.preview.callPreviewFunction('setSkinIndex', Number(event.detail));
             });
-            panel.$.animationSelectPro.addEventListener('confirm', (event) => {
+            panel.$.animation.addEventListener('confirm', async (event) => {
                 panel.animationIndex = Number(event.detail);
-                callFunction('play', panel.animationIndex);
+                await panel.preview.callPreviewFunction('setAnimationIndex', panel.animationIndex);
+                Elements.control.updateState(panel);
             });
+            panel.$.duration.addEventListener('confirm', (event) => {
+                panel.preview.callPreviewFunction('setCurrentTime', Number(event.target.value));
+            });
+
             panel.spinUpdate = Elements.spine.update.bind(panel);
         },
-        update(info) {
-            const panel = this;
-
-            if (!info) {
-                Properties.forEach(property => {
-                    panel.$[property].setAttribute('disabled', '');
-                });
-                return;
-            }
-
+        getDurations(panel, info) {
+            return info.animation.durations[panel.animationIndex];
+        },
+        update(panel, info) {
             Properties.forEach(property => {
-                panel.$[property].removeAttribute('disabled');
+                panel.$[property].toggleAttribute('disabled', !info);
             });
 
-            Elements.spine.updateEnum.call(panel, panel.$.skinSelectPro, info.skin);
-            Elements.spine.updateEnum.call(panel, panel.$.animationSelectPro, info.animation);
-            Elements.spine.updateDuration.call(panel, 0, info.animation.durations[panel.animationIndex]);
-            Elements.control.update.call(panel, false);
-            Elements.control.updateInfo.call(panel, info);
-            panel.isPreviewDataDirty = true;
-        },
-        updateDuration(delay, duration) {
-            const panel = this;
+            if (!info) { return; }
 
-            panel.$.duration.setAttribute('value', `${Number(delay).toFixed(3)} / ${duration.toFixed(3)}`);
+            Elements.control.updateState(panel);
+            Elements.spine.updateEnum(panel.$.skin, info.skin);
+            Elements.spine.updateEnum(panel.$.animation, info.animation, (value) => {
+                panel.animationIndex = value;
+            });
+            Elements.spine.updateDuration(panel, 0, Elements.spine.getDurations(panel, info));
+            Elements.control.update(panel, false);
+            Elements.control.updateInfo(panel, info);
+            panel.preview.doRefreshDirty();
+        },
+        updateDuration(panel, time, duration) {
+            panel.$.duration.setConfig({
+                min: 0,
+                max: duration,
+                minStep: 0.1,
+            });
+            panel.$.duration.setAttribute('value', time);
         },
     },
     control: {
-        ready() {
-            const panel = this;
-
-            Slider.forEach((key) => {
+        ready(panel) {
+            Config.SLIDER.forEach((key) => {
                 panel.$[key].addEventListener('change', (event) => {
-                    callFunction('setProperties', key, Number(event.target.value));
+                    panel.preview.callPreviewFunction('setProperties', key, Number(event.target.value));
                 });
             });
 
-            CheckBox.forEach((key) => {
+            Config.CHECKBOX.forEach((key) => {
                 panel.$[key].addEventListener('confirm', (event) => {
-                    callFunction('setProperties', key, Boolean(event.target.value)).then((() => {
-                        this.isPreviewDataDirty = true;
+                    panel.preview.callPreviewFunction('setProperties', key, Boolean(event.target.value)).then((() => {
+                        panel.preview.doRefreshDirty();
                     }));
                 });
             });
 
-            panel.$.play.addEventListener('click', () => {
-                callFunction('play', panel.animationIndex);
-            });
-            panel.$.pause.addEventListener('confirm', (event) => {
-                callFunction('pause');
-            });
-            panel.$.stop.addEventListener('confirm', (event) => {
-                callFunction('stop');
+            Config.PLAY_CONTROL.forEach((key) => {
+                panel.$[key].addEventListener('click', () => {
+                    panel.preview.callPreviewFunction(key);
+                });
             });
         },
-        updateInfo(info) {
-            const panel = this;
-
-            CheckBox.forEach((key) => {
-                panel.$[key].setAttribute('value', Boolean(info[key]));
-            });
-            Slider.forEach((key) => {
-                panel.$[key].setAttribute('value', Number(info[key]));
-            });
+        updateState(panel) {
+            const disabled = 0 === panel.animationIndex;
+            Config.PLAY_CONTROL.forEach(property => panel.$[property].toggleAttribute('disabled', disabled));
+            panel.$.timeScale.toggleAttribute('disabled', disabled);
+            panel.$.duration.toggleAttribute('disabled', disabled);
         },
-        update(playing) {
-            const panel = this;
-
-            if (playing) {
-                panel.$.play.setAttribute('hidden', '');
-                panel.$.pause.removeAttribute('hidden');
-            } else {
-                panel.$.pause.setAttribute('hidden', '');
-                panel.$.play.removeAttribute('hidden');
-            }
+        updateInfo(panel, info) {
+            Config.CHECKBOX.forEach((key) => panel.$[key].setAttribute('value', Boolean(info[key])));
+            Config.SLIDER.forEach((key) => panel.$[key].setAttribute('value', Number(info[key])));
+        },
+        update(panel, playing) {
+            panel.$.play.toggleAttribute('hidden', playing);
+            panel.$.pause.toggleAttribute('hidden', !playing);
         },
     },
 };
 
 exports.methods = {
-    async refreshPreview() {
+    /**
+     *
+     * @param info
+     *  isPlaying
+     *  duration
+     *  currentTime
+     */
+    onAnimationUpdate(info) {
         const panel = this;
-
-        // After await, the panel no longer exists
-        if (!panel.$.canvas) {
-            return;
-        }
-
-        const doDraw = async () => {
-            try {
-                const canvas = panel.$.canvas;
-                const image = panel.$.image;
-
-                const width = image.clientWidth;
-                const height = image.clientHeight;
-                if (canvas.width !== width || canvas.height !== height) {
-                    canvas.width = width;
-                    canvas.height = height;
-
-                    await panel.glPreview.initGL(canvas, { width, height });
-                    await panel.glPreview.resizeGL(width, height);
-                }
-
-                const info = await panel.glPreview.queryPreviewData({
-                    width: canvas.width,
-                    height: canvas.height,
-                });
-
-                panel.glPreview.drawGL(info);
-            } catch (e) {
-                console.warn(e);
-            }
-        };
-
-        requestAnimationFrame(async () => {
-            await doDraw();
-            panel.isPreviewDataDirty = false;
-        });
-    },
-
-    onAnimationUpdate(playing, delay, duration) {
-        const panel = this;
-        Elements.spine.updateDuration.call(panel, delay, duration);
-        Elements.control.update.call(panel, playing);
-        panel.isPreviewDataDirty = true;
+        Elements.spine.updateDuration(panel, info.currentTime, info.duration);
+        Elements.control.update(panel, info.isPlaying);
+        panel.preview.doRefreshDirty();
     },
 };
 
 exports.ready = function() {
     this.onAnimationUpdateBind = this.onAnimationUpdate.bind(this);
 
-    Editor.Message.addBroadcastListener('scene:spine-preview-animation-time-change', this.onAnimationUpdateBind);
+    Editor.Message.__protected__.addBroadcastListener('scene:spine-preview-animation-time-change', this.onAnimationUpdateBind);
 
-    for (const prop in Elements) {
-        const element = Elements[prop];
-        if (element.ready) {
-            element.ready.call(this);
-        }
-    }
+    this.preview = new PreviewControl('scene:spine-preview', 'query-spine-preview-data', this.$.canvas, this.$.image);
+
+    Object.values(Elements).forEach((element) => element.ready && element.ready(this));
 };
 
 exports.update = function(assetList, metaList) {
@@ -424,25 +311,15 @@ exports.update = function(assetList, metaList) {
     this.meta = metaList[0];
 
     // 如何多选就隐藏预览
-    if (assetList.length > 1) {
-        this.$.container.style.display = 'none';
-    } else {
-        this.$.container.style.display = 'block';
-    }
+    hideElement(this.$.container, assetList.length > 1);
 
-    for (const prop in Elements) {
-        const element = Elements[prop];
-        if (element.update) {
-            element.update.call(this);
-        }
-    }
+    Object.values(Elements).forEach((element) => element.update && element.update(this));
 };
 
 exports.close = function() {
-    for (const prop in Elements) {
-        const element = Elements[prop];
-        if (element.close) {
-            element.close.call(this);
-        }
-    }
+    Editor.Message.__protected__.removeBroadcastListener('scene:spine-preview-animation-time-change', this.onAnimationUpdateBind);
+
+    this.preview.close();
+
+    Object.values(Elements).forEach((element) => element.close && element.close(this));
 };
