@@ -505,6 +505,7 @@ export class Label extends UIRenderer {
         }
         if (this._cacheMode === CacheMode.CHAR) {
             this._ttfSpriteFrame = null;
+            this.destroyLetterTexture();
         }
 
         this._cacheMode = value;
@@ -932,10 +933,20 @@ export class Label extends UIRenderer {
         // this._textRenderData = null;
         // this._textLayoutData = null;
 
-        // texture cannot be destroyed in here, lettertexture image source is public.
-        this._letterTexture = null;
+        this.destroyLetterTexture();
 
         super.onDestroy();
+    }
+
+    private destroyLetterTexture (): void {
+        const letterTexture = this._letterTexture;
+        if (letterTexture) {
+            letterTexture.decRef(false);
+            if (letterTexture.refCount <= 0) {
+                letterTexture.destroy();
+            }
+        }
+        this._letterTexture = null;
     }
 
     /**
@@ -1035,8 +1046,13 @@ export class Label extends UIRenderer {
             }
         } else {
             if (this.cacheMode === CacheMode.CHAR) {
-                this._letterTexture = this._assembler!.getAssemblerData();
-                this._texture = this._letterTexture;
+                const oldLetterTexture = this._letterTexture;
+                const letterTexture = this._assembler!.getAssemblerData();
+                if (letterTexture !== oldLetterTexture) {
+                    this.destroyLetterTexture();
+                    letterTexture.addRef();
+                }
+                this._texture = this._letterTexture = letterTexture;
             } else if (!this._ttfSpriteFrame) {
                 this._ttfSpriteFrame = new SpriteFrame();
                 this._assemblerData = this._assembler!.getAssemblerData();
