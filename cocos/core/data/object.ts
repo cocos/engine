@@ -71,11 +71,13 @@ const AllHideMasks = DontSave | EditorOnly | LockedInEditor | HideInHierarchy;
 const objectsToDestroy: CCObject[] = [];
 let deferredDestroyTimer: number | null = null;
 
-function compileDestruct (obj, ctor): Function {
+type DestructFunction = (o: CCObject) => void;
+
+function compileDestruct (obj: any, ctor: any): DestructFunction {
     const shouldSkipId = obj instanceof legacyCC.Node || obj instanceof legacyCC.Component;
     const idToSkip = shouldSkipId ? '_id' : null;
 
-    let key;
+    let key: string;
     const propsToReset = {};
     for (key in obj) {
         // eslint-disable-next-line no-prototype-builtins
@@ -146,7 +148,7 @@ function compileDestruct (obj, ctor): Function {
             func += (`${statement + val};\n`);
         }
         // eslint-disable-next-line @typescript-eslint/no-implied-eval,no-new-func
-        return Function('o', func);
+        return Function('o', func) as DestructFunction;
     } else {
         return (o): void => {
             for (const _key in propsToReset) {
@@ -341,12 +343,12 @@ class CCObject implements EditorExtendableObject {
      */
     public _destruct (): void {
         const ctor: any = this.constructor;
-        let destruct;
+        let destruct: DestructFunction;
         if (Object.prototype.hasOwnProperty.call(ctor, '__destruct__')) {
             destruct = ctor.__destruct__;
         } else {
             destruct = compileDestruct(this, ctor);
-            js.value(ctor, '__destruct__', destruct, true);
+            js.value(ctor as Record<string, any>, '__destruct__', destruct, true);
         }
 
         destruct(this);

@@ -28,7 +28,7 @@ import { array, Pool } from '../core/utils/js';
 import { tryCatchFunctor_EDITOR } from '../core/utils/misc';
 import { invokeOnEnable, createInvokeImpl, createInvokeImplJit, OneOffInvoker, LifeCycleInvoker } from './component-scheduler';
 import { legacyCC } from '../core/global-exports';
-import { assert, errorID, getError } from '../core/platform/debug';
+import { assert, errorID, getError, log } from '../core/platform/debug';
 import { NodeEventType } from './node-event';
 import { assertIsTrue } from '../core/data/utils/asserts';
 import type { Component } from './component';
@@ -116,7 +116,7 @@ activateTasksPool.get = function getActivateTask (): ActivateTask {
 
 function _componentCorrupted (node: Node, comp: Component, index: number): void {
     errorID(3817, node.name, index);
-    console.log('Corrupted component value:', comp);
+    log('Corrupted component value:', comp);
     if (comp) {
         node._removeComponent(comp);
     } else {

@@ -42,7 +42,7 @@ export const letterFont = js.mixin(bmfontUtils, {
         return _shareAtlas.getTexture() as LetterRenderTexture | null;
     },
 
-    _updateFontFamily (comp) {
+    _updateFontFamily (comp: Label) {
         shareLabelInfo.fontAtlas = _shareAtlas;
         shareLabelInfo.fontFamily = this._getFontFamily(comp);
 
@@ -72,9 +72,9 @@ export const letterFont = js.mixin(bmfontUtils, {
         return fontFamily;
     },
 
-    _updateLabelInfo (comp) {
+    _updateLabelInfo (comp: Label) {
         shareLabelInfo.fontDesc = this._getFontDesc();
-        shareLabelInfo.color = comp.color;
+        shareLabelInfo.color.set(comp.color);
         shareLabelInfo.hash = computeHash(shareLabelInfo);
     },
 

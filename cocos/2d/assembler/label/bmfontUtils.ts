@@ -23,7 +23,7 @@
 */
 
 import { JSB } from 'internal:constants';
-import { IConfig, FontAtlas } from '../../assets/bitmap-font';
+import { IConfig, FontAtlas, BitmapFont } from '../../assets/bitmap-font';
 import { SpriteFrame } from '../../assets/sprite-frame';
 import { Rect, errorID } from '../../../core';
 import { Label, Overflow, CacheMode } from '../../components/label';
@@ -282,8 +282,8 @@ export const bmfontUtils = {
         dataList[dataOffset + 3].y = y;
     },
 
-    _updateFontFamily (comp): void {
-        const fontAsset = comp.font;
+    _updateFontFamily (comp: Label): void {
+        const fontAsset = comp.font as BitmapFont;
         _spriteFrame = fontAsset.spriteFrame;
         _fntConfig = fontAsset.fntConfig;
         shareLabelInfo.fontAtlas = fontAsset.fontDefDictionary;
@@ -299,7 +299,7 @@ export const bmfontUtils = {
         // TODO update material and uv
     },
 
-    _updateLabelInfo (comp): void {
+    _updateLabelInfo (comp: Label): void {
         // clear
         shareLabelInfo.hash = '';
         shareLabelInfo.margin = 0;

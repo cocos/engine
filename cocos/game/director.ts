@@ -372,7 +372,10 @@ export class Director extends EventTarget {
         }
 
         // Clear scene
-        this.getScene()?.destroy();
+        const scene = this.getScene();
+        if (scene) {
+            scene.destroy();
+        }
 
         this.emit(DirectorEvent.RESET);
 
@@ -417,7 +420,7 @@ export class Director extends EventTarget {
             const existNode = scene.uuid === node._originalSceneId && scene.getChildByUuid(node.uuid);
             if (existNode) {
                 // scene also contains the persist node, select the old one
-                const index = existNode.getSiblingIndex();
+                const index = existNode.siblingIndex;
                 // restore to the old saving flag
                 node.hideFlags &= ~CCObject.Flags.DontSave;
                 node.hideFlags |= CCObject.Flags.DontSave & existNode.hideFlags;
