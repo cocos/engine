@@ -1163,7 +1163,7 @@ struct QuadResource {
     IntrusivePtr<gfx::InputAssembler> quadIA;
 };
 
-enum class ResourceType {
+enum class ResourceType : uint8_t {
     STORAGE_BUFFER,
     STORAGE_IMAGE,
 };

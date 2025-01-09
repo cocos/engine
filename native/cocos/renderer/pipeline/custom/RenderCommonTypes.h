@@ -51,7 +51,7 @@ namespace cc {
 
 namespace render {
 
-enum class UpdateFrequency {
+enum class UpdateFrequency : uint8_t {
     PER_INSTANCE,
     PER_BATCH,
     PER_PHASE,
@@ -59,7 +59,7 @@ enum class UpdateFrequency {
     COUNT,
 };
 
-enum class ParameterType {
+enum class ParameterType : uint8_t {
     CONSTANTS,
     CBV,
     UAV,
@@ -77,7 +77,7 @@ struct CopyTag {};
 struct MoveTag {};
 struct RaytraceTag {};
 
-enum class ResourceResidency {
+enum class ResourceResidency : uint8_t {
     MANAGED,
     MEMORYLESS,
     PERSISTENT,
@@ -85,7 +85,7 @@ enum class ResourceResidency {
     BACKBUFFER,
 };
 
-enum class QueueHint {
+enum class QueueHint : uint8_t {
     NONE,
     OPAQUE,
     MASK,
@@ -95,14 +95,14 @@ enum class QueueHint {
     RENDER_TRANSPARENT = BLEND,
 };
 
-enum class ResourceDimension {
+enum class ResourceDimension : uint8_t {
     BUFFER,
     TEXTURE1D,
     TEXTURE2D,
     TEXTURE3D,
 };
 
-enum class ResourceFlags : uint32_t {
+enum class ResourceFlags : uint32_t { // NOLINT(performance-enum-size)
     NONE = 0,
     UNIFORM = 0x1,
     INDIRECT = 0x2,
@@ -147,12 +147,12 @@ constexpr bool any(ResourceFlags e) noexcept {
 struct BufferTag {};
 struct TextureTag {};
 
-enum class TaskType {
+enum class TaskType : uint8_t {
     SYNC,
     ASYNC,
 };
 
-enum class SceneFlags : uint32_t {
+enum class SceneFlags : uint32_t { // NOLINT(performance-enum-size)
     NONE = 0,
     OPAQUE = 0x1,
     MASK = 0x2,
@@ -204,13 +204,13 @@ constexpr bool any(SceneFlags e) noexcept {
     return !!e;
 }
 
-enum class LightingMode : uint32_t {
+enum class LightingMode : uint8_t {
     NONE,
     DEFAULT,
     CLUSTERED,
 };
 
-enum class AttachmentType {
+enum class AttachmentType : uint8_t {
     RENDER_TARGET,
     DEPTH_STENCIL,
     SHADING_RATE,
@@ -222,7 +222,7 @@ enum class AccessType : uint8_t {
     WRITE,
 };
 
-enum class ClearValueType {
+enum class ClearValueType : uint8_t {
     NONE,
     FLOAT_TYPE,
     INT_TYPE,
@@ -245,7 +245,7 @@ struct LightInfo {
     bool culledByLight{false};
 };
 
-enum class ResolveFlags : uint32_t {
+enum class ResolveFlags : uint32_t { // NOLINT(performance-enum-size)
     NONE = 0,
     COLOR = 1 << 0,
     DEPTH = 1 << 1,

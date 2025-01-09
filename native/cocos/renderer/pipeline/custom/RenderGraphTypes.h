@@ -878,7 +878,7 @@ struct RenderQueue {
     gfx::Viewport viewport;
 };
 
-enum class CullingFlags : uint32_t {
+enum class CullingFlags : uint32_t { // NOLINT(performance-enum-size)
     NONE = 0,
     CAMERA_FRUSTUM = 0x1,
     LIGHT_FRUSTUM = 0x2,

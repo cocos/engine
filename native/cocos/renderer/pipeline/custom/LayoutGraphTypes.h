@@ -53,7 +53,7 @@ namespace cc {
 
 namespace render {
 
-enum class DescriptorTypeOrder {
+enum class DescriptorTypeOrder : uint8_t {
     UNIFORM_BUFFER,
     DYNAMIC_UNIFORM_BUFFER,
     SAMPLER_TEXTURE,
@@ -183,7 +183,7 @@ struct RenderPhase {
     PmrTransparentSet<ccstd::pmr::string> shaders;
 };
 
-enum class RenderPassType : uint32_t {
+enum class RenderPassType : uint8_t {
     SINGLE_RENDER_PASS,
     RENDER_PASS,
     RENDER_SUBPASS,

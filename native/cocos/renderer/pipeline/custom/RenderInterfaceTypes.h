@@ -284,7 +284,7 @@ enum class PipelineType {
  * 在编写渲染算法时，应该查询当前设备的能力，来选择合适的tile-based算法。
  * 使用硬件不支持的特性，会导致未定义行为。
  */
-enum class SubpassCapabilities : uint32_t {
+enum class SubpassCapabilities : uint32_t { // NOLINT(performance-enum-size)
     NONE = 0,
     /**
      * @en Supports read depth/stencil value at current pixel.
