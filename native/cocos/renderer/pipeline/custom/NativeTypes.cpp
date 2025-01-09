@@ -37,7 +37,7 @@ namespace render {
 ProgramInfo::ProgramInfo(const allocator_type& alloc) noexcept
 : attributes(alloc) {}
 
-ProgramInfo::ProgramInfo(IProgramInfo programInfoIn, gfx::ShaderInfo shaderInfoIn, ccstd::pmr::vector<gfx::Attribute> attributesIn, ccstd::vector<signed> blockSizesIn, ccstd::unordered_map<ccstd::string, uint32_t> handleMapIn, const allocator_type& alloc) noexcept
+ProgramInfo::ProgramInfo(IProgramInfo programInfoIn, gfx::ShaderInfo shaderInfoIn, ccstd::pmr::vector<gfx::Attribute> attributesIn, ccstd::vector<signed> blockSizesIn, ccstd::unordered_map<ccstd::string, uint32_t> handleMapIn, const allocator_type& alloc)
 : programInfo(std::move(programInfoIn)),
   shaderInfo(std::move(shaderInfoIn)),
   attributes(std::move(attributesIn), alloc),

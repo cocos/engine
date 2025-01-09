@@ -49,7 +49,7 @@ struct ProgramInfo {
     }
 
     ProgramInfo(const allocator_type& alloc) noexcept; // NOLINT
-    ProgramInfo(IProgramInfo programInfoIn, gfx::ShaderInfo shaderInfoIn, ccstd::pmr::vector<gfx::Attribute> attributesIn, ccstd::vector<signed> blockSizesIn, ccstd::unordered_map<ccstd::string, uint32_t> handleMapIn, const allocator_type& alloc) noexcept;
+    ProgramInfo(IProgramInfo programInfoIn, gfx::ShaderInfo shaderInfoIn, ccstd::pmr::vector<gfx::Attribute> attributesIn, ccstd::vector<signed> blockSizesIn, ccstd::unordered_map<ccstd::string, uint32_t> handleMapIn, const allocator_type& alloc);
     ProgramInfo(ProgramInfo&& rhs, const allocator_type& alloc);
     ProgramInfo(ProgramInfo const& rhs, const allocator_type& alloc);
 

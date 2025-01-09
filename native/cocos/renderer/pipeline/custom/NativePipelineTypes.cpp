@@ -29,6 +29,7 @@
  */
 // clang-format off
 #include "NativePipelineTypes.h"
+#include "cocos/base/Ptr.h"
 
 namespace cc {
 

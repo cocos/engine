@@ -30,7 +30,6 @@
 // clang-format off
 #pragma once
 #include "cocos/base/Ptr.h"
-#include "cocos/base/std/container/map.h"
 #include "cocos/base/std/container/string.h"
 #include "cocos/base/std/hash/hash.h"
 #include "cocos/renderer/gfx-base/GFXDef-common.h"
@@ -287,7 +286,7 @@ struct ResolvePair {
     }
 
     ResolvePair(const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept; // NOLINT
-    ResolvePair(ccstd::pmr::string sourceIn, ccstd::pmr::string targetIn, ResolveFlags resolveFlagsIn, gfx::ResolveMode modeIn, gfx::ResolveMode mode1In, const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept;
+    ResolvePair(ccstd::pmr::string sourceIn, ccstd::pmr::string targetIn, ResolveFlags resolveFlagsIn, gfx::ResolveMode modeIn, gfx::ResolveMode mode1In, const allocator_type& alloc = boost::container::pmr::get_default_resource());
     ResolvePair(ResolvePair&& rhs, const allocator_type& alloc);
     ResolvePair(ResolvePair const& rhs, const allocator_type& alloc);
 
@@ -319,7 +318,7 @@ struct CopyPair {
     }
 
     CopyPair(const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept; // NOLINT
-    CopyPair(ccstd::pmr::string sourceIn, ccstd::pmr::string targetIn, uint32_t mipLevelsIn, uint32_t numSlicesIn, uint32_t sourceMostDetailedMipIn, uint32_t sourceFirstSliceIn, uint32_t sourcePlaneSliceIn, uint32_t targetMostDetailedMipIn, uint32_t targetFirstSliceIn, uint32_t targetPlaneSliceIn, const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept;
+    CopyPair(ccstd::pmr::string sourceIn, ccstd::pmr::string targetIn, uint32_t mipLevelsIn, uint32_t numSlicesIn, uint32_t sourceMostDetailedMipIn, uint32_t sourceFirstSliceIn, uint32_t sourcePlaneSliceIn, uint32_t targetMostDetailedMipIn, uint32_t targetFirstSliceIn, uint32_t targetPlaneSliceIn, const allocator_type& alloc = boost::container::pmr::get_default_resource());
     CopyPair(CopyPair&& rhs, const allocator_type& alloc);
     CopyPair(CopyPair const& rhs, const allocator_type& alloc);
 
@@ -347,7 +346,7 @@ struct UploadPair {
     }
 
     UploadPair(const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept; // NOLINT
-    UploadPair(ccstd::vector<uint8_t> sourceIn, ccstd::pmr::string targetIn, uint32_t mipLevelsIn, uint32_t numSlicesIn, uint32_t targetMostDetailedMipIn, uint32_t targetFirstSliceIn, uint32_t targetPlaneSliceIn, const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept;
+    UploadPair(ccstd::vector<uint8_t> sourceIn, ccstd::pmr::string targetIn, uint32_t mipLevelsIn, uint32_t numSlicesIn, uint32_t targetMostDetailedMipIn, uint32_t targetFirstSliceIn, uint32_t targetPlaneSliceIn, const allocator_type& alloc = boost::container::pmr::get_default_resource());
     UploadPair(UploadPair&& rhs, const allocator_type& alloc);
 
     UploadPair(UploadPair&& rhs) noexcept = default;
@@ -371,7 +370,7 @@ struct MovePair {
     }
 
     MovePair(const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept; // NOLINT
-    MovePair(ccstd::pmr::string sourceIn, ccstd::pmr::string targetIn, uint32_t mipLevelsIn, uint32_t numSlicesIn, uint32_t targetMostDetailedMipIn, uint32_t targetFirstSliceIn, uint32_t targetPlaneSliceIn, const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept;
+    MovePair(ccstd::pmr::string sourceIn, ccstd::pmr::string targetIn, uint32_t mipLevelsIn, uint32_t numSlicesIn, uint32_t targetMostDetailedMipIn, uint32_t targetFirstSliceIn, uint32_t targetPlaneSliceIn, const allocator_type& alloc = boost::container::pmr::get_default_resource());
     MovePair(MovePair&& rhs, const allocator_type& alloc);
     MovePair(MovePair const& rhs, const allocator_type& alloc);
 

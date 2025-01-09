@@ -29,6 +29,7 @@
  */
 // clang-format off
 #include "LayoutGraphTypes.h"
+#include "cocos/base/Ptr.h"
 
 namespace cc {
 
@@ -157,7 +158,7 @@ DescriptorSetLayoutData::DescriptorSetLayoutData(const allocator_type& alloc) no
   uniformBlocks(alloc),
   bindingMap(alloc) {}
 
-DescriptorSetLayoutData::DescriptorSetLayoutData(uint32_t slotIn, uint32_t capacityIn, ccstd::pmr::vector<DescriptorBlockData> descriptorBlocksIn, PmrUnorderedMap<NameLocalID, gfx::UniformBlock> uniformBlocksIn, PmrFlatMap<NameLocalID, uint32_t> bindingMapIn, const allocator_type& alloc) noexcept // NOLINT
+DescriptorSetLayoutData::DescriptorSetLayoutData(uint32_t slotIn, uint32_t capacityIn, ccstd::pmr::vector<DescriptorBlockData> descriptorBlocksIn, PmrUnorderedMap<NameLocalID, gfx::UniformBlock> uniformBlocksIn, PmrFlatMap<NameLocalID, uint32_t> bindingMapIn, const allocator_type& alloc) // NOLINT
 : slot(slotIn),
   capacity(capacityIn),
   descriptorBlocks(std::move(descriptorBlocksIn), alloc),
@@ -176,7 +177,7 @@ DescriptorSetLayoutData::DescriptorSetLayoutData(DescriptorSetLayoutData&& rhs, 
 DescriptorSetData::DescriptorSetData(const allocator_type& alloc) noexcept
 : descriptorSetLayoutData(alloc) {}
 
-DescriptorSetData::DescriptorSetData(DescriptorSetLayoutData descriptorSetLayoutDataIn, IntrusivePtr<gfx::DescriptorSetLayout> descriptorSetLayoutIn, IntrusivePtr<gfx::DescriptorSet> descriptorSetIn, const allocator_type& alloc) noexcept
+DescriptorSetData::DescriptorSetData(DescriptorSetLayoutData descriptorSetLayoutDataIn, IntrusivePtr<gfx::DescriptorSetLayout> descriptorSetLayoutIn, IntrusivePtr<gfx::DescriptorSet> descriptorSetIn, const allocator_type& alloc)
 : descriptorSetLayoutData(std::move(descriptorSetLayoutDataIn), alloc),
   descriptorSetLayout(std::move(descriptorSetLayoutIn)),
   descriptorSet(std::move(descriptorSetIn)) {}

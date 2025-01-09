@@ -38,6 +38,7 @@
 #include "cocos/base/std/container/string.h"
 #include "cocos/base/std/container/vector.h"
 #include "cocos/base/std/hash/hash.h"
+#include "cocos/renderer/gfx-base/GFXDef-common.h"
 #include "cocos/renderer/gfx-base/GFXDescriptorSet.h"
 #include "cocos/renderer/gfx-base/GFXDescriptorSetLayout.h"
 #include "cocos/renderer/gfx-base/GFXPipelineLayout.h"
@@ -455,7 +456,7 @@ struct DescriptorSetLayoutData {
     }
 
     DescriptorSetLayoutData(const allocator_type& alloc) noexcept; // NOLINT
-    DescriptorSetLayoutData(uint32_t slotIn, uint32_t capacityIn, ccstd::pmr::vector<DescriptorBlockData> descriptorBlocksIn, PmrUnorderedMap<NameLocalID, gfx::UniformBlock> uniformBlocksIn, PmrFlatMap<NameLocalID, uint32_t> bindingMapIn, const allocator_type& alloc) noexcept;
+    DescriptorSetLayoutData(uint32_t slotIn, uint32_t capacityIn, ccstd::pmr::vector<DescriptorBlockData> descriptorBlocksIn, PmrUnorderedMap<NameLocalID, gfx::UniformBlock> uniformBlocksIn, PmrFlatMap<NameLocalID, uint32_t> bindingMapIn, const allocator_type& alloc);
     DescriptorSetLayoutData(DescriptorSetLayoutData&& rhs, const allocator_type& alloc);
 
     DescriptorSetLayoutData(DescriptorSetLayoutData&& rhs) noexcept = default;
@@ -479,7 +480,7 @@ struct DescriptorSetData {
     }
 
     DescriptorSetData(const allocator_type& alloc) noexcept; // NOLINT
-    DescriptorSetData(DescriptorSetLayoutData descriptorSetLayoutDataIn, IntrusivePtr<gfx::DescriptorSetLayout> descriptorSetLayoutIn, IntrusivePtr<gfx::DescriptorSet> descriptorSetIn, const allocator_type& alloc) noexcept;
+    DescriptorSetData(DescriptorSetLayoutData descriptorSetLayoutDataIn, IntrusivePtr<gfx::DescriptorSetLayout> descriptorSetLayoutIn, IntrusivePtr<gfx::DescriptorSet> descriptorSetIn, const allocator_type& alloc);
     DescriptorSetData(DescriptorSetData&& rhs, const allocator_type& alloc);
 
     DescriptorSetData(DescriptorSetData&& rhs) noexcept = default;

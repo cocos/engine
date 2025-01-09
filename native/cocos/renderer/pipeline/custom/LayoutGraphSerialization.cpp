@@ -27,10 +27,10 @@
  * The following section is auto-generated.
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
-#include "cocos/renderer/pipeline/custom/LayoutGraphSerialization.h"
 #include "cocos/base/std/container/string.h"
 #include "cocos/renderer/pipeline/custom/ArchiveTypes.h"
 #include "cocos/renderer/pipeline/custom/LayoutGraphGraphs.h"
+#include "cocos/renderer/pipeline/custom/LayoutGraphSerialization.h"
 #include "cocos/renderer/pipeline/custom/LayoutGraphTypes.h"
 #include "cocos/renderer/pipeline/custom/RenderCommonSerialization.h"
 #include "cocos/renderer/pipeline/custom/RenderCommonTypes.h"
