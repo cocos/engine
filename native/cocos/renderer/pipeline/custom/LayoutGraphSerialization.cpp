@@ -27,6 +27,7 @@
  * The following section is auto-generated.
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
+// NOLINTBEGIN(misc-include-cleaner)
 #include "cocos/renderer/pipeline/custom/ArchiveTypes.h"
 #include "cocos/renderer/pipeline/custom/LayoutGraphGraphs.h"
 #include "cocos/renderer/pipeline/custom/LayoutGraphSerialization.h"
@@ -507,3 +508,4 @@ void load(InputArchive& ar, LayoutGraphData& g) {
 } // namespace render
 
 } // namespace cc
+// NOLINTEND(misc-include-cleaner)
