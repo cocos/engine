@@ -92,7 +92,7 @@ struct RasterView {
 
     RasterView(RasterView&& rhs) noexcept = default;
     RasterView(RasterView const& rhs) = delete;
-    RasterView& operator=(RasterView&& rhs) = default;
+    RasterView& operator=(RasterView&& rhs) noexcept = default;
     RasterView& operator=(RasterView const& rhs) = default;
 
     ccstd::pmr::string slotName;
@@ -130,7 +130,7 @@ struct ComputeView {
 
     ComputeView(ComputeView&& rhs) noexcept = default;
     ComputeView(ComputeView const& rhs) = delete;
-    ComputeView& operator=(ComputeView&& rhs) = default;
+    ComputeView& operator=(ComputeView&& rhs) noexcept = default;
     ComputeView& operator=(ComputeView const& rhs) = default;
 
     bool isRead() const {
@@ -265,7 +265,7 @@ struct Subpass {
 
     Subpass(Subpass&& rhs) noexcept = default;
     Subpass(Subpass const& rhs) = delete;
-    Subpass& operator=(Subpass&& rhs) = default;
+    Subpass& operator=(Subpass&& rhs) noexcept = default;
     Subpass& operator=(Subpass const& rhs) = default;
 
     PmrTransparentMap<ccstd::pmr::string, RasterView> rasterViews;
@@ -298,7 +298,7 @@ struct SubpassGraph {
 
     SubpassGraph(SubpassGraph&& rhs) noexcept = default;
     SubpassGraph(SubpassGraph const& rhs) = delete;
-    SubpassGraph& operator=(SubpassGraph&& rhs) = default;
+    SubpassGraph& operator=(SubpassGraph&& rhs) noexcept = default;
     SubpassGraph& operator=(SubpassGraph const& rhs) = default;
 
     // Graph
@@ -385,7 +385,7 @@ struct SubpassGraph {
 
         Vertex(Vertex&& rhs) noexcept = default;
         Vertex(Vertex const& rhs) = delete;
-        Vertex& operator=(Vertex&& rhs) = default;
+        Vertex& operator=(Vertex&& rhs) noexcept = default;
         Vertex& operator=(Vertex const& rhs) = default;
 
         ccstd::pmr::vector<OutEdge> outEdges;
@@ -424,7 +424,7 @@ struct RasterSubpass {
 
     RasterSubpass(RasterSubpass&& rhs) noexcept = default;
     RasterSubpass(RasterSubpass const& rhs) = delete;
-    RasterSubpass& operator=(RasterSubpass&& rhs) = default;
+    RasterSubpass& operator=(RasterSubpass&& rhs) noexcept = default;
     RasterSubpass& operator=(RasterSubpass const& rhs) = default;
 
     PmrTransparentMap<ccstd::pmr::string, RasterView> rasterViews;
@@ -450,7 +450,7 @@ struct ComputeSubpass {
 
     ComputeSubpass(ComputeSubpass&& rhs) noexcept = default;
     ComputeSubpass(ComputeSubpass const& rhs) = delete;
-    ComputeSubpass& operator=(ComputeSubpass&& rhs) = default;
+    ComputeSubpass& operator=(ComputeSubpass&& rhs) noexcept = default;
     ComputeSubpass& operator=(ComputeSubpass const& rhs) = default;
 
     PmrTransparentMap<ccstd::pmr::string, RasterView> rasterViews;
@@ -470,7 +470,7 @@ struct RasterPass {
 
     RasterPass(RasterPass&& rhs) noexcept = default;
     RasterPass(RasterPass const& rhs) = delete;
-    RasterPass& operator=(RasterPass&& rhs) = default;
+    RasterPass& operator=(RasterPass&& rhs) noexcept = default;
     RasterPass& operator=(RasterPass const& rhs) = default;
 
     PmrTransparentMap<ccstd::pmr::string, RasterView> rasterViews;
@@ -511,7 +511,7 @@ struct PersistentRenderPassAndFramebuffer {
 
     PersistentRenderPassAndFramebuffer(PersistentRenderPassAndFramebuffer&& rhs) noexcept = default;
     PersistentRenderPassAndFramebuffer(PersistentRenderPassAndFramebuffer const& rhs) = delete;
-    PersistentRenderPassAndFramebuffer& operator=(PersistentRenderPassAndFramebuffer&& rhs) = default;
+    PersistentRenderPassAndFramebuffer& operator=(PersistentRenderPassAndFramebuffer&& rhs) noexcept = default;
     PersistentRenderPassAndFramebuffer& operator=(PersistentRenderPassAndFramebuffer const& rhs) = default;
 
     IntrusivePtr<gfx::RenderPass> renderPass;
@@ -703,7 +703,7 @@ struct ResourceGraph {
 
         Vertex(Vertex&& rhs) noexcept = default;
         Vertex(Vertex const& rhs) = delete;
-        Vertex& operator=(Vertex&& rhs) = default;
+        Vertex& operator=(Vertex&& rhs) noexcept = default;
         Vertex& operator=(Vertex const& rhs) = default;
 
         ccstd::pmr::vector<OutEdge> outEdges;
@@ -755,7 +755,7 @@ struct ComputePass {
 
     ComputePass(ComputePass&& rhs) noexcept = default;
     ComputePass(ComputePass const& rhs) = delete;
-    ComputePass& operator=(ComputePass&& rhs) = default;
+    ComputePass& operator=(ComputePass&& rhs) noexcept = default;
     ComputePass& operator=(ComputePass const& rhs) = default;
 
     PmrTransparentMap<ccstd::pmr::string, ccstd::pmr::vector<ComputeView>> computeViews;
@@ -774,7 +774,7 @@ struct ResolvePass {
 
     ResolvePass(ResolvePass&& rhs) noexcept = default;
     ResolvePass(ResolvePass const& rhs) = delete;
-    ResolvePass& operator=(ResolvePass&& rhs) = default;
+    ResolvePass& operator=(ResolvePass&& rhs) noexcept = default;
     ResolvePass& operator=(ResolvePass const& rhs) = default;
 
     ccstd::pmr::vector<ResolvePair> resolvePairs;
@@ -791,7 +791,7 @@ struct CopyPass {
 
     CopyPass(CopyPass&& rhs) noexcept = default;
     CopyPass(CopyPass const& rhs) = delete;
-    CopyPass& operator=(CopyPass&& rhs) = default;
+    CopyPass& operator=(CopyPass&& rhs) noexcept = default;
     CopyPass& operator=(CopyPass const& rhs) = delete;
 
     ccstd::pmr::vector<CopyPair> copyPairs;
@@ -810,7 +810,7 @@ struct MovePass {
 
     MovePass(MovePass&& rhs) noexcept = default;
     MovePass(MovePass const& rhs) = delete;
-    MovePass& operator=(MovePass&& rhs) = default;
+    MovePass& operator=(MovePass&& rhs) noexcept = default;
     MovePass& operator=(MovePass const& rhs) = default;
 
     ccstd::pmr::vector<MovePair> movePairs;
@@ -828,7 +828,7 @@ struct RaytracePass {
 
     RaytracePass(RaytracePass&& rhs) noexcept = default;
     RaytracePass(RaytracePass const& rhs) = delete;
-    RaytracePass& operator=(RaytracePass&& rhs) = default;
+    RaytracePass& operator=(RaytracePass&& rhs) noexcept = default;
     RaytracePass& operator=(RaytracePass const& rhs) = default;
 
     PmrTransparentMap<ccstd::pmr::string, ccstd::pmr::vector<ComputeView>> computeViews;
@@ -854,7 +854,7 @@ struct ClearView {
 
     ClearView(ClearView&& rhs) noexcept = default;
     ClearView(ClearView const& rhs) = delete;
-    ClearView& operator=(ClearView&& rhs) = default;
+    ClearView& operator=(ClearView&& rhs) noexcept = default;
     ClearView& operator=(ClearView const& rhs) = default;
 
     ccstd::pmr::string slotName;
@@ -972,7 +972,7 @@ struct RenderData {
 
     RenderData(RenderData&& rhs) noexcept = default;
     RenderData(RenderData const& rhs) = delete;
-    RenderData& operator=(RenderData&& rhs) = default;
+    RenderData& operator=(RenderData&& rhs) noexcept = default;
     RenderData& operator=(RenderData const& rhs) = delete;
 
     PmrFlatMap<uint32_t, ccstd::pmr::vector<char>> constants;
@@ -997,7 +997,7 @@ struct RenderGraph {
 
     RenderGraph(RenderGraph&& rhs) noexcept = default;
     RenderGraph(RenderGraph const& rhs) = delete;
-    RenderGraph& operator=(RenderGraph&& rhs) = default;
+    RenderGraph& operator=(RenderGraph&& rhs) noexcept = default;
     RenderGraph& operator=(RenderGraph const& rhs) = delete;
 
     // Graph
@@ -1139,7 +1139,7 @@ struct RenderGraph {
 
         Object(Object&& rhs) noexcept = default;
         Object(Object const& rhs) = delete;
-        Object& operator=(Object&& rhs) = default;
+        Object& operator=(Object&& rhs) noexcept = default;
         Object& operator=(Object const& rhs) = default;
 
         ccstd::pmr::vector<ChildEdge> children;
@@ -1158,7 +1158,7 @@ struct RenderGraph {
 
         Vertex(Vertex&& rhs) noexcept = default;
         Vertex(Vertex const& rhs) = delete;
-        Vertex& operator=(Vertex&& rhs) = default;
+        Vertex& operator=(Vertex&& rhs) noexcept = default;
         Vertex& operator=(Vertex const& rhs) = default;
 
         ccstd::pmr::vector<OutEdge> outEdges;

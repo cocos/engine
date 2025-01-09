@@ -56,7 +56,7 @@ struct ProgramInfo {
 
     ProgramInfo(ProgramInfo&& rhs) noexcept = default;
     ProgramInfo(ProgramInfo const& rhs) = delete;
-    ProgramInfo& operator=(ProgramInfo&& rhs) = default;
+    ProgramInfo& operator=(ProgramInfo&& rhs) noexcept = default;
     ProgramInfo& operator=(ProgramInfo const& rhs) = default;
 
     IProgramInfo programInfo;
@@ -78,7 +78,7 @@ struct ProgramGroup {
 
     ProgramGroup(ProgramGroup&& rhs) noexcept = default;
     ProgramGroup(ProgramGroup const& rhs) = delete;
-    ProgramGroup& operator=(ProgramGroup&& rhs) = default;
+    ProgramGroup& operator=(ProgramGroup&& rhs) noexcept = default;
     ProgramGroup& operator=(ProgramGroup const& rhs) = default;
 
     PmrTransparentMap<ccstd::pmr::string, ProgramInfo> programInfos;

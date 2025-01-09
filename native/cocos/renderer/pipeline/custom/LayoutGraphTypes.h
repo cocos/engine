@@ -155,7 +155,7 @@ struct DescriptorDB {
 
     DescriptorDB(DescriptorDB&& rhs) noexcept = default;
     DescriptorDB(DescriptorDB const& rhs) = delete;
-    DescriptorDB& operator=(DescriptorDB&& rhs) = default;
+    DescriptorDB& operator=(DescriptorDB&& rhs) noexcept = default;
     DescriptorDB& operator=(DescriptorDB const& rhs) = default;
 
     ccstd::pmr::map<DescriptorBlockIndex, DescriptorBlock> blocks;
@@ -177,7 +177,7 @@ struct RenderPhase {
 
     RenderPhase(RenderPhase&& rhs) noexcept = default;
     RenderPhase(RenderPhase const& rhs) = delete;
-    RenderPhase& operator=(RenderPhase&& rhs) = default;
+    RenderPhase& operator=(RenderPhase&& rhs) noexcept = default;
     RenderPhase& operator=(RenderPhase const& rhs) = default;
 
     PmrTransparentSet<ccstd::pmr::string> shaders;
@@ -205,7 +205,7 @@ struct LayoutGraph {
 
     LayoutGraph(LayoutGraph&& rhs) noexcept = default;
     LayoutGraph(LayoutGraph const& rhs) = delete;
-    LayoutGraph& operator=(LayoutGraph&& rhs) = default;
+    LayoutGraph& operator=(LayoutGraph&& rhs) noexcept = default;
     LayoutGraph& operator=(LayoutGraph const& rhs) = default;
 
     // Graph
@@ -332,7 +332,7 @@ struct LayoutGraph {
 
         Vertex(Vertex&& rhs) noexcept = default;
         Vertex(Vertex const& rhs) = delete;
-        Vertex& operator=(Vertex&& rhs) = default;
+        Vertex& operator=(Vertex&& rhs) noexcept = default;
         Vertex& operator=(Vertex const& rhs) = default;
 
         ccstd::pmr::vector<OutEdge> outEdges;
@@ -380,7 +380,7 @@ struct UniformBlockData {
 
     UniformBlockData(UniformBlockData&& rhs) noexcept = default;
     UniformBlockData(UniformBlockData const& rhs) = delete;
-    UniformBlockData& operator=(UniformBlockData&& rhs) = default;
+    UniformBlockData& operator=(UniformBlockData&& rhs) noexcept = default;
     UniformBlockData& operator=(UniformBlockData const& rhs) = default;
 
     uint32_t bufferSize{0};
@@ -436,7 +436,7 @@ struct DescriptorBlockData {
 
     DescriptorBlockData(DescriptorBlockData&& rhs) noexcept = default;
     DescriptorBlockData(DescriptorBlockData const& rhs) = delete;
-    DescriptorBlockData& operator=(DescriptorBlockData&& rhs) = default;
+    DescriptorBlockData& operator=(DescriptorBlockData&& rhs) noexcept = default;
     DescriptorBlockData& operator=(DescriptorBlockData const& rhs) = default;
 
     DescriptorTypeOrder type{DescriptorTypeOrder::UNIFORM_BUFFER};
@@ -462,7 +462,7 @@ struct DescriptorSetLayoutData {
 
     DescriptorSetLayoutData(DescriptorSetLayoutData&& rhs) noexcept = default;
     DescriptorSetLayoutData(DescriptorSetLayoutData const& rhs) = delete;
-    DescriptorSetLayoutData& operator=(DescriptorSetLayoutData&& rhs) = default;
+    DescriptorSetLayoutData& operator=(DescriptorSetLayoutData&& rhs) noexcept = default;
     DescriptorSetLayoutData& operator=(DescriptorSetLayoutData const& rhs) = delete;
 
     uint32_t slot{0xFFFFFFFF};
@@ -486,7 +486,7 @@ struct DescriptorSetData {
 
     DescriptorSetData(DescriptorSetData&& rhs) noexcept = default;
     DescriptorSetData(DescriptorSetData const& rhs) = delete;
-    DescriptorSetData& operator=(DescriptorSetData&& rhs) = default;
+    DescriptorSetData& operator=(DescriptorSetData&& rhs) noexcept = default;
     DescriptorSetData& operator=(DescriptorSetData const& rhs) = delete;
 
     DescriptorSetLayoutData descriptorSetLayoutData;
@@ -506,7 +506,7 @@ struct PipelineLayoutData {
 
     PipelineLayoutData(PipelineLayoutData&& rhs) noexcept = default;
     PipelineLayoutData(PipelineLayoutData const& rhs) = delete;
-    PipelineLayoutData& operator=(PipelineLayoutData&& rhs) = default;
+    PipelineLayoutData& operator=(PipelineLayoutData&& rhs) noexcept = default;
     PipelineLayoutData& operator=(PipelineLayoutData const& rhs) = delete;
 
     ccstd::pmr::map<UpdateFrequency, DescriptorSetData> descriptorSets;
@@ -524,7 +524,7 @@ struct ShaderBindingData {
 
     ShaderBindingData(ShaderBindingData&& rhs) noexcept = default;
     ShaderBindingData(ShaderBindingData const& rhs) = delete;
-    ShaderBindingData& operator=(ShaderBindingData&& rhs) = default;
+    ShaderBindingData& operator=(ShaderBindingData&& rhs) noexcept = default;
     ShaderBindingData& operator=(ShaderBindingData const& rhs) = delete;
 
     PmrFlatMap<NameLocalID, uint32_t> descriptorBindings;
@@ -541,7 +541,7 @@ struct ShaderLayoutData {
 
     ShaderLayoutData(ShaderLayoutData&& rhs) noexcept = default;
     ShaderLayoutData(ShaderLayoutData const& rhs) = delete;
-    ShaderLayoutData& operator=(ShaderLayoutData&& rhs) = default;
+    ShaderLayoutData& operator=(ShaderLayoutData&& rhs) noexcept = default;
     ShaderLayoutData& operator=(ShaderLayoutData const& rhs) = delete;
 
     ccstd::pmr::map<UpdateFrequency, DescriptorSetLayoutData> layoutData;
@@ -559,7 +559,7 @@ struct TechniqueData {
 
     TechniqueData(TechniqueData&& rhs) noexcept = default;
     TechniqueData(TechniqueData const& rhs) = delete;
-    TechniqueData& operator=(TechniqueData&& rhs) = default;
+    TechniqueData& operator=(TechniqueData&& rhs) noexcept = default;
     TechniqueData& operator=(TechniqueData const& rhs) = delete;
 
     ccstd::pmr::vector<ShaderLayoutData> passes;
@@ -576,7 +576,7 @@ struct EffectData {
 
     EffectData(EffectData&& rhs) noexcept = default;
     EffectData(EffectData const& rhs) = delete;
-    EffectData& operator=(EffectData&& rhs) = default;
+    EffectData& operator=(EffectData&& rhs) noexcept = default;
     EffectData& operator=(EffectData const& rhs) = delete;
 
     ccstd::pmr::map<ccstd::pmr::string, TechniqueData> techniques;
@@ -593,7 +593,7 @@ struct ShaderProgramData {
 
     ShaderProgramData(ShaderProgramData&& rhs) noexcept = default;
     ShaderProgramData(ShaderProgramData const& rhs) = delete;
-    ShaderProgramData& operator=(ShaderProgramData&& rhs) = default;
+    ShaderProgramData& operator=(ShaderProgramData&& rhs) noexcept = default;
     ShaderProgramData& operator=(ShaderProgramData const& rhs) = delete;
 
     PipelineLayoutData layout;
@@ -611,7 +611,7 @@ struct RenderStageData {
 
     RenderStageData(RenderStageData&& rhs) noexcept = default;
     RenderStageData(RenderStageData const& rhs) = delete;
-    RenderStageData& operator=(RenderStageData&& rhs) = default;
+    RenderStageData& operator=(RenderStageData&& rhs) noexcept = default;
     RenderStageData& operator=(RenderStageData const& rhs) = delete;
 
     PmrUnorderedMap<NameLocalID, gfx::ShaderStageFlagBit> descriptorVisibility;
@@ -628,7 +628,7 @@ struct RenderPhaseData {
 
     RenderPhaseData(RenderPhaseData&& rhs) noexcept = default;
     RenderPhaseData(RenderPhaseData const& rhs) = delete;
-    RenderPhaseData& operator=(RenderPhaseData&& rhs) = default;
+    RenderPhaseData& operator=(RenderPhaseData&& rhs) noexcept = default;
     RenderPhaseData& operator=(RenderPhaseData const& rhs) = delete;
 
     ccstd::pmr::string rootSignature;
@@ -652,7 +652,7 @@ struct LayoutGraphData {
 
     LayoutGraphData(LayoutGraphData&& rhs) noexcept = default;
     LayoutGraphData(LayoutGraphData const& rhs) = delete;
-    LayoutGraphData& operator=(LayoutGraphData&& rhs) = default;
+    LayoutGraphData& operator=(LayoutGraphData&& rhs) noexcept = default;
     LayoutGraphData& operator=(LayoutGraphData const& rhs) = delete;
 
     // Graph
@@ -779,7 +779,7 @@ struct LayoutGraphData {
 
         Vertex(Vertex&& rhs) noexcept = default;
         Vertex(Vertex const& rhs) = delete;
-        Vertex& operator=(Vertex&& rhs) = default;
+        Vertex& operator=(Vertex&& rhs) noexcept = default;
         Vertex& operator=(Vertex const& rhs) = default;
 
         ccstd::pmr::vector<OutEdge> outEdges;

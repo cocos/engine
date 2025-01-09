@@ -910,7 +910,7 @@ struct RenderInstancingQueue {
 
     RenderInstancingQueue(RenderInstancingQueue&& rhs) noexcept = default;
     RenderInstancingQueue(RenderInstancingQueue const& rhs) = delete;
-    RenderInstancingQueue& operator=(RenderInstancingQueue&& rhs) = default;
+    RenderInstancingQueue& operator=(RenderInstancingQueue&& rhs) noexcept = default;
     RenderInstancingQueue& operator=(RenderInstancingQueue const& rhs) = default;
 
     bool empty() const noexcept;
@@ -949,7 +949,7 @@ struct ProbeHelperQueue {
 
     ProbeHelperQueue(ProbeHelperQueue&& rhs) noexcept = default;
     ProbeHelperQueue(ProbeHelperQueue const& rhs) = delete;
-    ProbeHelperQueue& operator=(ProbeHelperQueue&& rhs) = default;
+    ProbeHelperQueue& operator=(ProbeHelperQueue&& rhs) noexcept = default;
     ProbeHelperQueue& operator=(ProbeHelperQueue const& rhs) = default;
 
     static LayoutGraphData::vertex_descriptor getDefaultId(const LayoutGraphData &lg);
@@ -979,7 +979,7 @@ struct RenderDrawQueue {
 
     RenderDrawQueue(RenderDrawQueue&& rhs) noexcept = default;
     RenderDrawQueue(RenderDrawQueue const& rhs) = delete;
-    RenderDrawQueue& operator=(RenderDrawQueue&& rhs) = default;
+    RenderDrawQueue& operator=(RenderDrawQueue&& rhs) noexcept = default;
     RenderDrawQueue& operator=(RenderDrawQueue const& rhs) = default;
 
     void add(const scene::Model& model, float depth, uint32_t subModelIdx, uint32_t passIdx);
@@ -1004,7 +1004,7 @@ struct NativeRenderQueue {
 
     NativeRenderQueue(NativeRenderQueue&& rhs) noexcept = default;
     NativeRenderQueue(NativeRenderQueue const& rhs) = delete;
-    NativeRenderQueue& operator=(NativeRenderQueue&& rhs) = default;
+    NativeRenderQueue& operator=(NativeRenderQueue&& rhs) noexcept = default;
     NativeRenderQueue& operator=(NativeRenderQueue const& rhs) = delete;
 
     void sort();
@@ -1051,7 +1051,7 @@ struct BufferPool {
 
     BufferPool(BufferPool&& rhs) noexcept = default;
     BufferPool(BufferPool const& rhs) = delete;
-    BufferPool& operator=(BufferPool&& rhs) = default;
+    BufferPool& operator=(BufferPool&& rhs) noexcept = default;
     BufferPool& operator=(BufferPool const& rhs) = delete;
     void init(gfx::Device* deviceIn, uint32_t sz, bool bDynamic);
     void syncResources();
@@ -1078,7 +1078,7 @@ struct DescriptorSetPool {
 
     DescriptorSetPool(DescriptorSetPool&& rhs) noexcept = default;
     DescriptorSetPool(DescriptorSetPool const& rhs) = delete;
-    DescriptorSetPool& operator=(DescriptorSetPool&& rhs) = default;
+    DescriptorSetPool& operator=(DescriptorSetPool&& rhs) noexcept = default;
     DescriptorSetPool& operator=(DescriptorSetPool const& rhs) = delete;
     void init(gfx::Device* deviceIn, IntrusivePtr<gfx::DescriptorSetLayout> layout);
     void syncDescriptorSets();
@@ -1103,7 +1103,7 @@ struct UniformBlockResource {
 
     UniformBlockResource(UniformBlockResource&& rhs) noexcept = default;
     UniformBlockResource(UniformBlockResource const& rhs) = delete;
-    UniformBlockResource& operator=(UniformBlockResource&& rhs) = default;
+    UniformBlockResource& operator=(UniformBlockResource&& rhs) noexcept = default;
     UniformBlockResource& operator=(UniformBlockResource const& rhs) = delete;
     void init(gfx::Device* deviceIn, uint32_t sz, bool bDynamic);
     gfx::Buffer* createFromCpuBuffer();
@@ -1123,7 +1123,7 @@ struct ProgramResource {
 
     ProgramResource(ProgramResource&& rhs) noexcept = default;
     ProgramResource(ProgramResource const& rhs) = delete;
-    ProgramResource& operator=(ProgramResource&& rhs) = default;
+    ProgramResource& operator=(ProgramResource&& rhs) noexcept = default;
     ProgramResource& operator=(ProgramResource const& rhs) = delete;
     void syncResources() noexcept;
 
@@ -1142,7 +1142,7 @@ struct LayoutGraphNodeResource {
 
     LayoutGraphNodeResource(LayoutGraphNodeResource&& rhs) noexcept = default;
     LayoutGraphNodeResource(LayoutGraphNodeResource const& rhs) = delete;
-    LayoutGraphNodeResource& operator=(LayoutGraphNodeResource&& rhs) = default;
+    LayoutGraphNodeResource& operator=(LayoutGraphNodeResource&& rhs) noexcept = default;
     LayoutGraphNodeResource& operator=(LayoutGraphNodeResource const& rhs) = delete;
     void syncResources() noexcept;
 
@@ -1179,7 +1179,7 @@ struct SceneResource {
 
     SceneResource(SceneResource&& rhs) noexcept = default;
     SceneResource(SceneResource const& rhs) = delete;
-    SceneResource& operator=(SceneResource&& rhs) = default;
+    SceneResource& operator=(SceneResource&& rhs) noexcept = default;
     SceneResource& operator=(SceneResource const& rhs) = delete;
 
     ccstd::pmr::unordered_map<NameLocalID, ResourceType> resourceIndex;
@@ -1234,7 +1234,7 @@ struct FrustumCulling {
 
     FrustumCulling(FrustumCulling&& rhs) noexcept = default;
     FrustumCulling(FrustumCulling const& rhs) = delete;
-    FrustumCulling& operator=(FrustumCulling&& rhs) = default;
+    FrustumCulling& operator=(FrustumCulling&& rhs) noexcept = default;
     FrustumCulling& operator=(FrustumCulling const& rhs) = default;
 
     ccstd::pmr::unordered_map<FrustumCullingKey, FrustumCullingID> resultIndex;
@@ -1285,7 +1285,7 @@ struct LightBoundsCulling {
 
     LightBoundsCulling(LightBoundsCulling&& rhs) noexcept = default;
     LightBoundsCulling(LightBoundsCulling const& rhs) = delete;
-    LightBoundsCulling& operator=(LightBoundsCulling&& rhs) = default;
+    LightBoundsCulling& operator=(LightBoundsCulling&& rhs) noexcept = default;
     LightBoundsCulling& operator=(LightBoundsCulling const& rhs) = default;
 
     ccstd::pmr::unordered_map<LightBoundsCullingKey, LightBoundsCullingID> resultIndex;
@@ -1336,7 +1336,7 @@ struct SceneCulling {
 
     SceneCulling(SceneCulling&& rhs) noexcept = default;
     SceneCulling(SceneCulling const& rhs) = delete;
-    SceneCulling& operator=(SceneCulling&& rhs) = default;
+    SceneCulling& operator=(SceneCulling&& rhs) noexcept = default;
     SceneCulling& operator=(SceneCulling const& rhs) = delete;
 
     void clear() noexcept;
@@ -1479,7 +1479,7 @@ struct PipelineCustomization {
 
     PipelineCustomization(PipelineCustomization&& rhs) noexcept = default;
     PipelineCustomization(PipelineCustomization const& rhs) = delete;
-    PipelineCustomization& operator=(PipelineCustomization&& rhs) = default;
+    PipelineCustomization& operator=(PipelineCustomization&& rhs) noexcept = default;
     PipelineCustomization& operator=(PipelineCustomization const& rhs) = default;
 
     std::shared_ptr<CustomPipelineContext> currentContext;

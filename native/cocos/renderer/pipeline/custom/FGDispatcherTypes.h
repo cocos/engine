@@ -77,7 +77,7 @@ struct ResourceAccessNode {
 
     ResourceAccessNode(ResourceAccessNode&& rhs) noexcept = default;
     ResourceAccessNode(ResourceAccessNode const& rhs) = delete;
-    ResourceAccessNode& operator=(ResourceAccessNode&& rhs) = default;
+    ResourceAccessNode& operator=(ResourceAccessNode&& rhs) noexcept = default;
     ResourceAccessNode& operator=(ResourceAccessNode const& rhs) = default;
 
     PmrFlatMap<ccstd::pmr::string, AccessStatus> resourceStatus;
@@ -100,7 +100,7 @@ struct AttachmentInfo {
 
     AttachmentInfo(AttachmentInfo&& rhs) noexcept = default;
     AttachmentInfo(AttachmentInfo const& rhs) = delete;
-    AttachmentInfo& operator=(AttachmentInfo&& rhs) = default;
+    AttachmentInfo& operator=(AttachmentInfo&& rhs) noexcept = default;
     AttachmentInfo& operator=(AttachmentInfo const& rhs) = default;
 
     ccstd::pmr::string parentName;
@@ -120,7 +120,7 @@ struct FGRenderPassInfo {
 
     FGRenderPassInfo(FGRenderPassInfo&& rhs) noexcept = default;
     FGRenderPassInfo(FGRenderPassInfo const& rhs) = delete;
-    FGRenderPassInfo& operator=(FGRenderPassInfo&& rhs) = default;
+    FGRenderPassInfo& operator=(FGRenderPassInfo&& rhs) noexcept = default;
     FGRenderPassInfo& operator=(FGRenderPassInfo const& rhs) = default;
 
     ccstd::vector<LayoutAccess> colorAccesses;
@@ -266,7 +266,7 @@ struct ResourceAccessGraph {
 
         Vertex(Vertex&& rhs) noexcept = default;
         Vertex(Vertex const& rhs) = delete;
-        Vertex& operator=(Vertex&& rhs) = default;
+        Vertex& operator=(Vertex&& rhs) noexcept = default;
         Vertex& operator=(Vertex const& rhs) = default;
 
         ccstd::pmr::vector<OutEdge> outEdges;
@@ -401,7 +401,7 @@ struct RelationGraph {
 
         Vertex(Vertex&& rhs) noexcept = default;
         Vertex(Vertex const& rhs) = delete;
-        Vertex& operator=(Vertex&& rhs) = default;
+        Vertex& operator=(Vertex&& rhs) noexcept = default;
         Vertex& operator=(Vertex const& rhs) = default;
 
         ccstd::pmr::vector<OutEdge> outEdges;
@@ -430,7 +430,7 @@ struct RenderingInfo {
 
     RenderingInfo(RenderingInfo&& rhs) noexcept = default;
     RenderingInfo(RenderingInfo const& rhs) = delete;
-    RenderingInfo& operator=(RenderingInfo&& rhs) = default;
+    RenderingInfo& operator=(RenderingInfo&& rhs) noexcept = default;
     RenderingInfo& operator=(RenderingInfo const& rhs) = default;
 
     gfx::RenderPassInfo renderpassInfo;
