@@ -39,7 +39,7 @@ namespace render {
 
 class PipelineRuntime;
 
-enum class PipelineType;
+enum class PipelineType : uint8_t;
 enum class SubpassCapabilities : uint32_t;
 
 struct PipelineCapabilities;

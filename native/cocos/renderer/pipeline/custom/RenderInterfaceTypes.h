@@ -244,7 +244,7 @@ public:
  * Different types of pipeline have different hardward capabilities and interfaces.
  * @zh 管线类型，不同类型的管线具有不同的硬件能力与接口
  */
-enum class PipelineType {
+enum class PipelineType : uint8_t {
     /**
      * @en Basic render pipeline.
      * Basic render pipeline is available on all platforms.
