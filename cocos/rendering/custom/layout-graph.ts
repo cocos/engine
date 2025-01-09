@@ -114,7 +114,7 @@ export class DescriptorGroupBlockIndex {
         descriptorType: DescriptorTypeOrder = DescriptorTypeOrder.UNIFORM_BUFFER,
         visibility: ShaderStageFlagBit = ShaderStageFlagBit.NONE,
         accessType: MemoryAccessBit = MemoryAccessBit.READ_ONLY,
-        viewDimension: ViewDimension = ViewDimension.TEX2D,
+        viewDimension: ViewDimension = ViewDimension.UNKNOWN,
         sampleType: SampleType = SampleType.FLOAT,
         format: Format = Format.UNKNOWN,
     ) {
@@ -1069,7 +1069,7 @@ export class LayoutGraphObjectPool {
         descriptorType: DescriptorTypeOrder = DescriptorTypeOrder.UNIFORM_BUFFER,
         visibility: ShaderStageFlagBit = ShaderStageFlagBit.NONE,
         accessType: MemoryAccessBit = MemoryAccessBit.READ_ONLY,
-        viewDimension: ViewDimension = ViewDimension.TEX2D,
+        viewDimension: ViewDimension = ViewDimension.UNKNOWN,
         sampleType: SampleType = SampleType.FLOAT,
         format: Format = Format.UNKNOWN,
     ): DescriptorGroupBlockIndex {

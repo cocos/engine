@@ -124,7 +124,7 @@ struct DescriptorGroupBlockIndex {
     DescriptorTypeOrder descriptorType{DescriptorTypeOrder::UNIFORM_BUFFER};
     gfx::ShaderStageFlagBit visibility{gfx::ShaderStageFlagBit::NONE};
     gfx::MemoryAccessBit accessType{gfx::MemoryAccessBit::READ_ONLY};
-    gfx::ViewDimension viewDimension{gfx::ViewDimension::TEX2D};
+    gfx::ViewDimension viewDimension{gfx::ViewDimension::UNKNOWN};
     gfx::SampleType sampleType{gfx::SampleType::FLOAT};
     gfx::Format format{gfx::Format::UNKNOWN};
 };
@@ -428,6 +428,7 @@ struct DescriptorBlockData {
 
     DescriptorBlockData(const allocator_type& alloc) noexcept; // NOLINT
     DescriptorBlockData(DescriptorTypeOrder typeIn, gfx::ShaderStageFlagBit visibilityIn, uint32_t capacityIn, gfx::MemoryAccessBit accessTypeIn, gfx::ViewDimension viewDimensionIn, gfx::SampleType sampleTypeIn, gfx::Format formatIn, const allocator_type& alloc) noexcept;
+    DescriptorBlockData(DescriptorTypeOrder typeIn, gfx::ShaderStageFlagBit visibilityIn, uint32_t capacityIn, const allocator_type& alloc) noexcept;
     DescriptorBlockData(DescriptorBlockData&& rhs, const allocator_type& alloc);
     DescriptorBlockData(DescriptorBlockData const& rhs, const allocator_type& alloc);
 

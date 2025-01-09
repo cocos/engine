@@ -124,6 +124,12 @@ DescriptorBlockData::DescriptorBlockData(DescriptorTypeOrder typeIn, gfx::Shader
   format(formatIn),
   descriptors(alloc) {}
 
+DescriptorBlockData::DescriptorBlockData(DescriptorTypeOrder typeIn, gfx::ShaderStageFlagBit visibilityIn, uint32_t capacityIn, const allocator_type& alloc) noexcept // NOLINT
+: type(typeIn),
+  visibility(visibilityIn),
+  capacity(capacityIn),
+  descriptors(alloc) {}
+
 DescriptorBlockData::DescriptorBlockData(DescriptorBlockData&& rhs, const allocator_type& alloc)
 : type(rhs.type),
   visibility(rhs.visibility),

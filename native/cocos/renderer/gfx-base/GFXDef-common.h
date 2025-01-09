@@ -1452,6 +1452,10 @@ struct DescriptorSetLayoutBinding {
     DescriptorType descriptorType{DescriptorType::UNKNOWN};
     uint32_t count{0};
     ShaderStageFlags stageFlags{ShaderStageFlagBit::NONE};
+    MemoryAccess memoryAccessFlags{MemoryAccessBit::READ_ONLY};
+    ViewDimension viewDimension{ViewDimension::UNKNOWN};
+    SampleType sampleType{SampleType::FLOAT};
+    Format format{Format::UNKNOWN};
     SamplerList immutableSamplers;
 
     EXPOSE_COPY_FN(DescriptorSetLayoutBinding)
