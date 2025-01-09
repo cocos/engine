@@ -147,8 +147,8 @@ class Assignments {
 
 // HELPER FUNCTIONS
 
-function getPropAccessor (key): string {
-    return IDENTIFIER_RE.test(key) ? (`.${key}`) : (`[${escapeForJS(key)}]`);
+function getPropAccessor (key: any): string {
+    return IDENTIFIER_RE.test(key as string) ? (`.${key}`) : (`[${escapeForJS(key)}]`);
 }
 
 //
@@ -246,12 +246,13 @@ class Parser {
                 if (clsNameIsModule) {
                     try {
                         // ensure is module
+                        // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
                         clsNameIsModule = (func === Function(`return ${clsName}`)());
                         if (clsNameIsModule) {
                             this.funcModuleCache[clsName] = clsName;
                             return clsName;
                         }
-                    } catch (e) {}
+                    } catch (e) { /* empty */ }
                 }
             }
         }
@@ -279,10 +280,10 @@ class Parser {
 
     public setValueType (codeArray, defaultValue, srcValue, targetExpression): void {
         // HACK: here we've changed the signature of get method.
-        const assignments: any = (Assignments.pool.get as any)(targetExpression);
+        const assignments: Assignments = (Assignments.pool.get as any)(targetExpression);
         let fastDefinedProps = defaultValue.constructor.__props__;
         if (!fastDefinedProps) {
-            fastDefinedProps = Object.keys(defaultValue);
+            fastDefinedProps = Object.keys(defaultValue as object);
         }
         for (let i = 0; i < fastDefinedProps.length; i++) {
             const propName = fastDefinedProps[i];
@@ -417,13 +418,13 @@ class Parser {
 
     // codeArray - the source code array for this object
     public enumerateObject (codeArray, obj): void {
-        const klass = obj.constructor;
+        const klass: Constructor<unknown> = obj.constructor;
         if (isCCClassOrFastDefined(klass)) {
             this.enumerateCCClass(codeArray, obj, klass);
         } else {
             // primitive javascript object
             for (const key in obj) {
-                if (!obj.hasOwnProperty(key)
+                if (!Object.prototype.hasOwnProperty.call(obj, key)
                     || (key.charCodeAt(0) === 95 && key.charCodeAt(1) === 95   // starts with "__"
                     && key !== '__type__')
                 ) {
@@ -452,7 +453,7 @@ class Parser {
         }
 
         let createCode;
-        const ctor = obj.constructor;
+        const ctor: Constructor<unknown> = obj.constructor;
         if (isCCClassOrFastDefined(ctor)) {
             if (this.parent) {
                 if (this.parent instanceof cclegacy.Component) {
