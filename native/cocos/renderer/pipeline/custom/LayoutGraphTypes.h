@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner)
 #pragma once
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -824,4 +825,5 @@ inline hash_t hash<cc::render::NameLocalID>::operator()(const cc::render::NameLo
 
 } // namespace ccstd
 
+// NOLINTEND(misc-include-cleaner)
 // clang-format on

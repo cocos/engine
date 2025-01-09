@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner)
 #include "NativePipelineTypes.h"
 #include "cocos/base/Ptr.h"
 
@@ -256,4 +257,5 @@ PipelineCustomization::PipelineCustomization(PipelineCustomization const& rhs, c
 
 } // namespace cc
 
+// NOLINTEND(misc-include-cleaner)
 // clang-format on

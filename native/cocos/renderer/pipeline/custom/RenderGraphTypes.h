@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner)
 #pragma once
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -1269,4 +1270,5 @@ inline hash_t hash<cc::render::RasterPass>::operator()(const cc::render::RasterP
 
 } // namespace ccstd
 
+// NOLINTEND(misc-include-cleaner)
 // clang-format on

@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner)
 #pragma once
 #include <boost/graph/adjacency_iterator.hpp>
 #include <boost/graph/graph_traits.hpp>
@@ -502,4 +503,5 @@ struct FrameGraphDispatcher {
 
 } // namespace cc
 
+// NOLINTEND(misc-include-cleaner)
 // clang-format on

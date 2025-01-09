@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner)
 #include "NativeTypes.h"
 
 namespace cc {
@@ -74,4 +75,5 @@ ProgramGroup::ProgramGroup(ProgramGroup const& rhs, const allocator_type& alloc)
 
 } // namespace cc
 
+// NOLINTEND(misc-include-cleaner)
 // clang-format on

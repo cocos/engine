@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner)
 #include "RenderInterfaceTypes.h"
 
 namespace cc {
@@ -38,4 +39,5 @@ namespace render {
 
 } // namespace cc
 
+// NOLINTEND(misc-include-cleaner)
 // clang-format on

@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner)
 #include "RenderGraphTypes.h"
 #include "cocos/base/Ptr.h"
 
@@ -496,4 +497,5 @@ RenderGraph::Vertex::Vertex(Vertex const& rhs, const allocator_type& alloc)
 
 } // namespace cc
 
+// NOLINTEND(misc-include-cleaner)
 // clang-format on

@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner)
 #include "LayoutGraphTypes.h"
 #include "cocos/base/Ptr.h"
 
@@ -301,4 +302,5 @@ LayoutGraphData::Vertex::Vertex(Vertex const& rhs, const allocator_type& alloc)
 
 } // namespace cc
 
+// NOLINTEND(misc-include-cleaner)
 // clang-format on

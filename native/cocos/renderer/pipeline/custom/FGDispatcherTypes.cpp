@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner)
 #include "FGDispatcherTypes.h"
 
 namespace cc {
@@ -171,4 +172,5 @@ FrameGraphDispatcher::FrameGraphDispatcher(ResourceGraph& resourceGraphIn, const
 
 } // namespace cc
 
+// NOLINTEND(misc-include-cleaner)
 // clang-format on

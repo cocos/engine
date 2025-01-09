@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner)
 #pragma once
 #include "cocos/base/std/container/string.h"
 #include "cocos/base/std/hash/hash.h"
@@ -88,4 +89,5 @@ struct ProgramGroup {
 
 } // namespace cc
 
+// NOLINTEND(misc-include-cleaner)
 // clang-format on

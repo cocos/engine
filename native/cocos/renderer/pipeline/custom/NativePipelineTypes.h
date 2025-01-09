@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner)
 #pragma once
 #include "base/std/container/map.h"
 #include "cocos/base/Ptr.h"
@@ -1717,6 +1718,7 @@ inline hash_t hash<cc::render::NativeRenderQueueKey>::operator()(const cc::rende
 
 } // namespace ccstd
 
+// NOLINTEND(misc-include-cleaner)
 // clang-format on
 
 #ifdef _MSC_VER
