@@ -1664,9 +1664,11 @@ export class Skeleton extends UIRenderer {
     public _updateColor (): void {
         const self = this;
         const uiProps = self.node._uiProps;
-        const a = uiProps.opacity;
         const tempColor = self._tempColor;
         const color = self._color;
+        const parentOpacity = self.node.parent ? self.node.parent._uiProps.opacity : 1.0;
+        //Calculate the final opacity here, because the first frame affected by parent's opacity
+        const a = uiProps.localOpacity * parentOpacity * color.a / 255;
 
         if (tempColor.r === color.r && tempColor.g === color.g && tempColor.b === color.b && tempColor.a === a) {
             return;
