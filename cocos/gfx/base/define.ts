@@ -384,6 +384,21 @@ export enum TextureType {
     TEX2D_ARRAY,
 }
 
+export enum ViewDimension {
+    UNKNOWN,
+    BUFFER,
+    TEX1D,
+    TEX1D_ARRAY,
+    TEX2D,
+    TEX2D_ARRAY,
+    TEX2DMS,
+    TEX2DMS_ARRAY,
+    TEX3D,
+    TEXCUBE,
+    TEXCUBE_ARRAY,
+    RAYTRACING_ACCELERATION_STRUCTURE,
+}
+
 export enum TextureUsageBit {
     NONE = 0,
     TRANSFER_SRC = 0x1,

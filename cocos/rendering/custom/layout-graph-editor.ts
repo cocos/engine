@@ -25,7 +25,7 @@
 /* eslint-disable max-len */
 import { EffectAsset } from '../../asset/assets';
 import { assert, error, warn } from '../../core';
-import { Format, MemoryAccessBit, SampleType, ShaderStageFlagBit, Type, Uniform, UniformBlock } from '../../gfx';
+import { Format, MemoryAccessBit, SampleType, ShaderStageFlagBit, Type, Uniform, UniformBlock, ViewDimension } from '../../gfx';
 import { DefaultVisitor, depthFirstSearch, GraphColor, MutableVertexPropertyMap } from './graph';
 import {
     Descriptor,
@@ -42,7 +42,7 @@ import {
 import { getDescriptorTypeOrderName } from './layout-graph-names';
 import { ENABLE_SUBPASS, getOrCreateDescriptorID, sortDescriptorBlocks } from './layout-graph-utils';
 import {
-    AccessType, ParameterType, UpdateFrequency, ViewDimension,
+    AccessType, ParameterType, UpdateFrequency,
 } from './types';
 import { getUpdateFrequencyName } from './types-names';
 
@@ -683,7 +683,7 @@ export class LayoutGraphInfo {
                 ParameterType.TABLE,
                 DescriptorTypeOrder.UNIFORM_BUFFER,
                 rate >= UpdateFrequency.PER_PHASE ? visBlock.getVisibility(info.name) : info.stageFlags,
-                AccessType.READ,
+                MemoryAccessBit.READ_ONLY,
                 ViewDimension.BUFFER,
             );
             const key = JSON.stringify(groupBlockIndex);
@@ -759,7 +759,7 @@ export class LayoutGraphInfo {
                 ParameterType.TABLE,
                 DescriptorTypeOrder.STORAGE_BUFFER,
                 rate >= UpdateFrequency.PER_PHASE ? visBlock.getVisibility(info.name) : info.stageFlags,
-                this.getBufferAccessType(info.memoryAccess),
+                info.memoryAccess,
                 ViewDimension.BUFFER,
             );
             const key = JSON.stringify(groupBlockIndex);
@@ -821,7 +821,7 @@ export class LayoutGraphInfo {
                 ParameterType.TABLE,
                 order,
                 rate >= UpdateFrequency.PER_PHASE ? visBlock.getVisibility(info.name) : info.stageFlags,
-                AccessType.READ,
+                MemoryAccessBit.READ_ONLY,
                 ViewDimension.UNKNOWN,
             );
             const key = JSON.stringify(groupBlockIndex);
@@ -881,7 +881,7 @@ export class LayoutGraphInfo {
                 ParameterType.TABLE,
                 order,
                 rate >= UpdateFrequency.PER_PHASE ? visBlock.getVisibility(info.name) : info.stageFlags,
-                AccessType.READ,
+                MemoryAccessBit.READ_ONLY,
                 this.getViewDimension(info.type),
                 info.sampleType, // SINT, UINT not supported yet. Only support FLOAT, UNFILTERABLE_FLOAT
                 Format.UNKNOWN, // Format is not used for textures
@@ -908,7 +908,7 @@ export class LayoutGraphInfo {
         case Type.SAMPLER2D_ARRAY:
         case Type.TEXTURE2D_ARRAY:
         case Type.IMAGE2D_ARRAY:
-            return ViewDimension.TEX2DARRAY;
+            return ViewDimension.TEX2D_ARRAY;
         case Type.SAMPLER_CUBE:
         case Type.TEXTURE_CUBE:
         case Type.IMAGE_CUBE:
@@ -939,7 +939,7 @@ export class LayoutGraphInfo {
                 ParameterType.TABLE,
                 DescriptorTypeOrder.STORAGE_IMAGE,
                 rate >= UpdateFrequency.PER_PHASE ? visBlock.getVisibility(info.name) : info.stageFlags,
-                this.getImageAccessType(info.memoryAccess),
+                info.memoryAccess,
                 this.getViewDimension(info.type),
                 SampleType.FLOAT, // Not used, use default value
                 Format.UNKNOWN, // TODO(zhouzhenglong): Add correct layout format qualifier

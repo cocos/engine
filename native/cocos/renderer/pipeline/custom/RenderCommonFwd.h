@@ -50,7 +50,6 @@ struct RaytraceTag;
 enum class ResourceResidency;
 enum class QueueHint;
 enum class ResourceDimension;
-enum class ViewDimension : uint8_t;
 enum class ResourceFlags : uint32_t;
 
 struct BufferTag;

@@ -77,21 +77,6 @@ export enum ResourceDimension {
     TEXTURE3D,
 }
 
-export enum ViewDimension {
-    UNKNOWN,
-    BUFFER,
-    TEX1D,
-    TEX1DARRAY,
-    TEX2D,
-    TEX2DARRAY,
-    TEX2DMS,
-    TEX2DMSARRAY,
-    TEX3D,
-    TEXCUBE,
-    TEXCUBEARRAY,
-    RAYTRACING_ACCELERATION_STRUCTURE,
-}
-
 export enum ResourceFlags {
     NONE = 0,
     UNIFORM = 0x1,
