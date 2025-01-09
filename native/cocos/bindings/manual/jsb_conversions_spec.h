@@ -38,6 +38,12 @@
     #include "physics/spec/IWorld.h"
 #endif
 
+#if CC_USE_BOX2D_JSB
+class b2Vec2;
+class b2Vec3;
+class b2Color;
+#endif
+
 namespace cc {
 class Data;
 class Vec4;
@@ -636,3 +642,14 @@ bool sevalue_to_native(const se::Value &from, cc::physics::HeightFieldDesc *to, 
 bool sevalue_to_native(const se::Value &from, cc::physics::RaycastOptions *to, se::Object *ctx);
 
 #endif // USE_PHYSICS_PHYSX
+
+#if CC_USE_BOX2D_JSB
+bool sevalue_to_native(const se::Value &from, b2Vec2 *to, se::Object * /*unused*/);
+bool sevalue_to_native(const se::Value &from, b2Vec3 *to, se::Object * /*unused*/);
+bool sevalue_to_native(const se::Value &from, b2Color *to, se::Object * /*unused*/);
+
+bool nativevalue_to_se(const b2Vec2 &from, se::Value &to, se::Object * /*ctx*/); // NOLINT(readability-identifier-naming)
+bool nativevalue_to_se(const b2Vec3 &from, se::Value &to, se::Object * /*ctx*/); // NOLINT(readability-identifier-naming)
+bool nativevalue_to_se(const b2Color &from, se::Value &to, se::Object * /*ctx*/); // NOLINT(readability-identifier-naming)
+
+#endif //CC_USE_BOX2D_JSB

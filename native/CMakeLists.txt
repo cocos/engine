@@ -33,6 +33,7 @@ cc_set_if_undefined(USE_WEBSOCKET_SERVER     OFF)
 cc_set_if_undefined(USE_JOB_SYSTEM_TASKFLOW  OFF)
 cc_set_if_undefined(USE_JOB_SYSTEM_TBB       OFF)
 cc_set_if_undefined(USE_PHYSICS_PHYSX        OFF)
+cc_set_if_undefined(USE_BOX2D_JSB            OFF)
 cc_set_if_undefined(USE_MODULES              OFF)
 cc_set_if_undefined(USE_XR                   OFF)
 cc_set_if_undefined(USE_SERVER_MODE          OFF)
@@ -181,6 +182,7 @@ if(CI_FORCE_MINIMAL_FEATURES)
     set(USE_DEBUG_RENDERER OFF)
     set(USE_GEOMETRY_RENDERER OFF)
     set(USE_WEBP OFF)
+    set(USE_BOX2D_JSB OFF)
 endif()
 
 ################################# external source code ################################
@@ -236,6 +238,7 @@ cc_inspect_values(
     NODE_EXECUTABLE
     NET_MODE
     USE_REMOTE_LOG
+    USE_BOX2D_JSB
 )
 
 if(USE_XR)
@@ -2038,6 +2041,19 @@ cocos_source_files(
     cocos/2d/renderer/StencilManager.cpp
 )
 
+##### box2d
+if(USE_BOX2D_JSB)
+cocos_source_files(
+    NO_WERROR NO_UBUILD ${SWIG_OUTPUT}/jsb_box2d_auto.cpp
+                        ${SWIG_OUTPUT}/jsb_box2d_auto.h
+
+    NO_WERROR cocos/bindings/manual/jsb_box2d_manual.cpp
+              cocos/bindings/manual/jsb_box2d_manual.h
+              cocos/bindings/manual/Box2dCallbacks.cpp
+              cocos/bindings/manual/Box2dCallbacks.h
+)
+endif()
+
 ##### 3d
 cocos_source_files(
     cocos/3d/assets/Types.h
@@ -3175,6 +3191,7 @@ function(cc_apply_definations target)
         $<$<OR:$<CONFIG:Debug>,$<BOOL:${CC_DEBUG_FORCE}>>:CC_DEBUG=1>
         $<IF:$<BOOL:${USE_ADPF}>,CC_USE_ADPF=1,CC_USE_ADPF=0>
         $<IF:$<BOOL:${USE_GOOGLE_BILLING}>,CC_USE_GOOGLE_BILLING=1,CC_USE_GOOGLE_BILLING=0>
+        $<IF:$<BOOL:${USE_BOX2D_JSB}>,CC_USE_BOX2D_JSB=1,CC_USE_BOX2D_JSB=0>
     )
 endfunction()
 
