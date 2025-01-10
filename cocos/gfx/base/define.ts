@@ -1812,7 +1812,7 @@ export class DescriptorSetLayoutBinding {
         public descriptorType: DescriptorType = DescriptorType.UNKNOWN,
         public count: number = 0,
         public stageFlags: ShaderStageFlags = ShaderStageFlagBit.NONE,
-        public memoryAccessFlags: MemoryAccess = MemoryAccessBit.READ_ONLY,
+        public access: MemoryAccess = MemoryAccessBit.READ_ONLY,
         public viewDimension: ViewDimension = ViewDimension.UNKNOWN,
         public sampleType: SampleType = SampleType.FLOAT,
         public format: Format = Format.UNKNOWN,
@@ -1824,7 +1824,7 @@ export class DescriptorSetLayoutBinding {
         this.descriptorType = info.descriptorType;
         this.count = info.count;
         this.stageFlags = info.stageFlags;
-        this.memoryAccessFlags = info.memoryAccessFlags;
+        this.access = info.access;
         this.viewDimension = info.viewDimension;
         this.sampleType = info.sampleType;
         this.format = info.format;
