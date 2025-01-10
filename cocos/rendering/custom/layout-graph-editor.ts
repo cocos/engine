@@ -677,7 +677,7 @@ export class LayoutGraphInfo {
             parameterType: ParameterType.TABLE,
             descriptorType: DescriptorTypeOrder.UNIFORM_BUFFER,
         });
-        for (const info of blocks) {
+        blocks.forEach((info): void => {
             const groupBlockIndex = new DescriptorGroupBlockIndex(
                 rate,
                 ParameterType.TABLE,
@@ -694,7 +694,7 @@ export class LayoutGraphInfo {
             } else {
                 counter.addDescriptor(key, info.name, 1);
             }
-        }
+        });
     }
     private buildBuffers (
         visDB: VisibilityDB,
@@ -753,7 +753,7 @@ export class LayoutGraphInfo {
             parameterType: ParameterType.TABLE,
             descriptorType: DescriptorTypeOrder.STORAGE_BUFFER,
         });
-        for (const info of infoArray) {
+        infoArray.forEach((info): void => {
             const groupBlockIndex = new DescriptorGroupBlockIndex(
                 rate,
                 ParameterType.TABLE,
@@ -769,7 +769,7 @@ export class LayoutGraphInfo {
             } else {
                 counter.addDescriptor(key, info.name, 1);
             }
-        }
+        });
     }
     private buildNonTextures (
         visDB: VisibilityDB,
@@ -815,7 +815,7 @@ export class LayoutGraphInfo {
             parameterType: ParameterType.TABLE,
             descriptorType: order,
         });
-        for (const info of infoArray) {
+        infoArray.forEach((info): void => {
             const groupBlockIndex = new DescriptorGroupBlockIndex(
                 rate,
                 ParameterType.TABLE,
@@ -831,7 +831,7 @@ export class LayoutGraphInfo {
             } else {
                 counter.addDescriptor(key, info.name, info.count);
             }
-        }
+        });
     }
     private buildTextures (
         visDB: VisibilityDB,
@@ -875,7 +875,7 @@ export class LayoutGraphInfo {
             parameterType: ParameterType.TABLE,
             descriptorType: order,
         });
-        for (const info of infoArray) {
+        infoArray.forEach((info): void => {
             const groupBlockIndex = new DescriptorGroupBlockIndex(
                 rate,
                 ParameterType.TABLE,
@@ -893,7 +893,7 @@ export class LayoutGraphInfo {
             } else {
                 counter.addDescriptor(key, info.name, info.count);
             }
-        }
+        });
     }
     private getViewDimension (type: Type): ViewDimension  {
         switch (type) {
@@ -933,7 +933,7 @@ export class LayoutGraphInfo {
             parameterType: ParameterType.TABLE,
             descriptorType: DescriptorTypeOrder.STORAGE_IMAGE,
         });
-        for (const info of infoArray) {
+        infoArray.forEach((info): void => {
             const groupBlockIndex = new DescriptorGroupBlockIndex(
                 rate,
                 ParameterType.TABLE,
@@ -951,7 +951,7 @@ export class LayoutGraphInfo {
             } else {
                 counter.addDescriptor(key, info.name, info.count);
             }
-        }
+        });
     }
     public addEffect (asset: EffectAsset): void {
         const lg = this.lg;
@@ -988,7 +988,7 @@ export class LayoutGraphInfo {
                 const groupCounter = new DescriptorCounter();
 
                 // merge descriptors and reserve capacity
-                for (const list of shader.descriptors) {
+                shader.descriptors.forEach((list): void => {
                     this.buildBlocks(visDB, list.rate, list.blocks, db, counter);
                     this.buildBuffers(visDB, list.rate, list.buffers, Type.UNKNOWN, db, counter);
                     this.buildNonTextures(visDB, list.rate, DescriptorTypeOrder.SAMPLER, list.samplers, Type.SAMPLER, db, counter);
@@ -1005,7 +1005,7 @@ export class LayoutGraphInfo {
                     this.buildGroupTextures(visDB, list.rate, DescriptorTypeOrder.TEXTURE, list.textures, db, groupCounter);
                     this.buildGroupTextures(visDB, list.rate, DescriptorTypeOrder.SAMPLER_TEXTURE, list.samplerTextures, db, groupCounter);
                     this.buildGroupImages(visDB, list.rate, list.images, db, groupCounter);
-                }
+                });
 
                 // update max capacity and debug info
                 counter.counter.forEach((v: number, key: string): void => {
