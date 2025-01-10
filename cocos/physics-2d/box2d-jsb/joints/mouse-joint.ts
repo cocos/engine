@@ -64,6 +64,7 @@ export class b2MouseJoint extends b2Joint implements IMouseJoint {
     _createJointDef (): any {
         const def = new b2.MouseJointDef();
         const comp = this._jointComp as MouseJoint2D;
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         //@ts-ignore
         def.target = { x: this._touchPoint.x / PHYSICS_2D_PTM_RATIO, y: this._touchPoint.y / PHYSICS_2D_PTM_RATIO };
         def.maxForce = comp.maxForce;
@@ -125,12 +126,6 @@ export class b2MouseJoint extends b2Joint implements IMouseJoint {
             return;
         }
 
-        // let camera = cc.Camera.findCamera(this.node);
-        // if (camera) {
-        //     this.target = camera.getScreenToWorldPoint(this._touchPoint);
-        // }
-        // else {
         this.setTarget(this._touchPoint);
-        // }
     }
 }

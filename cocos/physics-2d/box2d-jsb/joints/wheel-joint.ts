@@ -63,7 +63,6 @@ export class b2WheelJoint extends b2Joint implements IWheelJoint {
         def.localAnchorB = { x: comp.connectedAnchor.x / PHYSICS_2D_PTM_RATIO, y: comp.connectedAnchor.y / PHYSICS_2D_PTM_RATIO };
         const angle = toRadian(comp.angle);
         def.localAxisA = { x: Math.cos(angle), y: Math.sin(angle) };
-        // def.localAxisA.Set(0, 1);
         def.maxMotorTorque = comp.maxMotorTorque;
         def.motorSpeed = toRadian(comp.motorSpeed);
         def.enableMotor = comp.enableMotor;

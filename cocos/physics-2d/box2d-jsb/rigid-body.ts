@@ -31,7 +31,6 @@ import { PHYSICS_2D_PTM_RATIO, ERigidBody2DType } from '../framework/physics-typ
 
 import { Node } from '../../scene-graph/node';
 import { Collider2D } from '../framework';
-import { NodeEventType } from '../../scene-graph/node-event';
 
 const tempVec3 = new Vec3();
 
@@ -104,13 +103,6 @@ export class b2RigidBody2D implements IRigidBody2D {
         if (type & Node.TransformBit.POSITION) {
             isPosDirty = true;
             const pos = this._rigidBody.node.worldPosition;
-            // let temp;
-
-            // if (bodyType === ERigidBody2DType.Animated) {
-            //     temp = b2body.GetLinearVelocity();
-            // } else {
-            //     temp = b2body.GetPosition();
-            // }
 
             tempVec2_1.x = pos.x / PHYSICS_2D_PTM_RATIO;
             tempVec2_1.y = pos.y / PHYSICS_2D_PTM_RATIO;
@@ -212,13 +204,7 @@ export class b2RigidBody2D implements IRigidBody2D {
 
         const pos = this._rigidBody.node.worldPosition;
 
-        // let temp;
         const bodyType = this._rigidBody.type;
-        // if (bodyType === ERigidBody2DType.Animated) {
-        //     temp = b2body.GetLinearVelocity();
-        // } else {
-        //     temp = b2body.GetPosition();
-        // }
 
         const temp = tempVec2_1;
         temp.x = pos.x / PHYSICS_2D_PTM_RATIO;
