@@ -1131,6 +1131,76 @@ export class LayoutGraphInfo {
         }
         return 0;
     }
+    private buildDescriptorBlocks (
+        lg: LayoutGraph,
+        blocks: Map<string, DescriptorBlock>,
+        passID: number,
+        phaseDB: DescriptorDB,
+        phaseID: number,
+    ): number {
+        for (const [key, passBlock] of blocks) {
+            const index: DescriptorBlockIndex = JSON.parse(key);
+            if (index.updateFrequency !== UpdateFrequency.PER_PASS) {
+                error(`phase: ${lg.getName(phaseID)} update frequency is not PER_PASS`);
+                return 1;
+            }
+            if (passBlock.count === 0) {
+                error(`pass: ${lg.getName(passID)} count is 0`);
+                return 1;
+            }
+            if (passBlock.capacity !== passBlock.count) {
+                error(`pass: ${lg.getName(passID)} capacity does not equal count`);
+                return 1;
+            }
+            const phaseBlock = this.getDescriptorBlock(key, phaseDB);
+            phaseBlock.descriptors.clear();
+            phaseBlock.uniformBlocks.clear();
+            phaseBlock.capacity = passBlock.capacity;
+            phaseBlock.count = passBlock.count;
+            for (const [name, d] of passBlock.descriptors) {
+                phaseBlock.descriptors.set(name, d);
+            }
+            for (const [name, b] of passBlock.uniformBlocks) {
+                phaseBlock.uniformBlocks.set(name, b);
+            }
+        }
+        return 0;
+    }
+    private buildDescriptorGroupBlocks (
+        lg: LayoutGraph,
+        blocks: Map<string, DescriptorBlock>,
+        passID: number,
+        phaseDB: DescriptorDB,
+        phaseID: number,
+    ): number {
+        for (const [key, passBlock] of blocks) {
+            const index: DescriptorGroupBlockIndex = JSON.parse(key);
+            if (index.updateFrequency !== UpdateFrequency.PER_PASS) {
+                error(`phase: ${lg.getName(phaseID)} update frequency is not PER_PASS`);
+                return 1;
+            }
+            if (passBlock.count === 0) {
+                error(`pass: ${lg.getName(passID)} count is 0`);
+                return 1;
+            }
+            if (passBlock.capacity !== passBlock.count) {
+                error(`pass: ${lg.getName(passID)} capacity does not equal count`);
+                return 1;
+            }
+            const phaseBlock = this.getDescriptorGroupBlock(key, phaseDB);
+            phaseBlock.descriptors.clear();
+            phaseBlock.uniformBlocks.clear();
+            phaseBlock.capacity = passBlock.capacity;
+            phaseBlock.count = passBlock.count;
+            for (const [name, d] of passBlock.descriptors) {
+                phaseBlock.descriptors.set(name, d);
+            }
+            for (const [name, b] of passBlock.uniformBlocks) {
+                phaseBlock.uniformBlocks.set(name, b);
+            }
+        }
+        return 0;
+    }
     public build (): number {
         const lg = this.lg;
         const visMap = new Map<number, VisibilityDB>();
@@ -1213,31 +1283,11 @@ export class LayoutGraphInfo {
                     return 1;
                 }
                 const phaseDB = lg.getDescriptors(phaseID);
-                for (const [key, passBlock] of passDB.blocks) {
-                    const index: DescriptorBlockIndex = JSON.parse(key);
-                    if (index.updateFrequency !== UpdateFrequency.PER_PASS) {
-                        error(`phase: ${lg.getName(phaseID)} update frequency is not PER_PASS`);
-                        return 1;
-                    }
-                    if (passBlock.count === 0) {
-                        error(`pass: ${lg.getName(passID)} count is 0`);
-                        return 1;
-                    }
-                    if (passBlock.capacity !== passBlock.count) {
-                        error(`pass: ${lg.getName(passID)} capacity does not equal count`);
-                        return 1;
-                    }
-                    const phaseBlock = this.getDescriptorBlock(key, phaseDB);
-                    phaseBlock.descriptors.clear();
-                    phaseBlock.uniformBlocks.clear();
-                    phaseBlock.capacity = passBlock.capacity;
-                    phaseBlock.count = passBlock.count;
-                    for (const [name, d] of passBlock.descriptors) {
-                        phaseBlock.descriptors.set(name, d);
-                    }
-                    for (const [name, b] of passBlock.uniformBlocks) {
-                        phaseBlock.uniformBlocks.set(name, b);
-                    }
+                if (this.buildDescriptorBlocks(lg, passDB.blocks, passID, phaseDB, phaseID)) {
+                    return 1;
+                }
+                if (this.buildDescriptorGroupBlocks(lg, passDB.groupBlocks, passID, phaseDB, phaseID)) {
+                    return 1;
                 }
             }
         }
