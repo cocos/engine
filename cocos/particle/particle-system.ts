@@ -1326,93 +1326,95 @@ export class ParticleSystem extends ModelRenderer {
         }
     }
 
-    protected _onVisibilityChange (val): void {
+    protected _onVisibilityChange (val: number): void {
         if (this.processor.model) {
             this.processor.model.visFlags = val;
         }
     }
 
     private emit (count: number, dt: number): void {
-        const loopDelta = (this._time % this.duration) / this.duration; // loop delta value
+        const self = this;
+        const node = self.node;
+        const loopDelta = (self._time % self.duration) / self.duration; // loop delta value
 
         // refresh particle node position to update emit position
-        if (this._needRefresh) {
+        if (self._needRefresh) {
             // this.node.setPosition(this.node.getPosition());
-            this.node.invalidateChildren(TransformBit.POSITION);
+            node.invalidateChildren(TransformBit.POSITION);
 
-            this._needRefresh = false;
+            self._needRefresh = false;
         }
 
-        if (this._simulationSpace === Space.World) {
-            this.node.getWorldMatrix(_world_mat);
-            this.node.getWorldRotation(_world_rol);
+        if (self._simulationSpace === Space.World) {
+            node.getWorldMatrix(_world_mat);
+            node.getWorldRotation(_world_rol);
         }
 
         for (let i = 0; i < count; ++i) {
-            const particle = this.processor.getFreeParticle();
+            const particle = self.processor.getFreeParticle();
             if (particle === null) {
                 return;
             }
-            particle.particleSystem = this;
+            particle.particleSystem = self;
             particle.reset();
 
             const rand = pseudoRandom(randomRangeInt(0, bits.INT_MAX));
 
-            if (this._shapeModule && this._shapeModule.enable) {
-                this._shapeModule.emit(particle);
+            if (self._shapeModule && self._shapeModule.enable) {
+                self._shapeModule.emit(particle);
             } else {
                 Vec3.set(particle.position, 0, 0, 0);
                 Vec3.copy(particle.velocity, particleEmitZAxis);
             }
 
-            if (this._textureAnimationModule && this._textureAnimationModule.enable) {
-                this._textureAnimationModule.init(particle);
+            if (self._textureAnimationModule && self._textureAnimationModule.enable) {
+                self._textureAnimationModule.init(particle);
             }
 
-            const curveStartSpeed = this.startSpeed.evaluate(loopDelta, rand)!;
+            const curveStartSpeed = self.startSpeed.evaluate(loopDelta, rand)!;
             Vec3.multiplyScalar(particle.velocity, particle.velocity, curveStartSpeed);
 
-            if (this._simulationSpace === Space.World) {
+            if (self._simulationSpace === Space.World) {
                 Vec3.transformMat4(particle.position, particle.position, _world_mat);
                 Vec3.transformQuat(particle.velocity, particle.velocity, _world_rol);
             }
 
             Vec3.copy(particle.ultimateVelocity, particle.velocity);
             // apply startRotation.
-            if (this.startRotation3D) {
+            if (self.startRotation3D) {
                 // eslint-disable-next-line max-len
-                particle.startEuler.set(this.startRotationX.evaluate(loopDelta, rand), this.startRotationY.evaluate(loopDelta, rand), this.startRotationZ.evaluate(loopDelta, rand));
+                particle.startEuler.set(self.startRotationX.evaluate(loopDelta, rand), self.startRotationY.evaluate(loopDelta, rand), self.startRotationZ.evaluate(loopDelta, rand));
             } else {
-                particle.startEuler.set(0, 0, this.startRotationZ.evaluate(loopDelta, rand));
+                particle.startEuler.set(0, 0, self.startRotationZ.evaluate(loopDelta, rand));
             }
             particle.rotation.set(particle.startEuler);
 
             // apply startSize.
-            if (this.startSize3D) {
+            if (self.startSize3D) {
                 Vec3.set(
                     particle.startSize,
-                    this.startSizeX.evaluate(loopDelta, rand)!,
-                    this.startSizeY.evaluate(loopDelta, rand)!,
-                    this.startSizeZ.evaluate(loopDelta, rand)!,
+                    self.startSizeX.evaluate(loopDelta, rand)!,
+                    self.startSizeY.evaluate(loopDelta, rand)!,
+                    self.startSizeZ.evaluate(loopDelta, rand)!,
                 );
             } else {
-                Vec3.set(particle.startSize, this.startSizeX.evaluate(loopDelta, rand)!, 1, 1);
+                Vec3.set(particle.startSize, self.startSizeX.evaluate(loopDelta, rand)!, 1, 1);
                 particle.startSize.y = particle.startSize.x;
             }
             Vec3.copy(particle.size, particle.startSize);
 
             // apply startColor.
-            particle.startColor.set(this.startColor.evaluate(loopDelta, rand));
+            particle.startColor.set(self.startColor.evaluate(loopDelta, rand));
             particle.color.set(particle.startColor);
 
             // apply startLifetime.
-            particle.startLifetime = this.startLifetime.evaluate(loopDelta, rand)! + dt;
+            particle.startLifetime = self.startLifetime.evaluate(loopDelta, rand)! + dt;
             particle.remainingLifetime = particle.startLifetime;
 
             particle.randomSeed = randomRangeInt(0, 233280);
             particle.loopCount++;
 
-            this.processor.setNewParticle(particle);
+            self.processor.setNewParticle(particle);
         } // end of particles forLoop.
     }
 
