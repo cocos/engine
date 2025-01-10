@@ -11,7 +11,7 @@ exports.close = close;
 const { setHidden, setReadonly, isMultipleInvalid } = require('../utils/prop');
 
 const AUTO_ATLAS_EXTNAME = '.pac';
-const ASSET_Dir = join(Editor.Project.path, 'assets');
+const ASSET_DIR = join(Editor.Project.path, 'assets');
 
 // Query the automatic atlas with the .pac suffix
 async function findAutoAtlasFolder(spriteFrameUuid) {
@@ -22,7 +22,7 @@ async function findAutoAtlasFolder(spriteFrameUuid) {
     }
 
     let dir = dirname(filePath);
-    while (dir !== ASSET_Dir) {
+    while (dir !== ASSET_DIR) {
         const files = readdirSync(dir);
         const file = files.find(file => file.endsWith(AUTO_ATLAS_EXTNAME));
         if (file) {
