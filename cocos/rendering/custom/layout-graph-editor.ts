@@ -1446,6 +1446,15 @@ class LayoutGraphBuilder2 {
         }
         return data;
     }
+    private getDescriptorGroupData (ppl: PipelineLayoutData, rate: UpdateFrequency): DescriptorSetData {
+        const data = ppl.descriptorGroups.get(rate);
+        if (data === undefined) {
+            const newData = new DescriptorSetData();
+            ppl.descriptorGroups.set(rate, newData);
+            return newData;
+        }
+        return data;
+    }
     addDescriptorBlock (nodeID: number, index: DescriptorBlockIndex, block: Readonly<DescriptorBlockFlattened>): void {
         if (block.capacity <= 0) {
             error('empty block');
@@ -1488,10 +1497,72 @@ class LayoutGraphBuilder2 {
             layout.samplerTextureCapacity += block.capacity;
         }
     }
+    addDescriptorGroupBlock (nodeID: number, index: DescriptorGroupBlockIndex, block: Readonly<DescriptorBlockFlattened>): void {
+        if (block.capacity <= 0) {
+            error('empty block');
+            return;
+        }
+        if (block.descriptorNames.length !== block.descriptors.length) {
+            error('error descriptor');
+            return;
+        }
+        if (block.uniformBlockNames.length !== block.uniformBlocks.length) {
+            error('error uniform');
+            return;
+        }
+        if (!(index.updateFrequency >= UpdateFrequency.PER_INSTANCE
+            && index.updateFrequency <= UpdateFrequency.PER_PASS)) {
+            error('invalid update frequency');
+            return;
+        }
+
+        const lg = this.lg;
+        const ppl: PipelineLayoutData = lg.getLayout(nodeID);
+        const setData = this.getDescriptorGroupData(ppl, index.updateFrequency);
+        const layout = setData.descriptorSetLayoutData;
+
+        const dstBlock = new DescriptorBlockData(
+            index.descriptorType,
+            index.visibility,
+            block.capacity,
+            index.accessType,
+            index.viewDimension,
+            index.sampleType,
+            index.format,
+        );
+        dstBlock.offset = layout.capacity;
+        layout.descriptorBlocks.push(dstBlock);
+        for (let j = 0; j < block.descriptors.length; ++j) {
+            const name: string = block.descriptorNames[j];
+            const d: Descriptor = block.descriptors[j];
+            const nameID = getOrCreateDescriptorID(lg, name);
+            const data = new DescriptorData(nameID, d.type, d.count);
+            dstBlock.descriptors.push(data);
+        }
+        layout.capacity += block.capacity;
+        if (index.descriptorType === DescriptorTypeOrder.UNIFORM_BUFFER
+            || index.descriptorType === DescriptorTypeOrder.DYNAMIC_UNIFORM_BUFFER) {
+            layout.uniformBlockCapacity += block.capacity;
+        } else if (index.descriptorType === DescriptorTypeOrder.SAMPLER_TEXTURE) {
+            layout.samplerTextureCapacity += block.capacity;
+        }
+    }
     addUniformBlock (nodeID: number, index: DescriptorBlockIndex, name: string, uniformBlock: UniformBlock): void {
         const g: LayoutGraphData = this.lg;
         const ppl: PipelineLayoutData = g.getLayout(nodeID);
         const setData = this.getDescriptorSetData(ppl, index.updateFrequency);
+        const layout = setData.descriptorSetLayoutData;
+        const nameID = getOrCreateDescriptorID(g, name);
+        layout.uniformBlocks.set(nameID, uniformBlock);
+        // register constant names
+        for (const member of uniformBlock.members) {
+            getOrCreateConstantID(g, member.name);
+        }
+    }
+    addGroupUniformBlock (nodeID: number, index: DescriptorGroupBlockIndex, name: string, uniformBlock: UniformBlock): void {
+        const g: LayoutGraphData = this.lg;
+        const ppl: PipelineLayoutData = g.getLayout(nodeID);
+        const setData = this.getDescriptorGroupData(ppl, index.updateFrequency);
         const layout = setData.descriptorSetLayoutData;
         const nameID = getOrCreateDescriptorID(g, name);
         layout.uniformBlocks.set(nameID, uniformBlock);
@@ -1511,6 +1582,35 @@ class LayoutGraphBuilder2 {
         const layout = setData.descriptorSetLayoutData;
 
         const dstBlock = new DescriptorBlockData(index.descriptorType, index.visibility, block.capacity);
+        dstBlock.offset = layout.capacity;
+        layout.descriptorBlocks.push(dstBlock);
+        layout.capacity += block.capacity;
+        if (index.descriptorType === DescriptorTypeOrder.UNIFORM_BUFFER
+            || index.descriptorType === DescriptorTypeOrder.DYNAMIC_UNIFORM_BUFFER) {
+            layout.uniformBlockCapacity += block.capacity;
+        } else if (index.descriptorType === DescriptorTypeOrder.SAMPLER_TEXTURE) {
+            layout.samplerTextureCapacity += block.capacity;
+        }
+    }
+    reserveDescriptorGroupBlock (nodeID: number, index: DescriptorGroupBlockIndex, block: DescriptorBlockFlattened): void {
+        if (block.capacity <= 0) {
+            error('empty block');
+            return;
+        }
+        const g: LayoutGraphData = this.lg;
+        const ppl: PipelineLayoutData = g.getLayout(nodeID);
+        const setData = this.getDescriptorGroupData(ppl, index.updateFrequency);
+        const layout = setData.descriptorSetLayoutData;
+
+        const dstBlock = new DescriptorBlockData(
+            index.descriptorType,
+            index.visibility,
+            block.capacity,
+            index.accessType,
+            index.viewDimension,
+            index.sampleType,
+            index.format,
+        );
         dstBlock.offset = layout.capacity;
         layout.descriptorBlocks.push(dstBlock);
         layout.capacity += block.capacity;
