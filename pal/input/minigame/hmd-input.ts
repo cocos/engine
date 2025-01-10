@@ -57,19 +57,20 @@ export class HMDInputDevice {
     }
 
     private _initInputSource (): void {
-        this._viewLeftPosition = new InputSourcePosition();
-        this._viewLeftPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
-        this._viewLeftOrientation = new InputSourceOrientation();
-        this._viewLeftOrientation.getValue = (): Readonly<Quat> =>  Quat.IDENTITY;
+        const self = this;
+        self._viewLeftPosition = new InputSourcePosition();
+        self._viewLeftPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
+        self._viewLeftOrientation = new InputSourceOrientation();
+        self._viewLeftOrientation.getValue = (): Readonly<Quat> =>  Quat.IDENTITY;
 
-        this._viewRightPosition = new InputSourcePosition();
-        this._viewRightPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
-        this._viewRightOrientation = new InputSourceOrientation();
-        this._viewRightOrientation.getValue = (): Readonly<Quat> =>  Quat.IDENTITY;
+        self._viewRightPosition = new InputSourcePosition();
+        self._viewRightPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
+        self._viewRightOrientation = new InputSourceOrientation();
+        self._viewRightOrientation.getValue = (): Readonly<Quat> =>  Quat.IDENTITY;
 
-        this._headMiddlePosition = new InputSourcePosition();
-        this._headMiddlePosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
-        this._headMiddleOrientation = new InputSourceOrientation();
-        this._headMiddleOrientation.getValue = (): Readonly<Quat> =>  Quat.IDENTITY;
+        self._headMiddlePosition = new InputSourcePosition();
+        self._headMiddlePosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
+        self._headMiddleOrientation = new InputSourceOrientation();
+        self._headMiddleOrientation.getValue = (): Readonly<Quat> =>  Quat.IDENTITY;
     }
 }
