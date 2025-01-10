@@ -1043,7 +1043,7 @@ export class LayoutGraphInfo {
             }
         }
     }
-    private buildDescriptorBlocks (
+    private mergeDescriptorBlocks (
         passVisDB: VisibilityDB,
         blocks: Map<string, DescriptorBlock>,
         passDB: DescriptorDB,
@@ -1085,7 +1085,7 @@ export class LayoutGraphInfo {
         }
         return 0;
     }
-    private buildDescriptorGroupBlocks (
+    private mergeDescriptorGroupBlocks (
         passVisDB: VisibilityDB,
         blocks: Map<string, DescriptorBlock>,
         passDB: DescriptorDB,
@@ -1184,10 +1184,10 @@ export class LayoutGraphInfo {
                 error(`pass: ${lg.getName(parentID)} has no visibility database`);
                 return 1;
             }
-            if (this.buildDescriptorBlocks(passVisDB, phaseDB.blocks, passDB)) {
+            if (this.mergeDescriptorBlocks(passVisDB, phaseDB.blocks, passDB)) {
                 return 1;
             }
-            if (this.buildDescriptorGroupBlocks(passVisDB, phaseDB.groupBlocks, passDB)) {
+            if (this.mergeDescriptorGroupBlocks(passVisDB, phaseDB.groupBlocks, passDB)) {
                 return 1;
             }
         }
