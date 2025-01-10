@@ -33,7 +33,7 @@ import {
     DescriptorBlockData,
     DescriptorBlockFlattened,
     DescriptorBlockIndex,
-    DescriptorData, DescriptorDB, DescriptorGroupBlock, DescriptorGroupBlockIndex, DescriptorSetData,
+    DescriptorData, DescriptorDB, DescriptorGroupBlockIndex, DescriptorSetData,
     DescriptorTypeOrder,
     LayoutGraph, LayoutGraphData, LayoutGraphDataValue, LayoutGraphValue,
     PipelineLayoutData, RenderPassType, RenderPhase, RenderPhaseData,
@@ -585,10 +585,10 @@ export class LayoutGraphInfo {
         }
         return value;
     }
-    private getDescriptorGroupBlock (key: string, descriptorDB: DescriptorDB): DescriptorGroupBlock {
+    private getDescriptorGroupBlock (key: string, descriptorDB: DescriptorDB): DescriptorBlock {
         const value = descriptorDB.groupBlocks.get(key);
         if (value === undefined) {
-            const groupBlock: DescriptorGroupBlock = new DescriptorGroupBlock();
+            const groupBlock: DescriptorBlock = new DescriptorBlock();
             descriptorDB.groupBlocks.set(key, groupBlock);
             return groupBlock;
         }
@@ -1043,6 +1043,94 @@ export class LayoutGraphInfo {
             }
         }
     }
+    private buildDescriptorBlocks (
+        passVisDB: VisibilityDB,
+        blocks: Map<string, DescriptorBlock>,
+        passDB: DescriptorDB,
+    ): number {
+        for (const [key0, block] of blocks) {
+            const index0: DescriptorBlockIndex = JSON.parse(key0);
+            if (index0.updateFrequency <= UpdateFrequency.PER_PHASE) {
+                continue;
+            }
+            const visIndex = new VisibilityIndex(index0.updateFrequency, index0.parameterType, index0.descriptorType);
+            const passVisBlock = passVisDB.getBlock(visIndex);
+
+            for (const [name, d] of block.descriptors) {
+                const vis = passVisBlock.getVisibility(name);
+                let passBlock: DescriptorBlock;
+                if (vis === index0.visibility) {
+                    passBlock = this.getDescriptorBlock(key0, passDB);
+                } else {
+                    const index = new DescriptorBlockIndex(
+                        index0.updateFrequency,
+                        index0.parameterType,
+                        index0.descriptorType,
+                        vis,
+                    );
+                    const key = JSON.stringify(index);
+                    passBlock = this.getDescriptorBlock(key, passDB);
+                }
+                this.addDescriptor(passBlock, name, d.type);
+                if (index0.descriptorType !== DescriptorTypeOrder.UNIFORM_BUFFER) {
+                    continue;
+                }
+                const b = block.uniformBlocks.get(name);
+                if (!b) {
+                    error(`uniform block: ${name} not found`);
+                    return 1;
+                }
+                this.addUniformBlock(passBlock, name, b);
+            }
+        }
+        return 0;
+    }
+    private buildDescriptorGroupBlocks (
+        passVisDB: VisibilityDB,
+        blocks: Map<string, DescriptorBlock>,
+        passDB: DescriptorDB,
+    ): number {
+        for (const [key0, block] of blocks) {
+            const index0: DescriptorGroupBlockIndex = JSON.parse(key0);
+            if (index0.updateFrequency <= UpdateFrequency.PER_PHASE) {
+                continue;
+            }
+            const visIndex = new VisibilityIndex(index0.updateFrequency, index0.parameterType, index0.descriptorType);
+            const passVisBlock = passVisDB.getBlock(visIndex);
+
+            for (const [name, d] of block.descriptors) {
+                const vis = passVisBlock.getVisibility(name);
+                let passBlock: DescriptorBlock;
+                if (vis === index0.visibility) {
+                    passBlock = this.getDescriptorGroupBlock(key0, passDB);
+                } else {
+                    const index = new DescriptorGroupBlockIndex(
+                        index0.updateFrequency,
+                        index0.parameterType,
+                        index0.descriptorType,
+                        vis,
+                        index0.accessType,
+                        index0.viewDimension,
+                        index0.sampleType,
+                        index0.format,
+                    );
+                    const key = JSON.stringify(index);
+                    passBlock = this.getDescriptorGroupBlock(key, passDB);
+                }
+                this.addDescriptor(passBlock, name, d.type);
+                if (index0.descriptorType !== DescriptorTypeOrder.UNIFORM_BUFFER) {
+                    continue;
+                }
+                const b = block.uniformBlocks.get(name);
+                if (!b) {
+                    error(`uniform block: ${name} not found`);
+                    return 1;
+                }
+                this.addUniformBlock(passBlock, name, b);
+            }
+        }
+        return 0;
+    }
     public build (): number {
         const lg = this.lg;
         const visMap = new Map<number, VisibilityDB>();
@@ -1096,40 +1184,11 @@ export class LayoutGraphInfo {
                 error(`pass: ${lg.getName(parentID)} has no visibility database`);
                 return 1;
             }
-            for (const [key0, block] of phaseDB.blocks) {
-                const index0: DescriptorBlockIndex = JSON.parse(key0);
-                if (index0.updateFrequency <= UpdateFrequency.PER_PHASE) {
-                    continue;
-                }
-                const visIndex = new VisibilityIndex(index0.updateFrequency, index0.parameterType, index0.descriptorType);
-                const passVisBlock = passVisDB.getBlock(visIndex);
-
-                for (const [name, d] of block.descriptors) {
-                    const vis = passVisBlock.getVisibility(name);
-                    let passBlock: DescriptorBlock;
-                    if (vis === index0.visibility) {
-                        passBlock = this.getDescriptorBlock(key0, passDB);
-                    } else {
-                        const index = new DescriptorBlockIndex(
-                            index0.updateFrequency,
-                            index0.parameterType,
-                            index0.descriptorType,
-                            vis,
-                        );
-                        const key = JSON.stringify(index);
-                        passBlock = this.getDescriptorBlock(key, passDB);
-                    }
-                    this.addDescriptor(passBlock, name, d.type);
-                    if (index0.descriptorType !== DescriptorTypeOrder.UNIFORM_BUFFER) {
-                        continue;
-                    }
-                    const b = block.uniformBlocks.get(name);
-                    if (!b) {
-                        error(`uniform block: ${name} not found`);
-                        return 1;
-                    }
-                    this.addUniformBlock(passBlock, name, b);
-                }
+            if (this.buildDescriptorBlocks(passVisDB, phaseDB.blocks, passDB)) {
+                return 1;
+            }
+            if (this.buildDescriptorGroupBlocks(passVisDB, phaseDB.groupBlocks, passDB)) {
+                return 1;
             }
         }
         // update pass

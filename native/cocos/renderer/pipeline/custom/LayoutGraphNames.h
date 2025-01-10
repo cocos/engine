@@ -55,7 +55,6 @@ inline const char* getName(const DescriptorBlock& /*v*/) noexcept { return "Desc
 inline const char* getName(const DescriptorBlockFlattened& /*v*/) noexcept { return "DescriptorBlockFlattened"; }
 inline const char* getName(const DescriptorBlockIndex& /*v*/) noexcept { return "DescriptorBlockIndex"; }
 inline const char* getName(const DescriptorGroupBlockIndex& /*v*/) noexcept { return "DescriptorGroupBlockIndex"; }
-inline const char* getName(const DescriptorGroupBlock& /*v*/) noexcept { return "DescriptorGroupBlock"; }
 inline const char* getName(const DescriptorDB& /*v*/) noexcept { return "DescriptorDB"; }
 inline const char* getName(const RenderStageTag& /*v*/) noexcept { return "RenderStage"; }
 inline const char* getName(const RenderPhaseTag& /*v*/) noexcept { return "RenderPhase"; }

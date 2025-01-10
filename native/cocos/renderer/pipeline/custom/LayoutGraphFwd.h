@@ -45,7 +45,6 @@ struct DescriptorBlock;
 struct DescriptorBlockFlattened;
 struct DescriptorBlockIndex;
 struct DescriptorGroupBlockIndex;
-struct DescriptorGroupBlock;
 struct DescriptorDB;
 struct RenderStageTag;
 struct RenderPhaseTag;
