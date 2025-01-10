@@ -1189,7 +1189,7 @@ export class ParticleSystem extends ModelRenderer {
             const thisCurPos = self._curPos;
             const thisOldPos = self._oldPos;
 
-            if (!self._curPos.equals(self._oldPos) && self._boundingBox && self._culler) {
+            if (!thisCurPos.equals(thisOldPos) && self._boundingBox && self._culler) {
                 const dx = thisCurPos.x - thisOldPos.x;
                 const dy = thisCurPos.y - thisOldPos.y;
                 const dz = thisCurPos.z - thisOldPos.z;
@@ -1198,7 +1198,7 @@ export class ParticleSystem extends ModelRenderer {
                 center.y += dy;
                 center.z += dz;
                 self._culler.setBoundingBoxCenter(center.x, center.y, center.z);
-                thisOldPos.set(self._curPos);
+                thisOldPos.set(thisCurPos);
             }
 
             const renderScene = self.node.scene.renderScene;
