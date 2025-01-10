@@ -28,6 +28,7 @@ import { assert, error, warn } from '../../core';
 import { DescriptorSetInfo, DescriptorSetLayout, DescriptorSetLayoutBinding, DescriptorSetLayoutInfo, DescriptorType, Device, Feature, Format, FormatFeatureBit, GetTypeSize, PipelineLayout, PipelineLayoutInfo, ShaderStageFlagBit, Type, Uniform, UniformBlock } from '../../gfx';
 import { UBOForwardLightEnum, UBOSkinning } from '../define';
 import type {
+    DescriptorGroupBlockIndex,
     LayoutGraphData,
     PipelineLayoutData, RenderPhaseData,
 } from './layout-graph';
@@ -178,6 +179,29 @@ export function sortDescriptorBlocks<T> (lhs: [string, T], rhs: [string, T]): nu
         + rhsIndex.parameterType * 1000
         + rhsIndex.descriptorType * 100
         + rhsIndex.visibility;
+    return lhsValue - rhsValue;
+}
+
+export function sortDescriptorGroupBlocks<T> (lhs: [string, T], rhs: [string, T]): number {
+    const lhsIndex: DescriptorGroupBlockIndex = JSON.parse(lhs[0]);
+    const rhsIndex: DescriptorGroupBlockIndex = JSON.parse(rhs[0]);
+
+    const lhsValue = lhsIndex.updateFrequency * 1000000000
+        + lhsIndex.parameterType * 100000000
+        + lhsIndex.descriptorType * 10000000
+        + lhsIndex.visibility * 1000000
+        + lhsIndex.accessType * 100000
+        + lhsIndex.viewDimension * 10000
+        + lhsIndex.sampleType * 1000
+        + lhsIndex.format;
+    const rhsValue = rhsIndex.updateFrequency * 1000000000
+        + rhsIndex.parameterType * 100000000
+        + rhsIndex.descriptorType * 10000000
+        + rhsIndex.visibility * 1000000
+        + rhsIndex.accessType * 100000
+        + rhsIndex.viewDimension * 10000
+        + rhsIndex.sampleType * 1000
+        + rhsIndex.format;
     return lhsValue - rhsValue;
 }
 

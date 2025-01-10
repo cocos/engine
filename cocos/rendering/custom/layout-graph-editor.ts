@@ -40,7 +40,7 @@ import {
     RenderStageData, ShaderProgramData,
 } from './layout-graph';
 import { getDescriptorTypeOrderName } from './layout-graph-names';
-import { ENABLE_SUBPASS, getOrCreateDescriptorID, sortDescriptorBlocks } from './layout-graph-utils';
+import { ENABLE_SUBPASS, getOrCreateDescriptorID, sortDescriptorBlocks, sortDescriptorGroupBlocks } from './layout-graph-utils';
 import {
     AccessType, ParameterType, UpdateFrequency,
 } from './types';
@@ -1378,6 +1378,29 @@ function buildLayoutGraphDataImpl (graph: LayoutGraph, builder: LayoutGraphBuild
                 }
             } else {
                 builder.reserveDescriptorBlock(v, index, flattened);
+            }
+        });
+
+        const flattenedGroupBlocks = Array.from(db.groupBlocks).sort(sortDescriptorGroupBlocks);
+        flattenedGroupBlocks.forEach((value: [string, DescriptorBlock]): void => {
+            const key = value[0];
+            const block = value[1];
+            const index: DescriptorGroupBlockIndex = JSON.parse(key);
+            if (index.updateFrequency > maxLevel || index.updateFrequency < minLevel) {
+                return;
+            }
+            const flattened = convertDescriptorBlock(block);
+            if (block.capacity === 0) {
+                error('block capacity is 0');
+                return;
+            }
+            if (index.updateFrequency > UpdateFrequency.PER_BATCH) {
+                builder.addDescriptorGroupBlock(v, index, flattened);
+                for (let i = 0; i < flattened.uniformBlockNames.length; ++i) {
+                    builder.addGroupUniformBlock(v, index, flattened.uniformBlockNames[i], flattened.uniformBlocks[i]);
+                }
+            } else {
+                builder.reserveDescriptorGroupBlock(v, index, flattened);
             }
         });
     }
