@@ -102,6 +102,7 @@ export function evalOptCurve (t: number, coefs: Float32Array | number[]): number
  * 描述一条曲线，其中每个相邻关键帧采用三次hermite插值计算。
  */
 export class AnimationCurve {
+    /** @dontmangle */
     private _curve!: RealCurve;
 
     private static defaultKF: Keyframe[] = [{

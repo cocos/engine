@@ -1330,6 +1330,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         this.emit(NodeEventType.CHILDREN_ORDER_CHANGED);
     }
 
+    /** @dontmangle */
     protected _instantiate (cloned?: Node | null, isSyncedNode: boolean = false): Node {
         if (!cloned) {
             cloned = cclegacy.instantiate._clone(this, this) as Node;

@@ -157,6 +157,7 @@ export class Prefab extends Asset {
         return this._createFunction!(rootToRedirect);  // this.data._instantiate();
     }
 
+    /** @dontmangle */
     protected _instantiate (): Node {
         let node: Node;
         let useJit = false;

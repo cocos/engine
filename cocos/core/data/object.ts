@@ -196,6 +196,8 @@ class CCObject implements EditorExtendableObject {
      * @internal
      */
     public _objFlags: number = 0;
+
+    /** @dontmangle */
     protected declare _name: string;
 
     constructor (name = '') {

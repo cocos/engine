@@ -281,8 +281,9 @@ export class KeyframeCurve<TKeyframeValue> implements CurveBase, Iterable<KeyFra
     }
 
     // Times are always sorted and 1-1 correspond to values.
+    /** @dontmangle */
     protected _times: number[] = [];
-
+    /** @dontmangle */
     protected _values: TKeyframeValue[] = [];
 }
 
