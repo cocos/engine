@@ -3246,6 +3246,10 @@ Can't getGFXSampler with out device
 
 [Physics] Failed to load user customized default physics material: %s, will fallback to built-in default physics material
 
+### 9644
+
+[Physics] Failed to find ear. There might be self-intersection in the polygon.
+
 ### 10001
 
 The sub-mesh contains %d vertices, which beyonds the capability (%d vertices most) of renderer of your platform.

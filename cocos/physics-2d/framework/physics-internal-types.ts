@@ -23,6 +23,7 @@
 */
 
 export declare class DelayEvent {
-    target: Object;
+    target: any;
+    // eslint-disable-next-line @typescript-eslint/ban-types
     func: Function;
 }
