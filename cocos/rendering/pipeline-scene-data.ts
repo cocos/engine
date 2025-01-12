@@ -32,12 +32,13 @@ import { Light } from '../render-scene/scene/light';
 import { Material } from '../asset/assets';
 import { Pass } from '../render-scene/core/pass';
 import { CSMLayers } from './shadow/csm-layers';
-import { legacyCC } from '../core/global-exports';
+import { cclegacy } from '../core/global-exports';
 import { Skin } from '../render-scene/scene/skin';
 import { Model } from '../render-scene/scene/model';
 import { PostSettings } from '../render-scene/scene/post-settings';
-import { MeshRenderer } from '../3d/framework/mesh-renderer';
+import type { MeshRenderer } from '../3d/framework/mesh-renderer';
 import type { LightProbes } from '../gi/light-probe';
+import type { Director } from '../game/director';
 
 const GEOMETRY_RENDERER_TECHNIQUE_COUNT = 6;
 
@@ -111,7 +112,7 @@ export class PipelineSceneData {
     public octree: Octree = new Octree();
     public skin: Skin = new Skin();
     public postSettings: PostSettings = new PostSettings();
-    public lightProbes: LightProbes = legacyCC.internal.LightProbes ? new legacyCC.internal.LightProbes() : null;
+    public lightProbes: LightProbes = cclegacy.internal.LightProbes ? new cclegacy.internal.LightProbes() : null;
 
     /**
       * @en The list for valid punctual Lights, only available after the scene culling of the current frame.

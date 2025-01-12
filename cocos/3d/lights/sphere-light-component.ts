@@ -30,6 +30,7 @@ import { Light, PhotometricTerm } from './light-component';
 import { CCFloat, CCInteger, cclegacy } from '../../core';
 import { Camera } from '../../render-scene/scene';
 import { Root } from '../../root';
+import { isHDRInPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
 
 /**
  * @en The sphere light component, multiple sphere lights can be added to one scene.
@@ -62,7 +63,7 @@ export class SphereLight extends Light {
     @range([0, Number.POSITIVE_INFINITY, 100])
     @type(CCInteger)
     get luminousFlux (): number {
-        const isHDR = (cclegacy.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = isHDRInPipelineSceneData();
         if (isHDR) {
             return this._luminanceHDR * scene.nt2lm(this._size);
         } else {
@@ -70,7 +71,7 @@ export class SphereLight extends Light {
         }
     }
     set luminousFlux (val) {
-        const isHDR = (cclegacy.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = isHDRInPipelineSceneData();
         let result = 0;
         if (isHDR) {
             this._luminanceHDR = val / scene.nt2lm(this._size);
@@ -92,7 +93,7 @@ export class SphereLight extends Light {
     @range([0, Number.POSITIVE_INFINITY, 10])
     @type(CCInteger)
     get luminance (): number {
-        const isHDR = (cclegacy.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = isHDRInPipelineSceneData();
         if (isHDR) {
             return this._luminanceHDR;
         } else {
@@ -100,7 +101,7 @@ export class SphereLight extends Light {
         }
     }
     set luminance (val) {
-        const isHDR = (cclegacy.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = isHDRInPipelineSceneData();
         if (isHDR) {
             this._luminanceHDR = val;
             this._light && ((this._light as scene.SphereLight).luminanceHDR = this._luminanceHDR);

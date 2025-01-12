@@ -99,6 +99,7 @@ export class LightingStage extends RenderStage {
     }
     public gatherLights (camera: Camera): void {
         const pipeline = this._pipeline as DeferredPipeline;
+        const isHDR = pipeline.pipelineSceneData.isHDR;
         const cmdBuff = pipeline.commandBuffers[0];
 
         const sphereLights = camera.scene!.sphereLights;
@@ -131,7 +132,7 @@ export class LightingStage extends RenderStage {
                     _vec4Array[2] = finalColor.z;
                 }
 
-                if (pipeline.pipelineSceneData.isHDR) {
+                if (isHDR) {
                     _vec4Array[3] = light.luminance * exposure * this._lightMeterScale;
                 } else {
                     _vec4Array[3] = light.luminance;
@@ -164,7 +165,7 @@ export class LightingStage extends RenderStage {
                     _vec4Array[1] = finalColor.y;
                     _vec4Array[2] = finalColor.z;
                 }
-                if (pipeline.pipelineSceneData.isHDR) {
+                if (isHDR) {
                     _vec4Array[3] = light.luminance * exposure * this._lightMeterScale;
                 } else {
                     _vec4Array[3] = light.luminance;
@@ -201,7 +202,7 @@ export class LightingStage extends RenderStage {
                     _vec4Array[2] = finalColor.z;
                 }
 
-                if (pipeline.pipelineSceneData.isHDR) {
+                if (isHDR) {
                     _vec4Array[3] = light.luminance * exposure * this._lightMeterScale;
                 } else {
                     _vec4Array[3] = light.luminance;
@@ -234,7 +235,7 @@ export class LightingStage extends RenderStage {
                     _vec4Array[1] = finalColor.y;
                     _vec4Array[2] = finalColor.z;
                 }
-                if (pipeline.pipelineSceneData.isHDR) {
+                if (isHDR) {
                     _vec4Array[3] = light.illuminance * exposure;
                 } else {
                     _vec4Array[3] = light.illuminance;
