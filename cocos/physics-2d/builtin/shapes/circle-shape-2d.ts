@@ -30,6 +30,7 @@ import Intersection2D from '../intersection-2d';
 const tempVec2 = new Vec2();
 const tempMat4 = new Mat4();
 
+/** @mangle */
 export class BuiltinCircleShape extends BuiltinShape2D {
     private _worldPosition = new Vec2();
     get worldPosition (): Readonly<Vec2> {

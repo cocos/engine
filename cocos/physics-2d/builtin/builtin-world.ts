@@ -40,6 +40,7 @@ import { director } from '../../game';
 const contactResults: BuiltinContact[] = [];
 const testIntersectResults: Collider2D[] = [];
 
+/** @mangle */
 export class BuiltinPhysicsWorld implements IPhysicsWorld {
     private _contacts: BuiltinContact[] = [];
     private _shapes: BuiltinShape2D[] = [];
