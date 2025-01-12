@@ -123,7 +123,7 @@ export const ttf: IAssembler = {
         if (!renderData) {
             return;
         }
-        const uiTrans = comp.node.getUITransformComponent()!;
+        const uiTrans = comp.node._getUITransformComponent()!;
         const width = uiTrans.width;
         const height = uiTrans.height;
         const appX = uiTrans.anchorX * width;

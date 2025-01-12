@@ -1641,7 +1641,7 @@ export class Skeleton extends UIRenderer {
     }
 
     private _updateUITransform (): void {
-        const uiTrans = this.node.getUITransformComponent()!;
+        const uiTrans = this.node._getUITransformComponent()!;
         const skeletonData = this._runtimeData;
         if (!skeletonData) {
             uiTrans.setContentSize(100, 100);

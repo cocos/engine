@@ -156,7 +156,7 @@ export const barFilled: IAssembler = {
     updateVertexData (sprite: Sprite, fillStart: number, fillEnd: number) {
         const renderData: RenderData | null = sprite.renderData;
         const dataList: IRenderData[] = renderData!.data;
-        const uiTrans = sprite.node.getUITransformComponent()!;
+        const uiTrans = sprite.node._getUITransformComponent()!;
         const width = uiTrans.width;
         const height = uiTrans.height;
         const appX = uiTrans.anchorX * width;

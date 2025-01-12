@@ -51,7 +51,7 @@ export function getReadonlyNodeSize (parent: Node | Scene): {
     height: number;
     init(visibleRect_: Rect): void;
 } | Readonly<Size> {
-    const parentUITransform = parent.getUITransformComponent();
+    const parentUITransform = parent._getUITransformComponent();
     if (parent instanceof Scene) {
         if (EDITOR) {
             // const canvasComp = parent.getComponentInChildren(Canvas);
@@ -838,7 +838,7 @@ export class Widget extends Component {
 
     public onEnable (): void {
         this.node.getPosition(this._lastPos);
-        this._lastSize.set(this.node.getUITransformComponent()!.contentSize);
+        this._lastSize.set(this.node._getUITransformComponent()!.contentSize);
         cclegacy._widgetManager.add(this);
         this._hadAlignOnce = false;
         this._registerEvent();
@@ -976,7 +976,7 @@ export class Widget extends Component {
             return;
         }
         const isHorizontal = (flag & LEFT_RIGHT) > 0;
-        const trans = this.node.getUITransformComponent()!;
+        const trans = this.node._getUITransformComponent()!;
         if (isAlign) {
             this._alignFlags |= flag;
 

@@ -53,40 +53,40 @@ replaceProperty(Node.prototype, 'Node', [
         name: 'width',
         targetName: 'node.getComponent(UITransform)',
         customGetter (this: Node): number {
-            return this.getUITransformComponent()!.width;
+            return this._getUITransformComponent()!.width;
         },
         customSetter (this: Node, value: number): void {
-            this.getUITransformComponent()!.width = value;
+            this._getUITransformComponent()!.width = value;
         },
     },
     {
         name: 'height',
         targetName: 'node.getComponent(UITransform)',
         customGetter (this: Node): number {
-            return this.getUITransformComponent()!.height;
+            return this._getUITransformComponent()!.height;
         },
         customSetter (this: Node, value: number): void {
-            this.getUITransformComponent()!.height = value;
+            this._getUITransformComponent()!.height = value;
         },
     },
     {
         name: 'anchorX',
         targetName: 'node.getComponent(UITransform)',
         customGetter (this: Node): number {
-            return this.getUITransformComponent()!.anchorX;
+            return this._getUITransformComponent()!.anchorX;
         },
         customSetter (this: Node, value: number): void {
-            this.getUITransformComponent()!.anchorX = value;
+            this._getUITransformComponent()!.anchorX = value;
         },
     },
     {
         name: 'anchorY',
         targetName: 'node.getComponent(UITransform)',
         customGetter (this: Node): number {
-            return this.getUITransformComponent()!.anchorY;
+            return this._getUITransformComponent()!.anchorY;
         },
         customSetter (this: Node, value: number): void {
-            this.getUITransformComponent()!.anchorY = value;
+            this._getUITransformComponent()!.anchorY = value;
         },
     },
     {
@@ -96,7 +96,7 @@ replaceProperty(Node.prototype, 'Node', [
             if (!out) {
                 out = new Vec2();
             }
-            out.set(this.getUITransformComponent()!.anchorPoint);
+            out.set(this._getUITransformComponent()!.anchorPoint);
             return out;
         },
     },
@@ -104,7 +104,7 @@ replaceProperty(Node.prototype, 'Node', [
         name: 'setAnchorPoint',
         targetName: 'node.getComponent(UITransform)',
         customFunction (this: Node, point: Vec2 | number, y?: number): void {
-            this.getUITransformComponent()!.setAnchorPoint(point, y);
+            this._getUITransformComponent()!.setAnchorPoint(point, y);
         },
     },
     {
@@ -115,7 +115,7 @@ replaceProperty(Node.prototype, 'Node', [
                 out = new Size();
             }
 
-            out.set(this.getUITransformComponent()!.contentSize);
+            out.set(this._getUITransformComponent()!.contentSize);
             return out;
         },
     },
@@ -124,9 +124,9 @@ replaceProperty(Node.prototype, 'Node', [
         targetName: 'node.getComponent(UITransform)',
         customFunction (this: Node, size: Size | number, height?: number): void {
             if (typeof size === 'number') {
-                this.getUITransformComponent()!.setContentSize(size, height!);
+                this._getUITransformComponent()!.setContentSize(size, height!);
             } else {
-                this.getUITransformComponent()!.setContentSize(size);
+                this._getUITransformComponent()!.setContentSize(size);
             }
         },
     },

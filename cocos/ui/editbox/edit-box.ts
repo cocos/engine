@@ -651,11 +651,11 @@ export class EditBox extends Component {
     }
 
     protected _syncSize (): void {
-        const trans = this.node.getUITransformComponent()!;
+        const trans = this.node._getUITransformComponent()!;
         const size = trans.contentSize;
 
         if (this._background) {
-            const bgTrans = this._background.node.getUITransformComponent()!;
+            const bgTrans = this._background.node._getUITransformComponent()!;
             bgTrans.anchorPoint = trans.anchorPoint;
             bgTrans.setContentSize(size);
         }
@@ -749,14 +749,14 @@ export class EditBox extends Component {
     }
 
     protected _updateLabelPosition (size: Size): void {
-        const trans = this.node.getUITransformComponent()!;
+        const trans = this.node._getUITransformComponent()!;
         const offX = -trans.anchorX * trans.width;
         const offY = -trans.anchorY * trans.height;
 
         const placeholderLabel = this._placeholderLabel;
         const textLabel = this._textLabel;
         if (textLabel) {
-            textLabel.node.getUITransformComponent()!.setContentSize(size.width - LEFT_PADDING, size.height);
+            textLabel.node._getUITransformComponent()!.setContentSize(size.width - LEFT_PADDING, size.height);
             textLabel.node.setPosition(offX + LEFT_PADDING, offY + size.height, textLabel.node.position.z);
             if (this._inputMode === InputMode.ANY) {
                 textLabel.verticalAlign = VerticalTextAlignment.TOP;
@@ -765,27 +765,27 @@ export class EditBox extends Component {
         }
 
         if (placeholderLabel) {
-            placeholderLabel.node.getUITransformComponent()!.setContentSize(size.width - LEFT_PADDING, size.height);
+            placeholderLabel.node._getUITransformComponent()!.setContentSize(size.width - LEFT_PADDING, size.height);
             placeholderLabel.node.setPosition(offX + LEFT_PADDING, offY + size.height, placeholderLabel.node.position.z);
             placeholderLabel.enableWrapText = this._inputMode === InputMode.ANY;
         }
     }
 
     protected _resizeChildNodes (): void {
-        const trans = this.node.getUITransformComponent()!;
+        const trans = this.node._getUITransformComponent()!;
         const textLabelNode = this._textLabel && this._textLabel.node;
         if (textLabelNode) {
             textLabelNode.setPosition(-trans.width / 2, trans.height / 2, textLabelNode.position.z);
-            textLabelNode.getUITransformComponent()!.setContentSize(trans.contentSize);
+            textLabelNode._getUITransformComponent()!.setContentSize(trans.contentSize);
         }
         const placeholderLabelNode = this._placeholderLabel && this._placeholderLabel.node;
         if (placeholderLabelNode) {
             placeholderLabelNode.setPosition(-trans.width / 2, trans.height / 2, placeholderLabelNode.position.z);
-            placeholderLabelNode.getUITransformComponent()!.setContentSize(trans.contentSize);
+            placeholderLabelNode._getUITransformComponent()!.setContentSize(trans.contentSize);
         }
         const backgroundNode = this._background && this._background.node;
         if (backgroundNode) {
-            backgroundNode.getUITransformComponent()!.setContentSize(trans.contentSize);
+            backgroundNode._getUITransformComponent()!.setContentSize(trans.contentSize);
         }
 
         this._syncSize();

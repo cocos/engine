@@ -149,7 +149,7 @@ export class ProgressBar extends Component {
             const entity = this._barSprite.node;
             if (!entity) { return; }
 
-            const entitySize = entity.getUITransformComponent()!.contentSize;
+            const entitySize = entity._getUITransformComponent()!.contentSize;
             if (this._mode === Mode.HORIZONTAL) {
                 this.totalLength = entitySize.width;
             } else if (this._mode === Mode.VERTICAL) {
@@ -253,11 +253,11 @@ export class ProgressBar extends Component {
             const entity = this._barSprite.node;
             if (!entity) { return; }
 
-            const trans = this.node.getUITransformComponent()!;
+            const trans = this.node._getUITransformComponent()!;
             const nodeSize = trans.contentSize;
             const nodeAnchor = trans.anchorPoint;
 
-            const barSpriteSize = entity.getUITransformComponent()!.contentSize;
+            const barSpriteSize = entity._getUITransformComponent()!.contentSize;
 
             // if (entity.parent === this.node) {
             //     this.node.setContentSize(barSpriteSize);
@@ -288,7 +288,7 @@ export class ProgressBar extends Component {
 
             if (!entity) { return; }
 
-            const entTrans = entity.getUITransformComponent()!;
+            const entTrans = entity._getUITransformComponent()!;
             const entityAnchorPoint = entTrans.anchorPoint;
             const entitySize = entTrans.contentSize;
 

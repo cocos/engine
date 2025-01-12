@@ -446,7 +446,7 @@ export class PageView extends ScrollView {
         if (!page || this._pages.indexOf(page) !== -1 || !this.content) {
             return;
         }
-        if (!page.getUITransformComponent()) {
+        if (!page._getUITransformComponent()) {
             logID(4301);
             return;
         }
@@ -473,7 +473,7 @@ export class PageView extends ScrollView {
         if (index >= pageCount) {
             this.addPage(page);
         } else {
-            if (!page.getUITransformComponent()) {
+            if (!page._getUITransformComponent()) {
                 logID(4301);
                 return;
             }
@@ -613,7 +613,7 @@ export class PageView extends ScrollView {
         const locPages = EDITOR_NOT_IN_PREVIEW ? this.content.children : this._pages;
         const selfSize = viewTrans.contentSize;
         for (let i = 0, len = locPages.length; i < len; i++) {
-            locPages[i].getUITransformComponent()!.setContentSize(selfSize);
+            locPages[i]._getUITransformComponent()!.setContentSize(selfSize);
         }
     }
 
@@ -662,8 +662,8 @@ export class PageView extends ScrollView {
         const layout = this.content.getComponent(Layout);
         if (layout) {
             if (this._sizeMode === SizeMode.Free && this._pages.length > 0) {
-                const firstPageTrans = this._pages[0].getUITransformComponent()!;
-                const lastPageTrans = this._pages[this._pages.length - 1].getUITransformComponent()!;
+                const firstPageTrans = this._pages[0]._getUITransformComponent()!;
+                const lastPageTrans = this._pages[this._pages.length - 1]._getUITransformComponent()!;
                 if (this.direction === PageViewDirection.HORIZONTAL) {
                     layout.paddingLeft = (viewTrans.width - firstPageTrans.width) / 2;
                     layout.paddingRight = (viewTrans.width - lastPageTrans.width) / 2;

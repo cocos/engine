@@ -648,7 +648,7 @@ export class Sprite extends UIRenderer {
         }
 
         if (this._spriteFrame) {
-            const actualSize = this.node.getUITransformComponent()!.contentSize;
+            const actualSize = this.node._getUITransformComponent()!.contentSize;
             let expectedW = actualSize.width;
             let expectedH = actualSize.height;
             if (this._sizeMode === SizeMode.RAW) {

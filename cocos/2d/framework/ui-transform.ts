@@ -781,8 +781,8 @@ export class UITransform extends Component {
         const siblings = node.children;
         if (siblings) {
             siblings.sort((a: Node, b: Node): number => {
-                const aComp = a.getUITransformComponent();
-                const bComp = b.getUITransformComponent();
+                const aComp = a._getUITransformComponent();
+                const bComp = b._getUITransformComponent();
                 const ca = aComp ? aComp._priority : 0;
                 const cb = bComp ? bComp._priority : 0;
                 const diff = ca - cb;

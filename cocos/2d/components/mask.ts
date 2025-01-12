@@ -336,7 +336,7 @@ export class Mask extends Component {
      * @param worldPt @en point in World Space. @zh 世界空间中的点击点。
      */
     public isHit (worldPt: Vec2): boolean {
-        const uiTrans = this.node.getUITransformComponent()!;
+        const uiTrans = this.node._getUITransformComponent()!;
         const size = uiTrans.contentSize;
         const w = size.width;
         const h = size.height;
@@ -412,7 +412,7 @@ export class Mask extends Component {
             return;
         }
 
-        const uiTrans = this.node.getUITransformComponent()!;
+        const uiTrans = this.node._getUITransformComponent()!;
         const graphics = this._graphics;
         // Share render data with graphics content
         graphics.clear();

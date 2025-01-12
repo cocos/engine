@@ -1089,7 +1089,7 @@ export class ArmatureDisplay extends UIRenderer {
         if (this._armature) {
             const armatureData = this._armature.armatureData;
             const aabb = armatureData.aabb;
-            this.node.getUITransformComponent()!.setContentSize(aabb.width, aabb.height);
+            this.node._getUITransformComponent()!.setContentSize(aabb.width, aabb.height);
         }
         this.attachUtil.init(this);
 

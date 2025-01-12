@@ -144,7 +144,7 @@ export const simple: IAssembler = {
             return;
         }
 
-        const uiTrans = sprite.node.getUITransformComponent()!;
+        const uiTrans = sprite.node._getUITransformComponent()!;
         const dataList: IRenderData[] = renderData.data;
         const cw = uiTrans.width;
         const ch = uiTrans.height;

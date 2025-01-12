@@ -137,7 +137,7 @@ export class Canvas extends RenderRoot2D {
                 // TODO: support paddings of locked widget
                 this.node.getPosition(this._pos);
                 const nodeSize = view.getDesignResolutionSize();
-                const trans = this.node.getUITransformComponent()!;
+                const trans = this.node._getUITransformComponent()!;
 
                 let scaleX = this.node.scale.x;
                 let anchorX = trans.anchorX;

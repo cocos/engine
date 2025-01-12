@@ -95,7 +95,7 @@ export class UIMeshRenderer extends Component {
     }
 
     public onLoad (): void {
-        if (!this.node.getUITransformComponent()) {
+        if (!this.node._getUITransformComponent()) {
             this.node.addComponent('cc.UITransform');
         }
 

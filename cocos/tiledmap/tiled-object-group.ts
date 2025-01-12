@@ -207,7 +207,7 @@ export class TiledObjectGroup extends Component {
             height = mapSize.height * tileSize.height;
         }
 
-        const transComp = this.node.getUITransformComponent()!;
+        const transComp = this.node._getUITransformComponent()!;
         transComp.setContentSize(width, height);
 
         const leftTopX = width * transComp.anchorX;
@@ -257,7 +257,7 @@ export class TiledObjectGroup extends Component {
                     label = textNode.addComponent(Label);
                 }
 
-                const textTransComp = textNode.getUITransformComponent()!;
+                const textTransComp = textNode._getUITransformComponent()!;
                 textNode.active = object.visible;
                 textTransComp.anchorX = 0;
                 textTransComp.anchorY = 1;
@@ -328,7 +328,7 @@ export class TiledObjectGroup extends Component {
                     sprite = imgNode.addComponent(Sprite);
                 }
 
-                const imgTrans = imgNode.getUITransformComponent()!;
+                const imgTrans = imgNode._getUITransformComponent()!;
                 if (iso) {
                     imgTrans.anchorX = 0.5 + tileOffsetX / object.width;
                     imgTrans.anchorY = tileOffsetY / object.height;
@@ -414,7 +414,7 @@ export class TiledObjectGroup extends Component {
 
             const tileOffsetX = tileset.tileOffset.x;
             const tileOffsetY = tileset.tileOffset.y;
-            const imgTrans = imgNode.getUITransformComponent()!;
+            const imgTrans = imgNode._getUITransformComponent()!;
             if (iso) {
                 imgTrans.anchorX = 0.5 + tileOffsetX / object.width;
                 imgTrans.anchorY = tileOffsetY / object.height;
