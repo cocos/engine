@@ -48,6 +48,7 @@ const tempB2AABB = new b2.AABB();
 
 const testResults: Collider2D[] = [];
 
+/** @mangle */
 export class b2PhysicsWorld implements IPhysicsWorld {
     protected _world: b2.World;
     protected _bodies: b2RigidBody2D[] = [];

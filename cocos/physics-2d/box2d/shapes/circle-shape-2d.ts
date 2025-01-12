@@ -29,6 +29,7 @@ import { PHYSICS_2D_PTM_RATIO } from '../../framework/physics-types';
 import { ICircleShape } from '../../spec/i-physics-shape';
 import { Vec2 } from '../../../core';
 
+/** @mangle */
 export class b2CircleShape extends b2Shape2D implements ICircleShape {
     get worldRadius (): number {
         return (this._shapes[0] as b2.CircleShape).m_radius * PHYSICS_2D_PTM_RATIO;

@@ -3888,3 +3888,7 @@ Can't find the spriteFrame of tilesets %s
 ### 16407
 
 Spline error: invalid mode
+
+### 16408
+
+[Physics2D] b2PolygonShape failed to decompose polygon into convex polygons, node name: %s

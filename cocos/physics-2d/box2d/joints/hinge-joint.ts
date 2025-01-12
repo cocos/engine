@@ -29,6 +29,7 @@ import { b2Joint } from './joint-2d';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework/physics-types';
 import { toRadian } from '../../../core';
 
+/** @mangle */
 export class b2HingeJoint extends b2Joint implements IHingeJoint {
     enableLimit (v: boolean): void {
         if (this._b2joint) {

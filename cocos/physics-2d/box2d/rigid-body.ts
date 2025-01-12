@@ -39,6 +39,7 @@ const tempVec3 = new Vec3();
 
 const tempVec2_1 = new b2.Vec2();
 
+/** @mangle */
 export class b2RigidBody2D implements IRigidBody2D {
     get impl (): b2.Body | null {
         return this._body;

@@ -33,6 +33,7 @@ const _tmp_color = new Color();
 const GREEN_COLOR = Color.GREEN;
 const RED_COLOR = Color.RED;
 
+/** @mangle */
 export class PhysicsDebugDraw extends b2.Draw {
     _drawer: Graphics | null = null;
 
@@ -44,11 +45,11 @@ export class PhysicsDebugDraw extends b2.Draw {
         this._drawer = drawer;
     }
 
-    _DrawPolygon (vertices, vertexCount): void {
+    _DrawPolygon (vertices: Vec2[], vertexCount: number): void {
         const drawer = this._drawer!;
 
         for (let i = 0; i < vertexCount; i++) {
-            b2.Transform.MulXV(this._xf, vertices[i] as Vec2, _tmp_vec2);
+            b2.Transform.MulXV(this._xf, vertices[i], _tmp_vec2);
             const x = _tmp_vec2.x * PHYSICS_2D_PTM_RATIO;
             const y = _tmp_vec2.y * PHYSICS_2D_PTM_RATIO;
             if (i === 0) drawer.moveTo(x, y);
@@ -60,13 +61,13 @@ export class PhysicsDebugDraw extends b2.Draw {
         drawer.close();
     }
 
-    DrawPolygon (vertices, vertexCount, color): void {
+    DrawPolygon (vertices: Vec2[], vertexCount: number, color: Color): void {
         this._applyStrokeColor(color);
         this._DrawPolygon(vertices, vertexCount);
         this._drawer!.stroke();
     }
 
-    DrawSolidPolygon (vertices, vertexCount, color): void {
+    DrawSolidPolygon (vertices: Vec2[], vertexCount: number, color: Color): void {
         this._applyFillColor(color);
         this._DrawPolygon(vertices, vertexCount);
         this._drawer!.fill();
