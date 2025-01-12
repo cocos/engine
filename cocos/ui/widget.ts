@@ -62,8 +62,8 @@ export function getReadonlyNodeSize (parent: Node | Scene): {
         }
 
         return visibleRect;
-    } else if (parent._uiProps.uiTransformComp) {
-        return parent._uiProps.uiTransformComp.contentSize;
+    } else if (parent.getUITransformComponent()) {
+        return parent.getUITransformComponent().contentSize;
     } else {
         return Size.ZERO;
     }
@@ -837,7 +837,7 @@ export class Widget extends Component {
 
     public onEnable (): void {
         this.node.getPosition(this._lastPos);
-        this._lastSize.set(this.node._uiProps.uiTransformComp!.contentSize);
+        this._lastSize.set(this.node.getUITransformComponent()!.contentSize);
         cclegacy._widgetManager.add(this);
         this._hadAlignOnce = false;
         this._registerEvent();
@@ -975,7 +975,7 @@ export class Widget extends Component {
             return;
         }
         const isHorizontal = (flag & LEFT_RIGHT) > 0;
-        const trans = this.node._uiProps.uiTransformComp!;
+        const trans = this.node.getUITransformComponent()!;
         if (isAlign) {
             this._alignFlags |= flag;
 

@@ -777,12 +777,12 @@ export class UITransform extends Component {
         }
     }
 
-    private static _sortChildrenSibling (node): void {
+    private static _sortChildrenSibling (node: Node): void {
         const siblings = node.children;
         if (siblings) {
             siblings.sort((a: Node, b: Node): number => {
-                const aComp = a._uiProps.uiTransformComp;
-                const bComp = b._uiProps.uiTransformComp;
+                const aComp = a.getUITransformComponent();
+                const bComp = b.getUITransformComponent();
                 const ca = aComp ? aComp._priority : 0;
                 const cb = bComp ? bComp._priority : 0;
                 const diff = ca - cb;

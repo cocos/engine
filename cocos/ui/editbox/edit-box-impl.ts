@@ -331,13 +331,13 @@ export class EditBoxImpl extends EditBoxImplBase {
         const dpr = screenAdapter.devicePixelRatio;
 
         node.getWorldMatrix(_matrix);
-        const transform = node._uiProps.uiTransformComp;
+        const transform = node.getUITransformComponent();
         if (transform) {
             Vec3.set(_vec3, -transform.anchorX * transform.width, -transform.anchorY * transform.height, _vec3.z);
             Mat4.transform(_matrix, _matrix, _vec3);
         }
 
-        if (!node._uiProps.uiTransformComp) {
+        if (!node.getUITransformComponent()) {
             return;
         }
 

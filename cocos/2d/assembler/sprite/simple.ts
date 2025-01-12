@@ -41,7 +41,7 @@ const QUAD_INDICES = Uint16Array.from([0, 1, 2, 1, 3, 2]);
  * 可通过 `UI.simple` 获取该组装器。
  */
 export const simple: IAssembler = {
-    createData(sprite: Sprite) {
+    createData (sprite: Sprite) {
         const renderData = sprite.requestRenderData();
         renderData.dataLength = 4;
         renderData.resize(4, 6);
@@ -49,7 +49,7 @@ export const simple: IAssembler = {
         return renderData;
     },
 
-    updateRenderData(sprite: Sprite) {
+    updateRenderData (sprite: Sprite) {
         const frame = sprite.spriteFrame;
 
         dynamicAtlasManager.packToDynamicAtlas(sprite, frame);
@@ -95,7 +95,7 @@ export const simple: IAssembler = {
         }
     },
 
-    fillBuffers(sprite: Sprite, renderer: IBatcher) {
+    fillBuffers (sprite: Sprite, renderer: IBatcher) {
         if (sprite === null) {
             return;
         }
@@ -138,13 +138,13 @@ export const simple: IAssembler = {
         // renderer.switchBufferAccessor().appendIndices(chunk);
     },
 
-    updateVertexData(sprite: Sprite) {
+    updateVertexData (sprite: Sprite) {
         const renderData: RenderData | null = sprite.renderData;
         if (!renderData) {
             return;
         }
 
-        const uiTrans = sprite.node._uiProps.uiTransformComp!;
+        const uiTrans = sprite.node.getUITransformComponent()!;
         const dataList: IRenderData[] = renderData.data;
         const cw = uiTrans.width;
         const ch = uiTrans.height;

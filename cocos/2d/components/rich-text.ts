@@ -118,7 +118,7 @@ function getSegmentByPool (type: string, content: string | SpriteFrame): ISegmen
         seg.comp.underlineHeight = 2;
     }
     node.setPosition(0, 0, 0);
-    const trans = node._uiProps.uiTransformComp!;
+    const trans = node.getUITransformComponent()!;
     trans.setAnchorPoint(0.5, 0.5);
 
     seg.node = node;
@@ -758,7 +758,7 @@ export class RichText extends Component {
         }
         label.styleIndex = styleIndex;
         this._applyTextAttribute(label);
-        const size = label.node._uiProps.uiTransformComp!.contentSize;
+        const size = label.node.getUITransformComponent()!.contentSize;
         Vec2.set(out, size.x, size.y);
         return out;
     }
@@ -855,7 +855,7 @@ export class RichText extends Component {
 
         labelSegment.styleIndex = styleIndex;
         labelSegment.lineCount = this._lineCount;
-        labelSegment.node._uiProps.uiTransformComp!.setAnchorPoint(0, 0);
+        labelSegment.node.getUITransformComponent()!.setAnchorPoint(0, 0);
         labelSegment.node.layer = this.node.layer;
         this.node.insertChild(labelSegment.node, this._labelChildrenNum++);
         this._applyTextAttribute(labelSegment);
@@ -901,7 +901,7 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
             for (let k = 0; k < fragments.length; ++k) {
                 const splitString = fragments[k];
                 labelSegment = this._addLabelSegment(splitString, styleIndex);
-                const labelSize = labelSegment.node._uiProps.uiTransformComp!.contentSize;
+                const labelSize = labelSegment.node.getUITransformComponent()!.contentSize;
                 this._lineOffsetX += labelSize.width;
                 if (fragments.length > 1 && k < fragments.length - 1) {
                     this._updateLineInfo();
@@ -984,13 +984,13 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
             const sprite = segment.comp;
             switch (style.imageAlign) {
             case 'top':
-                segment.node._uiProps.uiTransformComp!.setAnchorPoint(0, 1);
+                segment.node.getUITransformComponent()!.setAnchorPoint(0, 1);
                 break;
             case 'center':
-                segment.node._uiProps.uiTransformComp!.setAnchorPoint(0, 0.5);
+                segment.node.getUITransformComponent()!.setAnchorPoint(0, 0.5);
                 break;
             default:
-                segment.node._uiProps.uiTransformComp!.setAnchorPoint(0, 0);
+                segment.node.getUITransformComponent()!.setAnchorPoint(0, 0);
                 break;
             }
 
@@ -1033,7 +1033,7 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
                     this._labelWidth = this._lineOffsetX;
                 }
             }
-            segment.node._uiProps.uiTransformComp!.setContentSize(spriteWidth, spriteHeight);
+            segment.node.getUITransformComponent()!.setContentSize(spriteWidth, spriteHeight);
             segment.lineCount = this._lineCount;
 
             segment.clickHandler = '';
@@ -1126,7 +1126,7 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
                 } else {
                     label = this._addLabelSegment(labelString, i);
 
-                    this._lineOffsetX += label.node._uiProps.uiTransformComp!.width;
+                    this._lineOffsetX += label.node.getUITransformComponent()!.width;
                     if (this._lineOffsetX > this._labelWidth) {
                         this._labelWidth = this._lineOffsetX;
                     }
@@ -1147,7 +1147,7 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
         this._labelHeight = (this._lineCount + BASELINE_RATIO) * this._lineHeight;
 
         // trigger "size-changed" event
-        this.node._uiProps.uiTransformComp!.setContentSize(this._labelWidth, this._labelHeight);
+        this.node.getUITransformComponent()!.setContentSize(this._labelWidth, this._labelHeight);
 
         this._updateRichTextPosition();
         this._layoutDirty = false;
@@ -1176,7 +1176,7 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
         let nextTokenX = 0;
         let nextLineIndex = 1;
         const totalLineCount = this._lineCount;
-        const trans = this.node._uiProps.uiTransformComp!;
+        const trans = this.node.getUITransformComponent()!;
         const anchorX = trans.anchorX;
         const anchorY = trans.anchorY;
         for (let i = 0; i < this._segments.length; ++i) {
@@ -1209,7 +1209,7 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
             );
 
             if (lineCount === nextLineIndex) {
-                nextTokenX += segment.node._uiProps.uiTransformComp!.width;
+                nextTokenX += segment.node.getUITransformComponent()!.width;
             }
 
             const sprite = segment.node.getComponent(Sprite);
@@ -1218,7 +1218,7 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
                 // adjust img align (from <img align=top|center|bottom>)
                 const lineHeightSet = this._lineHeight;
                 const lineHeightReal = this._lineHeight * (1 + BASELINE_RATIO); // single line node height
-                switch (segment.node._uiProps.uiTransformComp!.anchorY) {
+                switch (segment.node.getUITransformComponent()!.anchorY) {
                 case 1:
                     position.y += (lineHeightSet + ((lineHeightReal - lineHeightSet) / 2));
                     break;

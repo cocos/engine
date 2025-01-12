@@ -304,7 +304,7 @@ export class ScrollView extends ViewGroup {
         if (this._content === value) {
             return;
         }
-        const viewTrans = value && value.parent && value.parent._uiProps.uiTransformComp;
+        const viewTrans = value && value.parent && value.parent.getUITransformComponent();
         if (value && (!value || !viewTrans)) {
             logID(4302);
             return;
@@ -435,7 +435,7 @@ export class ScrollView extends ViewGroup {
         if (!parent) {
             return null;
         }
-        return parent._uiProps.uiTransformComp;
+        return parent.getUITransformComponent();
     }
 
     protected _autoScrolling = false;
@@ -712,7 +712,7 @@ export class ScrollView extends ViewGroup {
         if (!this._content || !this.view) {
             return Vec2.ZERO;
         }
-        const contentSize = this._content._uiProps.uiTransformComp!.contentSize;
+        const contentSize = this._content.getUITransformComponent()!.contentSize;
         let horizontalMaximizeOffset = contentSize.width - this.view.width;
         let verticalMaximizeOffset = contentSize.height - this.view.height;
         horizontalMaximizeOffset = horizontalMaximizeOffset >= 0 ? horizontalMaximizeOffset : 0;
@@ -1199,7 +1199,7 @@ export class ScrollView extends ViewGroup {
         const targetDelta = deltaMove.clone();
         targetDelta.normalize();
         if (this._content && this.view) {
-            const contentSize = this._content._uiProps.uiTransformComp!.contentSize;
+            const contentSize = this._content.getUITransformComponent()!.contentSize;
             const scrollViewSize = this.view.contentSize;
 
             const totalMoveWidth = contentSize.width - scrollViewSize.width;
@@ -1316,7 +1316,7 @@ export class ScrollView extends ViewGroup {
             return -1;
         }
         const contentPos = this._getContentPosition();
-        const uiTrans = this._content._uiProps.uiTransformComp!;
+        const uiTrans = this._content.getUITransformComponent()!;
         return contentPos.x - uiTrans.anchorX * uiTrans.width;
     }
 
@@ -1324,7 +1324,7 @@ export class ScrollView extends ViewGroup {
         if (!this._content) {
             return -1;
         }
-        const uiTrans = this._content._uiProps.uiTransformComp!;
+        const uiTrans = this._content.getUITransformComponent()!;
         return this._getContentLeftBoundary() + uiTrans.width;
     }
 
@@ -1332,7 +1332,7 @@ export class ScrollView extends ViewGroup {
         if (!this._content) {
             return -1;
         }
-        const uiTrans = this._content._uiProps.uiTransformComp!;
+        const uiTrans = this._content.getUITransformComponent()!;
         return this._getContentBottomBoundary() + uiTrans.height;
     }
 
@@ -1341,7 +1341,7 @@ export class ScrollView extends ViewGroup {
             return -1;
         }
         const contentPos = this._getContentPosition();
-        const uiTrans = this._content._uiProps.uiTransformComp!;
+        const uiTrans = this._content.getUITransformComponent()!;
         return contentPos.y - uiTrans.anchorY * uiTrans.height;
     }
 
@@ -1465,7 +1465,7 @@ export class ScrollView extends ViewGroup {
             return;
         }
         const viewTrans = self.view;
-        const uiTrans = self._content._uiProps.uiTransformComp!;
+        const uiTrans = self._content.getUITransformComponent()!;
 
         const verticalScrollBar = self._verticalScrollBar;
         if (verticalScrollBar && verticalScrollBar.isValid) {
@@ -1520,7 +1520,7 @@ export class ScrollView extends ViewGroup {
     }
 
     protected _getLocalAxisAlignDelta (out: Vec3, touch: Touch): void {
-        const uiTransformComp = this.node._uiProps.uiTransformComp;
+        const uiTransformComp = this.node.getUITransformComponent();
 
         if (uiTransformComp) {
             touch.getUILocation(_tempVec2);
@@ -1555,7 +1555,7 @@ export class ScrollView extends ViewGroup {
         let verticalScrollEventType: ScrollViewEventType = ScrollViewEventType.NONE;
         let horizontalScrollEventType: ScrollViewEventType = ScrollViewEventType.NONE;
         if (self._content) {
-            const { anchorX, anchorY, width, height } = self._content._uiProps.uiTransformComp!;
+            const { anchorX, anchorY, width, height } = self._content.getUITransformComponent()!;
             const pos = self._content.position || Vec3.ZERO;
 
             if (self.vertical) {
@@ -1628,7 +1628,7 @@ export class ScrollView extends ViewGroup {
     protected _clampDelta (out: Vec3): void {
         if (this._content && this.view) {
             const scrollViewSize = this.view.contentSize;
-            const uiTrans = this._content._uiProps.uiTransformComp!;
+            const uiTrans = this._content.getUITransformComponent()!;
             if (uiTrans.width < scrollViewSize.width) {
                 out.x = 0;
             }
@@ -1848,7 +1848,7 @@ export class ScrollView extends ViewGroup {
         const moveDelta = new Vec3();
         if (self._content && self.view) {
             let totalScrollDelta = 0;
-            const uiTrans = self._content._uiProps.uiTransformComp!;
+            const uiTrans = self._content.getUITransformComponent()!;
             const contentSize = uiTrans.contentSize;
             const scrollSize = self.view.contentSize;
             if (applyToHorizontal) {
@@ -1878,7 +1878,7 @@ export class ScrollView extends ViewGroup {
 
         // 是否限制在上视区上边
         if (self._content) {
-            const uiTrans = self._content._uiProps.uiTransformComp!;
+            const uiTrans = self._content.getUITransformComponent()!;
             const contentSize = uiTrans.contentSize;
             if (contentSize.height < scrollViewSize.height) {
                 totalScrollDelta = contentSize.height - scrollViewSize.height;
