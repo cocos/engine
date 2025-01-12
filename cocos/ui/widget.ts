@@ -51,6 +51,7 @@ export function getReadonlyNodeSize (parent: Node | Scene): {
     height: number;
     init(visibleRect_: Rect): void;
 } | Readonly<Size> {
+    const parentUITransform = parent.getUITransformComponent();
     if (parent instanceof Scene) {
         if (EDITOR) {
             // const canvasComp = parent.getComponentInChildren(Canvas);
@@ -62,8 +63,8 @@ export function getReadonlyNodeSize (parent: Node | Scene): {
         }
 
         return visibleRect;
-    } else if (parent.getUITransformComponent()) {
-        return parent.getUITransformComponent().contentSize;
+    } else if (parentUITransform) {
+        return parentUITransform.contentSize;
     } else {
         return Size.ZERO;
     }

@@ -226,7 +226,7 @@ export class Slider extends Component {
         this._touchHandle = true;
         const touhPos = event.touch!.getUILocation();
         Vec3.set(this._touchPos, touhPos.x, touhPos.y, 0);
-        this._handle.node.getUITransformComponent().convertToNodeSpaceAR(this._touchPos, this._offset);
+        this._handle.node.getUITransformComponent()!.convertToNodeSpaceAR(this._touchPos, this._offset);
 
         event.propagationStopped = true;
     }
