@@ -30,6 +30,7 @@ import { IVec3Like } from '../../../core';
 import { bt } from '../instantiated';
 import { BulletCache } from '../bullet-cache';
 
+/** @mangle */
 export class BulletSimplexShape extends BulletShape implements ISimplexShape {
     setShapeType (v: SimplexCollider.ESimplexType): void {
         // TODO:

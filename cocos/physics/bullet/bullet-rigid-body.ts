@@ -36,6 +36,7 @@ import { bt } from './instantiated';
 const v3_0 = CC_V3_0;
 const v3_1 = CC_V3_1;
 
+/** @mangle */
 export class BulletRigidBody implements IRigidBody {
     get isAwake (): boolean {
         const state = bt.CollisionObject_getActivationState(this.impl);

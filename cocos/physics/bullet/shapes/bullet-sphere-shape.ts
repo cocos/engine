@@ -30,6 +30,7 @@ import { BulletCache, CC_V3_0 } from '../bullet-cache';
 import { bt } from '../instantiated';
 import { absMaxComponent } from '../../../core';
 
+/** @mangle */
 export class BulletSphereShape extends BulletShape implements ISphereShape {
     updateRadius (): void {
         bt.SphereShape_setUnscaledRadius(this.impl, this.getMinUnscaledRadius());

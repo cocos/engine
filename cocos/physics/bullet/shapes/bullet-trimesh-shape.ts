@@ -31,8 +31,9 @@ import { BulletCache } from '../bullet-cache';
 import { bt, EBulletType } from '../instantiated';
 import { BulletBvhTriangleMeshShape } from '../bullet-bvh-triangle-mesh-shape';
 
+/** @mangle */
 export class BulletTrimeshShape extends BulletShape implements ITrimeshShape {
-    private btBVHMeshShape;
+    private btBVHMeshShape: BulletBvhTriangleMeshShape | null = null;
     public get collider (): MeshCollider {
         return this._collider as MeshCollider;
     }

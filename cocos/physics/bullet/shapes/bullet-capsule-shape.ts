@@ -28,6 +28,7 @@ import { CapsuleCollider } from '../../../../exports/physics-framework';
 import { ICapsuleShape } from '../../spec/i-physics-shape';
 import { bt } from '../instantiated';
 
+/** @mangle */
 export class BulletCapsuleShape extends BulletShape implements ICapsuleShape {
     setCylinderHeight (v: number): void {
         this.updateProperties(

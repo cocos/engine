@@ -38,6 +38,8 @@ import { TransformBit } from '../../../scene-graph';
 const v3_0 = new Vec3(0, 0, 0);
 const v3_1 = new Vec3(0, 0, 0);
 const v3_2 = new Vec3(0, 0, 0);
+
+/** @mangle */
 export abstract class BulletCharacterController implements IBaseCharacterController {
     readonly wrappedWorld: BulletWorld;
     private _isEnabled = false;
