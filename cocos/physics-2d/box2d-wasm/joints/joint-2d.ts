@@ -28,6 +28,7 @@ import { Joint2D, PhysicsSystem2D, RigidBody2D } from '../../framework';
 import { B2PhysicsWorld } from '../physics-world';
 import { warn } from '../../../core';
 
+/** @mangle */
 export class B2Joint implements IJoint2D {
     get impl (): B2.Joint | null {
         return this._b2joint;

@@ -31,6 +31,7 @@ import { Vec2, Rect } from '../../../core';
 
 const tempAabb = new Rect();
 
+/** @mangle */
 export class B2BoxShape extends B2Shape2D implements IBoxShape {
     _worldPoints: Vec2[] = [new Vec2(), new Vec2(), new Vec2(), new Vec2()];
     get worldPoints (): Readonly<Vec2>[] {

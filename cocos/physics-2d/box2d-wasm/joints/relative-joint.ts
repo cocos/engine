@@ -31,6 +31,7 @@ import { Vec2, toRadian } from '../../../core';
 
 const tempB2Vec2 = { x: 0, y: 0 };//new b2.Vec2();
 
+/** @mangle */
 export class B2RelativeJoint extends B2Joint implements IRelativeJoint {
     setMaxForce (v: number): void {
         if (this._b2joint) {
