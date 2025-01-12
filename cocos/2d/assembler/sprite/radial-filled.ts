@@ -94,7 +94,7 @@ function _calcIntersectedPoints (
 }
 
 function _calculateVertices (sprite: Sprite): void {
-    const uiTrans = sprite.node._getUITransformComponent()!;
+    const uiTrans = sprite.node._getUITransformComp()!;
     const width = uiTrans.width;
     const height = uiTrans.height;
     const appX = uiTrans.anchorX * width;

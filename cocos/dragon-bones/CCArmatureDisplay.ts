@@ -142,7 +142,7 @@ export class CCArmatureDisplay extends DisplayData implements IEventDispatcher {
     convertToWorldSpace (point: Vec3): Vec3 | undefined {
         const newPos = this.convertToRootSpace(point);
         const ccNode = this.getRootNode();
-        return ccNode?._getUITransformComponent()?.convertToWorldSpaceAR(newPos);
+        return ccNode?._getUITransformComp()?.convertToWorldSpaceAR(newPos);
     }
     /**
      * @en Get the node of root ArmatureDisplay component in.

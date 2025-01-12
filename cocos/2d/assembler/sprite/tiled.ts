@@ -74,7 +74,7 @@ export const tiled: IAssembler = {
             return;
         }
 
-        const uiTrans = sprite.node._getUITransformComponent()!;
+        const uiTrans = sprite.node._getUITransformComp()!;
         const contentWidth = Math.abs(uiTrans.width);
         const contentHeight = Math.abs(uiTrans.height);
 
@@ -226,7 +226,7 @@ export const tiled: IAssembler = {
     },
 
     updateVerts (sprite: Sprite, sizableWidth: number, sizableHeight: number, row: number, col: number) {
-        const uiTrans = sprite.node._getUITransformComponent()!;
+        const uiTrans = sprite.node._getUITransformComp()!;
         const renderData = sprite.renderData;
         if (!renderData) return;
         const dataList: IRenderData[] = renderData.data;

@@ -709,7 +709,7 @@ export class Layout extends Component {
     protected onEnable (): void {
         this._addEventListeners();
 
-        const trans = this.node._getUITransformComponent()!;
+        const trans = this.node._getUITransformComp()!;
         if (trans.contentSize.equals(Size.ZERO)) {
             trans.setContentSize(this._layoutSize);
         }
@@ -727,7 +727,7 @@ export class Layout extends Component {
         const children = this.node.children;
         for (let i = 0; i < children.length; ++i) {
             const child = children[i];
-            const uiTrans = child._getUITransformComponent();
+            const uiTrans = child._getUITransformComp();
             if (child.activeInHierarchy && uiTrans) {
                 this._usefulLayoutObj.push(uiTrans);
             }
@@ -795,12 +795,12 @@ export class Layout extends Component {
     }
 
     protected _resized (): void {
-        this._layoutSize.set(this.node._getUITransformComponent()!.contentSize);
+        this._layoutSize.set(this.node._getUITransformComp()!.contentSize);
         this._doLayoutDirty();
     }
 
     protected _doLayoutHorizontally (baseWidth: number, rowBreak: boolean, fnPositionY: (...args: any[]) => number, applyChildren: boolean): number {
-        const trans = this.node._getUITransformComponent()!;
+        const trans = this.node._getUITransformComp()!;
         const layoutAnchor = trans.anchorPoint;
         const limit = this._getFixedBreakingNum();
 
@@ -894,7 +894,7 @@ export class Layout extends Component {
     }
 
     protected _doLayoutVertically (baseHeight: number, columnBreak: boolean, fnPositionX: (...args: any[]) => number, applyChildren: boolean): number {
-        const trans = this.node._getUITransformComponent()!;
+        const trans = this.node._getUITransformComp()!;
         const layoutAnchor = trans.anchorPoint;
         const limit = this._getFixedBreakingNum();
 
@@ -1018,7 +1018,7 @@ export class Layout extends Component {
         this._doLayoutHorizontally(baseWidth, true, fnPositionY, true);
 
         if (this._resizeMode === LayoutResizeMode.CONTAINER) {
-            this.node._getUITransformComponent()!.setContentSize(baseWidth, newHeight);
+            this.node._getUITransformComp()!.setContentSize(baseWidth, newHeight);
         }
     }
 
@@ -1051,12 +1051,12 @@ export class Layout extends Component {
         this._doLayoutVertically(baseHeight, true, fnPositionX, true);
 
         if (this._resizeMode === LayoutResizeMode.CONTAINER) {
-            this.node._getUITransformComponent()!.setContentSize(newWidth, baseHeight);
+            this.node._getUITransformComp()!.setContentSize(newWidth, baseHeight);
         }
     }
 
     protected _doLayoutGrid (): void {
-        const trans = this.node._getUITransformComponent()!;
+        const trans = this.node._getUITransformComp()!;
         const layoutAnchor = trans.anchorPoint;
         const layoutSize = trans.contentSize;
 
@@ -1081,7 +1081,7 @@ export class Layout extends Component {
 
             baseSize += (activeChildCount - 1) * this._spacingX + this._getPaddingH();
         } else {
-            baseSize = this.node._getUITransformComponent()!.width;
+            baseSize = this.node._getUITransformComp()!.width;
         }
 
         return baseSize;
@@ -1101,7 +1101,7 @@ export class Layout extends Component {
 
             baseSize += (activeChildCount - 1) * this._spacingY + this._getPaddingV();
         } else {
-            baseSize = this.node._getUITransformComponent()!.height;
+            baseSize = this.node._getUITransformComp()!.height;
         }
 
         return baseSize;
@@ -1123,7 +1123,7 @@ export class Layout extends Component {
             };
 
             this._doLayoutHorizontally(newWidth, false, fnPositionY, true);
-            this.node._getUITransformComponent()!.width = newWidth;
+            this.node._getUITransformComp()!.width = newWidth;
         } else if (this._layoutType === LayoutType.VERTICAL) {
             const newHeight = this._getVerticalBaseHeight();
 
@@ -1133,7 +1133,7 @@ export class Layout extends Component {
             };
 
             this._doLayoutVertically(newHeight, false, fnPositionX, true);
-            this.node._getUITransformComponent()!.height = newHeight;
+            this.node._getUITransformComp()!.height = newHeight;
         } else if (this._layoutType === LayoutType.GRID) {
             this._doLayoutGrid();
         }

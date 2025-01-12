@@ -2720,7 +2720,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
      * @mangle
      * @engineInternal
      */
-    _getUITransformComponent (): UITransform | null {
+    _getUITransformComp (): UITransform | null {
         return this._uiProps.uiTransformComp;
     }
 }

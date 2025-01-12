@@ -66,7 +66,7 @@ function align (node: Node, widget: Widget): void {
 
     const isRoot = useGlobal;
     node.getPosition(_tempPos);
-    const uiTrans = node._getUITransformComponent()!;
+    const uiTrans = node._getUITransformComp()!;
     let x = _tempPos.x;
     let y = _tempPos.y;
     const anchor = uiTrans.anchorPoint;
@@ -343,9 +343,9 @@ export const widgetManager = cclegacy._widgetManager = {
                 return;
             }
 
-            const parentTrans = widgetParent._uiProps && widgetParent._getUITransformComponent();
+            const parentTrans = widgetParent._uiProps && widgetParent._getUITransformComp();
             const parentAP = parentTrans ? parentTrans.anchorPoint : _defaultAnchor;
-            const trans = widgetNode._getUITransformComponent()!;
+            const trans = widgetNode._getUITransformComp()!;
             const matchSize = getReadonlyNodeSize(widgetParent);
             const myAP = trans.anchorPoint;
             const pos = widgetNode.position;

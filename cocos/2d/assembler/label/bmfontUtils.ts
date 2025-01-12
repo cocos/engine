@@ -102,7 +102,7 @@ export const bmfontUtils = {
 
         if (comp.renderData.vertDirty) {
             _comp = comp;
-            _uiTrans = _comp.node._getUITransformComponent()!;
+            _uiTrans = _comp.node._getUITransformComp()!;
             const renderData = comp.renderData;
 
             const processing = TextProcessing.instance;

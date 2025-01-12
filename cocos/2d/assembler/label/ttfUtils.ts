@@ -116,7 +116,7 @@ export const ttfUtils =  {
         if (!comp.renderData) { return; }
 
         if (comp.renderData.vertDirty) {
-            const trans = comp.node._getUITransformComponent()!;
+            const trans = comp.node._getUITransformComp()!;
             const processing = TextProcessing.instance;
             const style = comp.textStyle;
             const layout = comp.textLayout;

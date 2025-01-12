@@ -328,7 +328,7 @@ export class TiledLayer extends UIRenderer {
     }
 
     protected _updateCullingOffsetByUserNode (node_: Node): void {
-        const node = node_._getUITransformComponent()!.contentSize;
+        const node = node_._getUITransformComp()!.contentSize;
         if (this._topOffset < node.height) {
             this._topOffset = node.height;
         }
@@ -468,7 +468,7 @@ export class TiledLayer extends UIRenderer {
 
     protected _syncAnchorPoint (): void {
         const node = this.node;
-        const trans = node._getUITransformComponent()!;
+        const trans = node._getUITransformComp()!;
         const scale = node.getScale();
         this._leftDownToCenterX = trans.width * trans.anchorX * scale.x;
         this._leftDownToCenterY = trans.height * trans.anchorY * scale.y;
@@ -1402,12 +1402,12 @@ export class TiledLayer extends UIRenderer {
                 width = (tileWidth * layerW) + tileWidth / 2;
                 height = (this._diffY1 + this._hexSideLength) * layerH + this._diffY1;
             }
-            this.node._getUITransformComponent()!.setContentSize(width, height);
+            this.node._getUITransformComp()!.setContentSize(width, height);
         } else if (this._layerOrientation === Orientation.ISO) {
             const wh = layerW + layerH;
-            this.node._getUITransformComponent()!.setContentSize(maptw * 0.5 * wh, mapth * 0.5 * wh);
+            this.node._getUITransformComp()!.setContentSize(maptw * 0.5 * wh, mapth * 0.5 * wh);
         } else {
-            this.node._getUITransformComponent()!.setContentSize(layerW * maptw, layerH * mapth);
+            this.node._getUITransformComp()!.setContentSize(layerW * maptw, layerH * mapth);
         }
 
         // offset (after layer orientation is set);

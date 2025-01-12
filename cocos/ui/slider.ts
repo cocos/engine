@@ -218,7 +218,7 @@ export class Slider extends Component {
     }
 
     protected _onHandleDragStart (event?: EventTouch): void {
-        if (!event || !this._handle || !this._handle.node._getUITransformComponent()) {
+        if (!event || !this._handle || !this._handle.node._getUITransformComp()) {
             return;
         }
 
@@ -226,7 +226,7 @@ export class Slider extends Component {
         this._touchHandle = true;
         const touhPos = event.touch!.getUILocation();
         Vec3.set(this._touchPos, touhPos.x, touhPos.y, 0);
-        this._handle.node._getUITransformComponent()!.convertToNodeSpaceAR(this._touchPos, this._offset);
+        this._handle.node._getUITransformComp()!.convertToNodeSpaceAR(this._touchPos, this._offset);
 
         event.propagationStopped = true;
     }
@@ -287,7 +287,7 @@ export class Slider extends Component {
 
         const touchPos = touch.getUILocation();
         Vec3.set(this._touchPos, touchPos.x, touchPos.y, 0);
-        const uiTrans = this.node._getUITransformComponent()!;
+        const uiTrans = this.node._getUITransformComp()!;
         const localTouchPos = uiTrans.convertToNodeSpaceAR(this._touchPos, _tempPos);
         if (this.direction === Direction.Horizontal as number) {
             this.progress = clamp01(0.5 + (localTouchPos.x - this._offset.x) / uiTrans.width);
@@ -301,7 +301,7 @@ export class Slider extends Component {
             return;
         }
         this._handleLocalPos.set(this._handle.node.position);
-        const uiTrans = this.node._getUITransformComponent()!;
+        const uiTrans = this.node._getUITransformComp()!;
         if (this._direction === Direction.Horizontal) {
             this._handleLocalPos.x = -uiTrans.width * uiTrans.anchorX + this.progress * uiTrans.width;
         } else {
@@ -312,7 +312,7 @@ export class Slider extends Component {
     }
 
     private _changeLayout (): void {
-        const uiTrans = this.node._getUITransformComponent()!;
+        const uiTrans = this.node._getUITransformComp()!;
         const contentSize = uiTrans.contentSize;
         uiTrans.setContentSize(contentSize.height, contentSize.width);
         if (this._handle) {
@@ -329,7 +329,7 @@ export class Slider extends Component {
 
     protected _xrHandleProgress (point: Vec3): void {
         if (!this._touchHandle) {
-            const uiTrans = this.node._getUITransformComponent()!;
+            const uiTrans = this.node._getUITransformComp()!;
             uiTrans.convertToNodeSpaceAR(point, _tempPos);
             if (this.direction === Direction.Horizontal as number) {
                 this.progress = clamp01(0.5 + (_tempPos.x - this.node.position.x) / uiTrans.width);

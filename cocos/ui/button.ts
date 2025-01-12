@@ -673,9 +673,9 @@ export class Button extends Component {
         if (!this.target) {
             return;
         }
-        const targetTrans = this.target._getUITransformComponent();
+        const targetTrans = this.target._getUITransformComp();
         if (EDITOR && targetTrans) {
-            this.node._getUITransformComponent()!.setContentSize(targetTrans.contentSize);
+            this.node._getUITransformComp()!.setContentSize(targetTrans.contentSize);
         }
     }
 
@@ -849,7 +849,7 @@ export class Button extends Component {
             return;
         }
 
-        const hit = this.node._getUITransformComponent()!.hitTest(touch.getLocation(), event.windowId);
+        const hit = this.node._getUITransformComp()!.hitTest(touch.getLocation(), event.windowId);
 
         if (this._transition === Transition.SCALE && this.target && this._originalScale) {
             if (hit) {

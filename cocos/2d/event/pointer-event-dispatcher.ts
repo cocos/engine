@@ -216,7 +216,7 @@ class PointerEventDispatcher implements IEventDispatcher {
             const pointerEventProcessor = pointerEventProcessorList[i];
             const node = pointerEventProcessor.node;
             if (node._uiProps) {
-                const trans = node._getUITransformComponent();
+                const trans = node._getUITransformComp();
                 pointerEventProcessor.cachedCameraPriority = trans!.cameraPriority;
             }
         }
@@ -227,9 +227,9 @@ class PointerEventDispatcher implements IEventDispatcher {
     private _sortByPriority (p1: NodeEventProcessor, p2: NodeEventProcessor): number {
         const node1: Node = p1.node;
         const node2: Node = p2.node;
-        if (!p2 || !node2 || !node2.activeInHierarchy || !node2._getUITransformComponent()) {
+        if (!p2 || !node2 || !node2.activeInHierarchy || !node2._getUITransformComp()) {
             return -1;
-        } else if (!p1 || !node1 || !node1.activeInHierarchy || !node1._getUITransformComponent()) {
+        } else if (!p1 || !node1 || !node1.activeInHierarchy || !node1._getUITransformComp()) {
             return 1;
         }
 
