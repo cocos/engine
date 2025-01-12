@@ -46,6 +46,7 @@ export enum EPhysXShapeType {
     MESH,
 }
 
+/** @mangle */
 export class PhysXShape implements IBaseShape {
     private static _MESH_SCALE: any;
     static get MESH_SCALE (): any {

@@ -33,6 +33,7 @@ const v3_0 = new Vec3();
 const quat_0 = new Quat();
 const mat_0 = new Mat4();
 
+/** @mangle */
 export class PhysXFixedJoint extends PhysXJoint implements IFixedConstraint {
     setBreakForce (v: number): void {
         this._breakForce = this.constraint.breakForce;

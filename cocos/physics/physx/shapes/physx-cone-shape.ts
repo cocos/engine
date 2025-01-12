@@ -30,6 +30,7 @@ import { createConvexMesh, createMeshGeometryFlags, PX, _trans } from '../physx-
 import { PhysXInstance } from '../physx-instance';
 import { EPhysXShapeType, PhysXShape } from './physx-shape';
 
+/** @mangle */
 export class PhysXConeShape extends PhysXShape implements IConeShape {
     static CONVEX_MESH: any;
     geometry: any;

@@ -29,6 +29,7 @@ import { PX } from '../physx-adapter';
 import { PhysXInstance } from '../physx-instance';
 import { EPhysXShapeType, PhysXShape } from './physx-shape';
 
+/** @mangle */
 export class PhysXSphereShape extends PhysXShape implements ISphereShape {
     static SPHERE_GEOMETRY: any;
 

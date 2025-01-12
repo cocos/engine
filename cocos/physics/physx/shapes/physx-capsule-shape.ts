@@ -29,6 +29,7 @@ import { PX } from '../physx-adapter';
 import { PhysXInstance } from '../physx-instance';
 import { EPhysXShapeType, PhysXShape } from './physx-shape';
 
+/** @mangle */
 export class PhysXCapsuleShape extends PhysXShape implements ICapsuleShape {
     static CAPSULE_GEOMETRY: any;
 

@@ -29,6 +29,7 @@ import { PX } from '../physx-adapter';
 import { EPhysXShapeType, PhysXShape } from './physx-shape';
 import { PhysXInstance } from '../physx-instance';
 
+/** @mangle */
 export class PhysXBoxShape extends PhysXShape implements IBoxShape {
     static BOX_GEOMETRY: any;
 

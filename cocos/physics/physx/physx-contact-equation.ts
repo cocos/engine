@@ -27,6 +27,8 @@ import { IContactEquation, ICollisionEvent, Collider } from '../framework';
 import { getContactNormal, getContactPosition } from './physx-adapter';
 
 const quat = new Quat();
+
+/** @mangle */
 export class PhysXContactEquation implements IContactEquation {
     get isBodyA (): boolean {
         return this.colliderA.uuid === this.event.selfCollider.uuid;
