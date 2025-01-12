@@ -23,15 +23,17 @@
 */
 
 import { btCache } from './instantiated';
+import type { BulletSharedBody } from './bullet-shared-body';
+import type { BulletCharacterController } from './character-controllers/bullet-character-controller';
 
 // The import function used in c++ code, same as DLL Import
 export const importFunc = {
     syncPhysicsToGraphics (id: number): void {
-        const body = btCache.CACHE.getWrapper(id, btCache.BODY_CACHE_NAME);
+        const body = btCache.CACHE.getWrapper<BulletSharedBody>(id, btCache.BODY_CACHE_NAME);
         body.syncPhysicsToGraphics();
     },
     onShapeHitExt (hit: number, controller: number): void {
-        const cct = btCache.CACHE.getWrapper(controller, btCache.CCT_CACHE_NAME);
+        const cct = btCache.CACHE.getWrapper<BulletCharacterController>(controller, btCache.CCT_CACHE_NAME);
         cct.onShapeHitExt(hit);
     },
     onDebugDrawLine (from: number, to: number, color: number): void {

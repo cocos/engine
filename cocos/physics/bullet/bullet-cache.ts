@@ -26,6 +26,7 @@ import { Collider, TriggerEventType, CollisionEventType, IContactEquation, Chara
 import { Vec3, Quat, Mat4, Color } from '../../core';
 import { CharacterTriggerEventType } from '../framework';
 import { bt, btCache } from './instantiated';
+import type { BulletWorld } from './bullet-world';
 
 export const TriggerEventObject = {
     type: 'onTriggerEnter' as unknown as TriggerEventType,
@@ -72,6 +73,8 @@ export class BulletCache {
     }
 
     static isNotEmptyShape (ptr: Bullet.ptr): boolean { return ptr !== bt.EmptyShape_static(); }
+
+    static world: BulletWorld | null = null;
 
     readonly BT_TRANSFORM_0 = bt.Transform_new();
     readonly BT_TRANSFORM_1 = bt.Transform_new();
