@@ -24,10 +24,11 @@
 */
 
 import { DEV, JSB } from 'internal:constants';
-import { CCObject, isCCObject, js, ValueType, jsbUtils, isCCClassOrFastDefined, getError, warn, misc, cclegacy } from '../core';
+import { CCObject, isCCObject, js, ValueType, isCCClassOrFastDefined, getError, warn, misc, cclegacy } from '../core';
 import { Prefab } from '../scene-graph/prefab';
 import { Node } from '../scene-graph/node';
 import { Component } from '../scene-graph/component';
+import { updateChildrenForDeserialize } from '../core/utils/jsb-utils';
 
 const Destroyed = CCObject.Flags.Destroyed;
 const PersistentMask = CCObject.Flags.PersistentMask;
@@ -106,7 +107,7 @@ export function instantiate (original: any, internalForce?: boolean): any {
             clone = original._instantiate(null, true);
             cclegacy.game._isCloning = false;
             if (JSB) {
-                jsbUtils.updateChildrenForDeserialize(clone);
+                updateChildrenForDeserialize(clone as Node);
             }
             // eslint-disable-next-line @typescript-eslint/no-unsafe-return
             return clone;
@@ -119,7 +120,7 @@ export function instantiate (original: any, internalForce?: boolean): any {
     clone = doInstantiate(original);
     cclegacy.game._isCloning = false;
     if (JSB) {
-        jsbUtils.updateChildrenForDeserialize(clone);
+        updateChildrenForDeserialize(clone as Node);
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return clone;
@@ -182,9 +183,9 @@ function enumerateCCClass (klass, obj, clone, parent): void {
             const initValue = clone[key];
             if (initValue instanceof ValueType
                 && initValue.constructor === value.constructor) {
-                initValue.set(value);
+                initValue.set(value as ValueType);
             } else {
-                clone[key] = value._iN$t || instantiateObj(value, parent);
+                clone[key] = value._iN$t || instantiateObj(value as any[], parent);
             }
         } else {
             clone[key] = value;
@@ -195,9 +196,9 @@ function enumerateCCClass (klass, obj, clone, parent): void {
 function enumerateObject (obj, clone, parent): void {
     // 目前使用“_iN$t”这个特殊字段来存实例化后的对象，这样做主要是为了防止循环引用
     // 注意，为了避免循环引用，所有新创建的实例，必须在赋值前被设为源对象的_iN$t
-    js.value(obj, '_iN$t', clone, true);
+    js.value(obj as Record<string, any>, '_iN$t', clone, true);
     objsToClearTmpVar.push(obj);
-    const klass = obj.constructor;
+    const klass: Constructor<unknown> = obj.constructor;
     if (isCCClassOrFastDefined(klass)) {
         enumerateCCClass(klass, obj, clone, parent);
     } else {
@@ -216,7 +217,7 @@ function enumerateObject (obj, clone, parent): void {
                 if (value === clone) {
                     continue;   // value is obj._iN$t
                 }
-                clone[key] = value._iN$t || instantiateObj(value, parent);
+                clone[key] = value._iN$t || instantiateObj(value as any[], parent);
             } else {
                 clone[key] = value;
             }
@@ -262,7 +263,7 @@ function instantiateObj (obj: TypedArray | any[] | CCObject, parent: any): any {
         for (let i = 0; i < len; ++i) {
             const value = obj[i];
             if (typeof value === 'object' && value) {
-                clone[i] = value._iN$t || instantiateObj(value, parent);
+                clone[i] = value._iN$t || instantiateObj(value as any[], parent);
             } else {
                 clone[i] = value;
             }
