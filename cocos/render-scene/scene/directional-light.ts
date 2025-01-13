@@ -23,7 +23,7 @@
 */
 
 import { Vec3, cclegacy } from '../../core';
-import { isHDRInPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
+import { getPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
 import { Ambient } from './ambient';
 import { Light, LightType } from './light';
 import { CSMLevel, CSMOptimizationMode, PCFType, Shadows } from './shadows';
@@ -81,7 +81,7 @@ export class DirectionalLight extends Light {
      * @zh 光源的辐照度，单位是 Lux(lx)
      */
     get illuminance (): number {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._illuminanceHDR;
         } else {
@@ -89,7 +89,7 @@ export class DirectionalLight extends Light {
         }
     }
     set illuminance (value: number) {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this.illuminanceHDR = value;
         } else {

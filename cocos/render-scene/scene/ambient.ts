@@ -23,7 +23,7 @@
 */
 
 import { Vec4, cclegacy } from '../../core';
-import { isHDRInPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
+import { getPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
 import { AmbientInfo } from '../../scene-graph/scene-globals';
 
 /**
@@ -59,7 +59,7 @@ export class Ambient {
      * @zh 天空颜色
      */
     get skyColor (): Vec4 {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._skyColorHDR;
         } else {
@@ -67,7 +67,7 @@ export class Ambient {
         }
     }
     set skyColor (color: Vec4) {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this._skyColorHDR.set(color);
         } else {
@@ -80,7 +80,7 @@ export class Ambient {
      * @zh 天空亮度
      */
     get skyIllum (): number {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._skyIllumHDR;
         } else {
@@ -88,7 +88,7 @@ export class Ambient {
         }
     }
     set skyIllum (illum: number) {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this._skyIllumHDR = illum;
         } else {
@@ -100,7 +100,7 @@ export class Ambient {
      * @zh 地面颜色
      */
     get groundAlbedo (): Vec4 {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._groundAlbedoHDR;
         } else {
@@ -108,7 +108,7 @@ export class Ambient {
         }
     }
     set groundAlbedo (color: Vec4) {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this._groundAlbedoHDR.set(color);
         } else {

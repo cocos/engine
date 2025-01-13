@@ -22,26 +22,8 @@
 
 import { cclegacy } from '../core/global-exports';
 import type { Director } from '../game/director';
-import type { Shadows } from '../render-scene/scene/shadows';
-import type { Skybox } from '../render-scene/scene/skybox';
 import type { PipelineSceneData } from './pipeline-scene-data';
 
 export function getPipelineSceneData (): PipelineSceneData {
     return (cclegacy.director as Director).root!.pipeline.pipelineSceneData;
-}
-
-export function isHDRInPipelineSceneData (): boolean {
-    return (cclegacy.director as Director).root!.pipeline.pipelineSceneData.isHDR;
-}
-
-export function setHDRInPipelineSceneData (v: boolean): void {
-    (cclegacy.director as Director).root!.pipeline.pipelineSceneData.isHDR = v;
-}
-
-export function getShadowsInPipelineSceneData (): Shadows {
-    return (cclegacy.director as Director).root!.pipeline.pipelineSceneData.shadows;
-}
-
-export function getSkyboxInPipelineSceneData (): Skybox {
-    return (cclegacy.director as Director).root!.pipeline.pipelineSceneData.skybox;
 }

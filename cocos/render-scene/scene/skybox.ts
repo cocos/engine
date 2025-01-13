@@ -34,7 +34,7 @@ import { Root } from '../../root';
 import { GlobalDSManager } from '../../rendering/global-descriptor-set-manager';
 import { deviceManager } from '../../gfx';
 import { Enum, cclegacy } from '../../core';
-import { isHDRInPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
+import { getPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
 
 let skybox_mesh: Mesh | null = null;
 let skybox_material: Material | null = null;
@@ -164,7 +164,7 @@ export class Skybox {
      * @zh 使用的立方体贴图
      */
     get envmap (): TextureCube | null {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._envmapHDR;
         } else {
@@ -172,7 +172,7 @@ export class Skybox {
         }
     }
     set envmap (val: TextureCube | null) {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this.setEnvMaps(val, this._envmapLDR);
         } else {
@@ -185,7 +185,7 @@ export class Skybox {
      * @zh 使用的漫反射卷积图
      */
     get diffuseMap (): TextureCube | null {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._diffuseMapHDR;
         } else {
@@ -193,7 +193,7 @@ export class Skybox {
         }
     }
     set diffuseMap (val: TextureCube | null) {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this.setDiffuseMaps(val, this._diffuseMapLDR);
         } else {
@@ -202,7 +202,7 @@ export class Skybox {
     }
 
     get reflectionMap (): TextureCube | null {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._reflectionHDR;
         } else {

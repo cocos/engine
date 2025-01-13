@@ -23,7 +23,7 @@
 */
 
 import { Vec3, cclegacy, geometry } from '../../core';
-import { isHDRInPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
+import { getPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
 import { Light, LightType, nt2lm } from './light';
 
 /**
@@ -71,7 +71,7 @@ export class SphereLight extends Light {
      * @zh 光源的亮度
      */
     get luminance (): number {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._luminanceHDR;
         } else {
@@ -79,7 +79,7 @@ export class SphereLight extends Light {
         }
     }
     set luminance (value: number) {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this.luminanceHDR = value;
         } else {

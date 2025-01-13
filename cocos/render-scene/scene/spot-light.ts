@@ -24,7 +24,7 @@
 
 import { Mat4, Quat, Vec3, geometry, cclegacy } from '../../core';
 import type { Frustum } from '../../core/geometry';
-import { isHDRInPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
+import { getPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
 import { Light, LightType, nt2lm } from './light';
 import { PCFType } from './shadows';
 
@@ -113,7 +113,7 @@ export class SpotLight extends Light {
      * @zh 光源的亮度
      */
     get luminance (): number {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._luminanceHDR;
         } else {
@@ -121,7 +121,7 @@ export class SpotLight extends Light {
         }
     }
     set luminance (value: number) {
-        const isHDR = isHDRInPipelineSceneData();
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this.luminanceHDR = value;
         } else {
