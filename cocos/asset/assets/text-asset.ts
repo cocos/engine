@@ -45,8 +45,8 @@ export class TextAsset extends Asset {
         return this.text;
     }
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 }
 
