@@ -1173,9 +1173,9 @@ export class Model {
      */
     public getMacroPatches (subModelIndex: number): IMacroPatch[] | null {
         let patches = this.receiveShadow ? shadowMapPatches : null;
-        if (this._lightmap != null) {
+        if (this._lightmap != null && this.node && this.node.scene) {
             const sceneGlobals = this.node.scene.globals;
-            if (this.node && this.node.scene && !sceneGlobals.disableLightmap) {
+            if (!sceneGlobals.disableLightmap) {
                 const mainLightIsStationary = sceneGlobals.bakedWithStationaryMainLight;
                 const lightmapPathes = mainLightIsStationary ? stationaryLightMapPatches : staticLightMapPatches;
 
