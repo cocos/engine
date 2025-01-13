@@ -94,16 +94,12 @@ export abstract class Action {
 
     // called before the action start. It will also set the target.
     startWithTarget<T> (target: T | null): void {
-        // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions, no-console
-        console.log(`${this}, startWithTarget`);
         this.originalTarget = target;
         this.target = target;
     }
 
     // called after the action has finished. It will set the 'target' to nil.
     stop (): void {
-        // eslint-disable-next-line @typescript-eslint/no-base-to-string, @typescript-eslint/restrict-template-expressions, no-console
-        console.log(`${this}, stop`);
         this.target = null;
     }
 
@@ -152,6 +148,7 @@ export abstract class Action {
 
     /**
      * Return the worker target of the current action applys on.
+     * @engineInternal
      * @mangle
      *
      * Example 1:
