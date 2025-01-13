@@ -266,7 +266,7 @@ class ScreenAdapter extends EventTarget {
             return new Size(width, height);
         case WindowType.Unknown:
         default:
-            return new Size(0, 0);
+            return new Size(1, 1);
         }
     }
     private get _windowType (): WindowType {
