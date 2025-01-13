@@ -1390,7 +1390,7 @@ export class TiledLayer extends UIRenderer {
         const mapth = self._mapTileSize.height;
         const layerW = self._layerSize.width;
         const layerH = self._layerSize.height;
-        const uiTransformComp = this.node._getUITransformComp()!;
+        const uiTransformComp = self.node._getUITransformComp()!;
 
         if (self._layerOrientation === Orientation.HEX) {
             let width = 0;
