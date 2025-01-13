@@ -952,7 +952,7 @@ export class MeshRenderer extends ModelRenderer {
 
         if (mainLight.node.mobility === MobilityMode.Static) {
             const sceneGlobals = this.node.scene.globals;
-            const lightProbeInfoData = this.node.scene.globals.lightProbeInfo.data;
+            const lightProbeInfoData = sceneGlobals.lightProbeInfo.data;
             let forceClose = false;
             if (this.bakeSettings.texture && !sceneGlobals.disableLightmap) {
                 forceClose = true;
