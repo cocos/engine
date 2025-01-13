@@ -61,7 +61,7 @@ function setEntityLocalOpacityDirtyRecursively (
     const uiOp = node.getComponent(UIOpacity);
     if (uiOp && stopRecursiveIfHasOpacity) {
         // Because it's possible that UiOpacity components are handled by themselves (at onEnable or onDisable)
-        uiOp._parentOpacity = parentOpacity;
+        uiOp._setParentOpacity(parentOpacity);
         return;
     }
 
@@ -75,7 +75,7 @@ function setEntityLocalOpacityDirtyRecursively (
     if (render && render.color) { // exclude UIMeshRenderer which has not color
         render.renderEntity.colorDirty = dirty;
         if (uiOp) {
-            uiOp._parentOpacity = parentOpacity;
+            uiOp._setParentOpacity(parentOpacity);
             render.renderEntity.localOpacity = parentOpacity * uiOp.opacity / 255;
         } else {
             // there is a just UIRenderer but no UIOpacity on the node, we should just transport the parentOpacity to the node.
@@ -89,7 +89,7 @@ function setEntityLocalOpacityDirtyRecursively (
     if (uiOp) {
         // there is a just UIOpacity but no UIRenderer on the node.
         // we should transport the interrupt opacity downward
-        uiOp._parentOpacity = parentOpacity;
+        uiOp._setParentOpacity(parentOpacity);
         parentOpacity = parentOpacity * uiOp.opacity / 255;
     }
 
@@ -131,16 +131,18 @@ export class UIOpacity extends Component {
      * @zh
      * 父节点的opacity。
      *
-     * @engineInternal
-     * @mangle
      */
-    public _parentOpacity: number = 1.0;
+    private _parentOpacity: number = 1.0;
 
     /**
      * @engineInternal
      * @mangle
      */
-    public _parentOpacityResetFlag: boolean = true;
+    _setParentOpacity (v: number): void {
+        this._parentOpacity = v;
+    }
+
+    private _parentOpacityResetFlag: boolean = true;
 
     /**
      * @en
