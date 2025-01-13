@@ -149,7 +149,7 @@ Object.defineProperty(imageAssetProto, 'width', {
     configurable: true,
     enumerable: true,
     get () {
-        return this._nativeData.width || this._width;
+        return this._nativeData?.width || this._width;
     }
 });
 
@@ -157,7 +157,7 @@ Object.defineProperty(imageAssetProto, 'height', {
     configurable: true,
     enumerable: true,
     get () {
-        return this._nativeData.height || this._height;
+        return this._nativeData?.height || this._height;
     }
 });
 
