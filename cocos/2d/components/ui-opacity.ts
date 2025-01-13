@@ -32,6 +32,80 @@ import { NodeEventType } from '../../scene-graph/node-event';
 
 /**
  * @en
+ * Recursively sets localopacity.
+ *
+ * @zh
+ * 递归设置localopacity。
+ *
+ * @param node @en recursive node.
+ *             @zh 递归的节点。
+ * @param dirty @en Is the color dirty.
+ *              @zh color是否dirty。
+ * @param parentOpacity @en The parent node's opacity.
+ *                      @zh 父节点的opacity。
+ * @param stopRecursiveIfHasOpacity @en Stop recursion if UiOpacity component exists.
+ *                                  @zh 如果存在UiOpacity组件则停止递归。
+ */
+function setEntityLocalOpacityDirtyRecursively (
+    node: Node,
+    dirty: boolean,
+    parentOpacity: number,
+    stopRecursiveIfHasOpacity: boolean,
+): void {
+    if (!node.isValid) {
+        // Since children might be destroyed before the parent,
+        // we should add protecting condition when executing recursion downwards.
+        return;
+    }
+
+    const uiOp = node.getComponent(UIOpacity);
+    if (uiOp && stopRecursiveIfHasOpacity) {
+        // Because it's possible that UiOpacity components are handled by themselves (at onEnable or onDisable)
+        uiOp._parentOpacity = parentOpacity;
+        return;
+    }
+
+    // If the node has never been activated, then node._uiProps.uiComp won't be set.
+    // We need to check if the UIRenderer exists or not.
+    let render = node._uiProps.uiComp as UIRenderer | null;
+    if (!render) {
+        render = node.getComponent(UIRenderer);
+    }
+
+    if (render && render.color) { // exclude UIMeshRenderer which has not color
+        render.renderEntity.colorDirty = dirty;
+        if (uiOp) {
+            uiOp._parentOpacity = parentOpacity;
+            render.renderEntity.localOpacity = parentOpacity * uiOp.opacity / 255;
+        } else {
+            // there is a just UIRenderer but no UIOpacity on the node, we should just transport the parentOpacity to the node.
+            render.renderEntity.localOpacity = parentOpacity;
+        }
+        render.node._uiProps.localOpacity = render.renderEntity.localOpacity;
+        //No need for recursion here. Because it doesn't affect the capacity of the child nodes.
+        return;
+    }
+
+    if (uiOp) {
+        // there is a just UIOpacity but no UIRenderer on the node.
+        // we should transport the interrupt opacity downward
+        uiOp._parentOpacity = parentOpacity;
+        parentOpacity = parentOpacity * uiOp.opacity / 255;
+    }
+
+    const children = node.children;
+    for (let i = 0, len = children.length; i < len; ++i) {
+        setEntityLocalOpacityDirtyRecursively(
+            children[i],
+            dirty || (parentOpacity < 1),
+            parentOpacity,
+            stopRecursiveIfHasOpacity,
+        );
+    }
+}
+
+/**
+ * @en
  * Set the UI transparency component.
  * This component can be used to influence subsequent render nodes.
  * Nodes that already have a rendering component can modify the alpha channel of color directly.
@@ -56,10 +130,17 @@ export class UIOpacity extends Component {
      *
      * @zh
      * 父节点的opacity。
+     *
+     * @engineInternal
+     * @mangle
      */
-    private _parentOpacity: number = 1.0;
+    public _parentOpacity: number = 1.0;
 
-    private _parentOpacityResetFlag: boolean = true;
+    /**
+     * @engineInternal
+     * @mangle
+     */
+    public _parentOpacityResetFlag: boolean = true;
 
     /**
      * @en
@@ -82,98 +163,14 @@ export class UIOpacity extends Component {
         this._opacity = value;
         this.node._uiProps.localOpacity = value / 255;
 
-        this.setEntityLocalOpacityDirtyRecursively(true);
+        if (JSB) {
+            setEntityLocalOpacityDirtyRecursively(this.node, true, this._parentOpacity, false);
+        }
 
         if (EDITOR_NOT_IN_PREVIEW) {
             setTimeout(() => {
                 EditorExtends.Node.emit('change', this.node.uuid, this.node);
             }, 200);
-        }
-    }
-
-    private setEntityLocalOpacityDirtyRecursively (dirty: boolean): void {
-        if (JSB) {
-            // const render = this.node._uiProps.uiComp as UIRenderer;
-            // if (render) {
-            //     render.setEntityOpacity(this.node._uiProps.localOpacity);
-            // }
-            // UIRenderer.setEntityColorDirtyRecursively(this.node, dirty);
-
-            UIOpacity.setEntityLocalOpacityDirtyRecursively(this.node, dirty, this._parentOpacity, false);
-        }
-    }
-
-    /**
-     * @en
-     * Recursively sets localopacity.
-     *
-     * @zh
-     * 递归设置localopacity。
-     *
-     * @param node @en recursive node.
-     *             @zh 递归的节点。
-     * @param dirty @en Is the color dirty.
-     *              @zh color是否dirty。
-     * @param parentOpacity @en The parent node's opacity.
-     *                      @zh 父节点的opacity。
-     * @param stopRecursiveIfHasOpacity @en Stop recursion if UiOpacity component exists.
-     *                                  @zh 如果存在UiOpacity组件则停止递归。
-     */
-    public static setEntityLocalOpacityDirtyRecursively (
-        node: Node,
-        dirty: boolean,
-        parentOpacity: number,
-        stopRecursiveIfHasOpacity: boolean,
-    ): void {
-        if (!node.isValid) {
-            // Since children might be destroyed before the parent,
-            // we should add protecting condition when executing recursion downwards.
-            return;
-        }
-
-        const uiOp = node.getComponent(UIOpacity);
-        if (uiOp && stopRecursiveIfHasOpacity) {
-            // Because it's possible that UiOpacity components are handled by themselves (at onEnable or onDisable)
-            uiOp._parentOpacity = parentOpacity;
-            return;
-        }
-
-        // If the node has never been activated, then node._uiProps.uiComp won't be set.
-        // We need to check if the UIRenderer exists or not.
-        let render = node._uiProps.uiComp as UIRenderer | null;
-        if (!render) {
-            render = node.getComponent(UIRenderer);
-        }
-
-        if (render && render.color) { // exclude UIMeshRenderer which has not color
-            render.renderEntity.colorDirty = dirty;
-            if (uiOp) {
-                uiOp._parentOpacity = parentOpacity;
-                render.renderEntity.localOpacity = parentOpacity * uiOp.opacity / 255;
-            } else {
-                // there is a just UIRenderer but no UIOpacity on the node, we should just transport the parentOpacity to the node.
-                render.renderEntity.localOpacity = parentOpacity;
-            }
-            render.node._uiProps.localOpacity = render.renderEntity.localOpacity;
-            //No need for recursion here. Because it doesn't affect the capacity of the child nodes.
-            return;
-        }
-
-        if (uiOp) {
-            // there is a just UIOpacity but no UIRenderer on the node.
-            // we should transport the interrupt opacity downward
-            uiOp._parentOpacity = parentOpacity;
-            parentOpacity = parentOpacity * uiOp.opacity / 255;
-        }
-
-        const children = node.children;
-        for (let i = 0, len = children.length; i < len; ++i) {
-            UIOpacity.setEntityLocalOpacityDirtyRecursively(
-                children[i],
-                dirty || (parentOpacity < 1),
-                parentOpacity,
-                stopRecursiveIfHasOpacity,
-            );
         }
     }
 
@@ -207,7 +204,7 @@ export class UIOpacity extends Component {
         } else {
             this._parentOpacityResetFlag = true;
         }
-        UIOpacity.setEntityLocalOpacityDirtyRecursively(this.node, true, opacity, false);
+        setEntityLocalOpacityDirtyRecursively(this.node, true, opacity, false);
     }
 
     protected _setEntityLocalOpacityRecursively (opacity: number): void {
@@ -224,7 +221,7 @@ export class UIOpacity extends Component {
         }
         // The current node is not recursive, only the child nodes are recursive.
         for (const child of this.node.children) {
-            UIOpacity.setEntityLocalOpacityDirtyRecursively(child, true, opacity, true);
+            setEntityLocalOpacityDirtyRecursively(child, true, opacity, true);
         }
     }
 
