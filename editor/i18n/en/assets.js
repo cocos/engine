@@ -10,6 +10,7 @@ module.exports = {
         cloneToDirectoryIllegal: 'Please limit the saved path to the current project assets path',
         preview: {
             header: 'Preview',
+            resetCameraView: 'Reset camera view',
         },
         spine: {
             skin: 'Skin',
