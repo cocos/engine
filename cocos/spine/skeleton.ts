@@ -27,7 +27,7 @@ import { Material, Texture2D } from '../asset/assets';
 import { error, logID, warn } from '../core/platform/debug';
 import { Enum, EnumType, ccenum } from '../core/value-types/enum';
 import { Node, NodeEventType } from '../scene-graph';
-import { CCObject, Color, RecyclePool, js } from '../core';
+import { CCObjectFlags, Color, RecyclePool, js } from '../core';
 import { SkeletonData } from './skeleton-data';
 import { Graphics, UIRenderer } from '../2d';
 import { Batcher2D } from '../2d/renderer/batcher-2d';
@@ -1614,7 +1614,7 @@ export class Skeleton extends UIRenderer {
             if (!this._debugRenderer) {
                 const debugDrawNode = new Node('DEBUG_DRAW_NODE');
                 debugDrawNode.layer = this.node.layer;
-                debugDrawNode.hideFlags |= CCObject.Flags.DontSave | CCObject.Flags.HideInHierarchy;
+                debugDrawNode.hideFlags |= CCObjectFlags.DontSave | CCObjectFlags.HideInHierarchy;
                 const debugDraw = debugDrawNode.addComponent(Graphics);
                 debugDraw.lineWidth = 5;
                 debugDraw.strokeColor = new Color(255, 0, 0, 255);

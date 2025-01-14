@@ -25,7 +25,7 @@
 import { EDITOR_NOT_IN_PREVIEW, TEST } from 'internal:constants';
 import { IPhysicsWorld } from '../spec/i-physics-world';
 // import { Graphics } from '../../2d';
-import { CCObject, Vec3, Color, IVec2Like, Vec2, Rect, js } from '../../core';
+import { CCObjectFlags, Vec3, Color, IVec2Like, Vec2, Rect, js } from '../../core';
 // import { Canvas } from '../../2d/framework';
 import { BuiltinShape2D } from './shapes/shape-2d';
 import { BuiltinBoxShape } from './shapes/box-shape-2d';
@@ -221,7 +221,7 @@ export class BuiltinPhysicsWorld implements IPhysicsWorld {
 
             const node = new Node('PHYSICS_2D_DEBUG_DRAW');
             // node.zIndex = cc.macro.MAX_ZINDEX;
-            node.hideFlags |= CCObject.Flags.DontSave;
+            node.hideFlags |= CCObjectFlags.DontSave;
             node.parent = canvas;
             node.worldPosition = Vec3.ZERO;
 

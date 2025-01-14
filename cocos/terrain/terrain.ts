@@ -31,7 +31,7 @@ import { TextureFilter, PixelFormat, WrapMode } from '../asset/assets/asset-enum
 import { Material } from '../asset/assets/material';
 import { RenderingSubMesh } from '../asset/assets/rendering-sub-mesh';
 import { Component } from '../scene-graph/component';
-import { CCObject, isValid } from '../core/data/object';
+import { CCObjectFlags, isValid } from '../core/data/object';
 import { director } from '../game/director';
 import { AttributeName, BufferUsageBit, Format, MemoryUsageBit, PrimitiveMode, Attribute, Buffer, BufferInfo, deviceManager, Texture } from '../gfx';
 import { clamp, Rect, Size, Vec2, Vec3, Vec4 } from '../core/math';
@@ -418,7 +418,7 @@ export class TerrainBlock {
 
         this._node = new Node('TerrainBlock');
         this._node.setParent(this._terrain.node);
-        this._node.hideFlags |= CCObject.Flags.DontSave | CCObject.Flags.HideInHierarchy;
+        this._node.hideFlags |= CCObjectFlags.DontSave | CCObjectFlags.HideInHierarchy;
         this._node.layer = this._terrain.node.layer;
 
         this._renderable = this._node.addComponent(TerrainRenderable);

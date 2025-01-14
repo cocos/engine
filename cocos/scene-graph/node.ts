@@ -35,7 +35,7 @@ import { CustomSerializable, editorExtrasTag, SerializationContext, Serializatio
 import { errorID, warnID, error, log, getError } from '../core/platform/debug';
 import { Component } from './component';
 import { property } from '../core/data/decorators/property';
-import { CCObject, js } from '../core';
+import { CCObject, CCObjectFlags, js } from '../core';
 import { PrefabInfo, PrefabInstance } from './prefab/prefab-info';
 import { NodeEventType } from './node-event';
 import { Event } from '../input/types';
@@ -46,9 +46,9 @@ import type { Director } from '../game/director';
 import type { Game } from '../game/game';
 import type { UITransform } from '../2d/framework/ui-transform';
 
-const Destroying = CCObject.Flags.Destroying;
-const DontDestroy = CCObject.Flags.DontDestroy;
-const Deactivating = CCObject.Flags.Deactivating;
+const Destroying = CCObjectFlags.Destroying;
+const DontDestroy = CCObjectFlags.DontDestroy;
+const Deactivating = CCObjectFlags.Deactivating;
 
 export const TRANSFORM_ON = 1 << 0;
 const ACTIVE_ON = 1 << 1;
@@ -1917,11 +1917,10 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         }
 
         this.hasChangedFlags = TransformBit.TRS;
-        const len = this._children.length;
-        for (let i = 0; i < len; ++i) {
-            this._children[i]._siblingIndex = i;
-            this._children[i]._onBatchCreated(dontSyncChildPrefab);
-        }
+        this._children.forEach((child: Node, i: number) => {
+            child._siblingIndex = i;
+            child._onBatchCreated(dontSyncChildPrefab);
+        });
     }
 
     /**
@@ -2099,31 +2098,35 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
             cur = cur._parent;
         }
         let child: Node;
+        let childMat: Mat4;
+        let childPos: Vec3;
         let dirtyBits = 0;
 
         while (i) {
             child = dirtyNodes[--i];
+            childMat = child._mat;
+            childPos = child._pos;
             dirtyBits |= child._transformFlags;
             if (cur) {
                 if (dirtyBits & TransformBit.POSITION) {
-                    Vec3.transformMat4(child._pos, child._lpos, cur._mat);
-                    child._mat.m12 = child._pos.x;
-                    child._mat.m13 = child._pos.y;
-                    child._mat.m14 = child._pos.z;
+                    Vec3.transformMat4(childPos, child._lpos, cur._mat);
+                    childMat.m12 = childPos.x;
+                    childMat.m13 = childPos.y;
+                    childMat.m14 = childPos.z;
                 }
                 if (dirtyBits & TransformBit.RS) {
-                    Mat4.fromSRT(child._mat, child._lrot, child._lpos, child._lscale);
-                    Mat4.multiply(child._mat, cur._mat, child._mat);
+                    Mat4.fromSRT(childMat, child._lrot, child._lpos, child._lscale);
+                    Mat4.multiply(childMat, cur._mat, childMat);
 
                     const rotTmp = dirtyBits & TransformBit.ROTATION ? child._rot : null;
-                    Mat4.toSRT(child._mat, rotTmp, null, child._scale);
+                    Mat4.toSRT(childMat, rotTmp, null, child._scale);
                 }
             } else {
                 if (dirtyBits & TransformBit.POSITION) {
-                    Vec3.copy(child._pos, child._lpos);
-                    child._mat.m12 = child._pos.x;
-                    child._mat.m13 = child._pos.y;
-                    child._mat.m14 = child._pos.z;
+                    Vec3.copy(childPos, child._lpos);
+                    childMat.m12 = childPos.x;
+                    childMat.m13 = childPos.y;
+                    childMat.m14 = childPos.z;
                 }
                 if (dirtyBits & TransformBit.RS) {
                     if (dirtyBits & TransformBit.ROTATION) {
@@ -2132,7 +2135,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                     if (dirtyBits & TransformBit.SCALE) {
                         Vec3.copy(child._scale, child._lscale);
                     }
-                    Mat4.fromRTS(child._mat, child._rot, child._pos, child._scale);
+                    Mat4.fromRTS(childMat, child._rot, child._pos, child._scale);
                 }
             }
 

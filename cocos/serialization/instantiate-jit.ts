@@ -26,10 +26,10 @@
 // Some helper methods for compile instantiation code
 
 import { TEST } from 'internal:constants';
-import { CCClass, isCCClassOrFastDefined, js, CCObject, isCCObject, cclegacy, flattenCodeArray } from '../core';
+import { CCClass, isCCClassOrFastDefined, js, CCObjectFlags, isCCObject, cclegacy, flattenCodeArray } from '../core';
 
-const Destroyed = CCObject.Flags.Destroyed;
-const PersistentMask = CCObject.Flags.PersistentMask;
+const Destroyed = CCObjectFlags.Destroyed;
+const PersistentMask = CCObjectFlags.PersistentMask;
 const DEFAULT = `${CCClass.Attr.DELIMETER}default`;
 const IDENTIFIER_RE = CCClass.IDENTIFIER_RE;
 

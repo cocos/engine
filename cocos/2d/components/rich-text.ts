@@ -27,7 +27,7 @@ import { ccclass, executeInEditMode, executionOrder, help, menu, multiline, type
 import { DEBUG, DEV, EDITOR } from 'internal:constants';
 import { Font, SpriteAtlas, TTFFont, SpriteFrame } from '../assets';
 import { EventTouch } from '../../input/types';
-import { assert, warnID, Color, Vec2, CCObject, cclegacy, js, Size } from '../../core';
+import { assert, warnID, Color, Vec2, CCObjectFlags, cclegacy, js, Size } from '../../core';
 import { HtmlTextParser, IHtmlTextParserResultObj, IHtmlTextParserStack } from '../utils/html-text-parser';
 import { Node } from '../../scene-graph';
 import { CacheMode, HorizontalTextAlignment, Label, VerticalTextAlignment } from './label';
@@ -103,7 +103,7 @@ function getSegmentByPool (type: string, content: string | SpriteFrame): ISegmen
     if (!node) {
         node = new Node(type);
     }
-    node.hideFlags |= CCObject.Flags.DontSave | CCObject.Flags.HideInHierarchy;
+    node.hideFlags |= CCObjectFlags.DontSave | CCObjectFlags.HideInHierarchy;
     node.active = true; // Reset node state when use node
     if (type === RichTextChildImageName) {
         seg.comp = node.getComponent(Sprite) || node.addComponent(Sprite);

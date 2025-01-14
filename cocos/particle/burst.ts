@@ -86,12 +86,10 @@ export default class Burst {
     @range([0, Number.POSITIVE_INFINITY, 1])
     public count: CurveRange = new CurveRange();
 
-    private _remainingCount: number;
-    private _curTime: number;
+    private _remainingCount = 0;
+    private _curTime = 0.0;
 
     constructor () {
-        this._remainingCount = 0;
-        this._curTime = 0.0;
     }
 
     /**
@@ -111,7 +109,7 @@ export default class Burst {
             preFrameTime = (preFrameTime > 0.0) ? preFrameTime : 0.0;
             const curFrameTime = repeat(psys.time - psys.startDelay.evaluate(0, 1), psys.duration);
             if (this._curTime >= preFrameTime && this._curTime < curFrameTime) {
-                (psys as any).emit(this.count.evaluate(this._curTime / psys.duration, 1), dt - (curFrameTime - this._curTime));
+                psys.emit(this.count.evaluate(this._curTime / psys.duration, 1), dt - (curFrameTime - this._curTime));
                 this._curTime += this.repeatInterval;
                 --this._remainingCount;
             }
@@ -133,7 +131,7 @@ export default class Burst {
      * @param psys @en Particle system to burst. @zh 要触发的粒子系统。
      * @returns @en burst max particle count. @zh 一次最多触发的粒子个数。
      */
-    public getMaxCount (psys): number {
+    public getMaxCount (psys: ParticleSystem): number {
         return this.count.getMax() * Math.min(Math.ceil(psys.duration / this.repeatInterval), this.repeatCount);
     }
 }

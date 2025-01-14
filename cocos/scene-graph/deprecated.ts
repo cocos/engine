@@ -30,7 +30,7 @@ import { Node } from './node';
 import { Vec2 } from '../core/math/vec2';
 import { Size } from '../core/math/size';
 import { legacyCC } from '../core/global-exports';
-import { CCObject } from '../core/data/object';
+import { CCObjectFlags } from '../core/data/object';
 import { warnID } from '../core/platform/debug';
 import { SceneGlobals } from './scene-globals';
 import { SystemEventType } from '../input/types';
@@ -298,8 +298,8 @@ removeProperty(Layers.BitMask, 'Layers.BitMask', [
     },
 ]);
 
-const HideInHierarchy = CCObject.Flags.HideInHierarchy;
-const DontSave = CCObject.Flags.DontSave;
+const HideInHierarchy = CCObjectFlags.HideInHierarchy;
+const DontSave = CCObjectFlags.DontSave;
 
 /**
  * @internal

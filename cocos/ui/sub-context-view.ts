@@ -37,7 +37,7 @@ import {  Size } from '../core/math';
 
 import { legacyCC } from '../core/global-exports';
 import { NodeEventType } from '../scene-graph/node-event';
-import { CCObject } from '../core';
+import { CCObjectFlags } from '../core';
 import { Texture2D } from '../asset/assets';
 
 /**
@@ -118,7 +118,7 @@ export class SubContextView extends Component {
 
     constructor () {
         super();
-        this._content.hideFlags |= CCObject.Flags.DontSave | CCObject.Flags.HideInHierarchy;
+        this._content.hideFlags |= CCObjectFlags.DontSave | CCObjectFlags.HideInHierarchy;
         this._updatedTime = performance.now();
     }
 
@@ -167,7 +167,7 @@ export class SubContextView extends Component {
 
     private _initContentNode (): void {
         if (this._openDataContext) {
-            const sharedCanvas = this._openDataContext.canvas;
+            const sharedCanvas: HTMLCanvasElement = this._openDataContext.canvas;
 
             const image = this._imageAsset;
             image.reset(sharedCanvas);
@@ -240,7 +240,7 @@ export class SubContextView extends Component {
             return;
         }
 
-        const sharedCanvas = this._openDataContext.canvas;
+        const sharedCanvas: HTMLCanvasElement = this._openDataContext.canvas;
         img.reset(sharedCanvas);
         if (sharedCanvas.width > img.width || sharedCanvas.height > img.height) {
             this._texture.create(sharedCanvas.width, sharedCanvas.height);

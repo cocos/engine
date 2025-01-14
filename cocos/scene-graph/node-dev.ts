@@ -23,13 +23,13 @@
 */
 
 import { EDITOR, DEV, TEST } from 'internal:constants';
-import { CCObject } from '../core/data/object';
+import { CCObjectFlags } from '../core/data/object';
 import * as js from '../core/utils/js';
 import { legacyCC } from '../core/global-exports';
 import { error, errorID, getError } from '../core/platform/debug';
 import { Component } from './component';
 
-const Destroying = CCObject.Flags.Destroying;
+const Destroying = CCObjectFlags.Destroying;
 const IS_PREVIEW = !!legacyCC.GAME_VIEW;
 
 export function nodePolyfill (Node): void {

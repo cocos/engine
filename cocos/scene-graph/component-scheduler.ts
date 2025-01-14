@@ -23,7 +23,7 @@
 */
 
 import { EDITOR, SUPPORT_JIT, DEV, TEST } from 'internal:constants';
-import { CCObject } from '../core/data/object';
+import { CCObjectFlags } from '../core/data/object';
 import { js } from '../core';
 import { tryCatchFunctor_EDITOR } from '../core/utils/misc';
 import { legacyCC } from '../core/global-exports';
@@ -32,9 +32,9 @@ import type { Component } from './component';
 
 const fastRemoveAt = js.array.fastRemoveAt;
 
-const IsStartCalled = CCObject.Flags.IsStartCalled;
-const IsOnEnableCalled = CCObject.Flags.IsOnEnableCalled;
-const IsEditorOnEnableCalled = CCObject.Flags.IsEditorOnEnableCalled;
+const IsStartCalled = CCObjectFlags.IsStartCalled;
+const IsOnEnableCalled = CCObjectFlags.IsOnEnableCalled;
+const IsEditorOnEnableCalled = CCObjectFlags.IsEditorOnEnableCalled;
 
 const callerFunctor: any = EDITOR && tryCatchFunctor_EDITOR;
 const callOnEnableInTryCatch: any = EDITOR && callerFunctor('onEnable');

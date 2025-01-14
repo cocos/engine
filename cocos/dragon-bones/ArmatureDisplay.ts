@@ -25,7 +25,7 @@
 import { EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
 import { Armature, Bone, EventObject, AnimationState } from '@cocos/dragonbones-js';
 import { UIRenderer } from '../2d/framework/ui-renderer';
-import { Color, Enum, ccenum, errorID, RecyclePool, js, CCObject, EventTarget, cclegacy, _decorator, warn } from '../core';
+import { Color, Enum, ccenum, errorID, RecyclePool, js, EventTarget, cclegacy, _decorator, warn, CCObjectFlags } from '../core';
 import { BlendFactor } from '../gfx';
 import { AnimationCache, ArmatureCache, ArmatureFrame } from './ArmatureCache';
 import { AttachUtil } from './AttachUtil';
@@ -759,8 +759,7 @@ export class ArmatureDisplay extends UIRenderer {
      */
     _init (): void {
         if (EDITOR_NOT_IN_PREVIEW) {
-            const Flags = CCObject.Flags;
-            this._objFlags |= (Flags.IsAnchorLocked | Flags.IsSizeLocked);
+            this._objFlags |= (CCObjectFlags.IsAnchorLocked | CCObjectFlags.IsSizeLocked);
             // this._refreshInspector();
         }
 
@@ -998,7 +997,7 @@ export class ArmatureDisplay extends UIRenderer {
         if (this.debugBones) {
             if (!this._debugDraw) {
                 const debugDrawNode = new Node('DEBUG_DRAW_NODE');
-                debugDrawNode.hideFlags |= CCObject.Flags.DontSave | CCObject.Flags.HideInHierarchy;
+                debugDrawNode.hideFlags |= CCObjectFlags.DontSave | CCObjectFlags.HideInHierarchy;
                 const debugDraw = debugDrawNode.addComponent(Graphics);
                 debugDraw.lineWidth = 1;
                 debugDraw.strokeColor = new Color(255, 0, 0, 255);

@@ -29,7 +29,7 @@
 
 import { DEBUG, EDITOR, BUILD, TEST, EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
 import { SceneAsset } from '../asset/assets/scene-asset';
-import { System, EventTarget, Scheduler, js, errorID, error, assertID, warnID, macro, CCObject, cclegacy, isValid } from '../core';
+import { System, EventTarget, Scheduler, js, errorID, error, assertID, warnID, macro, CCObject, CCObjectFlags, cclegacy, isValid } from '../core';
 import { input } from '../input';
 import { Root } from '../root';
 import { Node, NodeEventType, Scene } from '../scene-graph';
@@ -422,12 +422,12 @@ export class Director extends EventTarget {
                 // scene also contains the persist node, select the old one
                 const index = existNode.siblingIndex;
                 // restore to the old saving flag
-                node.hideFlags &= ~CCObject.Flags.DontSave;
-                node.hideFlags |= CCObject.Flags.DontSave & existNode.hideFlags;
+                node.hideFlags &= ~CCObjectFlags.DontSave;
+                node.hideFlags |= CCObjectFlags.DontSave & existNode.hideFlags;
                 existNode._destroyImmediate();
                 scene.insertChild(node, index);
             } else {
-                node.hideFlags |= CCObject.Flags.DontSave;
+                node.hideFlags |= CCObjectFlags.DontSave;
                 node.parent = scene;
             }
         }

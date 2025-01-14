@@ -26,7 +26,7 @@ import b2 from '@cocos/box2d';
 import { EDITOR_NOT_IN_PREVIEW, TEST } from 'internal:constants';
 
 import { IPhysicsWorld } from '../spec/i-physics-world';
-import { IVec2Like, Vec3, Quat, Vec2, toDegree, Rect, CCObject, js } from '../../core';
+import { IVec2Like, Vec3, Quat, Vec2, toDegree, Rect, CCObjectFlags, js } from '../../core';
 import { PHYSICS_2D_PTM_RATIO, ERaycast2DType, ERigidBody2DType } from '../framework/physics-types';
 import { b2RigidBody2D } from './rigid-body';
 import { PhysicsContactListener } from './platform/physics-contact-listener';
@@ -122,7 +122,7 @@ export class b2PhysicsWorld implements IPhysicsWorld {
 
             const node = new Node('PHYSICS_2D_DEBUG_DRAW');
             // node.zIndex = cc.macro.MAX_ZINDEX;
-            node.hideFlags |= CCObject.Flags.DontSave;
+            node.hideFlags |= CCObjectFlags.DontSave;
             node.parent = canvas;
             node.worldPosition = Vec3.ZERO;
             node.layer = Layers.Enum.UI_2D;

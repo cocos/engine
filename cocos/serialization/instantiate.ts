@@ -24,13 +24,13 @@
 */
 
 import { DEV, JSB } from 'internal:constants';
-import { CCObject, isCCObject, js, ValueType, jsbUtils, isCCClassOrFastDefined, getError, warn, misc, cclegacy } from '../core';
+import { CCObject, CCObjectFlags, isCCObject, js, ValueType, jsbUtils, isCCClassOrFastDefined, getError, warn, misc, cclegacy } from '../core';
 import { Prefab } from '../scene-graph/prefab';
 import { Node } from '../scene-graph/node';
 import { Component } from '../scene-graph/component';
 
-const Destroyed = CCObject.Flags.Destroyed;
-const PersistentMask = CCObject.Flags.PersistentMask;
+const Destroyed = CCObjectFlags.Destroyed;
+const PersistentMask = CCObjectFlags.PersistentMask;
 
 const objsToClearTmpVar: any[] = [];   // used to reset _iN$t variable
 

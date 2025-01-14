@@ -1332,7 +1332,11 @@ export class ParticleSystem extends ModelRenderer {
         }
     }
 
-    private emit (count: number, dt: number): void {
+    /**
+     * @engineInternal
+     * emit is used in burst.ts, so it should be public and marked as engine internal.
+     */
+    public emit (count: number, dt: number): void {
         const self = this;
         const node = self.node;
         const loopDelta = (self._time % self.duration) / self.duration; // loop delta value

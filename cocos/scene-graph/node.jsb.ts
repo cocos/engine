@@ -25,7 +25,7 @@ import { cclegacy } from '../core/global-exports';
 import { errorID, getError } from '../core/platform/debug';
 import { Component } from './component';
 import { NodeEventType } from './node-event';
-import { CCObject } from '../core/data/object';
+import { CCObjectFlags } from '../core/data/object';
 import { NodeUIProperties } from './node-ui-properties';
 import { MobilityMode, NodeSpace, TransformBit } from './node-enum';
 import { Mat4, Quat, Vec3 } from '../core/math';
@@ -84,7 +84,7 @@ const TRANSFORMBIT_TRS = TransformBit.TRS;
 const nodeProto: any = jsb.Node.prototype;
 export const TRANSFORM_ON = 1 << 0;
 const ACTIVE_ON = 1 << 1;
-const Destroying = CCObject.Flags.Destroying;
+const Destroying = CCObjectFlags.Destroying;
 
 // TODO: `_setTempFloatArray` is only implemented on Native platforms. @dumganhar
 // issue: https://github.com/cocos/cocos-engine/issues/14644
