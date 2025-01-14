@@ -328,7 +328,7 @@ export class TiledLayer extends UIRenderer {
     }
 
     protected _updateCullingOffsetByUserNode (node_: Node): void {
-        const node = node_._uiProps.uiTransformComp!.contentSize;
+        const node = node_._getUITransformComp()!.contentSize;
         if (this._topOffset < node.height) {
             this._topOffset = node.height;
         }
@@ -468,7 +468,7 @@ export class TiledLayer extends UIRenderer {
 
     protected _syncAnchorPoint (): void {
         const node = this.node;
-        const trans = node._uiProps.uiTransformComp!;
+        const trans = node._getUITransformComp()!;
         const scale = node.getScale();
         this._leftDownToCenterX = trans.width * trans.anchorX * scale.x;
         this._leftDownToCenterY = trans.height * trans.anchorY * scale.y;
@@ -1341,81 +1341,89 @@ export class TiledLayer extends UIRenderer {
         this._prepareToRender();
     }
 
-    public init (layerInfo: TMXLayerInfo, mapInfo: TMXMapInfo, tilesets: TMXTilesetInfo[], textures: SpriteFrame[], texGrids: TiledTextureGrids): void {
-        this._cullingDirty = true;
-        this._layerInfo = layerInfo;
-        this._mapInfo = mapInfo;
+    public init (
+        layerInfo: TMXLayerInfo,
+        mapInfo: TMXMapInfo,
+        tilesets: TMXTilesetInfo[],
+        textures: SpriteFrame[],
+        texGrids: TiledTextureGrids,
+    ): void {
+        const self = this;
+        self._cullingDirty = true;
+        self._layerInfo = layerInfo;
+        self._mapInfo = mapInfo;
 
         const size = layerInfo.layerSize!;
 
         // layerInfo
-        this._layerName = layerInfo.name;
-        this.tiles = layerInfo.tiles as unknown as any;
-        this._properties = layerInfo.properties;
-        this._layerSize = size;
-        this._minGID = layerInfo.minGID;
-        this._maxGID = layerInfo.maxGID;
-        this._opacity = layerInfo.opacity;
+        self._layerName = layerInfo.name;
+        self.tiles = layerInfo.tiles as unknown as any;
+        self._properties = layerInfo.properties;
+        self._layerSize = size;
+        self._minGID = layerInfo.minGID;
+        self._maxGID = layerInfo.maxGID;
+        self._opacity = layerInfo.opacity;
 
         if (layerInfo.tintColor) {
-            this._tintColor = layerInfo.tintColor;
+            self._tintColor = layerInfo.tintColor;
             // this.node.color = this._tintColor;
         }
 
-        this.renderOrder = mapInfo.renderOrder;
-        this._staggerAxis = mapInfo.getStaggerAxis()!;
-        this._staggerIndex = mapInfo.getStaggerIndex()!;
-        this._hexSideLength = mapInfo.getHexSideLength();
-        this._animations = mapInfo.getTileAnimations();
+        self.renderOrder = mapInfo.renderOrder;
+        self._staggerAxis = mapInfo.getStaggerAxis()!;
+        self._staggerIndex = mapInfo.getStaggerIndex()!;
+        self._hexSideLength = mapInfo.getHexSideLength();
+        self._animations = mapInfo.getTileAnimations();
 
         // tilesets
-        this._tilesets = tilesets;
+        self._tilesets = tilesets;
         // textures
-        this._textures = textures;
+        self._textures = textures;
         // grid texture
-        this.texGrids = texGrids;
+        self.texGrids = texGrids;
 
         // mapInfo
-        this._layerOrientation = mapInfo.orientation;
-        this._mapTileSize = mapInfo.getTileSize();
+        self._layerOrientation = mapInfo.orientation;
+        self._mapTileSize = mapInfo.getTileSize();
 
-        const maptw = this._mapTileSize.width;
-        const mapth = this._mapTileSize.height;
-        const layerW = this._layerSize.width;
-        const layerH = this._layerSize.height;
+        const maptw = self._mapTileSize.width;
+        const mapth = self._mapTileSize.height;
+        const layerW = self._layerSize.width;
+        const layerH = self._layerSize.height;
+        const uiTransformComp = self.node._getUITransformComp()!;
 
-        if (this._layerOrientation === Orientation.HEX) {
+        if (self._layerOrientation === Orientation.HEX) {
             let width = 0;
             let height = 0;
             const tileWidth = maptw & ~1;
             const tileHeight = mapth & ~1;
 
-            this._odd_even = (this._staggerIndex === StaggerIndex.STAGGERINDEX_ODD) ? 1 : -1;
-            if (this._staggerAxis === StaggerAxis.STAGGERAXIS_X) {
-                this._diffX1 = (tileWidth - this._hexSideLength) / 2;
-                this._diffY1 = 0;
-                width = (this._diffX1 + this._hexSideLength) * layerW + this._diffX1;
+            self._odd_even = (self._staggerIndex === StaggerIndex.STAGGERINDEX_ODD) ? 1 : -1;
+            if (self._staggerAxis === StaggerAxis.STAGGERAXIS_X) {
+                self._diffX1 = (tileWidth - self._hexSideLength) / 2;
+                self._diffY1 = 0;
+                width = (self._diffX1 + self._hexSideLength) * layerW + self._diffX1;
                 height = (tileHeight * layerH) + tileHeight / 2;
             } else {
-                this._diffX1 = 0;
-                this._diffY1 = (tileHeight - this._hexSideLength) / 2;
+                self._diffX1 = 0;
+                self._diffY1 = (tileHeight - self._hexSideLength) / 2;
                 width = (tileWidth * layerW) + tileWidth / 2;
-                height = (this._diffY1 + this._hexSideLength) * layerH + this._diffY1;
+                height = (self._diffY1 + self._hexSideLength) * layerH + self._diffY1;
             }
-            this.node._uiProps.uiTransformComp!.setContentSize(width, height);
-        } else if (this._layerOrientation === Orientation.ISO) {
+            uiTransformComp.setContentSize(width, height);
+        } else if (self._layerOrientation === Orientation.ISO) {
             const wh = layerW + layerH;
-            this.node._uiProps.uiTransformComp!.setContentSize(maptw * 0.5 * wh, mapth * 0.5 * wh);
+            uiTransformComp.setContentSize(maptw * 0.5 * wh, mapth * 0.5 * wh);
         } else {
-            this.node._uiProps.uiTransformComp!.setContentSize(layerW * maptw, layerH * mapth);
+            uiTransformComp.setContentSize(layerW * maptw, layerH * mapth);
         }
 
         // offset (after layer orientation is set);
-        this._offset = new Vec2(layerInfo.offset.x, -layerInfo.offset.y);
-        this._useAutomaticVertexZ = false;
-        this._vertexZvalue = 0;
-        this._syncAnchorPoint();
-        this._prepareToRender();
+        self._offset = new Vec2(layerInfo.offset.x, -layerInfo.offset.y);
+        self._useAutomaticVertexZ = false;
+        self._vertexZvalue = 0;
+        self._syncAnchorPoint();
+        self._prepareToRender();
     }
 
     protected _prepareToRender (): void {

@@ -34,7 +34,7 @@ const tempFilter = new b2.Filter();
 const lowerBound = new b2.Vec2();
 const upperBound = new b2.Vec2();
 
-function getFilter (shape: b2Shape2D): any {
+function getFilter (shape: b2Shape2D): b2.Filter {
     const comp = shape.collider;
     if (comp.body) {
         tempFilter.categoryBits = comp.group === PhysicsGroup.DEFAULT ? comp.body.group : comp.group;
@@ -45,6 +45,7 @@ function getFilter (shape: b2Shape2D): any {
     return tempFilter;
 }
 
+/** @mangle */
 export class b2Shape2D implements IBaseShape {
     protected _shapes: b2.Shape[] = [];
     protected _fixtures: b2.Fixture[] = [];

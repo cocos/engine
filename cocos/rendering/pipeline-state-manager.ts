@@ -26,6 +26,8 @@ import { Shader, RenderPass, InputAssembler, Device, PipelineState, InputState, 
 import { Pass } from '../render-scene/core/pass';
 
 export class PipelineStateManager {
+    private constructor () {}
+
     private static _PSOHashMap: Map<number, PipelineState> = new Map<number, PipelineState>();
 
     // pass is only needed on TS.

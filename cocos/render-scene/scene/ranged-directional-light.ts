@@ -21,6 +21,7 @@
 
 import { cclegacy } from '../../core';
 import { Vec3 } from '../../core/math/vec3';
+import { getPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
 import { Ambient } from './ambient';
 import { Light, LightType } from './light';
 
@@ -76,7 +77,7 @@ export class RangedDirectionalLight extends Light {
      * @zh 光源的辐照度，单位是 Lux(lx)
      */
     get illuminance (): number {
-        const isHDR = cclegacy.director.root.pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._illuminanceHDR;
         } else {
@@ -84,7 +85,7 @@ export class RangedDirectionalLight extends Light {
         }
     }
     set illuminance (value: number) {
-        const isHDR = cclegacy.director.root.pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this.illuminanceHDR = value;
         } else {

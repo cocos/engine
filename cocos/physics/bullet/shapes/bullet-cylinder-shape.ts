@@ -29,6 +29,7 @@ import { IVec3Like, absMax } from '../../../core';
 import { BulletCache } from '../bullet-cache';
 import { bt } from '../instantiated';
 
+/** @mangle */
 export class BulletCylinderShape extends BulletShape implements ICylinderShape {
     setHeight (v: number): void {
         this.updateProperties(

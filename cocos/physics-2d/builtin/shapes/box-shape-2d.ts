@@ -27,8 +27,9 @@ import { Vec2, Rect } from '../../../core';
 import { BoxCollider2D } from '../../framework';
 import Intersection2D from '../intersection-2d';
 
+/** @mangle */
 export class BuiltinBoxShape extends BuiltinShape2D {
-    private _worldPoints = [new Vec2(), new Vec2(), new Vec2(), new Vec2()]
+    private _worldPoints = [new Vec2(), new Vec2(), new Vec2(), new Vec2()];
     get worldPoints (): Readonly<Vec2[]> {
         return this._worldPoints;
     }

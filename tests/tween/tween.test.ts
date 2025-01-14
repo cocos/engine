@@ -18,6 +18,18 @@ function runFrames(frames: number) {
     }
 }
 
+function randomTickSeconds(time: number) {
+    let totalTime = 0;
+    for (;;) {
+        const dt = 0.016 * 2 * Math.random();
+        director.tick(dt);
+        totalTime += dt;
+        if (totalTime >= time) {
+            break;
+        }
+    }
+}
+
 test('remove actions by tag', function () {
     const scene = new Scene('test-tags');
     const node = new Node();
@@ -4850,7 +4862,7 @@ test('updateUntil 2', function () {
     const target2 = { x: 0 };
 
     tween(node)
-        .delay(1)
+        .delay(1)  // 1s 
         .sequence(
             tween(node).parallel(
                 tween(node).by(1, { position: v3(90, 90, 90) }).call(cb),
@@ -4863,10 +4875,10 @@ test('updateUntil 2', function () {
                     }
                     return false;
                 }, 1, false, 'hello'),
-                tween(node).by(3, { scale: v3(30, 30, 30) })
+                tween(node).by(3, { scale: v3(30, 30, 30) }) // 3s
             ),
             tween(node).call(cb2),
-            tween(target2).by(1, { x: 100 }),
+            tween(target2).by(1, { x: 100 }), // 1s
         )
         .updateUntil((target: Node, dt: number, arg0: number, arg1: boolean, arg2: string): boolean => {
             elapsed += dt;
@@ -4876,7 +4888,7 @@ test('updateUntil 2', function () {
                 return true;
             }
             return false;
-        }, 2, true, 'world')
+        }, 2, true, 'world') // 2s
         .start();
 
     runFrames(1); // Start
@@ -4907,6 +4919,34 @@ test('updateUntil 2', function () {
 
     runFrames(120) // updateUnitl 2
     expect(updateUntilSuccessTimes).toBe(2);
+
+    director.unregisterSystem(sys);
+});
+
+test('updateUntil 3', function () {
+    const sys = new TweenSystem();
+    (TweenSystem.instance as any) = sys;
+    director.registerSystem(TweenSystem.ID, sys, System.Priority.MEDIUM);
+
+    const node = new Node();
+
+    let testNumber = 0;
+    tween(node)
+        .delay(1)
+        .call(() => {
+            testNumber++;
+        })
+        .updateUntil(() => {
+            return false;
+        })
+        .start();
+
+    runFrames(1); // Start
+    randomTickSeconds(1);
+    expect(testNumber).toBe(1);
+
+    randomTickSeconds(1);
+    expect(testNumber).toBe(1);
 
     director.unregisterSystem(sys);
 });

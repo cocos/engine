@@ -60,6 +60,7 @@ const impulse: IPhysics2DImpulse = {
     tangentImpulses: [] as number[],
 };
 
+/** @mangle */
 export class PhysicsContact implements IPhysics2DContact {
     static get (b2contact: number): PhysicsContact {
         let c = pools.pop();

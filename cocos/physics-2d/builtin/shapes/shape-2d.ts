@@ -28,6 +28,7 @@ import { Rect, Vec2 } from '../../../core';
 import { BuiltinPhysicsWorld } from '../builtin-world';
 import { BuiltinContact } from '../builtin-contact';
 
+/** @mangle */
 export class BuiltinShape2D implements IBaseShape {
     protected _collider: Collider2D | null = null;
 

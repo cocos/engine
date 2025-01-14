@@ -24,6 +24,7 @@
 
 import { BulletShape } from './shapes/bullet-shape';
 
+/** @mangle */
 export interface IBulletBodyStruct {
     readonly id: number;
     readonly body: Bullet.ptr;
@@ -33,6 +34,7 @@ export interface IBulletBodyStruct {
     useCompound: boolean;
 }
 
+/** @mangle */
 export interface IBulletGhostStruct {
     readonly id: number;
     readonly ghost: Bullet.ptr;

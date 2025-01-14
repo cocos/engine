@@ -37,8 +37,8 @@ import { Asset } from './asset';
 export class BufferAsset extends Asset {
     private _buffer: ArrayBuffer | null = null;
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     /**

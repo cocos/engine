@@ -30,6 +30,7 @@ import { IVec3Like } from '../../../core';
 import { BulletCache } from '../bullet-cache';
 import { bt } from '../instantiated';
 
+/** @mangle */
 export class BulletPlaneShape extends BulletShape implements IPlaneShape {
     setNormal (v: IVec3Like): void {
         cocos2BulletVec3(bt.StaticPlaneShape_getPlaneNormal(this.impl), v);

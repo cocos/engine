@@ -10,6 +10,7 @@ module.exports = {
         cloneToDirectoryIllegal: '保存路径请限制在当前项目 /assets 路径内',
         preview: {
             header: '预览',
+            resetCameraView: '复位摄像机视图',
         },
         spine: {
             skin: '皮肤',

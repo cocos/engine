@@ -72,9 +72,10 @@ export function validPunctualLightsCulling (pipeline: BasicPipeline, camera: Cam
     validPunctualLights.length = 0;
     const _sphere = geometry.Sphere.create(0, 0, 0, 1);
     const { spotLights } = camera.scene!;
+    const disableLightmap = camera.node.scene.globals.disableLightmap;
     for (let i = 0; i < spotLights.length; i++) {
         const light = spotLights[i];
-        if (light.baked && !camera.node.scene.globals.disableLightmap) {
+        if (light.baked && !disableLightmap) {
             continue;
         }
 
@@ -87,7 +88,7 @@ export function validPunctualLightsCulling (pipeline: BasicPipeline, camera: Cam
     const { sphereLights } = camera.scene!;
     for (let i = 0; i < sphereLights.length; i++) {
         const light = sphereLights[i];
-        if (light.baked && !camera.node.scene.globals.disableLightmap) {
+        if (light.baked && !disableLightmap) {
             continue;
         }
         geometry.Sphere.set(_sphere, light.position.x, light.position.y, light.position.z, light.range);

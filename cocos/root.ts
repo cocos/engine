@@ -41,6 +41,7 @@ import { IPipelineEvent, PipelineEventProcessor } from './rendering/pipeline-eve
 import { localDescriptorSetLayout_ResizeMaxJoints, UBOCameraEnum, UBOGlobalEnum, UBOLocalEnum, UBOShadowEnum, UBOWorldBound } from './rendering/define';
 import { XREye, XRPoseType } from './xr/xr-enums';
 import { ICustomJointTextureLayout } from './3d/skeletal-animation/skeletal-animation-utils';
+import { getPipelineSceneData } from './rendering/pipeline-scene-data-utils';
 
 /**
  * @en Initialization information for the Root
@@ -434,8 +435,8 @@ export class Root {
             this._scenes[i].onGlobalPipelineStateChanged();
         }
 
-        if (this._pipeline!.pipelineSceneData.skybox.enabled) {
-            this._pipeline!.pipelineSceneData.skybox.model!.onGlobalPipelineStateChanged();
+        if (getPipelineSceneData().skybox.enabled) {
+            getPipelineSceneData().skybox.model!.onGlobalPipelineStateChanged();
         }
 
         this._pipeline!.onGlobalPipelineStateChanged();

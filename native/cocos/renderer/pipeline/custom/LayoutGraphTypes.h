@@ -136,13 +136,6 @@ inline bool operator<(const DescriptorGroupBlockIndex& lhs, const DescriptorGrou
            std::forward_as_tuple(rhs.updateFrequency, rhs.parameterType, rhs.descriptorType, rhs.visibility, rhs.accessType, rhs.viewDimension, rhs.sampleType, rhs.format);
 }
 
-struct DescriptorGroupBlock {
-    ccstd::map<ccstd::string, Descriptor> descriptors;
-    ccstd::map<ccstd::string, gfx::UniformBlock> uniformBlocks;
-    uint32_t capacity{0};
-    uint32_t count{0};
-};
-
 struct DescriptorDB {
     using allocator_type = boost::container::pmr::polymorphic_allocator<char>;
     allocator_type get_allocator() const noexcept { // NOLINT
@@ -159,7 +152,7 @@ struct DescriptorDB {
     DescriptorDB& operator=(DescriptorDB const& rhs) = default;
 
     ccstd::pmr::map<DescriptorBlockIndex, DescriptorBlock> blocks;
-    ccstd::pmr::map<DescriptorGroupBlockIndex, DescriptorGroupBlock> groupBlocks;
+    ccstd::pmr::map<DescriptorGroupBlockIndex, DescriptorBlock> groupBlocks;
 };
 
 struct RenderStageTag {};

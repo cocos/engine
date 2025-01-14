@@ -29,6 +29,7 @@ import { b2Joint } from './joint-2d';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework/physics-types';
 import { toRadian } from '../../../core';
 
+/** @mangle */
 export class b2WheelJoint extends b2Joint implements IWheelJoint {
     setDampingRatio (v: number): void {
         if (this._b2joint) {

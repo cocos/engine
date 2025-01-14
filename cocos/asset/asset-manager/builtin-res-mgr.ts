@@ -40,6 +40,8 @@ export class BuiltinResMgr {
     protected _resources: Record<string, Asset> = {};
     protected _materialsToBeCompiled: Material[] = [];
 
+    constructor () {}
+
     // this should be called after renderer initialized
     public init (): void {
         const resources = this._resources;

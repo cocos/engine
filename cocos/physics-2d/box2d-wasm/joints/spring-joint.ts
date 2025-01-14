@@ -28,6 +28,7 @@ import { B2Joint } from './joint-2d';
 import { SpringJoint2D } from '../../framework';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework/physics-types';
 
+/** @mangle */
 export class B2SpringJoint extends B2Joint implements ISpringJoint {
     setFrequency (v: number): void {
         if (this._b2joint) {

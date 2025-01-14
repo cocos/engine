@@ -1,8 +1,6 @@
 /*
- Copyright (c) 2022-2023 Xiamen Yaji Software Co., Ltd.
-
+ Copyright (c) 2025 Xiamen Yaji Software Co., Ltd.
  https://www.cocos.com/
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights to
@@ -22,8 +20,10 @@
  THE SOFTWARE.
 */
 
-export declare class DelayEvent {
-    target: any;
-    // eslint-disable-next-line @typescript-eslint/ban-types
-    func: Function;
+import { cclegacy } from '../core/global-exports';
+import type { Director } from '../game/director';
+import type { PipelineSceneData } from './pipeline-scene-data';
+
+export function getPipelineSceneData (): PipelineSceneData {
+    return (cclegacy.director as Director).root!.pipeline.pipelineSceneData;
 }

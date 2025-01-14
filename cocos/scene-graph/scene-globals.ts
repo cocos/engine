@@ -45,6 +45,7 @@ import { cclegacy, macro } from '../core';
 import { Scene } from './scene';
 import { NodeEventType } from './node-event';
 import { PostSettings, ToneMappingType } from '../render-scene/scene/post-settings';
+import { getPipelineSceneData } from '../rendering/pipeline-scene-data-utils';
 
 const _up = new Vec3(0, 1, 0);
 const _v3 = new Vec3();
@@ -132,7 +133,7 @@ export class AmbientInfo {
     @tooltip('i18n:ambient.skyLightingColor')
     set skyLightingColor (val: Color) {
         _v4.set(val.x, val.y, val.z, val.w);
-        if ((legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR) {
+        if (getPipelineSceneData().isHDR) {
             this._skyColorHDR.set(_v4);
         } else {
             this._skyColorLDR.set(_v4);
@@ -140,7 +141,7 @@ export class AmbientInfo {
         if (this._resource) { this._resource.skyColor.set(_v4); }
     }
     get skyLightingColor (): Color {
-        const isHDR = (legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         _v4.set(isHDR ? this._skyColorHDR : this._skyColorLDR);
         normalizeHDRColor(_v4);
         return _col.set(_v4.x * 255, _v4.y * 255, _v4.z * 255, 255);
@@ -150,7 +151,7 @@ export class AmbientInfo {
      * @internal
      */
     set skyColor (val: Vec4) {
-        if ((legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR) {
+        if (getPipelineSceneData().isHDR) {
             this._skyColorHDR.set(val);
         } else {
             this._skyColorLDR.set(val);
@@ -167,7 +168,7 @@ export class AmbientInfo {
     @tooltip('i18n:ambient.skyIllum')
     @range([0, Number.POSITIVE_INFINITY, 100])
     set skyIllum (val: number) {
-        if ((legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR) {
+        if (getPipelineSceneData().isHDR) {
             this._skyIllumHDR = val;
         } else {
             this._skyIllumLDR = val;
@@ -176,7 +177,7 @@ export class AmbientInfo {
         if (this._resource) { this._resource.skyIllum = val; }
     }
     get skyIllum (): number {
-        if ((legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR) {
+        if (getPipelineSceneData().isHDR) {
             return this._skyIllumHDR;
         } else {
             return this._skyIllumLDR;
@@ -200,7 +201,7 @@ export class AmbientInfo {
     @tooltip('i18n:ambient.groundLightingColor')
     set groundLightingColor (val: Color) {
         _v4.set(val.x, val.y, val.z, val.w);
-        if ((legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR) {
+        if (getPipelineSceneData().isHDR) {
             this._groundAlbedoHDR.set(_v4);
         } else {
             this._groundAlbedoLDR.set(_v4);
@@ -208,7 +209,7 @@ export class AmbientInfo {
         if (this._resource) { this._resource.groundAlbedo.set(_v4); }
     }
     get groundLightingColor (): Color {
-        const isHDR = (legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         _v4.set(isHDR ? this._groundAlbedoHDR : this._groundAlbedoLDR);
         normalizeHDRColor(_v4);
         return _col.set(_v4.x * 255, _v4.y * 255, _v4.z * 255, 255);
@@ -218,7 +219,7 @@ export class AmbientInfo {
      * @internal
      */
     set groundAlbedo (val: Vec4) {
-        if ((legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR) {
+        if (getPipelineSceneData().isHDR) {
             this._groundAlbedoHDR.set(val);
         } else {
             this._groundAlbedoLDR.set(val);
@@ -349,7 +350,7 @@ export class SkyboxInfo {
     @editable
     @tooltip('i18n:skybox.useHDR')
     set useHDR (val) {
-        (legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR = val;
+        getPipelineSceneData().isHDR = val;
         this._useHDR = val;
 
         // Switch UI to and from LDR/HDR textures depends on HDR state
@@ -370,7 +371,7 @@ export class SkyboxInfo {
         }
     }
     get useHDR (): boolean {
-        (legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR = this._useHDR;
+        getPipelineSceneData().isHDR = this._useHDR;
         return this._useHDR;
     }
 
@@ -382,7 +383,7 @@ export class SkyboxInfo {
     @type(TextureCube)
     @tooltip('i18n:skybox.envmap')
     set envmap (val) {
-        const isHDR = (legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this._envmapHDR = val;
             this._reflectionHDR = null;
@@ -411,7 +412,7 @@ export class SkyboxInfo {
         }
     }
     get envmap (): TextureCube | null {
-        const isHDR = (legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._envmapHDR;
         } else {
@@ -450,7 +451,7 @@ export class SkyboxInfo {
     @type(TextureCube)
     @displayOrder(100)
     set diffuseMap (val: TextureCube | null) {
-        const isHDR = (legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this._diffuseMapHDR = val;
         } else {
@@ -462,7 +463,7 @@ export class SkyboxInfo {
         }
     }
     get diffuseMap (): TextureCube | null {
-        const isHDR = (legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._diffuseMapHDR;
         } else {
@@ -485,7 +486,7 @@ export class SkyboxInfo {
     @type(TextureCube)
     @displayOrder(100)
     set reflectionMap (val: TextureCube | null) {
-        const isHDR = (legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this._reflectionHDR = val;
         } else {
@@ -496,7 +497,7 @@ export class SkyboxInfo {
         }
     }
     get reflectionMap (): TextureCube | null {
-        const isHDR = (legacyCC.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._reflectionHDR;
         } else {

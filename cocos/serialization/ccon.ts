@@ -217,6 +217,8 @@ export class BufferBuilder {
     private _viewOrPaddings: (ArrayBufferView | number)[] = [];
     private _length = 0;
 
+    constructor () {}
+
     get byteLength (): number {
         return this._length;
     }

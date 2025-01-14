@@ -35,6 +35,7 @@ const v3_2 = new Vec3();
 const quat_0 = new Quat();
 const mat_0 = new Mat4();
 
+/** @mangle */
 export class PhysXRevoluteJoint extends PhysXJoint implements IHingeConstraint {
     private _limitPair = new PX.PxJointAngularLimitPair(0, 0);
 

@@ -113,8 +113,8 @@ export abstract class ActionInterval extends FiniteTimeAction {
         return true;
     }
 
-    isDone (): boolean {
-        return (this._elapsed >= this._duration);
+    override isDone (): boolean {
+        return this._elapsed >= this._duration && !this.isUnknownDuration();
     }
 
     _cloneDecoration (action: ActionInterval): void {
@@ -136,12 +136,16 @@ export abstract class ActionInterval extends FiniteTimeAction {
         t = (t < 1 ? t : 1);
         this.update(t > 0 ? t : 0);
 
-        // NOTE: If the action's duration is unknown, the elapsed time should keep at the point of the last frame,
+        // NOTE: If the action's duration is unknown, the elapsed time should be kept at the point of the last frame,
         // because ActionUnknownDuration will be executed at each frame until its callback returns true.
         // After ActionUnknownDuration is finished, the isUnknownDuration method will return false
         // and the elapsed time will go as before.
         if (this.isUnknownDuration() && !this._firstTick) {
-            this._elapsed -= dt;
+            if (t < 1) {
+                this._elapsed -= dt;
+            } else {
+                this._elapsed = this._startTime + this._duration;
+            }
         }
 
         if (this._firstTick) {

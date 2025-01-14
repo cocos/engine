@@ -83,8 +83,8 @@ export interface ITexture2DCreateInfo {
  */
 @ccclass('cc.Texture2D')
 export class Texture2D extends SimpleTexture {
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     /**

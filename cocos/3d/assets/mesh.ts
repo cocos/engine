@@ -380,8 +380,8 @@ export class Mesh extends Asset {
 
     private _jointBufferIndices: number[] | null = null;
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     /**

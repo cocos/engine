@@ -147,8 +147,8 @@ export class TextureBase extends Asset {
 
     private _textureHash = 0;
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
 
         // Id for generate hash in material
         this._id = idGenerator.getNewId();

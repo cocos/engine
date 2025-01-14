@@ -24,8 +24,13 @@ class PreviewControl {
     _glPreview = null;
 
     // html element
-    _canvasElement = null;
-    _imageElement = null;
+    _container = null;
+
+    _image = null;
+    _canvas = null;
+
+    _toolbar = null;
+    _resetCamera = null;
 
     _resizeObserver = null;
 
@@ -33,28 +38,89 @@ class PreviewControl {
     _onMouseDownBind = this._onMouseDown.bind(this);
     _onMouseWheelBind = this._onMouseWheel.bind(this);
 
-    constructor(name, method, canvas, image) {
-        this._canvasElement = canvas;
-        this._imageElement = image;
+    _onResetCameraBind = this._onResetCamera.bind(this);
+
+    enabledResetCamera = true;
+
+    /**
+     * create
+     *  image
+     *    - toolbar
+     *      - button:reset-camera
+     *    - canvas
+     * @param container - preview root
+     * @private
+     */
+    _createElements(container) {
+        this._container = container;
+
+        this._image = document.createElement('div');
+        this._image.classList.add('image');
+        this._image.style = `
+            height: var(--inspector-footer-preview-height, 200px);
+            overflow: hidden;
+            display: flex;
+            flex: 1;
+        `;
+        this._container.appendChild(this._image);
+
+        this._toolbar = document.createElement('div');
+        this._toolbar.classList.add('toolbar');
+        this._toolbar.style = `
+            display: flex;
+        `;
+        this._image.appendChild(this._toolbar);
+
+        if (this.enabledResetCamera) {
+            this._resetCamera = document.createElement('ui-button');
+            this._resetCamera.classList.add('reset-camera');
+            this._resetCamera.setAttribute('type', 'icon');
+            this._resetCamera.setAttribute('tooltip', 'i18n:ENGINE.inspector.preview.resetCameraView');
+            this._resetCamera.style = `
+                position: absolute;
+                right: 10px;
+                bottom: 10px;
+            `;
+            this._resetCamera.innerHTML = `<ui-icon value="reset"></ui-icon>`;
+            this._toolbar.appendChild(this._resetCamera);
+        }
+
+        this._canvas = document.createElement('canvas');
+        this._canvas.style = `
+            flex: 1;
+        `;
+        this._canvas.classList.add('canvas');
+        this._image.appendChild(this._canvas);
+    }
+
+    constructor(name, method, container) {
         this._gLPreviewConfig = {
             name: name,
             method: method,
         };
+        this._createElements(container);
     }
 
     async callPreviewFunction(funcName, ...args) {
-        return await Editor.Message.request('scene', 'call-preview-function', this._gLPreviewConfig.name, funcName, ...args);
+        try {
+            const result = await Editor.Message.request('scene', 'call-preview-function', this._gLPreviewConfig.name, funcName, ...args);
+            this.doRefreshDirty();
+            return result;
+        } catch (e) {
+            console.error(e);
+            return null;
+        }
     }
 
     async init() {
         const GLPreview = Editor._Module.require('PreviewExtends').default;
         this._glPreview = new GLPreview(this._gLPreviewConfig.name, this._gLPreviewConfig.method);
         await this._glPreview.init({
-            width: this._canvasElement.clientWidth,
-            height: this._canvasElement.clientHeight,
+            width: this._canvas.clientWidth,
+            height: this._canvas.clientHeight,
         });
         this._resizeObserver = new window.ResizeObserver(this._observerBind);
-        this._resizeObserver.observe(this._imageElement);
+        this._resizeObserver.observe(this._image);
         this._registerEventListener();
 
         await this._refresh();
@@ -66,19 +132,21 @@ class PreviewControl {
     }
 
     close() {
-        this._resizeObserver && this._resizeObserver.unobserve(this._imageElement);
+        this._resizeObserver && this._resizeObserver.unobserve(this._image);
         cancelAnimationFrame(this._animationId);
         this._unregisterEventListener();
     }
 
     _registerEventListener() {
-        this._canvasElement.addEventListener('mousedown', this._onMouseDownBind);
-        this._canvasElement.addEventListener('wheel', this._onMouseWheelBind);
+        this._resetCamera.addEventListener('click', this._onResetCameraBind);
+        this._canvas.addEventListener('mousedown', this._onMouseDownBind);
+        this._canvas.addEventListener('wheel', this._onMouseWheelBind);
     }
 
     _unregisterEventListener() {
-        this._canvasElement.removeEventListener('mousedown', this._onMouseDownBind);
-        this._canvasElement.removeEventListener('wheel', this._onMouseWheelBind);
+        this._resetCamera.removeEventListener('click', this._onResetCameraBind);
+        this._canvas.removeEventListener('mousedown', this._onMouseDownBind);
+        this._canvas.removeEventListener('wheel', this._onMouseWheelBind);
     }
 
     _observer() {
@@ -89,8 +157,8 @@ class PreviewControl {
         if (this._isDirty) {
             try {
                 this._isDirty = false;
-                const canvas = this._canvasElement;
-                const image = this._imageElement;
+                const canvas = this._canvas;
+                const image = this._image;
 
                 const width = image.clientWidth;
                 const height = image.clientHeight;
@@ -162,6 +230,13 @@ class PreviewControl {
         });
 
         this._isDirty = true;
+    }
+
+    _onResetCamera() {
+        this.callPreviewFunction('resetCameraView')
+            .then(() => {
+                this.doRefreshDirty();
+            });
     }
 }
 

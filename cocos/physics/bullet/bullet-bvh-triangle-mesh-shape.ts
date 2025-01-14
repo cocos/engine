@@ -26,6 +26,7 @@ import { bt, EBulletType } from './instantiated';
 import { Mesh } from '../../3d/assets';
 import { cocos2BulletTriMesh } from './bullet-utils';
 
+/** @mangle */
 export class BulletBvhTriangleMeshShape {
     private static readonly BulletBvhTriangleMeshShapeMap = new Map<number, BulletBvhTriangleMeshShape>();
 

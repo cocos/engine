@@ -28,6 +28,7 @@ import { b2Joint } from './joint-2d';
 import { SpringJoint2D } from '../../framework';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework/physics-types';
 
+/** @mangle */
 export class b2SpringJoint extends b2Joint implements ISpringJoint {
     setDampingRatio (v: number): void {
         if (this._b2joint) {

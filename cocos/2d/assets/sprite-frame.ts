@@ -643,8 +643,8 @@ export class SpriteFrame extends Asset {
     protected _minPos = v3();
     protected _maxPos = v3();
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
 
         if (EDITOR) {
             // Atlas asset uuid

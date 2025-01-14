@@ -167,11 +167,11 @@ export class LightProbeGroup extends Component {
         if (!this.node) {
             return;
         }
-
-        const changed = this.node.scene.globals.lightProbeInfo.addNode(this.node);
+        const lightProbeInfo = this.node.scene.globals.lightProbeInfo;
+        const changed = lightProbeInfo.addNode(this.node);
         if (changed) {
-            this.node.scene.globals.lightProbeInfo.syncData(this.node, this.probes);
-            this.node.scene.globals.lightProbeInfo.update(true);
+            lightProbeInfo.syncData(this.node, this.probes);
+            lightProbeInfo.update(true);
         }
     }
 
@@ -223,8 +223,9 @@ export class LightProbeGroup extends Component {
     }
 
     public onProbeChanged (updateTet = true, emitEvent = true): void {
-        this.node.scene.globals.lightProbeInfo.syncData(this.node, this.probes);
-        this.node.scene.globals.lightProbeInfo.update(updateTet);
+        const lightProbeInfo = this.node.scene.globals.lightProbeInfo;
+        lightProbeInfo.syncData(this.node, this.probes);
+        lightProbeInfo.update(updateTet);
 
         if (emitEvent) {
             this.node.emit(NodeEventType.LIGHT_PROBE_CHANGED);

@@ -44,8 +44,8 @@ export class Skeleton extends Asset {
 
     private _invBindposes: Mat4[] | null = null;
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     /**

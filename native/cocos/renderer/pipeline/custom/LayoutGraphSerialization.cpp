@@ -118,20 +118,6 @@ void load(InputArchive& ar, DescriptorGroupBlockIndex& v) {
     load(ar, v.format);
 }
 
-void save(OutputArchive& ar, const DescriptorGroupBlock& v) {
-    save(ar, v.descriptors);
-    save(ar, v.uniformBlocks);
-    save(ar, v.capacity);
-    save(ar, v.count);
-}
-
-void load(InputArchive& ar, DescriptorGroupBlock& v) {
-    load(ar, v.descriptors);
-    load(ar, v.uniformBlocks);
-    load(ar, v.capacity);
-    load(ar, v.count);
-}
-
 void save(OutputArchive& ar, const DescriptorDB& v) {
     save(ar, v.blocks);
     save(ar, v.groupBlocks);

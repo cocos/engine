@@ -31,6 +31,7 @@ import { ITerrainAsset } from '../../spec/i-external';
 import { CC_V3_0, BulletCache } from '../bullet-cache';
 import { bt } from '../instantiated';
 
+/** @mangle */
 export class BulletTerrainShape extends BulletShape implements ITerrainShape {
     public get collider (): TerrainCollider {
         return this._collider as TerrainCollider;

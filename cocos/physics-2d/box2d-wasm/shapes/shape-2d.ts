@@ -46,6 +46,7 @@ function getFilter (shape: B2Shape2D): B2.Filter {
     return tempFilter;
 }
 
+/** @mangle */
 export class B2Shape2D implements IBaseShape {
     protected _shapes: number[] = [];
     protected _fixtures: number[] = [];//B2.Fixture ptr

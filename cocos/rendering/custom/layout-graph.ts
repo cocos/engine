@@ -137,26 +137,13 @@ export class DescriptorGroupBlockIndex {
     declare format: Format;
 }
 
-export class DescriptorGroupBlock {
-    reset (): void {
-        this.descriptors.clear();
-        this.uniformBlocks.clear();
-        this.capacity = 0;
-        this.count = 0;
-    }
-    readonly descriptors: Map<string, Descriptor> = new Map<string, Descriptor>();
-    readonly uniformBlocks: Map<string, UniformBlock> = new Map<string, UniformBlock>();
-    capacity = 0;
-    count = 0;
-}
-
 export class DescriptorDB {
     reset (): void {
         this.blocks.clear();
         this.groupBlocks.clear();
     }
     readonly blocks: Map<string, DescriptorBlock> = new Map<string, DescriptorBlock>();
-    readonly groupBlocks: Map<string, DescriptorGroupBlock> = new Map<string, DescriptorGroupBlock>();
+    readonly groupBlocks: Map<string, DescriptorBlock> = new Map<string, DescriptorBlock>();
 }
 
 export class RenderPhase {
@@ -1013,7 +1000,6 @@ export class LayoutGraphObjectPool {
         this.dbf.reset(); // DescriptorBlockFlattened
         this.dbi.reset(); // DescriptorBlockIndex
         this.dgbi.reset(); // DescriptorGroupBlockIndex
-        this.dgb.reset(); // DescriptorGroupBlock
         this.dd.reset(); // DescriptorDB
         this.rp.reset(); // RenderPhase
         this.lg.reset(); // LayoutGraph
@@ -1082,11 +1068,6 @@ export class LayoutGraphObjectPool {
         v.viewDimension = viewDimension;
         v.sampleType = sampleType;
         v.format = format;
-        return v;
-    }
-    createDescriptorGroupBlock (): DescriptorGroupBlock {
-        const v = this.dgb.add(); // DescriptorGroupBlock
-        v.reset();
         return v;
     }
     createDescriptorDB (): DescriptorDB {
@@ -1207,7 +1188,6 @@ export class LayoutGraphObjectPool {
     private readonly dbf: RecyclePool<DescriptorBlockFlattened> = createPool(DescriptorBlockFlattened);
     private readonly dbi: RecyclePool<DescriptorBlockIndex> = createPool(DescriptorBlockIndex);
     private readonly dgbi: RecyclePool<DescriptorGroupBlockIndex> = createPool(DescriptorGroupBlockIndex);
-    private readonly dgb: RecyclePool<DescriptorGroupBlock> = createPool(DescriptorGroupBlock);
     private readonly dd: RecyclePool<DescriptorDB> = createPool(DescriptorDB);
     private readonly rp: RecyclePool<RenderPhase> = createPool(RenderPhase);
     private readonly lg: RecyclePool<LayoutGraph> = createPool(LayoutGraph);
@@ -1360,51 +1340,16 @@ export function loadDescriptorGroupBlockIndex (a: InputArchive, v: DescriptorGro
     v.format = a.n();
 }
 
-export function saveDescriptorGroupBlock (a: OutputArchive, v: DescriptorGroupBlock): void {
-    a.n(v.descriptors.size); // Map<string, Descriptor>
-    for (const [k1, v1] of v.descriptors) {
-        a.s(k1);
-        saveDescriptor(a, v1);
-    }
-    a.n(v.uniformBlocks.size); // Map<string, UniformBlock>
-    for (const [k1, v1] of v.uniformBlocks) {
-        a.s(k1);
-        saveUniformBlock(a, v1);
-    }
-    a.n(v.capacity);
-    a.n(v.count);
-}
-
-export function loadDescriptorGroupBlock (a: InputArchive, v: DescriptorGroupBlock): void {
-    let sz = 0;
-    sz = a.n(); // Map<string, Descriptor>
-    for (let i1 = 0; i1 !== sz; ++i1) {
-        const k1 = a.s();
-        const v1 = new Descriptor();
-        loadDescriptor(a, v1);
-        v.descriptors.set(k1, v1);
-    }
-    sz = a.n(); // Map<string, UniformBlock>
-    for (let i1 = 0; i1 !== sz; ++i1) {
-        const k1 = a.s();
-        const v1 = new UniformBlock();
-        loadUniformBlock(a, v1);
-        v.uniformBlocks.set(k1, v1);
-    }
-    v.capacity = a.n();
-    v.count = a.n();
-}
-
 export function saveDescriptorDB (a: OutputArchive, v: DescriptorDB): void {
     a.n(v.blocks.size); // Map<string, DescriptorBlock>
     for (const [k1, v1] of v.blocks) {
         saveDescriptorBlockIndex(a, JSON.parse(k1) as DescriptorBlockIndex);
         saveDescriptorBlock(a, v1);
     }
-    a.n(v.groupBlocks.size); // Map<string, DescriptorGroupBlock>
+    a.n(v.groupBlocks.size); // Map<string, DescriptorBlock>
     for (const [k1, v1] of v.groupBlocks) {
         saveDescriptorGroupBlockIndex(a, JSON.parse(k1) as DescriptorGroupBlockIndex);
-        saveDescriptorGroupBlock(a, v1);
+        saveDescriptorBlock(a, v1);
     }
 }
 
@@ -1418,12 +1363,12 @@ export function loadDescriptorDB (a: InputArchive, v: DescriptorDB): void {
         loadDescriptorBlock(a, v1);
         v.blocks.set(JSON.stringify(k1), v1);
     }
-    sz = a.n(); // Map<string, DescriptorGroupBlock>
+    sz = a.n(); // Map<string, DescriptorBlock>
     for (let i1 = 0; i1 !== sz; ++i1) {
         const k1 = new DescriptorGroupBlockIndex();
         loadDescriptorGroupBlockIndex(a, k1);
-        const v1 = new DescriptorGroupBlock();
-        loadDescriptorGroupBlock(a, v1);
+        const v1 = new DescriptorBlock();
+        loadDescriptorBlock(a, v1);
         v.groupBlocks.set(JSON.stringify(k1), v1);
     }
 }

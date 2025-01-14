@@ -22,11 +22,16 @@
  THE SOFTWARE.
 */
 
+type BeginContactCallback = (contact: number) => void;
+type EndContactCallback = (contact: number) => void;
+type PreSolveCallback = (contact: number, oldManifold: number) => void;
+type PostSolveCallback = (contact: number, impulse: number) => void;
+
 export class PhysicsContactListener {
-    static _BeginContact: Function | null = null;
-    static _EndContact: Function | null = null;
-    static _PreSolve: Function | null = null;
-    static _PostSolve: Function | null = null;
+    static _BeginContact: BeginContactCallback | null = null;
+    static _EndContact: EndContactCallback | null = null;
+    static _PreSolve: PreSolveCallback | null = null;
+    static _PostSolve: PostSolveCallback | null = null;
 
     static BeginContact (contact: number): void {
         if (this._BeginContact) {

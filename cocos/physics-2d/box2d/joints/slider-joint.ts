@@ -29,6 +29,7 @@ import { SliderJoint2D } from '../../framework';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework/physics-types';
 import { toRadian } from '../../../core';
 
+/** @mangle */
 export class b2SliderJoint extends b2Joint implements ISliderJoint {
     // limit
     enableLimit (v: boolean): void {

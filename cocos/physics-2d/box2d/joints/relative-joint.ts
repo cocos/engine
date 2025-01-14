@@ -29,6 +29,7 @@ import { RelativeJoint2D } from '../../framework';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework/physics-types';
 import { toRadian } from '../../../core';
 
+/** @mangle */
 export class b2RelativeJoint extends b2Joint implements IRelativeJoint {
     setMaxForce (v: number): void {
         if (this._b2joint) {

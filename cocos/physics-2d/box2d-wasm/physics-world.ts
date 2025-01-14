@@ -50,6 +50,7 @@ const tempVec2_2 = new Vec2();
 
 const testResults: Collider2D[] = [];
 
+/** @mangle */
 export class B2PhysicsWorld implements IPhysicsWorld {
     protected _world: B2.World;
     protected _bodies: B2RigidBody2D[] = [];

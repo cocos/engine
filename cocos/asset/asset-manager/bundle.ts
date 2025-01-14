@@ -44,6 +44,8 @@ import type { AssetManager } from './asset-manager';
 export default class Bundle {
     private _config: Config = new Config();
 
+    constructor () {}
+
     /**
      * For internal use.
      * @engineInternal

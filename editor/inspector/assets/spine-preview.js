@@ -77,9 +77,6 @@ exports.template = /* html */`
             </div>
             <ui-scale-plate class="duration"></ui-scale-plate>    
         </div>
-        <div class="image">
-            <canvas class="canvas"></canvas>
-        </div>
     </div>
 </ui-section>
 `;
@@ -126,18 +123,6 @@ exports.style = /* css */`
                 }
             }
         }
-        & > .image {
-            height: var(--inspector-footer-preview-height, 200px);
-            overflow: hidden;
-            display: flex;
-            flex: 1;
-            position: relative;
-            
-            & > .canvas {
-                position: absolute;
-                inset: 0;
-            }
-        }
     }
 }
 `;
@@ -153,8 +138,6 @@ const Properties = [...Config.CHECKBOX, ...Config.SLIDER, ...Config.OTHER, ...Co
 
 exports.$ = {
     container: '.preview',
-    canvas: '.canvas',
-    image: '.image',
 
     ...Object.fromEntries(Properties.map((key) => [key, `.${key}`])),
 
@@ -167,11 +150,8 @@ const Elements = {
             panel.preview.init();
         },
         async update(panel) {
-            if (!panel.$.canvas) { return; }
-
             const spineData = await panel.preview.callPreviewFunction('setSpine', panel.asset.uuid);
             panel.spinUpdate(panel, spineData);
-            panel.preview.doRefreshDirty();
         },
         close(panel) {
             panel.preview.callPreviewFunction('stop');
@@ -228,7 +208,6 @@ const Elements = {
             Elements.spine.updateDuration(panel, 0, Elements.spine.getDurations(panel, info));
             Elements.control.update(panel, false);
             Elements.control.updateInfo(panel, info);
-            panel.preview.doRefreshDirty();
         },
         updateDuration(panel, time, duration) {
             panel.$.duration.setConfig({
@@ -249,9 +228,7 @@ const Elements = {
 
             Config.CHECKBOX.forEach((key) => {
                 panel.$[key].addEventListener('confirm', (event) => {
-                    panel.preview.callPreviewFunction('setProperties', key, Boolean(event.target.value)).then((() => {
-                        panel.preview.doRefreshDirty();
-                    }));
+                    panel.preview.callPreviewFunction('setProperties', key, Boolean(event.target.value));
                 });
             });
 
@@ -299,7 +276,7 @@ exports.ready = function() {
 
     Editor.Message.__protected__.addBroadcastListener('scene:spine-preview-animation-time-change', this.onAnimationUpdateBind);
 
-    this.preview = new PreviewControl('scene:spine-preview', 'query-spine-preview-data', this.$.canvas, this.$.image);
+    this.preview = new PreviewControl('scene:spine-preview', 'query-spine-preview-data', this.$.container);
 
     Object.values(Elements).forEach((element) => element.ready && element.ready(this));
 };

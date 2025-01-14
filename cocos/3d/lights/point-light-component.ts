@@ -27,7 +27,8 @@ import { ccclass, help, executeInEditMode, menu, tooltip, type, displayOrder,
 import { scene } from '../../render-scene';
 import { Camera, LightType } from '../../render-scene/scene';
 import { Light, PhotometricTerm } from './light-component';
-import { CCFloat, CCInteger, cclegacy } from '../../core';
+import { CCFloat, CCInteger } from '../../core';
+import { getPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
 
 /**
  * @en The point light component, multiple point lights can be added to one scene.
@@ -58,7 +59,7 @@ export class PointLight extends Light {
     @range([0, Number.POSITIVE_INFINITY, 100])
     @type(CCInteger)
     get luminousFlux (): number {
-        const isHDR = cclegacy.director.root.pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._luminanceHDR * scene.nt2lm(1.0);
         } else {
@@ -66,7 +67,7 @@ export class PointLight extends Light {
         }
     }
     set luminousFlux (val) {
-        const isHDR = cclegacy.director.root.pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         let result = 0;
         if (isHDR) {
             this._luminanceHDR = val / scene.nt2lm(1.0);
@@ -89,7 +90,7 @@ export class PointLight extends Light {
     @range([0, Number.POSITIVE_INFINITY, 10])
     @type(CCInteger)
     get luminance (): number {
-        const isHDR = cclegacy.director.root.pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._luminanceHDR;
         } else {
@@ -97,7 +98,7 @@ export class PointLight extends Light {
         }
     }
     set luminance (val) {
-        const isHDR = cclegacy.director.root.pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this._luminanceHDR = val;
             // eslint-disable-next-line @typescript-eslint/no-unused-expressions

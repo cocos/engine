@@ -328,8 +328,8 @@ export class EffectAsset extends Asset {
     @editorOnly
     public hideInEditor = false;
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     /**

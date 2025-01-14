@@ -31,6 +31,7 @@ import { addReference, createConvexMesh, createMeshGeometryFlags, createTriangle
 import { EPhysXShapeType, PhysXShape } from './physx-shape';
 import { PhysXInstance } from '../physx-instance';
 
+/** @mangle */
 export class PhysXTrimeshShape extends PhysXShape implements ITrimeshShape {
     geometry: any;
 

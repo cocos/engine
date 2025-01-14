@@ -241,9 +241,9 @@ export class ScrollBar extends Component {
             return;
         }
 
-        const contentSize = content._uiProps.uiTransformComp!.contentSize;
-        const scrollViewSize = this._scrollView.node._uiProps.uiTransformComp!.contentSize;
-        const barSize = this.node._uiProps.uiTransformComp!.contentSize;
+        const contentSize = content._getUITransformComp()!.contentSize;
+        const scrollViewSize = this._scrollView.node._getUITransformComp()!.contentSize;
+        const barSize = this.node._getUITransformComp()!.contentSize;
 
         if (this._conditionalDisableScrollBar(contentSize, scrollViewSize)) {
             return;
@@ -322,8 +322,8 @@ export class ScrollBar extends Component {
         if (this._scrollView) {
             const content = this._scrollView.content;
             if (content) {
-                const contentSize = content._uiProps.uiTransformComp!.contentSize;
-                const scrollViewSize = this._scrollView.node._uiProps.uiTransformComp!.contentSize;
+                const contentSize = content._getUITransformComp()!.contentSize;
+                const scrollViewSize = this._scrollView.node._getUITransformComp()!.contentSize;
                 if (this._conditionalDisableScrollBar(contentSize, scrollViewSize)) {
                     return;
                 }
@@ -351,8 +351,8 @@ export class ScrollBar extends Component {
     }
 
     protected _convertToScrollViewSpace (out: Vec2, content: Node): void {
-        const scrollTrans = this._scrollView && this._scrollView.node._uiProps.uiTransformComp;
-        const contentTrans = content._uiProps.uiTransformComp;
+        const scrollTrans = this._scrollView && this._scrollView.node._getUITransformComp();
+        const contentTrans = content._getUITransformComp();
         if (!scrollTrans || !contentTrans) {
             out.set(Vec2.ZERO);
         } else {
@@ -394,18 +394,18 @@ export class ScrollBar extends Component {
     }
 
     protected _fixupHandlerPosition (out: Vec3): void {
-        const uiTrans = this.node._uiProps.uiTransformComp!;
+        const uiTrans = this.node._getUITransformComp()!;
         const barSize = uiTrans.contentSize;
         const barAnchor = uiTrans.anchorPoint;
-        const handleSize = this.handle!.node._uiProps.uiTransformComp!.contentSize;
+        const handleSize = this.handle!.node._getUITransformComp()!.contentSize;
 
         const handleParent = this.handle!.node.parent!;
 
         Vec3.set(_tempPos_1, -barSize.width * barAnchor.x, -barSize.height * barAnchor.y, 0);
-        const leftBottomWorldPosition = this.node._uiProps.uiTransformComp!.convertToWorldSpaceAR(_tempPos_1, _tempPos_2);
+        const leftBottomWorldPosition = this.node._getUITransformComp()!.convertToWorldSpaceAR(_tempPos_1, _tempPos_2);
         const fixupPosition = out;
         fixupPosition.set(0, 0, 0);
-        handleParent._uiProps.uiTransformComp!.convertToNodeSpaceAR(leftBottomWorldPosition, fixupPosition);
+        handleParent._getUITransformComp()!.convertToNodeSpaceAR(leftBottomWorldPosition, fixupPosition);
 
         if (this.direction === ScrollBarDirection.HORIZONTAL) {
             fixupPosition.set(fixupPosition.x, fixupPosition.y + (barSize.height - handleSize.height) / 2, fixupPosition.z);
@@ -468,7 +468,7 @@ export class ScrollBar extends Component {
     protected _updateLength (length: number): void {
         if (this._handle) {
             const handleNode = this._handle.node;
-            const handleTrans = handleNode._uiProps.uiTransformComp!;
+            const handleTrans = handleNode._getUITransformComp()!;
             const handleNodeSize = handleTrans.contentSize;
             const anchor = handleTrans.anchorPoint;
             if (anchor.x !== defaultAnchor.x || anchor.y !== defaultAnchor.y) {

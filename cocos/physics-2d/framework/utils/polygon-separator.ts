@@ -69,12 +69,16 @@ export function ConvexPartition (vertices: IVec2Like[]): IVec2Like[][] {
     ForceCounterClockWise(vertices);
 
     let list: IVec2Like[][] = [];
-    let d; let lowerDist; let upperDist;
-    let p;
+    let d: number = 0;
+    let lowerDist: number = 0;
+    let upperDist: number = 0;
+    let p: Vec2;
     let lowerInt = new Vec2();
     let upperInt = new Vec2(); // intersection points
-    let lowerIndex = 0; let upperIndex = 0;
-    let lowerPoly; let upperPoly;
+    let lowerIndex = 0;
+    let upperIndex = 0;
+    let lowerPoly: IVec2Like[];
+    let upperPoly: IVec2Like[];
 
     for (let i = 0; i < vertices.length; ++i) {
         if (Reflex(i, vertices)) {
@@ -84,8 +88,12 @@ export function ConvexPartition (vertices: IVec2Like[]): IVec2Like[][] {
                 if (Left(At(i - 1, vertices), At(i, vertices), At(j, vertices))
                     && RightOn(At(i - 1, vertices), At(i, vertices), At(j - 1, vertices))) {
                     // find the povar of intersection
-                    p = LineIntersect(At(i - 1, vertices), At(i, vertices), At(j, vertices),
-                        At(j - 1, vertices));
+                    p = LineIntersect(
+                        At(i - 1, vertices),
+                        At(i, vertices),
+                        At(j, vertices),
+                        At(j - 1, vertices),
+                    );
                     if (Right(At(i + 1, vertices), At(i, vertices), p)) {
                         // make sure it's inside the poly
                         d = SquareDist(At(i, vertices), p);
@@ -100,8 +108,12 @@ export function ConvexPartition (vertices: IVec2Like[]): IVec2Like[][] {
 
                 if (Left(At(i + 1, vertices), At(i, vertices), At(j + 1, vertices))
                     && RightOn(At(i + 1, vertices), At(i, vertices), At(j, vertices))) {
-                    p = LineIntersect(At(i + 1, vertices), At(i, vertices), At(j, vertices),
-                        At(j + 1, vertices));
+                    p = LineIntersect(
+                        At(i + 1, vertices),
+                        At(i, vertices),
+                        At(j, vertices),
+                        At(j + 1, vertices),
+                    );
                     if (Left(At(i - 1, vertices), At(i, vertices), p)) {
                         d = SquareDist(At(i, vertices), p);
                         if (d < upperDist) {
@@ -168,7 +180,7 @@ export function ConvexPartition (vertices: IVec2Like[]): IVec2Like[][] {
     return list;
 }
 
-function CanSee (i, j, vertices): boolean {
+function CanSee (i: number, j: number, vertices: IVec2Like[]): boolean {
     if (Reflex(i, vertices)) {
         if (LeftOn(At(i, vertices), At(i - 1, vertices), At(j, vertices))
             && RightOn(At(i, vertices), At(i + 1, vertices), At(j, vertices))) return false;
@@ -234,13 +246,13 @@ function SquareDist (a: IVec2Like, b: IVec2Like): number {
 }
 
 // forces counter clock wise order.
-export function ForceCounterClockWise (vertices): void {
+export function ForceCounterClockWise (vertices: IVec2Like[]): void {
     if (!IsCounterClockWise(vertices)) {
         vertices.reverse();
     }
 }
 
-export function IsCounterClockWise (vertices): boolean {
+export function IsCounterClockWise (vertices: IVec2Like[]): boolean {
     // We just return true for lines
     if (vertices.length < 3) return true;
 
@@ -248,7 +260,7 @@ export function IsCounterClockWise (vertices): boolean {
 }
 
 // gets the signed area.
-function GetSignedArea (vertices): number {
+function GetSignedArea (vertices: IVec2Like[]): number {
     let i;
     let area = 0;
 
@@ -262,7 +274,7 @@ function GetSignedArea (vertices): number {
 }
 
 // From Mark Bayazit's convex decomposition algorithm
-function LineIntersect (p1, p2, q1, q2): Vec2 {
+function LineIntersect (p1: IVec2Like, p2: IVec2Like, q1: IVec2Like, q2: IVec2Like): Vec2 {
     const i = new Vec2();
     const a1 = p2.y - p1.y;
     const b1 = p1.x - p2.x;
@@ -282,7 +294,7 @@ function LineIntersect (p1, p2, q1, q2): Vec2 {
 
 // from Eric Jordan's convex decomposition library, it checks if the lines a0->a1 and b0->b1 cross.
 // if they do, intersectionPovar will be filled with the povar of crossing. Grazing lines should not return true.
-function LineIntersect2 (a0, a1, b0, b1, intersectionPoint): boolean {
+function LineIntersect2 (a0: IVec2Like, a1: IVec2Like, b0: IVec2Like, b1: IVec2Like, intersectionPoint: IVec2Like): boolean {
     if (a0 == b0 || a0 == b1 || a1 == b0 || a1 == b1) return false;
 
     const x1 = a0.x;
@@ -318,7 +330,7 @@ function LineIntersect2 (a0, a1, b0, b1, intersectionPoint): boolean {
     return false;
 }
 
-function FloatEquals (value1, value2): boolean {
+function FloatEquals (value1: number, value2: number): boolean {
     return Math.abs(value1 - value2) <= 10e-7;
 }
 

@@ -34,6 +34,8 @@ import { TransformBit } from '../../../scene-graph';
 
 const v3_0 = new Vec3(0, 0, 0);
 const v3_1 = new Vec3(0, 0, 0);
+
+/** @mangle */
 export class PhysXCharacterController implements IBaseCharacterController {
     private _isEnabled = false;
     protected _impl: any = null;

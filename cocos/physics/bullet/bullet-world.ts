@@ -48,6 +48,8 @@ const v3_1 = CC_V3_1;
 const v3_2 = CC_V3_2;
 const c_0 = CC_COLOR_0;
 const emitHit = new CharacterControllerContact();
+
+/** @mangle */
 export class BulletWorld implements IPhysicsWorld {
     setDefaultMaterial (v: PhysicsMaterial): void {
         //empty

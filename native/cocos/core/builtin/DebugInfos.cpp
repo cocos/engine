@@ -441,6 +441,7 @@ ccstd::unordered_map<uint32_t, ccstd::string> debugInfos = {
 { 9641, "[Physics][cannon.js]: sweep functions are not supported in cannon.js" },
 { 9642, "[Physics] PhysicsSystem initDefaultMaterial() Failed to load builtinMaterial." },
 { 9643, "[Physics] Failed to load user customized default physics material: %s, will fallback to built-in default physics material" },
+{ 9644, "[Physics] Failed to find ear. There might be self-intersection in the polygon." },
 { 10001, "The sub-mesh contains %d vertices, which beyonds the capability (%d vertices most) of renderer of your platform." },
 { 10002, "Sub-mesh may include at most %d morph targets, but you specified %d." },
 { 11000, "WebGL context lost." },
@@ -600,6 +601,7 @@ ccstd::unordered_map<uint32_t, ccstd::string> debugInfos = {
 { 16405, "This device does not support WebGL2" },
 { 16406, "Can't find the spriteFrame of tilesets %s" },
 { 16407, "Spline error: invalid mode" },
+{ 16408, "[Physics2D] b2PolygonShape failed to decompose polygon into convex polygons, node name: %s" },
 
 };
 }//namespace cc

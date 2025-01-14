@@ -35,6 +35,7 @@ import { importFunc } from '../bullet-env';
 
 const v3_0 = new Vec3(0, 0, 0);
 
+/** @mangle */
 export class BulletBoxCharacterController extends BulletCharacterController implements IBoxCharacterController {
     get component (): BoxCharacterController {
         return this._comp as BoxCharacterController;

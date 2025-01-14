@@ -32,6 +32,7 @@ import { BulletCache, CC_V3_0 } from '../bullet-cache';
 import { bt } from '../instantiated';
 import { cocos2BulletVec3 } from '../bullet-utils';
 
+/** @mangle */
 export class BulletP2PConstraint extends BulletConstraint implements IPointToPointConstraint {
     setPivotA (v: IVec3Like): void {
         const cs = this.constraint;

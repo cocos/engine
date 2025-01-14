@@ -29,6 +29,7 @@ import { PX, setJointActors, _pxtrans } from '../physx-adapter';
 import { PhysXRigidBody } from '../physx-rigid-body';
 import { PhysXInstance } from '../physx-instance';
 
+/** @mangle */
 export class PhysXJoint implements IBaseConstraint {
     private static _tempActor: any;
 

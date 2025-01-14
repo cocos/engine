@@ -769,32 +769,32 @@ export class ParticleSystem extends ModelRenderer {
     /**
      * @ignore
      */
-    private _isPlaying: boolean;
-    private _isPaused: boolean;
-    private _isStopped: boolean;
-    private _isEmitting: boolean;
-    private _needToRestart: boolean;
-    private _needRefresh: boolean;
+    private declare _isPlaying: boolean;
+    private declare _isPaused: boolean;
+    private declare _isStopped: boolean;
+    private declare _isEmitting: boolean;
+    private declare _needToRestart: boolean;
+    private declare _needRefresh: boolean;
 
-    private _time: number;  // playback position in seconds.
-    private _emitRateTimeCounter: number;
-    private _emitRateDistanceCounter: number;
-    private _oldWPos: Vec3;
-    private _curWPos: Vec3;
+    private declare _time: number;  // playback position in seconds.
+    private declare _emitRateTimeCounter: number;
+    private declare _emitRateDistanceCounter: number;
+    private declare _oldWPos: Vec3;
+    private declare _curWPos: Vec3;
 
-    private _boundingBox: geometry.AABB | null;
-    private _culler: ParticleCuller | null;
-    private _oldPos: Vec3 | null;
-    private _curPos: Vec3 | null;
-    private _isCulled: boolean;
-    private _isSimulating: boolean;
+    private declare _boundingBox: geometry.AABB | null;
+    private declare _culler: ParticleCuller | null;
+    private declare _oldPos: Vec3 | null;
+    private declare _curPos: Vec3 | null;
+    private declare _isCulled: boolean;
+    private declare _isSimulating: boolean;
 
-    private _customData1: Vec2;
-    private _customData2: Vec2;
+    private declare _customData1: Vec2;
+    private declare _customData2: Vec2;
 
-    private _subEmitters: any[]; // array of { emitter: ParticleSystem, type: 'birth', 'collision' or 'death'}
+    private declare _subEmitters: any[]; // array of { emitter: ParticleSystem, type: 'birth', 'collision' or 'death'}
 
-    private _needAttach: boolean;
+    private declare _needAttach: boolean;
 
     @serializable
     private _prewarm = false;
@@ -814,37 +814,39 @@ export class ParticleSystem extends ModelRenderer {
     constructor () {
         super();
 
-        this.rateOverTime.constant = 10;
-        this.startLifetime.constant = 5;
-        this.startSizeX.constant = 1;
-        this.startSpeed.constant = 5;
+        const self = this;
+
+        self.rateOverTime.constant = 10;
+        self.startLifetime.constant = 5;
+        self.startSizeX.constant = 1;
+        self.startSpeed.constant = 5;
 
         // internal status
-        this._isPlaying = false;
-        this._isPaused = false;
-        this._isStopped = true;
-        this._isEmitting = false;
-        this._needToRestart = false;
-        this._needRefresh = true;
-        this._needAttach = false;
+        self._isPlaying = false;
+        self._isPaused = false;
+        self._isStopped = true;
+        self._isEmitting = false;
+        self._needToRestart = false;
+        self._needRefresh = true;
+        self._needAttach = false;
 
-        this._time = 0.0;  // playback position in seconds.
-        this._emitRateTimeCounter = 0.0;
-        this._emitRateDistanceCounter = 0.0;
-        this._oldWPos = new Vec3();
-        this._curWPos = new Vec3();
+        self._time = 0.0;  // playback position in seconds.
+        self._emitRateTimeCounter = 0.0;
+        self._emitRateDistanceCounter = 0.0;
+        self._oldWPos = new Vec3();
+        self._curWPos = new Vec3();
 
-        this._boundingBox = null;
-        this._culler = null;
-        this._oldPos = null;
-        this._curPos = null;
-        this._isCulled = false;
-        this._isSimulating = true;
+        self._boundingBox = null;
+        self._culler = null;
+        self._oldPos = null;
+        self._curPos = null;
+        self._isCulled = false;
+        self._isSimulating = true;
 
-        this._customData1 = new Vec2();
-        this._customData2 = new Vec2();
+        self._customData1 = new Vec2();
+        self._customData2 = new Vec2();
 
-        this._subEmitters = []; // array of { emitter: ParticleSystem, type: 'birth', 'collision' or 'death'}
+        self._subEmitters = []; // array of { emitter: ParticleSystem, type: 'birth', 'collision' or 'death'}
     }
 
     public onFocusInEditor (): void {
@@ -1120,91 +1122,99 @@ export class ParticleSystem extends ModelRenderer {
     }
 
     private _calculateBounding (forceRefresh: boolean): void {
-        if (this._boundingBox) {
-            if (!this._culler) {
-                this._culler = new ParticleCuller(this);
+        const self = this;
+        if (self._boundingBox) {
+            if (!self._culler) {
+                self._culler = new ParticleCuller(self);
             }
-            this._culler.calculatePositions();
-            geometry.AABB.fromPoints(this._boundingBox, this._culler.minPos, this._culler.maxPos);
+            self._culler.calculatePositions();
+            geometry.AABB.fromPoints(self._boundingBox, self._culler.minPos, self._culler.maxPos);
             if (forceRefresh) {
-                this.aabbHalfX = this._boundingBox.halfExtents.x;
-                this.aabbHalfY = this._boundingBox.halfExtents.y;
-                this.aabbHalfZ = this._boundingBox.halfExtents.z;
+                self.aabbHalfX = self._boundingBox.halfExtents.x;
+                self.aabbHalfY = self._boundingBox.halfExtents.y;
+                self.aabbHalfZ = self._boundingBox.halfExtents.z;
             } else {
-                if (this.aabbHalfX) {
-                    this.setBoundingX(this.aabbHalfX);
+                if (self.aabbHalfX) {
+                    self.setBoundingX(self.aabbHalfX);
                 } else {
-                    this.aabbHalfX = this._boundingBox.halfExtents.x;
+                    self.aabbHalfX = self._boundingBox.halfExtents.x;
                 }
 
-                if (this.aabbHalfY) {
-                    this.setBoundingY(this.aabbHalfY);
+                if (self.aabbHalfY) {
+                    self.setBoundingY(self.aabbHalfY);
                 } else {
-                    this.aabbHalfY = this._boundingBox.halfExtents.y;
+                    self.aabbHalfY = self._boundingBox.halfExtents.y;
                 }
 
-                if (this.aabbHalfZ) {
-                    this.setBoundingZ(this.aabbHalfZ);
+                if (self.aabbHalfZ) {
+                    self.setBoundingZ(self.aabbHalfZ);
                 } else {
-                    this.aabbHalfZ = this._boundingBox.halfExtents.z;
+                    self.aabbHalfZ = self._boundingBox.halfExtents.z;
                 }
             }
-            this._culler.clear();
+            self._culler.clear();
         }
     }
 
     protected update (dt: number): void {
-        const scaledDeltaTime = dt * this.simulationSpeed;
+        const self = this;
+        const thisProcessor = self.processor;
+        const thisTrailModule = self.trailModule;
+        const scaledDeltaTime = dt * self.simulationSpeed;
 
-        if (!this.renderCulling) {
-            if (this._boundingBox) {
-                this._boundingBox = null;
+        if (!self.renderCulling) {
+            if (self._boundingBox) {
+                self._boundingBox = null;
             }
-            if (this._culler) {
-                this._culler.clear();
-                this._culler.destroy();
-                this._culler = null;
+            if (self._culler) {
+                self._culler.clear();
+                self._culler.destroy();
+                self._culler = null;
             }
-            this._isSimulating = true;
+            self._isSimulating = true;
         } else {
-            if (!this._boundingBox) {
-                this._boundingBox = new geometry.AABB();
-                this._calculateBounding(false);
+            if (!self._boundingBox) {
+                self._boundingBox = new geometry.AABB();
+                self._calculateBounding(false);
             }
 
-            if (!this._curPos) {
-                this._curPos = new Vec3();
+            if (!self._curPos) {
+                self._curPos = new Vec3();
             }
-            this.node.getWorldPosition(this._curPos);
-            if (!this._oldPos) {
-                this._oldPos = new Vec3();
-                this._oldPos.set(this._curPos);
+            self.node.getWorldPosition(self._curPos);
+            if (!self._oldPos) {
+                self._oldPos = new Vec3();
+                self._oldPos.set(self._curPos);
             }
-            if (!this._curPos.equals(this._oldPos) && this._boundingBox && this._culler) {
-                const dx = this._curPos.x - this._oldPos.x;
-                const dy = this._curPos.y - this._oldPos.y;
-                const dz = this._curPos.z - this._oldPos.z;
-                const center = this._boundingBox.center;
+            const thisCurPos = self._curPos;
+            const thisOldPos = self._oldPos;
+
+            if (!thisCurPos.equals(thisOldPos) && self._boundingBox && self._culler) {
+                const dx = thisCurPos.x - thisOldPos.x;
+                const dy = thisCurPos.y - thisOldPos.y;
+                const dz = thisCurPos.z - thisOldPos.z;
+                const center = self._boundingBox.center;
                 center.x += dx;
                 center.y += dy;
                 center.z += dz;
-                this._culler.setBoundingBoxCenter(center.x, center.y, center.z);
-                this._oldPos.set(this._curPos);
+                self._culler.setBoundingBoxCenter(center.x, center.y, center.z);
+                thisOldPos.set(thisCurPos);
             }
 
-            const cameraLst: Camera[]|undefined = this.node.scene.renderScene?.cameras;
+            const renderScene = self.node.scene.renderScene;
+            const cameraLst: Camera[] | undefined = renderScene ? renderScene.cameras : undefined;
             let culled = true;
-            if (cameraLst !== undefined && this._boundingBox) {
+            if (cameraLst !== undefined && self._boundingBox) {
                 for (let i = 0; i < cameraLst.length; ++i) {
                     const camera: Camera = cameraLst[i];
                     const visibility = camera.visibility;
-                    if ((visibility & this.node.layer) === this.node.layer) {
+                    if ((visibility & self.node.layer) === self.node.layer) {
                         if (EDITOR_NOT_IN_PREVIEW) {
-                            if (camera.name === 'Editor Camera' && geometry.intersect.aabbFrustum(this._boundingBox, camera.frustum)) {
+                            if (camera.name === 'Editor Camera' && geometry.intersect.aabbFrustum(self._boundingBox, camera.frustum)) {
                                 culled = false;
                                 break;
                             }
-                        } else if (geometry.intersect.aabbFrustum(this._boundingBox, camera.frustum)) {
+                        } else if (geometry.intersect.aabbFrustum(self._boundingBox, camera.frustum)) {
                             culled = false;
                             break;
                         }
@@ -1212,194 +1222,199 @@ export class ParticleSystem extends ModelRenderer {
                 }
             }
             if (culled) {
-                if (this._cullingMode !== CullingMode.AlwaysSimulate) {
-                    this._isSimulating = false;
+                if (self._cullingMode !== CullingMode.AlwaysSimulate) {
+                    self._isSimulating = false;
                 }
-                if (!this._isCulled) {
-                    this.processor.detachFromScene();
-                    this._isCulled = true;
+                if (!self._isCulled) {
+                    thisProcessor.detachFromScene();
+                    self._isCulled = true;
                 }
-                if (this._trailModule && this._trailModule.enable) {
-                    this._trailModule._detachFromScene();
+                if (thisTrailModule && thisTrailModule.enable) {
+                    thisTrailModule._detachFromScene();
                 }
-                if (this._cullingMode === CullingMode.PauseAndCatchup) {
-                    this._time += scaledDeltaTime;
+                if (self._cullingMode === CullingMode.PauseAndCatchup) {
+                    self._time += scaledDeltaTime;
                 }
-                if (this._cullingMode !== CullingMode.AlwaysSimulate) {
+                if (self._cullingMode !== CullingMode.AlwaysSimulate) {
                     return;
                 }
             } else {
-                if (this._isCulled) {
-                    this._attachToScene();
-                    this._isCulled = false;
+                if (self._isCulled) {
+                    self._attachToScene();
+                    self._isCulled = false;
                 }
-                if (!this._isSimulating) {
-                    this._isSimulating = true;
+                if (!self._isSimulating) {
+                    self._isSimulating = true;
                 }
             }
 
-            if (!this._isSimulating) {
+            if (!self._isSimulating) {
                 return;
             }
         }
 
-        if (this._isPlaying) {
-            this._time += scaledDeltaTime;
+        if (self._isPlaying) {
+            self._time += scaledDeltaTime;
 
             // Execute emission
-            this._emit(scaledDeltaTime);
+            self._emit(scaledDeltaTime);
 
             // simulation, update particles.
-            if (this.processor.updateParticles(scaledDeltaTime) === 0 && !this._isEmitting) {
-                this.stop();
+            if (thisProcessor.updateParticles(scaledDeltaTime) === 0 && !self._isEmitting) {
+                self.stop();
             }
         } else {
-            const mat: Material | null = this.getMaterialInstance(0) || this.processor.getDefaultMaterial();
+            const mat: Material | null = self.getMaterialInstance(0) || thisProcessor.getDefaultMaterial();
             const pass = mat!.passes[0];
-            this.processor.updateRotation(pass);
-            this.processor.updateScale(pass);
+            thisProcessor.updateRotation(pass);
+            thisProcessor.updateScale(pass);
         }
 
-        if (this._needAttach) { // Check whether this particle model should be reattached
-            if (this.getParticleCount() > 0) {
-                if (!this._isCulled) {
-                    if (!this.processor.getModel()?.scene) {
-                        this.processor.attachToScene();
+        if (self._needAttach) { // Check whether this particle model should be reattached
+            if (self.getParticleCount() > 0) {
+                if (!self._isCulled) {
+                    if (!thisProcessor.getModel()?.scene) {
+                        thisProcessor.attachToScene();
                     }
-                    if (this._trailModule && this._trailModule.enable) {
-                        if (!this._trailModule.getModel()?.scene) {
-                            this._trailModule._attachToScene();
+                    if (thisTrailModule && thisTrailModule.enable) {
+                        if (!thisTrailModule.getModel()?.scene) {
+                            thisTrailModule._attachToScene();
                         }
                     }
-                    this._needAttach = false;
+                    self._needAttach = false;
                 }
             }
         }
 
-        if (!this.renderer.useGPU && this._trailModule && this._trailModule.enable) {
-            if (!this._trailModule.inited) {
-                this._trailModule.clear();
-                this._trailModule.destroy();
-                this._trailModule.onInit(this);
+        if (!self.renderer.useGPU && thisTrailModule && thisTrailModule.enable) {
+            if (!thisTrailModule.inited) {
+                thisTrailModule.clear();
+                thisTrailModule.destroy();
+                thisTrailModule.onInit(this);
                 // Rebuild trail buffer
-                this._trailModule.enable = false;
-                this._trailModule.enable = true;
+                thisTrailModule.enable = false;
+                thisTrailModule.enable = true;
             }
         }
     }
 
     protected beforeRender (): void {
-        if (this.getParticleCount() <= 0) {
-            if (this.processor.getModel()?.scene) {
-                this.processor.detachFromScene();
-                if (this._trailModule && this._trailModule.enable) {
-                    this._trailModule._detachFromScene();
+        const self = this;
+        const thisProcessor = self.processor;
+        const thisTrailModule = self.trailModule;
+        if (self.getParticleCount() <= 0) {
+            if (thisProcessor.getModel()?.scene) {
+                thisProcessor.detachFromScene();
+                if (thisTrailModule && thisTrailModule.enable) {
+                    thisTrailModule._detachFromScene();
                 }
-                this._needAttach = false;
+                self._needAttach = false;
             }
-        } else if (!this.processor.getModel()?.scene) {
-            this._needAttach = true;
+        } else if (!thisProcessor.getModel()?.scene) {
+            self._needAttach = true;
         }
 
-        if (!this._isPlaying) return;
+        if (!self._isPlaying) return;
 
         // update render data
-        this.processor.updateRenderData();
-        this.processor.beforeRender();
+        thisProcessor.updateRenderData();
+        thisProcessor.beforeRender();
         // update trail
-        if (this._trailModule && this._trailModule.enable) {
-            this._trailModule.updateRenderData();
-            this._trailModule.beforeRender();
+        if (thisTrailModule && thisTrailModule.enable) {
+            thisTrailModule.updateRenderData();
+            thisTrailModule.beforeRender();
         }
     }
 
-    protected _onVisibilityChange (val): void {
+    protected _onVisibilityChange (val: number): void {
         if (this.processor.model) {
             this.processor.model.visFlags = val;
         }
     }
 
     private emit (count: number, dt: number): void {
-        const loopDelta = (this._time % this.duration) / this.duration; // loop delta value
+        const self = this;
+        const node = self.node;
+        const loopDelta = (self._time % self.duration) / self.duration; // loop delta value
 
         // refresh particle node position to update emit position
-        if (this._needRefresh) {
+        if (self._needRefresh) {
             // this.node.setPosition(this.node.getPosition());
-            this.node.invalidateChildren(TransformBit.POSITION);
+            node.invalidateChildren(TransformBit.POSITION);
 
-            this._needRefresh = false;
+            self._needRefresh = false;
         }
 
-        if (this._simulationSpace === Space.World) {
-            this.node.getWorldMatrix(_world_mat);
-            this.node.getWorldRotation(_world_rol);
+        if (self._simulationSpace === Space.World) {
+            node.getWorldMatrix(_world_mat);
+            node.getWorldRotation(_world_rol);
         }
 
         for (let i = 0; i < count; ++i) {
-            const particle = this.processor.getFreeParticle();
+            const particle = self.processor.getFreeParticle();
             if (particle === null) {
                 return;
             }
-            particle.particleSystem = this;
+            particle.particleSystem = self;
             particle.reset();
 
             const rand = pseudoRandom(randomRangeInt(0, bits.INT_MAX));
 
-            if (this._shapeModule && this._shapeModule.enable) {
-                this._shapeModule.emit(particle);
+            if (self._shapeModule && self._shapeModule.enable) {
+                self._shapeModule.emit(particle);
             } else {
                 Vec3.set(particle.position, 0, 0, 0);
                 Vec3.copy(particle.velocity, particleEmitZAxis);
             }
 
-            if (this._textureAnimationModule && this._textureAnimationModule.enable) {
-                this._textureAnimationModule.init(particle);
+            if (self._textureAnimationModule && self._textureAnimationModule.enable) {
+                self._textureAnimationModule.init(particle);
             }
 
-            const curveStartSpeed = this.startSpeed.evaluate(loopDelta, rand)!;
+            const curveStartSpeed = self.startSpeed.evaluate(loopDelta, rand)!;
             Vec3.multiplyScalar(particle.velocity, particle.velocity, curveStartSpeed);
 
-            if (this._simulationSpace === Space.World) {
+            if (self._simulationSpace === Space.World) {
                 Vec3.transformMat4(particle.position, particle.position, _world_mat);
                 Vec3.transformQuat(particle.velocity, particle.velocity, _world_rol);
             }
 
             Vec3.copy(particle.ultimateVelocity, particle.velocity);
             // apply startRotation.
-            if (this.startRotation3D) {
+            if (self.startRotation3D) {
                 // eslint-disable-next-line max-len
-                particle.startEuler.set(this.startRotationX.evaluate(loopDelta, rand), this.startRotationY.evaluate(loopDelta, rand), this.startRotationZ.evaluate(loopDelta, rand));
+                particle.startEuler.set(self.startRotationX.evaluate(loopDelta, rand), self.startRotationY.evaluate(loopDelta, rand), self.startRotationZ.evaluate(loopDelta, rand));
             } else {
-                particle.startEuler.set(0, 0, this.startRotationZ.evaluate(loopDelta, rand));
+                particle.startEuler.set(0, 0, self.startRotationZ.evaluate(loopDelta, rand));
             }
             particle.rotation.set(particle.startEuler);
 
             // apply startSize.
-            if (this.startSize3D) {
+            if (self.startSize3D) {
                 Vec3.set(
                     particle.startSize,
-                    this.startSizeX.evaluate(loopDelta, rand)!,
-                    this.startSizeY.evaluate(loopDelta, rand)!,
-                    this.startSizeZ.evaluate(loopDelta, rand)!,
+                    self.startSizeX.evaluate(loopDelta, rand)!,
+                    self.startSizeY.evaluate(loopDelta, rand)!,
+                    self.startSizeZ.evaluate(loopDelta, rand)!,
                 );
             } else {
-                Vec3.set(particle.startSize, this.startSizeX.evaluate(loopDelta, rand)!, 1, 1);
+                Vec3.set(particle.startSize, self.startSizeX.evaluate(loopDelta, rand)!, 1, 1);
                 particle.startSize.y = particle.startSize.x;
             }
             Vec3.copy(particle.size, particle.startSize);
 
             // apply startColor.
-            particle.startColor.set(this.startColor.evaluate(loopDelta, rand));
+            particle.startColor.set(self.startColor.evaluate(loopDelta, rand));
             particle.color.set(particle.startColor);
 
             // apply startLifetime.
-            particle.startLifetime = this.startLifetime.evaluate(loopDelta, rand)! + dt;
+            particle.startLifetime = self.startLifetime.evaluate(loopDelta, rand)! + dt;
             particle.remainingLifetime = particle.startLifetime;
 
             particle.randomSeed = randomRangeInt(0, 233280);
             particle.loopCount++;
 
-            this.processor.setNewParticle(particle);
+            self.processor.setNewParticle(particle);
         } // end of particles forLoop.
     }
 
@@ -1419,46 +1434,47 @@ export class ParticleSystem extends ModelRenderer {
 
     // internal function
     private _emit (dt: number): void {
+        const self = this;
         // emit particles.
-        const startDelay = this.startDelay.evaluate(0, 1)!;
-        if (this._time > startDelay) {
-            if (this._time > (this.duration + startDelay)) {
-                // this._time = startDelay; // delay will not be applied from the second loop.(Unity)
-                // this._emitRateTimeCounter = 0.0;
-                // this._emitRateDistanceCounter = 0.0;
-                if (!this.loop) {
-                    this._isEmitting = false;
+        const startDelay = self.startDelay.evaluate(0, 1)!;
+        if (self._time > startDelay) {
+            if (self._time > (self.duration + startDelay)) {
+                // self._time = startDelay; // delay will not be applied from the second loop.(Unity)
+                // self._emitRateTimeCounter = 0.0;
+                // self._emitRateDistanceCounter = 0.0;
+                if (!self.loop) {
+                    self._isEmitting = false;
                 }
             }
 
-            if (!this._isEmitting) return;
+            if (!self._isEmitting) return;
 
             // emit by rateOverTime
-            this._emitRateTimeCounter += this.rateOverTime.evaluate(this._time / this.duration, 1)! * dt;
-            if (this._emitRateTimeCounter > 1) {
-                const emitNum = Math.floor(this._emitRateTimeCounter);
-                this._emitRateTimeCounter -= emitNum;
-                this.emit(emitNum, dt);
+            self._emitRateTimeCounter += self.rateOverTime.evaluate(self._time / self.duration, 1)! * dt;
+            if (self._emitRateTimeCounter > 1) {
+                const emitNum = Math.floor(self._emitRateTimeCounter);
+                self._emitRateTimeCounter -= emitNum;
+                self.emit(emitNum, dt);
             }
 
             // emit by rateOverDistance
-            const rateOverDistance = this.rateOverDistance.evaluate(this._time / this.duration, 1)!;
+            const rateOverDistance = self.rateOverDistance.evaluate(self._time / self.duration, 1)!;
             if (rateOverDistance > 0) {
-                Vec3.copy(this._oldWPos, this._curWPos);
-                this.node.getWorldPosition(this._curWPos);
-                const distance = Vec3.distance(this._curWPos, this._oldWPos);
-                this._emitRateDistanceCounter += distance * rateOverDistance;
+                Vec3.copy(self._oldWPos, self._curWPos);
+                self.node.getWorldPosition(self._curWPos);
+                const distance = Vec3.distance(self._curWPos, self._oldWPos);
+                self._emitRateDistanceCounter += distance * rateOverDistance;
             }
 
-            if (this._emitRateDistanceCounter > 1) {
-                const emitNum = Math.floor(this._emitRateDistanceCounter);
-                this._emitRateDistanceCounter -= emitNum;
-                this.emit(emitNum, dt);
+            if (self._emitRateDistanceCounter > 1) {
+                const emitNum = Math.floor(self._emitRateDistanceCounter);
+                self._emitRateDistanceCounter -= emitNum;
+                self.emit(emitNum, dt);
             }
 
             // bursts
-            for (const burst of this.bursts) {
-                burst.update(this, dt);
+            for (const burst of self.bursts) {
+                burst.update(self, dt);
             }
         }
     }

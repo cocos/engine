@@ -49,6 +49,7 @@ import { ProbeType, ReflectionProbe } from './reflection-probe';
 import { ReflectionProbeType } from '../../3d/reflection-probe/reflection-probe-enum';
 import type { SH } from '../../gi/light-probe/sh';
 import type { PipelineSceneData } from '../../rendering';
+import { getPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
 
 const m4_1 = new Mat4();
 
@@ -715,7 +716,8 @@ export class Model {
         this._updateStamp = stamp;
 
         this.updateSHUBOs();
-        const forceUpdateUBO = this.node.scene.globals.shadows.enabled && this.node.scene.globals.shadows.type === ShadowType.Planar;
+        const shadows = this.node.scene.globals.shadows;
+        const forceUpdateUBO = shadows.enabled && shadows.type === ShadowType.Planar;
 
         if (!this._localDataUpdated) { return; }
         this._localDataUpdated = false;
@@ -760,7 +762,7 @@ export class Model {
             return false;
         }
 
-        const lightProbes = (cclegacy.director.root as Root).pipeline.pipelineSceneData.lightProbes;
+        const lightProbes = getPipelineSceneData().lightProbes;
         if (!lightProbes || lightProbes.empty()) {
             return false;
         }
@@ -1171,14 +1173,15 @@ export class Model {
      */
     public getMacroPatches (subModelIndex: number): IMacroPatch[] | null {
         let patches = this.receiveShadow ? shadowMapPatches : null;
-        if (this._lightmap != null) {
-            if (this.node && this.node.scene && !this.node.scene.globals.disableLightmap) {
-                const mainLightIsStationary = this.node.scene.globals.bakedWithStationaryMainLight;
+        if (this._lightmap != null && this.node && this.node.scene) {
+            const sceneGlobals = this.node.scene.globals;
+            if (!sceneGlobals.disableLightmap) {
+                const mainLightIsStationary = sceneGlobals.bakedWithStationaryMainLight;
                 const lightmapPathes = mainLightIsStationary ? stationaryLightMapPatches : staticLightMapPatches;
 
                 patches = patches ? patches.concat(lightmapPathes) : lightmapPathes;
                 // use highp lightmap
-                if (this.node.scene.globals.bakedWithHighpLightmap) {
+                if (sceneGlobals.bakedWithHighpLightmap) {
                     patches = patches.concat(highpLightMapPatches);
                 }
             }

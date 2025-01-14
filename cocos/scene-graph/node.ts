@@ -44,6 +44,7 @@ import { DispatcherEventType, NodeEventProcessor } from './node-event-processor'
 import type { Scene } from './scene';
 import type { Director } from '../game/director';
 import type { Game } from '../game/game';
+import type { UITransform } from '../2d/framework/ui-transform';
 
 const Destroying = CCObject.Flags.Destroying;
 const DontDestroy = CCObject.Flags.DontDestroy;
@@ -2714,6 +2715,14 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         }
 
         return result;
+    }
+
+    /**
+     * @mangle
+     * @engineInternal
+     */
+    _getUITransformComp (): UITransform | null {
+        return this._uiProps.uiTransformComp;
     }
 }
 

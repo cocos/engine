@@ -42,6 +42,10 @@ const A_INDEX = 3;
 const mathAbs = Math.abs;
 const mathMax = Math.max;
 
+function freezeColor (r: number, g: number, b: number, a: number): Readonly<Color> {
+    return Object.freeze(new Color(r, g, b, a));
+}
+
 /**
  * @en Representation of RGBA colors.<br/>
  * Each color component is an integer value with a range from 0 to 255.<br/>
@@ -49,16 +53,16 @@ const mathMax = Math.max;
  * 每个通道都为取值范围 [0, 255] 的整数。<br/>
  */
 export class Color extends ValueType implements Modifiable {
-    public static WHITE = Object.freeze(new Color(255, 255, 255, 255));
-    public static GRAY = Object.freeze(new Color(127, 127, 127, 255));
-    public static BLACK = Object.freeze(new Color(0, 0, 0, 255));
-    public static TRANSPARENT = Object.freeze(new Color(0, 0, 0, 0));
-    public static RED = Object.freeze(new Color(255, 0, 0, 255));
-    public static GREEN = Object.freeze(new Color(0, 255, 0, 255));
-    public static BLUE = Object.freeze(new Color(0, 0, 255, 255));
-    public static CYAN = Object.freeze(new Color(0, 255, 255, 255));
-    public static MAGENTA = Object.freeze(new Color(255, 0, 255, 255));
-    public static YELLOW = Object.freeze(new Color(255, 255, 0, 255));
+    public static WHITE = freezeColor(255, 255, 255, 255);
+    public static GRAY = freezeColor(127, 127, 127, 255);
+    public static BLACK = freezeColor(0, 0, 0, 255);
+    public static TRANSPARENT = freezeColor(0, 0, 0, 0);
+    public static RED = freezeColor(255, 0, 0, 255);
+    public static GREEN = freezeColor(0, 255, 0, 255);
+    public static BLUE = freezeColor(0, 0, 255, 255);
+    public static CYAN = freezeColor(0, 255, 255, 255);
+    public static MAGENTA = freezeColor(255, 0, 255, 255);
+    public static YELLOW = freezeColor(255, 255, 0, 255);
 
     /**
      * @en Copy content of a color into another and save the results to out color.

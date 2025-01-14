@@ -55,8 +55,8 @@ export class SpriteAtlas extends Asset {
     @editable
     public spriteFrames: ISpriteFrameList = js.createMap();
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     /**

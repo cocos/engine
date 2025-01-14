@@ -32,6 +32,7 @@ import { PhysXWorld } from './physx-world';
 
 const v3_0 = new Vec3();
 
+/** @mangle */
 export class PhysXRigidBody implements IRigidBody {
     get impl (): any { return this._sharedBody.impl; }
 

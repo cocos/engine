@@ -29,6 +29,7 @@ import { BulletRigidBody } from '../bullet-rigid-body';
 import { bt, EBulletType } from '../instantiated';
 import { BulletWorld } from '../bullet-world';
 
+/** @mangle */
 export abstract class BulletConstraint implements IBaseConstraint {
     setConnectedBody (v: RigidBody | null): void {
         if (this._connectedBody === v) return;

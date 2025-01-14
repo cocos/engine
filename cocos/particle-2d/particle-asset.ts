@@ -39,7 +39,7 @@ const { ccclass, serializable, editable } = _decorator;
 export class ParticleAsset extends Asset {
     @serializable
     @editable
-    public spriteFrame: SpriteFrame | null= null;
+    public spriteFrame: SpriteFrame | null = null;
 }
 
 cclegacy.ParticleAsset = ParticleAsset;

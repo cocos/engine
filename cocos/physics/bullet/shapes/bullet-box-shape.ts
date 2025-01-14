@@ -32,6 +32,7 @@ import { cocos2BulletVec3 } from '../bullet-utils';
 import { BulletCache } from '../bullet-cache';
 import { bt } from '../instantiated';
 
+/** @mangle */
 export class BulletBoxShape extends BulletShape implements IBoxShape {
     updateSize (): void {
         const hf = BulletCache.instance.BT_V3_0;

@@ -300,7 +300,7 @@ class CCObject implements EditorExtendableObject {
         this._objFlags |= ToDestroy;
         objectsToDestroy.push(this);
 
-        if (EDITOR && deferredDestroyTimer === null && legacyCC.engine && !legacyCC.engine._isUpdating) {
+        if (EDITOR_NOT_IN_PREVIEW && deferredDestroyTimer === null && legacyCC.engine && !legacyCC.engine._isUpdating) {
             // auto destroy immediate in edit mode
             deferredDestroyTimer = setTimeout(CCObject._deferredDestroy);
         }

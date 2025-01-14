@@ -50,6 +50,7 @@ enum BulletDofAxis {
     SWING2 = 5,
 }
 
+/** @mangle */
 export class BulletConfigurableConstraint extends BulletConstraint implements IConfigurableConstraint {
     private _setLimit (v: EConstraintMode, axis: number, lower: number, upper: number): void  {
         switch (v) {

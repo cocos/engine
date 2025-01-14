@@ -26,6 +26,8 @@ export class BufferBlob {
     private _arrayBufferOrPaddings: Array<ArrayBuffer | number> = [];
     private _length = 0;
 
+    constructor () {}
+
     public setNextAlignment (align: number): void {
         if (align !== 0) {
             const remainder = this._length % align;

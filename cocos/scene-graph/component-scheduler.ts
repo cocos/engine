@@ -85,7 +85,7 @@ function stableRemoveInactive (iterator: js.array.MutableForwardIterator<Compone
     }
 }
 
-type InvokeFunc = (iterator: js.array.MutableForwardIterator<Component>, dt?: number) => void;
+export type InvokeFunc = (iterator: js.array.MutableForwardIterator<Component>, dt?: number) => void;
 
 // This class contains some queues used to invoke life-cycle methods by script execution order
 export class LifeCycleInvoker {
@@ -173,6 +173,10 @@ export class OneOffInvoker extends LifeCycleInvoker {
 
 // for update: sort every time new component registered, invoke many times
 class ReusableInvoker extends LifeCycleInvoker {
+    constructor (invokeFunc: InvokeFunc) {
+        super(invokeFunc);
+    }
+
     public add (comp: Component): void {
         const order = (comp.constructor as typeof Component)._executionOrder;
         if (order === 0) {

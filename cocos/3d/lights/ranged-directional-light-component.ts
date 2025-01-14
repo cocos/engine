@@ -25,6 +25,7 @@ import { Camera, LightType } from '../../render-scene/scene';
 import { scene } from '../../render-scene';
 import { CCInteger, cclegacy } from '../../core';
 import { range } from '../../core/data/decorators';
+import { getPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
 
 /**
  * @en The ranged directional light component, Multiple ranged directional light sources are allowed in a scene.
@@ -51,7 +52,7 @@ export class RangedDirectionalLight extends Light {
     @range([0, Number.POSITIVE_INFINITY, 10])
     @type(CCInteger)
     get illuminance (): number {
-        const isHDR = cclegacy.director.root.pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._illuminanceHDR;
         } else {
@@ -59,7 +60,7 @@ export class RangedDirectionalLight extends Light {
         }
     }
     set illuminance (val) {
-        const isHDR = cclegacy.director.root.pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this._illuminanceHDR = val;
             this._light && ((this._light as scene.RangedDirectionalLight).illuminanceHDR = this._illuminanceHDR);

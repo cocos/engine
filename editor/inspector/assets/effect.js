@@ -26,18 +26,18 @@ exports.template = /* html */`
 `;
 
 exports.style = /* css */`
-    .asset-effect { 
-        padding-right: 4px;    
+    .asset-effect {
+        padding-right: 4px;
     }
 
     .asset-effect[multiple-invalid] > *:not(.multiple-warn-tip) {
         display: none!important;
      }
-    
+
      .asset-effect[multiple-invalid] > .multiple-warn-tip {
         display: block;
      }
-    
+
     .asset-effect .multiple-warn-tip {
         display: none;
         text-align: center;
@@ -305,7 +305,7 @@ exports.methods = {
 
         const fileSource = panel.asset.library['.json'];
 
-        if (fileSource && !existsSync(fileSource)) {
+        if (!fileSource || !existsSync(fileSource)) {
             console.error('Read effect json file in library failed.');
             return false;
         }

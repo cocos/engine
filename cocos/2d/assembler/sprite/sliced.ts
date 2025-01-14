@@ -108,7 +108,7 @@ export const sliced: IAssembler = {
         const renderData = sprite.renderData;
         if (!renderData) return;
         const dataList: IRenderData[] = renderData.data;
-        const uiTrans = sprite.node._uiProps.uiTransformComp!;
+        const uiTrans = sprite.node._getUITransformComp()!;
         const width = uiTrans.width;
         const height = uiTrans.height;
         const appX = uiTrans.anchorX * width;

@@ -34,6 +34,8 @@ class GarbageCollectionManager {
     private _finalizationRegistry: FinalizationRegistry | null = EDITOR && typeof FinalizationRegistry !== 'undefined' ? new FinalizationRegistry(this.finalizationRegistryCallback.bind(this)) : null;
     private _gcObjects: WeakMap<any, GCObject> = new WeakMap();
 
+    constructor () {}
+
     public registerGCObject (gcObject: GCObject): GCObject {
         if (EDITOR && this._finalizationRegistry) {
             const token = {};

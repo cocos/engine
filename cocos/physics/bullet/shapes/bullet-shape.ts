@@ -35,6 +35,8 @@ import { EColliderType } from '../../framework';
 
 const v3_0 = CC_V3_0;
 const ccMaterialBooks = {};
+
+/** @mangle */
 export abstract class BulletShape implements IBaseShape {
     updateEventListener (): void {
         this._sharedBody.wrappedWorld.updateNeedEmitEvents(this.collider.needCollisionEvent || this.collider.needTriggerEvent);
@@ -46,8 +48,8 @@ export abstract class BulletShape implements IBaseShape {
             if (this._compound) {
                 if (!ccMaterialBooks[v1._uuid]) ccMaterialBooks[v1._uuid] = bt.ccMaterial_new();
                 const mat = ccMaterialBooks[v1._uuid];
-                bt.ccMaterial_set(mat, v1.restitution, v1.friction, v1.rollingFriction, v1.spinningFriction);
-                bt.CollisionShape_setMaterial(this._impl, mat);
+                bt.ccMaterial_set(mat as number, v1.restitution, v1.friction, v1.rollingFriction, v1.spinningFriction);
+                bt.CollisionShape_setMaterial(this._impl, mat as number);
             } else {
                 bt.CollisionObject_setMaterial(this._sharedBody.body, v1.restitution, v1.friction, v1.rollingFriction, v1.spinningFriction);
             }

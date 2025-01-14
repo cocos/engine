@@ -155,6 +155,10 @@ export class AnimationClip extends Asset {
     @serializable
     public enableTrsBlending = false;
 
+    constructor (name?: string) {
+        super(name);
+    }
+
     /**
      * @zh 动画的周期。
      * @en Animation duration.

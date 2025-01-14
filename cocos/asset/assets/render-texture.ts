@@ -61,8 +61,8 @@ const _windowInfo: IRenderWindowInfo = {
 @ccclass('cc.RenderTexture')
 export class RenderTexture extends TextureBase {
     private _window: RenderWindow | null = null;
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     /**
