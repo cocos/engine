@@ -1064,7 +1064,7 @@ NSUInteger mu::highestSupportedFeatureSet(id<MTLDevice> device) {
         maxKnownFeatureSet = MTLFeatureSet_iOS_GPUFamily4_v1;
     } else {
         CC_ASSERT(false);
-        maxKnownFeatureSet MTLFeatureSet_iOS_GPUFamily1_v4;
+        maxKnownFeatureSet = MTLFeatureSet_iOS_GPUFamily1_v4;
     }
 #else
     if (@available(macOS 10.14, *)) {
