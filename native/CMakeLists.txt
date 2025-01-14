@@ -3474,6 +3474,7 @@ if(APPLE)
             "-framework CoreText"
             "-framework CoreGraphics"
             "-framework AVFoundation"
+            "-lz"
         )
         set_property(TARGET ${ENGINE_NAME} PROPERTY XCODE_ATTRIBUTE_IPHONEOS_DEPLOYMENT_TARGET ${TARGET_IOS_VERSION})
         set_property(TARGET ${ENGINE_NAME} PROPERTY XCODE_ATTRIBUTE_ENABLE_BITCODE "NO")
