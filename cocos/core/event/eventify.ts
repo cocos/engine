@@ -151,6 +151,7 @@ export interface IEventified {
  */
 export function Eventify<TBase> (base: Constructor<TBase>): Constructor<TBase & IEventified> {
     class Eventified extends (base as unknown as any) {
+        /** @dontmangle */
         protected _callbackTable = createMap(true);
 
         public once<Callback extends (...any) => void> (type: EventType, callback: Callback, target?: any): Callback {
