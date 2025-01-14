@@ -455,7 +455,7 @@ export class Mesh extends Asset {
                     subVBs.push(vertexBuffers[idx]);
                 }
 
-                const attributes: Attribute[] = [];
+                const allAttributes: Attribute[] = [];
                 for (let k = 0; k < primitive.vertexBundelIndices.length; k++) {
                     const idx = primitive.vertexBundelIndices[k];
                     const attributes = this._struct.vertexBundles[idx].attributes;
@@ -463,11 +463,11 @@ export class Mesh extends Asset {
                         const attr = attributes[j];
                         const attribute = new Attribute();
                         attribute.copy(attr);
-                        attributes.push(attribute);
+                        allAttributes.push(attribute);
                     }
                 }
 
-                const subMesh = new RenderingSubMesh(subVBs, attributes, primitive.primitiveMode, indexBuffer);
+                const subMesh = new RenderingSubMesh(subVBs, allAttributes, primitive.primitiveMode, indexBuffer);
                 subMesh.drawInfo = new DrawInfo();
                 subMesh.mesh = this;
                 subMesh.subMeshIdx = i;
