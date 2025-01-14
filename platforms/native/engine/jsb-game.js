@@ -24,13 +24,18 @@
  ****************************************************************************/
 
 cc.game.restart = function () {
-    // Need to clear scene, or native object destructor won't be invoke.
-    cc.director.getScene().destroy();
-    cc.Object._deferredDestroy();
-    __restartVM();
+    return new Promise((resolve) => {
+        // Need to clear scene, or native object destructor won't be invoked.
+        cc.director.getScene().destroy();
+        cc.Object._deferredDestroy();
+        __restartVM();
+
+        // Resolve the promise to indicate completion
+        resolve();
+    });
 };
 
-jsb.onError(function (location, message, stack) {
+jsb.onError((location, message, stack) => {
     console.error(location, message, stack);
 });
 
