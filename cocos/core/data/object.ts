@@ -30,7 +30,7 @@ import { legacyCC } from '../global-exports';
 import { EditorExtendableObject, editorExtrasTag } from './editor-extras-tag';
 import { copyAllProperties } from '../utils/js';
 
-// definitions for CCObject.Flags
+// definitions for CCObjectFlags
 
 export enum CCObjectFlags {
     Destroyed = 1 << 0,
@@ -235,11 +235,11 @@ class CCObject implements EditorExtendableObject {
      * @en After inheriting CCObject objects, control whether you need to hide, lock, serialize, and other functions.
      * @zh 在继承 CCObject 对象后，控制是否需要隐藏，锁定，序列化等功能。
      */
-    public set hideFlags (hideFlags: CCObject.Flags) {
+    public set hideFlags (hideFlags: CCObjectFlags) {
         const flags = hideFlags & CCObjectFlags.AllHideMasks;
         this._objFlags = (this._objFlags & ~CCObjectFlags.AllHideMasks) | flags;
     }
-    public get hideFlags (): CCObject.Flags {
+    public get hideFlags (): CCObjectFlags {
         return this._objFlags & CCObjectFlags.AllHideMasks;
     }
 
@@ -401,7 +401,7 @@ if (EDITOR || TEST) {
         function (this: CCObject) {
             return this._objFlags;
         },
-        function (this: CCObject, objFlags: CCObject.Flags) {
+        function (this: CCObject, objFlags: CCObjectFlags) {
             this._objFlags = objFlags;
         },
     );
