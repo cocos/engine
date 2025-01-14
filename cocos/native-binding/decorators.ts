@@ -122,15 +122,14 @@ interface cc_DirectionalLight_Context_Args {
    CSMLevel: any;
    CSMOptimizationMode: any;
    CCInteger: any;
-   cclegacy: any;
+   getPipelineSceneData: any;
    ShadowType: any;
    CCBoolean: any;
    CCFloat: any;
 }
 export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args, apply = defaultExec) {
-  type Root = any;
   type DirectionalLight = any;
-  const { DirectionalLight, Camera, PCFType, CSMLevel, CSMOptimizationMode, CCInteger, cclegacy, ShadowType, CCBoolean, CCFloat } = { ...ctx };
+  const { DirectionalLight, Camera, PCFType, CSMLevel, CSMOptimizationMode, CCInteger, getPipelineSceneData, ShadowType, CCBoolean, CCFloat } = { ...ctx };
   const illuminanceDescriptor = Object.getOwnPropertyDescriptor(DirectionalLight.prototype, 'illuminance');
   const shadowEnabledDescriptor = Object.getOwnPropertyDescriptor(DirectionalLight.prototype, 'shadowEnabled');
   const shadowPcfDescriptor = Object.getOwnPropertyDescriptor(DirectionalLight.prototype, 'shadowPcf');
@@ -182,7 +181,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
     displayOrder: 1
   }
 })(DirectionalLight.prototype, 'shadowEnabled',  shadowEnabledDescriptor); }, 'property', 'shadowEnabled');
-  apply(() => { $.visible(() => (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap)(DirectionalLight.prototype, 'shadowEnabled',  shadowEnabledDescriptor); }, 'visible', 'shadowEnabled');
+  apply(() => { $.visible(() => getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap)(DirectionalLight.prototype, 'shadowEnabled',  shadowEnabledDescriptor); }, 'visible', 'shadowEnabled');
   apply(() => { $.tooltip('i18n:lights.shadowEnabled')(DirectionalLight.prototype, 'shadowEnabled',  shadowEnabledDescriptor); }, 'tooltip', 'shadowEnabled');
   apply(() => { $.type(PCFType)(DirectionalLight.prototype, 'shadowPcf',  shadowPcfDescriptor); }, 'type', 'shadowPcf');
   apply(() => { $.editable(DirectionalLight.prototype, 'shadowPcf',  shadowPcfDescriptor); }, 'editable', 'shadowPcf');
@@ -192,7 +191,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
     displayOrder: 5
   }
 })(DirectionalLight.prototype, 'shadowPcf',  shadowPcfDescriptor); }, 'property', 'shadowPcf');
-  apply(() => { $.visible(() => (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap)(DirectionalLight.prototype, 'shadowPcf',  shadowPcfDescriptor); }, 'visible', 'shadowPcf');
+  apply(() => { $.visible(() => getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap)(DirectionalLight.prototype, 'shadowPcf',  shadowPcfDescriptor); }, 'visible', 'shadowPcf');
   apply(() => { $.tooltip('i18n:lights.shadowPcf')(DirectionalLight.prototype, 'shadowPcf',  shadowPcfDescriptor); }, 'tooltip', 'shadowPcf');
   apply(() => { $.type(CCFloat)(DirectionalLight.prototype, 'shadowBias',  shadowBiasDescriptor); }, 'type', 'shadowBias');
   apply(() => { $.editable(DirectionalLight.prototype, 'shadowBias',  shadowBiasDescriptor); }, 'editable', 'shadowBias');
@@ -202,7 +201,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
     displayOrder: 6
   }
 })(DirectionalLight.prototype, 'shadowBias',  shadowBiasDescriptor); }, 'property', 'shadowBias');
-  apply(() => { $.visible(() => (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap)(DirectionalLight.prototype, 'shadowBias',  shadowBiasDescriptor); }, 'visible', 'shadowBias');
+  apply(() => { $.visible(() => getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap)(DirectionalLight.prototype, 'shadowBias',  shadowBiasDescriptor); }, 'visible', 'shadowBias');
   apply(() => { $.tooltip('i18n:lights.shadowBias')(DirectionalLight.prototype, 'shadowBias',  shadowBiasDescriptor); }, 'tooltip', 'shadowBias');
   apply(() => { $.type(CCFloat)(DirectionalLight.prototype, 'shadowNormalBias',  shadowNormalBiasDescriptor); }, 'type', 'shadowNormalBias');
   apply(() => { $.editable(DirectionalLight.prototype, 'shadowNormalBias',  shadowNormalBiasDescriptor); }, 'editable', 'shadowNormalBias');
@@ -212,7 +211,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
     displayOrder: 7
   }
 })(DirectionalLight.prototype, 'shadowNormalBias',  shadowNormalBiasDescriptor); }, 'property', 'shadowNormalBias');
-  apply(() => { $.visible(() => (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap)(DirectionalLight.prototype, 'shadowNormalBias',  shadowNormalBiasDescriptor); }, 'visible', 'shadowNormalBias');
+  apply(() => { $.visible(() => getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap)(DirectionalLight.prototype, 'shadowNormalBias',  shadowNormalBiasDescriptor); }, 'visible', 'shadowNormalBias');
   apply(() => { $.tooltip('i18n:lights.shadowNormalBias')(DirectionalLight.prototype, 'shadowNormalBias',  shadowNormalBiasDescriptor); }, 'tooltip', 'shadowNormalBias');
   apply(() => { $.type(CCFloat)(DirectionalLight.prototype, 'shadowSaturation',  shadowSaturationDescriptor); }, 'type', 'shadowSaturation');
   apply(() => { $.slide(DirectionalLight.prototype, 'shadowSaturation',  shadowSaturationDescriptor); }, 'slide', 'shadowSaturation');
@@ -224,7 +223,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
     displayOrder: 8
   }
 })(DirectionalLight.prototype, 'shadowSaturation',  shadowSaturationDescriptor); }, 'property', 'shadowSaturation');
-  apply(() => { $.visible(() => (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap)(DirectionalLight.prototype, 'shadowSaturation',  shadowSaturationDescriptor); }, 'visible', 'shadowSaturation');
+  apply(() => { $.visible(() => getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap)(DirectionalLight.prototype, 'shadowSaturation',  shadowSaturationDescriptor); }, 'visible', 'shadowSaturation');
   apply(() => { $.tooltip('i18n:lights.shadowSaturation')(DirectionalLight.prototype, 'shadowSaturation',  shadowSaturationDescriptor); }, 'tooltip', 'shadowSaturation');
   apply(() => { $.type(CCFloat)(DirectionalLight.prototype, 'shadowDistance',  shadowDistanceDescriptor); }, 'type', 'shadowDistance');
   apply(() => { $.slide(DirectionalLight.prototype, 'shadowDistance',  shadowDistanceDescriptor); }, 'slide', 'shadowDistance');
@@ -238,7 +237,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
   }
 })(DirectionalLight.prototype, 'shadowDistance',  shadowDistanceDescriptor); }, 'property', 'shadowDistance');
   apply(() => { $.visible(function (this: DirectionalLight) {
-  return (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap && this._shadowFixedArea === false;
+  return getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap && this._shadowFixedArea === false;
 })(DirectionalLight.prototype, 'shadowDistance',  shadowDistanceDescriptor); }, 'visible', 'shadowDistance');
   apply(() => { $.tooltip('i18n:lights.shadowDistance')(DirectionalLight.prototype, 'shadowDistance',  shadowDistanceDescriptor); }, 'tooltip', 'shadowDistance');
   apply(() => { $.type(CCFloat)(DirectionalLight.prototype, 'shadowInvisibleOcclusionRange',  shadowInvisibleOcclusionRangeDescriptor); }, 'type', 'shadowInvisibleOcclusionRange');
@@ -253,7 +252,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
   }
 })(DirectionalLight.prototype, 'shadowInvisibleOcclusionRange',  shadowInvisibleOcclusionRangeDescriptor); }, 'property', 'shadowInvisibleOcclusionRange');
   apply(() => { $.visible(function (this: DirectionalLight) {
-  return (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap && this._shadowFixedArea === false && this._csmAdvancedOptions;
+  return getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap && this._shadowFixedArea === false && this._csmAdvancedOptions;
 })(DirectionalLight.prototype, 'shadowInvisibleOcclusionRange',  shadowInvisibleOcclusionRangeDescriptor); }, 'visible', 'shadowInvisibleOcclusionRange');
   apply(() => { $.tooltip('i18n:lights.shadowInvisibleOcclusionRange')(DirectionalLight.prototype, 'shadowInvisibleOcclusionRange',  shadowInvisibleOcclusionRangeDescriptor); }, 'tooltip', 'shadowInvisibleOcclusionRange');
   apply(() => { $.type(CSMLevel)(DirectionalLight.prototype, 'csmLevel',  csmLevelDescriptor); }, 'type', 'csmLevel');
@@ -276,7 +275,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
   }
 })(DirectionalLight.prototype, 'enableCSM',  enableCSMDescriptor); }, 'property', 'enableCSM');
   apply(() => { $.visible(function (this: DirectionalLight) {
-  return (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap && this._shadowFixedArea === false;
+  return getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap && this._shadowFixedArea === false;
 })(DirectionalLight.prototype, 'enableCSM',  enableCSMDescriptor); }, 'visible', 'enableCSM');
   apply(() => { $.tooltip('i18n:lights.enableCSM')(DirectionalLight.prototype, 'enableCSM',  enableCSMDescriptor); }, 'tooltip', 'enableCSM');
   apply(() => { $.type(CCFloat)(DirectionalLight.prototype, 'csmLayerLambda',  csmLayerLambdaDescriptor); }, 'type', 'csmLayerLambda');
@@ -309,7 +308,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
     displayOrder: 14
   }
 })(DirectionalLight.prototype, 'shadowFixedArea',  shadowFixedAreaDescriptor); }, 'property', 'shadowFixedArea');
-  apply(() => { $.visible(() => (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap)(DirectionalLight.prototype, 'shadowFixedArea',  shadowFixedAreaDescriptor); }, 'visible', 'shadowFixedArea');
+  apply(() => { $.visible(() => getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap)(DirectionalLight.prototype, 'shadowFixedArea',  shadowFixedAreaDescriptor); }, 'visible', 'shadowFixedArea');
   apply(() => { $.tooltip('i18n:lights.shadowFixedArea')(DirectionalLight.prototype, 'shadowFixedArea',  shadowFixedAreaDescriptor); }, 'tooltip', 'shadowFixedArea');
   apply(() => { $.type(CCFloat)(DirectionalLight.prototype, 'shadowNear',  shadowNearDescriptor); }, 'type', 'shadowNear');
   apply(() => { $.editable(DirectionalLight.prototype, 'shadowNear',  shadowNearDescriptor); }, 'editable', 'shadowNear');
@@ -320,7 +319,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
   }
 })(DirectionalLight.prototype, 'shadowNear',  shadowNearDescriptor); }, 'property', 'shadowNear');
   apply(() => { $.visible(function (this: DirectionalLight) {
-  return (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap && this._shadowFixedArea === true;
+  return getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap && this._shadowFixedArea === true;
 })(DirectionalLight.prototype, 'shadowNear',  shadowNearDescriptor); }, 'visible', 'shadowNear');
   apply(() => { $.tooltip('i18n:lights.shadowNear')(DirectionalLight.prototype, 'shadowNear',  shadowNearDescriptor); }, 'tooltip', 'shadowNear');
   apply(() => { $.type(CCFloat)(DirectionalLight.prototype, 'shadowFar',  shadowFarDescriptor); }, 'type', 'shadowFar');
@@ -332,7 +331,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
   }
 })(DirectionalLight.prototype, 'shadowFar',  shadowFarDescriptor); }, 'property', 'shadowFar');
   apply(() => { $.visible(function (this: DirectionalLight) {
-  return (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap && this._shadowFixedArea === true;
+  return getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap && this._shadowFixedArea === true;
 })(DirectionalLight.prototype, 'shadowFar',  shadowFarDescriptor); }, 'visible', 'shadowFar');
   apply(() => { $.tooltip('i18n:lights.shadowFar')(DirectionalLight.prototype, 'shadowFar',  shadowFarDescriptor); }, 'tooltip', 'shadowFar');
   apply(() => { $.type(CCFloat)(DirectionalLight.prototype, 'shadowOrthoSize',  shadowOrthoSizeDescriptor); }, 'type', 'shadowOrthoSize');
@@ -343,7 +342,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
   }
 })(DirectionalLight.prototype, 'shadowOrthoSize',  shadowOrthoSizeDescriptor); }, 'property', 'shadowOrthoSize');
   apply(() => { $.visible(function (this: DirectionalLight) {
-  return (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap && this._shadowFixedArea === true;
+  return getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap && this._shadowFixedArea === true;
 })(DirectionalLight.prototype, 'shadowOrthoSize',  shadowOrthoSizeDescriptor); }, 'visible', 'shadowOrthoSize');
   apply(() => { $.tooltip('i18n:lights.shadowOrthoSize')(DirectionalLight.prototype, 'shadowOrthoSize',  shadowOrthoSizeDescriptor); }, 'tooltip', 'shadowOrthoSize');
   apply(() => { $.type(CCBoolean)(DirectionalLight.prototype, 'csmAdvancedOptions',  csmAdvancedOptionsDescriptor); }, 'type', 'csmAdvancedOptions');
@@ -355,7 +354,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
   }
 })(DirectionalLight.prototype, 'csmAdvancedOptions',  csmAdvancedOptionsDescriptor); }, 'property', 'csmAdvancedOptions');
   apply(() => { $.visible(function (this: DirectionalLight) {
-  return (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap && this._csmLevel > CSMLevel.LEVEL_1;
+  return getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap && this._csmLevel > CSMLevel.LEVEL_1;
 })(DirectionalLight.prototype, 'csmAdvancedOptions',  csmAdvancedOptionsDescriptor); }, 'visible', 'csmAdvancedOptions');
   apply(() => { $.tooltip('i18n:lights.shadowAdvancedOptions')(DirectionalLight.prototype, 'csmAdvancedOptions',  csmAdvancedOptionsDescriptor); }, 'tooltip', 'csmAdvancedOptions');
   apply(() => { $.type(CCBoolean)(DirectionalLight.prototype, 'csmLayersTransition',  csmLayersTransitionDescriptor); }, 'type', 'csmLayersTransition');
@@ -367,7 +366,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
   }
 })(DirectionalLight.prototype, 'csmLayersTransition',  csmLayersTransitionDescriptor); }, 'property', 'csmLayersTransition');
   apply(() => { $.visible(function (this: DirectionalLight) {
-  return (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap && this._csmLevel > CSMLevel.LEVEL_1 && this._csmAdvancedOptions;
+  return getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap && this._csmLevel > CSMLevel.LEVEL_1 && this._csmAdvancedOptions;
 })(DirectionalLight.prototype, 'csmLayersTransition',  csmLayersTransitionDescriptor); }, 'visible', 'csmLayersTransition');
   apply(() => { $.tooltip('i18n:lights.csmLayersTransition')(DirectionalLight.prototype, 'csmLayersTransition',  csmLayersTransitionDescriptor); }, 'tooltip', 'csmLayersTransition');
   apply(() => { $.type(CCFloat)(DirectionalLight.prototype, 'csmTransitionRange',  csmTransitionRangeDescriptor); }, 'type', 'csmTransitionRange');
@@ -381,7 +380,7 @@ export function patch_cc_DirectionalLight(ctx: cc_DirectionalLight_Context_Args,
   }
 })(DirectionalLight.prototype, 'csmTransitionRange',  csmTransitionRangeDescriptor); }, 'property', 'csmTransitionRange');
   apply(() => { $.visible(function (this: DirectionalLight) {
-  return (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.enabled && (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap && this._csmLevel > CSMLevel.LEVEL_1 && this._csmAdvancedOptions;
+  return getPipelineSceneData().shadows.enabled && getPipelineSceneData().shadows.type === ShadowType.ShadowMap && this._csmLevel > CSMLevel.LEVEL_1 && this._csmAdvancedOptions;
 })(DirectionalLight.prototype, 'csmTransitionRange',  csmTransitionRangeDescriptor); }, 'visible', 'csmTransitionRange');
   apply(() => { $.tooltip('i18n:lights.csmTransitionRange')(DirectionalLight.prototype, 'csmTransitionRange',  csmTransitionRangeDescriptor); }, 'tooltip', 'csmTransitionRange');
   apply(() => { $.executeInEditMode(DirectionalLight); }, 'executeInEditMode', null);
@@ -1171,13 +1170,12 @@ interface cc_SpotLight_Context_Args {
    PhotometricTerm: any;
    PCFType: any;
    CCFloat: any;
-   cclegacy: any;
+   getPipelineSceneData: any;
    ShadowType: any;
    CCBoolean: any;
 }
 export function patch_cc_SpotLight(ctx: cc_SpotLight_Context_Args, apply = defaultExec) {
-  type Root = any;
-  const { SpotLight, scene, Camera, PhotometricTerm, PCFType, CCFloat, cclegacy, ShadowType, CCBoolean } = { ...ctx };
+  const { SpotLight, scene, Camera, PhotometricTerm, PCFType, CCFloat, getPipelineSceneData, ShadowType, CCBoolean } = { ...ctx };
   const luminousFluxDescriptor = Object.getOwnPropertyDescriptor(SpotLight.prototype, 'luminousFlux');
   const luminanceDescriptor = Object.getOwnPropertyDescriptor(SpotLight.prototype, 'luminance');
   const termDescriptor = Object.getOwnPropertyDescriptor(SpotLight.prototype, 'term');
@@ -1230,7 +1228,7 @@ export function patch_cc_SpotLight(ctx: cc_SpotLight_Context_Args, apply = defau
     displayOrder: 1
   }
 })(SpotLight.prototype, 'shadowEnabled',  shadowEnabledDescriptor); }, 'property', 'shadowEnabled');
-  apply(() => { $.visible(() => (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap)(SpotLight.prototype, 'shadowEnabled',  shadowEnabledDescriptor); }, 'visible', 'shadowEnabled');
+  apply(() => { $.visible(() => getPipelineSceneData().shadows.type === ShadowType.ShadowMap)(SpotLight.prototype, 'shadowEnabled',  shadowEnabledDescriptor); }, 'visible', 'shadowEnabled');
   apply(() => { $.tooltip('i18n:lights.shadowEnabled')(SpotLight.prototype, 'shadowEnabled',  shadowEnabledDescriptor); }, 'tooltip', 'shadowEnabled');
   apply(() => { $.type(PCFType)(SpotLight.prototype, 'shadowPcf',  shadowPcfDescriptor); }, 'type', 'shadowPcf');
   apply(() => { $.editable(SpotLight.prototype, 'shadowPcf',  shadowPcfDescriptor); }, 'editable', 'shadowPcf');
@@ -1240,7 +1238,7 @@ export function patch_cc_SpotLight(ctx: cc_SpotLight_Context_Args, apply = defau
     displayOrder: 2
   }
 })(SpotLight.prototype, 'shadowPcf',  shadowPcfDescriptor); }, 'property', 'shadowPcf');
-  apply(() => { $.visible(() => (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap)(SpotLight.prototype, 'shadowPcf',  shadowPcfDescriptor); }, 'visible', 'shadowPcf');
+  apply(() => { $.visible(() => getPipelineSceneData().shadows.type === ShadowType.ShadowMap)(SpotLight.prototype, 'shadowPcf',  shadowPcfDescriptor); }, 'visible', 'shadowPcf');
   apply(() => { $.tooltip('i18n:lights.shadowPcf')(SpotLight.prototype, 'shadowPcf',  shadowPcfDescriptor); }, 'tooltip', 'shadowPcf');
   apply(() => { $.type(CCFloat)(SpotLight.prototype, 'shadowBias',  shadowBiasDescriptor); }, 'type', 'shadowBias');
   apply(() => { $.editable(SpotLight.prototype, 'shadowBias',  shadowBiasDescriptor); }, 'editable', 'shadowBias');
@@ -1250,7 +1248,7 @@ export function patch_cc_SpotLight(ctx: cc_SpotLight_Context_Args, apply = defau
     displayOrder: 3
   }
 })(SpotLight.prototype, 'shadowBias',  shadowBiasDescriptor); }, 'property', 'shadowBias');
-  apply(() => { $.visible(() => (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap)(SpotLight.prototype, 'shadowBias',  shadowBiasDescriptor); }, 'visible', 'shadowBias');
+  apply(() => { $.visible(() => getPipelineSceneData().shadows.type === ShadowType.ShadowMap)(SpotLight.prototype, 'shadowBias',  shadowBiasDescriptor); }, 'visible', 'shadowBias');
   apply(() => { $.tooltip('i18n:lights.shadowBias')(SpotLight.prototype, 'shadowBias',  shadowBiasDescriptor); }, 'tooltip', 'shadowBias');
   apply(() => { $.type(CCFloat)(SpotLight.prototype, 'shadowNormalBias',  shadowNormalBiasDescriptor); }, 'type', 'shadowNormalBias');
   apply(() => { $.editable(SpotLight.prototype, 'shadowNormalBias',  shadowNormalBiasDescriptor); }, 'editable', 'shadowNormalBias');
@@ -1260,7 +1258,7 @@ export function patch_cc_SpotLight(ctx: cc_SpotLight_Context_Args, apply = defau
     displayOrder: 4
   }
 })(SpotLight.prototype, 'shadowNormalBias',  shadowNormalBiasDescriptor); }, 'property', 'shadowNormalBias');
-  apply(() => { $.visible(() => (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap)(SpotLight.prototype, 'shadowNormalBias',  shadowNormalBiasDescriptor); }, 'visible', 'shadowNormalBias');
+  apply(() => { $.visible(() => getPipelineSceneData().shadows.type === ShadowType.ShadowMap)(SpotLight.prototype, 'shadowNormalBias',  shadowNormalBiasDescriptor); }, 'visible', 'shadowNormalBias');
   apply(() => { $.tooltip('i18n:lights.shadowNormalBias')(SpotLight.prototype, 'shadowNormalBias',  shadowNormalBiasDescriptor); }, 'tooltip', 'shadowNormalBias');
   apply(() => { $.executeInEditMode(SpotLight); }, 'executeInEditMode', null);
   apply(() => { $.menu('Light/SpotLight')(SpotLight); }, 'menu', null);
