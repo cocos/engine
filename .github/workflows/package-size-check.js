@@ -42,14 +42,7 @@ console.log(`features: [ ${features.join(', ')} ]`);
         },
         wasmCompressionMode: 'brotli',
         inlineEnum: true,
-        mangleProperties: {
-            "mangleProtected": true,
-            "mangleList": [],
-            "dontMangleList": [
-                "BaseFactory",
-                "Slot"
-            ]
-        },
+        mangleProperties: true,
     };
 
     await fs.ensureDir(outDir);
