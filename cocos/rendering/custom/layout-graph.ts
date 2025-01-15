@@ -603,6 +603,12 @@ export class PipelineLayoutData {
         this.descriptorSets.clear();
         this.descriptorGroups.clear();
     }
+    getSets (isWebGPU: boolean): Map<UpdateFrequency, DescriptorSetData> {
+        return isWebGPU ? this.descriptorGroups : this.descriptorSets;
+    }
+    getSet (frequency: UpdateFrequency, isWebGPU: boolean): DescriptorSetData | undefined {
+        return isWebGPU ? this.descriptorGroups.get(frequency) : this.descriptorSets.get(frequency);
+    }
     readonly descriptorSets: Map<UpdateFrequency, DescriptorSetData> = new Map<UpdateFrequency, DescriptorSetData>();
     readonly descriptorGroups: Map<UpdateFrequency, DescriptorSetData> = new Map<UpdateFrequency, DescriptorSetData>();
 }

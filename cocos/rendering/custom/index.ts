@@ -29,7 +29,7 @@ import { macro } from '../../core/platform/macro';
 import { LayoutGraphData, loadLayoutGraphData } from './layout-graph';
 import { BinaryInputArchive } from './binary-archive';
 import { WebProgramLibrary } from './web-program-library';
-import { Device } from '../../gfx';
+import { API, Device } from '../../gfx';
 import { initializeLayoutGraphData, terminateLayoutGraphData, getCustomPassID, getCustomPhaseID, getCustomSubpassID } from './layout-graph-utils';
 import { ProgramLibrary } from './private';
 import { forceResizeAllWindows } from './framework';
@@ -97,7 +97,11 @@ export function init (device: Device, arrayBuffer: ArrayBuffer | null): void {
 }
 
 export function destroy (): void {
-    terminateLayoutGraphData(defaultLayoutGraph);
+    if (_pipeline) {
+        terminateLayoutGraphData(defaultLayoutGraph, _pipeline.device.gfxAPI === API.WEBGPU);
+    } else {
+        terminateLayoutGraphData(defaultLayoutGraph, false);
+    }
 }
 
 export function getPassID (name: string | undefined): number {
