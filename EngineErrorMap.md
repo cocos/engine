@@ -2195,6 +2195,14 @@ browser don't support web audio
 
 This feature supports WebGL render mode only.
 
+### 5203
+
+Audio buffer cache %s has not been added.
+
+### 5204
+
+Audio buffer %s has been cached.
+
 ### 5300
 
 Type of target to deserialize not matched with data: target is %s, data is %s

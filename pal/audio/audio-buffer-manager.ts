@@ -22,6 +22,9 @@
  THE SOFTWARE.
 */
 
+import { warnID } from '../../cocos/core/platform/debug';
+
+/** @mangle */
 interface CachedAudioBufferData {
     usedCount: number,
     audioBuffer: AudioBuffer,
@@ -33,6 +36,7 @@ interface AudioBufferDataMap {
 
 /**
  * This is a manager to manage the cache of audio buffer for web audio.
+ * @mangle
  */
 class AudioBufferManager {
     private _audioBufferDataMap: AudioBufferDataMap = {};
@@ -40,7 +44,7 @@ class AudioBufferManager {
     public addCache (url: string, audioBuffer: AudioBuffer): void {
         const audioBufferData = this._audioBufferDataMap[url];
         if (audioBufferData) {
-            console.warn(`Audio buffer ${url} has been cached`);
+            warnID(5204, url);
             return;
         }
         this._audioBufferDataMap[url] = {
@@ -52,7 +56,7 @@ class AudioBufferManager {
     public retainCache (url: string): void {
         const audioBufferData = this._audioBufferDataMap[url];
         if (!audioBufferData) {
-            console.warn(`Audio buffer cache ${url} has not been added.`);
+            warnID(5203, url);
             return;
         }
         audioBufferData.usedCount++;
@@ -66,7 +70,7 @@ class AudioBufferManager {
     public tryReleasingCache (url: string): void {
         const audioBufferData = this._audioBufferDataMap[url];
         if (!audioBufferData) {
-            console.warn(`Audio buffer cache ${url} has not been added.`);
+            warnID(5203, url);
             return;
         }
         if (--audioBufferData.usedCount <= 0) {
