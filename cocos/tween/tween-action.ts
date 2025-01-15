@@ -202,7 +202,7 @@ export class TweenAction<T extends object> extends ActionInterval {
         return !!this._opts.relative;
     }
 
-    clone (): TweenAction<T> {
+    override clone (): TweenAction<T> {
         const action = new TweenAction(this._duration, this._originProps, this._opts);
         action._reversed = this._reversed;
         action._owner = this._owner;
@@ -211,7 +211,7 @@ export class TweenAction<T extends object> extends ActionInterval {
         return action;
     }
 
-    reverse (): TweenAction<T> {
+    override reverse (): TweenAction<T> {
         if (!this._opts.relative) {
             warnID(16382);
             return new TweenAction<T>(0, {});
@@ -224,7 +224,7 @@ export class TweenAction<T extends object> extends ActionInterval {
         return action;
     }
 
-    startWithTarget<U> (target: U | null): void {
+    override startWithTarget<U> (target: U | null): void {
         const isEqual: TypeEquality<T, U> = true;
         if (!isEqual) return;
         super.startWithTarget(target);
@@ -340,7 +340,7 @@ export class TweenAction<T extends object> extends ActionInterval {
         if (this._opts.onStart) { this._opts.onStart(workerTarget); }
     }
 
-    stop (): void {
+    override stop (): void {
         const props = this._props;
         for (const name in props) {
             const prop = props[name];
@@ -354,7 +354,7 @@ export class TweenAction<T extends object> extends ActionInterval {
         super.stop();
     }
 
-    update (t: number): void {
+    override update (t: number): void {
         const workerTarget = this._getWorkerTarget<T>();
         if (!workerTarget) return;
 
@@ -414,7 +414,7 @@ export class TweenAction<T extends object> extends ActionInterval {
         return current = start + (end - start) * t;
     }
 
-    isUnknownDuration (): boolean {
+    override isUnknownDuration (): boolean {
         return false;
     }
 }

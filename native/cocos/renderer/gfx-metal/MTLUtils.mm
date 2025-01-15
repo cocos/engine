@@ -98,40 +98,6 @@ enum class GPUFamily {
 
 #if CC_PLATFORM == CC_PLATFORM_IOS
 ccstd::string getIOSFeatureSetToString(MTLFeatureSet featureSet) {
-    if (@available(iOS 8.0, *)) {
-        switch (featureSet) {
-            case MTLFeatureSet_iOS_GPUFamily1_v1:
-                return "MTLFeatureSet_iOS_GPUFamily1_v1";
-            case MTLFeatureSet_iOS_GPUFamily2_v1:
-                return "MTLFeatureSet_iOS_GPUFamily2_v1";
-            default:
-                break;
-        }
-    }
-    if (@available(iOS 9.0, *)) {
-        switch (featureSet) {
-            case MTLFeatureSet_iOS_GPUFamily1_v2:
-                return "MTLFeatureSet_iOS_GPUFamily1_v2";
-            case MTLFeatureSet_iOS_GPUFamily2_v2:
-                return "MTLFeatureSet_iOS_GPUFamily2_v2";
-            case MTLFeatureSet_iOS_GPUFamily3_v1:
-                return "MTLFeatureSet_iOS_GPUFamily3_v1";
-            default:
-                break;
-        }
-    }
-    if (@available(iOS 10.0, *)) {
-        switch (featureSet) {
-            case MTLFeatureSet_iOS_GPUFamily1_v3:
-                return "MTLFeatureSet_iOS_GPUFamily1_v3";
-            case MTLFeatureSet_iOS_GPUFamily2_v3:
-                return "MTLFeatureSet_iOS_GPUFamily2_v3";
-            case MTLFeatureSet_iOS_GPUFamily3_v2:
-                return "MTLFeatureSet_iOS_GPUFamily3_v2";
-            default:
-                break;
-        }
-    }
     if (@available(iOS 11.0, *)) {
         switch (featureSet) {
             case MTLFeatureSet_iOS_GPUFamily1_v4:
@@ -192,68 +158,10 @@ GPUFamily getIOSGPUFamily(MTLFeatureSet featureSet) {
                 break;
         }
     }
-    if (@available(iOS 10.0, *)) {
-        switch (featureSet) {
-            case MTLFeatureSet_iOS_GPUFamily1_v3:
-                return GPUFamily::Apple1;
-            case MTLFeatureSet_iOS_GPUFamily2_v3:
-                return GPUFamily::Apple2;
-            case MTLFeatureSet_iOS_GPUFamily3_v2:
-                return GPUFamily::Apple3;
-            default:
-                break;
-        }
-    }
-    if (@available(iOS 9.0, *)) {
-        switch (featureSet) {
-            case MTLFeatureSet_iOS_GPUFamily1_v2:
-                return GPUFamily::Apple1;
-            case MTLFeatureSet_iOS_GPUFamily2_v2:
-                return GPUFamily::Apple2;
-            case MTLFeatureSet_iOS_GPUFamily3_v1:
-                return GPUFamily::Apple3;
-            default:
-                break;
-        }
-    }
-    if (@available(iOS 8.0, *)) {
-        switch (featureSet) {
-            case MTLFeatureSet_iOS_GPUFamily1_v1:
-                return GPUFamily::Apple1;
-            case MTLFeatureSet_iOS_GPUFamily2_v1:
-                return GPUFamily::Apple2;
-            default:
-                break;
-        }
-    }
     return GPUFamily::Apple1;
 }
 #else
 ccstd::string getMacFeatureSetToString(MTLFeatureSet featureSet) {
-    if (@available(macOS 10.11, *)) {
-        switch (featureSet) {
-            case MTLFeatureSet_macOS_GPUFamily1_v1:
-                return "MTLFeatureSet_macOS_GPUFamily1_v1";
-            default:
-                break;
-        }
-    }
-    if (@available(macOS 10.12, *)) {
-        switch (featureSet) {
-            case MTLFeatureSet_macOS_GPUFamily1_v2:
-                return "MTLFeatureSet_macOS_GPUFamily1_v2";
-            default:
-                break;
-        }
-    }
-    if (@available(macOS 10.13, *)) {
-        switch (featureSet) {
-            case MTLFeatureSet_macOS_GPUFamily1_v3:
-                return "MTLFeatureSet_macOS_GPUFamily1_v3";
-            default:
-                break;
-        }
-    }
     if (@available(macOS 10.14, *)) {
         switch (featureSet) {
             case MTLFeatureSet_macOS_GPUFamily1_v4:
@@ -525,7 +433,7 @@ MTLVertexFormat mu::toMTLVertexFormat(Format format, bool isNormalized) {
                 }
             }
 #else
-            if (@available(macOS 10.13, *)) {
+            if (@available(macOS 10.14, *)) {
                 if (isNormalized) {
                     return MTLVertexFormatUChar4Normalized_BGRA;
                 } else {
@@ -1149,38 +1057,30 @@ const uint8_t *mu::convertRGB32FToRGBA32F(const uint8_t *source, uint32_t length
 
 NSUInteger mu::highestSupportedFeatureSet(id<MTLDevice> device) {
     NSUInteger maxKnownFeatureSet;
-    NSUInteger defaultFeatureSet;
 #if CC_PLATFORM == CC_PLATFORM_IOS
-    defaultFeatureSet = MTLFeatureSet_iOS_GPUFamily1_v1;
     if (@available(iOS 12.0, *)) {
-        maxKnownFeatureSet = MTLFeatureSet_iOS_GPUFamily4_v2;
+        maxKnownFeatureSet = MTLFeatureSet_iOS_GPUFamily5_v1;
     } else if (@available(iOS 11.0, *)) {
         maxKnownFeatureSet = MTLFeatureSet_iOS_GPUFamily4_v1;
-    } else if (@available(iOS 10.0, *)) {
-        maxKnownFeatureSet = MTLFeatureSet_iOS_GPUFamily3_v2;
-    } else if (@available(iOS 9.0, *)) {
-        maxKnownFeatureSet = MTLFeatureSet_iOS_GPUFamily3_v1;
     } else {
-        maxKnownFeatureSet = MTLFeatureSet_iOS_GPUFamily2_v1;
+        CC_ASSERT(false);
+        maxKnownFeatureSet = MTLFeatureSet_iOS_GPUFamily1_v4;
     }
 #else
-    defaultFeatureSet = MTLFeatureSet_macOS_GPUFamily1_v1;
     if (@available(macOS 10.14, *)) {
         maxKnownFeatureSet = MTLFeatureSet_macOS_GPUFamily2_v1;
-    } else if (@available(macOS 10.13, *)) {
-        maxKnownFeatureSet = MTLFeatureSet_macOS_GPUFamily1_v3;
-    } else if (@available(macOS 10.12, *)) {
-        maxKnownFeatureSet = MTLFeatureSet_macOS_GPUFamily1_v2;
     } else {
+        CC_ASSERT(false);
         maxKnownFeatureSet = MTLFeatureSet_macOS_GPUFamily1_v1;
     }
 #endif
     for (int featureSet = static_cast<int>(maxKnownFeatureSet); featureSet >= 0; --featureSet) {
         if ([device supportsFeatureSet:MTLFeatureSet(featureSet)]) {
-            return static_cast<NSUInteger>(featureSet);
+            maxKnownFeatureSet = static_cast<NSUInteger>(featureSet);
+            break;
         }
     }
-    return defaultFeatureSet;
+    return maxKnownFeatureSet;
 }
 
 uint32_t mu::getGPUFamily(MTLFeatureSet featureSet) {
