@@ -26,10 +26,11 @@ import { CCClass } from '../data';
 import { Enum } from '../value-types';
 import { Color, lerp, repeat, EPSILON, approx, random } from '../math';
 
-const Mode = Enum({
-    Blend: 0,
-    Fixed: 1,
-});
+enum GradientMode {
+    Blend = 0,
+    Fixed = 1,
+}
+Enum(GradientMode);
 
 export class ColorKey {
     /**
@@ -89,7 +90,7 @@ export class Gradient {
      * 混合模式对取到的最近两个颜色帧进行插值计算。
      * 固定模式直接取最近的颜色帧返回，不进行插值。
      */
-    public static Mode = Mode;
+    public static Mode = GradientMode;
     /**
      * @en Array of color key.
      * @zh 颜色关键帧列表。
@@ -104,7 +105,7 @@ export class Gradient {
      * @en Blend mode.
      * @zh 混合模式。
      */
-    public mode = Mode.Blend;
+    public mode = GradientMode.Blend;
 
     /**
      * @en Set color keys array and alpha keys array.
@@ -188,7 +189,7 @@ export class Gradient {
                 const preTime = colorKeys[i - 1].time;
                 const curTime = colorKeys[i].time;
                 if (time >= preTime && time < curTime) {
-                    if (this.mode === Mode.Fixed) {
+                    if (this.mode === GradientMode.Fixed) {
                         Color.copy(out, colorKeys[i].color);
                         return out;
                     }
@@ -224,7 +225,7 @@ export class Gradient {
                 const preTime = alphaKeys[i - 1].time;
                 const curTime = alphaKeys[i].time;
                 if (time >= preTime && time < curTime) {
-                    if (this.mode === Mode.Fixed) {
+                    if (this.mode === GradientMode.Fixed) {
                         return alphaKeys[i].alpha;
                     }
                     const factor = (time - preTime) / (curTime - preTime);
@@ -251,7 +252,7 @@ export class Gradient {
 CCClass.fastDefine('cc.Gradient', Gradient, {
     colorKeys: [],
     alphaKeys: [],
-    mode: Mode.Blend,
+    mode: GradientMode.Blend,
 });
 
 CCClass.Attr.setClassAttr(Gradient, 'colorKeys', 'visible', true);

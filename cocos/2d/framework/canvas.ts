@@ -34,10 +34,10 @@ import { RenderRoot2D } from './render-root-2d';
 
 const _worldPos = new Vec3();
 
-const RenderMode = Enum({
-    OVERLAY: 0,
-    INTERSPERSE: 1,
-});
+enum CanvasRenderMode {
+    OVERLAY = 0,
+    INTERSPERSE= 1,
+}
 
 /**
  * @en
@@ -126,7 +126,7 @@ export class Canvas extends RenderRoot2D {
     protected declare fitDesignResolution_EDITOR: (() => void) | undefined;
 
     private _pos = new Vec3();
-    private _renderMode = RenderMode.OVERLAY;
+    private _renderMode = CanvasRenderMode.OVERLAY;
 
     constructor () {
         super();
@@ -237,7 +237,7 @@ export class Canvas extends RenderRoot2D {
     private _getViewPriority (): number {
         if (this._cameraComponent) {
             let priority = this.cameraComponent?.priority as number;
-            priority = this._renderMode === RenderMode.OVERLAY ? priority | 1 << 30 : priority & ~(1 << 30);
+            priority = this._renderMode === CanvasRenderMode.OVERLAY ? priority | 1 << 30 : priority & ~(1 << 30);
             return priority;
         }
 
