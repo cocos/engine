@@ -470,35 +470,18 @@ if (EDITOR) {
     CCClass.fastDefine('cc.Object', CCObject, { _name: '', _objFlags: 0 });
 }
 
+const CCObjectFlagsEnum = {};
+for (const key in CCObjectFlags) {
+    if (typeof key === 'string' && typeof CCObjectFlags[key] === 'number') {
+        CCObjectFlagsEnum[key] = CCObjectFlags[key];
+    }
+}
 /**
  * Bit mask that controls object states.
  * @enum Object.Flags
  * @private
  */
-js.value(CCObject, 'Flags', {
-    Destroyed: CCObjectFlags.Destroyed,
-    DontSave: CCObjectFlags.DontSave,
-    EditorOnly: CCObjectFlags.EditorOnly,
-    Dirty: CCObjectFlags.Dirty,
-    DontDestroy: CCObjectFlags.DontDestroy,
-    PersistentMask: CCObjectFlags.PersistentMask,
-    Destroying: CCObjectFlags.Destroying,
-    Deactivating: CCObjectFlags.Deactivating,
-    LockedInEditor: CCObjectFlags.LockedInEditor,
-    HideInHierarchy: CCObjectFlags.HideInHierarchy,
-    AllHideMasks: CCObjectFlags.AllHideMasks,
-    IsPreloadStarted: CCObjectFlags.IsPreloadStarted,
-    IsOnLoadStarted: CCObjectFlags.IsOnLoadStarted,
-    IsOnLoadCalled: CCObjectFlags.IsOnLoadCalled,
-    IsOnEnableCalled: CCObjectFlags.IsOnEnableCalled,
-    IsStartCalled: CCObjectFlags.IsStartCalled,
-    IsEditorOnEnableCalled: CCObjectFlags.IsEditorOnEnableCalled,
-    IsPositionLocked: CCObjectFlags.IsPositionLocked,
-    IsRotationLocked: CCObjectFlags.IsRotationLocked,
-    IsScaleLocked: CCObjectFlags.IsScaleLocked,
-    IsAnchorLocked: CCObjectFlags.IsAnchorLocked,
-    IsSizeLocked: CCObjectFlags.IsSizeLocked,
-});
+js.value(CCObject, 'Flags', CCObjectFlagsEnum);
 
 declare namespace CCObject {
     export enum Flags {
