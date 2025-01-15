@@ -38,7 +38,8 @@ const _unitBoxExtent = new Vec3(0.5, 0.5, 0.5);
 function getShapeTypeEnumName (enumValue: number): keyof typeof ParticleShapeType {
     let enumName = '';
     for (const key in ParticleShapeType) {
-        if (ParticleShapeType[key] === enumValue) {
+        const value = ParticleShapeType[key];
+        if (typeof value === 'number' && value === enumValue) {
             enumName = key;
             break;
         }
