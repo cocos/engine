@@ -235,11 +235,11 @@ class CCObject implements EditorExtendableObject {
      * @en After inheriting CCObject objects, control whether you need to hide, lock, serialize, and other functions.
      * @zh 在继承 CCObject 对象后，控制是否需要隐藏，锁定，序列化等功能。
      */
-    public set hideFlags (hideFlags: CCObjectFlags) {
+    public set hideFlags (hideFlags: CCObject.Flags) {
         const flags = hideFlags & CCObjectFlags.AllHideMasks;
         this._objFlags = (this._objFlags & ~CCObjectFlags.AllHideMasks) | flags;
     }
-    public get hideFlags (): CCObjectFlags {
+    public get hideFlags (): CCObject.Flags {
         return this._objFlags & CCObjectFlags.AllHideMasks;
     }
 
