@@ -284,14 +284,18 @@ export function createInvokeImpl (
 const invokeStart = SUPPORT_JIT ? createInvokeImplJit(`c.start();c._objFlags|=${IsStartCalled}`, false, IsStartCalled)
     : createInvokeImpl(
         (c: Component): void => {
-            (c as any).start();
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            c.start();
             c._objFlags |= IsStartCalled;
         },
         (iterator: js.array.MutableForwardIterator<Component>): void => {
             const array = iterator.array;
             for (iterator.i = 0; iterator.i < array.length; ++iterator.i) {
                 const comp = array[iterator.i];
-                (comp as any).start();
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                comp.start();
                 comp._objFlags |= IsStartCalled;
             }
         },
@@ -301,12 +305,16 @@ const invokeStart = SUPPORT_JIT ? createInvokeImplJit(`c.start();c._objFlags|=${
 const invokeUpdate = SUPPORT_JIT ? createInvokeImplJit('c.update(dt)', true)
     : createInvokeImpl(
         (c: Component, dt?: number): void => {
-            (c as any).update(dt);
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            c.update(dt);
         },
         (iterator: js.array.MutableForwardIterator<Component>, dt?: number): void => {
             const array = iterator.array;
             for (iterator.i = 0; iterator.i < array.length; ++iterator.i) {
-                (array[iterator.i] as any).update(dt);
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                array[iterator.i].update(dt);
             }
         },
     );
@@ -314,12 +322,16 @@ const invokeUpdate = SUPPORT_JIT ? createInvokeImplJit('c.update(dt)', true)
 const invokeLateUpdate = SUPPORT_JIT ? createInvokeImplJit('c.lateUpdate(dt)', true)
     : createInvokeImpl(
         (c: Component, dt?: number): void => {
-            (c as any).lateUpdate(dt);
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            c.lateUpdate(dt);
         },
         (iterator: js.array.MutableForwardIterator<Component>, dt?: number): void => {
             const array = iterator.array;
             for (iterator.i = 0; iterator.i < array.length; ++iterator.i) {
-                (array[iterator.i] as any).lateUpdate(dt);
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore
+                array[iterator.i].lateUpdate(dt);
             }
         },
     );
@@ -343,7 +355,9 @@ export const invokeOnEnable = EDITOR ? (iterator: js.array.MutableForwardIterato
     for (iterator.i = 0; iterator.i < array.length; ++iterator.i) {
         const comp = array[iterator.i];
         if (comp._enabled) {
-            (comp as any).onEnable();
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore
+            comp.onEnable();
             const deactivatedDuringOnEnable = !comp.node.activeInHierarchy;
             if (!deactivatedDuringOnEnable) {
                 compScheduler._onEnabled(comp);
@@ -561,7 +575,7 @@ export class ComponentScheduler {
 }
 
 if (EDITOR) {
-    ComponentScheduler.prototype.enableComp = function (comp, invoker): void {
+    ComponentScheduler.prototype.enableComp = function (comp: Component, invoker?: OneOffInvoker): void {
         // NOTE: _executeInEditMode is dynamically injected on Editor environment
         if (legacyCC.GAME_VIEW || (comp.constructor as any)._executeInEditMode) {
             if (!(comp._objFlags & IsOnEnableCalled)) {
@@ -585,7 +599,7 @@ if (EDITOR) {
         enableInEditor(comp);
     };
 
-    ComponentScheduler.prototype.disableComp = function (comp): void {
+    ComponentScheduler.prototype.disableComp = function (comp: Component): void {
         // NOTE: _executeInEditMode is dynamically injected on Editor environment
         if (legacyCC.GAME_VIEW || (comp.constructor as any)._executeInEditMode) {
             if (comp._objFlags & IsOnEnableCalled) {
