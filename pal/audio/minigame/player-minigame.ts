@@ -32,7 +32,7 @@ import { enqueueOperation, OperationInfo, OperationQueueable } from '../operatio
 import { OS } from '../../system-info/enum-type';
 
 export class OneShotAudioMinigame {
-    private _innerAudioContext: InnerAudioContext;
+    private declare _innerAudioContext: InnerAudioContext;
     private _onPlayCb?: () => void;
     get onPlay (): (() => void) | undefined {
         return this._onPlayCb;
