@@ -33,6 +33,7 @@ export interface OperationInfo {
     invoking: boolean,
 }
 
+/** @mangle */
 export interface OperationQueueable {
     _operationQueue: OperationInfo[];
     _eventTarget: EventTarget;
