@@ -23,9 +23,10 @@
  THE SOFTWARE.
 */
 
+import { BYTEDANCE, WECHAT, WECHAT_MINI_PROGRAM } from 'internal:constants';
+
 import { systemInfo } from 'pal/system-info';
 import { screenAdapter } from 'pal/screen-adapter';
-import { BYTEDANCE, WECHAT, WECHAT_MINI_PROGRAM } from 'internal:constants';
 import { legacyCC } from '../global-exports';
 import { Rect } from '../math/rect';
 import { Vec2 } from '../math/vec2';
@@ -33,6 +34,7 @@ import { warnID, log } from './debug';
 import { NetworkType, Language, OS, Platform, BrowserType, Feature } from '../../../pal/system-info/enum-type';
 import { screen } from './screen';
 import { macro } from './macro';
+import type { View } from '../../ui/view';
 
 // TODO: the type Storage conflicts with the one on OH platform.
 type Storage = any;
@@ -265,6 +267,7 @@ export const sys = {
 
     /**
      * @engineInternal
+     * @mangle
      */
     __isWebIOS14OrIPadOS14Env: false,
 
@@ -366,7 +369,7 @@ export const sys = {
      * @return {Rect}
      */
     getSafeAreaRect (symmetric: boolean = true): Rect {
-        const locView = legacyCC.view;
+        const locView: View = legacyCC.view;
         const edge = screenAdapter.safeAreaEdge;
         if (symmetric) {
             if (screenAdapter.orientation === macro.ORIENTATION_PORTRAIT) {

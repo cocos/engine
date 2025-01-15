@@ -580,6 +580,7 @@ export class View extends Eventify(System) {
     /**
      * Convert location in Cocos screen coordinate to location in UI space
      * @engineInternal
+     * @mangle
      */
     public _convertToUISpace (point: Vec2): void {
         const viewport = this._viewportRect;

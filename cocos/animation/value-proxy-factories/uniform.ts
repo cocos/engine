@@ -29,7 +29,7 @@ import { SpriteFrame } from '../../2d/assets/sprite-frame';
 import { TextureBase } from '../../asset/assets/texture-base';
 import { deviceManager, Type } from '../../gfx';
 import { Pass } from '../../render-scene/core/pass';
-import { getDefaultFromType, getStringFromType } from '../../render-scene/core/pass-utils';
+import { getBindingFromHandle, getDefaultFromType, getStringFromType, getTypeFromHandle, MaterialProperty } from '../../render-scene/core/pass-utils';
 import { IValueProxy, IValueProxyFactory } from '../value-proxy';
 import { warn, warnID } from '../../core';
 
@@ -97,7 +97,7 @@ export class UniformProxyFactory implements IValueProxyFactory {
             return undefined;
         }
 
-        const type = Pass.getTypeFromHandle(handle);
+        const type = getTypeFromHandle(handle);
         if (type < Type.SAMPLER1D) {
             const realHandle = channelIndex === undefined ? handle : pass.getHandle(uniformName, channelIndex, Type.FLOAT);
             if (!realHandle) {
@@ -106,18 +106,18 @@ export class UniformProxyFactory implements IValueProxyFactory {
             }
             if (isUniformArray(pass, uniformName)) {
                 return {
-                    set: (value: any): void => {
+                    set: (value: MaterialProperty[]): void => {
                         pass.setUniformArray(realHandle, value);
                     },
                 };
             }
             return {
-                set: (value: any): void => {
+                set: (value: MaterialProperty): void => {
                     pass.setUniform(realHandle, value);
                 },
             };
         } else {
-            const binding = Pass.getBindingFromHandle(handle);
+            const binding = getBindingFromHandle(handle);
             const prop = pass.properties[uniformName];
             const texName = prop && prop.value ? `${prop.value as string}${getStringFromType(prop.type)}` : getDefaultFromType(prop.type) as string;
             let dftTex = builtinResMgr.get<TextureBase>(texName);

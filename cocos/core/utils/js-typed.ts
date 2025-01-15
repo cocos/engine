@@ -460,10 +460,11 @@ export function copyAllProperties (source: any, target: any, excepts: Array<stri
  */
 export function addon (object?: Record<string | number, any>, ...sources: any[]): Record<string | number, any> {
     object = object || {};
-    for (const source of sources) {
+    for (let i = 0; i < sources.length; ++i) {
+        const source = sources[i];
         if (source) {
             if (typeof source !== 'object') {
-                errorID(5402, source);
+                errorID(5402, source as string);
                 continue;
             }
             for (const name in source) {
@@ -486,10 +487,11 @@ export function addon (object?: Record<string | number, any>, ...sources: any[])
  */
 export function mixin (object?: Record<string | number, any>, ...sources: any[]): Record<string | number, any> {
     object = object || {};
-    for (const source of sources) {
+    for (let i = 0; i < sources.length; ++i) {
+        const source = sources[i];
         if (source) {
             if (typeof source !== 'object') {
-                errorID(5403, source);
+                errorID(5403, source as string);
                 continue;
             }
             for (const name in source) {

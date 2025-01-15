@@ -995,7 +995,7 @@ export class Camera {
      * Editor specific gizmo camera logic
      * @internal
      */
-    public syncCameraEditor (camera): void {
+    public syncCameraEditor (camera: Camera): void {
         if (EDITOR) {
             this.position = camera.position;
             this.forward = camera.forward;

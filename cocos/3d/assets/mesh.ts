@@ -1530,7 +1530,7 @@ export function decodeMesh (mesh: Mesh.ICreateInfo): Mesh.ICreateInfo {
         const bound = view.count * view.stride;
         const buffer = new Uint8Array(bound);
         const vertex = new Uint8Array(mesh.data.buffer, view.offset, view.length);
-        const res = MeshoptDecoder.decodeVertexBuffer(buffer, view.count, view.stride, vertex) as number;
+        const res = MeshoptDecoder.decodeVertexBuffer(buffer, view.count, view.stride, vertex);
         res_checker(res);
 
         bufferBlob.setNextAlignment(view.stride);
@@ -1553,7 +1553,7 @@ export function decodeMesh (mesh: Mesh.ICreateInfo): Mesh.ICreateInfo {
         const bound = view.count * view.stride;
         const buffer = new Uint8Array(bound);
         const index = new Uint8Array(mesh.data.buffer, view.offset, view.length);
-        const res = MeshoptDecoder.decodeIndexBuffer(buffer, view.count, view.stride, index) as number;
+        const res = MeshoptDecoder.decodeIndexBuffer(buffer, view.count, view.stride, index);
         res_checker(res);
 
         bufferBlob.setNextAlignment(view.stride);

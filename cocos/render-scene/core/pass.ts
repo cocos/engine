@@ -256,7 +256,7 @@ export class Pass {
     public getBinding (name: string): number {
         const handle = this.getHandle(name);
         if (!handle) { return -1; }
-        return Pass.getBindingFromHandle(handle);
+        return getBindingFromHandle(handle);
     }
 
     /**
@@ -266,9 +266,9 @@ export class Pass {
      * @param value New value
      */
     public setUniform (handle: number, value: MaterialProperty): void {
-        const binding = Pass.getBindingFromHandle(handle);
-        const type = Pass.getTypeFromHandle(handle);
-        const ofs = Pass.getOffsetFromHandle(handle);
+        const binding = getBindingFromHandle(handle);
+        const type = getTypeFromHandle(handle);
+        const ofs = getOffsetFromHandle(handle);
         const block = this._getBlockView(type, binding);
         if (DEBUG) {
             const validator = type2validator[type];
@@ -285,9 +285,9 @@ export class Pass {
      * @param out The output property to store the result
      */
     public getUniform<T extends MaterialProperty> (handle: number, out: T): T {
-        const binding = Pass.getBindingFromHandle(handle);
-        const type = Pass.getTypeFromHandle(handle);
-        const ofs = Pass.getOffsetFromHandle(handle);
+        const binding = getBindingFromHandle(handle);
+        const type = getTypeFromHandle(handle);
+        const ofs = getOffsetFromHandle(handle);
         const block = this._getBlockView(type, binding);
         return type2reader[type](block, out, ofs) as T;
     }
@@ -299,11 +299,11 @@ export class Pass {
      * @param value New value
      */
     public setUniformArray (handle: number, value: MaterialProperty[]): void {
-        const binding = Pass.getBindingFromHandle(handle);
-        const type = Pass.getTypeFromHandle(handle);
+        const binding = getBindingFromHandle(handle);
+        const type = getTypeFromHandle(handle);
         const stride = GetTypeSize(type) >> 2;
         const block = this._getBlockView(type, binding);
-        let ofs = Pass.getOffsetFromHandle(handle);
+        let ofs = getOffsetFromHandle(handle);
         for (let i = 0; i < value.length; i++, ofs += stride) {
             if (value[i] === null) { continue; }
             type2writer[type](block, value[i], ofs);
@@ -408,10 +408,10 @@ export class Pass {
     public resetUniform (name: string): void {
         const handle = this.getHandle(name);
         if (!handle) { return; }
-        const type = Pass.getTypeFromHandle(handle);
-        const binding = Pass.getBindingFromHandle(handle);
-        const ofs = Pass.getOffsetFromHandle(handle);
-        const count = Pass.getCountFromHandle(handle);
+        const type = getTypeFromHandle(handle);
+        const binding = getBindingFromHandle(handle);
+        const ofs = getOffsetFromHandle(handle);
+        const count = getCountFromHandle(handle);
         const block = this._getBlockView(type, binding);
         const info = this._properties[name];
         const givenDefault = info && info.value;
@@ -428,8 +428,8 @@ export class Pass {
     public resetTexture (name: string, index?: number): void {
         const handle = this.getHandle(name);
         if (!handle) { return; }
-        const type = Pass.getTypeFromHandle(handle);
-        const binding = Pass.getBindingFromHandle(handle);
+        const type = getTypeFromHandle(handle);
+        const binding = getBindingFromHandle(handle);
         const info = this._properties[name];
         const value = info && info.value;
         let textureBase: TextureBase;

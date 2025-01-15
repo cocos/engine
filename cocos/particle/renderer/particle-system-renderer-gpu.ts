@@ -29,7 +29,7 @@ import { Component } from '../../scene-graph';
 import { AttributeName, Format, Attribute, API, deviceManager, FormatInfos } from '../../gfx';
 import { Mat4, Vec2, Vec4, Quat, Vec3, warn } from '../../core';
 import { MaterialInstance, IMaterialInstanceInfo } from '../../render-scene/core/material-instance';
-import { MacroRecord } from '../../render-scene/core/pass-utils';
+import { getBindingFromHandle, MacroRecord } from '../../render-scene/core/pass-utils';
 import { ParticleAlignmentSpace, ParticleRenderMode, ParticleSpace } from '../enum';
 import { Particle, IParticleModule } from '../particle';
 import { packGradientRange } from '../animator/gradient-range';
@@ -396,7 +396,7 @@ export default class ParticleSystemRendererGPU extends ParticleSystemRendererBas
             this._forceTexture = packed.texture;
             this._forceData = packed.texdata;
             const handle = pass.getHandle('force_over_time_tex0');
-            const binding = Pass.getBindingFromHandle(handle);
+            const binding = getBindingFromHandle(handle);
             pass.bindSampler(binding, this._forceTexture.getGFXSampler()!);
             pass.bindTexture(binding, this._forceTexture.getGFXTexture()!);
             const spaceHandle = pass.getHandle('u_force_space');
@@ -422,7 +422,7 @@ export default class ParticleSystemRendererGPU extends ParticleSystemRendererBas
             this._velocityTexture = packed.texture;
             this._velocityData = packed.texdata;
             const handle = pass.getHandle('velocity_over_time_tex0');
-            const binding = Pass.getBindingFromHandle(handle);
+            const binding = getBindingFromHandle(handle);
             pass.bindSampler(binding, this._velocityTexture.getGFXSampler()!);
             pass.bindTexture(binding, this._velocityTexture.getGFXTexture()!);
             const spaceHandle = pass.getHandle('u_velocity_space');
@@ -440,7 +440,7 @@ export default class ParticleSystemRendererGPU extends ParticleSystemRendererBas
             this._colorTexture = packed.texture;
             this._colorData = packed.texdata;
             const handle = pass.getHandle('color_over_time_tex0');
-            const binding = Pass.getBindingFromHandle(handle);
+            const binding = getBindingFromHandle(handle);
             pass.bindSampler(binding, this._colorTexture.getGFXSampler()!);
             pass.bindTexture(binding, this._colorTexture.getGFXTexture()!);
             const modeHandle = pass.getHandle('u_color_mode');
@@ -463,7 +463,7 @@ export default class ParticleSystemRendererGPU extends ParticleSystemRendererBas
             this._rotationData = packed.texdata;
             if (this._rotationTexture) {
                 const handle = pass.getHandle('rotation_over_time_tex0');
-                const binding = Pass.getBindingFromHandle(handle);
+                const binding = getBindingFromHandle(handle);
                 pass.bindSampler(binding, this._rotationTexture.getGFXSampler()!);
                 pass.bindTexture(binding, this._rotationTexture.getGFXTexture()!);
                 const modeHandle = pass.getHandle('u_rotation_mode');
@@ -486,7 +486,7 @@ export default class ParticleSystemRendererGPU extends ParticleSystemRendererBas
             this._sizeData = packed.texdata;
             if (this._sizeTexture) {
                 const handle = pass.getHandle('size_over_time_tex0');
-                const binding = Pass.getBindingFromHandle(handle);
+                const binding = getBindingFromHandle(handle);
                 pass.bindSampler(binding, this._sizeTexture.getGFXSampler()!);
                 pass.bindTexture(binding, this._sizeTexture.getGFXTexture()!);
                 const modeHandle = pass.getHandle('u_size_mode');
@@ -504,7 +504,7 @@ export default class ParticleSystemRendererGPU extends ParticleSystemRendererBas
             this._animTexture = packed.texture;
             this._animData = packed.texdata;
             const handle = pass.getHandle('texture_animation_tex0');
-            const binding = Pass.getBindingFromHandle(handle);
+            const binding = getBindingFromHandle(handle);
             pass.bindSampler(binding, this._animTexture.getGFXSampler()!);
             pass.bindTexture(binding, this._animTexture.getGFXTexture()!);
             const infoHandle = pass.getHandle('u_anim_info');
