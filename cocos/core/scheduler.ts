@@ -25,7 +25,7 @@
 
 import { IDGenerator } from './utils/id-generator';
 import { createMap } from './utils/js';
-import { System } from './system';
+import { System, SystemPriority } from './system';
 import { legacyCC } from './global-exports';
 import { errorID, warnID, logID, assertID } from './platform/debug';
 
@@ -859,7 +859,7 @@ export class Scheduler extends System {
      * 不要调用此函数，除非你确定你在做什么。
      */
     public unscheduleAll (): void {
-        this.unscheduleAllWithMinPriority(System.Priority.SCHEDULER);
+        this.unscheduleAllWithMinPriority(SystemPriority.SCHEDULER);
     }
 
     /**
@@ -976,7 +976,7 @@ export class Scheduler extends System {
      * 不要调用这个方法，除非你知道你正在做什么。
      */
     public pauseAllTargets (): ISchedulable[] {
-        return this.pauseAllTargetsWithMinPriority(System.Priority.SCHEDULER);
+        return this.pauseAllTargetsWithMinPriority(SystemPriority.SCHEDULER);
     }
 
     /**

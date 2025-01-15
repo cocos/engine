@@ -25,16 +25,23 @@
 import { ISchedulable } from './scheduler';
 import { Enum } from './value-types/enum';
 
+export enum SystemPriority {
+    LOW = 0,
+    MEDIUM = 100,
+    HIGH = 200,
+    SCHEDULER = (1 << 31) >>> 0,
+}
+
 /**
  * @en Base class for all functional system managed by [[Director]].
  * @zh 功能系统的基类，由 [[Director]] 管理。
  */
 export class System implements ISchedulable {
     static Priority = Enum({
-        LOW: 0,
-        MEDIUM: 100,
-        HIGH: 200,
-        SCHEDULER: (1 << 31) >>> 0,
+        LOW: SystemPriority.LOW,
+        MEDIUM: SystemPriority.MEDIUM,
+        HIGH: SystemPriority.HIGH,
+        SCHEDULER: SystemPriority.SCHEDULER,
     });
 
     protected _id = '';

@@ -23,7 +23,7 @@
 */
 
 import { EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
-import { System } from '../core';
+import { System, SystemPriority } from '../core';
 import { ActionManager } from './actions/action-manager';
 import { director, DirectorEvent } from '../game';
 
@@ -83,5 +83,5 @@ export class TweenSystem extends System {
 director.on(DirectorEvent.INIT, () => {
     const sys = new TweenSystem();
     (TweenSystem as any).instance = sys;
-    director.registerSystem(TweenSystem.ID, sys, System.Priority.MEDIUM);
+    director.registerSystem(TweenSystem.ID, sys, SystemPriority.MEDIUM);
 });

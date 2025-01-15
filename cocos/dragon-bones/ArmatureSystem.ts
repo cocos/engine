@@ -23,7 +23,7 @@
 */
 
 import { director } from '../game/director';
-import { System, cclegacy } from '../core';
+import { System, SystemPriority, cclegacy } from '../core';
 import { ArmatureDisplay } from './ArmatureDisplay';
 /**
  * @en The ArmatureSystem is mainly responsible for triggering and updating the animation uniformly.
@@ -49,7 +49,7 @@ export class ArmatureSystem extends System {
     public static getInstance (): ArmatureSystem {
         if (!ArmatureSystem._instance) {
             ArmatureSystem._instance = new ArmatureSystem();
-            director.registerSystem(ArmatureSystem.ID, ArmatureSystem._instance, System.Priority.HIGH);
+            director.registerSystem(ArmatureSystem.ID, ArmatureSystem._instance, SystemPriority.HIGH);
         }
         return ArmatureSystem._instance;
     }

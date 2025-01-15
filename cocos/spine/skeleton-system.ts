@@ -23,7 +23,7 @@
 */
 
 import { director } from '../game/director';
-import { System } from '../core';
+import { System, SystemPriority } from '../core';
 import { Skeleton } from './skeleton';
 import { legacyCC } from '../core/global-exports';
 
@@ -51,7 +51,7 @@ export class SkeletonSystem extends System {
     public static getInstance (): SkeletonSystem {
         if (!SkeletonSystem._instance) {
             SkeletonSystem._instance = new SkeletonSystem();
-            director.registerSystem(SkeletonSystem.ID, SkeletonSystem._instance, System.Priority.HIGH);
+            director.registerSystem(SkeletonSystem.ID, SkeletonSystem._instance, SystemPriority.HIGH);
         }
         return SkeletonSystem._instance;
     }

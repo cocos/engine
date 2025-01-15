@@ -23,8 +23,8 @@
 */
 
 import { ccclass } from 'cc.decorator';
-import { System, errorID, cclegacy, js } from '../core';
-import { director, Director, DirectorEvent } from '../game/director';
+import { System, errorID, cclegacy, js, SystemPriority } from '../core';
+import { director, DirectorEvent } from '../game/director';
 import { Node } from '../scene-graph';
 import { LegacyBlendStateBuffer } from '../3d/skeletal-animation/skeletal-animation-blending';
 import { AnimationState } from './animation-state';
@@ -162,7 +162,7 @@ export class AnimationManager extends System {
 
 director.on(DirectorEvent.INIT, (): void => {
     const animationManager = new AnimationManager();
-    director.registerSystem(AnimationManager.ID, animationManager, System.Priority.HIGH);
+    director.registerSystem(AnimationManager.ID, animationManager, SystemPriority.HIGH);
 });
 
 cclegacy.AnimationManager = AnimationManager;
