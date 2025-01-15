@@ -24,7 +24,7 @@
 */
 
 import { DEV, JSB } from 'internal:constants';
-import { CCObject, CCObjectFlags, isCCObject, js, ValueType, jsbUtils, isCCClassOrFastDefined, getError, warn, misc, cclegacy } from '../core';
+import { CCObject, CCObjectFlags, isCCObject, js, ValueType, isCCClassOrFastDefined, getError, warn, misc, cclegacy } from '../core';
 import { Prefab } from '../scene-graph/prefab';
 import { Node } from '../scene-graph/node';
 import { Component } from '../scene-graph/component';
