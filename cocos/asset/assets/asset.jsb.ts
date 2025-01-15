@@ -22,11 +22,12 @@
  THE SOFTWARE.
 */
 
-import { cclegacy, js, _decorator, path, jsbUtils, CallbacksInvoker, applyMixins } from '../../core';
+import { cclegacy, js, _decorator, path, CallbacksInvoker, applyMixins } from '../../core';
 import { getUrlWithUuid } from '../asset-manager/helper';
 import { patch_cc_Asset } from '../../native-binding/decorators';
 import type { Asset as JsbAsset } from './asset';
 import type { AssetManager } from '../asset-manager';
+import { ExtraEventMethods } from '../../core/utils/jsb-utils';
 
 declare const jsb: any;
 
@@ -36,7 +37,7 @@ declare const jsb: any;
  */
 export type CreateNodeCallback = (error: Error | null, node: Node) => void;
 
-applyMixins(jsb.Asset, [CallbacksInvoker, jsbUtils.ExtraEventMethods]);
+applyMixins(jsb.Asset, [CallbacksInvoker, ExtraEventMethods]);
 
 const assetProto: any = jsb.Asset.prototype;
 

@@ -1377,6 +1377,10 @@ nodeProto._instantiate = function (cloned: Node, isSyncedNode: boolean) {
     return cloned;
 };
 
+nodeProto._getUITransformComp = function () {
+    return this._uiProps.uiTransformComp;
+};
+
 nodeProto._onSiblingIndexChanged = function (index) {
     const siblings = this._parent._children;
     index = index !== -1 ? index : siblings.length - 1;

@@ -57,6 +57,8 @@ export abstract class Action {
 
     /**
      * The tween who owns this action.
+     * @engineInternal
+     * @mangle
      */
     public _owner: Tween | null = null;
 
@@ -146,6 +148,8 @@ export abstract class Action {
 
     /**
      * Return the worker target of the current action applys on.
+     * @engineInternal
+     * @mangle
      *
      * Example 1:
      * ```ts

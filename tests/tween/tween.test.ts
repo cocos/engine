@@ -4981,3 +4981,26 @@ test('parallel with two call tween', function () {
 
     director.unregisterSystem(sys);
 });
+
+test('parallel with set action', function () {
+    const sys = new TweenSystem();
+    (TweenSystem.instance as any) = sys;
+    director.registerSystem(TweenSystem.ID, sys, System.Priority.MEDIUM);
+
+    const node = new Node();
+    const node2 = new Node();
+
+    tween(node)
+        .parallel(
+            tween(node).by(1, { position: v3(1, 1, 1) }),
+            tween(node2).set({ position: v3(2, 2, 2) })
+        )
+        .start();
+
+    runFrames(1); // start
+    runFrames(60);
+
+    expect(node2.position.equals(v3(2, 2, 2))).toBeTruthy();
+
+    director.unregisterSystem(sys);
+});
