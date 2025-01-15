@@ -22,6 +22,7 @@
  THE SOFTWARE.
 */
 
+/** @mangle */
 export class BufferBlob {
     private _arrayBufferOrPaddings: Array<ArrayBuffer | number> = [];
     private _length = 0;

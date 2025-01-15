@@ -946,23 +946,27 @@ export class SpriteFrame extends Asset {
     /**
      * Calculate UV for sliced
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
+     * @engineInternal
+     * @mangle
      */
     public _calculateSlicedUV (): void {
-        const rect = this._rect;
-        // const texture = this._getCalculateTarget()!;
-        const tex = this.texture;
+        const self = this;
+        const rect = self._rect;
+        // const texture = self._getCalculateTarget()!;
+        const tex = self.texture;
+        const capInsets = self._capInsets;
         const atlasWidth = tex.width;
         const atlasHeight = tex.height;
-        const leftWidth = this._capInsets[INSET_LEFT];
-        const rightWidth = this._capInsets[INSET_RIGHT];
+        const leftWidth = capInsets[INSET_LEFT];
+        const rightWidth = capInsets[INSET_RIGHT];
         const centerWidth = rect.width - leftWidth - rightWidth;
-        const topHeight = this._capInsets[INSET_TOP];
-        const bottomHeight = this._capInsets[INSET_BOTTOM];
+        const topHeight = capInsets[INSET_TOP];
+        const bottomHeight = capInsets[INSET_BOTTOM];
         const centerHeight = rect.height - topHeight - bottomHeight;
 
-        const uvSliced = this.uvSliced;
+        const uvSliced = self.uvSliced;
         uvSliced.length = 0;
-        if (this._rotated) {
+        if (self._rotated) {
             temp_uvs[0].u = rect.x / atlasWidth;
             temp_uvs[1].u = (rect.x + bottomHeight) / atlasWidth;
             temp_uvs[2].u = (rect.x + bottomHeight + centerHeight) / atlasWidth;
@@ -1126,6 +1130,8 @@ export class SpriteFrame extends Asset {
 
     /**
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
+     * @engineInternal
+     * @mangle
      */
     public _setDynamicAtlasFrame (frame): void {
         if (!frame) return;
@@ -1144,6 +1150,8 @@ export class SpriteFrame extends Asset {
 
     /**
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
+     * @engineInternal
+     * @mangle
      */
     public _resetDynamicAtlasFrame (): void {
         if (!this._original) return;
@@ -1156,6 +1164,8 @@ export class SpriteFrame extends Asset {
 
     /**
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
+     * @engineInternal
+     * @mangle
      */
     public _checkPackable (): void {
         const dynamicAtlas = dynamicAtlasManager;
