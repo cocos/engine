@@ -69,12 +69,12 @@ function sortedIndex (array, comp): number {
 }
 
 // remove disabled and not invoked component from array
-function stableRemoveInactive (iterator: js.array.MutableForwardIterator<Component>, flagToClear: number): void {
+function stableRemoveInactive (iterator, flagToClear): void {
     const array = iterator.array;
     let next = iterator.i + 1;
     while (next < array.length) {
         const comp = array[next];
-        if (comp.node.activeInHierarchy) {
+        if (comp.node._activeInHierarchy) {
             ++next;
         } else {
             iterator.removeAt(next);
@@ -85,7 +85,7 @@ function stableRemoveInactive (iterator: js.array.MutableForwardIterator<Compone
     }
 }
 
-export type InvokeFunc = (iterator: js.array.MutableForwardIterator<Component>, dt?: number) => void;
+export type InvokeFunc = (...args: unknown[]) => void;
 
 // This class contains some queues used to invoke life-cycle methods by script execution order
 export class LifeCycleInvoker {
@@ -94,27 +94,27 @@ export class LifeCycleInvoker {
     /**
      * @engineInternal `_zero` is a protected property, we provide this public property for engine internal usage.
      */
-    public get zero (): js.array.MutableForwardIterator<Component> {
+    public get zero (): js.array.MutableForwardIterator<any> {
         return this._zero;
     }
     /**
      * @engineInternal `_neg` is a protected property, we provide this public property for engine internal usage.
      */
-    public get neg (): js.array.MutableForwardIterator<Component> {
+    public get neg (): js.array.MutableForwardIterator<any> {
         return this._neg;
     }
     /**
      * @engineInternal `_pos` is a protected property, we provide this public property for engine internal usage.
      */
-    public get pos (): js.array.MutableForwardIterator<Component> {
+    public get pos (): js.array.MutableForwardIterator<any> {
         return this._pos;
     }
     // components which priority === 0 (default)
-    protected declare _zero: js.array.MutableForwardIterator<Component>;
+    protected declare _zero: js.array.MutableForwardIterator<any>;
     // components which priority < 0
-    protected declare _neg: js.array.MutableForwardIterator<Component>;
+    protected declare _neg: js.array.MutableForwardIterator<any>;
     // components which priority > 0
-    protected declare _pos: js.array.MutableForwardIterator<Component>;
+    protected declare _pos: js.array.MutableForwardIterator<any>;
     protected declare _invoke: InvokeFunc;
     constructor (invokeFunc: InvokeFunc) {
         const Iterator = js.array.MutableForwardIterator;
@@ -129,8 +129,8 @@ export class LifeCycleInvoker {
     }
 }
 
-function compareOrder (a: Component, b: Component): number {
-    return (a.constructor as typeof Component)._executionOrder - (b.constructor as typeof Component)._executionOrder;
+function compareOrder (a, b): number {
+    return a.constructor._executionOrder - b.constructor._executionOrder;
 }
 
 // for onLoad: sort once all components registered, invoke once
@@ -228,11 +228,7 @@ function enableInEditor (comp): void {
 }
 
 // return function to simply call each component with try catch protection
-export function createInvokeImplJit (
-    code: string,
-    useDt?: boolean,
-    ensureFlag?: number,
-): (iterator: js.array.MutableForwardIterator<Component>, dt?: number) => void {
+export function createInvokeImplJit (code: string, useDt?, ensureFlag?): (iterator: any, dt: any) => void {
     // function (it) {
     //     let a = it.array;
     //     for (it.i = 0; it.i < a.length; ++it.i) {
@@ -245,18 +241,12 @@ export function createInvokeImplJit (
                 + 'var c=a[it.i];'}${
         code
     }}`;
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-    const fastPath = (useDt ? Function('it', 'dt', body) : Function('it', body)) as (iterator: js.array.MutableForwardIterator<Component>, dt?: number) => void;
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval, no-new-func
-    const singleInvoke = Function('c', 'dt', code) as (c: Component, dt?: number) => void;
+    const fastPath = useDt ? Function('it', 'dt', body) : Function('it', body);
+    const singleInvoke = Function('c', 'dt', code);
     return createInvokeImpl(singleInvoke, fastPath, ensureFlag);
 }
-export function createInvokeImpl (
-    singleInvoke: (c: Component, dt?: number) => void,
-    fastPath: (iterator: js.array.MutableForwardIterator<Component>, dt?: number) => void,
-    ensureFlag?: number,
-): (iterator: js.array.MutableForwardIterator<Component>, dt?: number) => void {
-    return (iterator: js.array.MutableForwardIterator<Component>, dt?: number): void => {
+export function createInvokeImpl (singleInvoke, fastPath, ensureFlag?): (iterator: any, dt: any) => void {
+    return (iterator, dt: number): void => {
         try {
             fastPath(iterator, dt);
         } catch (e) {
@@ -283,18 +273,14 @@ export function createInvokeImpl (
 
 const invokeStart = SUPPORT_JIT ? createInvokeImplJit(`c.start();c._objFlags|=${IsStartCalled}`, false, IsStartCalled)
     : createInvokeImpl(
-        (c: Component): void => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+        (c): void => {
             c.start();
             c._objFlags |= IsStartCalled;
         },
-        (iterator: js.array.MutableForwardIterator<Component>): void => {
+        (iterator): void => {
             const array = iterator.array;
             for (iterator.i = 0; iterator.i < array.length; ++iterator.i) {
                 const comp = array[iterator.i];
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
                 comp.start();
                 comp._objFlags |= IsStartCalled;
             }
@@ -304,16 +290,12 @@ const invokeStart = SUPPORT_JIT ? createInvokeImplJit(`c.start();c._objFlags|=${
 
 const invokeUpdate = SUPPORT_JIT ? createInvokeImplJit('c.update(dt)', true)
     : createInvokeImpl(
-        (c: Component, dt?: number): void => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+        (c, dt: number): void => {
             c.update(dt);
         },
-        (iterator: js.array.MutableForwardIterator<Component>, dt?: number): void => {
+        (iterator, dt: number): void => {
             const array = iterator.array;
             for (iterator.i = 0; iterator.i < array.length; ++iterator.i) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
                 array[iterator.i].update(dt);
             }
         },
@@ -321,44 +303,38 @@ const invokeUpdate = SUPPORT_JIT ? createInvokeImplJit('c.update(dt)', true)
 
 const invokeLateUpdate = SUPPORT_JIT ? createInvokeImplJit('c.lateUpdate(dt)', true)
     : createInvokeImpl(
-        (c: Component, dt?: number): void => {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
+        (c, dt: number): void => {
             c.lateUpdate(dt);
         },
-        (iterator: js.array.MutableForwardIterator<Component>, dt?: number): void => {
+        (iterator, dt: number): void => {
             const array = iterator.array;
             for (iterator.i = 0; iterator.i < array.length; ++iterator.i) {
-                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                // @ts-ignore
                 array[iterator.i].lateUpdate(dt);
             }
         },
     );
 
-export const invokeOnEnable = EDITOR ? (iterator: js.array.MutableForwardIterator<Component>): void => {
+export const invokeOnEnable = EDITOR ? (iterator): void => {
     const compScheduler = legacyCC.director._compScheduler;
     const array = iterator.array;
     for (iterator.i = 0; iterator.i < array.length; ++iterator.i) {
         const comp = array[iterator.i];
         if (comp._enabled) {
             callOnEnableInTryCatch(comp);
-            const deactivatedDuringOnEnable = !comp.node.activeInHierarchy;
+            const deactivatedDuringOnEnable = !comp.node._activeInHierarchy;
             if (!deactivatedDuringOnEnable) {
                 compScheduler._onEnabled(comp);
             }
         }
     }
-} : (iterator: js.array.MutableForwardIterator<Component>): void => {
+} : (iterator): void => {
     const compScheduler = legacyCC.director._compScheduler;
     const array = iterator.array;
     for (iterator.i = 0; iterator.i < array.length; ++iterator.i) {
         const comp = array[iterator.i];
         if (comp._enabled) {
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             comp.onEnable();
-            const deactivatedDuringOnEnable = !comp.node.activeInHierarchy;
+            const deactivatedDuringOnEnable = !comp.node._activeInHierarchy;
             if (!deactivatedDuringOnEnable) {
                 compScheduler._onEnabled(comp);
             }
@@ -389,7 +365,7 @@ export class ComponentScheduler {
      */
     public declare lateUpdateInvoker: ReusableInvoker;
     // components deferred to schedule
-    private _deferredComps: Component[] = [];
+    private _deferredComps: any[] = [];
     private declare _updating: boolean;
 
     constructor () {
@@ -575,7 +551,7 @@ export class ComponentScheduler {
 }
 
 if (EDITOR) {
-    ComponentScheduler.prototype.enableComp = function (comp: Component, invoker?: OneOffInvoker): void {
+    ComponentScheduler.prototype.enableComp = function (comp, invoker): void {
         // NOTE: _executeInEditMode is dynamically injected on Editor environment
         if (legacyCC.GAME_VIEW || (comp.constructor as any)._executeInEditMode) {
             if (!(comp._objFlags & IsOnEnableCalled)) {
@@ -599,7 +575,7 @@ if (EDITOR) {
         enableInEditor(comp);
     };
 
-    ComponentScheduler.prototype.disableComp = function (comp: Component): void {
+    ComponentScheduler.prototype.disableComp = function (comp): void {
         // NOTE: _executeInEditMode is dynamically injected on Editor environment
         if (legacyCC.GAME_VIEW || (comp.constructor as any)._executeInEditMode) {
             if (comp._objFlags & IsOnEnableCalled) {
