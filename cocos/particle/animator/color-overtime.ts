@@ -26,10 +26,10 @@ import { ccclass, displayOrder, type, serializable } from 'cc.decorator';
 import { pseudoRandom } from '../../core';
 import { Particle, PARTICLE_MODULE_NAME, ParticleModuleBase } from '../particle';
 import GradientRange from './gradient-range';
-import { ModuleRandSeed } from '../enum';
+import { ParticleModuleRandSeed } from '../enum';
 import { isGradientTwoValues } from '../particle-general-function';
 
-const COLOR_OVERTIME_RAND_OFFSET = ModuleRandSeed.COLOR;
+const COLOR_OVERTIME_RAND_OFFSET = ParticleModuleRandSeed.COLOR;
 
 /**
  * @en

@@ -27,7 +27,7 @@ import ParticleBatchModel from '../models/particle-batch-model';
 import ParticleSystemRenderer from './particle-system-renderer-data';
 import { Material } from '../../asset/assets';
 import { Particle, IParticleModule } from '../particle';
-import { RenderMode } from '../enum';
+import { ParticleRenderMode } from '../enum';
 import { cclegacy } from '../../core';
 import { Pass } from '../../render-scene';
 import type { ParticleSystem } from '../particle-system';
@@ -107,7 +107,7 @@ export abstract class ParticleSystemRendererBase {
     public setVertexAttributes (): void {
         if (this._model) {
             this.updateVertexAttrib();
-            this._model.setVertexAttributes(this._renderInfo!.renderMode === RenderMode.Mesh ? this._renderInfo!.mesh : null, this._vertAttrs);
+            this._model.setVertexAttributes(this._renderInfo!.renderMode === ParticleRenderMode.Mesh ? this._renderInfo!.mesh : null, this._vertAttrs);
         }
     }
 

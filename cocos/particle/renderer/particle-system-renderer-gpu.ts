@@ -30,7 +30,7 @@ import { AttributeName, Format, Attribute, API, deviceManager, FormatInfos } fro
 import { Mat4, Vec2, Vec4, Quat, Vec3, warn } from '../../core';
 import { MaterialInstance, IMaterialInstanceInfo } from '../../render-scene/core/material-instance';
 import { MacroRecord } from '../../render-scene/core/pass-utils';
-import { AlignmentSpace, RenderMode, Space } from '../enum';
+import { ParticleAlignmentSpace, ParticleRenderMode, ParticleSpace } from '../enum';
 import { Particle, IParticleModule } from '../particle';
 import { packGradientRange } from '../animator/gradient-range';
 import { Pass } from '../../render-scene/core/pass';
@@ -156,7 +156,7 @@ export default class ParticleSystemRendererGPU extends ParticleSystemRendererBas
     private _uTimeHandle = 0;
     private _uRotHandle = 0;
     private _uNodeRotHandle = 0;
-    private _alignSpace = AlignmentSpace.View;
+    private _alignSpace = ParticleAlignmentSpace.View;
     private _inited = false;
 
     constructor (info: ParticleSystemRenderer) {
@@ -261,15 +261,15 @@ export default class ParticleSystemRendererGPU extends ParticleSystemRendererBas
 
     private doUpdateRotation (pass): void {
         const mode = this._renderInfo!.renderMode;
-        if (mode !== RenderMode.Mesh && this._alignSpace === AlignmentSpace.View) {
+        if (mode !== ParticleRenderMode.Mesh && this._alignSpace === ParticleAlignmentSpace.View) {
             return;
         }
 
-        if (this._alignSpace === AlignmentSpace.Local) {
+        if (this._alignSpace === ParticleAlignmentSpace.Local) {
             this._particleSystem?.node.getRotation(_node_rot);
-        } else if (this._alignSpace === AlignmentSpace.World) {
+        } else if (this._alignSpace === ParticleAlignmentSpace.World) {
             this._particleSystem?.node.getWorldRotation(_node_rot);
-        } else if (this._alignSpace === AlignmentSpace.View) {
+        } else if (this._alignSpace === ParticleAlignmentSpace.View) {
             // Quat.fromEuler(_node_rot, 0.0, 0.0, 0.0);
             _node_rot.set(0.0, 0.0, 0.0, 1.0);
             const cameraLst: Camera[] | undefined = this._particleSystem?.node.scene.renderScene?.cameras;
@@ -299,10 +299,10 @@ export default class ParticleSystemRendererGPU extends ParticleSystemRendererBas
     private doUpdateScale (pass): void {
         const nodeScale = this._node_scale;
         switch (this._particleSystem?.scaleSpace) {
-        case Space.Local:
+        case ParticleSpace.Local:
             this._particleSystem.node.getScale(nodeScale);
             break;
-        case Space.World:
+        case ParticleSpace.World:
             this._particleSystem.node.getWorldScale(nodeScale);
             break;
         default:
@@ -322,10 +322,10 @@ export default class ParticleSystemRendererGPU extends ParticleSystemRendererBas
 
             this._particleSystem.node.getWorldMatrix(_tempWorldTrans);
             switch (this._particleSystem.scaleSpace) {
-            case Space.Local:
+            case ParticleSpace.Local:
                 this._particleSystem.node.getScale(this._node_scale);
                 break;
-            case Space.World:
+            case ParticleSpace.World:
                 this._particleSystem.node.getWorldScale(this._node_scale);
                 break;
             default:
@@ -536,7 +536,7 @@ export default class ParticleSystemRendererGPU extends ParticleSystemRendererBas
     }
 
     public updateVertexAttrib (): void {
-        if (this._renderInfo!.renderMode !== RenderMode.Mesh) {
+        if (this._renderInfo!.renderMode !== ParticleRenderMode.Mesh) {
             return;
         }
         if (this._renderInfo!.mesh) {
@@ -560,10 +560,10 @@ export default class ParticleSystemRendererGPU extends ParticleSystemRendererBas
     private _setVertexAttrib (): void {
         if (!this._useInstance) {
             switch (this._renderInfo!.renderMode) {
-            case RenderMode.StrecthedBillboard:
+            case ParticleRenderMode.StrecthedBillboard:
                 this._vertAttrs = _gpu_vert_attr.slice();
                 break;
-            case RenderMode.Mesh:
+            case ParticleRenderMode.Mesh:
                 this._vertAttrs = _gpu_vert_attr_mesh.slice();
                 break;
             default:
@@ -576,10 +576,10 @@ export default class ParticleSystemRendererGPU extends ParticleSystemRendererBas
 
     private _setVertexAttribIns (): void {
         switch (this._renderInfo!.renderMode) {
-        case RenderMode.StrecthedBillboard:
+        case ParticleRenderMode.StrecthedBillboard:
             this._vertAttrs = _gpu_vert_attr_ins.slice();
             break;
-        case RenderMode.Mesh:
+        case ParticleRenderMode.Mesh:
             this._vertAttrs = _gpu_vert_attr_mesh_ins.slice();
             break;
         default:
@@ -613,23 +613,23 @@ export default class ParticleSystemRendererGPU extends ParticleSystemRendererBas
 
         ps.node.getWorldMatrix(_tempWorldTrans);
 
-        if (ps.simulationSpace === Space.World) {
+        if (ps.simulationSpace === ParticleSpace.World) {
             this._defines[CC_USE_WORLD_SPACE] = true;
         } else {
             this._defines[CC_USE_WORLD_SPACE] = false;
         }
         const renderMode = this._renderInfo!.renderMode;
-        if (renderMode === RenderMode.Billboard) {
+        if (renderMode === ParticleRenderMode.Billboard) {
             this._defines[CC_RENDER_MODE] = RENDER_MODE_BILLBOARD;
-        } else if (renderMode === RenderMode.StrecthedBillboard) {
+        } else if (renderMode === ParticleRenderMode.StrecthedBillboard) {
             this._defines[CC_RENDER_MODE] = RENDER_MODE_STRETCHED_BILLBOARD;
             this._frameTile_velLenScale.z = this._renderInfo!.velocityScale;
             this._frameTile_velLenScale.w = this._renderInfo!.lengthScale;
-        } else if (renderMode === RenderMode.HorizontalBillboard) {
+        } else if (renderMode === ParticleRenderMode.HorizontalBillboard) {
             this._defines[CC_RENDER_MODE] = RENDER_MODE_HORIZONTAL_BILLBOARD;
-        } else if (renderMode === RenderMode.VerticalBillboard) {
+        } else if (renderMode === ParticleRenderMode.VerticalBillboard) {
             this._defines[CC_RENDER_MODE] = RENDER_MODE_VERTICAL_BILLBOARD;
-        } else if (renderMode === RenderMode.Mesh) {
+        } else if (renderMode === ParticleRenderMode.Mesh) {
             this._defines[CC_RENDER_MODE] = RENDER_MODE_MESH;
         } else {
             warn(`particle system renderMode ${renderMode} not support.`);

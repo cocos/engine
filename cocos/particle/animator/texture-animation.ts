@@ -26,10 +26,10 @@ import { ccclass, tooltip, displayOrder, type, formerlySerializedAs, serializabl
 import { lerp, pseudoRandom, repeat, Enum, random, error } from '../../core';
 import { Particle, ParticleModuleBase, PARTICLE_MODULE_NAME } from '../particle';
 import CurveRange from './curve-range';
-import { ModuleRandSeed } from '../enum';
+import { ParticleModuleRandSeed } from '../enum';
 import { isCurveTwoValues } from '../particle-general-function';
 
-const TEXTURE_ANIMATION_RAND_OFFSET = ModuleRandSeed.TEXTURE;
+const TEXTURE_ANIMATION_RAND_OFFSET = ParticleModuleRandSeed.TEXTURE;
 
 /**
  * @en Texture animation type.

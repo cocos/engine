@@ -25,13 +25,13 @@
 import { Mat4, Quat, random, randomRange, randomRangeInt, Vec2, Vec3, bits } from '../core/math';
 import CurveRange from './animator/curve-range';
 import GradientRange from './animator/gradient-range';
-import { Space } from './enum';
+import { ParticleSpace } from './enum';
 
 export const particleEmitZAxis = new Vec3(0, 0, -1);
 
 export function calculateTransform (systemSpace: number, moduleSpace: number, worldTransform: Mat4, outQuat: Quat): boolean {
     if (moduleSpace !== systemSpace) {
-        if (systemSpace === Space.World) {
+        if (systemSpace === ParticleSpace.World) {
             Mat4.getRotation(outQuat, worldTransform);
         } else {
             Mat4.invert(worldTransform, worldTransform);

@@ -24,13 +24,13 @@
 
 import { ccclass, tooltip, displayOrder, range, type, serializable } from 'cc.decorator';
 import { Mat4, pseudoRandom, Quat, Vec3 } from '../../core';
-import { Space, ModuleRandSeed } from '../enum';
+import { ParticleSpace, ParticleModuleRandSeed } from '../enum';
 import { calculateTransform, isCurveTwoValues } from '../particle-general-function';
 import CurveRange from './curve-range';
 
 import { Particle, ParticleModuleBase, PARTICLE_MODULE_NAME } from '../particle';
 
-const FORCE_OVERTIME_RAND_OFFSET = ModuleRandSeed.FORCE;
+const FORCE_OVERTIME_RAND_OFFSET = ParticleModuleRandSeed.FORCE;
 
 const _temp_v3 = new Vec3();
 
@@ -96,11 +96,11 @@ export default class ForceOvertimeModule extends ParticleModuleBase {
      * @en Force calculation coordinate. See [[Space]].
      * @zh 加速度计算时采用的坐标系 [[Space]]。
      */
-    @type(Space)
+    @type(ParticleSpace)
     @serializable
     @displayOrder(1)
     @tooltip('i18n:forceOvertimeModule.space')
-    public space = Space.Local;
+    public space = ParticleSpace.Local;
 
     // TODO:currently not supported
     public randomized = false;

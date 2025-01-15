@@ -25,7 +25,7 @@
 import { ccclass, tooltip, displayOrder, type, serializable, disallowAnimation, visible } from 'cc.decorator';
 import { Mesh } from '../../3d';
 import { Material, Texture2D } from '../../asset/assets';
-import { AlignmentSpace, RenderMode } from '../enum';
+import { ParticleAlignmentSpace, ParticleRenderMode } from '../enum';
 import ParticleSystemRendererCPU from './particle-system-renderer-cpu';
 import ParticleSystemRendererGPU from './particle-system-renderer-gpu';
 import { director } from '../../game/director';
@@ -50,7 +50,7 @@ export default class ParticleSystemRenderer {
     /**
      * @zh 设定粒子生成模式。
      */
-    @type(RenderMode)
+    @type(ParticleRenderMode)
     @displayOrder(0)
     @tooltip('i18n:particleSystemRenderer.renderMode')
     public get renderMode (): number {
@@ -101,9 +101,9 @@ export default class ParticleSystemRenderer {
         // this._updateModel();
     }
 
-    @type(RenderMode)
+    @type(ParticleRenderMode)
     @serializable
-    private _renderMode = RenderMode.Billboard;
+    private _renderMode = ParticleRenderMode.Billboard;
 
     @serializable
     private _velocityScale = 1;
@@ -263,7 +263,7 @@ export default class ParticleSystemRenderer {
      * @en Particle alignment space option. Includes world, local and view.
      * @zh 粒子对齐空间选择。包括世界空间，局部空间和视角空间。
      */
-    @type(AlignmentSpace)
+    @type(ParticleAlignmentSpace)
     @displayOrder(10)
     @tooltip('i18n:particle_system.alignSpace')
     public get alignSpace (): number {
@@ -276,9 +276,9 @@ export default class ParticleSystemRenderer {
     }
 
     @serializable
-    private _alignSpace = AlignmentSpace.View;
+    private _alignSpace = ParticleAlignmentSpace.View;
 
-    public static AlignmentSpace = AlignmentSpace;
+    public static AlignmentSpace = ParticleAlignmentSpace;
 
     private _particleSystem: ParticleSystem = null!;
 

@@ -32,7 +32,7 @@ import { Color, Mat4, Quat, toRadian, Vec3, Pool, warnID, cclegacy } from '../..
 import { scene } from '../../render-scene';
 import CurveRange from '../animator/curve-range';
 import GradientRange from '../animator/gradient-range';
-import { Space, TextureMode, TrailMode } from '../enum';
+import { ParticleSpace, ParticleTextureMode, ParticleTrailMode } from '../enum';
 import { Particle } from '../particle';
 import { TransformBit } from '../../scene-graph/node-enum';
 import type { ParticleSystem } from '../particle-system';
@@ -206,11 +206,11 @@ export default class TrailModule {
     /**
      * 设定粒子生成轨迹的方式。
      */
-    @type(TrailMode)
+    @type(ParticleTrailMode)
     @serializable
     @displayOrder(1)
     @tooltip('i18n:trailSegment.mode')
-    public mode = TrailMode.Particles;
+    public mode = ParticleTrailMode.Particles;
 
     /**
      * 轨迹存在的生命周期。
@@ -242,7 +242,7 @@ export default class TrailModule {
         this._minSquaredDistance = val * val;
     }
 
-    @type(Space)
+    @type(ParticleSpace)
     @displayOrder(6)
     @tooltip('i18n:trailSegment.space')
     public get space (): number {
@@ -266,11 +266,11 @@ export default class TrailModule {
     /**
      * 设定纹理填充方式。
      */
-    @type(TextureMode)
+    @type(ParticleTextureMode)
     @serializable
     @displayOrder(8)
     @tooltip('i18n:trailSegment.textureMode')
-    public textureMode = TextureMode.Stretch;
+    public textureMode = ParticleTextureMode.Stretch;
 
     @serializable
     @displayOrder(9)
@@ -316,8 +316,8 @@ export default class TrailModule {
     /**
      * 轨迹设定时的坐标系。
      */
-    @type(Space)
-    private _space = Space.World;
+    @type(ParticleSpace)
+    private _space = ParticleSpace.World;
 
     @serializable
     private _particleSystem: ParticleSystem | null = null;
@@ -463,7 +463,7 @@ export default class TrailModule {
 
     public update (): void {
         this._trailLifetime = this.lifeTime.evaluate(this._particleSystem!.time, 1)!;
-        if (this.space === Space.World && this._particleSystem!.simulationSpace === Space.Local) {
+        if (this.space === ParticleSpace.World && this._particleSystem!.simulationSpace === ParticleSpace.Local) {
             this._needTransform = true;
             this._particleSystem!.node.getWorldMatrix(this._psTransform);
             this._particleSystem!.node.getWorldRotation(_temp_quat);

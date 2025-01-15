@@ -29,7 +29,7 @@ import { AttributeName, Format, Attribute, FormatInfos } from '../../gfx';
 import { Mat4, Vec2, Vec3, Vec4, pseudoRandom, Quat, EPSILON, approx, RecyclePool, warn, Color } from '../../core';
 import { MaterialInstance, IMaterialInstanceInfo } from '../../render-scene/core/material-instance';
 import { MacroRecord } from '../../render-scene/core/pass-utils';
-import { AlignmentSpace, RenderMode, Space } from '../enum';
+import { ParticleAlignmentSpace, ParticleRenderMode, ParticleSpace } from '../enum';
 import { Particle, IParticleModule, PARTICLE_MODULE_ORDER, PARTICLE_MODULE_NAME } from '../particle';
 import { ParticleSystemRendererBase } from './particle-system-renderer-base';
 import { Camera } from '../../render-scene/scene/camera';
@@ -173,7 +173,7 @@ export default class ParticleSystemRendererCPU extends ParticleSystemRendererBas
     private _uScaleHandle = 0;
     private _uLenHandle = 0;
     private _uNodeRotHandle = 0;
-    private _alignSpace = AlignmentSpace.View;
+    private _alignSpace = ParticleAlignmentSpace.View;
     private _inited = false;
     private _localMat: Mat4 = new Mat4();
     private _gravity: Vec4 = new Vec4();
@@ -318,15 +318,15 @@ export default class ParticleSystemRendererCPU extends ParticleSystemRendererBas
 
     private doUpdateRotation (pass: Pass): void {
         const mode = this._renderInfo!.renderMode;
-        if (mode !== RenderMode.Mesh && this._alignSpace === AlignmentSpace.View) {
+        if (mode !== ParticleRenderMode.Mesh && this._alignSpace === ParticleAlignmentSpace.View) {
             return;
         }
 
-        if (this._alignSpace === AlignmentSpace.Local) {
+        if (this._alignSpace === ParticleAlignmentSpace.Local) {
             this._particleSystem?.node.getRotation(_node_rot);
-        } else if (this._alignSpace === AlignmentSpace.World) {
+        } else if (this._alignSpace === ParticleAlignmentSpace.World) {
             this._particleSystem?.node.getWorldRotation(_node_rot);
-        } else if (this._alignSpace === AlignmentSpace.View) {
+        } else if (this._alignSpace === ParticleAlignmentSpace.View) {
             // Quat.fromEuler(_node_rot, 0.0, 0.0, 0.0);
             _node_rot.set(0.0, 0.0, 0.0, 1.0);
             const cameraLst: Camera[] | undefined = this._particleSystem?.node.scene.renderScene?.cameras;
@@ -356,10 +356,10 @@ export default class ParticleSystemRendererCPU extends ParticleSystemRendererBas
     private doUpdateScale (pass): void {
         const nodeScale = this._node_scale;
         switch (this._particleSystem?.scaleSpace) {
-        case Space.Local:
+        case ParticleSpace.Local:
             this._particleSystem?.node.getScale(nodeScale);
             break;
-        case Space.World:
+        case ParticleSpace.World:
             this._particleSystem?.node.getWorldScale(nodeScale);
             break;
         default:
@@ -399,7 +399,7 @@ export default class ParticleSystemRendererCPU extends ParticleSystemRendererBas
 
         const useGravity = !ps.gravityModifier.isZero();
         if (useGravity) {
-            if (ps.simulationSpace === Space.Local) {
+            if (ps.simulationSpace === ParticleSpace.Local) {
                 const r: Quat = ps.node.getRotation();
                 Mat4.fromQuat(this._localMat, r);
                 this._localMat.transpose(); // just consider rotation, use transpose as invert
@@ -429,7 +429,7 @@ export default class ParticleSystemRendererCPU extends ParticleSystemRendererBas
             // apply gravity when both the mode is not Constant and the value is not 0.
             if (useGravity) {
                 const rand = isCurveTwoValues(ps.gravityModifier) ? pseudoRandom(p.randomSeed) : 0;
-                if (ps.simulationSpace === Space.Local) {
+                if (ps.simulationSpace === ParticleSpace.Local) {
                     const time = 1 - p.remainingLifetime / p.startLifetime;
                     const gravityFactor = -ps.gravityModifier.evaluate(time, rand)! * 9.8 * dt;
                     this._gravity.x = 0.0;
@@ -525,9 +525,9 @@ export default class ParticleSystemRendererCPU extends ParticleSystemRendererBas
     }
 
     private _setFillFunc (): void {
-        if (this._renderInfo!.renderMode === RenderMode.Mesh) {
+        if (this._renderInfo!.renderMode === ParticleRenderMode.Mesh) {
             this._fillDataFunc = this._fillMeshData;
-        } else if (this._renderInfo!.renderMode === RenderMode.StrecthedBillboard) {
+        } else if (this._renderInfo!.renderMode === ParticleRenderMode.StrecthedBillboard) {
             this._fillDataFunc = this._fillStrecthedData;
         } else {
             this._fillDataFunc = this._fillNormalData;
@@ -606,7 +606,7 @@ export default class ParticleSystemRendererCPU extends ParticleSystemRendererBas
     }
 
     public updateVertexAttrib (): void {
-        if (this._renderInfo!.renderMode !== RenderMode.Mesh) {
+        if (this._renderInfo!.renderMode !== ParticleRenderMode.Mesh) {
             return;
         }
         if (this._renderInfo!.mesh) {
@@ -630,10 +630,10 @@ export default class ParticleSystemRendererCPU extends ParticleSystemRendererBas
     private _setVertexAttrib (): void {
         if (!this._useInstance) {
             switch (this._renderInfo!.renderMode) {
-            case RenderMode.StrecthedBillboard:
+            case ParticleRenderMode.StrecthedBillboard:
                 this._vertAttrs = _vertex_attrs_stretch.slice();
                 break;
-            case RenderMode.Mesh:
+            case ParticleRenderMode.Mesh:
                 this._vertAttrs = _vertex_attrs_mesh.slice();
                 break;
             default:
@@ -646,10 +646,10 @@ export default class ParticleSystemRendererCPU extends ParticleSystemRendererBas
 
     private _setVertexAttribIns (): void {
         switch (this._renderInfo!.renderMode) {
-        case RenderMode.StrecthedBillboard:
+        case ParticleRenderMode.StrecthedBillboard:
             this._vertAttrs = _vertex_attrs_stretch_ins.slice();
             break;
-        case RenderMode.Mesh:
+        case ParticleRenderMode.Mesh:
             this._vertAttrs = _vertex_attrs_mesh_ins.slice();
             break;
         default:
@@ -681,7 +681,7 @@ export default class ParticleSystemRendererCPU extends ParticleSystemRendererBas
             }
         }
         const mat: Material = ps.getMaterialInstance(0) || this._defaultMat!;
-        if (ps.simulationSpace === Space.World) {
+        if (ps.simulationSpace === ParticleSpace.World) {
             this._defines[CC_USE_WORLD_SPACE] = true;
         } else {
             this._defines[CC_USE_WORLD_SPACE] = false;
@@ -694,17 +694,17 @@ export default class ParticleSystemRendererCPU extends ParticleSystemRendererBas
 
         const renderMode = this._renderInfo!.renderMode;
         const vlenScale = this._frameTile_velLenScale;
-        if (renderMode === RenderMode.Billboard) {
+        if (renderMode === ParticleRenderMode.Billboard) {
             this._defines[CC_RENDER_MODE] = RENDER_MODE_BILLBOARD;
-        } else if (renderMode === RenderMode.StrecthedBillboard) {
+        } else if (renderMode === ParticleRenderMode.StrecthedBillboard) {
             this._defines[CC_RENDER_MODE] = RENDER_MODE_STRETCHED_BILLBOARD;
             vlenScale.z = this._renderInfo!.velocityScale;
             vlenScale.w = this._renderInfo!.lengthScale;
-        } else if (renderMode === RenderMode.HorizontalBillboard) {
+        } else if (renderMode === ParticleRenderMode.HorizontalBillboard) {
             this._defines[CC_RENDER_MODE] = RENDER_MODE_HORIZONTAL_BILLBOARD;
-        } else if (renderMode === RenderMode.VerticalBillboard) {
+        } else if (renderMode === ParticleRenderMode.VerticalBillboard) {
             this._defines[CC_RENDER_MODE] = RENDER_MODE_VERTICAL_BILLBOARD;
-        } else if (renderMode === RenderMode.Mesh) {
+        } else if (renderMode === ParticleRenderMode.Mesh) {
             this._defines[CC_RENDER_MODE] = RENDER_MODE_MESH;
         } else {
             warn(`particle system renderMode ${renderMode} not support.`);
@@ -737,7 +737,7 @@ export default class ParticleSystemRendererCPU extends ParticleSystemRendererBas
         const ps = this._particleSystem;
         const trailModule = ps._trailModule;
         if (trailModule && trailModule.enable) {
-            if (ps.simulationSpace === Space.World || trailModule.space === Space.World) {
+            if (ps.simulationSpace === ParticleSpace.World || trailModule.space === ParticleSpace.World) {
                 this._trailDefines[CC_USE_WORLD_SPACE] = true;
             } else {
                 this._trailDefines[CC_USE_WORLD_SPACE] = false;

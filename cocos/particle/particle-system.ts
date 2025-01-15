@@ -41,7 +41,7 @@ import TextureAnimationModule from './animator/texture-animation';
 import VelocityOvertimeModule from './animator/velocity-overtime';
 import Burst from './burst';
 import ShapeModule from './emitter/shape-module';
-import { CullingMode, Space } from './enum';
+import { ParticleCullingMode, ParticleSpace } from './enum';
 import { particleEmitZAxis } from './particle-general-function';
 import ParticleSystemRenderer from './renderer/particle-system-renderer-data';
 import TrailModule from './renderer/trail';
@@ -106,11 +106,11 @@ export class ParticleSystem extends ModelRenderer {
      * @en The space of particle scaling.
      * @zh 计算粒子缩放的空间。
      */
-    @type(Space)
+    @type(ParticleSpace)
     @serializable
     @displayOrder(9)
     @tooltip('i18n:particle_system.scaleSpace')
-    public scaleSpace = Space.Local;
+    public scaleSpace = ParticleSpace.Local;
 
     /**
      * @en Whether to modify particle size on XYZ axis.
@@ -271,7 +271,7 @@ export class ParticleSystem extends ModelRenderer {
      * @en The simulation space of the particle system, it could be world, local or custom.
      * @zh 选择粒子系统所在的坐标系[[Space]]。<br>
      */
-    @type(Space)
+    @type(ParticleSpace)
     @serializable
     @displayOrder(4)
     @tooltip('i18n:particle_system.simulationSpace')
@@ -379,7 +379,7 @@ export class ParticleSystem extends ModelRenderer {
      * @en Particle culling mode option. Includes pause, pause and catchup, always simulate.
      * @zh 粒子剔除模式选择。包括暂停模拟，暂停以后快进继续以及不间断模拟。
      */
-    @type(CullingMode)
+    @type(ParticleCullingMode)
     @displayOrder(17)
     @tooltip('i18n:particle_system.cullingMode')
     get cullingMode (): number {
@@ -391,13 +391,13 @@ export class ParticleSystem extends ModelRenderer {
     }
 
     @serializable
-    _cullingMode = CullingMode.Pause;
+    _cullingMode = ParticleCullingMode.Pause;
 
     /**
      * @en Emitter culling mode.
      * @zh 发射器的各种剔除模式。
      */
-    public static CullingMode = CullingMode;
+    public static CullingMode = ParticleCullingMode;
 
     /**
      * @en Particle bounding box half width.
@@ -803,7 +803,7 @@ export class ParticleSystem extends ModelRenderer {
     private _capacity = 100;
 
     @serializable
-    private _simulationSpace = Space.Local;
+    private _simulationSpace = ParticleSpace.Local;
 
     /**
      * @en Particle update processor (update every particle).
@@ -1222,7 +1222,7 @@ export class ParticleSystem extends ModelRenderer {
                 }
             }
             if (culled) {
-                if (self._cullingMode !== CullingMode.AlwaysSimulate) {
+                if (self._cullingMode !== ParticleCullingMode.AlwaysSimulate) {
                     self._isSimulating = false;
                 }
                 if (!self._isCulled) {
@@ -1232,10 +1232,10 @@ export class ParticleSystem extends ModelRenderer {
                 if (thisTrailModule && thisTrailModule.enable) {
                     thisTrailModule._detachFromScene();
                 }
-                if (self._cullingMode === CullingMode.PauseAndCatchup) {
+                if (self._cullingMode === ParticleCullingMode.PauseAndCatchup) {
                     self._time += scaledDeltaTime;
                 }
-                if (self._cullingMode !== CullingMode.AlwaysSimulate) {
+                if (self._cullingMode !== ParticleCullingMode.AlwaysSimulate) {
                     return;
                 }
             } else {
@@ -1345,7 +1345,7 @@ export class ParticleSystem extends ModelRenderer {
             self._needRefresh = false;
         }
 
-        if (self._simulationSpace === Space.World) {
+        if (self._simulationSpace === ParticleSpace.World) {
             node.getWorldMatrix(_world_mat);
             node.getWorldRotation(_world_rol);
         }
@@ -1374,7 +1374,7 @@ export class ParticleSystem extends ModelRenderer {
             const curveStartSpeed = self.startSpeed.evaluate(loopDelta, rand)!;
             Vec3.multiplyScalar(particle.velocity, particle.velocity, curveStartSpeed);
 
-            if (self._simulationSpace === Space.World) {
+            if (self._simulationSpace === ParticleSpace.World) {
                 Vec3.transformMat4(particle.position, particle.position, _world_mat);
                 Vec3.transformQuat(particle.velocity, particle.velocity, _world_rol);
             }

@@ -25,7 +25,7 @@
 import { IParticleModule, Particle, PARTICLE_MODULE_ORDER } from './particle';
 import { Node } from '../scene-graph/node';
 import { TransformBit } from '../scene-graph/node-enum';
-import { RenderMode, Space } from './enum';
+import { ParticleRenderMode, ParticleSpace } from './enum';
 import { approx, EPSILON, Mat4, pseudoRandom, Quat, randomRangeInt, Vec3, Vec4, geometry, bits } from '../core';
 import { isCurveTwoValues, particleEmitZAxis } from './particle-general-function';
 import { ParticleSystemRendererBase } from './renderer/particle-system-renderer-base';
@@ -128,7 +128,7 @@ export class ParticleCuller {
         const loopDelta = (ps.time % ps.duration) / ps.duration; // loop delta value
 
         node.invalidateChildren(TransformBit.POSITION);
-        if (ps.simulationSpace === Space.World) {
+        if (ps.simulationSpace === ParticleSpace.World) {
             node.getWorldMatrix(_nodeMat);
             node.getWorldRotation(_nodeRol);
         }
@@ -154,7 +154,7 @@ export class ParticleCuller {
             const curveStartSpeed = ps.startSpeed.evaluate(loopDelta, rand)!;
             Vec3.multiplyScalar(particle.velocity, particle.velocity, curveStartSpeed);
 
-            if (ps.simulationSpace === Space.World) {
+            if (ps.simulationSpace === ParticleSpace.World) {
                 Vec3.transformMat4(particle.position, particle.position, _nodeMat);
                 Vec3.transformQuat(particle.velocity, particle.velocity, _nodeRol);
             }
@@ -191,10 +191,10 @@ export class ParticleCuller {
         ps.node.getWorldMatrix(_nodeMat);
 
         switch (ps.scaleSpace) {
-        case Space.Local:
+        case ParticleSpace.Local:
             ps.node.getScale(_nodeScale);
             break;
-        case Space.World:
+        case ParticleSpace.World:
             ps.node.getWorldScale(_nodeScale);
             break;
         default:
@@ -209,7 +209,7 @@ export class ParticleCuller {
             // value.update(ps.simulationSpace, _node_mat);
         });
 
-        if (ps.simulationSpace === Space.Local) {
+        if (ps.simulationSpace === ParticleSpace.Local) {
             const r: Quat = ps.node.getRotation();
             Mat4.fromQuat(this._localMat, r);
             this._localMat.transpose(); // just consider rotation, use transpose as invert
@@ -229,7 +229,7 @@ export class ParticleCuller {
             const useGravity = (ps.gravityModifier.mode !== Mode.Constant || ps.gravityModifier.constant !== 0);
             if (useGravity) {
                 const rand = isCurveTwoValues(ps.gravityModifier) ? pseudoRandom(p.randomSeed) : 0;
-                if (ps.simulationSpace === Space.Local) {
+                if (ps.simulationSpace === ParticleSpace.Local) {
                     const gravityFactor = -ps.gravityModifier.evaluate(1 - p.remainingLifetime / p.startLifetime, rand)! * 9.8 * dt;
                     this._gravity.x = 0.0;
                     this._gravity.y = gravityFactor;
@@ -268,7 +268,7 @@ export class ParticleCuller {
         const addPos: Vec3 = new Vec3();
 
         const meshSize: Vec3 = new Vec3(1.0, 1.0, 1.0);
-        if (this._processor.getInfo()!.renderMode === RenderMode.Mesh) {
+        if (this._processor.getInfo()!.renderMode === ParticleRenderMode.Mesh) {
             const mesh: Mesh | null = this._processor.getInfo().mesh;
             if (mesh && mesh.struct.minPosition && mesh.struct.maxPosition) {
                 const meshAABB: geometry.AABB = new geometry.AABB();
@@ -284,7 +284,7 @@ export class ParticleCuller {
             Vec3.multiply(size, _nodeScale, p.size);
             Vec3.multiply(size, size, meshSize);
             position.set(p.position);
-            if (this._particleSystem.simulationSpace !== Space.World) {
+            if (this._particleSystem.simulationSpace !== ParticleSpace.World) {
                 Vec3.transformMat4(position, position, worldMat);
             }
             if (isInit && i === 0) {

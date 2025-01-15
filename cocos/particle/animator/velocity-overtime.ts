@@ -24,14 +24,14 @@
 
 import { ccclass, tooltip, displayOrder, range, type, serializable } from 'cc.decorator';
 import { Mat4, pseudoRandom, Quat, Vec3 } from '../../core';
-import { Space, ModuleRandSeed } from '../enum';
+import { ParticleSpace, ParticleModuleRandSeed } from '../enum';
 import { Particle, ParticleModuleBase, PARTICLE_MODULE_NAME } from '../particle';
 import { calculateTransform, isCurveTwoValues } from '../particle-general-function';
 import CurveRange from './curve-range';
 
-const VELOCITY_X_OVERTIME_RAND_OFFSET = ModuleRandSeed.VELOCITY_X;
-const VELOCITY_Y_OVERTIME_RAND_OFFSET = ModuleRandSeed.VELOCITY_Y;
-const VELOCITY_Z_OVERTIME_RAND_OFFSET = ModuleRandSeed.VELOCITY_Z;
+const VELOCITY_X_OVERTIME_RAND_OFFSET = ParticleModuleRandSeed.VELOCITY_X;
+const VELOCITY_Y_OVERTIME_RAND_OFFSET = ParticleModuleRandSeed.VELOCITY_Y;
+const VELOCITY_Z_OVERTIME_RAND_OFFSET = ParticleModuleRandSeed.VELOCITY_Z;
 
 const _temp_v3 = new Vec3();
 
@@ -109,11 +109,11 @@ export default class VelocityOvertimeModule extends ParticleModuleBase {
      * @en Velocity [[Space]] used to calculate particle velocity.
      * @zh 速度计算时采用的坐标系[[Space]]。
      */
-    @type(Space)
+    @type(ParticleSpace)
     @serializable
     @displayOrder(1)
     @tooltip('i18n:velocityOvertimeModule.space')
-    public space = Space.Local;
+    public space = ParticleSpace.Local;
 
     private rotation: Quat;
     private needTransform: boolean;

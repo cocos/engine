@@ -26,10 +26,10 @@ import { ccclass, tooltip, displayOrder, type, serializable, range, visible } fr
 import { pseudoRandom, Vec3 } from '../../core';
 import { Particle, ParticleModuleBase, PARTICLE_MODULE_NAME } from '../particle';
 import CurveRange from './curve-range';
-import { ModuleRandSeed } from '../enum';
+import { ParticleModuleRandSeed } from '../enum';
 import { isCurveTwoValues } from '../particle-general-function';
 
-const SIZE_OVERTIME_RAND_OFFSET = ModuleRandSeed.SIZE;
+const SIZE_OVERTIME_RAND_OFFSET = ParticleModuleRandSeed.SIZE;
 
 /**
  * @en
