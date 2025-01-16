@@ -525,7 +525,6 @@ class Component extends CCObject {
      * @zh 如果该组件启用，则每帧调用 update。<br/>
      * 该方法为生命周期方法，父类未必会有实现。并且你只能在该方法内部调用父类的实现，不可在其它地方直接调用该方法。
      * @param dt - the delta time in seconds it took to complete the last frame
-     * @dontmangle
      */
     protected update? (dt: number): void;
 
@@ -543,7 +542,6 @@ class Component extends CCObject {
      * @zh 如果该组件启用，则每帧调用 LateUpdate。<br/>
      * 该方法为生命周期方法，父类未必会有实现。并且你只能在该方法内部调用父类的实现，不可在其它地方直接调用该方法。
      * @param dt - the delta time in seconds it took to complete the last frame
-     * @dontmangle
      */
     protected lateUpdate? (dt: number): void;
 
@@ -564,7 +562,6 @@ class Component extends CCObject {
      * 以避免在每次公有方法调用之前检查是否调用了onLoad。<br/>
      * 如果支持脚本优先级，则应删除此方法。
      * @private
-     * @dontmangle
      */
     protected __preload? (): void;
 
@@ -584,7 +581,6 @@ class Component extends CCObject {
      * @zh
      * 当附加到一个激活的节点上或者其节点第一次激活时候调用。onLoad 总是会在任何 start 方法调用前执行，这能用于安排脚本的初始化顺序。<br/>
      * 该方法为生命周期方法，父类未必会有实现。并且你只能在该方法内部调用父类的实现，不可在其它地方直接调用该方法。
-     * @dontmangle
      */
     protected onLoad? (): void;
 
@@ -604,7 +600,6 @@ class Component extends CCObject {
      * @zh
      * 如果该组件第一次启用，则在所有组件的 update 之前调用。通常用于需要在所有组件的 onLoad 初始化完毕后执行的逻辑。<br/>
      * 该方法为生命周期方法，父类未必会有实现。并且你只能在该方法内部调用父类的实现，不可在其它地方直接调用该方法。
-     * @dontmangle
      */
     protected start? (): void;
 
@@ -621,7 +616,6 @@ class Component extends CCObject {
      * You can only call its super class method inside it. It should not be called manually elsewhere.
      * @zh 当该组件被启用，并且它的节点也激活时。<br/>
      * 该方法为生命周期方法，父类未必会有实现。并且你只能在该方法内部调用父类的实现，不可在其它地方直接调用该方法。
-     * @dontmangle
      */
     protected onEnable? (): void;
 
@@ -638,7 +632,6 @@ class Component extends CCObject {
      * You can only call its super class method inside it. It should not be called manually elsewhere.
      * @zh 当该组件被禁用或节点变为无效时调用。<br/>
      * 该方法为生命周期方法，父类未必会有实现。并且你只能在该方法内部调用父类的实现，不可在其它地方直接调用该方法。
-     * @dontmangle
      */
     protected onDisable? (): void;
 
@@ -655,7 +648,6 @@ class Component extends CCObject {
      * You can only call its super class method inside it. It should not be called manually elsewhere.
      * @zh 当该组件被销毁时调用<br/>
      * 该方法为生命周期方法，父类未必会有实现。并且你只能在该方法内部调用父类的实现，不可在其它地方直接调用该方法。
-     * @dontmangle
      */
     protected onDestroy? (): void;
 
@@ -688,7 +680,6 @@ class Component extends CCObject {
      * 以便编辑器的场景视图可以正确地执行点选测试。
      * @param out_rect - The rect to store the result bounding rect
      * @private
-     * @dontmangle
      */
     protected _getLocalBounds? (out_rect: Rect): void;
 
@@ -731,7 +722,6 @@ class Component extends CCObject {
      * 这意味着仅仅指定了默认值的属性将被编辑器重置。
      * <br/>
      * 此方法仅在编辑器下会被调用。
-     * @dontmangle
      */
     protected onRestore? (): void;
 }
