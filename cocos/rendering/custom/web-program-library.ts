@@ -909,8 +909,6 @@ export class WebProgramLibrary implements ProgramLibrary {
             return;
         }
         this.device = deviceIn;
-        this.emptyDescriptorSetLayout = this.device.createDescriptorSetLayout(new DescriptorSetLayoutInfo());
-        this.emptyPipelineLayout = this.device.createPipelineLayout(new PipelineLayoutInfo());
 
         // update ubo
         // tips: for compatibility with old version, when maxVertexUniformVectors is 128, maxJoints = 30
@@ -1313,8 +1311,6 @@ export class WebProgramLibrary implements ProgramLibrary {
     public fixedLocal: boolean = true;
     public localLayoutData: DescriptorSetLayoutData = new DescriptorSetLayoutData();
     public localDescriptorSetLayout: DescriptorSetLayout | null = null;
-    public emptyDescriptorSetLayout: DescriptorSetLayout | null = null;
-    public emptyPipelineLayout: PipelineLayout | null = null;
     public pipeline: PipelineRuntime | null = null;
     public device: Device | null = null;
 }

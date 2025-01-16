@@ -221,6 +221,7 @@ export function getOrCreateDescriptorID (lg: LayoutGraphData, name: string): num
 }
 
 function createDescriptorInfo (layoutData: DescriptorSetLayoutData, info: DescriptorSetLayoutInfo): void {
+    info.bindings.length = 0;
     for (let i = 0; i < layoutData.descriptorBlocks.length; ++i) {
         const block = layoutData.descriptorBlocks[i];
         let slot = block.offset;
@@ -545,6 +546,7 @@ export function initializeDescriptorSetLayoutInfo (
     layoutData: DescriptorSetLayoutData,
     info: DescriptorSetLayoutInfo,
 ): void {
+    info.bindings = [];
     for (let i = 0; i < layoutData.descriptorBlocks.length; ++i) {
         const block = layoutData.descriptorBlocks[i];
         let slot = block.offset;
