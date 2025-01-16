@@ -31,11 +31,9 @@
     #define WIN32_LEAN_AND_MEAN 1
     #include <windows.h>
 
-namespace {
-    static HMODULE libegl = NULL;
-    static HMODULE libgles = NULL;
-    static PFNGLES3WLOADPROC pfnGles3wLoad = NULL;
-}
+static HMODULE libegl = NULL;
+static HMODULE libgles = NULL;
+static PFNGLES3WLOADPROC pfnGles3wLoad = NULL;
 
 bool gles3wOpen() {
     std::string eglPath = "libEGL.dll";
@@ -104,9 +102,11 @@ void *gles3wLoad(const char *proc) {
     #include <dlfcn.h>
 #include <BasePlatform.h>
 
-static void *libegl = nullptr;
-static void *libgles = nullptr;
-static PFNGLES3WLOADPROC pfnGles3wLoad = nullptr;
+namespace {
+    static void *libegl = nullptr;
+    static void *libgles = nullptr;
+    static PFNGLES3WLOADPROC pfnGles3wLoad = nullptr;
+}
 
 bool gles3wOpen() {
     libegl = dlopen("libEGL.so", RTLD_LAZY | RTLD_GLOBAL);

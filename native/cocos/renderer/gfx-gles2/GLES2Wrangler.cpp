@@ -28,10 +28,8 @@
     #define WIN32_LEAN_AND_MEAN 1
     #include <windows.h>
 
-namespace {
-    static HMODULE libegl = NULL;
-    static HMODULE libgles = NULL;
-}
+static HMODULE libegl = NULL;
+static HMODULE libgles = NULL;
 
 bool gles2wOpen() {
     libegl = LoadLibraryA("libEGL.dll");
@@ -70,8 +68,10 @@ void *gles2wLoad(const char *proc) {
     #include <dlfcn.h>
 #include <BasePlatform.h>
 
-static void *libegl = nullptr;
-static void *libgles = nullptr;
+namespace {
+    static void *libegl = nullptr;
+    static void *libgles = nullptr;
+}
 
 bool gles2wOpen() {
     libegl = dlopen("libEGL.so", RTLD_LAZY | RTLD_GLOBAL);
