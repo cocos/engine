@@ -66,6 +66,7 @@ void *gles2wLoad(const char *proc) {
 }
 #else
     #include <dlfcn.h>
+#include <BasePlatform.h>
 
 static void *libegl = nullptr;
 static void *libgles = nullptr;
@@ -98,7 +99,12 @@ bool gles2wClose() {
 void *gles2wLoad(const char *proc) {
     void *res = nullptr;
     if (eglGetProcAddress) res = reinterpret_cast<void *>(eglGetProcAddress(proc));
-    if (!res) res = dlsym(libegl, proc);
+    auto sdkVersion = cc::BasePlatform::getPlatform()->getSdkVersion();
+    if (sdkVersion <= 23) {
+        if (!res) res = dlsym(libgles, proc);
+    } else {
+        if (!res) res = dlsym(libegl, proc);
+    }
     return res;
 }
 #endif
