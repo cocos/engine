@@ -553,14 +553,13 @@ export function makeShaderInfo (
     srcShaderInfo: EffectAsset.IShaderInfo,
     programData: ShaderProgramData | null,
     fixedLocal: boolean,
-    isWebGPU: boolean,
 ): [ShaderInfo, Array<number>] {
     const descriptorSets: Array<DescriptorSetLayoutData | null> = [null, null, null, null];
     let fixedInstanceDescriptorSetLayout: IDescriptorSetLayoutInfo | null = null;
     const shaderInfo = new ShaderInfo();
     const blockSizes: number[] = [];
     { // pass
-        const passLayout = passLayouts.getSet(UpdateFrequency.PER_PASS, isWebGPU);
+        const passLayout = passLayouts.getSet(UpdateFrequency.PER_PASS);
         if (passLayout) {
             descriptorSets[UpdateFrequency.PER_PASS] = passLayout.descriptorSetLayoutData;
             populateMergedShaderInfo(
@@ -573,7 +572,7 @@ export function makeShaderInfo (
         }
     }
     { // phase
-        const phaseLayout = phaseLayouts.getSet(UpdateFrequency.PER_PHASE, isWebGPU);
+        const phaseLayout = phaseLayouts.getSet(UpdateFrequency.PER_PHASE);
         if (phaseLayout) {
             descriptorSets[UpdateFrequency.PER_PHASE] = phaseLayout.descriptorSetLayoutData;
             populateMergedShaderInfo(
@@ -588,7 +587,7 @@ export function makeShaderInfo (
     { // batch
         const batchInfo = srcShaderInfo.descriptors[UpdateFrequency.PER_BATCH];
         if (programData) {
-            const perBatch = programData.layout.getSet(UpdateFrequency.PER_BATCH, isWebGPU);
+            const perBatch = programData.layout.getSet(UpdateFrequency.PER_BATCH);
             if (perBatch) {
                 descriptorSets[UpdateFrequency.PER_BATCH] = perBatch.descriptorSetLayoutData;
                 populateMergedShaderInfo(
@@ -600,7 +599,7 @@ export function makeShaderInfo (
                 );
             }
         } else {
-            const batchLayout = phaseLayouts.getSet(UpdateFrequency.PER_BATCH, isWebGPU);
+            const batchLayout = phaseLayouts.getSet(UpdateFrequency.PER_BATCH);
             if (batchLayout) {
                 descriptorSets[UpdateFrequency.PER_BATCH] = batchLayout.descriptorSetLayoutData;
                 populateGroupedShaderInfo(
@@ -622,7 +621,7 @@ export function makeShaderInfo (
                 fixedInstanceDescriptorSetLayout = localDescriptorSetLayout;
                 populateLocalShaderInfo(instanceInfo, localDescriptorSetLayout, shaderInfo, blockSizes);
             } else {
-                const perInstance = programData.layout.getSet(UpdateFrequency.PER_INSTANCE, isWebGPU);
+                const perInstance = programData.layout.getSet(UpdateFrequency.PER_INSTANCE);
                 if (perInstance) {
                     descriptorSets[UpdateFrequency.PER_INSTANCE] = perInstance.descriptorSetLayoutData;
                     populateMergedShaderInfo(
@@ -635,7 +634,7 @@ export function makeShaderInfo (
                 }
             }
         } else {
-            const instanceLayout = phaseLayouts.getSet(UpdateFrequency.PER_INSTANCE, isWebGPU);
+            const instanceLayout = phaseLayouts.getSet(UpdateFrequency.PER_INSTANCE);
             if (instanceLayout) {
                 descriptorSets[UpdateFrequency.PER_INSTANCE] = instanceLayout.descriptorSetLayoutData;
                 populateGroupedShaderInfo(
@@ -729,16 +728,14 @@ export function buildProgramData (
     phase: RenderPhaseData,
     programData: ShaderProgramData,
     fixedLocal: boolean,
-    isWebGPU: boolean,
 ): void {
-    const programSets = programData.layout.getSets(isWebGPU);
+    const programSets = programData.layout.getSets();
     {
         const perBatch = makeDescriptorSetLayoutData(
             lg,
             UpdateFrequency.PER_BATCH,
             _setIndex[UpdateFrequency.PER_BATCH],
             srcShaderInfo.descriptors[UpdateFrequency.PER_BATCH],
-            isWebGPU,
         );
         const setData = new DescriptorSetData(perBatch);
         initializeDescriptorSetLayoutInfo(
@@ -775,7 +772,6 @@ export function buildProgramData (
             UpdateFrequency.PER_INSTANCE,
             _setIndex[UpdateFrequency.PER_INSTANCE],
             srcShaderInfo.descriptors[UpdateFrequency.PER_INSTANCE],
-            isWebGPU,
         );
         const setData = new DescriptorSetData(perInstance);
         initializeDescriptorSetLayoutInfo(
@@ -797,7 +793,6 @@ export function getOrCreateProgramDescriptorSetLayout (
     programName: string,
     rate: UpdateFrequency,
 ): DescriptorSetLayout {
-    const isWebGPU = device.gfxAPI === API.WEBGPU;
     assert(rate < UpdateFrequency.PER_PHASE);
     const phase = lg.j<RenderPhaseData>(phaseID);
     const programID = phase.shaderIndex.get(programName);
@@ -805,7 +800,7 @@ export function getOrCreateProgramDescriptorSetLayout (
         return getEmptyDescriptorSetLayout();
     }
     const programData = phase.shaderPrograms[programID];
-    const layout = programData.layout.getSet(rate, isWebGPU);
+    const layout = programData.layout.getSet(rate);
     if (layout === undefined) {
         return getEmptyDescriptorSetLayout();
     }
@@ -825,7 +820,6 @@ export function getProgramDescriptorSetLayout (
     programName: string,
     rate: UpdateFrequency,
 ): DescriptorSetLayout | null {
-    const isWebGPU = device.gfxAPI === API.WEBGPU;
     assert(rate < UpdateFrequency.PER_PHASE);
     const phase = lg.j<RenderPhaseData>(phaseID);
     const programID = phase.shaderIndex.get(programName);
@@ -833,7 +827,7 @@ export function getProgramDescriptorSetLayout (
         return null;
     }
     const programData = phase.shaderPrograms[programID];
-    const layout = programData.layout.getSet(rate, isWebGPU);
+    const layout = programData.layout.getSet(rate);
     if (layout === undefined) {
         return null;
     }
@@ -907,7 +901,6 @@ export class WebProgramLibrary implements ProgramLibrary {
             return;
         }
         this.device = deviceIn;
-        this.isWebGPU = deviceIn.gfxAPI === API.WEBGPU;
         this.emptyDescriptorSetLayout = this.device.createDescriptorSetLayout(new DescriptorSetLayoutInfo());
         this.emptyPipelineLayout = this.device.createPipelineLayout(new PipelineLayoutInfo());
 
@@ -918,11 +911,10 @@ export class WebProgramLibrary implements ProgramLibrary {
         UBOSkinning.initLayout(maxJoints);
 
         // init layout graph
-        const isWebGPU = this.isWebGPU;
         const lg = this.layoutGraph;
         for (const v of lg.v()) {
             const layout: PipelineLayoutData = lg.getLayout(v);
-            const sets = layout.getSets(isWebGPU);
+            const sets = layout.getSets();
             for (const [update, set] of sets) {
                 initializeDescriptorSetLayoutInfo(set.descriptorSetLayoutData, set.descriptorSetLayoutInfo);
                 set.descriptorSetLayout = this.device.createDescriptorSetLayout(set.descriptorSetLayoutInfo);
@@ -941,10 +933,10 @@ export class WebProgramLibrary implements ProgramLibrary {
             const passLayout = lg.getLayout(subpassOrPassID);
             const phaseLayout = lg.getLayout(phaseID);
             const info = new PipelineLayoutInfo();
-            populatePipelineLayoutInfo(passLayout, UpdateFrequency.PER_PASS, info, isWebGPU);
-            populatePipelineLayoutInfo(phaseLayout, UpdateFrequency.PER_PHASE, info, isWebGPU);
-            populatePipelineLayoutInfo(phaseLayout, UpdateFrequency.PER_BATCH, info, isWebGPU);
-            populatePipelineLayoutInfo(phaseLayout, UpdateFrequency.PER_INSTANCE, info, isWebGPU);
+            populatePipelineLayoutInfo(passLayout, UpdateFrequency.PER_PASS, info);
+            populatePipelineLayoutInfo(phaseLayout, UpdateFrequency.PER_PHASE, info);
+            populatePipelineLayoutInfo(phaseLayout, UpdateFrequency.PER_BATCH, info);
+            populatePipelineLayoutInfo(phaseLayout, UpdateFrequency.PER_INSTANCE, info);
             const phase = lg.j<RenderPhaseData>(phaseID);
             phase.pipelineLayout = this.device.createPipelineLayout(info);
         }
@@ -1013,7 +1005,6 @@ export class WebProgramLibrary implements ProgramLibrary {
                         phase,
                         programData,
                         this.fixedLocal,
-                        this.isWebGPU,
                     );
                 }
 
@@ -1025,7 +1016,6 @@ export class WebProgramLibrary implements ProgramLibrary {
                     srcShaderInfo,
                     programData,
                     this.fixedLocal,
-                    this.isWebGPU,
                 );
 
                 // overwrite programInfo
@@ -1173,7 +1163,6 @@ export class WebProgramLibrary implements ProgramLibrary {
                 subpassOrPassID,
                 phaseID,
                 UpdateFrequency.PER_BATCH,
-                this.isWebGPU,
             );
         }
         return getOrCreateProgramDescriptorSetLayout(
@@ -1194,7 +1183,6 @@ export class WebProgramLibrary implements ProgramLibrary {
                 subpassOrPassID,
                 phaseID,
                 UpdateFrequency.PER_INSTANCE,
-                this.isWebGPU,
             );
         }
         return getOrCreateProgramDescriptorSetLayout(
@@ -1266,7 +1254,6 @@ export class WebProgramLibrary implements ProgramLibrary {
             subpassOrPassID,
             phaseID,
             UpdateFrequency.PER_PASS,
-            this.isWebGPU,
         );
         if (passSet) {
             info.setLayouts.push(passSet);
@@ -1276,7 +1263,6 @@ export class WebProgramLibrary implements ProgramLibrary {
             subpassOrPassID,
             phaseID,
             UpdateFrequency.PER_PHASE,
-            this.isWebGPU,
         );
         if (phaseSet) {
             info.setLayouts.push(phaseSet);
@@ -1323,5 +1309,4 @@ export class WebProgramLibrary implements ProgramLibrary {
     public emptyPipelineLayout: PipelineLayout | null = null;
     public pipeline: PipelineRuntime | null = null;
     public device: Device | null = null;
-    public isWebGPU: boolean = false;
 }

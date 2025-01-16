@@ -423,14 +423,13 @@ export function getDescBinding (descId, descData: DescriptorSetData): number {
 
 export function getDescBindingFromName (bindingName: string): number {
     const pipeline = cclegacy.director.root.pipeline as WebPipeline;
-    const isWebGPU = pipeline.device.gfxAPI === API.WEBGPU;
     const layoutGraph = pipeline.layoutGraph;
     const vertIds = layoutGraph.v();
     const descId = layoutGraph.attributeIndex.get(bindingName);
     let currDesData: DescriptorSetData;
     for (const i of vertIds) {
         const layout = layoutGraph.getLayout(i);
-        const sets = layout.getSets(isWebGPU);
+        const sets = layout.getSets();
         for (const [k, descData] of sets) {
             const layoutData = descData.descriptorSetLayoutData;
             const blocks = layoutData.descriptorBlocks;
@@ -494,19 +493,17 @@ export function getDescriptorSetDataFromLayout (layoutName: string): DescriptorS
         return descLayout;
     }
     const webPip = cclegacy.director.root.pipeline as WebPipeline;
-    const isWebGPU = webPip.device.gfxAPI === API.WEBGPU;
     const stageId = webPip.layoutGraph.locateChild(webPip.layoutGraph.N, layoutName);
     const layout = webPip.layoutGraph.getLayout(stageId);
-    const layoutData = layout.getSet(UpdateFrequency.PER_PASS, isWebGPU);
+    const layoutData = layout.getSet(UpdateFrequency.PER_PASS);
     layouts.set(layoutName, layoutData!);
     return layoutData;
 }
 
 export function getDescriptorSetDataFromLayoutId (id: number): DescriptorSetData | undefined {
     const webPip = cclegacy.director.root.pipeline as WebPipeline;
-    const isWebGPU = webPip.device.gfxAPI === API.WEBGPU;
     const layout = webPip.layoutGraph.getLayout(id);
-    const layoutData = layout.getSet(UpdateFrequency.PER_PASS, isWebGPU);
+    const layoutData = layout.getSet(UpdateFrequency.PER_PASS);
     return layoutData;
 }
 
@@ -519,8 +516,7 @@ function getUniformBlock (block: string, layoutName: string): UniformBlock | und
     const lg = webPip.layoutGraph;
     const nodeId = lg.locateChild(0xFFFFFFFF, layoutName);
     const ppl = lg.getLayout(nodeId);
-    const isWebGPU = webPip.device.gfxAPI === API.WEBGPU;
-    const layout = ppl.getSet(UpdateFrequency.PER_PASS, isWebGPU)!.descriptorSetLayoutData;
+    const layout = ppl.getSet(UpdateFrequency.PER_PASS)!.descriptorSetLayoutData;
     const nameID: number = lg.attributeIndex.get(block)!;
     return layout.uniformBlocks.get(nameID);
 }

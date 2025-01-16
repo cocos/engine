@@ -97,11 +97,7 @@ export function init (device: Device, arrayBuffer: ArrayBuffer | null): void {
 }
 
 export function destroy (): void {
-    if (_pipeline) {
-        terminateLayoutGraphData(defaultLayoutGraph, _pipeline.device.gfxAPI === API.WEBGPU);
-    } else {
-        terminateLayoutGraphData(defaultLayoutGraph, false);
-    }
+    terminateLayoutGraphData(defaultLayoutGraph);
 }
 
 export function getPassID (name: string | undefined): number {

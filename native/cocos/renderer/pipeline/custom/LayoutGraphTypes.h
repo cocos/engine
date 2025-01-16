@@ -53,6 +53,14 @@ namespace cc {
 
 namespace render {
 
+enum class LayoutType : uint8_t {
+    VULKAN,
+    WEBGPU,
+};
+
+struct Layout {
+};
+
 enum class DescriptorTypeOrder : uint8_t {
     UNIFORM_BUFFER,
     DYNAMIC_UNIFORM_BUFFER,

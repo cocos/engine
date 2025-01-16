@@ -39,7 +39,9 @@ import {
     DescriptorData,
     DescriptorSetLayoutData,
     DescriptorTypeOrder,
+    Layout,
     LayoutGraphDataValue,
+    LayoutType,
 } from './layout-graph';
 import {
     ParameterType, UpdateFrequency,
@@ -248,10 +250,9 @@ function createDescriptorSetLayout (device: Device | null, layoutData: Descripto
 }
 
 export function createGfxDescriptorSetsAndPipelines (device: Device | null, g: LayoutGraphData): void {
-    const isWebGPU = device ? device.gfxAPI === API.WEBGPU : false;
     for (let i = 0; i < g._layouts.length; ++i) {
         const ppl: PipelineLayoutData = g.getLayout(i);
-        const sets = ppl.getSets(isWebGPU);
+        const sets = ppl.getSets();
         sets.forEach((value, key): void => {
             const level = value;
             const layoutData = level.descriptorSetLayoutData;
@@ -332,14 +333,13 @@ export function makeDescriptorSetLayoutData (
     rate: UpdateFrequency,
     set: number,
     descriptors: EffectAsset.IDescriptorInfo,
-    isWebGPU: boolean,
 ): DescriptorSetLayoutData {
     const map = new Map<string, DescriptorBlockData>();
     const uniformBlocks: Map<number, UniformBlock> = new Map<number, UniformBlock>();
 
     for (let i = 0; i < descriptors.blocks.length; i++) {
         const cb = descriptors.blocks[i];
-        const block = HTML5 && isWebGPU
+        const block = HTML5 && Layout.isWebGPU
             ? getDescriptorGroupBlockData(map, {
                 updateFrequency: rate,
                 parameterType: ParameterType.TABLE,
@@ -363,7 +363,7 @@ export function makeDescriptorSetLayoutData (
     }
     for (let i = 0; i < descriptors.samplerTextures.length; i++) {
         const samplerTexture = descriptors.samplerTextures[i];
-        const block = HTML5 && isWebGPU
+        const block = HTML5 && Layout.isWebGPU
             ? getDescriptorGroupBlockData(map, {
                 updateFrequency: rate,
                 parameterType: ParameterType.TABLE,
@@ -385,7 +385,7 @@ export function makeDescriptorSetLayoutData (
     }
     for (let i = 0; i < descriptors.samplers.length; i++) {
         const sampler = descriptors.samplers[i];
-        const block = HTML5 && isWebGPU
+        const block = HTML5 && Layout.isWebGPU
             ? getDescriptorGroupBlockData(map, {
                 updateFrequency: rate,
                 parameterType: ParameterType.TABLE,
@@ -407,7 +407,7 @@ export function makeDescriptorSetLayoutData (
     }
     for (let i = 0; i < descriptors.textures.length; i++) {
         const texture = descriptors.textures[i];
-        const block = HTML5 && isWebGPU
+        const block = HTML5 && Layout.isWebGPU
             ? getDescriptorGroupBlockData(map, {
                 updateFrequency: rate,
                 parameterType: ParameterType.TABLE,
@@ -429,7 +429,7 @@ export function makeDescriptorSetLayoutData (
     }
     for (let i = 0; i < descriptors.buffers.length; i++) {
         const buffer = descriptors.buffers[i];
-        const block = HTML5 && isWebGPU
+        const block = HTML5 && Layout.isWebGPU
             ? getDescriptorGroupBlockData(map, {
                 updateFrequency: rate,
                 parameterType: ParameterType.TABLE,
@@ -451,7 +451,7 @@ export function makeDescriptorSetLayoutData (
     }
     for (let i = 0; i < descriptors.images.length; i++) {
         const image = descriptors.images[i];
-        const block = HTML5 && isWebGPU
+        const block = HTML5 && Layout.isWebGPU
             ? getDescriptorGroupBlockData(map, {
                 updateFrequency: rate,
                 parameterType: ParameterType.TABLE,
@@ -473,7 +473,7 @@ export function makeDescriptorSetLayoutData (
     }
     for (let i = 0; i < descriptors.subpassInputs.length; i++) {
         const subpassInput = descriptors.subpassInputs[i];
-        const block = HTML5 && isWebGPU
+        const block = HTML5 && Layout.isWebGPU
             ? getDescriptorGroupBlockData(map, {
                 updateFrequency: rate,
                 parameterType: ParameterType.TABLE,
@@ -495,7 +495,7 @@ export function makeDescriptorSetLayoutData (
     }
 
     // sort blocks
-    const flattenedBlocks = HTML5 && isWebGPU
+    const flattenedBlocks = HTML5 && Layout.isWebGPU
         ? Array.from(map).sort(sortDescriptorGroupBlocks)
         : Array.from(map).sort(sortDescriptorBlocks);
 
@@ -569,9 +569,8 @@ export function populatePipelineLayoutInfo (
     layout: PipelineLayoutData,
     rate: UpdateFrequency,
     info: PipelineLayoutInfo,
-    isWebGPU: boolean,
 ): void {
-    const set = layout.getSet(rate, isWebGPU);
+    const set = layout.getSet(rate);
     if (set && set.descriptorSetLayout) {
         info.setLayouts.push(set.descriptorSetLayout);
     } else {
@@ -594,13 +593,14 @@ export function generateConstantMacros (device: Device, constantMacros: string):
 
 // initialize layout graph module
 export function initializeLayoutGraphData (device: Device, lg: LayoutGraphData): void {
-    const isWebGPU = device.gfxAPI === API.WEBGPU;
+    Layout.type = device.gfxAPI === API.WEBGPU ? LayoutType.WEBGPU : LayoutType.VULKAN;
+    Layout.isWebGPU = device.gfxAPI === API.WEBGPU;
     // create descriptor sets
     _emptyDescriptorSetLayout = device.createDescriptorSetLayout(new DescriptorSetLayoutInfo());
     _emptyPipelineLayout = device.createPipelineLayout(new PipelineLayoutInfo());
     for (const v of lg.v()) {
         const layoutData = lg.getLayout(v);
-        const sets = layoutData.getSets(isWebGPU);
+        const sets = layoutData.getSets();
         for (const [_, set] of sets) {
             if (set.descriptorSetLayout !== null) {
                 warn('descriptor set layout already initialized. It will be overwritten');
@@ -622,20 +622,20 @@ export function initializeLayoutGraphData (device: Device, lg: LayoutGraphData):
         const passLayout = lg.getLayout(subpassOrPassID);
         const phaseLayout = lg.getLayout(phaseID);
         const info = new PipelineLayoutInfo();
-        populatePipelineLayoutInfo(passLayout, UpdateFrequency.PER_PASS, info, isWebGPU);
-        populatePipelineLayoutInfo(phaseLayout, UpdateFrequency.PER_PHASE, info, isWebGPU);
-        populatePipelineLayoutInfo(phaseLayout, UpdateFrequency.PER_BATCH, info, isWebGPU);
-        populatePipelineLayoutInfo(phaseLayout, UpdateFrequency.PER_INSTANCE, info, isWebGPU);
+        populatePipelineLayoutInfo(passLayout, UpdateFrequency.PER_PASS, info);
+        populatePipelineLayoutInfo(phaseLayout, UpdateFrequency.PER_PHASE, info);
+        populatePipelineLayoutInfo(phaseLayout, UpdateFrequency.PER_BATCH, info);
+        populatePipelineLayoutInfo(phaseLayout, UpdateFrequency.PER_INSTANCE, info);
         const phase = lg.j<RenderPhaseData>(phaseID);
         phase.pipelineLayout = device.createPipelineLayout(info);
     }
 }
 
 // terminate layout graph module
-export function terminateLayoutGraphData (lg: LayoutGraphData, isWebGPU: boolean): void {
+export function terminateLayoutGraphData (lg: LayoutGraphData): void {
     for (const v of lg.v()) {
         const layoutData = lg.getLayout(v);
-        const sets = layoutData.getSets(isWebGPU);
+        const sets = layoutData.getSets();
         for (const [_, set] of sets) {
             if (set.descriptorSetLayout !== null) {
                 set.descriptorSetLayout.destroy();
@@ -662,11 +662,10 @@ export function getOrCreateDescriptorSetLayout (
     subpassOrPassID: number,
     phaseID: number,
     rate: UpdateFrequency,
-    isWebGPU: boolean,
 ): DescriptorSetLayout {
     if (rate < UpdateFrequency.PER_PASS) {
         const phaseData = lg.getLayout(phaseID);
-        const data = phaseData.getSet(rate, isWebGPU);
+        const data = phaseData.getSet(rate);
         if (data) {
             if (!data.descriptorSetLayout) {
                 error('descriptor set layout not initialized');
@@ -681,7 +680,7 @@ export function getOrCreateDescriptorSetLayout (
     assert(subpassOrPassID === lg.getParent(phaseID));
 
     const passData = lg.getLayout(subpassOrPassID);
-    const data = passData.getSet(rate, isWebGPU);
+    const data = passData.getSet(rate);
     if (data) {
         if (!data.descriptorSetLayout) {
             error('descriptor set layout not initialized');
@@ -698,11 +697,10 @@ export function getDescriptorSetLayout (
     subpassOrPassID: number,
     phaseID: number,
     rate: UpdateFrequency,
-    isWebGPU: boolean,
 ): DescriptorSetLayout | null {
     if (rate < UpdateFrequency.PER_PASS) {
         const phaseData = lg.getLayout(phaseID);
-        const data = phaseData.getSet(rate, isWebGPU);
+        const data = phaseData.getSet(rate);
         if (data) {
             if (!data.descriptorSetLayout) {
                 error('descriptor set layout not initialized');
@@ -717,7 +715,7 @@ export function getDescriptorSetLayout (
     assert(subpassOrPassID === lg.getParent(phaseID));
 
     const passData = lg.getLayout(subpassOrPassID);
-    const data = passData.getSet(rate, isWebGPU);
+    const data = passData.getSet(rate);
     if (data) {
         if (!data.descriptorSetLayout) {
             error('descriptor set layout not initialized');
@@ -773,11 +771,10 @@ export function getDescriptorName (lg: LayoutGraphData, nameID: number): string 
 export function getPerPassDescriptorSetLayoutData (
     lg: LayoutGraphData,
     subpassOrPassID: number,
-    isWebGPU: boolean,
 ): DescriptorSetLayoutData | null {
     assert(subpassOrPassID !== lg.N);
     const node = lg.getLayout(subpassOrPassID);
-    const set = node.getSet(UpdateFrequency.PER_PASS, isWebGPU);
+    const set = node.getSet(UpdateFrequency.PER_PASS);
     if (set === undefined) {
         return null;
     }
@@ -787,11 +784,10 @@ export function getPerPassDescriptorSetLayoutData (
 export function getPerPhaseDescriptorSetLayoutData (
     lg: LayoutGraphData,
     phaseID: number,
-    isWebGPU: boolean,
 ): DescriptorSetLayoutData | null {
     assert(phaseID !== lg.N);
     const node = lg.getLayout(phaseID);
-    const set = node.getSet(UpdateFrequency.PER_PHASE, isWebGPU);
+    const set = node.getSet(UpdateFrequency.PER_PHASE);
     if (set === undefined) {
         return null;
     }
@@ -802,13 +798,12 @@ export function getPerBatchDescriptorSetLayoutData (
     lg: LayoutGraphData,
     phaseID: number,
     programID: number,
-    isWebGPU: boolean,
 ): DescriptorSetLayoutData | null {
     assert(phaseID !== lg.N);
     const phase = lg.j<RenderPhaseData>(phaseID);
     assert(programID < phase.shaderPrograms.length);
     const program = phase.shaderPrograms[programID];
-    const set = program.layout.getSet(UpdateFrequency.PER_BATCH, isWebGPU);
+    const set = program.layout.getSet(UpdateFrequency.PER_BATCH);
     if (set === undefined) {
         return null;
     }
@@ -819,13 +814,12 @@ export function getPerInstanceDescriptorSetLayoutData (
     lg: LayoutGraphData,
     phaseID: number,
     programID: number,
-    isWebGPU: boolean,
 ): DescriptorSetLayoutData | null {
     assert(phaseID !== lg.N);
     const phase = lg.j<RenderPhaseData>(phaseID);
     assert(programID < phase.shaderPrograms.length);
     const program = phase.shaderPrograms[programID];
-    const set = program.layout.getSet(UpdateFrequency.PER_INSTANCE, isWebGPU);
+    const set = program.layout.getSet(UpdateFrequency.PER_INSTANCE);
     if (set === undefined) {
         return null;
     }

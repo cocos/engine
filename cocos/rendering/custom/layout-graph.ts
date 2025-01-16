@@ -41,6 +41,16 @@ function resetDescriptorSetLayoutInfo (info: DescriptorSetLayoutInfo): void {
     info.bindings.length = 0;
 }
 
+export const enum LayoutType {
+    VULKAN,
+    WEBGPU,
+}
+
+export class Layout {
+    static type = LayoutType.VULKAN;
+    static isWebGPU = false;
+}
+
 export const enum DescriptorTypeOrder {
     UNIFORM_BUFFER,
     DYNAMIC_UNIFORM_BUFFER,
@@ -604,11 +614,11 @@ export class PipelineLayoutData {
         this.descriptorSets.clear();
         this.descriptorGroups.clear();
     }
-    getSets (isWebGPU: boolean): Map<UpdateFrequency, DescriptorSetData> {
-        return HTML5 && isWebGPU ? this.descriptorGroups : this.descriptorSets;
+    getSets (): Map<UpdateFrequency, DescriptorSetData> {
+        return HTML5 && Layout.isWebGPU ? this.descriptorGroups : this.descriptorSets;
     }
-    getSet (frequency: UpdateFrequency, isWebGPU: boolean): DescriptorSetData | undefined {
-        return HTML5 && isWebGPU ? this.descriptorGroups.get(frequency) : this.descriptorSets.get(frequency);
+    getSet (frequency: UpdateFrequency): DescriptorSetData | undefined {
+        return HTML5 && Layout.isWebGPU ? this.descriptorGroups.get(frequency) : this.descriptorSets.get(frequency);
     }
     readonly descriptorSets: Map<UpdateFrequency, DescriptorSetData> = new Map<UpdateFrequency, DescriptorSetData>();
     readonly descriptorGroups: Map<UpdateFrequency, DescriptorSetData> = new Map<UpdateFrequency, DescriptorSetData>();
@@ -1002,6 +1012,7 @@ export class LayoutGraphObjectPool {
         this.renderCommon = renderCommon;
     }
     reset (): void {
+        this.l.reset(); // Layout
         this.d.reset(); // Descriptor
         this.db.reset(); // DescriptorBlock
         this.dbf.reset(); // DescriptorBlockFlattened
@@ -1025,6 +1036,10 @@ export class LayoutGraphObjectPool {
         this.rsd.reset(); // RenderStageData
         this.rpd.reset(); // RenderPhaseData
         this.lgd.reset(); // LayoutGraphData
+    }
+    createLayout (): Layout {
+        const v = this.l.add(); // Layout
+        return v;
     }
     createDescriptor (
         type: Type = Type.UNKNOWN,
@@ -1190,6 +1205,7 @@ export class LayoutGraphObjectPool {
         return v;
     }
     public readonly renderCommon: RenderCommonObjectPool;
+    private readonly l: RecyclePool<Layout> = createPool(Layout);
     private readonly d: RecyclePool<Descriptor> = createPool(Descriptor);
     private readonly db: RecyclePool<DescriptorBlock> = createPool(DescriptorBlock);
     private readonly dbf: RecyclePool<DescriptorBlockFlattened> = createPool(DescriptorBlockFlattened);

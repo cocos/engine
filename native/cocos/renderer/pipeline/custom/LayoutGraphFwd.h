@@ -38,6 +38,10 @@ namespace cc {
 
 namespace render {
 
+enum class LayoutType : uint8_t;
+
+struct Layout;
+
 enum class DescriptorTypeOrder : uint8_t;
 
 struct Descriptor;

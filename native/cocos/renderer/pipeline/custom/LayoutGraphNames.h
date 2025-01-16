@@ -36,6 +36,14 @@ namespace cc {
 
 namespace render {
 
+inline const char* getName(LayoutType e) noexcept {
+    switch (e) {
+        case LayoutType::VULKAN: return "VULKAN";
+        case LayoutType::WEBGPU: return "WEBGPU";
+    }
+    return "";
+}
+inline const char* getName(const Layout& /*v*/) noexcept { return "Layout"; }
 inline const char* getName(DescriptorTypeOrder e) noexcept {
     switch (e) {
         case DescriptorTypeOrder::UNIFORM_BUFFER: return "UNIFORM_BUFFER";
