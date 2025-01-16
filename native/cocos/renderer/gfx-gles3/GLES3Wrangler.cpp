@@ -102,6 +102,7 @@ void *gles3wLoad(const char *proc) {
     #include <dlfcn.h>
     #include "BasePlatform.h"
     #include "../gfx-gles-common/eglw.h"
+    #include "../gfx-gles-common/gles2w.h"
     #include "../gfx-gles-common/gles3w.h"
 
 
