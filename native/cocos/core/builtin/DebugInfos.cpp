@@ -266,6 +266,8 @@ ccstd::unordered_map<uint32_t, ccstd::string> debugInfos = {
 { 5200, "Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option" },
 { 5201, "browser don't support web audio" },
 { 5202, "This feature supports WebGL render mode only." },
+{ 5203, "Audio buffer cache %s has not been added." },
+{ 5204, "Audio buffer %s has been cached." },
 { 5300, "Type of target to deserialize not matched with data: target is %s, data is %s" },
 { 5301, "Can not find script '%s'" },
 { 5302, "Can not find class '%s'" },
