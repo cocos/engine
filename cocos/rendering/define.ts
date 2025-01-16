@@ -35,6 +35,9 @@ import { BindingMappingInfo, DescriptorType, Type, ShaderStageFlagBit, UniformSt
     TextureUsageBit,
     TextureFlagBit,
     SampleCount,
+    MemoryAccessBit,
+    ViewDimension,
+    SampleType,
 } from '../gfx';
 
 export const PIPELINE_FLOW_MAIN = 'MainFlow';
@@ -470,7 +473,14 @@ export class UBOLocal {
 
     public static readonly NAME = 'CCLocal';
     public static readonly BINDING = UBOLocalEnum.BINDING;
-    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOLocalEnum.BINDING, DescriptorType.UNIFORM_BUFFER, 1, ShaderStageFlagBit.VERTEX | ShaderStageFlagBit.FRAGMENT | ShaderStageFlagBit.COMPUTE);
+    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(
+        UBOLocalEnum.BINDING,
+        DescriptorType.UNIFORM_BUFFER,
+        1,
+        ShaderStageFlagBit.VERTEX | ShaderStageFlagBit.FRAGMENT | ShaderStageFlagBit.COMPUTE,
+        MemoryAccessBit.READ_ONLY,
+        ViewDimension.BUFFER,
+    );
     public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOLocalEnum.BINDING, UBOLocal.NAME, [
         new Uniform('cc_matWorld', Type.MAT4, 1),
         new Uniform('cc_matWorldIT', Type.MAT4, 1),
@@ -497,7 +507,14 @@ export class UBOWorldBound {
 
     public static readonly NAME = 'CCWorldBound';
     public static readonly BINDING = ModelLocalBindings.UBO_LOCAL;
-    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOWorldBound.BINDING, DescriptorType.UNIFORM_BUFFER, 1, ShaderStageFlagBit.VERTEX | ShaderStageFlagBit.COMPUTE);
+    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(
+        UBOWorldBound.BINDING,
+        DescriptorType.UNIFORM_BUFFER,
+        1,
+        ShaderStageFlagBit.VERTEX | ShaderStageFlagBit.COMPUTE,
+        MemoryAccessBit.READ_ONLY,
+        ViewDimension.BUFFER,
+    );
     public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOWorldBound.BINDING, UBOWorldBound.NAME, [
         new Uniform('cc_worldBoundCenter', Type.FLOAT4, 1),
         new Uniform('cc_worldBoundHalfExtents', Type.FLOAT4, 1),
@@ -517,7 +534,14 @@ export class UBOLocalBatched {
 
     public static readonly NAME = 'CCLocalBatched';
     public static readonly BINDING = ModelLocalBindings.UBO_LOCAL;
-    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOLocalBatched.BINDING, DescriptorType.UNIFORM_BUFFER, 1, ShaderStageFlagBit.VERTEX | ShaderStageFlagBit.COMPUTE);
+    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(
+        UBOLocalBatched.BINDING,
+        DescriptorType.UNIFORM_BUFFER,
+        1,
+        ShaderStageFlagBit.VERTEX | ShaderStageFlagBit.COMPUTE,
+        MemoryAccessBit.READ_ONLY,
+        ViewDimension.BUFFER,
+    );
     public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOLocalBatched.BINDING, UBOLocalBatched.NAME, [
         new Uniform('cc_matWorlds', Type.MAT4, UBOLocalBatched.BATCHING_COUNT),
     ], 1);
@@ -553,7 +577,14 @@ export class UBOForwardLight {
 
     public static readonly NAME = 'CCForwardLight';
     public static readonly BINDING = ModelLocalBindings.UBO_FORWARD_LIGHTS;
-    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOForwardLight.BINDING, DescriptorType.DYNAMIC_UNIFORM_BUFFER, 1, ShaderStageFlagBit.FRAGMENT);
+    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(
+        UBOForwardLight.BINDING,
+        DescriptorType.DYNAMIC_UNIFORM_BUFFER,
+        1,
+        ShaderStageFlagBit.FRAGMENT,
+        MemoryAccessBit.READ_ONLY,
+        ViewDimension.BUFFER,
+    );
     public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOForwardLight.BINDING, UBOForwardLight.NAME, [
         new Uniform('cc_lightPos', Type.FLOAT4, UBOForwardLightEnum.LIGHTS_PER_PASS),
         new Uniform('cc_lightColor', Type.FLOAT4, UBOForwardLightEnum.LIGHTS_PER_PASS),
@@ -582,7 +613,14 @@ export class UBOSkinningTexture {
 
     public static readonly NAME = 'CCSkinningTexture';
     public static readonly BINDING = ModelLocalBindings.UBO_SKINNING_TEXTURE;
-    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOSkinningTexture.BINDING, DescriptorType.UNIFORM_BUFFER, 1, ShaderStageFlagBit.VERTEX);
+    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(
+        UBOSkinningTexture.BINDING,
+        DescriptorType.UNIFORM_BUFFER,
+        1,
+        ShaderStageFlagBit.VERTEX,
+        MemoryAccessBit.READ_ONLY,
+        ViewDimension.BUFFER,
+    );
     public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOSkinningTexture.BINDING, UBOSkinningTexture.NAME, [
         new Uniform('cc_jointTextureInfo', Type.FLOAT4, 1),
     ], 1);
@@ -597,7 +635,14 @@ export class UBOSkinningAnimation {
 
     public static readonly NAME = 'CCSkinningAnimation';
     public static readonly BINDING = ModelLocalBindings.UBO_SKINNING_ANIMATION;
-    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOSkinningAnimation.BINDING, DescriptorType.UNIFORM_BUFFER, 1, ShaderStageFlagBit.VERTEX);
+    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(
+        UBOSkinningAnimation.BINDING,
+        DescriptorType.UNIFORM_BUFFER,
+        1,
+        ShaderStageFlagBit.VERTEX,
+        MemoryAccessBit.READ_ONLY,
+        ViewDimension.BUFFER,
+    );
     public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOSkinningAnimation.BINDING, UBOSkinningAnimation.NAME, [
         new Uniform('cc_jointAnimInfo', Type.FLOAT4, 1),
     ], 1);
@@ -616,7 +661,14 @@ export class UBOSkinning {
 
     public static readonly NAME = 'CCSkinning';
     public static readonly BINDING = ModelLocalBindings.UBO_SKINNING_TEXTURE;
-    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOSkinning.BINDING, DescriptorType.UNIFORM_BUFFER, 1, ShaderStageFlagBit.VERTEX);
+    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(
+        UBOSkinning.BINDING,
+        DescriptorType.UNIFORM_BUFFER,
+        1,
+        ShaderStageFlagBit.VERTEX,
+        MemoryAccessBit.READ_ONLY,
+        ViewDimension.BUFFER,
+    );
     public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOSkinning.BINDING, UBOSkinning.NAME, [
         new Uniform('cc_joints', Type.FLOAT4, 1),
     ], 1);
@@ -666,7 +718,14 @@ export class UBOMorph {
 
     public static readonly NAME = 'CCMorph';
     public static readonly BINDING = ModelLocalBindings.UBO_MORPH;
-    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOMorph.BINDING, DescriptorType.UNIFORM_BUFFER, 1, ShaderStageFlagBit.VERTEX);
+    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(
+        UBOMorph.BINDING,
+        DescriptorType.UNIFORM_BUFFER,
+        1,
+        ShaderStageFlagBit.VERTEX,
+        MemoryAccessBit.READ_ONLY,
+        ViewDimension.BUFFER,
+    );
     public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOMorph.BINDING, UBOMorph.NAME, [
         new Uniform('cc_displacementWeights', Type.FLOAT4, UBOMorphEnum.MAX_MORPH_TARGET_COUNT / 4),
         new Uniform('cc_displacementTextureInfo', Type.FLOAT4, 1),
@@ -680,7 +739,14 @@ export class UBOUILocal { // pre one vec4
     private constructor () {}
     public static readonly NAME = 'CCUILocal';
     public static readonly BINDING = ModelLocalBindings.UBO_UI_LOCAL;
-    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOUILocal.BINDING, DescriptorType.DYNAMIC_UNIFORM_BUFFER, 1, ShaderStageFlagBit.VERTEX);
+    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(
+        UBOUILocal.BINDING,
+        DescriptorType.DYNAMIC_UNIFORM_BUFFER,
+        1,
+        ShaderStageFlagBit.VERTEX,
+        MemoryAccessBit.READ_ONLY,
+        ViewDimension.BUFFER,
+    );
     public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOUILocal.BINDING, UBOUILocal.NAME, [
         new Uniform('cc_local_data', Type.FLOAT4, 1),
     ], 1);
@@ -718,7 +784,14 @@ export class UBOSH {
 
     public static readonly NAME = 'CCSH';
     public static readonly BINDING = UBOSHEnum.BINDING;
-    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(UBOSHEnum.BINDING, DescriptorType.UNIFORM_BUFFER, 1, ShaderStageFlagBit.FRAGMENT);
+    public static readonly DESCRIPTOR = new DescriptorSetLayoutBinding(
+        UBOSHEnum.BINDING,
+        DescriptorType.UNIFORM_BUFFER,
+        1,
+        ShaderStageFlagBit.FRAGMENT,
+        MemoryAccessBit.READ_ONLY,
+        ViewDimension.BUFFER,
+    );
     public static readonly LAYOUT = new UniformBlock(SetIndex.LOCAL, UBOSHEnum.BINDING, UBOSH.NAME, [
         new Uniform('cc_sh_linear_const_r', Type.FLOAT4, 1),
         new Uniform('cc_sh_linear_const_g', Type.FLOAT4, 1),
@@ -738,7 +811,14 @@ localDescriptorSetLayout.bindings[UBOSHEnum.BINDING] = UBOSH.DESCRIPTOR;
  */
 const UNIFORM_JOINT_TEXTURE_NAME = 'cc_jointTexture';
 export const UNIFORM_JOINT_TEXTURE_BINDING = ModelLocalBindings.SAMPLER_JOINTS;
-const UNIFORM_JOINT_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(UNIFORM_JOINT_TEXTURE_BINDING, DescriptorType.SAMPLER_TEXTURE, 1, ShaderStageFlagBit.VERTEX);
+const UNIFORM_JOINT_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(
+    UNIFORM_JOINT_TEXTURE_BINDING,
+    DescriptorType.SAMPLER_TEXTURE,
+    1,
+    ShaderStageFlagBit.VERTEX,
+    MemoryAccessBit.READ_ONLY,
+    ViewDimension.TEX2D,
+);
 const UNIFORM_JOINT_TEXTURE_LAYOUT = new UniformSamplerTexture(SetIndex.LOCAL, UNIFORM_JOINT_TEXTURE_BINDING, UNIFORM_JOINT_TEXTURE_NAME, Type.SAMPLER2D, 1);
 localDescriptorSetLayout.layouts[UNIFORM_JOINT_TEXTURE_NAME] = UNIFORM_JOINT_TEXTURE_LAYOUT;
 localDescriptorSetLayout.bindings[UNIFORM_JOINT_TEXTURE_BINDING] = UNIFORM_JOINT_TEXTURE_DESCRIPTOR;
@@ -749,7 +829,14 @@ localDescriptorSetLayout.bindings[UNIFORM_JOINT_TEXTURE_BINDING] = UNIFORM_JOINT
  */
 const UNIFORM_REALTIME_JOINT_TEXTURE_NAME = 'cc_realtimeJoint';
 export const UNIFORM_REALTIME_JOINT_TEXTURE_BINDING = ModelLocalBindings.SAMPLER_JOINTS;
-const UNIFORM_REALTIME_JOINT_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(UNIFORM_REALTIME_JOINT_TEXTURE_BINDING, DescriptorType.SAMPLER_TEXTURE, 1, ShaderStageFlagBit.VERTEX);
+const UNIFORM_REALTIME_JOINT_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(
+    UNIFORM_REALTIME_JOINT_TEXTURE_BINDING,
+    DescriptorType.SAMPLER_TEXTURE,
+    1,
+    ShaderStageFlagBit.VERTEX,
+    MemoryAccessBit.READ_ONLY,
+    ViewDimension.TEX2D,
+);
 const UNIFORM_REALTIME_JOINT_TEXTURE_LAYOUT = new UniformSamplerTexture(SetIndex.LOCAL, UNIFORM_REALTIME_JOINT_TEXTURE_BINDING, UNIFORM_REALTIME_JOINT_TEXTURE_NAME, Type.SAMPLER2D, 1);
 localDescriptorSetLayout.layouts[UNIFORM_REALTIME_JOINT_TEXTURE_NAME] = UNIFORM_REALTIME_JOINT_TEXTURE_LAYOUT;
 localDescriptorSetLayout.bindings[UNIFORM_REALTIME_JOINT_TEXTURE_BINDING] = UNIFORM_REALTIME_JOINT_TEXTURE_DESCRIPTOR;
@@ -760,7 +847,14 @@ localDescriptorSetLayout.bindings[UNIFORM_REALTIME_JOINT_TEXTURE_BINDING] = UNIF
  */
 const UNIFORM_POSITION_MORPH_TEXTURE_NAME = 'cc_PositionDisplacements';
 export const UNIFORM_POSITION_MORPH_TEXTURE_BINDING = ModelLocalBindings.SAMPLER_MORPH_POSITION;
-const UNIFORM_POSITION_MORPH_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(UNIFORM_POSITION_MORPH_TEXTURE_BINDING, DescriptorType.SAMPLER_TEXTURE, 1, ShaderStageFlagBit.VERTEX);
+const UNIFORM_POSITION_MORPH_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(
+    UNIFORM_POSITION_MORPH_TEXTURE_BINDING,
+    DescriptorType.SAMPLER_TEXTURE,
+    1,
+    ShaderStageFlagBit.VERTEX,
+    MemoryAccessBit.READ_ONLY,
+    ViewDimension.TEX2D,
+);
 const UNIFORM_POSITION_MORPH_TEXTURE_LAYOUT = new UniformSamplerTexture(SetIndex.LOCAL, UNIFORM_POSITION_MORPH_TEXTURE_BINDING, UNIFORM_POSITION_MORPH_TEXTURE_NAME, Type.SAMPLER2D, 1);
 localDescriptorSetLayout.layouts[UNIFORM_POSITION_MORPH_TEXTURE_NAME] = UNIFORM_POSITION_MORPH_TEXTURE_LAYOUT;
 localDescriptorSetLayout.bindings[UNIFORM_POSITION_MORPH_TEXTURE_BINDING] = UNIFORM_POSITION_MORPH_TEXTURE_DESCRIPTOR;
@@ -771,7 +865,14 @@ localDescriptorSetLayout.bindings[UNIFORM_POSITION_MORPH_TEXTURE_BINDING] = UNIF
  */
 const UNIFORM_NORMAL_MORPH_TEXTURE_NAME = 'cc_NormalDisplacements';
 export const UNIFORM_NORMAL_MORPH_TEXTURE_BINDING = ModelLocalBindings.SAMPLER_MORPH_NORMAL;
-const UNIFORM_NORMAL_MORPH_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(UNIFORM_NORMAL_MORPH_TEXTURE_BINDING, DescriptorType.SAMPLER_TEXTURE, 1, ShaderStageFlagBit.VERTEX);
+const UNIFORM_NORMAL_MORPH_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(
+    UNIFORM_NORMAL_MORPH_TEXTURE_BINDING,
+    DescriptorType.SAMPLER_TEXTURE,
+    1,
+    ShaderStageFlagBit.VERTEX,
+    MemoryAccessBit.READ_ONLY,
+    ViewDimension.TEX2D,
+);
 const UNIFORM_NORMAL_MORPH_TEXTURE_LAYOUT = new UniformSamplerTexture(
     SetIndex.LOCAL,
     UNIFORM_NORMAL_MORPH_TEXTURE_BINDING,
@@ -788,7 +889,14 @@ localDescriptorSetLayout.bindings[UNIFORM_NORMAL_MORPH_TEXTURE_BINDING] = UNIFOR
  */
 const UNIFORM_TANGENT_MORPH_TEXTURE_NAME = 'cc_TangentDisplacements';
 export const UNIFORM_TANGENT_MORPH_TEXTURE_BINDING = ModelLocalBindings.SAMPLER_MORPH_TANGENT;
-const UNIFORM_TANGENT_MORPH_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(UNIFORM_TANGENT_MORPH_TEXTURE_BINDING, DescriptorType.SAMPLER_TEXTURE, 1, ShaderStageFlagBit.VERTEX);
+const UNIFORM_TANGENT_MORPH_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(
+    UNIFORM_TANGENT_MORPH_TEXTURE_BINDING,
+    DescriptorType.SAMPLER_TEXTURE,
+    1,
+    ShaderStageFlagBit.VERTEX,
+    MemoryAccessBit.READ_ONLY,
+    ViewDimension.TEX2D,
+);
 const UNIFORM_TANGENT_MORPH_TEXTURE_LAYOUT = new UniformSamplerTexture(
     SetIndex.LOCAL,
     UNIFORM_TANGENT_MORPH_TEXTURE_BINDING,
@@ -805,7 +913,14 @@ localDescriptorSetLayout.bindings[UNIFORM_TANGENT_MORPH_TEXTURE_BINDING] = UNIFO
  */
 const UNIFORM_LIGHTMAP_TEXTURE_NAME = 'cc_lightingMap';
 export const UNIFORM_LIGHTMAP_TEXTURE_BINDING = ModelLocalBindings.SAMPLER_LIGHTMAP;
-const UNIFORM_LIGHTMAP_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(UNIFORM_LIGHTMAP_TEXTURE_BINDING, DescriptorType.SAMPLER_TEXTURE, 1, ShaderStageFlagBit.FRAGMENT);
+const UNIFORM_LIGHTMAP_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(
+    UNIFORM_LIGHTMAP_TEXTURE_BINDING,
+    DescriptorType.SAMPLER_TEXTURE,
+    1,
+    ShaderStageFlagBit.FRAGMENT,
+    MemoryAccessBit.READ_ONLY,
+    ViewDimension.TEX2D,
+);
 const UNIFORM_LIGHTMAP_TEXTURE_LAYOUT = new UniformSamplerTexture(
     SetIndex.LOCAL,
     UNIFORM_LIGHTMAP_TEXTURE_BINDING,
@@ -822,7 +937,14 @@ localDescriptorSetLayout.bindings[UNIFORM_LIGHTMAP_TEXTURE_BINDING] = UNIFORM_LI
  */
 const UNIFORM_SPRITE_TEXTURE_NAME = 'cc_spriteTexture';
 export const UNIFORM_SPRITE_TEXTURE_BINDING = ModelLocalBindings.SAMPLER_SPRITE;
-const UNIFORM_SPRITE_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(UNIFORM_SPRITE_TEXTURE_BINDING, DescriptorType.SAMPLER_TEXTURE, 1, ShaderStageFlagBit.FRAGMENT);
+const UNIFORM_SPRITE_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(
+    UNIFORM_SPRITE_TEXTURE_BINDING,
+    DescriptorType.SAMPLER_TEXTURE,
+    1,
+    ShaderStageFlagBit.FRAGMENT,
+    MemoryAccessBit.READ_ONLY,
+    ViewDimension.TEX2D,
+);
 const UNIFORM_SPRITE_TEXTURE_LAYOUT = new UniformSamplerTexture(SetIndex.LOCAL, UNIFORM_SPRITE_TEXTURE_BINDING, UNIFORM_SPRITE_TEXTURE_NAME, Type.SAMPLER2D, 1);
 localDescriptorSetLayout.layouts[UNIFORM_SPRITE_TEXTURE_NAME] = UNIFORM_SPRITE_TEXTURE_LAYOUT;
 localDescriptorSetLayout.bindings[UNIFORM_SPRITE_TEXTURE_BINDING] = UNIFORM_SPRITE_TEXTURE_DESCRIPTOR;
@@ -833,7 +955,14 @@ localDescriptorSetLayout.bindings[UNIFORM_SPRITE_TEXTURE_BINDING] = UNIFORM_SPRI
  */
 const UNIFORM_REFLECTION_TEXTURE_NAME = 'cc_reflectionTexture';
 export const UNIFORM_REFLECTION_TEXTURE_BINDING = ModelLocalBindings.SAMPLER_REFLECTION;
-const UNIFORM_REFLECTION_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(UNIFORM_REFLECTION_TEXTURE_BINDING, DescriptorType.SAMPLER_TEXTURE, 1, ShaderStageFlagBit.FRAGMENT);
+const UNIFORM_REFLECTION_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(
+    UNIFORM_REFLECTION_TEXTURE_BINDING,
+    DescriptorType.SAMPLER_TEXTURE,
+    1,
+    ShaderStageFlagBit.FRAGMENT,
+    MemoryAccessBit.READ_ONLY,
+    ViewDimension.TEX2D,
+);
 const UNIFORM_REFLECTION_TEXTURE_LAYOUT = new UniformSamplerTexture(SetIndex.LOCAL, UNIFORM_REFLECTION_TEXTURE_BINDING, UNIFORM_REFLECTION_TEXTURE_NAME, Type.SAMPLER2D, 1);
 localDescriptorSetLayout.layouts[UNIFORM_REFLECTION_TEXTURE_NAME] = UNIFORM_REFLECTION_TEXTURE_LAYOUT;
 localDescriptorSetLayout.bindings[UNIFORM_REFLECTION_TEXTURE_BINDING] = UNIFORM_REFLECTION_TEXTURE_DESCRIPTOR;
@@ -844,7 +973,16 @@ localDescriptorSetLayout.bindings[UNIFORM_REFLECTION_TEXTURE_BINDING] = UNIFORM_
   */
 const UNIFORM_REFLECTION_STORAGE_NAME = 'cc_reflectionStorage';
 export const UNIFORM_REFLECTION_STORAGE_BINDING = ModelLocalBindings.STORAGE_REFLECTION;
-const UNIFORM_REFLECTION_STORAGE_DESCRIPTOR = new DescriptorSetLayoutBinding(UNIFORM_REFLECTION_STORAGE_BINDING, DescriptorType.STORAGE_IMAGE, 1, ShaderStageFlagBit.COMPUTE);
+const UNIFORM_REFLECTION_STORAGE_DESCRIPTOR = new DescriptorSetLayoutBinding(
+    UNIFORM_REFLECTION_STORAGE_BINDING,
+    DescriptorType.STORAGE_IMAGE,
+    1,
+    ShaderStageFlagBit.COMPUTE,
+    MemoryAccessBit.READ_WRITE,
+    ViewDimension.TEX2D,
+    SampleType.FLOAT,
+    Format.RGBA8,
+);
 const UNIFORM_REFLECTION_STORAGE_LAYOUT = new UniformStorageImage(SetIndex.LOCAL, UNIFORM_REFLECTION_STORAGE_BINDING, UNIFORM_REFLECTION_STORAGE_NAME, Type.IMAGE2D, 1);
 localDescriptorSetLayout.layouts[UNIFORM_REFLECTION_STORAGE_NAME] = UNIFORM_REFLECTION_STORAGE_LAYOUT;
 localDescriptorSetLayout.bindings[UNIFORM_REFLECTION_STORAGE_BINDING] = UNIFORM_REFLECTION_STORAGE_DESCRIPTOR;
@@ -855,7 +993,14 @@ localDescriptorSetLayout.bindings[UNIFORM_REFLECTION_STORAGE_BINDING] = UNIFORM_
  */
 const UNIFORM_REFLECTION_PROBE_CUBEMAP_NAME = 'cc_reflectionProbeCubemap';
 export const UNIFORM_REFLECTION_PROBE_CUBEMAP_BINDING = ModelLocalBindings.SAMPLER_REFLECTION_PROBE_CUBE;
-const UNIFORM_REFLECTION_PROBE_CUBEMAP_DESCRIPTOR = new DescriptorSetLayoutBinding(UNIFORM_REFLECTION_PROBE_CUBEMAP_BINDING, DescriptorType.SAMPLER_TEXTURE, 1, ShaderStageFlagBit.FRAGMENT);
+const UNIFORM_REFLECTION_PROBE_CUBEMAP_DESCRIPTOR = new DescriptorSetLayoutBinding(
+    UNIFORM_REFLECTION_PROBE_CUBEMAP_BINDING,
+    DescriptorType.SAMPLER_TEXTURE,
+    1,
+    ShaderStageFlagBit.FRAGMENT,
+    MemoryAccessBit.READ_ONLY,
+    ViewDimension.TEXCUBE,
+);
 const UNIFORM_REFLECTION_PROBE_CUBEMAP_LAYOUT = new UniformSamplerTexture(
     SetIndex.LOCAL,
     UNIFORM_REFLECTION_PROBE_CUBEMAP_BINDING,
@@ -872,7 +1017,14 @@ localDescriptorSetLayout.bindings[UNIFORM_REFLECTION_PROBE_CUBEMAP_BINDING] = UN
  */
 const UNIFORM_REFLECTION_PROBE_TEXTURE_NAME = 'cc_reflectionProbePlanarMap';
 export const UNIFORM_REFLECTION_PROBE_TEXTURE_BINDING = ModelLocalBindings.SAMPLER_REFLECTION_PROBE_PLANAR;
-const UNIFORM_REFLECTION_PROBE_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(UNIFORM_REFLECTION_PROBE_TEXTURE_BINDING, DescriptorType.SAMPLER_TEXTURE, 1, ShaderStageFlagBit.FRAGMENT);
+const UNIFORM_REFLECTION_PROBE_TEXTURE_DESCRIPTOR = new DescriptorSetLayoutBinding(
+    UNIFORM_REFLECTION_PROBE_TEXTURE_BINDING,
+    DescriptorType.SAMPLER_TEXTURE,
+    1,
+    ShaderStageFlagBit.FRAGMENT,
+    MemoryAccessBit.READ_ONLY,
+    ViewDimension.TEX2D,
+);
 const UNIFORM_REFLECTION_PROBE_TEXTURE_LAYOUT = new UniformSamplerTexture(
     SetIndex.LOCAL,
     UNIFORM_REFLECTION_PROBE_TEXTURE_BINDING,
@@ -889,7 +1041,14 @@ localDescriptorSetLayout.bindings[UNIFORM_REFLECTION_PROBE_TEXTURE_BINDING] = UN
  */
 const UNIFORM_REFLECTION_PROBE_DATA_MAP_NAME = 'cc_reflectionProbeDataMap';
 export const UNIFORM_REFLECTION_PROBE_DATA_MAP_BINDING = ModelLocalBindings.SAMPLER_REFLECTION_PROBE_DATA_MAP;
-const UNIFORM_REFLECTION_PROBE_DATA_MAP_DESCRIPTOR = new DescriptorSetLayoutBinding(UNIFORM_REFLECTION_PROBE_DATA_MAP_BINDING, DescriptorType.SAMPLER_TEXTURE, 1, ShaderStageFlagBit.FRAGMENT);
+const UNIFORM_REFLECTION_PROBE_DATA_MAP_DESCRIPTOR = new DescriptorSetLayoutBinding(
+    UNIFORM_REFLECTION_PROBE_DATA_MAP_BINDING,
+    DescriptorType.SAMPLER_TEXTURE,
+    1,
+    ShaderStageFlagBit.FRAGMENT,
+    MemoryAccessBit.READ_ONLY,
+    ViewDimension.TEX2D,
+);
 const UNIFORM_REFLECTION_PROBE_DATA_MAP_LAYOUT = new UniformSamplerTexture(
     SetIndex.LOCAL,
     UNIFORM_REFLECTION_PROBE_DATA_MAP_BINDING,
@@ -906,7 +1065,14 @@ localDescriptorSetLayout.bindings[UNIFORM_REFLECTION_PROBE_DATA_MAP_BINDING] = U
  */
 const UNIFORM_REFLECTION_PROBE_BLEND_CUBEMAP_NAME = 'cc_reflectionProbeBlendCubemap';
 export const UNIFORM_REFLECTION_PROBE_BLEND_CUBEMAP_BINDING = ModelLocalBindings.SAMPLER_REFLECTION_PROBE_BLEND_CUBE;
-const UNIFORM_REFLECTION_PROBE_BLEND_CUBEMAP_DESCRIPTOR = new DescriptorSetLayoutBinding(UNIFORM_REFLECTION_PROBE_BLEND_CUBEMAP_BINDING, DescriptorType.SAMPLER_TEXTURE, 1, ShaderStageFlagBit.FRAGMENT);
+const UNIFORM_REFLECTION_PROBE_BLEND_CUBEMAP_DESCRIPTOR = new DescriptorSetLayoutBinding(
+    UNIFORM_REFLECTION_PROBE_BLEND_CUBEMAP_BINDING,
+    DescriptorType.SAMPLER_TEXTURE,
+    1,
+    ShaderStageFlagBit.FRAGMENT,
+    MemoryAccessBit.READ_ONLY,
+    ViewDimension.TEXCUBE,
+);
 const UNIFORM_REFLECTION_PROBE_BLEND_CUBEMAP_LAYOUT = new UniformSamplerTexture(
     SetIndex.LOCAL,
     UNIFORM_REFLECTION_PROBE_BLEND_CUBEMAP_BINDING,
