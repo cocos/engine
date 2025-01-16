@@ -726,23 +726,6 @@ export function getDescriptorSetLayout (
     return null;
 }
 
-// get or create DescriptorBlockData from DescriptorSetLayoutData
-export function getOrCreateDescriptorBlockData (
-    data: DescriptorSetLayoutData,
-    type: DescriptorType,
-    vis: ShaderStageFlagBit,
-): DescriptorBlockData {
-    const order = getDescriptorTypeOrder(type);
-    for (const block of data.descriptorBlocks) {
-        if (block.type === order && block.visibility === vis) {
-            return block;
-        }
-    }
-    const block = new DescriptorBlockData(order, vis);
-    data.descriptorBlocks.push(block);
-    return block;
-}
-
 export function getProgramID (lg: LayoutGraphData, phaseID: number, programName: string): number {
     assert(phaseID !== lg.N);
     const phase = lg.j<RenderPhaseData>(phaseID);

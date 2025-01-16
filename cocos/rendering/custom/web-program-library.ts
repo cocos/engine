@@ -703,7 +703,15 @@ export function makeLocalDescriptorSetLayoutData (
         const [name, type] = getDescriptorNameAndType(source, b.binding);
         const nameID = getOrCreateDescriptorID(lg, name);
         const order = getDescriptorTypeOrder(b.descriptorType);
-        const block = new DescriptorBlockData(order, b.stageFlags, b.count);
+        const block = new DescriptorBlockData(
+            order,
+            b.stageFlags,
+            b.count,
+            b.access,
+            b.viewDimension,
+            b.sampleType,
+            b.format,
+        );
         block.offset = b.binding;
         block.descriptors.push(new DescriptorData(nameID, type, b.count));
         data.descriptorBlocks.push(block);
