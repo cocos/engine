@@ -280,10 +280,18 @@ export class KeyframeCurve<TKeyframeValue> implements CurveBase, Iterable<KeyFra
         return iNext;
     }
 
-    // Times are always sorted and 1-1 correspond to values.
-    /** @dontmangle */
+    /**
+     * Times are always sorted and 1-1 correspond to values.
+     * @dontmangle
+     * NOTE: _times is a serializable property set by `CCClass.fastDefine`,
+     * so it should not be mangled while `mangleProtected` is true in `<<ProjectRoot>>/engine-mangle-config.json`.
+     */
     protected _times: number[] = [];
-    /** @dontmangle */
+    /**
+     * @dontmangle
+     * NOTE: _values is a serializable property set by `CCClass.fastDefine`,
+     * so it should not be mangled while `mangleProtected` is true in `<<ProjectRoot>>/engine-mangle-config.json`.
+     */
     protected _values: TKeyframeValue[] = [];
 }
 

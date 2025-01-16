@@ -151,7 +151,13 @@ export interface IEventified {
  */
 export function Eventify<TBase> (base: Constructor<TBase>): Constructor<TBase & IEventified> {
     class Eventified extends (base as unknown as any) {
-        /** @dontmangle */
+        /**
+         * @dontmangle
+         * NOTE: Eventified mixins all properties from CallbacksInvoker.prototype in the following code.
+         * After invoking `Eventify` for a class, CallbacksInvoker's constructor will not be called,
+         * but its functions may invoke `this._callbackTable` which is declared as `public` in CallbacksInvoker.
+         * Marking it as dontmangle is a workaround to avoid the issue that `this._callbackTable` is not defined.
+         */
         protected _callbackTable = createMap(true);
 
         public once<Callback extends (...any) => void> (type: EventType, callback: Callback, target?: any): Callback {

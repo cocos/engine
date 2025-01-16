@@ -1331,7 +1331,14 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         this.emit(NodeEventType.CHILDREN_ORDER_CHANGED);
     }
 
-    /** @dontmangle */
+    /**
+     * @dontmangle
+     * NOTE: the protected method `_instantiate` is invoked by dynamically without type information.
+     * See `instantiate` in cocos/serialization/instantiate.ts.
+     * ```ts
+     * clone = original._instantiate(null, true); // original is any, so _instantiate should not be mangled.
+     * ```
+     */
     protected _instantiate (cloned?: Node | null, isSyncedNode: boolean = false): Node {
         if (!cloned) {
             cloned = cclegacy.instantiate._clone(this, this) as Node;
