@@ -1016,6 +1016,8 @@ export class SpriteFrame extends Asset {
     /**
      * Calculate UV
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
+     * @engineInternal
+     * @mangle
      */
     public _calculateUV (): void {
         const arrayFill = js.array.fillItems;
