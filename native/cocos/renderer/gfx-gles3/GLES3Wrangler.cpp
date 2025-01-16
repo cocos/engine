@@ -23,12 +23,12 @@
 ****************************************************************************/
 
 #include "GLES3Wrangler.h"
-#include <string>
-#include "base/Log.h"
-#include "base/memory/Memory.h"
 
 #if defined(_WIN32) && !defined(ANDROID)
     #define WIN32_LEAN_AND_MEAN 1
+    #include <string>
+    #include "base/Log.h"
+    #include "base/memory/Memory.h"
     #include <windows.h>
 
 static HMODULE libegl = NULL;
