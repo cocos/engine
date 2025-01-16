@@ -861,7 +861,7 @@ export class Batcher2D implements IBatcher {
     }
 
     private _screenSort (a: RenderRoot2D, b: RenderRoot2D): number {
-        return a.node.getSiblingIndex() - b.node.getSiblingIndex();
+        return a.node.siblingIndex - b.node.siblingIndex;
     }
 
     // TODO: Not a good way to do the job

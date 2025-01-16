@@ -42,7 +42,29 @@ console.log(`features: [ ${features.join(', ')} ]`);
         },
         wasmCompressionMode: 'brotli',
         inlineEnum: true,
-        mangleProperties: true,
+        mangleProperties: {
+            mangleList: [
+                'UITransform._sortSiblings',
+                'UITransform._cleanChangeMap',
+                'Node._findComponents',
+                'Node._findChildComponent',
+                'Node._findChildComponents',
+                'Node.idGenerator',
+                'Node._stacks',
+                'Node._stackId',
+                'Node._setScene',
+                'EffectAsset._layoutValid',
+                'EffectAsset._effects',
+                'ReflectionProbe.DEFAULT_CUBE_SIZE',
+                'ReflectionProbe.DEFAULT_PLANER_SIZE',
+                'WebGLDeviceManager.setInstance',
+                'WebGL2DeviceManager.setInstance',
+                'CanvasPool',
+            ],
+            dontMangleList: [
+                'Component',
+            ],
+        },
     };
 
     await fs.ensureDir(outDir);

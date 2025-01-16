@@ -786,7 +786,7 @@ export class UITransform extends Component {
                 const ca = aComp ? aComp._priority : 0;
                 const cb = bComp ? bComp._priority : 0;
                 const diff = ca - cb;
-                if (diff === 0) return a.getSiblingIndex() - b.getSiblingIndex();
+                if (diff === 0) return a.siblingIndex - b.siblingIndex;
                 return diff;
             });
         }

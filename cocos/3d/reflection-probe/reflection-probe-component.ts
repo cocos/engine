@@ -64,8 +64,8 @@ export enum ProbeResolution {
 @playOnFocus
 @help('i18n:cc.ReflectionProbe')
 export class ReflectionProbe extends Component {
-    protected static readonly DEFAULT_CUBE_SIZE: Readonly<Vec3> =  new Vec3(1, 1, 1);
-    protected static readonly DEFAULT_PLANER_SIZE: Readonly<Vec3> =  new Vec3(5, 0.5, 5);
+    protected static readonly DEFAULT_CUBE_SIZE: Readonly<Vec3> = new Vec3(1, 1, 1);
+    protected static readonly DEFAULT_PLANER_SIZE: Readonly<Vec3> = new Vec3(5, 0.5, 5);
     protected readonly _lastSize = new Vec3();
     @serializable
     protected _resolution = 256;
