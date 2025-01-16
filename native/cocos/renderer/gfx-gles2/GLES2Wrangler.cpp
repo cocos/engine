@@ -69,8 +69,8 @@ void *gles2wLoad(const char *proc) {
 #include <BasePlatform.h>
 
 namespace {
-    static void *libegl = nullptr;
-    static void *libgles = nullptr;
+    void *libegl = nullptr;
+    void *libgles = nullptr;
 }
 
 bool gles2wOpen() {

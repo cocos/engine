@@ -103,9 +103,9 @@ void *gles3wLoad(const char *proc) {
 #include <BasePlatform.h>
 
 namespace {
-    static void *libegl = nullptr;
-    static void *libgles = nullptr;
-    static PFNGLES3WLOADPROC pfnGles3wLoad = nullptr;
+    void *libegl = nullptr;
+    void *libgles = nullptr;
+    PFNGLES3WLOADPROC pfnGles3wLoad = nullptr;
 }
 
 bool gles3wOpen() {
