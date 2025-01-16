@@ -100,7 +100,10 @@ void *gles3wLoad(const char *proc) {
 }
 #else
     #include <dlfcn.h>
-#include <BasePlatform.h>
+    #include "BasePlatform.h"
+    #include "eglw.h"
+    #include "gles3w.h"
+
 
 namespace {
     void *libegl = nullptr;
