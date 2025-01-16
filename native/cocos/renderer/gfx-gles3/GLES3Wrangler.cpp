@@ -101,8 +101,8 @@ void *gles3wLoad(const char *proc) {
 #else
     #include <dlfcn.h>
     #include "BasePlatform.h"
-    #include "eglw.h"
-    #include "gles3w.h"
+    #include "../gfx-gles-common/eglw.h"
+    #include "../gfx-gles-common/gles3w.h"
 
 
 namespace {

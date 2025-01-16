@@ -67,8 +67,8 @@ void *gles2wLoad(const char *proc) {
 #else
     #include <dlfcn.h>
     #include "BasePlatform.h"
-    #include "eglw.h"
-    #include "gles2w.h"
+    #include "../gfx-gles-common/eglw.h"
+    #include "../gfx-gles-common/gles2w.h"
 
 namespace {
     void *libegl = nullptr;
