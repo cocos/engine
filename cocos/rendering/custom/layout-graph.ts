@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 /* eslint-disable max-len */
+import { HTML5 } from 'internal:constants';
 import { AddressableGraph, AdjI, AdjacencyGraph, BidirectionalGraph, ComponentGraph, ED, InEI, MutableGraph, MutableReferenceGraph, NamedGraph, OutE, OutEI, PolymorphicGraph, PropertyGraph, ReferenceGraph, VertexListGraph, findRelative, getPath } from './graph';
 import type { DescriptorSet, DescriptorSetLayout, PipelineLayout } from '../../gfx';
 import { DescriptorSetLayoutInfo, Format, MemoryAccessBit, SampleType, ShaderStageFlagBit, Type, UniformBlock, ViewDimension } from '../../gfx';
@@ -604,10 +605,10 @@ export class PipelineLayoutData {
         this.descriptorGroups.clear();
     }
     getSets (isWebGPU: boolean): Map<UpdateFrequency, DescriptorSetData> {
-        return isWebGPU ? this.descriptorGroups : this.descriptorSets;
+        return HTML5 && isWebGPU ? this.descriptorGroups : this.descriptorSets;
     }
     getSet (frequency: UpdateFrequency, isWebGPU: boolean): DescriptorSetData | undefined {
-        return isWebGPU ? this.descriptorGroups.get(frequency) : this.descriptorSets.get(frequency);
+        return HTML5 && isWebGPU ? this.descriptorGroups.get(frequency) : this.descriptorSets.get(frequency);
     }
     readonly descriptorSets: Map<UpdateFrequency, DescriptorSetData> = new Map<UpdateFrequency, DescriptorSetData>();
     readonly descriptorGroups: Map<UpdateFrequency, DescriptorSetData> = new Map<UpdateFrequency, DescriptorSetData>();
