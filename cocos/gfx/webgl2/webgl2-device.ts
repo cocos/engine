@@ -70,7 +70,6 @@ import { IWebGL2BindingMapping, IWebGL2BlitManager } from './webgl2-gpu-objects'
 import { BrowserType, OS } from '../../../pal/system-info/enum-type';
 import type { WebGL2StateCache } from './webgl2-state-cache';
 import { WebGLConstants } from '../gl-constants';
-import { set } from '../../core/utils/js-typed';
 
 function setFormatFeature (formatFeatures: FormatFeature[], indexArray: Format[], feature: FormatFeature): void {
     for (let i = 0; i < indexArray.length; ++i) {
