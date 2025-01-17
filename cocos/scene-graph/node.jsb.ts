@@ -28,7 +28,7 @@ import { NodeEventType } from './node-event';
 import { CCObjectFlags } from '../core/data/object';
 import { NodeUIProperties } from './node-ui-properties';
 import { MobilityMode, NodeSpace, TransformBit } from './node-enum';
-import { Mat4, Quat, Vec3 } from '../core/math';
+import { IVec2Like, Mat4, Quat, Vec3 } from '../core/math';
 import { Layers } from './layers';
 import { editorExtrasTag, SerializationContext, SerializationOutput, serializeTag } from '../core/data';
 import { _tempFloatArray, fillMat4WithTempFloatArray } from './utils.jsb';
@@ -1107,6 +1107,17 @@ Object.defineProperty(nodeProto, '_static', {
     },
 });
 
+Object.defineProperty(nodeProto, '_hasSkewComp', {
+    configurable: true,
+    enumerable: true,
+    get(): Readonly<Boolean> {
+        return this._sharedUint8Arr[3] != 0;
+    },
+    set(v) {
+        this._sharedUint8Arr[3] = (v ? 1 : 0);
+    },
+});
+
 Object.defineProperty(nodeProto, 'forward', {
     configurable: true,
     enumerable: true,
@@ -1394,6 +1405,27 @@ nodeProto._onSiblingIndexChanged = function (index) {
         }
         this._eventProcessor.onUpdatingSiblingIndex();
     }
+};
+
+nodeProto._setSkew = function (v: IVec2Like): void {
+    this._sharedFloat32Arr[0] = v.x;
+    this._sharedFloat32Arr[1] = v.y;
+};
+
+nodeProto._getSkewX = function () {
+    return this._sharedFloat32Arr[0];
+};
+
+nodeProto._setSkewX = function (v: number) {
+    this._sharedFloat32Arr[0] = v;
+}
+
+nodeProto._getSkewY = function () {
+    return this._sharedFloat32Arr[1];
+};
+
+nodeProto._setSkewY = function (v: number) {
+    this._sharedFloat32Arr[1] = v;
 }
 
 //
@@ -1413,9 +1445,10 @@ nodeProto._ctor = function (name?: string) {
     this._sharedUint32Arr = new Uint32Array(sharedArrayBuffer, 0, 3);
     // Int32Array with 1 element: siblingIndex
     this._sharedInt32Arr = new Int32Array(sharedArrayBuffer, 12, 1);
-    // Uint8Array with 3 elements: activeInHierarchy, active, static
-    this._sharedUint8Arr = new Uint8Array(sharedArrayBuffer, 16, 3);
-    //
+    // Uint8Array with 4 elements: activeInHierarchy, active, static, _hasSkewComp
+    this._sharedUint8Arr = new Uint8Array(sharedArrayBuffer, 16, 4);
+    // Float32Array with 2 elements: skewX, skewY
+    this._sharedFloat32Arr = new Float32Array(sharedArrayBuffer, 20, 2);
 
     this._sharedUint32Arr[1] = Layers.Enum.DEFAULT; // this._sharedUint32Arr[1] is layer
     this._scene = null;

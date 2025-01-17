@@ -60,6 +60,11 @@ export enum TransformBit {
      */
     SCALE = (1 << 2),
     /**
+     * @en Skew changed
+     * @zh 节点斜切
+     */
+    SKEW = (1 << 3),
+    /**
      * @en Rotation or scale changed
      * @zh 节点旋转及缩放
      */

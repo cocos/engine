@@ -26,7 +26,7 @@ import { UIRenderer } from '../2d/framework/ui-renderer';
 import { warnID } from '../core/platform/debug';
 import { UIMeshRenderer } from '../2d';
 import type { Node } from './node';
-import type { UITransform } from '../2d/framework/ui-transform';
+import type { UITransform, UISkew } from '../2d/framework';
 
 /**
  * @en Node's UI properties abstraction
@@ -46,6 +46,17 @@ export class NodeUIProperties {
     }
     set uiTransformComp (value: UITransform | null) {
         this._uiTransformComp = value;
+    }
+
+    get uiSkewComp (): UISkew | null {
+        if (!this._uiSkewComp) {
+            this._uiSkewComp = this._node.getComponent('cc.UISkew') as UISkew;
+        }
+        return this._uiSkewComp;
+    }
+
+    set uiSkewComp (comp: UISkew | null) {
+        this._uiSkewComp = comp;
     }
 
     /**
@@ -90,6 +101,7 @@ export class NodeUIProperties {
 
     public colorDirty = true;
     protected _uiTransformComp: UITransform | null = null;
+    private _uiSkewComp: UISkew | null = null;
     private declare _node: Node;
 
     constructor (node: Node) {

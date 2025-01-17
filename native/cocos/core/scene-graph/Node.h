@@ -666,12 +666,14 @@ private:
     // NOTE: TypeArray created in node.jsb.ts _ctor should have the same memory layout
     uint32_t _eventMask{0};                                             // Uint32: 0
     uint32_t _layer{static_cast<uint32_t>(Layers::LayerList::DEFAULT)}; // Uint32: 1
-    uint32_t _transformFlags{static_cast<uint32_t>(TransformBit::TRS)}; // Uint32: 2
+    uint32_t _transformFlags{static_cast<uint32_t>(TransformBit::TRS | TransformBit::SKEW)}; // Uint32: 2
     index_t _siblingIndex{0};                                           // Int32: 0
     uint8_t _activeInHierarchy{0};                                      // Uint8: 0
     uint8_t _active{1};                                                 // Uint8: 1
     uint8_t _isStatic{0};                                               // Uint8: 2
-    uint8_t _padding{0};                                                // Uint8: 3
+    uint8_t _hasSkewComp{0};                                            // Uint8: 3
+    float _skewX{.0F};                                                  // Float32: 0
+    float _skewY{.0F};                                                  // Float32: 1
 
     /* set _hasChangedFlagsVersion to globalFlagChangeVersion when `_hasChangedFlags` updated.
      * `globalFlagChangeVersion == _hasChangedFlagsVersion` means that "_hasChangedFlags is dirty in current frametime".

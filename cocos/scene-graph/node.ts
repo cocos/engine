@@ -53,6 +53,8 @@ const Deactivating = CCObjectFlags.Deactivating;
 export const TRANSFORM_ON = 1 << 0;
 const ACTIVE_ON = 1 << 1;
 
+const DEG_TO_RAD = Math.PI / 180.0;
+
 const idGenerator = new js.IDGenerator('Node');
 
 function getConstructor<T> (typeOrClassName: string | Constructor<T> | AbstractedConstructor<T>): Constructor<T> | AbstractedConstructor<T> | null | undefined {
@@ -1551,7 +1553,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     @serializable
     protected _euler = new Vec3();
 
-    protected _transformFlags = TransformBit.TRS; // does the world transform need to update?
+    protected _transformFlags = TransformBit.TRS | TransformBit.SKEW; // does the world transform need to update?
     protected _eulerDirty = false;
 
     protected _flagChangeVersion = 0;
@@ -2144,6 +2146,22 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                         Vec3.copy(child._scale, child._lscale);
                     }
                     Mat4.fromRTS(childMat, child._rot, child._pos, child._scale);
+                }
+            }
+
+            if (dirtyBits & TransformBit.SKEW) {
+                const skew = child._uiProps.uiSkewComp;
+                if (skew) {
+                    const skewX = Math.tan(skew.x * DEG_TO_RAD);
+                    const skewY = Math.tan(skew.y * DEG_TO_RAD);
+                    const a = childMat.m00;
+                    const b = childMat.m01;
+                    const c = childMat.m04;
+                    const d = childMat.m05;
+                    childMat.m00 = a + c * skewY;
+                    childMat.m01 = b + d * skewY;
+                    childMat.m04 = c + a * skewX;
+                    childMat.m05 = d + b * skewX;
                 }
             }
 
