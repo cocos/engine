@@ -317,7 +317,7 @@ export class WebGLDevice extends Device {
             Format.DEPTH_STENCIL,
         ], false);
 
-        setFormatFeature(formatFeatures, [
+        setFormatFeatureBitwiseOr(formatFeatures, [
             Format.R8I,
             Format.RG8I,
             Format.RGB8I,
