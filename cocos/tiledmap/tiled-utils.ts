@@ -27,6 +27,20 @@ import { Texture2D } from '../asset/assets';
 import { Rect } from '../core';
 import { GID, TiledGrid, TiledTextureGrids, TMXTilesetInfo } from './tiled-types';
 
+/**
+ * If enabled, the texture coordinates will be calculated by using this formula:
+ * - texCoord.left = (rect.origin.x*2+1) / (texture.wide*2);
+ * - texCoord.right = texCoord.left + (rect.size.width*2-2)/(texture.wide*2);
+ *
+ * The same for bottom and top.
+ * This formula prevents artifacts by using 99% of the texture.
+ */
+let _enableTexelOffset = false;
+
+export function enableTexelOffsetUtils (enable: boolean): void {
+    _enableTexelOffset = enable;
+}
+
 export function fillTextureGrids (tileset: TMXTilesetInfo, texGrids: TiledTextureGrids, spFrame?: SpriteFrame): void {
     const spf: SpriteFrame = spFrame || tileset.sourceImage!;
     const tex: Texture2D = spf.texture as Texture2D;
@@ -100,10 +114,19 @@ export function fillTextureGrids (tileset: TMXTilesetInfo, texGrids: TiledTextur
                 grid._name = spFrame.name;
                 const lm = spFrame.unbiasUV[0];
                 const bm = spFrame.rotated ? spFrame.unbiasUV[1] : spFrame.unbiasUV[5];
-                grid.l = lm + (grid.x) / texWidth;
-                grid.t = bm + (grid.y) / texHeight;
-                grid.r = lm + (grid.x + grid.width) / texWidth;
-                grid.b = bm + (grid.y + grid.height) / texHeight;
+
+                if (_enableTexelOffset) {
+                    grid.l = lm + (grid.x + 0.5) / texWidth;
+                    grid.t = bm + (grid.y + 0.5) / texHeight;
+                    grid.r = lm + (grid.x + grid.width - 0.5) / texWidth;
+                    grid.b = bm + (grid.y + grid.height - 0.5) / texHeight;
+                } else {
+                    grid.l = lm + (grid.x) / texWidth;
+                    grid.t = bm + (grid.y) / texHeight;
+                    grid.r = lm + (grid.x + grid.width) / texWidth;
+                    grid.b = bm + (grid.y + grid.height) / texHeight;
+                }
+
                 grid._rect = new Rect(grid.x, grid.y, grid.width, grid.height);
             } else {
                 grid.l = grid.x / texWidth;

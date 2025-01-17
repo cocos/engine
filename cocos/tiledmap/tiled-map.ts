@@ -33,7 +33,7 @@ import { TiledLayer } from './tiled-layer';
 import { TiledObjectGroup } from './tiled-object-group';
 import { TiledMapAsset } from './tiled-map-asset';
 import { Sprite } from '../2d/components/sprite';
-import { fillTextureGrids } from './tiled-utils';
+import { fillTextureGrids, enableTexelOffsetUtils } from './tiled-utils';
 import { Size, Vec2, logID, Color, sys, warnID } from '../core';
 import { SpriteFrame } from '../2d/assets';
 import { NodeEventType } from '../scene-graph/node-event';
@@ -301,6 +301,22 @@ export class TiledMap extends Component {
      */
     getPropertiesForGID (gid: GID): PropertiesInfo | undefined {
         return this._tileProperties.get(gid);
+    }
+
+    /**
+     * @en Enables or disables texel offset correction to fix rendering issues like grid edge artifacts.
+     * This function adjusts the texture coordinates of each grid in the tilemap by applying
+     * a 0.5-pixel offset, ensuring that grid edges do not show black lines or artifacts caused by
+     * texture sampling inaccuracies. This is especially useful for tile-based rendering systems.
+     * @zh 启用或禁用像素偏移修正，用于修复网格边缘的渲染问题（如黑线）。此函数通过对每个 tilemap 网格的纹理坐标应用 0.5 像素
+     * 的偏移来调整，确保网格边缘不会出现因纹理采样不准确导致的黑线或其他伪影问题。对基于图块的渲染系统特别有用。
+     *
+     * @param enable
+     * @en Whether to enable (true) or disable (false) the texel offset correction.
+     * @zh 是否启用 (true) 或禁用 (false) 像素偏移修正。
+     */
+    enableTexelOffset (enable: boolean): void {
+        enableTexelOffsetUtils(enable);
     }
 
     __preload (): void {
