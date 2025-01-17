@@ -492,7 +492,7 @@ void Node::updateWorldTransformRecursive(uint32_t &dirtyBits) { // NOLINT(misc-n
     }
     dirtyBits |= currDirtyBits;
     bool positionDirty = dirtyBits & static_cast<uint32_t>(TransformBit::POSITION);
-    bool rotationScaleDirty = dirtyBits & static_cast<uint32_t>(TransformBit.RS);
+    bool rotationScaleDirty = dirtyBits & static_cast<uint32_t>(TransformBit::RS);
     if (parent) {
         if (positionDirty && !rotationScaleDirty) {
             _worldPosition.transformMat4(_localPosition, parent->_worldMatrix);
