@@ -1,3 +1,27 @@
+/*
+ Copyright (c) 2025 Xiamen Yaji Software Co., Ltd.
+
+ http://www.cocos.com
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights to
+ use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
+ of the Software, and to permit persons to whom the Software is furnished to do so,
+ subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ THE SOFTWARE.
+*/
+
 import { JSB } from 'internal:constants';
 import { ccclass, disallowMultiple, executeInEditMode, menu, serializable, type } from 'cc.decorator';
 import { Component } from '../../scene-graph/component';
@@ -102,7 +126,7 @@ export class UISkew extends Component {
      * @zh 设置节点斜切角度。
      * @param @en value The skew value in Vec2. @zh 斜切角度值。
      */
-    setSkew (value: IVec2Like): void;
+    setSkew (value: Readonly<IVec2Like>): void;
     /**
      * @en Sets the skew value of the node by x and y.
      * @zh 设置节点斜切角度。
@@ -110,7 +134,7 @@ export class UISkew extends Component {
      * @param y @en The skew on y axis. @zh Y 轴斜切角度。
      */
     setSkew (x: number, y: number): void;
-    setSkew (xOrVec2: number | IVec2Like, y?: number): void {
+    setSkew (xOrVec2: number | Readonly<IVec2Like>, y?: number): void {
         const v = this._value;
         if (typeof xOrVec2 === 'number') {
             tempVec2.set(xOrVec2, y);
@@ -127,12 +151,13 @@ export class UISkew extends Component {
     }
 
     /**
-     * @en Gets the skew value of the node.
-     * @zh 获取节点斜切角度。
+     * @en Copies and returns the skew value of the node.
+     * @zh 拷贝节点斜切角度值并返回。
      * @returns @en The skew value of the node. @zh 节点斜切角度。
      */
-    getSkew (): Readonly<Vec2> {
-        return this._value;
+    getSkew (out?: Vec2): Vec2 {
+        if (!out) out = new Vec2();
+        return out.set(this._value);
     }
 
     private _updateNodeTransformFlags (fireEvent?: boolean): void {
