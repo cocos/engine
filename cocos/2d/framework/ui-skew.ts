@@ -1,9 +1,8 @@
-import { ccclass, disallowMultiple, executeInEditMode, menu, serializable, type } from 'cc.decorator';
 import { JSB } from 'internal:constants';
+import { ccclass, disallowMultiple, executeInEditMode, menu, serializable, type } from 'cc.decorator';
 import { Component } from '../../scene-graph/component';
 import { cclegacy, IVec2Like, v2, Vec2 } from '../../core';
 import { NodeEventType, TransformBit } from '../../scene-graph';
-import { TRANSFORM_ON } from '../../scene-graph/node';
 
 const tempVec2 = v2();
 
