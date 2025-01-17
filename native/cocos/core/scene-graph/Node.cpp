@@ -464,6 +464,22 @@ void Node::updateWorldTransform() { // NOLINT(misc-no-recursion)
     updateWorldTransformRecursive(dirtyBits);
 }
 
+void Node::updateLocalMatrixBySkew(Mat4 *outLocalMatrix) {
+    if (_hasSkewComp) {
+        const float skewX = tanf(mathutils::toRadian(_skewX));
+        const float skewY = tanf(mathutils::toRadian(_skewY));
+        float *m = outLocalMatrix->m;
+        const float a = m[0];
+        const float b = m[1];
+        const float c = m[4];
+        const float d = m[5];
+        m[0] = a + c * skewY;
+        m[1] = b + d * skewY;
+        m[4] = c + a * skewX;
+        m[5] = d + b * skewX;
+    }
+}
+
 void Node::updateWorldTransformRecursive(uint32_t &dirtyBits) { // NOLINT(misc-no-recursion)
     const uint32_t currDirtyBits = _transformFlags;
     if (!currDirtyBits) {
@@ -475,19 +491,26 @@ void Node::updateWorldTransformRecursive(uint32_t &dirtyBits) { // NOLINT(misc-n
         parent->updateWorldTransformRecursive(dirtyBits);
     }
     dirtyBits |= currDirtyBits;
+    bool positionDirty = dirtyBits & static_cast<uint32_t>(TransformBit::POSITION);
+    bool rotationScaleDirty = dirtyBits & static_cast<uint32_t>(TransformBit.RS);
     if (parent) {
-        if (dirtyBits & static_cast<uint32_t>(TransformBit::POSITION)) {
+        if (positionDirty && !rotationScaleDirty) {
             _worldPosition.transformMat4(_localPosition, parent->_worldMatrix);
             _worldMatrix.m[12] = _worldPosition.x;
             _worldMatrix.m[13] = _worldPosition.y;
             _worldMatrix.m[14] = _worldPosition.z;
         }
-        if (dirtyBits & static_cast<uint32_t>(TransformBit::RS)) {
+        if (rotationScaleDirty) {
             Mat4::fromRTS(_localRotation, _localPosition, _localScale, &_worldMatrix);
+            if (dirtyBits & static_cast<uint32_t>(TransformBit::SKEW)) {
+                // If skew is dirty, rotation and scale must be also dirty.
+                // See _updateNodeTransformFlags in ui-skew.ts.
+                updateLocalMatrixBySkew(&_worldMatrix);
+            }
             Mat4::multiply(parent->_worldMatrix, _worldMatrix, &_worldMatrix);
             const bool rotChanged = dirtyBits & static_cast<uint32_t>(TransformBit::ROTATION);
             Quaternion *rotTmp = rotChanged ? &_worldRotation : nullptr;
-            Mat4::toRTS(_worldMatrix, rotTmp, nullptr, &_worldScale);
+            Mat4::toRTS(_worldMatrix, rotTmp, &_worldPosition, &_worldScale);
         }
     } else {
         if (dirtyBits & static_cast<uint32_t>(TransformBit::POSITION)) {
@@ -504,21 +527,9 @@ void Node::updateWorldTransformRecursive(uint32_t &dirtyBits) { // NOLINT(misc-n
                 _worldScale.set(_localScale);
             }
             Mat4::fromRTS(_worldRotation, _worldPosition, _worldScale, &_worldMatrix);
-        }
-    }
-    
-    if (dirtyBits & static_cast<uint32_t>(TransformBit::SKEW)) {
-        if (_hasSkewComp) {
-            const float skewX = tanf(mathutils::toRadian(_skewX));
-            const float skewY = tanf(mathutils::toRadian(_skewY));
-            const float a = _worldMatrix.m[0];
-            const float b = _worldMatrix.m[1];
-            const float c = _worldMatrix.m[4];
-            const float d = _worldMatrix.m[5];
-            _worldMatrix.m[0] = a + c * skewY;
-            _worldMatrix.m[1] = b + d * skewY;
-            _worldMatrix.m[4] = c + a * skewX;
-            _worldMatrix.m[5] = d + b * skewX;
+            if (dirtyBits & static_cast<uint32_t>(TransformBit::SKEW)) {
+                updateLocalMatrixBySkew(&_worldMatrix);
+            }
         }
     }
     

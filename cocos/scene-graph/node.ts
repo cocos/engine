@@ -2092,6 +2092,22 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         }
     }
 
+    private static updateLocalMatrixBySkew (node: Node, outLocalMatrix: Mat4): void {
+        const skew = node._uiProps.uiSkewComp;
+        if (skew) {
+            const skewX = Math.tan(skew.x * DEG_TO_RAD);
+            const skewY = Math.tan(skew.y * DEG_TO_RAD);
+            const a = outLocalMatrix.m00;
+            const b = outLocalMatrix.m01;
+            const c = outLocalMatrix.m04;
+            const d = outLocalMatrix.m05;
+            outLocalMatrix.m00 = a + c * skewY;
+            outLocalMatrix.m01 = b + d * skewY;
+            outLocalMatrix.m04 = c + a * skewX;
+            outLocalMatrix.m05 = d + b * skewX;
+        }
+    }
+
     /**
      * @en Update the world transform information if outdated
      * @zh 更新节点的世界变换信息
@@ -2111,57 +2127,54 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         let childMat: Mat4;
         let childPos: Vec3;
         let dirtyBits = 0;
+        let positionDirty = 0;
+        let rotationScaleDirty = 0;
 
         while (i) {
             child = dirtyNodes[--i];
             childMat = child._mat;
             childPos = child._pos;
             dirtyBits |= child._transformFlags;
+            positionDirty = dirtyBits & TransformBit.POSITION;
+            rotationScaleDirty = dirtyBits & TransformBit.RS;
             if (cur) {
-                if (dirtyBits & TransformBit.POSITION) {
+                if (positionDirty && !rotationScaleDirty) {
                     Vec3.transformMat4(childPos, child._lpos, cur._mat);
                     childMat.m12 = childPos.x;
                     childMat.m13 = childPos.y;
                     childMat.m14 = childPos.z;
                 }
-                if (dirtyBits & TransformBit.RS) {
+                if (rotationScaleDirty) {
                     Mat4.fromSRT(childMat, child._lrot, child._lpos, child._lscale);
+                    if (dirtyBits & TransformBit.SKEW) {
+                        // If skew is dirty, rotation and scale must be also dirty.
+                        // See _updateNodeTransformFlags in ui-skew.ts.
+                        Node.updateLocalMatrixBySkew(child, childMat);
+                    }
+
                     Mat4.multiply(childMat, cur._mat, childMat);
 
                     const rotTmp = dirtyBits & TransformBit.ROTATION ? child._rot : null;
-                    Mat4.toSRT(childMat, rotTmp, null, child._scale);
+                    Mat4.toSRT(childMat, rotTmp, childPos, child._scale);
                 }
             } else {
-                if (dirtyBits & TransformBit.POSITION) {
+                if (positionDirty) {
                     Vec3.copy(childPos, child._lpos);
                     childMat.m12 = childPos.x;
                     childMat.m13 = childPos.y;
                     childMat.m14 = childPos.z;
                 }
-                if (dirtyBits & TransformBit.RS) {
+                if (rotationScaleDirty) {
                     if (dirtyBits & TransformBit.ROTATION) {
                         Quat.copy(child._rot, child._lrot);
                     }
                     if (dirtyBits & TransformBit.SCALE) {
                         Vec3.copy(child._scale, child._lscale);
                     }
-                    Mat4.fromRTS(childMat, child._rot, child._pos, child._scale);
-                }
-            }
-
-            if (dirtyBits & TransformBit.SKEW) {
-                const skew = child._uiProps.uiSkewComp;
-                if (skew) {
-                    const skewX = Math.tan(skew.x * DEG_TO_RAD);
-                    const skewY = Math.tan(skew.y * DEG_TO_RAD);
-                    const a = childMat.m00;
-                    const b = childMat.m01;
-                    const c = childMat.m04;
-                    const d = childMat.m05;
-                    childMat.m00 = a + c * skewY;
-                    childMat.m01 = b + d * skewY;
-                    childMat.m04 = c + a * skewX;
-                    childMat.m05 = d + b * skewX;
+                    Mat4.fromSRT(childMat, child._rot, child._pos, child._scale);
+                    if (dirtyBits & TransformBit.SKEW) {
+                        Node.updateLocalMatrixBySkew(child, childMat);
+                    }
                 }
             }
 
