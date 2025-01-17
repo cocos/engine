@@ -25,10 +25,6 @@ export class UISkew extends Component {
         }
     }
 
-    protected override onLoad (): void {
-
-    }
-
     protected override onEnable (): void {
         this.node.on(NodeEventType.TRANSFORM_CHANGED, this._onTransformChanged, this);
     }
@@ -44,10 +40,18 @@ export class UISkew extends Component {
         this.node._uiProps.uiSkewComp = null;
     }
 
+    /**
+     * @en Gets the skew on x axis. Unit is degree.
+     * @zh 获取 X 轴斜切角度。
+     */
     get x (): number {
         return this._value.x;
     }
 
+    /**
+     * @en Sets the skew on x axis. Unit is degree.
+     * @zh 设置 X 轴斜切角度。
+     */
     set x (v: number) {
         this._value.x = v;
         if (JSB) {
@@ -56,10 +60,18 @@ export class UISkew extends Component {
         this._updateNodeTransformFlags();
     }
 
+    /**
+     * @en Gets the skew on y axis. Unit is degree.
+     * @zh 获取 Y 轴斜切角度。
+     */
     get y (): number {
         return this._value.y;
     }
 
+    /**
+     * @en Sets the skew on y axis. Unit is degree.
+     * @zh 设置 Y 轴斜切角度。
+     */
     set y (v: number) {
         this._value.y = v;
         if (JSB) {
@@ -69,26 +81,33 @@ export class UISkew extends Component {
     }
 
     /**
-     *
+     * @en Gets the skew value of the node. Unit is degree.
+     * @zh 获取节点斜切角度。
      */
     @type(Vec2)
     get skew (): Readonly<Vec2> {
         return this._value;
     }
 
+    /**
+     * @en Sets the skew value of the node. Unit is degree.
+     * @zh 设置节点斜切角度。
+     */
     set skew (value: Readonly<Vec2>) {
         this.setSkew(value);
     }
 
     /**
-     * @en Set the skew value of the node by Vec2.
-     * @param @en value The skew value in Vec2.
+     * @en Sets the skew value of the node by Vec2.
+     * @zh 设置节点斜切角度。
+     * @param @en value The skew value in Vec2. @zh 斜切角度值。
      */
     setSkew (value: IVec2Like): void;
     /**
-     * @en Set the skew value of the node by x and y.
-     * @param x @en The skew on x axis.
-     * @param y @en The skew on y axis.
+     * @en Sets the skew value of the node by x and y.
+     * @zh 设置节点斜切角度。
+     * @param x @en The skew on x axis. @zh X 轴斜切角度。
+     * @param y @en The skew on y axis. @zh Y 轴斜切角度。
      */
     setSkew (x: number, y: number): void;
     setSkew (xOrVec2: number | IVec2Like, y?: number): void {
@@ -107,6 +126,11 @@ export class UISkew extends Component {
         this._updateNodeTransformFlags();
     }
 
+    /**
+     * @en Gets the skew value of the node.
+     * @zh 获取节点斜切角度。
+     * @returns @en The skew value of the node. @zh 节点斜切角度。
+     */
     getSkew (): Readonly<Vec2> {
         return this._value;
     }
