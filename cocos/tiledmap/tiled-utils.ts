@@ -27,14 +27,6 @@ import { Texture2D } from '../asset/assets';
 import { Rect } from '../core';
 import { GID, TiledGrid, TiledTextureGrids, TMXTilesetInfo } from './tiled-types';
 
-/**
- * If enabled, the texture coordinates will be calculated by using this formula:
- * - texCoord.left = (rect.origin.x*2+1) / (texture.wide*2);
- * - texCoord.right = texCoord.left + (rect.size.width*2-2)/(texture.wide*2);
- *
- * The same for bottom and top.
- * This formula prevents artifacts by using 99% of the texture.
- */
 let _enableTexelOffset = false;
 
 export function enableTexelOffsetUtils (enable: boolean): void {
