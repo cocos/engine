@@ -392,8 +392,9 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
     /**
      * @engineInternal
+     * @dontmangle Ensure _eventMask not to be mangled since it is visited by UISkew._updateNodeTransformFlags with 'any' conversion.
      */
-    public _eventMask = 0;
+    protected _eventMask = 0;
 
     protected _siblingIndex = 0;
     /**

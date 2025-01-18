@@ -167,7 +167,7 @@ export class UISkew extends Component {
     private _updateNodeTransformFlags (): void {
         const node = this.node;
         node.invalidateChildren(TransformBit.SKEW);
-        if (node._eventMask & TRANSFORM_ON) {
+        if ((node as any)._eventMask & TRANSFORM_ON) {
             node.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.SKEW);
         }
     }
