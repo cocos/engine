@@ -45,16 +45,27 @@ export class UISkew extends Component {
 
     protected override __preload (): void {
         this.node._uiProps._uiSkewComp = this;
-        if (JSB) {
-            (this.node as any)._hasSkewComp = true;
-        }
+    }
+
+    protected override onEnable (): void {
+        this._syncNative(true);
+        this._updateNodeTransformFlags();
+    }
+
+    protected override onDisable (): void {
+        this._syncNative(false);
+        this._updateNodeTransformFlags();
     }
 
     protected override onDestroy (): void {
-        if (JSB) {
-            (this.node as any)._hasSkewComp = false;
-        }
+        this._syncNative(false);
         this.node._uiProps._uiSkewComp = null;
+    }
+
+    private _syncNative (enabled: boolean): void {
+        if (JSB) {
+            (this.node as any)._hasSkewComp = enabled;
+        }
     }
 
     /**

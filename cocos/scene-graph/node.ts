@@ -2097,6 +2097,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     }
 
     private static updateLocalMatrixBySkew (uiSkewComp: UISkew, outLocalMatrix: Mat4): void {
+        if (!uiSkewComp.enabled) return;
         if (uiSkewComp.x === 0 && uiSkewComp.y === 0) return;
         const skewX = Math.tan(uiSkewComp.x * DEG_TO_RAD);
         const skewY = Math.tan(uiSkewComp.y * DEG_TO_RAD);
