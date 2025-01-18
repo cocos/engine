@@ -27,6 +27,7 @@ import { ccclass, disallowMultiple, executeInEditMode, menu, serializable, type 
 import { Component } from '../../scene-graph/component';
 import { cclegacy, IVec2Like, v2, Vec2 } from '../../core';
 import { NodeEventType, TransformBit } from '../../scene-graph';
+import { TRANSFORM_ON } from '../../scene-graph/node';
 
 const tempVec2 = v2();
 
@@ -43,25 +44,17 @@ export class UISkew extends Component {
     }
 
     protected override __preload (): void {
-        this.node._uiProps.uiSkewComp = this;
+        this.node._uiProps._uiSkewComp = this;
         if (JSB) {
             (this.node as any)._hasSkewComp = true;
         }
-    }
-
-    protected override onEnable (): void {
-        this.node.on(NodeEventType.TRANSFORM_CHANGED, this._onTransformChanged, this);
-    }
-
-    protected override onDisable (): void {
-        this.node.off(NodeEventType.TRANSFORM_CHANGED, this._onTransformChanged, this);
     }
 
     protected override onDestroy (): void {
         if (JSB) {
             (this.node as any)._hasSkewComp = false;
         }
-        this.node._uiProps.uiSkewComp = null;
+        this.node._uiProps._uiSkewComp = null;
     }
 
     /**
@@ -160,17 +153,11 @@ export class UISkew extends Component {
         return out.set(this._value);
     }
 
-    private _updateNodeTransformFlags (fireEvent?: boolean): void {
+    private _updateNodeTransformFlags (): void {
         const node = this.node;
-        node.invalidateChildren(TransformBit.SKEW | TransformBit.RS);
-        if (fireEvent) {
+        node.invalidateChildren(TransformBit.SKEW);
+        if (node._eventMask & TRANSFORM_ON) {
             node.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.SKEW);
-        }
-    }
-
-    private _onTransformChanged (bit: TransformBit): void {
-        if (bit & TransformBit.RS) {
-            this._updateNodeTransformFlags(false);
         }
     }
 }

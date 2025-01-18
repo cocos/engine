@@ -38,6 +38,7 @@ enum class TransformBit : uint32_t {
     SCALE = (1 << 2),
     SKEW = (1 << 3),
     RS = ROTATION | SCALE,
+    RSS = ROTATION | SCALE | SKEW,
     TRS = POSITION | ROTATION | SCALE,
     TRS_MASK = ~TRS,
 };

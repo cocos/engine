@@ -48,17 +48,6 @@ export class NodeUIProperties {
         this._uiTransformComp = value;
     }
 
-    get uiSkewComp (): UISkew | null {
-        if (!this._uiSkewComp) {
-            this._uiSkewComp = this._node.getComponent('cc.UISkew') as UISkew;
-        }
-        return this._uiSkewComp;
-    }
-
-    set uiSkewComp (comp: UISkew | null) {
-        this._uiSkewComp = comp;
-    }
-
     /**
      * @en The base UI component
      * @zh UI 基类组件
@@ -101,7 +90,10 @@ export class NodeUIProperties {
 
     public colorDirty = true;
     protected _uiTransformComp: UITransform | null = null;
-    private _uiSkewComp: UISkew | null = null;
+    /**
+     * @engineInternal
+     */
+    public _uiSkewComp: UISkew | null = null;
     private declare _node: Node;
 
     constructor (node: Node) {

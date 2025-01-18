@@ -44,7 +44,7 @@ import { DispatcherEventType, NodeEventProcessor } from './node-event-processor'
 import type { Scene } from './scene';
 import type { Director } from '../game/director';
 import type { Game } from '../game/game';
-import type { UITransform } from '../2d/framework/ui-transform';
+import type { UITransform, UISkew } from '../2d/framework';
 
 const Destroying = CCObjectFlags.Destroying;
 const DontDestroy = CCObjectFlags.DontDestroy;
@@ -389,7 +389,11 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     protected _id: string = idGenerator.getNewId();
 
     protected _eventProcessor: NodeEventProcessor = new NodeEventProcessor(this);
-    protected _eventMask = 0;
+
+    /**
+     * @engineInternal
+     */
+    public _eventMask = 0;
 
     protected _siblingIndex = 0;
     /**
@@ -2092,20 +2096,18 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         }
     }
 
-    private static updateLocalMatrixBySkew (node: Node, outLocalMatrix: Mat4): void {
-        const skew = node._uiProps.uiSkewComp;
-        if (skew) {
-            const skewX = Math.tan(skew.x * DEG_TO_RAD);
-            const skewY = Math.tan(skew.y * DEG_TO_RAD);
-            const a = outLocalMatrix.m00;
-            const b = outLocalMatrix.m01;
-            const c = outLocalMatrix.m04;
-            const d = outLocalMatrix.m05;
-            outLocalMatrix.m00 = a + c * skewY;
-            outLocalMatrix.m01 = b + d * skewY;
-            outLocalMatrix.m04 = c + a * skewX;
-            outLocalMatrix.m05 = d + b * skewX;
-        }
+    private static updateLocalMatrixBySkew (uiSkewComp: UISkew, outLocalMatrix: Mat4): void {
+        if (uiSkewComp.x === 0 && uiSkewComp.y === 0) return;
+        const skewX = Math.tan(uiSkewComp.x * DEG_TO_RAD);
+        const skewY = Math.tan(uiSkewComp.y * DEG_TO_RAD);
+        const a = outLocalMatrix.m00;
+        const b = outLocalMatrix.m01;
+        const c = outLocalMatrix.m04;
+        const d = outLocalMatrix.m05;
+        outLocalMatrix.m00 = a + c * skewY;
+        outLocalMatrix.m01 = b + d * skewY;
+        outLocalMatrix.m04 = c + a * skewX;
+        outLocalMatrix.m05 = d + b * skewX;
     }
 
     /**
@@ -2128,7 +2130,8 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         let childPos: Vec3;
         let dirtyBits = 0;
         let positionDirty = 0;
-        let rotationScaleDirty = 0;
+        let rotationScaleSkewDirty = 0;
+        let uiSkewComp: UISkew | null;
 
         while (i) {
             child = dirtyNodes[--i];
@@ -2136,20 +2139,21 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
             childPos = child._pos;
             dirtyBits |= child._transformFlags;
             positionDirty = dirtyBits & TransformBit.POSITION;
-            rotationScaleDirty = dirtyBits & TransformBit.RS;
+            rotationScaleSkewDirty = dirtyBits & TransformBit.RSS;
             if (cur) {
-                if (positionDirty && !rotationScaleDirty) {
+                if (positionDirty && !rotationScaleSkewDirty) {
                     Vec3.transformMat4(childPos, child._lpos, cur._mat);
                     childMat.m12 = childPos.x;
                     childMat.m13 = childPos.y;
                     childMat.m14 = childPos.z;
                 }
-                if (rotationScaleDirty) {
+                if (rotationScaleSkewDirty) {
                     Mat4.fromSRT(childMat, child._lrot, child._lpos, child._lscale);
-                    if (dirtyBits & TransformBit.SKEW) {
+                    uiSkewComp = child._uiProps._uiSkewComp;
+                    if (uiSkewComp) {
                         // If skew is dirty, rotation and scale must be also dirty.
                         // See _updateNodeTransformFlags in ui-skew.ts.
-                        Node.updateLocalMatrixBySkew(child, childMat);
+                        Node.updateLocalMatrixBySkew(uiSkewComp, childMat);
                     }
 
                     Mat4.multiply(childMat, cur._mat, childMat);
@@ -2164,7 +2168,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                     childMat.m13 = childPos.y;
                     childMat.m14 = childPos.z;
                 }
-                if (rotationScaleDirty) {
+                if (rotationScaleSkewDirty) {
                     if (dirtyBits & TransformBit.ROTATION) {
                         Quat.copy(child._rot, child._lrot);
                     }
@@ -2172,8 +2176,9 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                         Vec3.copy(child._scale, child._lscale);
                     }
                     Mat4.fromSRT(childMat, child._rot, child._pos, child._scale);
-                    if (dirtyBits & TransformBit.SKEW) {
-                        Node.updateLocalMatrixBySkew(child, childMat);
+                    uiSkewComp = child._uiProps._uiSkewComp;
+                    if (uiSkewComp) {
+                        Node.updateLocalMatrixBySkew(uiSkewComp, childMat);
                     }
                 }
             }

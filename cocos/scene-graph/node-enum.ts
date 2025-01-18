@@ -69,6 +69,11 @@ export enum TransformBit {
      * @zh 节点旋转及缩放
      */
     RS = TransformBit.ROTATION | TransformBit.SCALE,
+
+    /**
+     * @en Rotation, scale or skew changed
+     */
+    RSS = TransformBit.ROTATION | TransformBit.SCALE | TransformBit.SKEW,
     /**
      * @en Translation, rotation or scale changed
      * @zh 节点平移，旋转及缩放
