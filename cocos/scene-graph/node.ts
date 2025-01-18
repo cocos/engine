@@ -1887,33 +1887,43 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
      */
     public _onSetParent (oldParent: this | null, keepWorldTransform = false): void {
-        if (this._parent) {
-            if ((oldParent == null || oldParent._scene !== this._parent._scene) && this._parent._scene != null) {
-                this.walk(Node._setScene);
+        const self = this;
+        const parent = self._parent;
+        if (parent) {
+            if ((oldParent == null || oldParent._scene !== parent._scene) && parent._scene != null) {
+                self.walk(Node._setScene);
             }
         }
 
         if (keepWorldTransform) {
-            const parent = this._parent;
             if (parent) {
                 parent.updateWorldTransform();
                 if (approx(Mat4.determinant(parent._mat), 0, EPSILON)) {
                     warnID(14300);
-                    this._transformFlags |= TransformBit.TRS;
-                    this.updateWorldTransform();
+                    self._transformFlags |= TransformBit.TRS;
+                    self.updateWorldTransform();
                 } else {
-                    Mat4.multiply(m4_1, Mat4.invert(m4_1, parent._mat), this._mat);
-                    Mat4.toRTS(m4_1, this._lrot, this._lpos, this._lscale);
+                    if (self._uiProps._uiSkewComp) {
+                        if (oldParent) {
+                            oldParent.updateWorldTransform();
+                            Mat4.fromSRT(m4_1, self._lrot, self._lpos, self._lscale);
+                            Mat4.multiply(self._mat, oldParent._mat, m4_1);
+                        } else {
+                            Mat4.fromSRT(self._mat, self._lrot, self._lpos, self._lscale);
+                        }
+                    }
+                    Mat4.multiply(m4_1, Mat4.invert(m4_1, parent._mat), self._mat);
+                    Mat4.toSRT(m4_1, self._lrot, self._lpos, self._lscale);
                 }
             } else {
-                Vec3.copy(this._lpos, this._pos);
-                Quat.copy(this._lrot, this._rot);
-                Vec3.copy(this._lscale, this._scale);
+                Vec3.copy(self._lpos, self._pos);
+                Quat.copy(self._lrot, self._rot);
+                Vec3.copy(self._lscale, self._scale);
             }
-            this._eulerDirty = true;
+            self._eulerDirty = true;
         }
 
-        this.invalidateChildren(TransformBit.TRS);
+        self.invalidateChildren(TransformBit.TRS);
     }
 
     protected _onHierarchyChanged (oldParent: this | null): void {
@@ -2150,18 +2160,20 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                     childMat.m14 = childPos.z;
                 }
                 if (rotationScaleSkewDirty) {
-                    Mat4.fromSRT(childMat, child._lrot, child._lpos, child._lscale);
+                    let originalWorldMatrix = childMat;
+                    Mat4.fromSRT(m4_1, child._lrot, child._lpos, child._lscale); // m4_1 stores local matrix
                     uiSkewComp = child._uiProps._uiSkewComp;
                     if (uiSkewComp) {
+                        Mat4.multiply(m4_2, cur._mat, m4_1);
                         // If skew is dirty, rotation and scale must be also dirty.
                         // See _updateNodeTransformFlags in ui-skew.ts.
-                        Node.updateLocalMatrixBySkew(uiSkewComp, childMat);
+                        Node.updateLocalMatrixBySkew(uiSkewComp, m4_1);
+                        originalWorldMatrix = m4_2;
                     }
-
-                    Mat4.multiply(childMat, cur._mat, childMat);
+                    Mat4.multiply(childMat, cur._mat, m4_1);
 
                     const rotTmp = dirtyBits & TransformBit.ROTATION ? child._rot : null;
-                    Mat4.toSRT(childMat, rotTmp, childPos, child._scale);
+                    Mat4.toSRT(originalWorldMatrix, rotTmp, childPos, child._scale);
                 }
             } else {
                 if (positionDirty) {
@@ -2534,12 +2546,13 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     public setWorldScale(x: number, y: number, z: number): void;
 
     public setWorldScale (val: Vec3 | number, y?: number, z?: number): void {
-        const parent = this._parent;
+        const self = this;
+        const parent = self._parent;
         if (parent) {
-            this.updateWorldTransform();
+            self.updateWorldTransform();
         }
 
-        const worldScale = this._scale;
+        const worldScale = self._scale;
         if (y === undefined) {
             Vec3.copy(worldScale, val as Vec3);
         } else {
@@ -2548,12 +2561,18 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
         let rotationFlag = TransformBit.NONE;
         if (parent) {
-            const xScale = Vec3.set(v3_b, this._mat.m00, this._mat.m01, this._mat.m02).length();
-            const yScale = Vec3.set(v3_b, this._mat.m04, this._mat.m05, this._mat.m06).length();
-            const zScale = Vec3.set(v3_b, this._mat.m08, this._mat.m09, this._mat.m10).length();
+            const worldMatrix = self._mat;
+            const uiSkewComp = self._uiProps._uiSkewComp;
+            if (uiSkewComp) {
+                Mat4.fromSRT(m4_1, self._lrot, self._lpos, self._lscale);
+                Mat4.multiply(worldMatrix, parent._mat, m4_1);
+            }
+            const xScale = Vec3.set(v3_b, worldMatrix.m00, worldMatrix.m01, worldMatrix.m02).length();
+            const yScale = Vec3.set(v3_b, worldMatrix.m04, worldMatrix.m05, worldMatrix.m06).length();
+            const zScale = Vec3.set(v3_b, worldMatrix.m08, worldMatrix.m09, worldMatrix.m10).length();
             if (xScale === 0) {
                 v3_a.x = worldScale.x;
-                this._mat.m00 = 1;
+                worldMatrix.m00 = 1;
                 rotationFlag = TransformBit.ROTATION;
             } else {
                 v3_a.x = worldScale.x / xScale;
@@ -2561,7 +2580,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
             if (yScale === 0) {
                 v3_a.y = worldScale.y;
-                this._mat.m05 = 1;
+                worldMatrix.m05 = 1;
                 rotationFlag = TransformBit.ROTATION;
             } else {
                 v3_a.y = worldScale.y / yScale;
@@ -2569,18 +2588,18 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
             if (zScale === 0) {
                 v3_a.z = worldScale.z;
-                this._mat.m10 = 1;
+                worldMatrix.m10 = 1;
                 rotationFlag = TransformBit.ROTATION;
             } else {
                 v3_a.z = worldScale.z / zScale;
             }
 
-            Mat4.scale(m4_1, this._mat, v3_a);
+            Mat4.scale(m4_1, worldMatrix, v3_a);
             Mat4.multiply(m4_2, Mat4.invert(m4_2, parent._mat), m4_1);
-            Mat3.fromQuat(m3_1, Quat.conjugate(qt_1, this._lrot));
+            Mat3.fromQuat(m3_1, Quat.conjugate(qt_1, self._lrot));
             Mat3.multiplyMat4(m3_1, m3_1, m4_2);
 
-            const localScale = this._lscale;
+            const localScale = self._lscale;
             localScale.x = Vec3.set(v3_a, m3_1.m00, m3_1.m01, m3_1.m02).length();
             localScale.y = Vec3.set(v3_a, m3_1.m03, m3_1.m04, m3_1.m05).length();
             localScale.z = Vec3.set(v3_a, m3_1.m06, m3_1.m07, m3_1.m08).length();
@@ -2588,12 +2607,12 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                 rotationFlag = TransformBit.ROTATION;
             }
         } else {
-            Vec3.copy(this._lscale, worldScale);
+            Vec3.copy(self._lscale, worldScale);
         }
 
-        this.invalidateChildren(TransformBit.SCALE | rotationFlag);
-        if (this._eventMask & TRANSFORM_ON) {
-            this.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.SCALE | rotationFlag);
+        self.invalidateChildren(TransformBit.SCALE | rotationFlag);
+        if (self._eventMask & TRANSFORM_ON) {
+            self.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.SCALE | rotationFlag);
         }
     }
 
