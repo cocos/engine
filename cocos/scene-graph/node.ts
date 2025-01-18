@@ -1709,7 +1709,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
      * @zh 本地坐标系变换矩阵
      */
     public set matrix (val: Readonly<Mat4>) {
-        Mat4.toRTS(val, this._lrot, this._lpos, this._lscale);
+        Mat4.toSRT(val, this._lrot, this._lpos, this._lscale);
         this.invalidateChildren(TransformBit.TRS);
         this._eulerDirty = true;
         if (this._eventMask & TRANSFORM_ON) {
