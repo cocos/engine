@@ -92,6 +92,7 @@ export class NodeUIProperties {
     protected _uiTransformComp: UITransform | null = null;
     /**
      * @engineInternal
+     * @mangle
      */
     public _uiSkewComp: UISkew | null = null;
     private declare _node: Node;
