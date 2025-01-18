@@ -397,7 +397,6 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     protected _eventProcessor: NodeEventProcessor = new NodeEventProcessor(this);
 
     /**
-     * @engineInternal
      * @dontmangle Ensure _eventMask not to be mangled since it is visited by UISkew._updateNodeTransformFlags with 'any' conversion.
      */
     protected _eventMask = 0;
