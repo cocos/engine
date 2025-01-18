@@ -44,7 +44,6 @@ uint32_t Node::globalFlagChangeVersion{0};
 namespace {
 const ccstd::string EMPTY_NODE_NAME;
 IDGenerator idGenerator("Node");
-Mat4 tempMat4;
 } // namespace
 
 Node::Node() : Node(EMPTY_NODE_NAME) {
@@ -503,12 +502,15 @@ void Node::updateWorldTransformRecursive(uint32_t &dirtyBits) { // NOLINT(misc-n
             _worldMatrix.m[14] = _worldPosition.z;
         }
         if (rotationScaleSkewDirty) {
+            static Mat4 tempMat4;
             Mat4 *originalWorldMatrix = &_worldMatrix;
             Mat4::fromRTS(_localRotation, _localPosition, _localScale, &_worldMatrix);
             if (_hasSkewComp) {
+                // Save the original world matrix without skew side effect.
                 tempMat4.set(_worldMatrix);
                 Mat4::multiply(_parent->_worldMatrix, tempMat4, &tempMat4);
                 originalWorldMatrix = &tempMat4;
+                //
                 // If skew is dirty, rotation and scale must be also dirty.
                 // See _updateNodeTransformFlags in ui-skew.ts.
                 updateLocalMatrixBySkew(&_worldMatrix);
@@ -759,7 +761,19 @@ void Node::onSetParent(Node *oldParent, bool keepWorldTransform) {
                 _transformFlags |= static_cast<uint32_t>(TransformBit::TRS);
                 updateWorldTransform();
             } else {
-                Mat4 tmpMat4 = _parent->_worldMatrix.getInversed() * _worldMatrix;
+                Mat4 tmpMat4;
+                if (_hasSkewComp) {
+                    // Calculate world matrix without skew side effect.
+                    if (oldParent) {
+                        oldParent->updateWorldTransform();
+                        Mat4::fromRTS(_localRotation, _localPosition, _localScale, &tmpMat4);
+                        Mat4::multiply(oldParent->_worldMatrix, tmpMat4, &_worldMatrix);
+                    } else {
+                        Mat4::fromRTS(_localRotation, _localPosition, _localScale, &_worldMatrix);
+                    }
+                }
+                
+                tmpMat4 = _parent->_worldMatrix.getInversed() * _worldMatrix;
                 Mat4::toRTS(tmpMat4, &_localRotation, &_localPosition, &_localScale);
             }
         } else {

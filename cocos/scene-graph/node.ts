@@ -1905,6 +1905,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                     self.updateWorldTransform();
                 } else {
                     if (self._uiProps._uiSkewComp) {
+                        // Calculate world matrix without skew side effect.
                         if (oldParent) {
                             oldParent.updateWorldTransform();
                             Mat4.fromSRT(m4_1, self._lrot, self._lpos, self._lscale);
@@ -2165,6 +2166,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                     Mat4.fromSRT(m4_1, child._lrot, child._lpos, child._lscale); // m4_1 stores local matrix
                     uiSkewComp = child._uiProps._uiSkewComp;
                     if (uiSkewComp) {
+                        // Save the original world matrix without skew side effect.
                         Mat4.multiply(m4_2, cur._mat, m4_1);
                         // If skew is dirty, rotation and scale must be also dirty.
                         // See _updateNodeTransformFlags in ui-skew.ts.
