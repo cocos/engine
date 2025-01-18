@@ -71,7 +71,7 @@ const v3_2 = new Vec3();
 
 // Dual Quaternion Skinning
 function uploadJointDataDQS (out: Float32Array, base: number, mat: Mat4, firstBone: boolean): void {
-    Mat4.toRTS(mat, qt_1, v3_1, v3_2);
+    Mat4.toSRT(mat, qt_1, v3_1, v3_2);
     // sign consistency
     if (firstBone) { Quat.copy(dq_0, qt_1); } else if (Quat.dot(dq_0, qt_1) < 0) { Quat.multiplyScalar(qt_1, qt_1, -1); }
     // conversion
@@ -381,8 +381,7 @@ export class JointTexturePool {
         }
     }
 
-    private _createAnimInfos (skeleton: Skeleton, clip: AnimationClip, skinningRoot: Node): IInternalJointAnimInfo[]
-    {
+    private _createAnimInfos (skeleton: Skeleton, clip: AnimationClip, skinningRoot: Node): IInternalJointAnimInfo[] {
         const animInfos: IInternalJointAnimInfo[] = [];
         const { joints, bindposes } = skeleton;
         const jointCount = joints.length;
