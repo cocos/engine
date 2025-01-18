@@ -44,6 +44,7 @@ uint32_t Node::globalFlagChangeVersion{0};
 namespace {
 const ccstd::string EMPTY_NODE_NAME;
 IDGenerator idGenerator("Node");
+Mat4 tempMat4;
 } // namespace
 
 Node::Node() : Node(EMPTY_NODE_NAME) {
@@ -502,8 +503,12 @@ void Node::updateWorldTransformRecursive(uint32_t &dirtyBits) { // NOLINT(misc-n
             _worldMatrix.m[14] = _worldPosition.z;
         }
         if (rotationScaleSkewDirty) {
+            Mat4 *originalWorldMatrix = &_worldMatrix;
             Mat4::fromRTS(_localRotation, _localPosition, _localScale, &_worldMatrix);
             if (_hasSkewComp) {
+                tempMat4.set(_worldMatrix);
+                Mat4::multiply(_parent->_worldMatrix, tempMat4, &tempMat4);
+                originalWorldMatrix = &tempMat4;
                 // If skew is dirty, rotation and scale must be also dirty.
                 // See _updateNodeTransformFlags in ui-skew.ts.
                 updateLocalMatrixBySkew(&_worldMatrix);
@@ -511,7 +516,7 @@ void Node::updateWorldTransformRecursive(uint32_t &dirtyBits) { // NOLINT(misc-n
             Mat4::multiply(parent->_worldMatrix, _worldMatrix, &_worldMatrix);
             const bool rotChanged = dirtyBits & static_cast<uint32_t>(TransformBit::ROTATION);
             Quaternion *rotTmp = rotChanged ? &_worldRotation : nullptr;
-            Mat4::toRTS(_worldMatrix, rotTmp, &_worldPosition, &_worldScale);
+            Mat4::toRTS(*originalWorldMatrix, rotTmp, &_worldPosition, &_worldScale);
         }
     } else {
         if (dirtyBits & static_cast<uint32_t>(TransformBit::POSITION)) {
@@ -642,7 +647,17 @@ void Node::setWorldScale(float x, float y, float z) {
     TransformBit rotationFlag = TransformBit::NONE;
     if (_parent != nullptr) {
         updateWorldTransform(); // ensure reentryability
-        Vec3 oldWorldScale = _worldScale;
+        
+        if (_hasSkewComp) {
+            Mat4::fromRTS(_localRotation, _localPosition, _localScale, &_worldMatrix);
+            Mat4::multiply(_parent->_worldMatrix, _worldMatrix, &_worldMatrix);
+        }
+        
+        float *m = _worldMatrix.m;
+        Vec3 oldWorldScale(Vec3(m[0], m[1], m[2]).length(),
+                           Vec3(m[4], m[5], m[6]).length(),
+                           Vec3(m[8], m[9], m[10]).length());
+        
         _worldScale.set(x, y, z);
         Mat3 localRS;
         Mat3 localRotInv;
