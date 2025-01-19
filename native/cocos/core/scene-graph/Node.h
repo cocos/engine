@@ -607,6 +607,7 @@ private:
     virtual void onBatchCreated(bool dontChildPrefab);
     virtual void updateScene();
 
+    bool getParentWorldMatrixNoSkew(Node *parent, Mat4 *out);
     void onSetParent(Node *oldParent, bool keepWorldTransform);
     void onHierarchyChanged(Node *);
     void onHierarchyChangedBase(Node *oldParent);
@@ -694,4 +695,8 @@ template <typename T>
 bool Node::isNode(T *obj) {
     return dynamic_cast<Node *>(obj) != nullptr && dynamic_cast<Scene *>(obj) == nullptr;
 }
+
+void incSkewCount();
+void decSkewCount();
+
 } // namespace cc

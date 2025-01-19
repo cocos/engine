@@ -268,6 +268,11 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     protected static _stackId = 0;
 
     /**
+     * @engineInternal
+     */
+    static _skewCount = 0;
+
+    /**
      * Call `_updateScene` of specified node.
      * @internal
      * @param node The node.
@@ -1935,24 +1940,29 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                     self._transformFlags |= TransformBit.TRS;
                     self.updateWorldTransform();
                 } else {
-                    // Calculate old parent's world matrix without skew side effect.
-                    const foundSkewInOldParent = Node._getParentWorldMatrixNoSkew(oldParent, m4_2);
-                    if (self._uiProps._uiSkewComp) {
-                        if (oldParent) {
+                    const hasSkew = Node._skewCount > 0;
+                    if (hasSkew) {
+                        // Calculate old parent's world matrix without skew side effect.
+                        const foundSkewInOldParent = Node._getParentWorldMatrixNoSkew(oldParent, m4_2);
+                        if (self._uiProps._uiSkewComp) {
+                            if (oldParent) {
+                                Mat4.fromSRT(m4_1, self._lrot, self._lpos, self._lscale);
+                                const parentMat = foundSkewInOldParent ? m4_2 : oldParent._mat;
+                                Mat4.multiply(self._mat, parentMat, m4_1);
+                            }
+                        } else if (foundSkewInOldParent) {
                             Mat4.fromSRT(m4_1, self._lrot, self._lpos, self._lscale);
-                            const parentMat = foundSkewInOldParent ? m4_2 : oldParent._mat;
-                            Mat4.multiply(self._mat, parentMat, m4_1);
+                            Mat4.multiply(self._mat, m4_2, m4_1);
                         }
-                    } else if (foundSkewInOldParent) {
-                        Mat4.fromSRT(m4_1, self._lrot, self._lpos, self._lscale);
-                        Mat4.multiply(self._mat, m4_2, m4_1);
                     }
 
                     let newParentMat = parent._mat;
-                    // Calculate new parent's world matrix without skew side effect.
-                    const foundSkewInNewParent = Node._getParentWorldMatrixNoSkew(parent, m4_2);
-                    if (foundSkewInNewParent) {
-                        newParentMat = m4_2;
+                    if (hasSkew) {
+                        // Calculate new parent's world matrix without skew side effect.
+                        const foundSkewInNewParent = Node._getParentWorldMatrixNoSkew(parent, m4_2);
+                        if (foundSkewInNewParent) {
+                            newParentMat = m4_2;
+                        }
                     }
                     Mat4.multiply(m4_1, Mat4.invert(m4_1, newParentMat), self._mat);
                     Mat4.toSRT(m4_1, self._lrot, self._lpos, self._lscale);
@@ -2204,14 +2214,17 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                 if (rotationScaleSkewDirty) {
                     let originalWorldMatrix = childMat;
                     Mat4.fromSRT(m4_1, child._lrot, child._lpos, child._lscale); // m4_1 stores local matrix
-                    uiSkewComp = child._uiProps._uiSkewComp;
-                    if (uiSkewComp) {
+
+                    if (Node._skewCount > 0) {
+                        uiSkewComp = child._uiProps._uiSkewComp;
+                        if (uiSkewComp) {
                         // Save the original world matrix without skew side effect.
-                        Mat4.multiply(m4_2, cur._mat, m4_1);
-                        // If skew is dirty, rotation and scale must be also dirty.
-                        // See _updateNodeTransformFlags in ui-skew.ts.
-                        Node.updateLocalMatrixBySkew(uiSkewComp, m4_1);
-                        originalWorldMatrix = m4_2;
+                            Mat4.multiply(m4_2, cur._mat, m4_1);
+                            // If skew is dirty, rotation and scale must be also dirty.
+                            // See _updateNodeTransformFlags in ui-skew.ts.
+                            Node.updateLocalMatrixBySkew(uiSkewComp, m4_1);
+                            originalWorldMatrix = m4_2;
+                        }
                     }
                     Mat4.multiply(childMat, cur._mat, m4_1);
 

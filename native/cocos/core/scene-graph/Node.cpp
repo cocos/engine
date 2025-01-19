@@ -44,6 +44,7 @@ uint32_t Node::globalFlagChangeVersion{0};
 namespace {
 const ccstd::string EMPTY_NODE_NAME;
 IDGenerator idGenerator("Node");
+int skewCount = 0;
 } // namespace
 
 Node::Node() : Node(EMPTY_NODE_NAME) {
@@ -746,6 +747,39 @@ void Node::setAngle(float val) {
     notifyLocalRotationUpdated();
 }
 
+bool Node::getParentWorldMatrixNoSkew(Node *parent, Mat4 *out) {
+    if (!parent) {
+        return false;
+    }
+    static ccstd::vector<Node*> tempNodes;
+    tempNodes.resize(0);
+    auto &ancestors = tempNodes;
+    Node *startNode = nullptr;
+    for (auto *cur = parent; cur; cur = cur->_parent) {
+        ancestors.emplace_back(cur);
+        if (cur->_hasSkewComp) {
+            startNode = cur;
+        }
+    }
+
+    bool ret = false;
+    Mat4 curMat4;
+    if (startNode) {
+        out->set(startNode->_parent->_worldMatrix); // Set the first no-skew node's world matrix to out.
+        auto iter = std::find(ancestors.begin(), ancestors.end(), startNode);
+        size_t start = iter - ancestors.begin();
+        for (size_t i = start; i >= 0; --i) {
+            const auto *node = ancestors[i];
+            Mat4::fromRTS(node->_localRotation, node->_localPosition, node->_localScale, &curMat4);
+            Mat4::multiply(*out, curMat4, out);
+        }
+        ret = true;
+    }
+
+    tempNodes.resize(0);
+    return ret;
+}
+
 void Node::onSetParent(Node *oldParent, bool keepWorldTransform) {
     if (_parent) {
         if ((oldParent == nullptr || oldParent->_scene != _parent->_scene) && _parent->_scene != nullptr) {
@@ -761,20 +795,35 @@ void Node::onSetParent(Node *oldParent, bool keepWorldTransform) {
                 _transformFlags |= static_cast<uint32_t>(TransformBit::TRS);
                 updateWorldTransform();
             } else {
-                Mat4 tmpMat4;
-                if (_hasSkewComp) {
-                    // Calculate world matrix without skew side effect.
-                    if (oldParent) {
-                        oldParent->updateWorldTransform();
-                        Mat4::fromRTS(_localRotation, _localPosition, _localScale, &tmpMat4);
-                        Mat4::multiply(oldParent->_worldMatrix, tmpMat4, &_worldMatrix);
-                    } else {
-                        Mat4::fromRTS(_localRotation, _localPosition, _localScale, &_worldMatrix);
+                const bool hasSkew = skewCount > 0;
+                Mat4 localMatrix;
+                Mat4 parentWorldMatrix;
+                if (hasSkew) {
+                    // Calculate old parent's world matrix without skew side effect.
+                    const bool foundSkewInOldParent = Node::getParentWorldMatrixNoSkew(oldParent, &parentWorldMatrix);
+                    if (_hasSkewComp) {
+                        if (oldParent) {
+                            Mat4::fromRTS(_localRotation, _localPosition, _localScale, &localMatrix);
+                            const Mat4 &parentMatrix = foundSkewInOldParent ? parentWorldMatrix : oldParent->_worldMatrix;
+                            Mat4::multiply(parentMatrix, localMatrix, &_worldMatrix);
+                        }
+                    } else if (foundSkewInOldParent) {
+                        Mat4::fromRTS(_localRotation, _localPosition, _localScale, &localMatrix);
+                        Mat4::multiply(parentWorldMatrix, localMatrix, &_worldMatrix);
+                    }
+                }
+
+                const auto *newParentMatrix = &_parent->_worldMatrix;
+                if (hasSkew) {
+                    // Calculate new parent's world matrix without skew side effect.
+                    const bool foundSkewInNewParent = Node::getParentWorldMatrixNoSkew(_parent, &parentWorldMatrix);
+                    if (foundSkewInNewParent) {
+                        newParentMatrix = &parentWorldMatrix;
                     }
                 }
                 
-                tmpMat4 = _parent->_worldMatrix.getInversed() * _worldMatrix;
-                Mat4::toRTS(tmpMat4, &_localRotation, &_localPosition, &_localScale);
+                localMatrix = newParentMatrix->getInversed() * _worldMatrix;
+                Mat4::toRTS(localMatrix, &_localRotation, &_localPosition, &_localScale);
             }
         } else {
             _localPosition.set(_worldPosition);
@@ -987,5 +1036,12 @@ void Node::destruct() {
 }
 
 //
+void incSkewCount() {
+    ++skewCount;
+}
+
+void decSkewCount() {
+    --skewCount;
+}
 
 } // namespace cc

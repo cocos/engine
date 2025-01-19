@@ -27,7 +27,7 @@ import { ccclass, disallowMultiple, executeInEditMode, menu, serializable, type 
 import { Component } from '../../scene-graph/component';
 import { cclegacy, IVec2Like, v2, Vec2 } from '../../core';
 import { NodeEventType, TransformBit } from '../../scene-graph';
-import { TRANSFORM_ON } from '../../scene-graph/node';
+import { TRANSFORM_ON, Node } from '../../scene-graph/node';
 
 const tempVec2 = v2();
 
@@ -51,6 +51,7 @@ export class UISkew extends Component {
 
     protected override __preload (): void {
         this.node._uiProps._uiSkewComp = this;
+        ++Node._skewCount;
     }
 
     protected override onEnable (): void {
@@ -70,6 +71,7 @@ export class UISkew extends Component {
         this._syncNative(false);
         this.node._uiProps._uiSkewComp = null;
         this._updateNodeTransformFlags();
+        --Node._skewCount;
     }
 
     private _syncNative (enabled: boolean): void {
