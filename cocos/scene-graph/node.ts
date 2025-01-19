@@ -78,6 +78,7 @@ const m3_1 = new Mat3();
 const m4_1 = mat4();
 const m4_2 = mat4();
 const dirtyNodes: Node[] = [];
+const tempNodes: Node[] = [];
 
 const reserveContentsForAllSyncablePrefabTag = Symbol('ReserveContentsForAllSyncablePrefab');
 let globalFlagChangeVersion = 0;
@@ -1880,6 +1881,36 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         }
     }
 
+    private static _getParentWorldMatrixNoSkew (parent: Node | null, out: Mat4): boolean {
+        if (!parent) {
+            return false;
+        }
+        tempNodes.length = 0;
+        const ancestors: Node[] = tempNodes;
+        let startNode: Node | null = null;
+        for (let cur: Node | null = parent; cur; cur = cur._parent) {
+            ancestors.push(cur);
+            if (cur._uiProps._uiSkewComp) {
+                startNode = cur;
+            }
+        }
+
+        let ret = false;
+        if (startNode) {
+            out.set(startNode.parent!._mat); // Set the first no-skew node's world matrix to out.
+            const start = ancestors.indexOf(startNode);
+            for (let i = start; i >= 0; --i) {
+                const node = ancestors[i];
+                Mat4.fromSRT(m4_1, node._lrot, node._lpos, node._lscale);
+                Mat4.multiply(out, out, m4_1);
+            }
+            ret = true;
+        }
+
+        tempNodes.length = 0;
+        return ret;
+    }
+
     // ===============================
     // hierarchy
     // ===============================
@@ -1904,17 +1935,26 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                     self._transformFlags |= TransformBit.TRS;
                     self.updateWorldTransform();
                 } else {
+                    // Calculate old parent's world matrix without skew side effect.
+                    const foundSkewInOldParent = Node._getParentWorldMatrixNoSkew(oldParent, m4_2);
                     if (self._uiProps._uiSkewComp) {
-                        // Calculate world matrix without skew side effect.
                         if (oldParent) {
-                            oldParent.updateWorldTransform();
                             Mat4.fromSRT(m4_1, self._lrot, self._lpos, self._lscale);
-                            Mat4.multiply(self._mat, oldParent._mat, m4_1);
-                        } else {
-                            Mat4.fromSRT(self._mat, self._lrot, self._lpos, self._lscale);
+                            const parentMat = foundSkewInOldParent ? m4_2 : oldParent._mat;
+                            Mat4.multiply(self._mat, parentMat, m4_1);
                         }
+                    } else if (foundSkewInOldParent) {
+                        Mat4.fromSRT(m4_1, self._lrot, self._lpos, self._lscale);
+                        Mat4.multiply(self._mat, m4_2, m4_1);
                     }
-                    Mat4.multiply(m4_1, Mat4.invert(m4_1, parent._mat), self._mat);
+
+                    let newParentMat = parent._mat;
+                    // Calculate new parent's world matrix without skew side effect.
+                    const foundSkewInNewParent = Node._getParentWorldMatrixNoSkew(parent, m4_2);
+                    if (foundSkewInNewParent) {
+                        newParentMat = m4_2;
+                    }
+                    Mat4.multiply(m4_1, Mat4.invert(m4_1, newParentMat), self._mat);
                     Mat4.toSRT(m4_1, self._lrot, self._lpos, self._lscale);
                 }
             } else {
@@ -2110,7 +2150,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     }
 
     private static updateLocalMatrixBySkew (uiSkewComp: UISkew, outLocalMatrix: Mat4): void {
-        if (!uiSkewComp.enabled) return;
+        if (!uiSkewComp.skewEnabled) return;
         if (uiSkewComp.x === 0 && uiSkewComp.y === 0) return;
         const skewX = Math.tan(uiSkewComp.x * DEG_TO_RAD);
         const skewY = Math.tan(uiSkewComp.y * DEG_TO_RAD);

@@ -39,8 +39,14 @@ export class UISkew extends Component {
     @serializable
     private _value: Vec2 = v2();
 
+    private _skewEnabled = false;
+
     constructor () {
         super();
+    }
+
+    get skewEnabled (): boolean {
+        return this._skewEnabled;
     }
 
     protected override __preload (): void {
@@ -48,18 +54,22 @@ export class UISkew extends Component {
     }
 
     protected override onEnable (): void {
+        this._skewEnabled = true;
         this._syncNative(true);
         this._updateNodeTransformFlags();
     }
 
     protected override onDisable (): void {
+        this._skewEnabled = false;
         this._syncNative(false);
         this._updateNodeTransformFlags();
     }
 
     protected override onDestroy (): void {
+        this._skewEnabled = false;
         this._syncNative(false);
         this.node._uiProps._uiSkewComp = null;
+        this._updateNodeTransformFlags();
     }
 
     private _syncNative (enabled: boolean): void {
