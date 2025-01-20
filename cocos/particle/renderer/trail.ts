@@ -593,12 +593,16 @@ export default class TrailModule {
             if (trailNum === 1 || trailNum === 2) {
                 const lastSecondTrail = trailSeg.getElement(trailSeg.end - 1)!;
                 Vec3.subtract(lastSecondTrail.velocity, _temp_trailEle.position, lastSecondTrail.position);
-                this._vbF32![this.vbOffset - this._vertSize / 4 - 4] = lastSecondTrail.velocity.x;
-                this._vbF32![this.vbOffset - this._vertSize / 4 - 3] = lastSecondTrail.velocity.y;
-                this._vbF32![this.vbOffset - this._vertSize / 4 - 2] = lastSecondTrail.velocity.z;
-                this._vbF32![this.vbOffset - 4] = lastSecondTrail.velocity.x;
-                this._vbF32![this.vbOffset - 3] = lastSecondTrail.velocity.y;
-                this._vbF32![this.vbOffset - 2] = lastSecondTrail.velocity.z;
+                const vbF32 = this._vbF32!;
+                const vbOffset = this.vbOffset;
+                const vertSizeDiv4 = this._vertSize / 4;
+                const lastSecondTrailVelocity = lastSecondTrail.velocity;
+                vbF32[vbOffset - vertSizeDiv4 - 4] = lastSecondTrailVelocity.x;
+                vbF32[vbOffset - vertSizeDiv4 - 3] = lastSecondTrailVelocity.y;
+                vbF32[vbOffset - vertSizeDiv4 - 2] = lastSecondTrailVelocity.z;
+                vbF32[vbOffset - 4] = lastSecondTrailVelocity.x;
+                vbF32[vbOffset - 3] = lastSecondTrailVelocity.y;
+                vbF32[vbOffset - 2] = lastSecondTrailVelocity.z;
                 Vec3.subtract(_temp_trailEle.velocity, _temp_trailEle.position, lastSecondTrail.position);
                 this._checkDirectionReverse(_temp_trailEle, lastSecondTrail);
             } else if (trailNum > 2) {
@@ -670,37 +674,38 @@ export default class TrailModule {
     }
 
     private rebuild (): void {
+        const self = this;
         const device: Device = director.root!.device;
         const vertexBuffer = device.createBuffer(new BufferInfo(
             BufferUsageBit.VERTEX | BufferUsageBit.TRANSFER_DST,
             MemoryUsageBit.HOST | MemoryUsageBit.DEVICE,
-            this._vertSize * (this._trailNum + 1) * 2,
-            this._vertSize,
+            self._vertSize * (self._trailNum + 1) * 2,
+            self._vertSize,
         ));
-        const vBuffer: ArrayBuffer = new ArrayBuffer(this._vertSize * (this._trailNum + 1) * 2);
-        this._vbF32 = new Float32Array(vBuffer);
-        this._vbUint32 = new Uint32Array(vBuffer);
+        const vBuffer: ArrayBuffer = new ArrayBuffer(self._vertSize * (self._trailNum + 1) * 2);
+        self._vbF32 = new Float32Array(vBuffer);
+        self._vbUint32 = new Uint32Array(vBuffer);
         vertexBuffer.update(vBuffer);
 
         const indexBuffer = device.createBuffer(new BufferInfo(
             BufferUsageBit.INDEX | BufferUsageBit.TRANSFER_DST,
             MemoryUsageBit.HOST | MemoryUsageBit.DEVICE,
-            Math.max(1, this._trailNum) * 6 * Uint16Array.BYTES_PER_ELEMENT,
+            Math.max(1, self._trailNum) * 6 * Uint16Array.BYTES_PER_ELEMENT,
             Uint16Array.BYTES_PER_ELEMENT,
         ));
-        this._iBuffer = new Uint16Array(Math.max(1, this._trailNum) * 6);
-        indexBuffer.update(this._iBuffer);
+        self._iBuffer = new Uint16Array(Math.max(1, self._trailNum) * 6);
+        indexBuffer.update(self._iBuffer);
 
-        this._iaVertCount = (this._trailNum + 1) * 2;
-        this._iaIndexCount = this._trailNum * 6;
+        self._iaVertCount = (self._trailNum + 1) * 2;
+        self._iaIndexCount = self._trailNum * 6;
 
-        this._subMeshData = new RenderingSubMesh([vertexBuffer], this._vertAttrs, PrimitiveMode.TRIANGLE_LIST, indexBuffer);
+        self._subMeshData = new RenderingSubMesh([vertexBuffer], self._vertAttrs, PrimitiveMode.TRIANGLE_LIST, indexBuffer);
 
-        const trailModel = this._trailModel;
-        if (trailModel && this._material) {
-            trailModel.node = trailModel.transform = this._particleSystem!.node;
-            trailModel.visFlags = this._particleSystem!.visibility;
-            trailModel.initSubModel(0, this._subMeshData, this._material);
+        const trailModel = self._trailModel;
+        if (trailModel && self._material) {
+            trailModel.node = trailModel.transform = self._particleSystem!.node;
+            trailModel.visFlags = self._particleSystem!.visibility;
+            trailModel.initSubModel(0, self._subMeshData, self._material);
             trailModel.enabled = true;
         }
     }
