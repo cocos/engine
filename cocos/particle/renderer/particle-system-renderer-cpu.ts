@@ -243,7 +243,7 @@ export default class ParticleSystemRendererCPU extends ParticleSystemRendererBas
         return this._particles!.add();
     }
 
-    public getDefaultTrailMaterial (): any {
+    public getDefaultTrailMaterial (): Material | null {
         return this._defaultTrailMat;
     }
 

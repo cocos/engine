@@ -454,7 +454,7 @@ export default class TrailModule {
     public updateMaterial (): void {
         if (this._particleSystem) {
             this._material = this._particleSystem.getMaterialInstance(1)
-                || (this._particleSystem.processor as any)._defaultTrailMat;
+                || this._particleSystem.processor.getDefaultTrailMaterial();
             if (this._trailModel) {
                 this._trailModel.setSubModelMaterial(0, this._material!);
             }

@@ -128,7 +128,7 @@ export abstract class ParticleSystemRendererBase {
     }
 
     public updateTrailMaterial (): void {}
-    public getDefaultTrailMaterial (): null { return null; }
+    public getDefaultTrailMaterial (): Material | null { return null; }
     public abstract getParticleCount (): number;
     public abstract getFreeParticle (): Particle | null;
     public abstract onMaterialModified (index: number, material: Material): void;
