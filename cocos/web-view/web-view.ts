@@ -171,23 +171,24 @@ export class WebView extends Component {
         }
         this._impl = WebViewImplManager.getImpl(this);
         // must be register the event listener
-        this._impl.componentEventList.set(WebViewEventType.LOADING, this.onLoading.bind(this));
-        this._impl.componentEventList.set(WebViewEventType.LOADED, this.onLoaded.bind(this));
-        this._impl.componentEventList.set(WebViewEventType.ERROR, this.onError.bind(this));
+        const list = this._impl.componentEventList;
+        list.set(WebViewEventType.LOADING, this.onLoading.bind(this));
+        list.set(WebViewEventType.LOADED, this.onLoaded.bind(this));
+        list.set(WebViewEventType.ERROR, this.onError.bind(this));
         this._impl.loadURL(this._url);
     }
 
-    onLoading (): void {
+    private onLoading (): void {
         ComponentEventHandler.emitEvents(this.webviewEvents, this, WebViewEventType.LOADING);
         this.node.emit(WebViewEventType.LOADING, this);
     }
 
-    onLoaded (): void {
+    private onLoaded (): void {
         ComponentEventHandler.emitEvents(this.webviewEvents, this, WebViewEventType.LOADED);
         this.node.emit(WebViewEventType.LOADED, this);
     }
 
-    onError (...args: any[any]): void {
+    private onError (...args: any[any]): void {
         ComponentEventHandler.emitEvents(this.webviewEvents, this, WebViewEventType.ERROR, args);
         this.node.emit(WebViewEventType.ERROR, this, args);
     }
