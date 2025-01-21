@@ -51,17 +51,21 @@ export class UISkew extends Component {
 
     protected override __preload (): void {
         this.node._uiProps._uiSkewComp = this;
-        ++Node._skewCount;
+        if (JSB) {
+            (this.node as any)._setSkew(this._value);
+        }
     }
 
     protected override onEnable (): void {
         this._skewEnabled = true;
+        Node._incSkewCompCount();
         this._syncNative(true);
         this._updateNodeTransformFlags();
     }
 
     protected override onDisable (): void {
         this._skewEnabled = false;
+        Node._decSkewCompCount();
         this._syncNative(false);
         this._updateNodeTransformFlags();
     }
@@ -71,7 +75,6 @@ export class UISkew extends Component {
         this._syncNative(false);
         this.node._uiProps._uiSkewComp = null;
         this._updateNodeTransformFlags();
-        --Node._skewCount;
     }
 
     private _syncNative (enabled: boolean): void {
@@ -97,7 +100,10 @@ export class UISkew extends Component {
         if (JSB) {
             (this.node as any)._setSkewX(v);
         }
-        this._updateNodeTransformFlags();
+
+        if (this._skewEnabled) {
+            this._updateNodeTransformFlags();
+        }
     }
 
     /**
@@ -117,7 +123,10 @@ export class UISkew extends Component {
         if (JSB) {
             (this.node as any)._setSkewY(v);
         }
-        this._updateNodeTransformFlags();
+
+        if (this._skewEnabled) {
+            this._updateNodeTransformFlags();
+        }
     }
 
     /**
@@ -163,7 +172,10 @@ export class UISkew extends Component {
         if (JSB) {
             (this.node as any)._setSkew(v);
         }
-        this._updateNodeTransformFlags();
+
+        if (this._skewEnabled) {
+            this._updateNodeTransformFlags();
+        }
     }
 
     /**

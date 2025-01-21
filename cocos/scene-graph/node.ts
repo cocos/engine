@@ -40,6 +40,7 @@ import { PrefabInfo, PrefabInstance } from './prefab/prefab-info';
 import { NodeEventType } from './node-event';
 import { Event } from '../input/types';
 import { DispatcherEventType, NodeEventProcessor } from './node-event-processor';
+import { getParentWorldMatrixNoSkew, updateLocalMatrixBySkew } from '../2d/framework/ui-skew-utils';
 
 import type { Scene } from './scene';
 import type { Director } from '../game/director';
@@ -52,8 +53,6 @@ const Deactivating = CCObjectFlags.Deactivating;
 
 export const TRANSFORM_ON = 1 << 0;
 const ACTIVE_ON = 1 << 1;
-
-const DEG_TO_RAD = Math.PI / 180.0;
 
 const idGenerator = new js.IDGenerator('Node');
 
@@ -78,10 +77,14 @@ const m3_1 = new Mat3();
 const m4_1 = mat4();
 const m4_2 = mat4();
 const dirtyNodes: Node[] = [];
-const tempNodes: Node[] = [];
 
 const reserveContentsForAllSyncablePrefabTag = Symbol('ReserveContentsForAllSyncablePrefab');
 let globalFlagChangeVersion = 0;
+
+// TODO: Make this configurable in cc.config.json
+const HAS_UI_SKEW = true;
+
+let skewCompCount = 0;
 
 /**
  * @zh
@@ -268,17 +271,26 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     protected static _stackId = 0;
 
     /**
-     * @engineInternal
-     */
-    static _skewCount = 0;
-
-    /**
      * Call `_updateScene` of specified node.
      * @internal
      * @param node The node.
      */
     protected static _setScene (node: Node): void {
         node._updateScene();
+    }
+
+    /**
+     * @engineInternal
+     */
+    static _incSkewCompCount (): void {
+        ++skewCompCount;
+    }
+
+    /**
+     * @engineInternal
+     */
+    static _decSkewCompCount (): void {
+        --skewCompCount;
     }
 
     protected static _findComponent<T extends Component> (node: Node, constructor: Constructor<T> | AbstractedConstructor<T>): T | null {
@@ -1885,36 +1897,6 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         }
     }
 
-    private static _getParentWorldMatrixNoSkew (parent: Node | null, out: Mat4): boolean {
-        if (!parent) {
-            return false;
-        }
-        tempNodes.length = 0;
-        const ancestors: Node[] = tempNodes;
-        let startNode: Node | null = null;
-        for (let cur: Node | null = parent; cur; cur = cur._parent) {
-            ancestors.push(cur);
-            if (cur._uiProps._uiSkewComp) {
-                startNode = cur;
-            }
-        }
-
-        let ret = false;
-        if (startNode) {
-            out.set(startNode.parent!._mat); // Set the first no-skew node's world matrix to out.
-            const start = ancestors.indexOf(startNode);
-            for (let i = start; i >= 0; --i) {
-                const node = ancestors[i];
-                Mat4.fromSRT(m4_1, node._lrot, node._lpos, node._lscale);
-                Mat4.multiply(out, out, m4_1);
-            }
-            ret = true;
-        }
-
-        tempNodes.length = 0;
-        return ret;
-    }
-
     // ===============================
     // hierarchy
     // ===============================
@@ -1939,31 +1921,29 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                     self._transformFlags |= TransformBit.TRS;
                     self.updateWorldTransform();
                 } else {
-                    const hasSkew = Node._skewCount > 0;
-                    if (hasSkew) {
-                        // Calculate old parent's world matrix without skew side effect.
-                        const foundSkewInOldParent = Node._getParentWorldMatrixNoSkew(oldParent, m4_2);
-                        if (self._uiProps._uiSkewComp) {
+                    let newParentMatWithoutSkew = parent._mat;
+                    if (HAS_UI_SKEW) {
+                        const hasSkew = skewCompCount > 0;
+                        if (hasSkew) {
                             if (oldParent) {
+                                // Calculate old parent's world matrix without skew side effect.
+                                const foundSkewInOldParent = getParentWorldMatrixNoSkew(oldParent, m4_2);
                                 Mat4.fromSRT(m4_1, self._lrot, self._lpos, self._lscale);
-                                const parentMat = foundSkewInOldParent ? m4_2 : oldParent._mat;
-                                Mat4.multiply(self._mat, parentMat, m4_1);
+                                const oldParentMatWithoutSkew = foundSkewInOldParent ? m4_2 : oldParent._mat;
+                                // Calculate current node's world matrix without skew side effect.
+                                Mat4.multiply(self._mat, oldParentMatWithoutSkew, m4_1);
                             }
-                        } else if (foundSkewInOldParent) {
-                            Mat4.fromSRT(m4_1, self._lrot, self._lpos, self._lscale);
-                            Mat4.multiply(self._mat, m4_2, m4_1);
+
+                            // Calculate new parent's world matrix without skew side effect.
+                            const foundSkewInNewParent = getParentWorldMatrixNoSkew(parent, m4_2);
+                            if (foundSkewInNewParent) {
+                                newParentMatWithoutSkew = m4_2;
+                            }
                         }
                     }
 
-                    let newParentMat = parent._mat;
-                    if (hasSkew) {
-                        // Calculate new parent's world matrix without skew side effect.
-                        const foundSkewInNewParent = Node._getParentWorldMatrixNoSkew(parent, m4_2);
-                        if (foundSkewInNewParent) {
-                            newParentMat = m4_2;
-                        }
-                    }
-                    Mat4.multiply(m4_1, Mat4.invert(m4_1, newParentMat), self._mat);
+                    // Calculate current node's new local transform
+                    Mat4.multiply(m4_1, Mat4.invert(m4_1, newParentMatWithoutSkew), self._mat);
                     Mat4.toSRT(m4_1, self._lrot, self._lpos, self._lscale);
                 }
             } else {
@@ -2158,21 +2138,6 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         }
     }
 
-    private static updateLocalMatrixBySkew (uiSkewComp: UISkew, outLocalMatrix: Mat4): void {
-        if (!uiSkewComp.skewEnabled) return;
-        if (uiSkewComp.x === 0 && uiSkewComp.y === 0) return;
-        const skewX = Math.tan(uiSkewComp.x * DEG_TO_RAD);
-        const skewY = Math.tan(uiSkewComp.y * DEG_TO_RAD);
-        const a = outLocalMatrix.m00;
-        const b = outLocalMatrix.m01;
-        const c = outLocalMatrix.m04;
-        const d = outLocalMatrix.m05;
-        outLocalMatrix.m00 = a + c * skewY;
-        outLocalMatrix.m01 = b + d * skewY;
-        outLocalMatrix.m04 = c + a * skewX;
-        outLocalMatrix.m05 = d + b * skewX;
-    }
-
     /**
      * @en Update the world transform information if outdated
      * @zh 更新节点的世界变换信息
@@ -2214,14 +2179,14 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                     let originalWorldMatrix = childMat;
                     Mat4.fromSRT(m4_1, child._lrot, child._lpos, child._lscale); // m4_1 stores local matrix
 
-                    if (Node._skewCount > 0) {
+                    if (HAS_UI_SKEW && skewCompCount > 0) {
                         uiSkewComp = child._uiProps._uiSkewComp;
                         if (uiSkewComp) {
-                        // Save the original world matrix without skew side effect.
-                            Mat4.multiply(m4_2, cur._mat, m4_1);
+                            // Save the original world matrix without skew side effect.
+                            Mat4.multiply(m4_2, cur._mat, m4_1); // m4_2 stores orignal world matrix with skew
                             // If skew is dirty, rotation and scale must be also dirty.
                             // See _updateNodeTransformFlags in ui-skew.ts.
-                            Node.updateLocalMatrixBySkew(uiSkewComp, m4_1);
+                            updateLocalMatrixBySkew(uiSkewComp, m4_1);
                             originalWorldMatrix = m4_2;
                         }
                     }
@@ -2245,9 +2210,12 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                         Vec3.copy(child._scale, child._lscale);
                     }
                     Mat4.fromSRT(childMat, child._rot, child._pos, child._scale);
-                    uiSkewComp = child._uiProps._uiSkewComp;
-                    if (uiSkewComp) {
-                        Node.updateLocalMatrixBySkew(uiSkewComp, childMat);
+
+                    if (HAS_UI_SKEW && skewCompCount > 0) {
+                        uiSkewComp = child._uiProps._uiSkewComp;
+                        if (uiSkewComp) {
+                            updateLocalMatrixBySkew(uiSkewComp, childMat);
+                        }
                     }
                 }
             }

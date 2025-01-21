@@ -129,6 +129,9 @@ public:
 
     static void resetChangedFlags();
     static void clearNodeArray();
+    
+    static void _incSkewCompCount();
+    static void _decSkewCompCount();
 
     Node();
     explicit Node(const ccstd::string &name);
@@ -695,8 +698,5 @@ template <typename T>
 bool Node::isNode(T *obj) {
     return dynamic_cast<Node *>(obj) != nullptr && dynamic_cast<Scene *>(obj) == nullptr;
 }
-
-void incSkewCount();
-void decSkewCount();
 
 } // namespace cc
