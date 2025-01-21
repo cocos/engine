@@ -68,7 +68,7 @@ export class UIComponent extends Component {
         // workaround: mark this as any
         // issue: https://github.com/cocos/cocos-engine/issues/14637
         const uiProps = this.node._uiProps;
-        if ((uiProps.uiComp as unknown as UIComponent) === this) {
+        if (uiProps.uiComp === this as unknown as UIRenderer) {
             uiProps.uiComp = null;
         }
     }
