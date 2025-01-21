@@ -61,7 +61,7 @@ export function getParentWorldMatrixNoSkew (parent: Node | null, out: Mat4): boo
 }
 
 export function updateLocalMatrixBySkew (uiSkewComp: UISkew, outLocalMatrix: Mat4): void {
-    if (!uiSkewComp.skewEnabled) return;
+    if (!uiSkewComp.isSkewEnabled()) return;
     if (uiSkewComp.x === 0 && uiSkewComp.y === 0) return;
     const skewX = Math.tan(uiSkewComp.x * DEG_TO_RAD);
     const skewY = Math.tan(uiSkewComp.y * DEG_TO_RAD);

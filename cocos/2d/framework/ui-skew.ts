@@ -39,13 +39,19 @@ export class UISkew extends Component {
     @serializable
     private _value: Vec2 = v2();
 
+    // FIXME(cjh): I added this property instead of `Component.enabled` since I found that
+    // When in UISkew.onDisable callback, `this.enabled` may still be true.
     private _skewEnabled = false;
 
     constructor () {
         super();
     }
 
-    get skewEnabled (): boolean {
+    /**
+     * @engineInternal
+     * @mangle
+     */
+    isSkewEnabled (): boolean {
         return this._skewEnabled;
     }
 
