@@ -1,5 +1,5 @@
 /****************************************************************************
-Copyright (c) 2022-2024 Xiamen Yaji Software Co., Ltd.
+Copyright (c) 2022-2025 Xiamen Yaji Software Co., Ltd.
 
 http://www.cocos.com
 
@@ -30,4 +30,4 @@ THE SOFTWARE.
 #define COCOS_VERSION_DEFINED   1
 #define COCOS_VERSION           30804
 
-// #define COCOS_PRE_RELEASE       "release"
+// #define COCOS_PRE_RELEASE       "honor"
