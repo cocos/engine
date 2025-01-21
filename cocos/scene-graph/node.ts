@@ -1593,6 +1593,54 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     }
 
     /**
+     * @en Get x axis value in local coordinate system
+     * @zh 获取本地 x 轴坐标分量
+     */
+    get x (): number {
+        return this._lpos.x;
+    }
+
+    /**
+     * @en Set x axis value in local coordinate system
+     * @zh 设置本地 x 轴坐标分量
+     */
+    set x (val: number) {
+        this.setPosition(val, this._lpos.y, this._lpos.z);
+    }
+
+    /**
+     * @en Get y axis value in local coordinate system
+     * @zh 获取本地 y 轴坐标分量
+     */
+    get y (): number {
+        return this._lpos.y;
+    }
+
+    /**
+     * @en Set y axis value in local coordinate system
+     * @zh 设置本地 y 轴坐标分量
+     */
+    set y (val: number) {
+        this.setPosition(this._lpos.x, val, this._lpos.z);
+    }
+
+    /**
+     * @en Get z axis value in local coordinate system
+     * @zh 获取本地 z 轴坐标分量
+     */
+    get z (): number {
+        return this._lpos.z;
+    }
+
+    /**
+     * @en Set z axis value in local coordinate system
+     * @zh 设置本地 z 轴坐标分量
+     */
+    set z (val: number) {
+        this.setPosition(this._lpos.x, this._lpos.y, val);
+    }
+
+    /**
      * @en Position in world coordinate system
      * @zh 世界坐标系下的坐标
      */
@@ -1604,6 +1652,57 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
     public set worldPosition (val: Readonly<Vec3>) {
         this.setWorldPosition(val as Vec3);
+    }
+
+    /**
+     * @en Get x axis value in world coordinate system
+     * @zh 获取世界坐标 x 轴分量
+     */
+    get worldPositionX (): number {
+        this.updateWorldTransform();
+        return this._pos.x;
+    }
+
+    /**
+     * @en Set x axis value in world coordinate system
+     * @zh 设置世界坐标 x 轴分量
+     */
+    set worldPositionX (val: number) {
+        this.setWorldPosition(val, this._pos.y, this._pos.z);
+    }
+
+    /**
+     * @en Get y axis value in world coordinate system
+     * @zh 获取世界坐标 y 轴分量
+     */
+    get worldPositionY (): number {
+        this.updateWorldTransform();
+        return this._pos.y;
+    }
+
+    /**
+     * @en Set y axis value in world coordinate system
+     * @zh 设置世界坐标 y 轴分量
+     */
+    set worldPositionY (val: number) {
+        this.setWorldPosition(this._pos.x, val, this._pos.z);
+    }
+
+    /**
+     * @en Get z axis value in world coordinate system
+     * @zh 获取世界坐标 z 轴分量
+     */
+    get worldPositionZ (): number {
+        this.updateWorldTransform();
+        return this._pos.z;
+    }
+
+    /**
+     * @en Set z axis value in world coordinate system
+     * @zh 设置世界坐标 z 轴分量
+     */
+    set worldPositionZ (val: number) {
+        this.setWorldPosition(this._pos.x, this._pos.y, val);
     }
 
     /**

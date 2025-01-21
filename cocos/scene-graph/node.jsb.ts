@@ -49,8 +49,9 @@ export const Node: typeof JsbNode = jsb.Node;
 export type Node = JsbNode;
 cclegacy.Node = Node;
 
-const NodeCls: any = Node;
+const tempVec3 = new Vec3();
 
+const NodeCls: any = Node;
 
 NodeCls.reserveContentsForAllSyncablePrefabTag = reserveContentsForAllSyncablePrefabTag;
 
@@ -860,6 +861,39 @@ Object.defineProperty(nodeProto, 'position', {
     },
 });
 
+Object.defineProperty(nodeProto, 'x', {
+    configurable: true,
+    enumerable: true,
+    get(): number {
+        return this._lpos.x;
+    },
+    set(v: number) {
+        this.setPosition(v, this._lpos.y, this._lpos.z);
+    },
+});
+
+Object.defineProperty(nodeProto, 'y', {
+    configurable: true,
+    enumerable: true,
+    get(): number {
+        return this._lpos.y;
+    },
+    set(v: number) {
+        this.setPosition(this._lpos.x, v, this._lpos.z);
+    },
+});
+
+Object.defineProperty(nodeProto, 'z', {
+    configurable: true,
+    enumerable: true,
+    get(): number {
+        return this._lpos.z;
+    },
+    set(v: number) {
+        this.setPosition(this._lpos.x, this._lpos.y, v);
+    },
+});
+
 Object.defineProperty(nodeProto, 'rotation', {
     configurable: true,
     enumerable: true,
@@ -890,6 +924,48 @@ Object.defineProperty(nodeProto, 'worldPosition', {
     },
     set(v: Readonly<Vec3>) {
         this.setWorldPosition(v as Vec3);
+    },
+});
+
+Object.defineProperty(nodeProto, 'worldPositionX', {
+    configurable: true,
+    enumerable: true,
+    get(): number {
+        this.getWorldPosition(tempVec3);
+        return tempVec3.x;
+    },
+    set(v: number) {
+        this.getWorldPosition(tempVec3);
+        tempVec3.x = v;
+        this.setWorldPosition(tempVec3);
+    },
+});
+
+Object.defineProperty(nodeProto, 'worldPositionY', {
+    configurable: true,
+    enumerable: true,
+    get(): number {
+        this.getWorldPosition(tempVec3);
+        return tempVec3.y;
+    },
+    set(v: number) {
+        this.getWorldPosition(tempVec3);
+        tempVec3.y = v;
+        this.setWorldPosition(tempVec3);
+    },
+});
+
+Object.defineProperty(nodeProto, 'worldPositionZ', {
+    configurable: true,
+    enumerable: true,
+    get(): number {
+        this.getWorldPosition(tempVec3);
+        return tempVec3.z;
+    },
+    set(v: number) {
+        this.getWorldPosition(tempVec3);
+        tempVec3.z = v;
+        this.setWorldPosition(tempVec3);
     },
 });
 
