@@ -256,6 +256,13 @@ export class TiffReader {
         return Math.floor((colorSample * multiplier) + (multiplier - 1));
     }
 
+    reset (): void {
+        this._littleEndian = false;
+        this._tiffData = [];
+        this._fileDirectories = [];
+        this._canvas = null;
+    }
+
     parseTIFF (tiffData: number[], canvas: HTMLCanvasElement): void {
         canvas = canvas || ccwindow.document.createElement('canvas');
 
@@ -728,3 +735,5 @@ const fieldTypeNames = {
 
 type FieldTypeNamesKey = keyof typeof fieldTypeNames;
 type FieldTypeNamesValue = typeof fieldTypeNames[FieldTypeNamesKey];
+
+export const tiffReader = new TiffReader();

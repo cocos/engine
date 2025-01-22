@@ -36,7 +36,7 @@ import { ImageAsset } from '../asset/assets/image-asset';
 import { ParticleAsset } from './particle-asset';
 import { BlendFactor } from '../gfx';
 import { PNGReader } from './png-reader';
-import { TiffReader } from './tiff-reader';
+import { tiffReader } from './tiff-reader';
 import codec from '../../external/compression/ZipUtils';
 import { IBatcher } from '../2d/renderer/i-batcher';
 import { assetManager, builtinResMgr } from '../asset/asset-manager';
@@ -746,7 +746,6 @@ export class ParticleSystem2D extends UIRenderer {
     private declare _previewTimer: number | null;
     private declare _focused: boolean;
     private declare _plistFile: string;
-    private declare _tiffReader;
     private _useFile: boolean;
 
     constructor () {
@@ -997,10 +996,8 @@ export class ParticleSystem2D extends UIRenderer {
                             const myPngObj = new PNGReader(buffer);
                             myPngObj.render(canvasObj);
                         } else {
-                            if (!this._tiffReader) {
-                                this._tiffReader = new TiffReader();
-                            }
-                            this._tiffReader.parseTIFF(buffer, canvasObj);
+                            tiffReader.parseTIFF(buffer, canvasObj);
+                            tiffReader.reset(); // Reset the tiff reader to avoid memory cached in it.
                         }
                         imageAsset = new ImageAsset(canvasObj);
                         assetManager.assets.add(imgPathName, imageAsset);
