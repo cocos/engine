@@ -767,8 +767,8 @@ bool Node::getParentWorldMatrixNoSkew(Node *parent, Mat4 *out) {
     if (startNode) {
         out->set(startNode->_parent->_worldMatrix); // Set the first no-skew node's world matrix to out.
         auto iter = std::find(ancestors.begin(), ancestors.end(), startNode);
-        int start = iter - ancestors.begin();
-        for (int i = start; i >= 0; --i) {
+        long start = static_cast<long>(iter - ancestors.begin());
+        for (long i = start; i >= 0; --i) {
             const auto *node = ancestors[i];
             Mat4::fromRTS(node->_localRotation, node->_localPosition, node->_localScale, &curMat4);
             Mat4::multiply(*out, curMat4, out);
