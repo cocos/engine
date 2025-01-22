@@ -30,13 +30,15 @@ import { game } from '../game';
 import { mat4 } from '../core/math';
 import { contains } from '../core/utils/misc';
 import { ccwindow } from '../core/global-exports';
+import type { WebView } from './web-view';
 
 const ccdocument = ccwindow.document;
 
 const _mat4_temp = mat4();
 
+/** @mangle */
 export class WebViewImplWeb extends WebViewImpl {
-    constructor (component: any) {
+    constructor (component: WebView) {
         super(component);
     }
 

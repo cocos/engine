@@ -397,14 +397,15 @@ export class VideoPlayer extends Component {
         this._impl = VideoPlayerImplManager.getImpl(this);
         this.syncSource();
 
-        this._impl.componentEventList.set(VideoPlayerEventType.META_LOADED, this.onMetaLoaded.bind(this));
-        this._impl.componentEventList.set(VideoPlayerEventType.READY_TO_PLAY, this.onReadyToPlay.bind(this));
-        this._impl.componentEventList.set(VideoPlayerEventType.PLAYING, this.onPlaying.bind(this));
-        this._impl.componentEventList.set(VideoPlayerEventType.PAUSED, this.onPaused.bind(this));
-        this._impl.componentEventList.set(VideoPlayerEventType.STOPPED, this.onStopped.bind(this));
-        this._impl.componentEventList.set(VideoPlayerEventType.COMPLETED, this.onCompleted.bind(this));
-        this._impl.componentEventList.set(VideoPlayerEventType.ERROR, this.onError.bind(this));
-        this._impl.componentEventList.set(VideoPlayerEventType.CLICKED, this.onClicked.bind(this));
+        const { componentEventList } = this._impl;
+        componentEventList.set(VideoPlayerEventType.META_LOADED, this.onMetaLoaded.bind(this));
+        componentEventList.set(VideoPlayerEventType.READY_TO_PLAY, this.onReadyToPlay.bind(this));
+        componentEventList.set(VideoPlayerEventType.PLAYING, this.onPlaying.bind(this));
+        componentEventList.set(VideoPlayerEventType.PAUSED, this.onPaused.bind(this));
+        componentEventList.set(VideoPlayerEventType.STOPPED, this.onStopped.bind(this));
+        componentEventList.set(VideoPlayerEventType.COMPLETED, this.onCompleted.bind(this));
+        componentEventList.set(VideoPlayerEventType.ERROR, this.onError.bind(this));
+        componentEventList.set(VideoPlayerEventType.CLICKED, this.onClicked.bind(this));
         if (this._playOnAwake && this._impl.loaded) {
             this.play();
         }

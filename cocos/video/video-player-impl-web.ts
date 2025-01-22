@@ -32,6 +32,8 @@ import { VideoPlayerImpl } from './video-player-impl';
 import { ClearFlagBit } from '../gfx';
 import { BrowserType, OS } from '../../pal/system-info/enum-type';
 import { ccwindow } from '../core/global-exports';
+import type { VideoPlayer } from './video-player';
+import type { VideoClip } from './assets/video-clip';
 
 const ccdocument = ccwindow.document;
 
@@ -39,6 +41,7 @@ const MIN_ZINDEX = -(2 ** 15);
 
 const _mat4_temp = mat4();
 
+/** @mangle */
 export class VideoPlayerImplWeb extends VideoPlayerImpl {
     protected _eventList: Map<string, ((e: Event) => void)> = new Map();
 
@@ -46,7 +49,7 @@ export class VideoPlayerImplWeb extends VideoPlayerImpl {
     protected _clearColorA = -1;
     protected _clearFlag;
 
-    constructor (component) {
+    constructor (component: VideoPlayer) {
         super(component);
     }
 
@@ -108,7 +111,7 @@ export class VideoPlayerImplWeb extends VideoPlayerImpl {
         }
     }
 
-    public syncClip (clip: any): void {
+    public syncClip (clip: VideoClip | null): void {
         this.removeVideoPlayer();
         if (!clip) { return; }
         this.createVideoPlayer(clip.nativeUrl);
@@ -171,8 +174,11 @@ export class VideoPlayerImplWeb extends VideoPlayerImpl {
 
     canFullScreen (enabled: boolean): void {
         // NOTE: below we visited some non-standard web interfaces to complement browser compatibility
-        // we need to mark video as any type.
-        const video = this._video as any;
+        const video = this._video as HTMLVideoElement & {
+            webkitEnterFullscreen?: () => void;
+            webkitExitFullscreen?: () => void;
+            webkitDisplayingFullscreen: boolean;
+        };
         if (!video || video.readyState !== READY_STATE.HAVE_ENOUGH_DATA) {
             return;
         }
