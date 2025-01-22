@@ -32,25 +32,26 @@ import { getError, logID } from '../core';
 import { ccwindow } from '../core/global-exports';
 
 interface IFile {
-    type: string,
-    values: any[],
+    type: string;
+    values: number[] | string[];
 }
 
 interface ISampleProperty {
-    bitsPerSample: number,
-    hasBytesPerSample: boolean,
-    bytesPerSample: number | undefined,
+    bitsPerSample: number;
+    hasBytesPerSample: boolean;
+    bytesPerSample: number | undefined;
 }
 
 /**
  * cc.tiffReader is a singleton object, it's a tiff file reader, it can parse byte array to draw into a canvas
  * @class
  * @name tiffReader
+ * @mangle
  */
 export class TiffReader {
     private _littleEndian = false;
     private _tiffData: number[] = [];
-    private _fileDirectories: any[] = [];
+    private _fileDirectories: Record<FieldTagNamesValue, IFile>[] = [];
     private _canvas: HTMLCanvasElement | null = null;
 
     constructor () {
@@ -129,8 +130,13 @@ export class TiffReader {
         return 0;
     }
 
-    public getFieldValues (fieldTagName: FieldTagNamesValue, fieldTypeName: FieldTypeNamesValue, typeCount: number, valueOffset: number): any[] {
-        const fieldValues: any[] = [];
+    public getFieldValues (
+        fieldTagName: FieldTagNamesValue,
+        fieldTypeName: FieldTypeNamesValue,
+        typeCount: number,
+        valueOffset: number,
+    ): string[] | number[] {
+        const fieldValues: number[] = [];
         const fieldTypeLength = this.getFieldTypeLength(fieldTypeName);
         const fieldValueSize = fieldTypeLength * typeCount;
 
@@ -158,7 +164,7 @@ export class TiffReader {
 
         if (fieldTypeName === 'ASCII') {
             fieldValues.forEach((e, i, a): void => {
-                a[i] = String.fromCharCode(e as number);
+                (a as unknown as string[])[i] = String.fromCharCode(e);
             });
         }
         return fieldValues;
@@ -219,7 +225,7 @@ export class TiffReader {
 
     parseFileDirectory (offset: number): void {
         const numDirEntries = this.getUint16(offset);
-        const tiffFields: IFile[] = [];
+        const tiffFields = {} as Record<FieldTagNamesValue, IFile>;
         let i = 0;
         let entryCount = 0;
 
@@ -233,7 +239,7 @@ export class TiffReader {
             const fieldTypeName = this.getFieldTypeName(fieldType as FieldTypeNamesKey);
             const fieldValues = this.getFieldValues(fieldTagName, fieldTypeName as FieldTypeNamesValue, typeCount, valueOffset);
 
-            tiffFields[fieldTagName] = { type: fieldTypeName, values: fieldValues };
+            tiffFields[fieldTagName] = { type: fieldTypeName!, values: fieldValues };
         }
 
         this._fileDirectories.push(tiffFields);
@@ -244,19 +250,13 @@ export class TiffReader {
         }
     }
 
-    clampColorSample (colorSample, bitsPerSample): number {
+    clampColorSample (colorSample: number, bitsPerSample: number): number {
         const multiplier = 2 ** (8 - bitsPerSample);
 
         return Math.floor((colorSample * multiplier) + (multiplier - 1));
     }
 
-    /**
-     * @function
-     * @param {Array} tiffData
-     * @param {HTMLCanvasElement} canvas
-     * @returns {*}
-     */
-    parseTIFF (tiffData: any[], canvas: HTMLCanvasElement): void {
+    parseTIFF (tiffData: number[], canvas: HTMLCanvasElement): void {
         canvas = canvas || ccwindow.document.createElement('canvas');
 
         this._tiffData = tiffData;
@@ -275,17 +275,17 @@ export class TiffReader {
 
         const fileDirectory = this._fileDirectories[0];
 
-        const imageWidth = fileDirectory.ImageWidth.values[0];
-        const imageLength = fileDirectory.ImageLength.values[0];
+        const imageWidth = fileDirectory.ImageWidth.values[0] as number;
+        const imageLength = fileDirectory.ImageLength.values[0] as number;
 
         this._canvas.width = imageWidth;
         this._canvas.height = imageLength;
 
-        const strips: any[] = [];
+        const strips: Array<Array<Array<number>>> = [];
 
-        const compression = (fileDirectory.Compression) ? fileDirectory.Compression.values[0] : 1;
+        const compression = (fileDirectory.Compression) ? fileDirectory.Compression.values[0] as number : 1;
 
-        const samplesPerPixel = fileDirectory.SamplesPerPixel.values[0];
+        const samplesPerPixel = fileDirectory.SamplesPerPixel.values[0] as number;
 
         const sampleProperties: ISampleProperty[] = [];
 
@@ -313,13 +313,13 @@ export class TiffReader {
             bytesPerPixel = bitsPerPixel / 8;
         }
 
-        const stripOffsetValues: number[] = fileDirectory.StripOffsets.values;
+        const stripOffsetValues = fileDirectory.StripOffsets.values as number[];
         const numStripOffsetValues = stripOffsetValues.length;
 
         let stripByteCountValues: number[];
         // StripByteCounts is supposed to be required, but see if we can recover anyway.
         if (fileDirectory.StripByteCounts) {
-            stripByteCountValues = fileDirectory.StripByteCounts.values;
+            stripByteCountValues = fileDirectory.StripByteCounts.values as number[];
         } else {
             logID(8003);
             // Infer StripByteCounts, if possible.
@@ -338,7 +338,8 @@ export class TiffReader {
 
             const stripByteCount = stripByteCountValues[i];
             // Loop through pixels.
-            for (let byteOffset = 0, bitOffset = 0, jIncrement = 1, getHeader = true, pixel: number[] = [], numBytes = 0, sample = 0, currentSample = 0;
+            for (let byteOffset = 0, bitOffset = 0, jIncrement = 1, getHeader = true,
+                pixel: number[] = [], numBytes = 0, sample = 0, currentSample = 0;
                 byteOffset < stripByteCount; byteOffset += jIncrement) {
                 // Decompress strip.
                 switch (compression) {
@@ -472,7 +473,7 @@ export class TiffReader {
         ctx.fillStyle = 'rgba(255, 255, 255, 0)';
 
         // If RowsPerStrip is missing, the whole image is in one strip.
-        const rowsPerStrip = fileDirectory.RowsPerStrip ? fileDirectory.RowsPerStrip.values[0] : imageLength;
+        const rowsPerStrip = fileDirectory.RowsPerStrip ? fileDirectory.RowsPerStrip.values[0] as number : imageLength;
 
         const numStrips = strips.length;
 
@@ -482,21 +483,21 @@ export class TiffReader {
         let numRowsInStrip = rowsPerStrip;
         let numRowsInPreviousStrip = 0;
 
-        const photometricInterpretation: number = fileDirectory.PhotometricInterpretation.values[0];
+        const photometricInterpretation = fileDirectory.PhotometricInterpretation.values[0] as number;
 
-        let extraSamplesValues = [];
+        let extraSamplesValues: number[] = [];
         let numExtraSamples = 0;
 
         if (fileDirectory.ExtraSamples) {
-            extraSamplesValues = fileDirectory.ExtraSamples.values;
+            extraSamplesValues = fileDirectory.ExtraSamples.values as number[];
             numExtraSamples = extraSamplesValues.length;
         }
 
-        let colorMapValues = [];
+        let colorMapValues: number[] = [];
         let colorMapSampleSize = 0;
         if (fileDirectory.ColorMap) {
-            colorMapValues = fileDirectory.ColorMap.values;
-            colorMapSampleSize = 2 ** (sampleProperties[0] as any).bitsPerSample;
+            colorMapValues = fileDirectory.ColorMap.values as number[];
+            colorMapSampleSize = 2 ** sampleProperties[0].bitsPerSample;
         }
 
         // Loop through the strips in the image.
