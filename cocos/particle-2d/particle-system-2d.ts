@@ -138,13 +138,8 @@ function getParticleComponents (node): ParticleSystem2D[] {
     return getParticleComponents(parent);
 }
 
-function wrapParseInt (str: string | number): number {
-    return parseInt(str as string);
-}
-
-function wrapParseFloat (str: string | number): number {
-    return parseInt(str as string);
-}
+const wrapParseInt: (str: string | number) => number = parseInt as any;
+const wrapParseFloat: (str: string | number) => number = parseFloat as any;
 
 /**
  * @en Particle System base class.
