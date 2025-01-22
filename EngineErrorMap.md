@@ -3177,6 +3177,14 @@ QuadRenderData is removed, please use MeshRenderData instead.
 
 Since v3.6, Because mask changes the inheritance relationship, you can directly manipulate the rendering components under the same node to complete the operation.
 
+### 9008
+
+request fullscreen is not supported on this platform.
+
+### 9009
+
+exit fullscreen is not supported on this platform.
+
 ### 9100
 
 texture size exceeds current device limits %d/%d
