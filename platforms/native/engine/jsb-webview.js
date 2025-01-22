@@ -23,39 +23,35 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-'use strict';
-
 if (cc.internal.WebView) {
-
     const { EventType } = cc.internal.WebView;
 
-    let vec3 = cc.Vec3;
-    let mat4 = cc.Mat4;
-    let _mat4_temp = new mat4();
+    const Vec3 = cc.Vec3;
+    const Mat4 = cc.Mat4;
+    const _mat4_temp = new Mat4();
 
-    let _topLeft = new vec3();
-    let _bottomRight = new vec3();
+    const _topLeft = new Vec3();
+    const _bottomRight = new Vec3();
 
-    cc.internal.WebViewImplManager.getImpl = function(componenet) {
+    cc.internal.WebViewImplManager.getImpl = function (componenet) {
         return new WebViewImplJSB(componenet);
     };
 
     class WebViewImplJSB extends cc.internal.WebViewImpl {
-
-        constructor(componenet) {
+        constructor (componenet) {
             super(componenet);
             this.jsCallback = null;
             this.interfaceSchema = null;
-            this._matViewProj_temp = new mat4();
+            this._matViewProj_temp = new Mat4();
         }
 
-        _bindEvent() {
-            let onLoaded = () => {
+        _bindEvent () {
+            const onLoaded = () => {
                 this._forceUpdate = true;
                 this.dispatchEvent(EventType.LOADED);
             };
 
-            let onError = () => {
+            const onError = () => {
                 this.dispatchEvent(EventType.ERROR);
             };
             this.webview.setOnDidFinishLoading(onLoaded);
@@ -67,37 +63,39 @@ if (cc.internal.WebView) {
             this.interfaceSchema = null;
         }
 
-        createWebView() {
+        createWebView () {
+            // eslint-disable-next-line no-undef
             if (!jsb.WebView) {
                 console.warn('jsb.WebView is null');
                 return;
             }
+            // eslint-disable-next-line no-undef
             this._webview = jsb.WebView.create();
             this._bindEvent();
         }
 
-        removeWebView() {
-            let webview = this.webview;
+        removeWebView () {
+            const webview = this.webview;
             if (webview) {
                 this.webview.destroy();
                 this.reset();
             }
         }
 
-        disable() {
+        disable () {
             if (this.webview) {
                 this.webview.setVisible(false);
             }
         }
 
-        enable() {
+        enable () {
             if (this.webview) {
                 this.webview.setVisible(true);
             }
         }
 
-        setOnJSCallback(callback) {
-            let webview = this.webview;
+        setOnJSCallback (callback) {
+            const webview = this.webview;
             if (webview) {
                 webview.setOnJSCallback(callback);
             } else {
@@ -105,8 +103,8 @@ if (cc.internal.WebView) {
             }
         }
 
-        setJavascriptInterfaceScheme(scheme) {
-            let webview = this.webview;
+        setJavascriptInterfaceScheme (scheme) {
+            const webview = this.webview;
             if (webview) {
                 webview.setJavascriptInterfaceScheme(scheme);
             } else {
@@ -114,8 +112,8 @@ if (cc.internal.WebView) {
             }
         }
 
-        loadURL(url) {
-            let webview = this.webview;
+        loadURL (url) {
+            const webview = this.webview;
             if (webview) {
                 webview.src = url;
                 webview.loadURL(url);
@@ -123,14 +121,15 @@ if (cc.internal.WebView) {
             }
         }
 
-        evaluateJS(str) {
-            let webview = this.webview;
+        evaluateJS (str) {
+            const webview = this.webview;
             if (webview) {
                 return webview.evaluateJS(str);
             }
+            return null;
         }
 
-        syncMatrix() {
+        syncMatrix () {
             if (!this._webview || !this._component || !this._uiTrans) return;
 
             const camera = this.UICamera;
@@ -140,12 +139,12 @@ if (cc.internal.WebView) {
 
             this._component.node.getWorldMatrix(_mat4_temp);
             const { width, height } = this._uiTrans.contentSize;
-            if (!this._forceUpdate &&
-                camera.matViewProj.equals(this._matViewProj_temp) &&
-                this._m00 === _mat4_temp.m00 && this._m01 === _mat4_temp.m01 &&
-                this._m04 === _mat4_temp.m04 && this._m05 === _mat4_temp.m05 &&
-                this._m12 === _mat4_temp.m12 && this._m13 === _mat4_temp.m13 &&
-                this._w === width && this._h === height) {
+            if (!this._forceUpdate
+                && camera.matViewProj.equals(this._matViewProj_temp)
+                && this._m00 === _mat4_temp.m00 && this._m01 === _mat4_temp.m01
+                && this._m04 === _mat4_temp.m04 && this._m05 === _mat4_temp.m05
+                && this._m12 === _mat4_temp.m12 && this._m13 === _mat4_temp.m13
+                && this._w === width && this._h === height) {
                 return;
             }
 
@@ -160,25 +159,25 @@ if (cc.internal.WebView) {
             this._w = width;
             this._h = height;
 
-            let canvas_width = cc.game.canvas.width;
-            let canvas_height = cc.game.canvas.height;
+            // const canvas_width = cc.game.canvas.width;
+            const canvasHeight = cc.game.canvas.height;
 
-            let ap = this._uiTrans.anchorPoint;
+            const ap = this._uiTrans.anchorPoint;
             // Vectors in node space
-            vec3.set(_topLeft, -ap.x * this._w, (1.0 - ap.y) * this._h, 0);
-            vec3.set(_bottomRight, (1 - ap.x) * this._w, -ap.y * this._h, 0);
+            Vec3.set(_topLeft, -ap.x * this._w, (1.0 - ap.y) * this._h, 0);
+            Vec3.set(_bottomRight, (1 - ap.x) * this._w, -ap.y * this._h, 0);
             // Convert to world space
-            vec3.transformMat4(_topLeft, _topLeft, _mat4_temp);
-            vec3.transformMat4(_bottomRight, _bottomRight, _mat4_temp);
+            Vec3.transformMat4(_topLeft, _topLeft, _mat4_temp);
+            Vec3.transformMat4(_bottomRight, _bottomRight, _mat4_temp);
             // need update camera data
             camera.update();
             // Convert to Screen space
             camera.worldToScreen(_topLeft, _topLeft);
             camera.worldToScreen(_bottomRight, _bottomRight);
 
-            let finalWidth = _bottomRight.x - _topLeft.x;
-            let finalHeight = _topLeft.y - _bottomRight.y;
-            this._webview.setFrame(_topLeft.x, canvas_height - _topLeft.y, finalWidth, finalHeight);
+            const finalWidth = _bottomRight.x - _topLeft.x;
+            const finalHeight = _topLeft.y - _bottomRight.y;
+            this._webview.setFrame(_topLeft.x, canvasHeight - _topLeft.y, finalWidth, finalHeight);
             this._forceUpdate = false;
         }
     }
