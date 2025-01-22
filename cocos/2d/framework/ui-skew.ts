@@ -37,7 +37,7 @@ const tempVec2 = v2();
 @executeInEditMode
 export class UISkew extends Component {
     @serializable
-    private _value: Vec2 = v2();
+    private _skew: Vec2 = v2();
 
     // FIXME(cjh): I added this property instead of `Component.enabled` since I found that
     // When in UISkew.onDisable callback, `this.enabled` may still be true.
@@ -58,7 +58,7 @@ export class UISkew extends Component {
     protected override __preload (): void {
         this.node._uiProps._uiSkewComp = this;
         if (JSB) {
-            (this.node as any)._setSkew(this._value);
+            (this.node as any)._setSkew(this._skew);
         }
     }
 
@@ -94,7 +94,7 @@ export class UISkew extends Component {
      * @zh 获取 X 轴斜切角度。
      */
     get x (): number {
-        return this._value.x;
+        return this._skew.x;
     }
 
     /**
@@ -102,7 +102,7 @@ export class UISkew extends Component {
      * @zh 设置 X 轴斜切角度。
      */
     set x (v: number) {
-        this._value.x = v;
+        this._skew.x = v;
         if (JSB) {
             (this.node as any)._setSkewX(v);
         }
@@ -117,7 +117,7 @@ export class UISkew extends Component {
      * @zh 获取 Y 轴斜切角度。
      */
     get y (): number {
-        return this._value.y;
+        return this._skew.y;
     }
 
     /**
@@ -125,7 +125,7 @@ export class UISkew extends Component {
      * @zh 设置 Y 轴斜切角度。
      */
     set y (v: number) {
-        this._value.y = v;
+        this._skew.y = v;
         if (JSB) {
             (this.node as any)._setSkewY(v);
         }
@@ -141,7 +141,7 @@ export class UISkew extends Component {
      */
     @type(Vec2)
     get skew (): Readonly<Vec2> {
-        return this._value;
+        return this._skew;
     }
 
     /**
@@ -166,7 +166,7 @@ export class UISkew extends Component {
      */
     setSkew (x: number, y: number): void;
     setSkew (xOrVec2: number | Readonly<IVec2Like>, y?: number): void {
-        const v = this._value;
+        const v = this._skew;
         if (typeof xOrVec2 === 'number') {
             tempVec2.set(xOrVec2, y);
         } else {
@@ -191,7 +191,7 @@ export class UISkew extends Component {
      */
     getSkew (out?: Vec2): Vec2 {
         if (!out) out = new Vec2();
-        return out.set(this._value);
+        return out.set(this._skew);
     }
 
     private _updateNodeTransformFlags (): void {
