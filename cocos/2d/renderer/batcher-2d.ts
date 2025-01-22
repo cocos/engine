@@ -869,6 +869,7 @@ export class Batcher2D implements IBatcher {
     // by legacyCC.director.root.batcher2D._releaseDescriptorSetCache
     /**
      * @engineInternal
+     * @mangle
      */
     public _releaseDescriptorSetCache (textureHash: number | Texture | null, sampler: Sampler | null = null): void {
         if (JSB) {
@@ -962,6 +963,7 @@ export class Batcher2D implements IBatcher {
     }
 }
 
+/** @mangle */
 class LocalDescriptorSet  {
     private _descriptorSet: DescriptorSet | null = null;
     private _transform: Node | null = null;
@@ -971,7 +973,7 @@ class LocalDescriptorSet  {
     private _transformUpdate = true;
     private declare _localData: Float32Array | null;
 
-    public get descriptorSet (): DescriptorSet | null {
+    public getDescriptorSet (): DescriptorSet | null {
         return this._descriptorSet;
     }
 
@@ -1063,6 +1065,7 @@ class LocalDescriptorSet  {
     }
 }
 
+/** @mangle */
 class DescriptorSetCache {
     private _descriptorSetCache = new Map<number, DescriptorSet>();
     private _dsCacheHashByTexture = new Map<number, number>();
@@ -1080,13 +1083,13 @@ class DescriptorSetCache {
             for (let i = 0, len = caches.length; i < len; i++) {
                 const cache: LocalDescriptorSet = caches[i];
                 if (cache.equals(batch.useLocalData, batch.textureHash, batch.samplerHash)) {
-                    return cache.descriptorSet!;
+                    return cache.getDescriptorSet()!;
                 }
             }
             const localDs = this._localCachePool.alloc();
             localDs.initialize(batch);
             this._localDescriptorSetCache.push(localDs);
-            return localDs.descriptorSet!;
+            return localDs.getDescriptorSet()!;
         } else {
             const hash = batch.textureHash ^ batch.samplerHash;
             if (this._descriptorSetCache.has(hash)) {

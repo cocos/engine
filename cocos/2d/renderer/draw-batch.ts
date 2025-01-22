@@ -33,30 +33,9 @@ import { IBatcher } from './i-batcher';
 import type { Root } from '../../root';
 
 const UI_VIS_FLAG = Layers.Enum.NONE | Layers.Enum.UI_3D;
+
+/** @mangle */
 export class DrawBatch2D {
-    public get inputAssembler (): InputAssembler | null {
-        return this._inputAssembler;
-    }
-
-    public set inputAssembler (ia: InputAssembler | null) {
-        this._inputAssembler = ia;
-    }
-
-    public get descriptorSet (): DescriptorSet | null {
-        return this._descriptorSet;
-    }
-
-    public set descriptorSet (ds: DescriptorSet | null) {
-        this._descriptorSet = ds;
-    }
-
-    public get visFlags (): number {
-        return this._visFlags;
-    }
-    public set visFlags (vis) {
-        this._visFlags = vis;
-    }
-
     get passes (): Pass[] {
         return this._passes;
     }
@@ -77,9 +56,9 @@ export class DrawBatch2D {
     public samplerHash = 0;
     private _passes: Pass[] = [];
     private _shaders: Shader[] = [];
-    private _visFlags: number = UI_VIS_FLAG;
-    private _inputAssembler: InputAssembler | null = null;
-    private _descriptorSet: DescriptorSet | null = null;
+    public visFlags: number = UI_VIS_FLAG;
+    public inputAssembler: InputAssembler | null = null;
+    public descriptorSet: DescriptorSet | null = null;
     //private declare _nativeObj: any;
 
     public destroy (ui: IBatcher): void {
@@ -88,8 +67,8 @@ export class DrawBatch2D {
 
     public clear (): void {
         // this.bufferBatch = null;
-        this._inputAssembler = null;
-        this._descriptorSet = null;
+        this.inputAssembler = null;
+        this.descriptorSet = null;
         // this.camera = null;
         this.texture = null;
         this.sampler = null;
