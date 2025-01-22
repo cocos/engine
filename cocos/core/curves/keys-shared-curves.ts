@@ -21,9 +21,8 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-
+import { ccclass, serializable } from 'cc.decorator';
 import { binarySearchEpsilon } from '../algorithm/binary-search';
-import { ccclass, serializable } from '../data/decorators';
 import { assertIsTrue } from '../data/utils/asserts';
 import { approx, IQuatLike, lerp, Quat } from '../math';
 import { ExtrapolationMode, RealCurve } from './curve';

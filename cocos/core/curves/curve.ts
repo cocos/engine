@@ -464,7 +464,7 @@ export class RealCurve extends KeyframeCurve<RealKeyframeValue> {
         if (values !== undefined) {
             assertIsTrue(Array.isArray(times));
             this.setKeyframes(
-                times.slice(),
+                (times as number[]).slice(),
                 values.map((value) => createRealKeyframeValue(value)),
             );
         } else {
