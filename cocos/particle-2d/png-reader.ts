@@ -42,7 +42,7 @@ interface PNGAnimationFrame {
 
 interface PNGTransparency {
     indexed?: number[];
-    rgb?: number[] | number;
+    rgb?: number[];
     grayscale?: number;
 }
 
@@ -58,7 +58,7 @@ export class PNGReader {
     private imgData: Uint8Array | number[] = [];
     private transparency: PNGTransparency = {
         indexed: [],
-        rgb: 0,
+        rgb: [],
         grayscale: 0,
     };
     private declare animation: {
