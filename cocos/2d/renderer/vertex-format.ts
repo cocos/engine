@@ -25,12 +25,17 @@
 import { AttributeName, Format, FormatInfos, Attribute } from '../../gfx';
 import { cclegacy } from '../../core';
 
+const ATTR_POSITION = AttributeName.ATTR_POSITION;
+const ATTR_COLOR = AttributeName.ATTR_COLOR;
+const ATTR_TEX_COORD = AttributeName.ATTR_TEX_COORD;
+const ATTR_COLOR2 = AttributeName.ATTR_COLOR2;
+
 /**
  * @en Vertex format with vector 3 position attribute
  * @zh 包含三维位置属性的顶点格式
  */
 export const vfmt = [
-    new Attribute(AttributeName.ATTR_POSITION, Format.RGB32F),
+    new Attribute(ATTR_POSITION, Format.RGB32F),
 ];
 
 /**
@@ -42,8 +47,8 @@ export const vfmt = [
  * 2. RGBA 颜色属性（Float32）
  */
 export const vfmtPosColor = [
-    new Attribute(AttributeName.ATTR_POSITION, Format.RGB32F),
-    new Attribute(AttributeName.ATTR_COLOR, Format.RGBA32F),
+    new Attribute(ATTR_POSITION, Format.RGB32F),
+    new Attribute(ATTR_COLOR, Format.RGBA32F),
 ];
 
 /**
@@ -57,9 +62,9 @@ export const vfmtPosColor = [
  * 3. RGBA 颜色属性（Float32）
  */
 export const vfmtPosUvColor = [
-    new Attribute(AttributeName.ATTR_POSITION, Format.RGB32F),
-    new Attribute(AttributeName.ATTR_TEX_COORD, Format.RG32F),
-    new Attribute(AttributeName.ATTR_COLOR, Format.RGBA32F),
+    new Attribute(ATTR_POSITION, Format.RGB32F),
+    new Attribute(ATTR_TEX_COORD, Format.RG32F),
+    new Attribute(ATTR_COLOR, Format.RGBA32F),
 ];
 
 /**
@@ -73,9 +78,9 @@ export const vfmtPosUvColor = [
  * 3. RGBA 颜色属性（Byte）
  */
 export const vfmtPosUvColor4B = [
-    new Attribute(AttributeName.ATTR_POSITION, Format.RGB32F),
-    new Attribute(AttributeName.ATTR_TEX_COORD, Format.RG32F),
-    new Attribute(AttributeName.ATTR_COLOR, Format.RGBA8, true),
+    new Attribute(ATTR_POSITION, Format.RGB32F),
+    new Attribute(ATTR_TEX_COORD, Format.RG32F),
+    new Attribute(ATTR_COLOR, Format.RGBA8, true),
 ];
 
 /**
@@ -91,10 +96,10 @@ export const vfmtPosUvColor4B = [
  * 4. 第二套 RGBA 颜色属性（Float32）
  */
 export const vfmtPosUvTwoColor = [
-    new Attribute(AttributeName.ATTR_POSITION, Format.RGB32F),
-    new Attribute(AttributeName.ATTR_TEX_COORD, Format.RG32F),
-    new Attribute(AttributeName.ATTR_COLOR, Format.RGBA32F),
-    new Attribute(AttributeName.ATTR_COLOR2, Format.RGBA32F),
+    new Attribute(ATTR_POSITION, Format.RGB32F),
+    new Attribute(ATTR_TEX_COORD, Format.RG32F),
+    new Attribute(ATTR_COLOR, Format.RGBA32F),
+    new Attribute(ATTR_COLOR2, Format.RGBA32F),
 ];
 
 /**
@@ -110,10 +115,10 @@ export const vfmtPosUvTwoColor = [
  * 4. 第二套 RGBA 颜色属性（Byte）
  */
 export const vfmtPosUvTwoColor4B = [
-    new Attribute(AttributeName.ATTR_POSITION, Format.RGB32F),
-    new Attribute(AttributeName.ATTR_TEX_COORD, Format.RG32F),
-    new Attribute(AttributeName.ATTR_COLOR, Format.RGBA8, true),
-    new Attribute(AttributeName.ATTR_COLOR2, Format.RGBA8, true),
+    new Attribute(ATTR_POSITION, Format.RGB32F),
+    new Attribute(ATTR_TEX_COORD, Format.RG32F),
+    new Attribute(ATTR_COLOR, Format.RGBA8, true),
+    new Attribute(ATTR_COLOR2, Format.RGBA8, true),
 ];
 
 /**

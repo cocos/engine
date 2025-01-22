@@ -60,6 +60,7 @@ export enum RenderDrawInfoType {
     SUB_NODE,
 }
 
+/** @mangle */
 export class RenderDrawInfo {
     protected _accId = -1;
     protected _bufferId = -1;
