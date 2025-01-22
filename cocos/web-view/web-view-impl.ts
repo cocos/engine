@@ -30,7 +30,6 @@ import { director } from '../game/director';
 import { Node } from '../scene-graph';
 import type { Camera } from '../render-scene/scene';
 
-/** @mangle */
 export abstract class WebViewImpl {
     protected _componentEventList: Map<WebViewEventType, (...args: any[any]) => void> = new Map();
     protected _state = WebViewEventType.NONE;

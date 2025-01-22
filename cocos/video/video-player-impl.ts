@@ -32,7 +32,6 @@ import type { Camera } from '../render-scene/scene';
 import type { VideoPlayer } from './video-player';
 import type { VideoClip } from './assets/video-clip';
 
-/** @mangle */
 export abstract class VideoPlayerImpl {
     protected _componentEventList: Map<string, () => void> = new Map();
     protected _state = VideoPlayerEventType.NONE;
