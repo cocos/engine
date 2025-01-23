@@ -34,6 +34,7 @@ const isHuaweiGame = (settingPlatform === 'huawei');
 const isJKWGame = (settingPlatform === 'jkw-game');
 const isQttGame = (settingPlatform === 'qtt-game');
 const isLinkSure = (settingPlatform === 'link-sure');
+const isHonorGame = (settingPlatform === 'honor-minigame');
 
 const _global = typeof window === 'undefined' ? global : window;
  
@@ -470,6 +471,13 @@ function initSys () {
      sys.TAOBAO_MINIGAME = 121;
 
     /**
+     * @property {Number} HONOR_MINIGAME
+     * @readOnly
+     * @default 122
+     */
+         sys.HONOR_MINIGAME = 122;
+
+    /**
      * BROWSER_TYPE_WECHAT
      * @property {String} BROWSER_TYPE_WECHAT
      * @readOnly
@@ -727,6 +735,8 @@ function initSys () {
             platform = sys.QTT_GAME;
         } else if (isLinkSure) {
             platform = sys.LINKSURE;
+        } else if (isHonorGame) {
+            platform = sys.HONOR_MINIGAME;
         }
         else {
             platform = __getPlatform();
@@ -744,7 +754,8 @@ function initSys () {
                         isOppoGame ||
                         isHuaweiGame ||
                         isJKWGame ||
-                        isQttGame);
+                        isQttGame ||
+                        isHonorGame);
 
         sys.os = __getOS();
         sys.language = __getCurrentLanguage();
