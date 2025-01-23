@@ -134,6 +134,9 @@ static bool SocketIO_finalize(se::State &s) { // NOLINT(readability-identifier-n
     auto *cobj = static_cast<cc::network::SIOClient *>(s.nativeThisObject());
     CC_LOG_INFO("jsbindings: finalizing JS object %p (SocketIO)", cobj);
     cobj->disconnect();
+    if(se::ScriptEngine::getInstance()->isInCleanup()) {
+        return true;
+    }
     auto *delegate = static_cast<JSB_SocketIODelegate *>(cobj->getDelegate());
     if (delegate->getRefCount() == 1) {
         cc::DeferredReleasePool::add(delegate);

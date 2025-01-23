@@ -24,6 +24,7 @@
 ****************************************************************************/
 
 #pragma once
+#include <set>
 #include <cassert>
 #include "../PrivateObject.h"
 #include "../RefCounter.h"
@@ -31,6 +32,7 @@
 #include "../config.h"
 #include "CommonHeader.h"
 #include "HelperMacros.h"
+#include "Utils.h"
 
 namespace se {
 class Class;
@@ -49,14 +51,9 @@ public:
     ~ObjectRef() {
         deleteRef();
     }
-    JSVM_Value getValue(JSVM_Env env) const {
-        JSVM_Value result;
-        JSVM_Status status;
-        NODE_API_CALL(status, env, OH_JSVM_GetReferenceValue(env, _ref, &result));
-        assert(status == JSVM_OK);
-        assert(result != nullptr);
-        return result;
-    }
+    
+    JSVM_Value getValue(JSVM_Env env) const;
+
     void initWeakref(JSVM_Env env, JSVM_Value obj) {
         assert(_ref == nullptr);
         _obj = obj;
@@ -121,6 +118,12 @@ public:
         BIGUINT64
     };
 
+    static std::set<Object*> objBaseSet;
+    static bool restarting;
+    static void resetBaseSet() {
+          objBaseSet.erase(objBaseSet.begin(), objBaseSet.end());
+    }
+    
     using BufferContentsFreeFunc = void (*)(void *contents, size_t byteLength, void *userData);
 
     struct ExternalArrayBufferCallbackParams {

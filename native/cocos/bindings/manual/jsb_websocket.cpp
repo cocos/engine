@@ -256,7 +256,9 @@ static bool webSocketFinalize(se::State &s) {
         CC_LOG_INFO("WebSocket (%p) isn't closed, try to close it!", cobj);
         cobj->closeAsync();
     }
-
+    if(se::ScriptEngine::getInstance()->isInCleanup()) {
+        return true;
+    }
     static_cast<JsbWebSocketDelegate *>(cobj->getDelegate())->release();
     return true;
 }

@@ -28,3 +28,4 @@ interface context {
 }
 
 export const getContext: (type: ContextType) => context;
+export const evalString: (value: string) => any;

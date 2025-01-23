@@ -108,6 +108,8 @@ export class HarmonyOSNextPackTool extends NativePackTool {
         const packageJson = this.readJSON5Sync(packageJsonPath);
         packageJson.name = this.params.projectName;
         writeFileSync(packageJsonPath, JSON5.stringify(packageJson, null, 4));
+        
+        await this.encrypteScripts();
         return true;
     }
 

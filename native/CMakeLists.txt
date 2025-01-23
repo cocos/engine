@@ -3408,6 +3408,7 @@ if(OPENHARMONY)
         libace_ndk.z.so 
         libz.so 
         librawfile.z.so
+        libohsensor.so
         ${CC_EXTERNAL_LIBS}
     )
     if(USE_SE_JSVM)

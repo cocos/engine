@@ -402,9 +402,85 @@ Napi::Env NapiHelper::getWorkerEnv() {
     return gWorkerEnv;
 }
 
+static bool sevalue_to_napivalue(const se::Value &seVal, Napi::Value *napiVal, Napi::Env env);
+
+static bool seobject_to_napivalue(se::Object *seObj, Napi::Value *napiVal, Napi::Env env) {
+    auto napiObj = Napi::Object::New(env);
+    std::vector<std::string> allKeys;
+    bool ok = seObj->getAllKeys(&allKeys);
+    if (ok && !allKeys.empty()) {
+        for (const auto &key : allKeys) {
+            Napi::Value napiProp;
+            se::Value prop;
+            ok = seObj->getProperty(key.c_str(), &prop);
+            if (ok) {
+                ok = sevalue_to_napivalue(prop, &napiProp, env);
+                if (ok) {
+                    napiObj.Set(key.c_str(), napiProp);
+                }
+            }
+        }
+    }
+    *napiVal = napiObj;
+    return true;
+}
+
+static bool sevalue_to_napivalue(const se::Value &seVal, Napi::Value *napiVal, Napi::Env env) {
+    // Only supports number or {tag: number, url: string} now
+    if (seVal.isNumber()) {
+        *napiVal = Napi::Number::New(env, seVal.toDouble());
+    } else if (seVal.isString()) {
+        *napiVal = Napi::String::New(env, seVal.toString().c_str());
+    } else if (seVal.isBoolean()) {
+        *napiVal = Napi::Boolean::New(env, seVal.toBoolean());
+    } else if (seVal.isObject()) {
+        seobject_to_napivalue(seVal.toObject(), napiVal, env);
+    } else {
+        CC_LOG_WARNING("sevalue_to_napivalue, Unsupported type: %d", static_cast<int32_t>(seVal.getType()));
+        return false;
+    }
+
+    return true;
+}
+
+Napi::Value evalString(const Napi::CallbackInfo &info){
+    Napi::Env env = info.Env();
+    size_t argc = info.Length();
+    if (argc != 1) {
+        Napi::Error::New(env, "Wrong argument count, 1 expected!").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    if (!info[0].IsString()) {
+        Napi::TypeError::New(env, "string expected!").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    std::string value = info[0].As<Napi::String>().ToString();
+    
+    if (!se::ScriptEngine::getInstance()->isValid()) {
+        CC_LOG_WARNING("ScriptEngine has not been initialized");
+        return env.Undefined();
+    }
+
+    se::AutoHandleScope hs;
+    
+    size_t length = value.length();
+    char* cValue = new char[length + 1];
+    strcpy(cValue, value.c_str());
+    se::Value ret;
+    se::ScriptEngine::getInstance()->evalString(cValue, length, &ret);
+    delete[] cValue;
+    Napi::Value result;
+    sevalue_to_napivalue(ret, &result, env);
+        
+    return result;
+}
+
 /* static */
 Napi::Object NapiHelper::init(Napi::Env env, Napi::Object exports) {
     exports["getContext"] = Napi::Function::New(env, getContext);
+    exports["evalString"] = Napi::Function::New(env, evalString);
     bool ret = exportFunctions(exports);
     if (!ret) {
         CC_LOG_ERROR("NapiHelper init failed");

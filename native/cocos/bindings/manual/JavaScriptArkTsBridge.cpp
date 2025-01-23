@@ -187,8 +187,6 @@ bool JavaScriptArkTsBridge::CallInfo::execute(se::Value& rval) {
 se::Class* __jsb_JavaScriptArkTsBridge_class = nullptr;
 
 static bool JavaScriptArkTsBridge_finalize(se::State& s) {
-    JavaScriptArkTsBridge* cobj = (JavaScriptArkTsBridge*)s.nativeThisObject();
-    delete cobj;
     return true;
 }
 SE_BIND_FINALIZE_FUNC(JavaScriptArkTsBridge_finalize)
