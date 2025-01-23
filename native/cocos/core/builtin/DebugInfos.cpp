@@ -425,6 +425,8 @@ ccstd::unordered_map<uint32_t, ccstd::string> debugInfos = {
 { 9005, "BATCHER2D_MEM_INCREMENT is too large, the Max value for BATCHER2D_MEM_INCREMENT is 2303KB (smaller than 65536 *9* 4 / 1024 = 2304KB)" },
 { 9006, "QuadRenderData is removed, please use MeshRenderData instead." },
 { 9007, "Since v3.6, Because mask changes the inheritance relationship, you can directly manipulate the rendering components under the same node to complete the operation." },
+{ 9008, "request fullscreen is not supported on this platform." },
+{ 9009, "exit fullscreen is not supported on this platform." },
 { 9100, "texture size exceeds current device limits %d/%d" },
 { 9101, "The length of the TypedArrayBuffer must be an integer." },
 { 9201, "Cannot access game frame or container." },
