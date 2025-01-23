@@ -23,11 +23,12 @@
 */
 
 import { legacyCC } from '../core/global-exports';
+import type { WebView } from './web-view';
 import { WebViewImplWeb } from './web-view-impl-web';
 
 export class WebViewImplManager {
     // default web
-    static getImpl (component): WebViewImplWeb {
+    static getImpl (component: WebView): WebViewImplWeb {
         return new WebViewImplWeb(component);
     }
 }

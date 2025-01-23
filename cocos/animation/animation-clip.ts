@@ -1386,7 +1386,7 @@ class RootMotionEvaluation {
             _rootBone: rootBone,
         } = this;
 
-        Mat4.toRTS(motionTransform, rotationMotion, translationMotion, scaleMotion);
+        Mat4.toSRT(motionTransform, rotationMotion, translationMotion, scaleMotion);
 
         Vec3.add(translationMotion, translationMotion, rootBone.position);
         rootBone.setPosition(translationMotion);

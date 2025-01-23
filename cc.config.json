@@ -715,7 +715,8 @@
         "noSideEffectFiles": [
             "cocos/serialization/instantiate-jit.ts",
             "cocos/game/splash-screen.ts",
-            "cocos/core/utils/jsb-utils.ts"
+            "cocos/core/utils/jsb-utils.ts",
+            "cocos/2d/framework/ui-skew-utils.ts"
         ]
     }
 }

@@ -170,11 +170,11 @@ export class WebView extends Component {
             return;
         }
         this._impl = WebViewImplManager.getImpl(this);
+        const { componentEventList } = this._impl;
         // must be register the event listener
-        const list = this._impl.componentEventList;
-        list.set(WebViewEventType.LOADING, this.onLoading.bind(this));
-        list.set(WebViewEventType.LOADED, this.onLoaded.bind(this));
-        list.set(WebViewEventType.ERROR, this.onError.bind(this));
+        componentEventList.set(WebViewEventType.LOADING, this.onLoading.bind(this));
+        componentEventList.set(WebViewEventType.LOADED, this.onLoaded.bind(this));
+        componentEventList.set(WebViewEventType.ERROR, this.onError.bind(this));
         this._impl.loadURL(this._url);
     }
 

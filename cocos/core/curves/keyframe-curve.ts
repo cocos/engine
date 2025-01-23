@@ -222,7 +222,7 @@ export class KeyframeCurve<TKeyframeValue> implements CurveBase, Iterable<KeyFra
         if (values !== undefined) {
             assertIsTrue(Array.isArray(times));
             this.setKeyframes(
-                times.slice(),
+                (times as number[]).slice(),
                 values.slice(),
             );
         } else {

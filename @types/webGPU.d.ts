@@ -716,7 +716,7 @@ interface GPUColorTargetState {
    */
   blend?: GPUBlendState;
   /**
-   * Bitmask controlling which channels are are written to when drawing to this color target.
+   * Bitmask controlling which channels are written to when drawing to this color target.
    */
   writeMask?: GPUColorWriteFlags;
 }

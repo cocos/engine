@@ -399,15 +399,15 @@ export class VideoPlayer extends Component {
         this._impl = VideoPlayerImplManager.getImpl(this);
         this.syncSource();
 
-        const list = this._impl.componentEventList;
-        list.set(VideoPlayerEventType.META_LOADED, this.onMetaLoaded.bind(this));
-        list.set(VideoPlayerEventType.READY_TO_PLAY, this.onReadyToPlay.bind(this));
-        list.set(VideoPlayerEventType.PLAYING, this.onPlaying.bind(this));
-        list.set(VideoPlayerEventType.PAUSED, this.onPaused.bind(this));
-        list.set(VideoPlayerEventType.STOPPED, this.onStopped.bind(this));
-        list.set(VideoPlayerEventType.COMPLETED, this.onCompleted.bind(this));
-        list.set(VideoPlayerEventType.ERROR, this.onError.bind(this));
-        list.set(VideoPlayerEventType.CLICKED, this.onClicked.bind(this));
+        const { componentEventList } = this._impl;
+        componentEventList.set(VideoPlayerEventType.META_LOADED, this.onMetaLoaded.bind(this));
+        componentEventList.set(VideoPlayerEventType.READY_TO_PLAY, this.onReadyToPlay.bind(this));
+        componentEventList.set(VideoPlayerEventType.PLAYING, this.onPlaying.bind(this));
+        componentEventList.set(VideoPlayerEventType.PAUSED, this.onPaused.bind(this));
+        componentEventList.set(VideoPlayerEventType.STOPPED, this.onStopped.bind(this));
+        componentEventList.set(VideoPlayerEventType.COMPLETED, this.onCompleted.bind(this));
+        componentEventList.set(VideoPlayerEventType.ERROR, this.onError.bind(this));
+        componentEventList.set(VideoPlayerEventType.CLICKED, this.onClicked.bind(this));
         if (this._playOnAwake && this._impl.loaded) {
             this.play();
         }

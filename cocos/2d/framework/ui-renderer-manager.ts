@@ -27,6 +27,7 @@ import { assert, js } from '../../core';
 import { UIMeshRenderer } from '../components';
 import { UIRenderer } from './ui-renderer';
 
+/** @mangle */
 export class UIRendererManager {
     private _allRenderers: (UIRenderer | UIMeshRenderer)[] = [];
     private _dirtyRenderers: (UIRenderer | UIMeshRenderer)[] = [];

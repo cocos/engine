@@ -64,6 +64,7 @@ export enum MaskMode {
     MASK_NODE_INVERTED
 }
 
+/** @mangle */
 export class RenderEntity {
     private _renderEntityType: RenderEntityType = RenderEntityType.STATIC;
 

@@ -24,28 +24,26 @@ THE SOFTWARE.
 ****************************************************************************/
 
 if (cc.internal.VideoPlayer) {
-
     const { EventType } = cc.internal.VideoPlayer;
 
-    let vec3 = cc.Vec3;
-    let _mat4_temp = cc.mat4();
+    const _mat4_temp = cc.mat4();
 
-    let _topLeft = new vec3();
-    let _bottomRight = new vec3();
+    const _topLeft = new cc.Vec3();
+    const _bottomRight = new cc.Vec3();
 
+    // eslint-disable-next-line no-undef
     const dpr = wx.getSystemInfoSync().pixelRatio;
 
-    cc.internal.VideoPlayerImplManager.getImpl = function(componenet) {
+    cc.internal.VideoPlayerImplManager.getImpl = function (componenet) {
         return new VideoPlayerImplMiniGame(componenet);
     };
 
     class VideoPlayerImplMiniGame extends cc.internal.VideoPlayerImpl {
-
-        constructor(componenet) {
+        constructor (componenet) {
             super(componenet);
         }
 
-        syncClip(clip) {
+        syncClip (clip) {
             this.removeVideoPlayer();
             if (!clip) {
                 return;
@@ -53,7 +51,7 @@ if (cc.internal.VideoPlayer) {
             this.createVideoPlayer(clip._nativeAsset);
         }
 
-        syncURL(url) {
+        syncURL (url) {
             this.removeVideoPlayer();
             if (!url) {
                 return;
@@ -71,40 +69,39 @@ if (cc.internal.VideoPlayer) {
             this.delayedPlay();
         }
 
-        _bindEvent() {
-            let video = this._video,
-                self = this;
+        _bindEvent () {
+            const video = this._video;
+                const self = this;
 
             if (!video) {
                 return;
             }
 
-            video.onPlay(function () {
+            video.onPlay(() => {
                 if (self._video !== video) return;
                 self._playing = true;
                 self.dispatchEvent(EventType.PLAYING);
             });
-            video.onEnded(function () {
+            video.onEnded(() => {
                 if (self._video !== video) return;
                 self._playing = false;
                 self._currentTime = self._duration;  // ensure currentTime is at the end of duration
                 self.dispatchEvent(EventType.COMPLETED);
             });
-            video.onPause(function () {
+            video.onPause(() => {
                 if (self._video !== video) return;
                 self._playing = false;
                 self.dispatchEvent(EventType.PAUSED);
             });
-            video.onTimeUpdate(function (res) {
+            video.onTimeUpdate((res) => {
                 self._duration = res.duration;
                 self._currentTime = res.position;
             });
             // onStop not supported, implemented in promise returned by video.stop call.
-
         }
 
         _unbindEvent () {
-            let video = this._video;
+            const video = this._video;
             if (!video) {
                 return;
             }
@@ -117,13 +114,15 @@ if (cc.internal.VideoPlayer) {
             // offStop not supported
         }
 
-        createVideoPlayer(url) {
+        createVideoPlayer (url) {
+            // eslint-disable-next-line no-undef
             if (!__globalAdapter.createVideo) {
                 console.warn('VideoPlayer not supported');
                 return;
             }
 
             if (!this._video) {
+                // eslint-disable-next-line no-undef
                 this._video = __globalAdapter.createVideo();
                 this._video.showCenterPlayBtn = false;
                 this._video.controls = false;
@@ -140,7 +139,7 @@ if (cc.internal.VideoPlayer) {
         }
 
         setURL (path) {
-            let video = this._video;
+            const video = this._video;
             if (!video || video.src === path) {
                 return;
             }
@@ -149,7 +148,7 @@ if (cc.internal.VideoPlayer) {
             video.autoplay = true;  // HACK: to implement onCanplay callback
             video.src = path;
             video.muted = true;
-            let self = this;
+            const self = this;
             this._loaded = false;
             function loadedCallback () {
                 video.offPlay();
@@ -165,8 +164,8 @@ if (cc.internal.VideoPlayer) {
             video.onPlay(loadedCallback);
         }
 
-        removeVideoPlayer() {
-            let video = this.video;
+        removeVideoPlayer () {
+            const video = this.video;
             if (video) {
                 video.stop();
                 video.destroy();
@@ -180,14 +179,13 @@ if (cc.internal.VideoPlayer) {
         }
 
         setVisible (value) {
-            let video = this._video;
+            const video = this._video;
             if (!video || this._visible === value) {
                 return;
             }
             if (value) {
                 video.width = this._actualWidth || 0;
-            }
-            else {
+            } else {
                 video.width = 0;  // hide video
             }
             this._visible = value;
@@ -201,10 +199,10 @@ if (cc.internal.VideoPlayer) {
             return this._duration;
         }
 
-        syncPlaybackRate(value) {
-            let video = this._video;
-            if(video && value !== video.playbackRate) {
-                if (value === 0.5 | value === 0.8 |value === 1.0 |value === 1.25 | value === 1.5) {
+        syncPlaybackRate (value) {
+            const video = this._video;
+            if (video && value !== video.playbackRate) {
+                if (value === 0.5 | value === 0.8 | value === 1.0 | value === 1.25 | value === 1.5) {
                     video.playbackRate = value;
                 } else {
                     console.warn('The platform does not support this PlaybackRate!');
@@ -212,29 +210,29 @@ if (cc.internal.VideoPlayer) {
             }
         }
 
-        syncVolume() {
+        syncVolume () {
             console.warn('The platform does not support');
         }
 
-        syncMute(enable) {
-            let video = this._video;
+        syncMute (enable) {
+            const video = this._video;
             if (video && video.muted !== enable) {
                 video.muted = enable;
             }
         }
 
-        syncLoop(enable) {
-            let video = this._video;
+        syncLoop (enable) {
+            const video = this._video;
             if (video && video.loop !== enable) {
                 video.loop = enable;
             }
         }
 
-        syncStayOnBottom() {
+        syncStayOnBottom () {
             console.warn('The platform does not support');
         }
 
-        getCurrentTime() {
+        getCurrentTime () {
             if (this.video) {
                 return this.currentTime();
             }
@@ -246,12 +244,12 @@ if (cc.internal.VideoPlayer) {
         }
 
         seekTo (time) {
-            let video = this._video;
+            const video = this._video;
             if (!video || !this._loaded) return;
             video.seek(time);
         }
 
-        disable(noPause) {
+        disable (noPause) {
             if (this._video) {
                 if (!noPause) {
                     this._video.pause();
@@ -261,7 +259,7 @@ if (cc.internal.VideoPlayer) {
             }
         }
 
-        enable() {
+        enable () {
             if (this._video) {
                 this.setVisible(true);
                 this._visible = true;
@@ -273,30 +271,30 @@ if (cc.internal.VideoPlayer) {
             this.syncCurrentTime();
         }
 
-        resume() {
-            let video = this._video;
+        resume () {
+            const video = this._video;
             if (this._playing || !video) return;
 
             video.play();
         }
 
-        pause() {
-            let video = this._video;
+        pause () {
+            const video = this._video;
             if (!this._playing || !video) return;
 
             video.pause();
         }
 
-        stop() {
-            let self = this;
-            let video = this._video;
+        stop () {
+            const self = this;
+            const video = this._video;
             if (!video || !this._visible) return;
             // HACK: this is to unify inconsistent behavior (on Android, video won't play from begin if called pause() before called stop().
             // but if called play() before stop(), video will play from begin.) of wechat official interface on Android & iOS.
             if (!this._playing) {
                 video.play();
             }
-            video.stop().then(function (res) {
+            video.stop().then((res) => {
                 if (res.errMsg && !res.errMsg.includes('ok')) {
                     console.error('failed to stop video player');
                     return;
@@ -307,31 +305,31 @@ if (cc.internal.VideoPlayer) {
             });
         }
 
-        canFullScreen(enabled) {
+        canFullScreen (enabled) {
             if (this._video) {
                 this.setFullScreenEnabled(enabled);
             }
         }
 
         setFullScreenEnabled (enable) {
-            let video = this._video;
+            const video = this._video;
             if (!video || this._fullScreenEnabled === enable) {
                 return;
             }
             if (enable) {
                 video.requestFullScreen();
-            }
-            else {
+            } else {
                 video.exitFullScreen();
             }
             this._fullScreenEnabled = enable;
         }
 
-        syncKeepAspectRatio(enabled) {
+        // eslint-disable-next-line no-unused-vars
+        syncKeepAspectRatio (enabled) {
             console.warn('On wechat game videoPlayer is always keep the aspect ratio');
         }
 
-        syncMatrix() {
+        syncMatrix () {
             if (!this._video || !this._component || !this._uiTrans) return;
 
             const camera = this.UICamera;
@@ -341,11 +339,11 @@ if (cc.internal.VideoPlayer) {
 
             this._component.node.getWorldMatrix(_mat4_temp);
             const { width, height } = this._uiTrans.contentSize;
-            if (!this._forceUpdate &&
-                this._m00 === _mat4_temp.m00 && this._m01 === _mat4_temp.m01 &&
-                this._m04 === _mat4_temp.m04 && this._m05 === _mat4_temp.m05 &&
-                this._m12 === _mat4_temp.m12 && this._m13 === _mat4_temp.m13 &&
-                this._w === width && this._h === height) {
+            if (!this._forceUpdate
+                && this._m00 === _mat4_temp.m00 && this._m01 === _mat4_temp.m01
+                && this._m04 === _mat4_temp.m04 && this._m05 === _mat4_temp.m05
+                && this._m12 === _mat4_temp.m12 && this._m13 === _mat4_temp.m13
+                && this._w === width && this._h === height) {
                 return;
             }
 
@@ -359,29 +357,28 @@ if (cc.internal.VideoPlayer) {
             this._w = width;
             this._h = height;
 
-            let canvas_width = cc.game.canvas.width;
-            let canvas_height = cc.game.canvas.height;
+            // const canvasWidth = cc.game.canvas.width;
+            const canvasHeight = cc.game.canvas.height;
 
-            let ap = this._uiTrans.anchorPoint;
+            const ap = this._uiTrans.anchorPoint;
             // Vectors in node space
-            vec3.set(_topLeft, -ap.x * this._w, (1.0 - ap.y) * this._h, 0);
-            vec3.set(_bottomRight, (1 - ap.x) * this._w, -ap.y * this._h, 0);
+            cc.Vec3.set(_topLeft, -ap.x * this._w, (1.0 - ap.y) * this._h, 0);
+            cc.Vec3.set(_bottomRight, (1 - ap.x) * this._w, -ap.y * this._h, 0);
             // Convert to world space
-            vec3.transformMat4(_topLeft, _topLeft, _mat4_temp);
-            vec3.transformMat4(_bottomRight, _bottomRight, _mat4_temp);
+            cc.Vec3.transformMat4(_topLeft, _topLeft, _mat4_temp);
+            cc.Vec3.transformMat4(_bottomRight, _bottomRight, _mat4_temp);
             // Convert to Screen space
             camera.worldToScreen(_topLeft, _topLeft);
             camera.worldToScreen(_bottomRight, _bottomRight);
 
-            let finalWidth = _bottomRight.x - _topLeft.x;
-            let finalHeight = _topLeft.y - _bottomRight.y;
+            const finalWidth = _bottomRight.x - _topLeft.x;
+            const finalHeight = _topLeft.y - _bottomRight.y;
 
             this._video.x = _topLeft.x / dpr;
-            this._video.y = (canvas_height - _topLeft.y) / dpr;
+            this._video.y = (canvasHeight - _topLeft.y) / dpr;
             this._actualWidth = this._video.width = finalWidth / dpr;
             this._video.height = finalHeight / dpr;
             this._forceUpdate = false;
         }
-
     }
 }
