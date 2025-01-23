@@ -973,6 +973,10 @@ class LocalDescriptorSet  {
     private _transformUpdate = true;
     private declare _localData: Float32Array | null;
 
+    // NOTE: Internal modules should avoid using getter/setter accessors since we're using babel to convert TS to JS
+    // and terser minifier could not handle the getter/setter generated JS code correctly.
+    // See the issue: https://github.com/terser/terser/issues/322
+    // Change get descriptorSet() to getDescriptorSet() in v3.8.6.
     public getDescriptorSet (): DescriptorSet | null {
         return this._descriptorSet;
     }
