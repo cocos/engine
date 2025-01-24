@@ -44,6 +44,20 @@ exports.template = /* html */`
                         </ui-checkbox>
                     </div>
                 </ui-prop>
+                <ui-prop class="time-scale-prop">
+                    <ui-label slot="label" value="i18n:ENGINE.inspector.spine.timeScale"></ui-label>
+                    <div slot="content">
+                        <ui-slider class="timeScale" value="1"></ui-slider>
+                        <ui-button class="reset-timeScale">
+                            <ui-icon value="reset"></ui-icon>
+                        </ui-button>
+                    </div>
+                </ui-prop>
+                <ui-prop hidden>
+                    <ui-label slot="label" value="Track"></ui-label>
+                    <ui-radio-group slot="content" class="track-group"></ui-radio-group>
+                </ui-prop>
+                
             </div>
             <inspector-resize-preview></inspector-resize-preview>
             <div class="buttons-group">
@@ -70,10 +84,6 @@ exports.template = /* html */`
                         <ui-icon value="forward"></ui-icon>
                     </ui-button>
                 </div>
-                <ui-prop>
-                    <ui-label slot="label" value="i18n:ENGINE.inspector.spine.timeScale"></ui-label>
-                    <ui-slider slot="content" class="timeScale" value="1"></ui-slider>
-                </ui-prop>
             </div>
             <ui-scale-plate class="duration"></ui-scale-plate>    
         </div>
@@ -101,6 +111,14 @@ exports.style = /* css */`
             
             & > .attribute {
                padding-bottom: 4px;
+               
+               & > .time-scale-prop [slot="content"] {
+                    display: flex;
+                    
+                    & > .timeScale {
+                        flex: 1;
+                    }
+                }
             }
             
             & > .duration[disabled] {
@@ -141,7 +159,9 @@ exports.$ = {
 
     ...Object.fromEntries(Properties.map((key) => [key, `.${key}`])),
 
+    resetTimeScale: '.reset-timeScale',
     buttonsGroup: '.buttons-group',
+    trackGroup: '.track-group',
 };
 
 const Elements = {
@@ -160,6 +180,18 @@ const Elements = {
         },
     },
     spine: {
+        updateTrackGroup(trackGroupElement, index, total) {
+            trackGroupElement.innerHTML = '';
+            trackGroupElement.setAttribute('value', index);
+            for (let i = 0; i < total; i++) {
+                const item = document.createElement('ui-radio-button');
+                item.setAttribute('value', i.toString());
+                trackGroupElement.appendChild(item);
+                const label = document.createElement('ui-label');
+                label.setAttribute('value', i.toString());
+                item.appendChild(label);
+            }
+        },
         updateEnum($selectPro, info, cb) {
             $selectPro.innerHTML = '';
             for (const key in info.list) {
@@ -187,6 +219,13 @@ const Elements = {
             panel.$.duration.addEventListener('confirm', (event) => {
                 panel.preview.callPreviewFunction('setCurrentTime', Number(event.target.value));
             });
+            panel.$.resetTimeScale.addEventListener('click', (event) => {
+                panel.$.timeScale.setAttribute('value', 1 + '');
+                panel.preview.callPreviewFunction('setProperties', 'timeScale', 1);
+            });
+            panel.$.trackGroup.addEventListener('change', (event) => {
+                panel.preview.callPreviewFunction('setTrackIndex', Number(event.target.value));
+            });
 
             panel.spinUpdate = Elements.spine.update.bind(panel);
         },
@@ -201,6 +240,7 @@ const Elements = {
             if (!info) { return; }
 
             Elements.control.updateState(panel);
+            Elements.spine.updateTrackGroup(panel.$.trackGroup, info.trackIndex, info.trackTotals);
             Elements.spine.updateEnum(panel.$.skin, info.skin);
             Elements.spine.updateEnum(panel.$.animation, info.animation, (value) => {
                 panel.animationIndex = value;
