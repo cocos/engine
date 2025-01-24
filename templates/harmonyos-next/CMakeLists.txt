@@ -9,8 +9,8 @@ set(CC_ALL_SOURCES)
 option(APP_NAME "Project Name" "test-cases")
 project(${APP_NAME} CXX)
 
-set(CMAKE_CXX_FLAGS_DEBUG  "-Werror=return-type")
-
+set(CMAKE_CXX_FLAGS_DEBUG "$ENV{CXXFLAGS} -O0 -Wall -g -ggdb -Werror=return-type")
+set(CMAKE_CXX_FLAGS_RELEASE "$ENV{CXXFLAGS} -O3 -Wall")
 
 include(${COMMON_DIR}/CMakeLists.txt)
 

@@ -136,12 +136,17 @@ bool gles3wClose() {
 void *gles3wLoad(const char *proc) {
     void *res = nullptr;
     if (eglGetProcAddress) res = reinterpret_cast<void *>(eglGetProcAddress(proc));
+    
+#if CC_PLATFORM != CC_PLATFORM_OPENHARMONY
     auto sdkVersion = cc::BasePlatform::getPlatform()->getSdkVersion();
     if (sdkVersion <= 23) {
         if (!res) res = dlsym(libgles, proc);
     } else {
         if (!res) res = dlsym(libegl, proc);
     }
+#else
+    if (!res) res = dlsym(libegl, proc);
+#endif
     return res;
 }
 #endif
