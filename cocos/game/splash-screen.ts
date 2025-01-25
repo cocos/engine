@@ -565,7 +565,6 @@ export class SplashScreen {
                     );
 
                     cmdBuff.bindPipelineState(bgPso);
-                    cmdBuff.bindDescriptorSet(SetIndex.GLOBAL, pipeline.descriptorSet);
                     cmdBuff.bindDescriptorSet(SetIndex.MATERIAL, bgPass.descriptorSet);
                     cmdBuff.bindInputAssembler(this.quadAssmebler);
                     cmdBuff.draw(this.quadAssmebler);
@@ -582,7 +581,6 @@ export class SplashScreen {
                     );
 
                     cmdBuff.bindPipelineState(logoPso);
-                    cmdBuff.bindDescriptorSet(SetIndex.GLOBAL, pipeline.descriptorSet);
                     cmdBuff.bindDescriptorSet(SetIndex.MATERIAL, logoPass.descriptorSet);
                     cmdBuff.bindInputAssembler(this.quadAssmebler);
                     cmdBuff.draw(this.quadAssmebler);
@@ -599,7 +597,6 @@ export class SplashScreen {
                     );
 
                     cmdBuff.bindPipelineState(watermarkPso);
-                    cmdBuff.bindDescriptorSet(SetIndex.GLOBAL, pipeline.descriptorSet);
                     cmdBuff.bindDescriptorSet(SetIndex.MATERIAL, wartermarkPass.descriptorSet);
                     cmdBuff.bindInputAssembler(this.quadAssmebler);
                     cmdBuff.draw(this.quadAssmebler);

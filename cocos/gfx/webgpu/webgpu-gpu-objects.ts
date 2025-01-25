@@ -217,6 +217,7 @@ export interface IWebGPUGPUDescriptorSetLayout {
     dynamicBindings: number[];
     descriptorIndices: number[];
     descriptorCount: number;
+    entries: GPUBindGroupLayoutEntry[];
     bindGroupLayout: GPUBindGroupLayout | null;
 }
 

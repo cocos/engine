@@ -830,6 +830,9 @@ export class WebPipeline implements BasicPipeline {
     constructor (layoutGraph: LayoutGraphData) {
         this._layoutGraph = layoutGraph;
     }
+    globalDSManager: GlobalDSManager;
+    descriptorSetLayout: DescriptorSetLayout;
+    descriptorSet: DescriptorSet;
     get type (): PipelineType {
         return PipelineType.BASIC;
     }
@@ -1137,7 +1140,7 @@ export class WebPipeline implements BasicPipeline {
     public getGlobalDescriptorSetData (): DescriptorSetData | undefined {
         const stageId = this.layoutGraph.locateChild(this.layoutGraph.N, 'default');
         const layout = this.layoutGraph.getLayout(stageId);
-        const layoutData = layout.descriptorSets.get(UpdateFrequency.PER_PASS);
+        const layoutData: DescriptorSetData | undefined = layout.getSet(UpdateFrequency.PER_PASS);
         return layoutData;
     }
 
@@ -1176,13 +1179,6 @@ export class WebPipeline implements BasicPipeline {
         pipelinePool = new PipelinePool();
         renderGraphPool = pipelinePool.renderGraphPool;
         createGfxDescriptorSetsAndPipelines(this._device, this._layoutGraph);
-        this._globalDSManager = new GlobalDSManager(this._device);
-        this._globalDescSetData = this.getGlobalDescriptorSetData()!;
-        this._globalDescriptorSetLayout = this._globalDescSetData.descriptorSetLayout;
-        this._globalDescriptorSetInfo = new DescriptorSetInfo(this._globalDescriptorSetLayout!);
-        this._globalDescriptorSet = this._device.createDescriptorSet(this._globalDescriptorSetInfo);
-        this._profilerDescriptorSet = this._device.createDescriptorSet(this._globalDescriptorSetInfo);
-        this._globalDSManager.globalDescriptorSet = this.globalDescriptorSet;
         this._compileMaterial();
         this.setMacroBool('CC_USE_HDR', this._pipelineSceneData.isHDR);
         this.setMacroBool('CC_USE_FLOAT_OUTPUT', macro.ENABLE_FLOAT_OUTPUT && supportsRGBA16HalfFloatTexture(this._device));
@@ -1221,8 +1217,6 @@ export class WebPipeline implements BasicPipeline {
         return true;
     }
     public destroy (): boolean {
-        this._globalDSManager?.globalDescriptorSet.destroy();
-        this._globalDSManager?.destroy();
         this._pipelineSceneData?.destroy();
         return true;
     }
@@ -1242,24 +1236,15 @@ export class WebPipeline implements BasicPipeline {
     public get macros (): MacroRecord {
         return this._macros;
     }
-    public get globalDSManager (): GlobalDSManager {
-        return this._globalDSManager;
-    }
-    public get descriptorSetLayout (): DescriptorSetLayout {
-        return this._globalDSManager.descriptorSetLayout;
-    }
-    public get descriptorSet (): DescriptorSet {
-        return this._globalDSManager.globalDescriptorSet;
-    }
     public get profilerDescriptorSet (): DescriptorSet {
         return this._profilerDescriptorSet!;
     }
-    public get globalDescriptorSet (): DescriptorSet {
-        return this._globalDescriptorSet!;
-    }
-    public get globalDescriptorSetInfo (): DescriptorSetInfo {
-        return this._globalDescriptorSetInfo!;
-    }
+    // public get globalDescriptorSet (): DescriptorSet {
+    //     return this._globalDescriptorSet!;
+    // }
+    // public get globalDescriptorSetInfo (): DescriptorSetInfo {
+    //     return this._globalDescriptorSetInfo!;
+    // }
     public get commandBuffers (): CommandBuffer[] {
         return [this._device.commandBuffer];
     }
@@ -1639,8 +1624,8 @@ export class WebPipeline implements BasicPipeline {
         const lg = this._layoutGraph;
         const phaseID = lg.shaderLayoutIndex.get(shaderName)!;
         const pplLayout = lg.getLayout(phaseID);
-        const setLayout = pplLayout.descriptorSets.get(freq)!;
-        return setLayout.descriptorSetLayout!;
+        const setLayout = pplLayout.getSet(freq)!;
+        return setLayout.descriptorSetLayout as DescriptorSetLayout;
     }
     get renderGraph (): RenderGraph | null {
         return this._renderGraph;
@@ -1690,11 +1675,7 @@ export class WebPipeline implements BasicPipeline {
     private _usesDeferredPipeline = false;
     private _copyPassMat: Material = new Material();
     private _device!: Device;
-    private _globalDSManager!: GlobalDSManager;
     private _defaultSampler!: Sampler;
-    private _globalDescriptorSet: DescriptorSet | null = null;
-    private _globalDescriptorSetInfo: DescriptorSetInfo | null = null;
-    private _globalDescriptorSetLayout: DescriptorSetLayout | null = null;
     private _profilerDescriptorSet: DescriptorSet | null = null;
     private readonly _macros: MacroRecord = {};
     private readonly _pipelineSceneData: PipelineSceneData = new PipelineSceneData();

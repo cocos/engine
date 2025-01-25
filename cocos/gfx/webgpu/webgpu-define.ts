@@ -27,7 +27,7 @@
 */
 
 import { WEBGPU } from 'internal:constants';
-import { gfx, webgpuAdapter, glslangWasmModule, promiseForWebGPUInstantiation, spirvOptModule, twgslModule } from '../../webgpu/instantiated';
+import { gfx, webgpuAdapter, glslangWasmModule, promiseForWebGPUInstantiation, twgslModule } from '../../webgpu/instantiated';
 import {
     Texture, CommandBuffer, DescriptorSet, Device, InputAssembler, Buffer, Shader
 } from './override';

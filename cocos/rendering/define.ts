@@ -975,10 +975,10 @@ const UNIFORM_REFLECTION_STORAGE_NAME = 'cc_reflectionStorage';
 export const UNIFORM_REFLECTION_STORAGE_BINDING = ModelLocalBindings.STORAGE_REFLECTION;
 const UNIFORM_REFLECTION_STORAGE_DESCRIPTOR = new DescriptorSetLayoutBinding(
     UNIFORM_REFLECTION_STORAGE_BINDING,
-    DescriptorType.STORAGE_IMAGE,
+    DescriptorType.SAMPLER_TEXTURE,
     1,
     ShaderStageFlagBit.COMPUTE,
-    MemoryAccessBit.READ_WRITE,
+    MemoryAccessBit.READ_ONLY,
     ViewDimension.TEX2D,
     SampleType.FLOAT,
     Format.RGBA8,
