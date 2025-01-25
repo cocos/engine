@@ -133,20 +133,23 @@ void UrlAudioPlayer::stop() {
     ALOGV("UrlAudioPlayer::stop (%p, %d)", this, getId());
     SLresult r = (*_playItf)->SetPlayState(_playItf, SL_PLAYSTATE_STOPPED);
     SL_RETURN_IF_FAILED(r, "UrlAudioPlayer::stop failed");
+    {
+          std::lock_guard<std::mutex> guard(destoryMutex); // 加入互斥锁
+            if (_state == State::PLAYING || _state == State::PAUSED) {
+                setLoop(false);
+                setState(State::STOPPED);
 
-    if (_state == State::PLAYING || _state == State::PAUSED) {
-        setLoop(false);
-        setState(State::STOPPED);
+                if (_playEventCallback != nullptr) {
+                    _playEventCallback(State::STOPPED);
+                }
 
-        if (_playEventCallback != nullptr) {
-            _playEventCallback(State::STOPPED);
-        }
-
-        destroy();
-        delete this;
+                destroy();
+                delete this;
     } else {
         ALOGW("UrlAudioPlayer (%p, state:%d) isn't playing or paused, could not invoke stop!", this, static_cast<int>(_state));
     }
+    }
+  
 }
 
 void UrlAudioPlayer::pause() {
