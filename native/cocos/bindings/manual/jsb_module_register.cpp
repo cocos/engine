@@ -48,6 +48,10 @@
 #include "cocos/bindings/manual/jsb_platform.h"
 #include "cocos/bindings/manual/jsb_scene_manual.h"
 #include "cocos/bindings/manual/jsb_xmlhttprequest.h"
+#if CC_USE_BOX2D_JSB
+#include "cocos/bindings/manual/jsb_box2d_manual.h"
+#include "cocos/bindings/auto/jsb_box2d_auto.h"
+#endif
 
 #if USE_GFX_RENDERER
 #endif
@@ -164,6 +168,10 @@ bool jsb_register_all_modules() {
     se->addRegisterCallback(register_all_scene_manual);
     se->addRegisterCallback(register_all_render);
     se->addRegisterCallback(register_all_native2d);
+#if CC_USE_BOX2D_JSB
+    se->addRegisterCallback(register_all_box2d);
+    se->addRegisterCallback(register_all_box2d_manual);
+#endif
 
 #if (CC_PLATFORM == CC_PLATFORM_IOS || CC_PLATFORM == CC_PLATFORM_MACOS)
     se->addRegisterCallback(register_javascript_objc_bridge);

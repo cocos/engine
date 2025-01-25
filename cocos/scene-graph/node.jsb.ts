@@ -741,6 +741,13 @@ nodeProto.getScale = function getScale(out?: Vec3): Vec3 {
     return Vec3.copy(new Vec3(), this._lscale);
 };
 
+nodeProto.set2DTransform = function set2DTransform(x: number, y: number, angle: number) {
+    _tempFloatArray[0] = x;
+    _tempFloatArray[1] = y;
+    _tempFloatArray[2] = angle;
+    this._set2DTransform();
+}
+
 nodeProto.setScale = function setScale(val: Readonly<Vec3> | number, y?: number, z?: number) {
     if (y === undefined && z === undefined) {
         _tempFloatArray[0] = 3;

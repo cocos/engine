@@ -622,6 +622,18 @@ static bool js_scene_Node_inverseTransformPoint(void *nativeObject) // NOLINT(re
 }
 SE_BIND_FUNC_FAST(js_scene_Node_inverseTransformPoint)
 
+static bool js_scene_Node_set2DTransform(void *nativeObject) // NOLINT(readability-identifier-naming)
+{
+    auto *cobj = reinterpret_cast<cc::Node *>(nativeObject);
+    float x = tempFloatArray[0];
+    float y = tempFloatArray[1];
+    float angle = tempFloatArray[2];
+    cobj->setWorldPosition(x, y, 0);
+    cobj->setWorldRotationFromEuler(0, 0, angle);
+    return true;
+}
+SE_BIND_FUNC_FAST(js_scene_Node_set2DTransform)
+
 static bool js_scene_Pass_blocks_getter(se::State &s) { // NOLINT(readability-identifier-naming)
     auto *cobj = SE_THIS_OBJECT<cc::scene::Pass>(s);
     SE_PRECONDITION2(cobj, false, "Invalid Native Object");
@@ -868,6 +880,7 @@ bool register_all_scene_manual(se::Object *obj) // NOLINT(readability-identifier
 
     __jsb_cc_Node_proto->defineFunction("_setRTS", _SE(js_scene_Node_setRTS));
     __jsb_cc_Node_proto->defineFunction("_inverseTransformPoint", _SE(js_scene_Node_inverseTransformPoint));
+    __jsb_cc_Node_proto->defineFunction("_set2DTransform", _SE(js_scene_Node_set2DTransform));
 
     __jsb_cc_scene_Pass_proto->defineProperty("blocks", _SE(js_scene_Pass_blocks_getter), nullptr);
 
