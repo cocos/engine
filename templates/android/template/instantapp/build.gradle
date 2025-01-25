@@ -34,11 +34,10 @@ android {
     }
 
     sourceSets.main {
-        java.srcDirs "../src", "src"
-        res.srcDirs "../res", 'res', "${RES_PATH}/proj/res"
+        java.srcDirs "../src", "src/main/java"
+        res.srcDirs "../res", 'res', 'src/main/res', "${RES_PATH}/proj/res"
         jniLibs.srcDirs "../libs", 'libs'
-        manifest.srcFile "AndroidManifest.xml"
-        assets.srcDir "${RES_PATH}/data"
+        assets.srcDirs "${RES_PATH}/data", 'src/main/assets'
     }
 
     externalNativeBuild {
