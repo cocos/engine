@@ -667,7 +667,7 @@ const aabbPlane = function (aabb: AABB, plane: Plane): number {
     const r = aabb.halfExtents.x * Math.abs(plane.n.x)
         + aabb.halfExtents.y * Math.abs(plane.n.y)
         + aabb.halfExtents.z * Math.abs(plane.n.z);
-    const dot = dot(plane.n, aabb.center);
+    const dot = vec3Dot(plane.n, aabb.center);
     if (dot + r < plane.d) { return -1; } else if (dot - r > plane.d) { return 0; }
     return 1;
 };
@@ -802,7 +802,7 @@ const obbPlane = (function (): (obb: OBB, plane: Plane) => number {
             + obb.halfExtents.y * absDot(plane.n, orientation.m03, orientation.m04, orientation.m05)
             + obb.halfExtents.z * absDot(plane.n, orientation.m06, orientation.m07, orientation.m08);
 
-        const dot = dot(plane.n, obb.center);
+        const dot = vec3Dot(plane.n, obb.center);
         if (dot + r < plane.d) { return -1; } else if (dot - r > plane.d) { return 0; }
         return 1;
     };
@@ -1019,7 +1019,7 @@ const obbCapsule = (function (): (obb: OBB, capsule: Capsule) => boolean | 1 | 0
  * @returns @zh 检测结果, 包含为 -1, 不包含为 0, 相交为 1 @en Test result, inside(back) = -1, outside(front) = 0, intersect = 1
  */
 const spherePlane = function (sphere: Sphere, plane: Plane): number {
-    const dot = dot(plane.n, sphere.center);
+    const dot = vec3Dot(plane.n, sphere.center);
     const r = sphere.radius * plane.n.length();
     if (dot + r < plane.d) { return -1; } else if (dot - r > plane.d) { return 0; }
     return 1;
@@ -1061,7 +1061,7 @@ const sphereFrustumAccurate = (function (): (sphere: Sphere, frustum: Frustum) =
             const plane = frustum.planes[i];
             const r = sphere.radius; const c = sphere.center;
             const n = plane.n; const d = plane.d;
-            const dot = dot(n, c);
+            const dot = vec3Dot(n, c);
             // frustum plane normal points to the inside
             if (dot + r < d) return 0; // completely outside
             else if (dot - r > d) { continue; }
@@ -1071,7 +1071,7 @@ const sphereFrustumAccurate = (function (): (sphere: Sphere, frustum: Frustum) =
             for (let j = 0; j < 6; j++) {
                 if (j === i || j === i + map[i]) { continue; }
                 const test = frustum.planes[j];
-                if (dot(test.n, pt) < test.d) { return 0; }
+                if (vec3Dot(test.n, pt) < test.d) { return 0; }
             }
         }
         return 1;
