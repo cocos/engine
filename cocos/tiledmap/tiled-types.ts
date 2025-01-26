@@ -345,7 +345,7 @@ export class TMXTilesetInfo {
      * First grid
      * @property {number} firstGid
      */
-    firstGid: GID = 0 as any;
+    firstGid: GID = 0;
 
     /**
      * Spacing

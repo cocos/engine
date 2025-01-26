@@ -2878,6 +2878,14 @@ cc.TMXLayer.getTileFlagsAt(): TMXLayer: the tiles map has been released
 
 cc.TiledMap.initWithXML(): Map not found. Please check the filename.
 
+### 7242
+
+TiledLayer.addUserNode node has been added.
+
+### 7243
+
+TiledLayer.removeUserNode node is not exist
+
 ### 7300
 
 <!-- DEPRECATED -->

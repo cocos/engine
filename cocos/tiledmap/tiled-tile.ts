@@ -114,7 +114,7 @@ export class TiledTile extends Component {
     }
     set grid (value: number) {
         if (this._layer) {
-            this._layer.setTileGIDAt(value as unknown as any, this._x, this._y);
+            this._layer.setTileGIDAt(value, this._x, this._y);
         }
     }
 
