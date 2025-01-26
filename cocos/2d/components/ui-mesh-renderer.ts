@@ -246,6 +246,14 @@ export class UIMeshRenderer extends Component {
      */
     // interface
     public markForUpdateRenderData (enable = true): void {
+        this._markForUpdateRenderData(enable);
+    }
+
+    /**
+     * @engineInternal
+     * @mangle
+     */
+    public _markForUpdateRenderData (enable = true): void {
         uiRendererManager.markDirtyRenderer(this);
     }
 
