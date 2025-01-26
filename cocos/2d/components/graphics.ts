@@ -556,7 +556,7 @@ export class Graphics extends UIRenderer {
             }
         }
 
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**

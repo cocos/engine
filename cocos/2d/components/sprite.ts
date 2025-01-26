@@ -211,7 +211,7 @@ export class Sprite extends UIRenderer {
 
         const lastSprite = this._spriteFrame;
         this._spriteFrame = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
         this._applySpriteFrame(lastSprite);
         if (EDITOR) {
             this.node.emit(SpriteEventType.SPRITE_FRAME_CHANGED, this);
@@ -268,7 +268,7 @@ export class Sprite extends UIRenderer {
             if (value === FillType.RADIAL || this._fillType === FillType.RADIAL) {
                 this.destroyRenderData();
             } else if (this.renderData) {
-                this.markForUpdateRenderData(true);
+                this._markForUpdateRenderData(true);
             }
         }
 
@@ -298,7 +298,7 @@ export class Sprite extends UIRenderer {
         this._fillCenter.x = value.x;
         this._fillCenter.y = value.y;
         if (this._type === SpriteType.FILLED && this.renderData) {
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
         }
     }
 
@@ -325,7 +325,7 @@ export class Sprite extends UIRenderer {
     set fillStart (value) {
         this._fillStart = clamp(value, 0, 1);
         if (this._type === SpriteType.FILLED && this.renderData) {
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
             this._updateUVs();
         }
     }
@@ -353,7 +353,7 @@ export class Sprite extends UIRenderer {
         // positive: counterclockwise, negative: clockwise
         this._fillRange = clamp(value, -1, 1);
         if (this._type === SpriteType.FILLED && this.renderData) {
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
             this._updateUVs();
         }
     }
@@ -386,7 +386,7 @@ export class Sprite extends UIRenderer {
         this._isTrimmedMode = value;
         if ((this._type === SpriteType.SIMPLE /* || this._type === SpriteType.MESH */)
             && this.renderData) {
-            this.markForUpdateRenderData(true);
+            this._markForUpdateRenderData(true);
         }
     }
 
@@ -606,7 +606,7 @@ export class Sprite extends UIRenderer {
             if (assembler && assembler.createData) {
                 const rd = self._renderData = assembler.createData(self);
                 rd.material = self.getRenderMaterial(0);
-                self.markForUpdateRenderData();
+                self._markForUpdateRenderData();
                 if (self.spriteFrame) {
                     assembler.updateUVs(self);
                 }
@@ -672,7 +672,7 @@ export class Sprite extends UIRenderer {
         const material = this.getRenderMaterial(0);
         if (spriteFrame) {
             if (material) {
-                this.markForUpdateRenderData();
+                this._markForUpdateRenderData();
             }
         }
 

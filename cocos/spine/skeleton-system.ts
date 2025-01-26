@@ -86,7 +86,7 @@ export class SkeletonSystem extends System {
             return;
         }
         this._skeletons.forEach((skeleton) => {
-            skeleton.markForUpdateRenderData();
+            skeleton._markForUpdateRenderData();
         });
     }
 }

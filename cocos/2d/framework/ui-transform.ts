@@ -764,7 +764,7 @@ export class UITransform extends Component {
     private _markRenderDataDirty (): void {
         const uiComp = this.node._uiProps.uiComp;
         if (uiComp) {
-            uiComp.markForUpdateRenderData();
+            uiComp._markForUpdateRenderData();
         }
     }
 

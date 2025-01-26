@@ -151,10 +151,10 @@ export class TiledTile extends Component {
         const p = this._layer.getPositionAt(x, y);
         this.node.setPosition(p!.x, p!.y);
         this._layer.setTiledTileAt(x, y, this);
-        this._layer.markForUpdateRenderData();
+        this._layer._markForUpdateRenderData();
     }
 
     private _updatePosition (): void {
-        this._layer!.markForUpdateRenderData();
+        this._layer!._markForUpdateRenderData();
     }
 }

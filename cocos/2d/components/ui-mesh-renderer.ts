@@ -86,7 +86,7 @@ export class UIMeshRenderer extends Component {
 
     onEnable (): void {
         uiRendererManager.addRenderer(this);
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     onDisable (): void {
@@ -212,7 +212,7 @@ export class UIMeshRenderer extends Component {
     public update (): void {
         if (JSB) {
             if (this._modelComponent) {
-                this.markForUpdateRenderData();
+                this._markForUpdateRenderData();
             }
         }
         this._fitUIRenderQueue();
