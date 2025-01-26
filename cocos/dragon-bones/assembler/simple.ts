@@ -181,7 +181,7 @@ export const simple: IAssembler = {
     updateColor (comp: ArmatureDisplay): void {
         if (!comp) return;
         _comp = comp;
-        _comp.markForUpdateRenderData();
+        _comp._markForUpdateRenderData();
     },
 };
 function realTimeTraverse (armature: Armature, parentOpacity: number, worldMat?: Mat4): void {

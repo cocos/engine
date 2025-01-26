@@ -144,7 +144,7 @@ export const tiled: IAssembler = {
         const renderData = sprite.renderData;
         if (!renderData) return;
         renderData.vertDirty = true;
-        sprite.markForUpdateRenderData();
+        sprite._markForUpdateRenderData();
     },
 
     fillBuffers (sprite: Sprite, renderer: IBatcher) {

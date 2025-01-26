@@ -532,7 +532,7 @@ nodeProto._onPostActivated = function (active: boolean) {
         if (this._uiProps && this._uiProps.uiComp) {
             this._uiProps.uiComp.setNodeDirty();
             this._uiProps.uiComp.setTextureDirty(); // for dynamic atlas
-            this._uiProps.uiComp.markForUpdateRenderData();
+            this._uiProps.uiComp._markForUpdateRenderData();
         }
     }
 };
@@ -1074,7 +1074,7 @@ Object.defineProperty(nodeProto, 'layer', {
         this._sharedUint32Arr[1] = v; // Uint32, 1: layer
         if (this._uiProps && this._uiProps.uiComp) {
             this._uiProps.uiComp.setNodeDirty();
-            this._uiProps.uiComp.markForUpdateRenderData();
+            this._uiProps.uiComp._markForUpdateRenderData();
         }
         this.emit(NodeEventType.LAYER_CHANGED, v);
     },

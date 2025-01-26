@@ -655,7 +655,7 @@ export class TiledMap extends Component {
         for (let i = 0, l = layers.length; i < l; i++) {
             const layer = layers[i];
             if (layer.hasAnimation() || layer.node.hasChangedFlags) {
-                layer.markForUpdateRenderData();
+                layer._markForUpdateRenderData();
             }
         }
     }

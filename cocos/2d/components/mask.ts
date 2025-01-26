@@ -512,7 +512,7 @@ export class Mask extends Component {
     public markForUpdateRenderData (enable = true): void {
         warnID(9007);
         if (this.subComp) {
-            this.subComp.markForUpdateRenderData(enable);
+            this.subComp._markForUpdateRenderData(enable);
         }
     }
     /**

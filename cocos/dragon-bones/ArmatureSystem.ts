@@ -99,7 +99,7 @@ export class ArmatureSystem extends System {
             return;
         }
         this._armatures.forEach((armature): void => {
-            armature.markForUpdateRenderData();
+            armature._markForUpdateRenderData();
         });
     }
 }

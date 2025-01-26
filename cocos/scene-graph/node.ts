@@ -1906,7 +1906,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         const uiComp = self._uiProps && self._uiProps.uiComp;
         if (uiComp) {
             uiComp.setNodeDirty();
-            uiComp.markForUpdateRenderData();
+            uiComp._markForUpdateRenderData();
         }
         self.emit(NodeEventType.LAYER_CHANGED, self._layer);
     }
@@ -2121,7 +2121,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
             if (uiComp) {
                 uiComp.setNodeDirty();
                 uiComp.setTextureDirty(); // for dynamic atlas
-                uiComp.markForUpdateRenderData();
+                uiComp._markForUpdateRenderData();
             }
         }
     }

@@ -224,7 +224,7 @@ export class TiledLayer extends UIRenderer {
         if (this._enableCulling !== value) {
             this._enableCulling = value;
             this._cullingDirty = true;
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
         }
     }
     get enableCulling (): boolean { return this._enableCulling!; }
@@ -349,7 +349,7 @@ export class TiledLayer extends UIRenderer {
         const self = dataComp._tiledLayer!;
         self._updateCullingOffsetByUserNode(node);
         self._userNodeDirty = true;
-        self.markForUpdateRenderData();
+        self._markForUpdateRenderData();
     }
 
     protected _userNodePosChange (): void {
@@ -387,7 +387,7 @@ export class TiledLayer extends UIRenderer {
         dataComp._col = -1;
         dataComp._index = -1;
         this._userNodeDirty = true;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     protected _limitInLayer (rowCol: { row: number, col: number }): void {
@@ -411,7 +411,7 @@ export class TiledLayer extends UIRenderer {
         colData.count++;
         colData.list.push(dataComp);
         this._userNodeDirty = true;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     public isUserNodeDirty (): boolean {
@@ -451,7 +451,7 @@ export class TiledLayer extends UIRenderer {
         this.node.on(NodeEventType.SIZE_CHANGED, this.updateCulling, this);
         this.node.parent!.on(NodeEventType.TRANSFORM_CHANGED, this.updateCulling, this);
         this.node.parent!.on(NodeEventType.SIZE_CHANGED, this.updateCulling, this);
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
         // delay 1 frame, since camera's matrix data is dirty
         this.scheduleOnce(this.updateCulling.bind(this));
     }
@@ -473,7 +473,7 @@ export class TiledLayer extends UIRenderer {
         this._leftDownToCenterX = trans.width * trans.anchorX * scale.x;
         this._leftDownToCenterY = trans.height * trans.anchorY * scale.y;
         this._cullingDirty = true;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -848,7 +848,7 @@ export class TiledLayer extends UIRenderer {
             this._cullingDirty = true;
         }
 
-        if (this._cullingDirty) this.markForUpdateRenderData();
+        if (this._cullingDirty) this._markForUpdateRenderData();
     }
 
     // the result may not precise, but it dose't matter, it just uses to be got range
@@ -1251,7 +1251,7 @@ export class TiledLayer extends UIRenderer {
       */
     public setTextures (textures: SpriteFrame[]): void {
         this._textures = textures;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -1476,7 +1476,7 @@ export class TiledLayer extends UIRenderer {
             this._assembler.createData(this);
         }
         if (this._tiledDataArray.length === 0) {
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
             this._updateColor();
         }
     }

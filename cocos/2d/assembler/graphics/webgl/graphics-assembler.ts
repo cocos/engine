@@ -152,7 +152,7 @@ export const graphicsAssembler: IAssembler = {
     },
 
     end (graphics: Graphics): void {
-        graphics.markForUpdateRenderData();
+        graphics._markForUpdateRenderData();
     },
 
     _expandStroke (graphics: Graphics): void {
