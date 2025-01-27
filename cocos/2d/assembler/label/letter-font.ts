@@ -33,7 +33,7 @@ const _isBold = false;
 
 let _shareAtlas: LetterAtlas | null  = null;
 
-export class LetterFont extends BmfontUtils implements IAssembler {
+export class LetterFont extends BmfontUtils {
     getAssemblerData (): LetterRenderTexture | null {
         if (!_shareAtlas) {
             _shareAtlas = new LetterAtlas(_atlasWidth, _atlasHeight);
