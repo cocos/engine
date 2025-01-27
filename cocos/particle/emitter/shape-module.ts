@@ -26,7 +26,7 @@ import { ccclass, tooltip, displayOrder, type, formerlySerializedAs, serializabl
 import { Mat4, Quat, Vec2, Vec3, clamp, pingPong, random, randomRange, repeat, toDegree, toRadian, warn } from '../../core';
 
 import CurveRange from '../animator/curve-range';
-import { ArcMode, EmitLocation, ShapeType } from '../enum';
+import { ParticleArcMode, ParticleEmitLocation, ParticleShapeType } from '../enum';
 import { fixedAngleUnitVector2, particleEmitZAxis, randomPointBetweenCircleAtFixedAngle, randomPointBetweenSphere,
     randomPointInCube, randomSign, randomSortArray, randomUnitVector } from '../particle-general-function';
 import { ParticleSystem } from '../particle-system';
@@ -35,15 +35,16 @@ import type { Particle } from '../particle';
 const _intermediVec = new Vec3(0, 0, 0);
 const _intermediArr: [number, number, number] = [0, 0, 0];
 const _unitBoxExtent = new Vec3(0.5, 0.5, 0.5);
-function getShapeTypeEnumName (enumValue: number): keyof typeof ShapeType {
+function getShapeTypeEnumName (enumValue: number): keyof typeof ParticleShapeType {
     let enumName = '';
-    for (const key in ShapeType) {
-        if (ShapeType[key] === enumValue) {
+    for (const key in ParticleShapeType) {
+        const value = ParticleShapeType[key];
+        if (typeof value === 'number' && value === enumValue) {
             enumName = key;
             break;
         }
     }
-    return enumName as keyof typeof ShapeType;
+    return enumName as keyof typeof ParticleShapeType;
 }
 
 /**
@@ -110,7 +111,7 @@ export default class ShapeModule {
     @displayOrder(6)
     @tooltip('i18n:shapeModule.arc')
     @visible(function (this: ShapeModule) {
-        const subset: Array<keyof typeof ShapeType> = ['Cone', 'Circle'];
+        const subset: Array<keyof typeof ParticleShapeType> = ['Cone', 'Circle'];
         const enumName = getShapeTypeEnumName(this.shapeType);
         return subset.includes(enumName);
     })
@@ -131,7 +132,7 @@ export default class ShapeModule {
     @displayOrder(5)
     @tooltip('i18n:shapeModule.angle')
     @visible(function (this: ShapeModule) {
-        const subset: Array<keyof typeof ShapeType> = ['Cone'];
+        const subset: Array<keyof typeof ParticleShapeType> = ['Cone'];
         const enumName = getShapeTypeEnumName(this.shapeType);
         return subset.includes(enumName);
     })
@@ -164,12 +165,12 @@ export default class ShapeModule {
      *
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
      */
-    @type(ShapeType)
+    @type(ParticleShapeType)
     @formerlySerializedAs('shapeType')
     @displayOrder(1)
-    public _shapeType = ShapeType.Cone;
+    public _shapeType = ParticleShapeType.Cone;
 
-    @type(ShapeType)
+    @type(ParticleShapeType)
     @tooltip('i18n:shapeModule.shapeType')
     public get shapeType (): number {
         return this._shapeType;
@@ -178,20 +179,20 @@ export default class ShapeModule {
     public set shapeType (val) {
         this._shapeType = val;
         switch (this._shapeType) {
-        case ShapeType.Box:
-            if (this.emitFrom === EmitLocation.Base) {
-                this.emitFrom = EmitLocation.Volume;
+        case ParticleShapeType.Box:
+            if (this.emitFrom === ParticleEmitLocation.Base) {
+                this.emitFrom = ParticleEmitLocation.Volume;
             }
             break;
-        case ShapeType.Cone:
-            if (this.emitFrom === EmitLocation.Edge) {
-                this.emitFrom = EmitLocation.Base;
+        case ParticleShapeType.Cone:
+            if (this.emitFrom === ParticleEmitLocation.Edge) {
+                this.emitFrom = ParticleEmitLocation.Base;
             }
             break;
-        case ShapeType.Sphere:
-        case ShapeType.Hemisphere:
-            if (this.emitFrom === EmitLocation.Base || this.emitFrom === EmitLocation.Edge) {
-                this.emitFrom = EmitLocation.Volume;
+        case ParticleShapeType.Sphere:
+        case ParticleShapeType.Hemisphere:
+            if (this.emitFrom === ParticleEmitLocation.Base || this.emitFrom === ParticleEmitLocation.Edge) {
+                this.emitFrom = ParticleEmitLocation.Volume;
             }
             break;
         default:
@@ -203,16 +204,16 @@ export default class ShapeModule {
      * @en Particles emitted from which part of the shape [[EmitLocation]] (Box Cone Sphere Hemisphere).
      * @zh 粒子从发射器哪个部位发射 [[EmitLocation]]。
      */
-    @type(EmitLocation)
+    @type(ParticleEmitLocation)
     @serializable
     @displayOrder(2)
     @tooltip('i18n:shapeModule.emitFrom')
     @visible(function (this: ShapeModule) {
-        const subset: Array<keyof typeof ShapeType> = ['Box', 'Cone', 'Sphere', 'Hemisphere'];
+        const subset: Array<keyof typeof ParticleShapeType> = ['Box', 'Cone', 'Sphere', 'Hemisphere'];
         const enumName = getShapeTypeEnumName(this.shapeType);
         return subset.includes(enumName);
     })
-    public emitFrom = EmitLocation.Volume;
+    public emitFrom = ParticleEmitLocation.Volume;
 
     /**
      * @en Align particle with particle direction.
@@ -258,7 +259,7 @@ export default class ShapeModule {
     @displayOrder(3)
     @tooltip('i18n:shapeModule.radius')
     @visible(function (this: ShapeModule) {
-        const subset: Array<keyof typeof ShapeType> = ['Circle', 'Cone', 'Sphere', 'Hemisphere'];
+        const subset: Array<keyof typeof ParticleShapeType> = ['Circle', 'Cone', 'Sphere', 'Hemisphere'];
         const enumName = getShapeTypeEnumName(this.shapeType);
         return subset.includes(enumName);
     })
@@ -278,7 +279,7 @@ export default class ShapeModule {
     @displayOrder(4)
     @tooltip('i18n:shapeModule.radiusThickness')
     @visible(function (this: ShapeModule) {
-        const subset: Array<keyof typeof ShapeType> = ['Circle', 'Cone', 'Sphere', 'Hemisphere'];
+        const subset: Array<keyof typeof ParticleShapeType> = ['Circle', 'Cone', 'Sphere', 'Hemisphere'];
         const enumName = getShapeTypeEnumName(this.shapeType);
         return subset.includes(enumName);
     })
@@ -288,27 +289,27 @@ export default class ShapeModule {
      * @en Arc mode for Cone and Circle shape.
      * @zh 粒子在扇形范围内的发射方式 [[ArcMode]]。
      */
-    @type(ArcMode)
+    @type(ParticleArcMode)
     @serializable
     @displayOrder(7)
     @tooltip('i18n:shapeModule.arcMode')
     @visible(function (this: ShapeModule) {
-        const subset: Array<keyof typeof ShapeType> = ['Cone', 'Circle'];
+        const subset: Array<keyof typeof ParticleShapeType> = ['Cone', 'Circle'];
         const enumName = getShapeTypeEnumName(this.shapeType);
         return subset.includes(enumName);
     })
-    public arcMode = ArcMode.Random;
+    public arcMode = ParticleArcMode.Random;
 
     /**
      * @en Control arc spread for Cone and circle shape.
      * @zh 控制可能产生粒子的弧周围的离散间隔。
      */
-    @visible(function noArc (this: ShapeModule) { return this.arcMode !== ArcMode.Random; }) // Bug fix: Hide this input when arcMode is random
+    @visible(function noArc (this: ShapeModule) { return this.arcMode !== ParticleArcMode.Random; }) // Bug fix: Hide this input when arcMode is random
     @serializable
     @displayOrder(9)
     @tooltip('i18n:shapeModule.arcSpread')
     @visible(function (this: ShapeModule) {
-        const subset: Array<keyof typeof ShapeType> = ['Cone', 'Circle'];
+        const subset: Array<keyof typeof ParticleShapeType> = ['Cone', 'Circle'];
         const enumName = getShapeTypeEnumName(this.shapeType);
         return subset.includes(enumName);
     })
@@ -319,13 +320,13 @@ export default class ShapeModule {
      * @zh 粒子沿圆周发射的速度。
      */
     @type(CurveRange)
-    @visible(function noArc (this: ShapeModule) { return this.arcMode !== ArcMode.Random; }) // Bug fix: Hide this input when arcMode is random
+    @visible(function noArc (this: ShapeModule) { return this.arcMode !== ParticleArcMode.Random; }) // Bug fix: Hide this input when arcMode is random
     @range([0, 1])
     @serializable
     @displayOrder(10)
     @tooltip('i18n:shapeModule.arcSpeed')
     @visible(function (this: ShapeModule) {
-        const subset: Array<keyof typeof ShapeType> = ['Cone', 'Circle'];
+        const subset: Array<keyof typeof ParticleShapeType> = ['Cone', 'Circle'];
         const enumName = getShapeTypeEnumName(this.shapeType);
         return subset.includes(enumName);
     })
@@ -340,7 +341,7 @@ export default class ShapeModule {
     @displayOrder(11)
     @tooltip('i18n:shapeModule.length')
     @visible(function (this: ShapeModule) {
-        const subset: Array<keyof typeof ShapeType> = ['Cone'];
+        const subset: Array<keyof typeof ParticleShapeType> = ['Cone'];
         const enumName = getShapeTypeEnumName(this.shapeType);
         return subset.includes(enumName);
     })
@@ -354,7 +355,7 @@ export default class ShapeModule {
     @displayOrder(12)
     @tooltip('i18n:shapeModule.boxThickness')
     @visible(function (this: ShapeModule) {
-        const subset: Array<keyof typeof ShapeType> = ['Box'];
+        const subset: Array<keyof typeof ParticleShapeType> = ['Box'];
         const enumName = getShapeTypeEnumName(this.shapeType);
         return subset.includes(enumName);
     })
@@ -403,19 +404,19 @@ export default class ShapeModule {
      */
     public emit (p: Particle): void {
         switch (this.shapeType) {
-        case ShapeType.Box:
+        case ParticleShapeType.Box:
             boxEmit(this.emitFrom, this.boxThickness, p.position, p.velocity);
             break;
-        case ShapeType.Circle:
+        case ParticleShapeType.Circle:
             circleEmit(this.radius, this.radiusThickness, this.generateArcAngle(), p.position, p.velocity);
             break;
-        case ShapeType.Cone:
+        case ParticleShapeType.Cone:
             coneEmit(this.emitFrom, this.radius, this.radiusThickness, this.generateArcAngle(), this._angle, this.length, p.position, p.velocity);
             break;
-        case ShapeType.Sphere:
+        case ParticleShapeType.Sphere:
             sphereEmit(this.emitFrom, this.radius, this.radiusThickness, p.position, p.velocity);
             break;
-        case ShapeType.Hemisphere:
+        case ParticleShapeType.Hemisphere:
             hemisphereEmit(this.emitFrom, this.radius, this.radiusThickness, p.position, p.velocity);
             break;
         default:
@@ -441,7 +442,7 @@ export default class ShapeModule {
     }
 
     private generateArcAngle (): number {
-        if (this.arcMode === ArcMode.Random) {
+        if (this.arcMode === ParticleArcMode.Random) {
             return randomRange(0, this._arc);
         }
         let angle = this.totalAngle + 2 * Math.PI * this.arcSpeed.evaluate(this.particleSystem!.time, 1)! * (this.particleSystem!.time - this.lastTime);
@@ -450,9 +451,9 @@ export default class ShapeModule {
             angle = Math.floor(angle / (this._arc * this.arcSpread)) * this._arc * this.arcSpread;
         }
         switch (this.arcMode) {
-        case ArcMode.Loop:
+        case ParticleArcMode.Loop:
             return repeat(angle, this._arc);
-        case ArcMode.PingPong:
+        case ParticleArcMode.PingPong:
             return pingPong(angle, this._arc);
         default:
             return repeat(angle, this._arc);
@@ -462,11 +463,11 @@ export default class ShapeModule {
 
 function sphereEmit (emitFrom: number, radius: number, radiusThickness: number, pos: Vec3, dir: Vec3): void {
     switch (emitFrom) {
-    case EmitLocation.Volume:
+    case ParticleEmitLocation.Volume:
         randomPointBetweenSphere(pos, radius * (1 - radiusThickness), radius);
         Vec3.normalize(dir, pos);
         break;
-    case EmitLocation.Shell:
+    case ParticleEmitLocation.Shell:
         randomUnitVector(pos);
         Vec3.multiplyScalar(pos, pos, radius);
         Vec3.normalize(dir, pos);
@@ -478,14 +479,14 @@ function sphereEmit (emitFrom: number, radius: number, radiusThickness: number, 
 
 function hemisphereEmit (emitFrom: number, radius: number, radiusThickness: number, pos: Vec3, dir: Vec3): void {
     switch (emitFrom) {
-    case EmitLocation.Volume:
+    case ParticleEmitLocation.Volume:
         randomPointBetweenSphere(pos, radius * (1 - radiusThickness), radius);
         if (pos.z > 0) {
             pos.z *= -1;
         }
         Vec3.normalize(dir, pos);
         break;
-    case EmitLocation.Shell:
+    case ParticleEmitLocation.Shell:
         randomUnitVector(pos);
         Vec3.multiplyScalar(pos, pos, radius);
         if (pos.z > 0) {
@@ -509,14 +510,14 @@ function coneEmit (
     dir: Vec3,
 ): void {
     switch (emitFrom) {
-    case EmitLocation.Base:
+    case ParticleEmitLocation.Base:
         randomPointBetweenCircleAtFixedAngle(pos, radius * (1 - radiusThickness), radius, theta);
         Vec2.multiplyScalar(dir, pos, Math.sin(angle));
         dir.z = -Math.cos(angle) * radius;
         Vec3.normalize(dir, dir);
         pos.z = 0;
         break;
-    case EmitLocation.Shell:
+    case ParticleEmitLocation.Shell:
         fixedAngleUnitVector2(pos, theta);
         Vec2.multiplyScalar(dir, pos, Math.sin(angle));
         dir.z = -Math.cos(angle);
@@ -524,7 +525,7 @@ function coneEmit (
         Vec2.multiplyScalar(pos, pos, radius);
         pos.z = 0;
         break;
-    case EmitLocation.Volume:
+    case ParticleEmitLocation.Volume:
         randomPointBetweenCircleAtFixedAngle(pos, radius * (1 - radiusThickness), radius, theta);
         Vec2.multiplyScalar(dir, pos, Math.sin(angle));
         dir.z = -Math.cos(angle) * radius;
@@ -539,11 +540,11 @@ function coneEmit (
 
 function boxEmit (emitFrom: number, boxThickness: Vec3, pos: Vec3, dir: Vec3): void {
     switch (emitFrom) {
-    case EmitLocation.Volume:
+    case ParticleEmitLocation.Volume:
         randomPointInCube(pos, _unitBoxExtent);
         // randomPointBetweenCube(pos, vec3.multiply(_intermediVec, _unitBoxExtent, boxThickness), _unitBoxExtent);
         break;
-    case EmitLocation.Shell:
+    case ParticleEmitLocation.Shell:
         _intermediArr[0] = randomRange(-0.5, 0.5);
         _intermediArr[1] = randomRange(-0.5, 0.5);
         _intermediArr[2] = randomSign() * 0.5;
@@ -551,7 +552,7 @@ function boxEmit (emitFrom: number, boxThickness: Vec3, pos: Vec3, dir: Vec3): v
         applyBoxThickness(_intermediArr, boxThickness);
         Vec3.set(pos, _intermediArr[0], _intermediArr[1], _intermediArr[2]);
         break;
-    case EmitLocation.Edge:
+    case ParticleEmitLocation.Edge:
         _intermediArr[0] = randomRange(-0.5, 0.5);
         _intermediArr[1] = randomSign() * 0.5;
         _intermediArr[2] = randomSign() * 0.5;

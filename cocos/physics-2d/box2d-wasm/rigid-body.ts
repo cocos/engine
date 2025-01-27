@@ -39,6 +39,8 @@ import { B2Joint } from './joints/joint-2d';
 const tempVec3 = new Vec3();
 const tempVec2_1 = { x: 0, y: 0 };//new B2.Vec2(0, 0);
 const tempVec2_2 = { x: 0, y: 0 };
+
+/** @mangle */
 export class B2RigidBody2D implements IRigidBody2D {
     get impl (): B2.Body | null {
         return this._body;

@@ -16,14 +16,14 @@
 
 #pragma once
 
-#if CC_PLATFORM == CC_PLATFORM_ANDROID && __ANDROID_API__ >= 30
+#if CC_PLATFORM == CC_PLATFORM_ANDROID && __ANDROID_API__ >= 30 && CC_USE_ADPF
     #include <android/api-level.h>
     #include <android/log.h>
     #include <android/thermal.h>
-#if __ANDROID_API__ >= 33
-    #include <ctime>
-    #include <android/performance_hint.h>
-#endif
+    #if __ANDROID_API__ >= 33
+        #include <android/performance_hint.h>
+        #include <ctime>
+    #endif
     #include <jni.h>
 
     #include <chrono>
@@ -68,7 +68,7 @@ public:
         }
 
         // clean all hint sessions
-        for ( const auto& kv : map_hint_sessions ) {
+        for (const auto &kv : map_hint_sessions) {
             jobject global_hint_session = kv.second;
             env->DeleteGlobalRef(global_hint_session);
         }
@@ -114,7 +114,7 @@ public:
     AThermalManager *getThermalManager() { return thermal_manager_; }
 
     void initialize();
-	void destroy();
+    void destroy();
 
 private:
     // Update thermal headroom each sec.
@@ -173,15 +173,14 @@ private:
     std::vector<int32_t> thread_ids_;
     std::chrono::time_point<std::chrono::steady_clock> perf_start_;
 
-#if __ANDROID_API__ >= 33
+    #if __ANDROID_API__ >= 33
     APerformanceHintManager *hint_manager_ = nullptr;
     APerformanceHintSession *hint_session_ = nullptr;
     int64_t last_target_ = 16666666;
-#endif
+    #endif
 };
 
     #define CC_SUPPORT_ADPF 1 // NOLINT
 #else
     #define CC_SUPPORT_ADPF 0 // NOLINT
 #endif                        // ADPF_MANAGER_H_
-

@@ -106,9 +106,10 @@ class Sliced implements IAssembler {
     }
 
     private updateVertexData (sprite: Sprite): void {
-        const renderData: RenderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const dataList: IRenderData[] = renderData.data;
-        const uiTrans = sprite.node._uiProps.uiTransformComp!;
+        const uiTrans = sprite.node._getUITransformComp()!;
         const width = uiTrans.width;
         const height = uiTrans.height;
         const appX = uiTrans.anchorX * width;
@@ -152,7 +153,8 @@ class Sliced implements IAssembler {
     }
 
     fillBuffers (sprite: Sprite, renderer: IBatcher): void {
-        const renderData: RenderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const chunk = renderData.chunk;
         if (sprite._flagChangedVersion !== sprite.node.flagChangedVersion || renderData.vertDirty) {
             this.updateWorldVertexData(sprite, chunk);
@@ -180,7 +182,8 @@ class Sliced implements IAssembler {
     }
 
     private updateWorldVertexData (sprite: Sprite, chunk: StaticVBChunk): void {
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const stride = renderData.floatStride;
         const dataList: IRenderData[] = renderData.data;
         const vData = chunk.vb;
@@ -210,8 +213,8 @@ class Sliced implements IAssembler {
     }
 
     updateUVs (sprite: Sprite): void {
-        if (!sprite.spriteFrame) return;
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!sprite.spriteFrame || !renderData) return;
         const vData = renderData.chunk.vb;
         const stride = renderData.floatStride;
         const uv = sprite.spriteFrame.uvSliced;
@@ -224,7 +227,8 @@ class Sliced implements IAssembler {
     }
 
     updateColor (sprite: Sprite): void {
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const vData = renderData.chunk.vb;
         const stride = renderData.floatStride;
 

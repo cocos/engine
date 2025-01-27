@@ -1,8 +1,6 @@
 /*
- Copyright (c) 2020-2023 Xiamen Yaji Software Co., Ltd.
-
+ Copyright (c) 2025 Xiamen Yaji Software Co., Ltd.
  https://www.cocos.com/
-
  Permission is hereby granted, free of charge, to any person obtaining a copy
  of this software and associated documentation files (the "Software"), to deal
  in the Software without restriction, including without limitation the rights to
@@ -22,38 +20,10 @@
  THE SOFTWARE.
 */
 
-let _stageOffset = 0;
-const _name2stageID = {};
+import { cclegacy } from '../core/global-exports';
+import type { Director } from '../game/director';
+import type { PipelineSceneData } from './pipeline-scene-data';
 
-export default {
-    addStage (name): void {
-        // already added
-        if (_name2stageID[name] !== undefined) {
-            return;
-        }
-
-        const stageID = 1 << _stageOffset;
-        _name2stageID[name] = stageID;
-
-        _stageOffset += 1;
-    },
-
-    stageID (name): any {
-        const id = _name2stageID[name];
-        if (id === undefined) {
-            return -1;
-        }
-        return id;
-    },
-
-    stageIDs (nameList): number {
-        let key = 0;
-        for (const name of nameList) {
-            const id = _name2stageID[name];
-            if (id !== undefined) {
-                key |= id;
-            }
-        }
-        return key;
-    },
-};
+export function getPipelineSceneData (): PipelineSceneData {
+    return (cclegacy.director as Director).root!.pipeline.pipelineSceneData;
+}

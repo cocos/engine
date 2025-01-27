@@ -40,35 +40,21 @@
 #define NODE_API_ASSERT_RETURN_VOID(env, assertion, message) \
     NODE_API_ASSERT_BASE(env, assertion, message, NODE_API_RETVAL_NOTHING)
 
-#define NODE_API_CALL_BASE(env, the_call, ret_val) \
-    do {                                           \
-        if ((the_call) != JSVM_OK) {               \
-            assert(false);                         \
-        }                                          \
+#define NODE_API_CALL_BASE(env, the_call, ret_val)                        \
+    do {                                                                  \
+        if ((the_call) != JSVM_OK) {                                      \
+            se::internal::logJsException((env), __FILE_NAME__, __LINE__); \
+        }                                                                 \
     } while (0)
 
 // Returns nullptr if the_call doesn't return JSVM_OK.
-#define NODE_API_CALL(status, env, the_call)                                        \
-    status = the_call;                                                              \
-    if (status != JSVM_OK) {                                                        \
-        bool isPending = false;                                                     \
-        if (JSVM_OK == OH_JSVM_IsExceptionPending((env), &isPending) && isPending) {    \
-            JSVM_Value error;                                                       \
-            if (JSVM_OK == OH_JSVM_GetAndClearLastException((env), &error)) {       \
-                JSVM_Value stack;                                                   \
-                OH_JSVM_GetNamedProperty((env), error, "stack", &stack);            \
-                JSVM_Value message;                                                 \
-                OH_JSVM_GetNamedProperty((env), error, "message", &message);        \
-                char stackstr[256];                                                 \
-                OH_JSVM_GetValueStringUtf8(env, stack, stackstr, 256, nullptr);     \
-                SE_LOGE("JSVM error stack: %{public}s", stackstr);                  \
-                char messagestr[256];                                               \
-                OH_JSVM_GetValueStringUtf8(env, message, messagestr, 256, nullptr); \
-                SE_LOGE("JSVM error message: %{public}s", messagestr);              \
-            }                                                                       \
-        }                                                                           \
-    }                                                                               \
-    NODE_API_CALL_BASE(env, status, nullptr)
+#define NODE_API_CALL(status, env, the_call)                                 \
+    do {                                                                     \
+        status = the_call;                                                   \
+        if (status != JSVM_OK) {                                             \
+            se::internal::logJsException((env), __FILE_NAME__, __LINE__);    \
+        }                                                                    \
+    } while (0)
 
 // Returns empty if the_call doesn't return JSVM_OK.
 #define NODE_API_CALL_RETURN_VOID(env, the_call) \
@@ -80,10 +66,19 @@
 #define DECLARE_NODE_API_GETTER(name, func) \
     { (name), nullptr, nullptr, (func), nullptr, nullptr, JSVM_DEFAULT, nullptr }
 
-void add_returned_status(JSVM_Env    env,
+#define JSVM_CALL_BASE(theCall, retVal) \
+    do {                                \
+        if((theCall) != JSVM_OK){       \
+            return retVal;              \
+        }                               \
+    } while (0)
+
+#define JSVM_CALL_RETURN_VOID(theCall) JSVM_CALL_BASE(theCall, NODE_API_RETVAL_NOTHING)
+
+void add_returned_status(JSVM_Env env,
                          const char* key,
-                         JSVM_Value  object,
-                         char*       expected_message,
+                         JSVM_Value object,
+                         char* expected_message,
                          JSVM_Status expected_status,
                          JSVM_Status actual_status);
 

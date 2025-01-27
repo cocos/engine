@@ -36,7 +36,7 @@ import { MorphModel } from './morph-model';
 import { deleteTransform, getTransform, getWorldMatrix, IJointTransform } from '../../animation/skeletal-animation-utils';
 import { IMacroPatch, BatchingSchemes, Pass } from '../../render-scene';
 import { director } from '../../game';
-import { Filter, PixelFormat, WrapMode } from '../../asset/assets/asset-enum';
+import { TextureFilter, PixelFormat, WrapMode } from '../../asset/assets/asset-enum';
 import { Texture2D, ImageAsset } from '../../asset/assets';
 import { SubModel } from '../../render-scene/scene';
 
@@ -332,8 +332,8 @@ export class SkinningModel extends MorphModel {
                 format: pixelFormat,
             });
             const texture = new Texture2D();
-            texture.setFilters(Filter.NEAREST, Filter.NEAREST);
-            texture.setMipFilter(Filter.NONE);
+            texture.setFilters(TextureFilter.NEAREST, TextureFilter.NEAREST);
+            texture.setMipFilter(TextureFilter.NONE);
             texture.setWrapMode(WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE);
             texture.image = image;
             textures[i] = texture;

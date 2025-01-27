@@ -33,7 +33,7 @@ import { Node } from '../scene-graph/node';
 import { ICounterOption } from './counter';
 import { PerfCounter } from './perf-counter';
 import { Pass } from '../render-scene';
-import { preTransforms, System, sys, cclegacy, settings, warnID, SettingsCategory } from '../core';
+import { preTransforms, System, sys, cclegacy, settings, warnID, SettingsCategory, CCObjectFlags } from '../core';
 import { Root } from '../root';
 import { director, DirectorEvent, game } from '../game';
 import { ccwindow } from '../core/global-exports';
@@ -280,7 +280,7 @@ export class Profiler extends System {
         }
 
         this._rootNode = new Node('PROFILER_NODE');
-        this._rootNode._objFlags = cclegacy.Object.Flags.DontSave | cclegacy.Object.Flags.HideInHierarchy;
+        this._rootNode._objFlags = CCObjectFlags.DontSave | CCObjectFlags.HideInHierarchy;
         game.addPersistRootNode(this._rootNode);
 
         const managerNode = new Node('Profiler_Root');

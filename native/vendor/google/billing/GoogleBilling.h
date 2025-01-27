@@ -24,169 +24,121 @@
 
 #pragma once
 
+#include <unordered_map>
 #include <vector>
-
 #include "base/Macros.h"
 #include "base/RefCounted.h"
 
+namespace se {
+class Object;
+}
+
 namespace cc {
+class PendingPurchasesParams;
+class QueryProductDetailsParams;
+class BillingFlowParams;
+class ConsumeParams;
+class AcknowledgePurchaseParams;
+class QueryPurchasesParams;
+class GetBillingConfigParams;
+class InAppMessageParams;
+class BillingResult;
 
-class CC_DLL BillingResult : public cc::RefCounted {
-public:
-    int responseCode{0};
-    std::string debugMessage;
-    std::string toString;
-};
-
-class CC_DLL OneTimePurchaseOfferDetails {
-public:
-    long priceAmountMicros;
-    std::string formattedPrice;
-    std::string priceCurrencyCode;
-};
-
-class CC_DLL InstallmentPlanDetails {
-public:
-    int installmentPlanCommitmentPaymentsCount;
-    int subsequentInstallmentPlanCommitmentPaymentsCount;
-};
-
-class CC_DLL PricingPhase {
-public:
-    int billingCycleCount;
-    long priceAmountMicros;
-    int recurrenceMode;
-    std::string billingPeriod;
-    std::string formattedPrice;
-    std::string priceCurrencyCode;
-};
-
-class CC_DLL PricingPhases {
-public:
-    ~PricingPhases() {
-        for (auto* pricingPhase : pricingPhaseList) {
-            delete pricingPhase;
+class CC_DLL BillingClient : public cc::RefCounted {
+private:
+    class scopedListener {
+    public:
+        scopedListener() = default;
+        scopedListener(se::Object* obj);
+        ~scopedListener();
+        se::Object* get() const {
+            return _obj;
         }
-        pricingPhaseList.clear();
-    }
-    std::vector<PricingPhase*> pricingPhaseList;
-};
+        void reset(se::Object* obj);
+        operator bool() const {
+            return _obj != nullptr;
+        }
 
-class CC_DLL SubscriptionOfferDetails {
+    private:
+        se::Object* _obj{nullptr};
+    };
+
 public:
-    std::string basePlanId;
-    std::string offerId;
-    std::string offerToken;
-    std::vector<std::string> offerTags;
-    std::unique_ptr<PricingPhases> pricingPhases;
-    std::unique_ptr<InstallmentPlanDetails> installmentPlanDetails;
-};
+    class Builder {
+    public:
+        Builder& enableAlternativeBillingOnly() {
+            this->_enableAlternativeBillingOnly = true;
+            return *this;
+        }
 
-class CC_DLL ProductDetails : public cc::RefCounted {
-public:
-    ~ProductDetails() override;
-    bool equals(const ProductDetails& other) const {
-        return hashCode == other.hashCode;
-    }
-    int _id; // This is an ID that is not visible to ts and is used to free the java object.
-    int hashCode;
-    std::string description;
-    std::string name;
-    std::string productId;
-    std::string productType;
-    std::string title;
-    std::string toString;
-    std::unique_ptr<OneTimePurchaseOfferDetails> oneTimePurchaseOfferDetails;
-    std::vector<SubscriptionOfferDetails*> subscriptionOfferDetails;
-};
+        Builder& enableExternalOffer() {
+            this->_enableExternalOffer = true;
+            return *this;
+        }
 
+        Builder& enablePendingPurchases(PendingPurchasesParams* pendingPurchasesParams) {
+            this->_pendingPurchasesParams = pendingPurchasesParams;
+            return *this;
+        }
 
-class CC_DLL AccountIdentifiers {
-public:
-    std::string obfuscatedAccountId;
-    std::string obfuscatedProfileId;
-};
+        Builder& enableUserChoiceBilling(se::Object* listener);
+        Builder& setListener(se::Object* listener);
 
-class CC_DLL PendingPurchaseUpdate {
-public:
-    std::string purchaseToken;
-    std::vector<std::string> products;
-};
+        BillingClient* build() {
+            return new BillingClient(this);
+        }
 
-class CC_DLL Purchase : public  cc::RefCounted {
-public:
-    ~Purchase() override;
-    bool equals(const Purchase& other) const {
-        return hashCode == other.hashCode;
-    }
-    int _id; // This is an ID that is not visible to ts and is used to free the java object.
-    bool isAcknowledged;
-    bool isAutoRenewing;
-    int purchaseState;
-    int hashCode;
-    int quantity;
-    long purchaseTime;
-    std::string developerPayload;
-    std::string orderId;
-    std::string originalJson;
-    std::string packageName;
-    std::string purchaseToken;
-    std::string signature;
-    std::string toString;
-    std::unique_ptr<AccountIdentifiers> accountIdentifiers;
-    std::unique_ptr<PendingPurchaseUpdate> pendingPurchaseUpdate;
-    std::vector<std::string> products;
-};
+    private:
+        friend class BillingClient;
+        friend class JniBilling;
+        bool _enableAlternativeBillingOnly{false};
+        bool _enableExternalOffer{false};
+        PendingPurchasesParams* _pendingPurchasesParams{nullptr};
+        scopedListener _purchasesUpdatedListener;
+        scopedListener _userChoiceBillingListener;
+    };
 
-class CC_DLL BillingConfig : public  cc::RefCounted {
-public:
-    std::string countryCode;
-};
-
-class AlternativeBillingOnlyReportingDetails : public  cc::RefCounted{
-public:
-    std::string externalTransactionToken;
-};
-
-class ExternalOfferReportingDetails : public  cc::RefCounted{
-public:
-    std::string externalTransactionToken;
-};
-
-class InAppMessageResult : public  cc::RefCounted{
-public:
-    int responseCode;
-    std::string purchaseToken;
-};
-
-class CC_DLL GoogleBilling {
-public:
-    static GoogleBilling &getInstance() {
-        static GoogleBilling instance;
-        return instance;
+    static Builder* newBuilder() {
+        return new Builder();
     }
 
-    void startConnection();
+    void startConnection(se::Object* listener);
     void endConnection();
     int getConnectionState() const;
     bool isReady() const;
-    void queryProductDetailsParams(const std::vector<std::string>& productIds, const std::string& type);
-    void launchBillingFlow(const std::vector<ProductDetails*>& productDetails, const std::string& selectedOfferToken);
-    void consumePurchases(const std::vector<Purchase*>& purchase);
-    void acknowledgePurchase(const std::vector<Purchase*>& purchase);
-    void queryPurchasesAsync(const std::string& productType);
-    void getBillingConfigAsync();
-
-    void createAlternativeBillingOnlyReportingDetailsAsync();
-    void isAlternativeBillingOnlyAvailableAsync();
-    void createExternalOfferReportingDetailsAsync();
-    void isExternalOfferAvailableAsync();
+    void queryProductDetailsAsync(QueryProductDetailsParams* params, se::Object* listener);
+    void launchBillingFlow(BillingFlowParams* params);
+    void consumeAsync(ConsumeParams* params, se::Object* listener);
+    void acknowledgePurchase(AcknowledgePurchaseParams* params, se::Object* listener);
+    void queryPurchasesAsync(QueryPurchasesParams* parmas, se::Object* listener);
+    void getBillingConfigAsync(GetBillingConfigParams* params, se::Object* listener);
+    void createAlternativeBillingOnlyReportingDetailsAsync(se::Object* listener);
+    void isAlternativeBillingOnlyAvailableAsync(se::Object* listener);
+    void createExternalOfferReportingDetailsAsync(se::Object* listener);
+    void isExternalOfferAvailableAsync(se::Object* listener);
     BillingResult* isFeatureSupported(const std::string& feature);
-    BillingResult* showAlternativeBillingOnlyInformationDialog();
-    BillingResult* showExternalOfferInformationDialog();
-    BillingResult* showInAppMessages();
+    void showAlternativeBillingOnlyInformationDialog(se::Object* listener);
+    void showExternalOfferInformationDialog(se::Object* listener);
+    void showInAppMessages(InAppMessageParams* params, se::Object* listener);
+
 private:
-    GoogleBilling() = default;
+    BillingClient(Builder* builder);
+    ~BillingClient();
+    int getNextListenerId();
+    int addListener(se::Object* listener);
+
+private:
+    friend class GoogleBillingHelper;
+    int _tag{-1};
+    bool _enableAlternativeBillingOnly{false};
+    bool _enableExternalOffer{false};
+    PendingPurchasesParams* _pendingPurchasesParams{nullptr};
+
+    scopedListener _purchasesUpdatedListener;
+    scopedListener _userChoiceBillingListener;
+
+    int _nextListnerId{0};
+    std::unordered_map<int, scopedListener> _listeners;
 };
 
 } // namespace cc

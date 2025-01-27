@@ -49,6 +49,7 @@ import { ProbeType, ReflectionProbe } from './reflection-probe';
 import { ReflectionProbeType } from '../../3d/reflection-probe/reflection-probe-enum';
 import type { SH } from '../../gi/light-probe/sh';
 import type { PipelineSceneData } from '../../rendering';
+import { getPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
 
 const m4_1 = new Mat4();
 
@@ -715,7 +716,8 @@ export class Model {
         this._updateStamp = stamp;
 
         this.updateSHUBOs();
-        const forceUpdateUBO = this.node.scene.globals.shadows.enabled && this.node.scene.globals.shadows.type === ShadowType.Planar;
+        const shadows = this.node.scene.globals.shadows;
+        const forceUpdateUBO = shadows.enabled && shadows.type === ShadowType.Planar;
 
         if (!this._localDataUpdated) { return; }
         this._localDataUpdated = false;
@@ -760,7 +762,7 @@ export class Model {
             return false;
         }
 
-        const lightProbes = (cclegacy.director.root as Root).pipeline.pipelineSceneData.lightProbes;
+        const lightProbes = getPipelineSceneData().lightProbes;
         if (!lightProbes || lightProbes.empty()) {
             return false;
         }
@@ -1171,14 +1173,15 @@ export class Model {
      */
     public getMacroPatches (subModelIndex: number): IMacroPatch[] | null {
         let patches = this.receiveShadow ? shadowMapPatches : null;
-        if (this._lightmap != null) {
-            if (this.node && this.node.scene && !this.node.scene.globals.disableLightmap) {
-                const mainLightIsStationary = this.node.scene.globals.bakedWithStationaryMainLight;
+        if (this._lightmap != null && this.node && this.node.scene) {
+            const sceneGlobals = this.node.scene.globals;
+            if (!sceneGlobals.disableLightmap) {
+                const mainLightIsStationary = sceneGlobals.bakedWithStationaryMainLight;
                 const lightmapPathes = mainLightIsStationary ? stationaryLightMapPatches : staticLightMapPatches;
 
                 patches = patches ? patches.concat(lightmapPathes) : lightmapPathes;
                 // use highp lightmap
-                if (this.node.scene.globals.bakedWithHighpLightmap) {
+                if (sceneGlobals.bakedWithHighpLightmap) {
                     patches = patches.concat(highpLightMapPatches);
                 }
             }
@@ -1216,15 +1219,15 @@ export class Model {
 
         const attributes: Attribute[] = [];
         const attributeSet = new Set<string>();
-        for (const pass of subModel.passes) {
+        subModel.passes.forEach((pass) => {
             const shader = pass.getShaderVariant(subModel.patches)!;
-            for (const attr of shader.attributes) {
+            shader.attributes.forEach((attr) => {
                 if (!attributeSet.has(attr.name)) {
                     attributes.push(attr);
                     attributeSet.add(attr.name);
                 }
-            }
-        }
+            });
+        });
         this._updateInstancedAttributes(attributes, subModel);
     }
 
@@ -1278,11 +1281,11 @@ export class Model {
     }
 
     protected _updateLocalDescriptors (subModelIndex: number, descriptorSet: DescriptorSet): void {
-        if (this._localBuffer) descriptorSet.bindBuffer(UBOLocal.BINDING, this._localBuffer);
+        if (this._localBuffer) descriptorSet.bindBuffer(UBOLocalEnum.BINDING, this._localBuffer);
     }
 
     protected _updateLocalSHDescriptors (subModelIndex: number, descriptorSet: DescriptorSet): void {
-        if (this._localSHBuffer) descriptorSet.bindBuffer(UBOSH.BINDING, this._localSHBuffer);
+        if (this._localSHBuffer) descriptorSet.bindBuffer(UBOSHEnum.BINDING, this._localSHBuffer);
     }
 
     protected _updateWorldBoundDescriptors (subModelIndex: number, descriptorSet: DescriptorSet): void {

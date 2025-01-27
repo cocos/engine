@@ -27,6 +27,7 @@ import { BUILD, LOAD_BULLET_MANUALLY, NATIVE_CODE_BUNDLE_MODE } from 'internal:c
 import { game } from '../../game';
 import { error, log, sys } from '../../core';
 import { NativeCodeBundleMode } from '../../misc/webassembly-support';
+import type { BulletCache } from './bullet-cache';
 
 //corresponds to bulletType in bullet-compile
 export enum EBulletType{
@@ -80,7 +81,7 @@ export enum EBulletDebugDrawModes
 }
 
 interface BtCache {
-    CACHE: any,
+    CACHE: typeof BulletCache,
     BODY_CACHE_NAME: string,
     CCT_CACHE_NAME: string,
 }

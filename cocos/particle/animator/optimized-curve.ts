@@ -58,8 +58,8 @@ export class OptimizedCurve {
     public integralUniform: Float32Array | null;
 
     constructor (constructUniform = false) {
-        this.optimizedKeys = new Array<geometry.OptimizedKey>(); // the i-th optimezed key stores coefficients of [i,i+1] segment in the original curve,so if the time of last key of the original key is 1,the last key won't be kept in the opt curve.
-        this.integral = new Array<number>();      // the integral of the curve between 0 and corresponding key,the i-th integral corresponds to the i+1-th key in optimizedKeys (because the integral of the first key is always zero,the first key won't be stored)
+        this.optimizedKeys = []; // the i-th optimezed key stores coefficients of [i,i+1] segment in the original curve,so if the time of last key of the original key is 1,the last key won't be kept in the opt curve.
+        this.integral = [];      // the integral of the curve between 0 and corresponding key,the i-th integral corresponds to the i+1-th key in optimizedKeys (because the integral of the first key is always zero,the first key won't be stored)
         this.constructUniform = constructUniform;
         this.coefUniform = null;
         this.timeUniform = null;

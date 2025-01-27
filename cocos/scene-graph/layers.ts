@@ -58,6 +58,7 @@ export interface LayerItem {
  * Every node can be assigned to multiple layers with different bit masks, you can setup layer with inclusive or exclusive operation.
  */
 export class Layers {
+    private constructor () {}
     /**
      * @en All layers in an Enum
      * @zh 以 Enum 形式存在的所有层列表
@@ -91,11 +92,7 @@ export class Layers {
      * @return A filter which can detect all accepted layers
      */
     public static makeMaskInclude (includes: number[]): number {
-        let mask = 0;
-        for (const inc of includes) {
-            mask |= inc;
-        }
-        return mask;
+        return includes.reduce((mask, inc) => mask | inc, 0);
     }
 
     /**

@@ -128,8 +128,8 @@ export class TextureCube extends SimpleTexture {
     @serializable
     _mipmapMode = MipmapMode.NONE;
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     /**

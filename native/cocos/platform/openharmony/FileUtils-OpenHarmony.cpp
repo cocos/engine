@@ -132,8 +132,8 @@ FileUtils::Status FileUtilsOpenHarmony::getContents(const std::string &filename,
 }
 
 FileUtilsOpenHarmony::~FileUtilsOpenHarmony() {
-    if (_nativeResourceManager)
-        OH_ResourceManager_ReleaseNativeResourceManager(_nativeResourceManager);
+    // if (_nativeResourceManager)
+    //     OH_ResourceManager_ReleaseNativeResourceManager(_nativeResourceManager);
 }
 
 bool FileUtilsOpenHarmony::init() {
@@ -185,6 +185,13 @@ bool FileUtilsOpenHarmony::isFileExistInternal(const std::string &strFilePath) c
     std::string strPath = strFilePath;
     if (!isAbsolutePath(strPath)) { // Not absolute path, add the default root path at the beginning.
         strPath.insert(0, _defaultResRootPath);
+    } else {
+        FILE *fp = fopen(strFilePath.c_str(), "r");
+        if (fp) {
+            fclose(fp);
+            return true;
+        }
+        return false;
     }
 
     if (nullptr == _nativeResourceManager) {

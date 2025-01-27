@@ -430,8 +430,9 @@ export class BuiltinForwardPassBuilder implements rendering.PipelinePassBuilder 
             && camera.scene.mainLight.shadowEnabled;
 
         // Reflection Probe
-        cameraConfigs.enablePlanarReflectionProbe =
-            cameraConfigs.isMainGameWindow || camera.cameraUsage === CameraUsage.SCENE_VIEW;
+        cameraConfigs.enablePlanarReflectionProbe = cameraConfigs.isMainGameWindow
+            || camera.cameraUsage === CameraUsage.SCENE_VIEW
+            || camera.cameraUsage === CameraUsage.GAME_VIEW;
 
         // MSAA
         cameraConfigs.enableMSAA = cameraConfigs.settings.msaa.enabled

@@ -33,6 +33,7 @@ export interface OperationInfo {
     invoking: boolean,
 }
 
+/** @mangle */
 export interface OperationQueueable {
     _operationQueue: OperationInfo[];
     _eventTarget: EventTarget;
@@ -74,6 +75,7 @@ function _tryCallingRecursively<T extends OperationQueueable> (target: T, opInfo
         opInfo.invoking = false;
         target._operationQueue.shift();
         target._eventTarget.emit(opInfo.id.toString());
+        target._eventTarget.off(opInfo.id.toString());    // remove the key from _eventTarget._callbackTable
         removeUnneededCalls(target);
         const nextOpInfo: OperationInfo = target._operationQueue[0];
         if (nextOpInfo) {

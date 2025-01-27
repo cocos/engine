@@ -861,7 +861,7 @@ export class Batcher2D implements IBatcher {
     }
 
     private _screenSort (a: RenderRoot2D, b: RenderRoot2D): number {
-        return a.node.getSiblingIndex() - b.node.getSiblingIndex();
+        return a.node.siblingIndex - b.node.siblingIndex;
     }
 
     // TODO: Not a good way to do the job
@@ -869,6 +869,7 @@ export class Batcher2D implements IBatcher {
     // by legacyCC.director.root.batcher2D._releaseDescriptorSetCache
     /**
      * @engineInternal
+     * @mangle
      */
     public _releaseDescriptorSetCache (textureHash: number | Texture | null, sampler: Sampler | null = null): void {
         if (JSB) {
@@ -962,6 +963,7 @@ export class Batcher2D implements IBatcher {
     }
 }
 
+/** @mangle */
 class LocalDescriptorSet  {
     private _descriptorSet: DescriptorSet | null = null;
     private _transform: Node | null = null;
@@ -971,7 +973,11 @@ class LocalDescriptorSet  {
     private _transformUpdate = true;
     private declare _localData: Float32Array | null;
 
-    public get descriptorSet (): DescriptorSet | null {
+    // NOTE: Internal modules should avoid using getter/setter accessors since we're using babel to convert TS to JS
+    // and terser minifier could not handle the getter/setter generated JS code correctly.
+    // See the issue: https://github.com/terser/terser/issues/322
+    // Change get descriptorSet() to getDescriptorSet() in v3.8.6.
+    public getDescriptorSet (): DescriptorSet | null {
         return this._descriptorSet;
     }
 
@@ -993,7 +999,7 @@ class LocalDescriptorSet  {
         this._samplerHash = batch.samplerHash;
         _dsInfo.layout = batch.passes[0].localSetLayout;
         this._descriptorSet = device.createDescriptorSet(_dsInfo);
-        this._descriptorSet.bindBuffer(UBOLocal.BINDING, this._localBuffer!);
+        this._descriptorSet.bindBuffer(UBOLocalEnum.BINDING, this._localBuffer!);
         const binding = ModelLocalBindings.SAMPLER_SPRITE;
         this._descriptorSet.bindTexture(binding, batch.texture!);
         this._descriptorSet.bindSampler(binding, batch.sampler!);
@@ -1063,6 +1069,7 @@ class LocalDescriptorSet  {
     }
 }
 
+/** @mangle */
 class DescriptorSetCache {
     private _descriptorSetCache = new Map<number, DescriptorSet>();
     private _dsCacheHashByTexture = new Map<number, number>();
@@ -1080,13 +1087,13 @@ class DescriptorSetCache {
             for (let i = 0, len = caches.length; i < len; i++) {
                 const cache: LocalDescriptorSet = caches[i];
                 if (cache.equals(batch.useLocalData, batch.textureHash, batch.samplerHash)) {
-                    return cache.descriptorSet!;
+                    return cache.getDescriptorSet()!;
                 }
             }
             const localDs = this._localCachePool.alloc();
             localDs.initialize(batch);
             this._localDescriptorSetCache.push(localDs);
-            return localDs.descriptorSet!;
+            return localDs.getDescriptorSet()!;
         } else {
             const hash = batch.textureHash ^ batch.samplerHash;
             if (this._descriptorSetCache.has(hash)) {

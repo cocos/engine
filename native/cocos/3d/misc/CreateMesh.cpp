@@ -44,7 +44,7 @@ gfx::AttributeList defAttrs = {
 };
 } // namespace
 
-Mesh *MeshUtils::createMesh(const IGeometry &geometry, Mesh *out /*= nullptr*/, const ICreateMeshOptions &options /*= {}*/) {
+Mesh *MeshUtils::createMesh(const IGeometry &geometry, Mesh *out /*= nullptr*/, const ccstd::optional<ICreateMeshOptions> &options /*= {} */) {
     if (!out) {
         out = ccnew Mesh();
     }
@@ -53,7 +53,11 @@ Mesh *MeshUtils::createMesh(const IGeometry &geometry, Mesh *out /*= nullptr*/, 
     return out;
 }
 
-Mesh::ICreateInfo MeshUtils::createMeshInfo(const IGeometry &geometry, const ICreateMeshOptions &options /* = {}*/) {
+Mesh::ICreateInfo MeshUtils::createMeshInfo(const IGeometry &geometry, const ccstd::optional<ICreateMeshOptions> &aOptions /* = {} */) {
+    ICreateMeshOptions options;
+    if (aOptions.has_value()) {
+        options = aOptions.value();
+    }
     // Collect attributes and calculate length of result vertex buffer.
     gfx::AttributeList attributes;
     uint32_t stride = 0;
@@ -285,7 +289,7 @@ static inline uint32_t getPadding(uint32_t length, uint32_t align) {
     return 0U;
 }
 
-Mesh *MeshUtils::createDynamicMesh(index_t primitiveIndex, const IDynamicGeometry &geometry, Mesh *out /*= nullptr*/, const ICreateDynamicMeshOptions &options /*= {}*/) {
+Mesh *MeshUtils::createDynamicMesh(index_t primitiveIndex, const IDynamicGeometry &geometry, Mesh *out /*= nullptr*/, const ccstd::optional<ICreateDynamicMeshOptions> &options /*= {} */) {
     if (!out) {
         out = ccnew Mesh();
     }
@@ -297,7 +301,12 @@ Mesh *MeshUtils::createDynamicMesh(index_t primitiveIndex, const IDynamicGeometr
     return out;
 }
 
-Mesh::ICreateInfo MeshUtils::createDynamicMeshInfo(const IDynamicGeometry &geometry, const ICreateDynamicMeshOptions &options /* = {}*/) {
+Mesh::ICreateInfo MeshUtils::createDynamicMeshInfo(const IDynamicGeometry &geometry, const ccstd::optional<ICreateDynamicMeshOptions> &aOptions /* = {} */) {
+    ICreateDynamicMeshOptions options;
+    if (aOptions.has_value()) {
+        options = aOptions.value();
+    }
+    
     gfx::AttributeList attributes;
     uint32_t stream = 0U;
 

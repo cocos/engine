@@ -387,7 +387,7 @@ export class Rect extends ValueType {
      */
     public toString (): string {
         const self = this;
-        return `(${self.x.toFixed(2)}, ${self.y.toFixed(2)}, ${self.width.toFixed(2)}, ${self.height.toFixed(2)})`;
+        return `(${self.x}, ${self.y}, ${self.width}, ${self.height})`;
     }
 
     /**

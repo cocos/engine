@@ -33,7 +33,7 @@ import { TiledLayer } from './tiled-layer';
 import { TiledObjectGroup } from './tiled-object-group';
 import { TiledMapAsset } from './tiled-map-asset';
 import { Sprite } from '../2d/components/sprite';
-import { fillTextureGrids } from './tiled-utils';
+import { fillTextureGrids, enableTexelOffsetUtils } from './tiled-utils';
 import { Size, Vec2, logID, Color, sys, warnID } from '../core';
 import { SpriteFrame } from '../2d/assets';
 import { NodeEventType } from '../scene-graph/node-event';
@@ -303,6 +303,22 @@ export class TiledMap extends Component {
         return this._tileProperties.get(gid);
     }
 
+    /**
+     * @en Enables or disables texel offset correction to fix rendering issues like grid edge artifacts.
+     * This function adjusts the texture coordinates of each grid in the tilemap by applying
+     * a 0.5-pixel offset, ensuring that grid edges do not show black lines or artifacts caused by
+     * texture sampling inaccuracies. This is especially useful for tile-based rendering systems.
+     * @zh 启用或禁用像素偏移修正，用于修复网格边缘的渲染问题（如黑线）。此函数通过对每个 tilemap 网格的纹理坐标应用 0.5 像素
+     * 的偏移来调整，确保网格边缘不会出现因纹理采样不准确导致的黑线或其他伪影问题。对基于图块的渲染系统特别有用。
+     *
+     * @param enable
+     * @en Whether to enable (true) or disable (false) the texel offset correction.
+     * @zh 是否启用 (true) 或禁用 (false) 像素偏移修正。
+     */
+    enableTexelOffset (enable: boolean): void {
+        enableTexelOffsetUtils(enable);
+    }
+
     __preload (): void {
         if (!this._tmxFile) {
             return;
@@ -402,9 +418,9 @@ export class TiledMap extends Component {
     }
 
     _syncAnchorPoint (): void {
-        const anchor = this.node._uiProps.uiTransformComp!.anchorPoint;
-        const leftTopX = this.node._uiProps.uiTransformComp!.width * anchor.x;
-        const leftTopY = this.node._uiProps.uiTransformComp!.height * (1 - anchor.y);
+        const anchor = this.node._getUITransformComp()!.anchorPoint;
+        const leftTopX = this.node._getUITransformComp()!.width * anchor.x;
+        const leftTopY = this.node._getUITransformComp()!.height * (1 - anchor.y);
         let i: number;
         let l: number;
         for (i = 0, l = this._layers.length; i < l; i++) {
@@ -412,12 +428,12 @@ export class TiledMap extends Component {
             const layerNode = layerInfo.node;
             // Tiled layer sync anchor to map because it's old behavior,
             // do not change the behavior avoid influence user's existed logic.
-            layerNode._uiProps.uiTransformComp!.setAnchorPoint(anchor);
+            layerNode._getUITransformComp()!.setAnchorPoint(anchor);
         }
 
         for (i = 0, l = this._groups.length; i < l; i++) {
             const groupInfo = this._groups[i];
-            const groupNode = groupInfo.node._uiProps.uiTransformComp!;
+            const groupNode = groupInfo.node._getUITransformComp()!;
             // Group layer not sync anchor to map because it's old behavior,
             // do not change the behavior avoid influence user's existing logic.
             groupNode.anchorX = 0.5;
@@ -428,7 +444,7 @@ export class TiledMap extends Component {
         }
 
         for (i = 0, l = this._images.length; i < l; i++) {
-            const image = this._images[i]._uiProps.uiTransformComp!;
+            const image = this._images[i]._getUITransformComp()!;
             image.anchorX = 0.5;
             image.anchorY = 0.5;
             const x = this._images[i]._offset.x - leftTopX + image.width * image.anchorX;
@@ -550,12 +566,12 @@ export class TiledMap extends Component {
                         height = spriteFrame!.originalSize.height;
                     }
 
-                    child._uiProps.uiTransformComp!.setContentSize(width, height);
+                    child._getUITransformComp()!.setContentSize(width, height);
                     images.push(child);
                 }
 
-                maxWidth = Math.max(maxWidth, child._uiProps.uiTransformComp!.width);
-                maxHeight = Math.max(maxHeight, child._uiProps.uiTransformComp!.height);
+                maxWidth = Math.max(maxWidth, child._getUITransformComp()!.width);
+                maxHeight = Math.max(maxHeight, child._getUITransformComp()!.height);
             }
         }
 
@@ -567,7 +583,7 @@ export class TiledMap extends Component {
             }
         }
 
-        this.node._uiProps.uiTransformComp!.setContentSize(maxWidth, maxHeight);
+        this.node._getUITransformComp()!.setContentSize(maxWidth, maxHeight);
         this._syncAnchorPoint();
     }
 

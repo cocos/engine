@@ -74,7 +74,7 @@ export class LetterFont extends BmfontUtils {
 
     protected _updateLabelInfo (comp: Label): void {
         shareLabelInfo.fontDesc = this._getFontDesc();
-        Color.copy(shareLabelInfo.color, comp.color);
+        shareLabelInfo.color.set(comp.color);
         shareLabelInfo.hash = computeHash(shareLabelInfo);
     }
 

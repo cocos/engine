@@ -102,6 +102,8 @@ macro(cc_ios_after_target _target_name)
     set(CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS[sdk=iphoneos*] "arm64")
     set(CMAKE_XCODE_ATTRIBUTE_VALID_ARCHS[sdk=iphonesimulator*] "x86_64")
 
+    set(CMAKE_XCODE_ATTRIBUTE_TARGETED_DEVICE_FAMILY "1,2")
+
     target_link_libraries(${CC_EXECUTABLE_NAME} ${ENGINE_NAME})
 
     target_include_directories(${CC_EXECUTABLE_NAME} PRIVATE

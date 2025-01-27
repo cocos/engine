@@ -289,7 +289,7 @@ export enum WrapMode {
  * @zh
  * 纹理过滤模式。
  */
-enum TextureFilter {
+export enum TextureFilter {
     NONE = Filter.NONE,
     /**
      * @en

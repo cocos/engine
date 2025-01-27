@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-import { IVec2Like } from '../../../core';
+import { IVec2Like, logID } from '../../../core';
 
 //https://github.com/x6ud/poly-partition-js
 
@@ -257,7 +257,7 @@ function Triangulate (polygon: IVec2Like[]): IVec2Like[][] | null {
     }
     vertices.forEach((vertex): void => updateVertex(vertex, vertices));
     for (let i = 0; i < len - 3; ++i) {
-        let ear;
+        let ear: Vertex | undefined;
         // find the most extruded ear
         for (let j = 0; j < len; ++j) {
             const vertex = vertices[j];
@@ -278,20 +278,20 @@ function Triangulate (polygon: IVec2Like[]): IVec2Like[][] | null {
                     const p2 = vertex.point!;
                     const p3 = vertex.next!.point!;
                     if (Math.abs(area(p1, p2, p3)) > 1e-5) {
-                        console.log('Failed to find ear. There might be self-intersection in the polygon.');
+                        logID(9644);
                         return null;
                     }
                 }
             }
             break;
         }
-        triangles.push([ear.prev.point, ear.point, ear.next.point]);
+        triangles.push([ear.prev!.point!, ear.point!, ear.next!.point!]);
         ear.isActive = false;
-        ear.prev.next = ear.next;
-        ear.next.prev = ear.prev;
-        ear.prev.shouldUpdate = true;
-        ear.next.shouldUpdate = true;
-        removeCollinearOrDuplicate(ear.next);
+        ear.prev!.next = ear.next;
+        ear.next!.prev = ear.prev;
+        ear.prev!.shouldUpdate = true;
+        ear.next!.shouldUpdate = true;
+        removeCollinearOrDuplicate(ear.next!);
         if (i === len - 4) {
             break;
         }

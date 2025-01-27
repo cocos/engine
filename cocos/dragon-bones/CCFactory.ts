@@ -24,7 +24,7 @@
 
 import { EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
 import { Armature, BaseObject, Animation, BaseFactory, DragonBones, DragonBonesData, DisplayData } from '@cocos/dragonbones-js';
-import { ISchedulable, Scheduler, System, _decorator } from '../core';
+import { ISchedulable, Scheduler, System, SystemPriority, _decorator } from '../core';
 import { CCTextureAtlasData } from './CCTextureData';
 import { TextureBase } from '../asset/assets/texture-base';
 import { CCSlot } from './CCSlot';
@@ -110,7 +110,7 @@ export class CCFactory extends BaseFactory implements ISchedulable {
     initUpdate (dt?: number): void {
         // director.getScheduler().enableForTarget(this);
         Scheduler.enableForTarget(this);
-        director.getScheduler().scheduleUpdate(this, System.Priority.HIGH, false);
+        director.getScheduler().scheduleUpdate(this, SystemPriority.HIGH, false);
     }
     /**
      * @en Trigger ArmatureDisplay components to update animation and render data.

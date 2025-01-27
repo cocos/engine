@@ -64,9 +64,9 @@ export class MaterialInstance extends Material {
     public recompileShaders (overrides: MacroRecord, passIdx?: number): void {
         if (!this._passes || !this.effectAsset) { return; }
         if (passIdx === undefined) {
-            for (const pass of this._passes) {
+            this._passes.forEach((pass) => {
                 pass.tryCompile(overrides);
-            }
+            });
         } else {
             this._passes[passIdx].tryCompile(overrides);
         }

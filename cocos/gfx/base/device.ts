@@ -53,6 +53,9 @@ import { Swapchain } from './swapchain';
  * @zh GFX 设备。
  */
 export abstract class Device {
+
+    constructor () {}
+
     /**
      * @en Current rendering API.
      * @zh 当前 GFX 使用的渲染 API。
@@ -149,25 +152,44 @@ export abstract class Device {
         return this._bindingMappingInfo;
     }
 
+    /** @mangle */
     protected _gfxAPI = API.UNKNOWN;
+    /** @mangle */
     protected _renderer = '';
+    /** @mangle */
     protected _vendor = '';
+    /** @mangle */
     protected _features = new Array<boolean>(Feature.COUNT);
+    /** @mangle */
     protected _formatFeatures = new Array<FormatFeature>(Format.COUNT);
+    /** @mangle */
     protected _queue: Queue | null = null;
+    /** @mangle */
     protected _cmdBuff: CommandBuffer | null = null;
+    /** @mangle */
     protected _numDrawCalls = 0;
+    /** @mangle */
     protected _numInstances = 0;
+    /** @mangle */
     protected _numTris = 0;
+    /** @mangle */
     protected _memoryStatus = new MemoryStatus();
+    /** @mangle */
     protected _caps = new DeviceCaps();
+    /** @mangle */
     protected _bindingMappingInfo: BindingMappingInfo = new BindingMappingInfo();
+    /** @mangle */
     protected _samplers = new Map<number, Sampler>();
+    /** @mangle */
     protected _generalBarrierss = new Map<number, GeneralBarrier>();
+    /** @mangle */
     protected _textureBarriers = new Map<number, TextureBarrier>();
+    /** @mangle */
     protected _bufferBarriers = new Map<number, BufferBarrier>();
+    /** @mangle */
     protected _swapchainFormat = Format.RGBA8;
 
+    /** @mangle */
     public static canvas: HTMLCanvasElement; // Hack for WebGL device initialization process
 
     public abstract initialize (info: Readonly<DeviceInfo>): boolean | Promise<boolean>;
@@ -383,6 +405,7 @@ export abstract class Device {
     }
 }
 
+/** @mangle */
 export class DefaultResource {
     private _texture2D: Texture | null = null;
     private _texture3D: Texture | null = null;

@@ -28,6 +28,7 @@ import { WebGLCmdFuncCreateTexture, WebGLCmdFuncDestroyTexture, WebGLCmdFuncResi
 import { WebGLDeviceManager } from './webgl-define';
 import { IWebGLGPUTexture } from './webgl-gpu-objects';
 
+/** @mangle */
 export class WebGLTexture extends Texture {
     get gpuTexture (): IWebGLGPUTexture {
         return this._gpuTexture!;
@@ -45,39 +46,43 @@ export class WebGLTexture extends Texture {
     }
 
     public initialize (info: Readonly<TextureInfo> | Readonly<TextureViewInfo>, isSwapchainTexture?: boolean): void {
+        const self = this;
+        const { instance } = WebGLDeviceManager;
         let texInfo = info as Readonly<TextureInfo>;
         const viewInfo = info as Readonly<TextureViewInfo>;
 
         if ('texture' in info) {
             texInfo = viewInfo.texture.info;
-            this._isTextureView = true;
+            self._isTextureView = true;
         }
+        const thisTextureInfo = self._info;
+        thisTextureInfo.copy(texInfo);
 
-        this._info.copy(texInfo);
+        const thisViewInfo = self._viewInfo;
 
-        this._isPowerOf2 = IsPowerOf2(this._info.width) && IsPowerOf2(this._info.height);
-        this._size = FormatSurfaceSize(
-            this._info.format,
-            this.width,
-            this.height,
-            this.depth,
-            this._info.levelCount,
-        ) * this._info.layerCount;
+        self._isPowerOf2 = IsPowerOf2(thisTextureInfo.width) && IsPowerOf2(thisTextureInfo.height);
+        self._size = FormatSurfaceSize(
+            thisTextureInfo.format,
+            self.width,
+            self.height,
+            self.depth,
+            thisTextureInfo.levelCount,
+        ) * thisTextureInfo.layerCount;
 
-        if (!this._isTextureView) {
-            this._gpuTexture = {
+        if (!self._isTextureView) {
+            self._gpuTexture = {
                 type: texInfo.type,
                 format: texInfo.format,
                 usage: texInfo.usage,
                 width: texInfo.width,
                 height: texInfo.height,
                 depth: texInfo.depth,
-                size: this._size,
+                size: self._size,
                 arrayLayer: texInfo.layerCount,
                 mipLevel: texInfo.levelCount,
                 samples: texInfo.samples,
                 flags: texInfo.flags,
-                isPowerOf2: this._isPowerOf2,
+                isPowerOf2: self._isPowerOf2,
 
                 glTarget: 0,
                 glInternalFmt: 0,
@@ -94,30 +99,32 @@ export class WebGLTexture extends Texture {
                 isSwapchainTexture: isSwapchainTexture || false,
             };
 
-            if (!this._gpuTexture.isSwapchainTexture) {
-                WebGLCmdFuncCreateTexture(WebGLDeviceManager.instance, this._gpuTexture);
-                WebGLDeviceManager.instance.memoryStatus.textureSize += this._size;
+            if (!self._gpuTexture.isSwapchainTexture) {
+                WebGLCmdFuncCreateTexture(instance, self._gpuTexture);
+                instance.memoryStatus.textureSize += self._size;
             }
 
-            this._viewInfo.texture = this;
-            this._viewInfo.type = info.type;
-            this._viewInfo.format = info.format;
-            this._viewInfo.baseLevel = 0;
-            this._viewInfo.levelCount = info.levelCount;
-            this._viewInfo.baseLayer = 0;
-            this._viewInfo.layerCount = info.layerCount;
+            thisViewInfo.texture = self;
+            thisViewInfo.type = info.type;
+            thisViewInfo.format = info.format;
+            thisViewInfo.baseLevel = 0;
+            thisViewInfo.levelCount = info.levelCount;
+            thisViewInfo.baseLayer = 0;
+            thisViewInfo.layerCount = info.layerCount;
         } else {
-            this._viewInfo.copy(viewInfo);
-            this._lodLevel = viewInfo.baseLevel;
-            this._gpuTexture = (viewInfo.texture as WebGLTexture)._gpuTexture;
+            thisViewInfo.copy(viewInfo);
+            self._lodLevel = viewInfo.baseLevel;
+            self._gpuTexture = (viewInfo.texture as WebGLTexture)._gpuTexture;
         }
     }
 
     public destroy (): void {
-        if (!this._isTextureView && this._gpuTexture) {
-            WebGLCmdFuncDestroyTexture(WebGLDeviceManager.instance, this._gpuTexture);
-            WebGLDeviceManager.instance.memoryStatus.textureSize -= this._size;
-            this._gpuTexture = null;
+        const self = this;
+        const { instance } = WebGLDeviceManager;
+        if (!self._isTextureView && self._gpuTexture) {
+            WebGLCmdFuncDestroyTexture(instance, self._gpuTexture);
+            instance.memoryStatus.textureSize -= self._size;
+            self._gpuTexture = null;
         }
     }
 
@@ -137,36 +144,40 @@ export class WebGLTexture extends Texture {
     }
 
     public resize (width: number, height: number): void {
-        if (this._info.width === width && this._info.height === height) {
+        const self = this;
+        const { instance } = WebGLDeviceManager;
+        const thisTextureInfo = self._info;
+        if (thisTextureInfo.width === width && thisTextureInfo.height === height) {
             return;
         }
 
-        if (this._info.levelCount === WebGLTexture.getLevelCount(this._info.width, this._info.height)) {
-            this._info.levelCount = WebGLTexture.getLevelCount(width, height);
-        } else if (this._info.levelCount > 1) {
-            this._info.levelCount = Math.min(this._info.levelCount, WebGLTexture.getLevelCount(width, height));
+        if (thisTextureInfo.levelCount === WebGLTexture.getLevelCount(thisTextureInfo.width, thisTextureInfo.height)) {
+            thisTextureInfo.levelCount = WebGLTexture.getLevelCount(width, height);
+        } else if (thisTextureInfo.levelCount > 1) {
+            thisTextureInfo.levelCount = Math.min(thisTextureInfo.levelCount, WebGLTexture.getLevelCount(width, height));
         }
 
-        const oldSize = this._size;
-        this._info.width = width;
-        this._info.height = height;
+        const oldSize = self._size;
+        thisTextureInfo.width = width;
+        thisTextureInfo.height = height;
 
-        this._size = FormatSurfaceSize(
-            this._info.format,
-            this.width,
-            this.height,
-            this.depth,
-            this._info.levelCount,
-        ) * this._info.layerCount;
+        self._size = FormatSurfaceSize(
+            thisTextureInfo.format,
+            self.width,
+            self.height,
+            self.depth,
+            thisTextureInfo.levelCount,
+        ) * thisTextureInfo.layerCount;
 
-        if (!this._isTextureView && this._gpuTexture) {
-            this._gpuTexture.width = width;
-            this._gpuTexture.height = height;
-            this._gpuTexture.size = this._size;
-            if (!this._gpuTexture.isSwapchainTexture) {
-                WebGLCmdFuncResizeTexture(WebGLDeviceManager.instance, this._gpuTexture);
-                WebGLDeviceManager.instance.memoryStatus.textureSize -= oldSize;
-                WebGLDeviceManager.instance.memoryStatus.textureSize += this._size;
+        const thisGpuTexture = self._gpuTexture;
+        if (!self._isTextureView && thisGpuTexture) {
+            thisGpuTexture.width = width;
+            thisGpuTexture.height = height;
+            thisGpuTexture.size = self._size;
+            if (!thisGpuTexture.isSwapchainTexture) {
+                WebGLCmdFuncResizeTexture(instance, thisGpuTexture);
+                instance.memoryStatus.textureSize -= oldSize;
+                instance.memoryStatus.textureSize += self._size;
             }
         }
     }

@@ -62,8 +62,11 @@ export abstract class Swapchain extends GFXObject {
         return this._colorTexture.height;
     }
 
+    /** @mangle */
     protected _transform = SurfaceTransform.IDENTITY;
+    /** @mangle */
     protected _colorTexture: Texture = null!;
+    /** @mangle */
     protected _depthStencilTexture: Texture = null!;
 
     constructor () {

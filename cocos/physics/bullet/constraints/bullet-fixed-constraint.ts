@@ -32,6 +32,7 @@ import { BulletCache, CC_MAT4_0, CC_QUAT_0, CC_V3_0 } from '../bullet-cache';
 import { bt } from '../instantiated';
 import { cocos2BulletQuat, cocos2BulletVec3 } from '../bullet-utils';
 
+/** @mangle */
 export class BulletFixedConstraint extends BulletConstraint implements IFixedConstraint {
     setBreakForce (v: number): void {
         bt.TypedConstraint_setMaxImpulseThreshold(this._impl, v);

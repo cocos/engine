@@ -43,9 +43,9 @@ const sqrt = Math.sqrt;
 
 function crt (v: number): number {
     if (v < 0) {
-        return -Math.pow(-v, 1 / 3);
+        return -((-v) ** (1 / 3));
     } else {
-        return Math.pow(v, 1 / 3);
+        return v ** (1 / 3);
     }
 }
 
@@ -85,11 +85,11 @@ function cardano (curve: BezierControlPoints, x: number): any {
     // and determine the discriminant:
     const discriminant = q2 * q2 + p3 * p3 * p3;
     // and some reserved variables
-    let u1;
-    let v1;
-    let x1;
-    let x2;
-    let x3;
+    let u1: number;
+    let v1: number;
+    let x1: number;
+    let x2: number;
+    let x3: number;
 
     // If the discriminant is negative, use polar coordinates
     // to get around square roots of negative numbers
@@ -144,9 +144,8 @@ function cardano (curve: BezierControlPoints, x: number): any {
         } else {
             return x2;
         }
-    }
-    // one real root, and two imaginary roots
-    else {
+    } else {
+        // one real root, and two imaginary roots
         const sd = sqrt(discriminant);
         u1 = crt(-q2 + sd);
         v1 = crt(q2 + sd);

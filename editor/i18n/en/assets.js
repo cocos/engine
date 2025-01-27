@@ -10,17 +10,20 @@ module.exports = {
         cloneToDirectoryIllegal: 'Please limit the saved path to the current project assets path',
         preview: {
             header: 'Preview',
+            resetCameraView: 'Reset camera view',
         },
         spine: {
             skin: 'Skin',
             animation: 'Animation',
             loop: 'Loop',
             timeScale: 'Rate',
+            enable: 'Enable',
             premultipliedAlpha: 'Premultiplied Alpha',
             useTint: 'Use Tint',
-            debugSlots: 'Debug Slots',
-            debugBones: 'Debug Bones',
-            debugMesh: 'Debug Mesh',
+            debug: 'Debug',
+            debugSlots: 'Slots',
+            debugBones: 'Bones',
+            debugMesh: 'Mesh',
         },
     },
 
@@ -507,6 +510,10 @@ module.exports = {
             assetMessage: "${assetName} is modified, it's data has not been saved. Do you want to save it?",
             save: 'Save',
             abort: 'Discard',
+        },
+        spine_data: {
+            atlas: 'Atlas',
+            atlas_warn: 'Failed to set up the atlas and requires a text file with the .atlas suffix',
         },
     },
 

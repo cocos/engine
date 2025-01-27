@@ -25,15 +25,29 @@
 /* eslint-disable max-len */
 import { EffectAsset } from '../../asset/assets';
 import { assert, error, warn } from '../../core';
-import { ShaderStageFlagBit, Type, Uniform, UniformBlock } from '../../gfx';
+import { Format, MemoryAccessBit, SampleType, ShaderStageFlagBit, Type, Uniform, UniformBlock, ViewDimension } from '../../gfx';
 import { DefaultVisitor, depthFirstSearch, GraphColor, MutableVertexPropertyMap } from './graph';
-import { DescriptorBlockData, DescriptorData, DescriptorDB, DescriptorSetData, LayoutGraph, LayoutGraphData, LayoutGraphDataValue, LayoutGraphValue, PipelineLayoutData, RenderPassType, RenderPhase, RenderPhaseData, RenderStageData, ShaderProgramData } from './layout-graph';
-import { ENABLE_SUBPASS, getOrCreateDescriptorID, sortDescriptorBlocks } from './layout-graph-utils';
-import { UpdateFrequency, Descriptor, DescriptorBlock, DescriptorBlockFlattened, DescriptorBlockIndex, DescriptorTypeOrder, ParameterType } from './types';
-import { getUpdateFrequencyName, getDescriptorTypeOrderName } from './types-names';
+import {
+    Descriptor,
+    DescriptorBlock,
+    DescriptorBlockData,
+    DescriptorBlockFlattened,
+    DescriptorBlockIndex,
+    DescriptorData, DescriptorDB, DescriptorGroupBlockIndex, DescriptorSetData,
+    DescriptorTypeOrder,
+    LayoutGraph, LayoutGraphData, LayoutGraphDataValue, LayoutGraphValue,
+    PipelineLayoutData, RenderPassType, RenderPhase, RenderPhaseData,
+    RenderStageData, ShaderProgramData,
+} from './layout-graph';
+import { getDescriptorTypeOrderName } from './layout-graph-names';
+import { ENABLE_SUBPASS, getOrCreateDescriptorID, sortDescriptorBlocks, sortDescriptorGroupBlocks } from './layout-graph-utils';
+import {
+    AccessType, ParameterType, UpdateFrequency,
+} from './types';
+import { getUpdateFrequencyName } from './types-names';
 
 export function getLayoutGraphDataVersion (): number {
-    return 0;
+    return 1;
 }
 
 // get name of gfx.Type
@@ -571,6 +585,15 @@ export class LayoutGraphInfo {
         }
         return value;
     }
+    private getDescriptorGroupBlock (key: string, descriptorDB: DescriptorDB): DescriptorBlock {
+        const value = descriptorDB.groupBlocks.get(key);
+        if (value === undefined) {
+            const groupBlock: DescriptorBlock = new DescriptorBlock();
+            descriptorDB.groupBlocks.set(key, groupBlock);
+            return groupBlock;
+        }
+        return value;
+    }
     private checkConsistency (lhs: UniformBlock, rhs: UniformBlock): boolean {
         if (lhs.count !== 1) {
             return false;
@@ -648,6 +671,31 @@ export class LayoutGraphInfo {
             }
         }
     }
+    private buildGroupBlocks (visDB: VisibilityDB, rate: UpdateFrequency, blocks: EffectAsset.IBlockInfo[], db: DescriptorDB, counter: DescriptorCounter): void {
+        const visBlock = visDB.getBlock({
+            updateFrequency: rate,
+            parameterType: ParameterType.TABLE,
+            descriptorType: DescriptorTypeOrder.UNIFORM_BUFFER,
+        });
+        blocks.forEach((info): void => {
+            const groupBlockIndex = new DescriptorGroupBlockIndex(
+                rate,
+                ParameterType.TABLE,
+                DescriptorTypeOrder.UNIFORM_BUFFER,
+                rate >= UpdateFrequency.PER_PHASE ? visBlock.getVisibility(info.name) : info.stageFlags,
+                MemoryAccessBit.READ_ONLY,
+                ViewDimension.BUFFER,
+            );
+            const key = JSON.stringify(groupBlockIndex);
+            const block = this.getDescriptorGroupBlock(key, db);
+            if (groupBlockIndex.updateFrequency > UpdateFrequency.PER_BATCH) {
+                this.addDescriptor(block, info.name);
+                this.addUniformBlock(block, info.name, this.makeUniformBlock(info));
+            } else {
+                counter.addDescriptor(key, info.name, 1);
+            }
+        });
+    }
     private buildBuffers (
         visDB: VisibilityDB,
         rate: UpdateFrequency,
@@ -676,6 +724,52 @@ export class LayoutGraphInfo {
                 counter.addDescriptor(key, info.name, 1);
             }
         }
+    }
+    private getBufferAccessType (access: MemoryAccessBit): AccessType {
+        if (access & MemoryAccessBit.WRITE_ONLY) {
+            return AccessType.READ_WRITE;
+        }
+        return AccessType.READ;
+    }
+    private getImageAccessType (access: MemoryAccessBit): AccessType {
+        if (access === MemoryAccessBit.READ_WRITE) {
+            return AccessType.READ_WRITE;
+        }
+        if (access === MemoryAccessBit.WRITE_ONLY) {
+            return AccessType.WRITE;
+        }
+        return AccessType.READ;
+    }
+    private buildGroupBuffers (
+        visDB: VisibilityDB,
+        rate: UpdateFrequency,
+        infoArray: EffectAsset.IBufferInfo[],
+        type: Type,
+        db: DescriptorDB,
+        counter: DescriptorCounter,
+    ): void {
+        const visBlock = visDB.getBlock({
+            updateFrequency: rate,
+            parameterType: ParameterType.TABLE,
+            descriptorType: DescriptorTypeOrder.STORAGE_BUFFER,
+        });
+        infoArray.forEach((info): void => {
+            const groupBlockIndex = new DescriptorGroupBlockIndex(
+                rate,
+                ParameterType.TABLE,
+                DescriptorTypeOrder.STORAGE_BUFFER,
+                rate >= UpdateFrequency.PER_PHASE ? visBlock.getVisibility(info.name) : info.stageFlags,
+                info.memoryAccess,
+                ViewDimension.BUFFER,
+            );
+            const key = JSON.stringify(groupBlockIndex);
+            const block = this.getDescriptorGroupBlock(key, db);
+            if (groupBlockIndex.updateFrequency > UpdateFrequency.PER_BATCH) {
+                this.addDescriptor(block, info.name, type);
+            } else {
+                counter.addDescriptor(key, info.name, 1);
+            }
+        });
     }
     private buildNonTextures (
         visDB: VisibilityDB,
@@ -707,6 +801,38 @@ export class LayoutGraphInfo {
             }
         }
     }
+    private buildGroupNonTextures (
+        visDB: VisibilityDB,
+        rate: UpdateFrequency,
+        order: DescriptorTypeOrder,
+        infoArray: EffectAsset.ISamplerInfo[] | EffectAsset.IInputAttachmentInfo[],
+        type: Type,
+        db: DescriptorDB,
+        counter: DescriptorCounter,
+    ): void {
+        const visBlock = visDB.getBlock({
+            updateFrequency: rate,
+            parameterType: ParameterType.TABLE,
+            descriptorType: order,
+        });
+        infoArray.forEach((info): void => {
+            const groupBlockIndex = new DescriptorGroupBlockIndex(
+                rate,
+                ParameterType.TABLE,
+                order,
+                rate >= UpdateFrequency.PER_PHASE ? visBlock.getVisibility(info.name) : info.stageFlags,
+                MemoryAccessBit.READ_ONLY,
+                ViewDimension.UNKNOWN,
+            );
+            const key = JSON.stringify(groupBlockIndex);
+            const block = this.getDescriptorGroupBlock(key, db);
+            if (groupBlockIndex.updateFrequency > UpdateFrequency.PER_BATCH) {
+                this.addDescriptor(block, info.name, type);
+            } else {
+                counter.addDescriptor(key, info.name, info.count);
+            }
+        });
+    }
     private buildTextures (
         visDB: VisibilityDB,
         rate: UpdateFrequency,
@@ -735,6 +861,97 @@ export class LayoutGraphInfo {
                 counter.addDescriptor(key, info.name, info.count);
             }
         }
+    }
+    private buildGroupTextures (
+        visDB: VisibilityDB,
+        rate: UpdateFrequency,
+        order: DescriptorTypeOrder,
+        infoArray: EffectAsset.ISamplerTextureInfo[] | EffectAsset.ITextureInfo[],
+        db: DescriptorDB,
+        counter: DescriptorCounter,
+    ): void {
+        const visBlock = visDB.getBlock({
+            updateFrequency: rate,
+            parameterType: ParameterType.TABLE,
+            descriptorType: order,
+        });
+        infoArray.forEach((info): void => {
+            const groupBlockIndex = new DescriptorGroupBlockIndex(
+                rate,
+                ParameterType.TABLE,
+                order,
+                rate >= UpdateFrequency.PER_PHASE ? visBlock.getVisibility(info.name) : info.stageFlags,
+                MemoryAccessBit.READ_ONLY,
+                this.getViewDimension(info.type),
+                info.sampleType, // SINT, UINT not supported yet. Only support FLOAT, UNFILTERABLE_FLOAT
+                Format.UNKNOWN, // Format is not used for textures
+            );
+            const key = JSON.stringify(groupBlockIndex);
+            const block = this.getDescriptorGroupBlock(key, db);
+            if (groupBlockIndex.updateFrequency > UpdateFrequency.PER_BATCH) {
+                this.addDescriptor(block, info.name, info.type);
+            } else {
+                counter.addDescriptor(key, info.name, info.count);
+            }
+        });
+    }
+    private getViewDimension (type: Type): ViewDimension  {
+        switch (type) {
+        case Type.SAMPLER1D:
+        case Type.TEXTURE1D:
+        case Type.IMAGE1D:
+            return ViewDimension.TEX1D;
+        case Type.SAMPLER2D:
+        case Type.TEXTURE2D:
+        case Type.IMAGE2D:
+            return ViewDimension.TEX2D;
+        case Type.SAMPLER2D_ARRAY:
+        case Type.TEXTURE2D_ARRAY:
+        case Type.IMAGE2D_ARRAY:
+            return ViewDimension.TEX2D_ARRAY;
+        case Type.SAMPLER_CUBE:
+        case Type.TEXTURE_CUBE:
+        case Type.IMAGE_CUBE:
+            return ViewDimension.TEXCUBE;
+        case Type.SAMPLER3D:
+        case Type.TEXTURE3D:
+        case Type.IMAGE3D:
+            return ViewDimension.TEX3D;
+        default:
+            return ViewDimension.UNKNOWN;
+        }
+    }
+    private buildGroupImages (
+        visDB: VisibilityDB,
+        rate: UpdateFrequency,
+        infoArray: EffectAsset.IImageInfo[],
+        db: DescriptorDB,
+        counter: DescriptorCounter,
+    ): void {
+        const visBlock = visDB.getBlock({
+            updateFrequency: rate,
+            parameterType: ParameterType.TABLE,
+            descriptorType: DescriptorTypeOrder.STORAGE_IMAGE,
+        });
+        infoArray.forEach((info): void => {
+            const groupBlockIndex = new DescriptorGroupBlockIndex(
+                rate,
+                ParameterType.TABLE,
+                DescriptorTypeOrder.STORAGE_IMAGE,
+                rate >= UpdateFrequency.PER_PHASE ? visBlock.getVisibility(info.name) : info.stageFlags,
+                info.memoryAccess,
+                this.getViewDimension(info.type),
+                SampleType.FLOAT, // Not used, use default value
+                Format.UNKNOWN, // TODO(zhouzhenglong): Add correct layout format qualifier
+            );
+            const key = JSON.stringify(groupBlockIndex);
+            const block = this.getDescriptorGroupBlock(key, db);
+            if (groupBlockIndex.updateFrequency > UpdateFrequency.PER_BATCH) {
+                this.addDescriptor(block, info.name, info.type);
+            } else {
+                counter.addDescriptor(key, info.name, info.count);
+            }
+        });
     }
     public addEffect (asset: EffectAsset): void {
         const lg = this.lg;
@@ -768,9 +985,10 @@ export class LayoutGraphInfo {
                 const visDB = passVis.getPhase(phaseName);
                 const db = lg.getDescriptors(phaseID);
                 const counter = new DescriptorCounter();
+                const groupCounter = new DescriptorCounter();
 
                 // merge descriptors and reserve capacity
-                for (const list of shader.descriptors) {
+                shader.descriptors.forEach((list): void => {
                     this.buildBlocks(visDB, list.rate, list.blocks, db, counter);
                     this.buildBuffers(visDB, list.rate, list.buffers, Type.UNKNOWN, db, counter);
                     this.buildNonTextures(visDB, list.rate, DescriptorTypeOrder.SAMPLER, list.samplers, Type.SAMPLER, db, counter);
@@ -778,7 +996,16 @@ export class LayoutGraphInfo {
                     this.buildTextures(visDB, list.rate, DescriptorTypeOrder.TEXTURE, list.textures, db, counter);
                     this.buildTextures(visDB, list.rate, DescriptorTypeOrder.SAMPLER_TEXTURE, list.samplerTextures, db, counter);
                     this.buildTextures(visDB, list.rate, DescriptorTypeOrder.STORAGE_IMAGE, list.images, db, counter);
-                }
+
+                    // WebGPU
+                    this.buildGroupBlocks(visDB, list.rate, list.blocks, db, groupCounter);
+                    this.buildGroupBuffers(visDB, list.rate, list.buffers, Type.UNKNOWN, db, groupCounter);
+                    this.buildGroupNonTextures(visDB, list.rate, DescriptorTypeOrder.SAMPLER, list.samplers, Type.SAMPLER, db, groupCounter);
+                    // InputAttachment is not supported in WebGPU
+                    this.buildGroupTextures(visDB, list.rate, DescriptorTypeOrder.TEXTURE, list.textures, db, groupCounter);
+                    this.buildGroupTextures(visDB, list.rate, DescriptorTypeOrder.SAMPLER_TEXTURE, list.samplerTextures, db, groupCounter);
+                    this.buildGroupImages(visDB, list.rate, list.images, db, groupCounter);
+                });
 
                 // update max capacity and debug info
                 counter.counter.forEach((v: number, key: string): void => {
@@ -797,8 +1024,182 @@ export class LayoutGraphInfo {
                         }
                     }
                 });
+                groupCounter.counter.forEach((v: number, key: string): void => {
+                    const block = this.getDescriptorGroupBlock(key, db);
+                    if (v > block.capacity) {
+                        block.capacity = Math.max(block.capacity, v);
+                        if (this.enableDebug) {
+                            const names = groupCounter.inspector.get(key);
+                            if (names === undefined) {
+                                return;
+                            }
+                            block.descriptors.clear();
+                            for (const name of names) {
+                                block.descriptors.set(name, new Descriptor());
+                            }
+                        }
+                    }
+                });
             }
         }
+    }
+    private mergeDescriptorBlocks (
+        passVisDB: VisibilityDB,
+        blocks: Map<string, DescriptorBlock>,
+        passDB: DescriptorDB,
+    ): number {
+        for (const [key0, block] of blocks) {
+            const index0: DescriptorBlockIndex = JSON.parse(key0);
+            if (index0.updateFrequency <= UpdateFrequency.PER_PHASE) {
+                continue;
+            }
+            const visIndex = new VisibilityIndex(index0.updateFrequency, index0.parameterType, index0.descriptorType);
+            const passVisBlock = passVisDB.getBlock(visIndex);
+
+            for (const [name, d] of block.descriptors) {
+                const vis = passVisBlock.getVisibility(name);
+                let passBlock: DescriptorBlock;
+                if (vis === index0.visibility) {
+                    passBlock = this.getDescriptorBlock(key0, passDB);
+                } else {
+                    const index = new DescriptorBlockIndex(
+                        index0.updateFrequency,
+                        index0.parameterType,
+                        index0.descriptorType,
+                        vis,
+                    );
+                    const key = JSON.stringify(index);
+                    passBlock = this.getDescriptorBlock(key, passDB);
+                }
+                this.addDescriptor(passBlock, name, d.type);
+                if (index0.descriptorType !== DescriptorTypeOrder.UNIFORM_BUFFER) {
+                    continue;
+                }
+                const b = block.uniformBlocks.get(name);
+                if (!b) {
+                    error(`uniform block: ${name} not found`);
+                    return 1;
+                }
+                this.addUniformBlock(passBlock, name, b);
+            }
+        }
+        return 0;
+    }
+    private mergeDescriptorGroupBlocks (
+        passVisDB: VisibilityDB,
+        blocks: Map<string, DescriptorBlock>,
+        passDB: DescriptorDB,
+    ): number {
+        for (const [key0, block] of blocks) {
+            const index0: DescriptorGroupBlockIndex = JSON.parse(key0);
+            if (index0.updateFrequency <= UpdateFrequency.PER_PHASE) {
+                continue;
+            }
+            const visIndex = new VisibilityIndex(index0.updateFrequency, index0.parameterType, index0.descriptorType);
+            const passVisBlock = passVisDB.getBlock(visIndex);
+
+            for (const [name, d] of block.descriptors) {
+                const vis = passVisBlock.getVisibility(name);
+                let passBlock: DescriptorBlock;
+                if (vis === index0.visibility) {
+                    passBlock = this.getDescriptorGroupBlock(key0, passDB);
+                } else {
+                    const index = new DescriptorGroupBlockIndex(
+                        index0.updateFrequency,
+                        index0.parameterType,
+                        index0.descriptorType,
+                        vis,
+                        index0.accessType,
+                        index0.viewDimension,
+                        index0.sampleType,
+                        index0.format,
+                    );
+                    const key = JSON.stringify(index);
+                    passBlock = this.getDescriptorGroupBlock(key, passDB);
+                }
+                this.addDescriptor(passBlock, name, d.type);
+                if (index0.descriptorType !== DescriptorTypeOrder.UNIFORM_BUFFER) {
+                    continue;
+                }
+                const b = block.uniformBlocks.get(name);
+                if (!b) {
+                    error(`uniform block: ${name} not found`);
+                    return 1;
+                }
+                this.addUniformBlock(passBlock, name, b);
+            }
+        }
+        return 0;
+    }
+    private buildDescriptorBlocks (
+        lg: LayoutGraph,
+        blocks: Map<string, DescriptorBlock>,
+        passID: number,
+        phaseDB: DescriptorDB,
+        phaseID: number,
+    ): number {
+        for (const [key, passBlock] of blocks) {
+            const index: DescriptorBlockIndex = JSON.parse(key);
+            if (index.updateFrequency !== UpdateFrequency.PER_PASS) {
+                error(`phase: ${lg.getName(phaseID)} update frequency is not PER_PASS`);
+                return 1;
+            }
+            if (passBlock.count === 0) {
+                error(`pass: ${lg.getName(passID)} count is 0`);
+                return 1;
+            }
+            if (passBlock.capacity !== passBlock.count) {
+                error(`pass: ${lg.getName(passID)} capacity does not equal count`);
+                return 1;
+            }
+            const phaseBlock = this.getDescriptorBlock(key, phaseDB);
+            phaseBlock.descriptors.clear();
+            phaseBlock.uniformBlocks.clear();
+            phaseBlock.capacity = passBlock.capacity;
+            phaseBlock.count = passBlock.count;
+            for (const [name, d] of passBlock.descriptors) {
+                phaseBlock.descriptors.set(name, d);
+            }
+            for (const [name, b] of passBlock.uniformBlocks) {
+                phaseBlock.uniformBlocks.set(name, b);
+            }
+        }
+        return 0;
+    }
+    private buildDescriptorGroupBlocks (
+        lg: LayoutGraph,
+        blocks: Map<string, DescriptorBlock>,
+        passID: number,
+        phaseDB: DescriptorDB,
+        phaseID: number,
+    ): number {
+        for (const [key, passBlock] of blocks) {
+            const index: DescriptorGroupBlockIndex = JSON.parse(key);
+            if (index.updateFrequency !== UpdateFrequency.PER_PASS) {
+                error(`phase: ${lg.getName(phaseID)} update frequency is not PER_PASS`);
+                return 1;
+            }
+            if (passBlock.count === 0) {
+                error(`pass: ${lg.getName(passID)} count is 0`);
+                return 1;
+            }
+            if (passBlock.capacity !== passBlock.count) {
+                error(`pass: ${lg.getName(passID)} capacity does not equal count`);
+                return 1;
+            }
+            const phaseBlock = this.getDescriptorGroupBlock(key, phaseDB);
+            phaseBlock.descriptors.clear();
+            phaseBlock.uniformBlocks.clear();
+            phaseBlock.capacity = passBlock.capacity;
+            phaseBlock.count = passBlock.count;
+            for (const [name, d] of passBlock.descriptors) {
+                phaseBlock.descriptors.set(name, d);
+            }
+            for (const [name, b] of passBlock.uniformBlocks) {
+                phaseBlock.uniformBlocks.set(name, b);
+            }
+        }
+        return 0;
     }
     public build (): number {
         const lg = this.lg;
@@ -853,40 +1254,11 @@ export class LayoutGraphInfo {
                 error(`pass: ${lg.getName(parentID)} has no visibility database`);
                 return 1;
             }
-            for (const [key0, block] of phaseDB.blocks) {
-                const index0: DescriptorBlockIndex = JSON.parse(key0);
-                if (index0.updateFrequency <= UpdateFrequency.PER_PHASE) {
-                    continue;
-                }
-                const visIndex = new VisibilityIndex(index0.updateFrequency, index0.parameterType, index0.descriptorType);
-                const passVisBlock = passVisDB.getBlock(visIndex);
-
-                for (const [name, d] of block.descriptors) {
-                    const vis = passVisBlock.getVisibility(name);
-                    let passBlock: DescriptorBlock;
-                    if (vis === index0.visibility) {
-                        passBlock = this.getDescriptorBlock(key0, passDB);
-                    } else {
-                        const index = new DescriptorBlockIndex(
-                            index0.updateFrequency,
-                            index0.parameterType,
-                            index0.descriptorType,
-                            vis,
-                        );
-                        const key = JSON.stringify(index);
-                        passBlock = this.getDescriptorBlock(key, passDB);
-                    }
-                    this.addDescriptor(passBlock, name, d.type);
-                    if (index0.descriptorType !== DescriptorTypeOrder.UNIFORM_BUFFER) {
-                        continue;
-                    }
-                    const b = block.uniformBlocks.get(name);
-                    if (!b) {
-                        error(`uniform block: ${name} not found`);
-                        return 1;
-                    }
-                    this.addUniformBlock(passBlock, name, b);
-                }
+            if (this.mergeDescriptorBlocks(passVisDB, phaseDB.blocks, passDB)) {
+                return 1;
+            }
+            if (this.mergeDescriptorGroupBlocks(passVisDB, phaseDB.groupBlocks, passDB)) {
+                return 1;
             }
         }
         // update pass
@@ -911,31 +1283,11 @@ export class LayoutGraphInfo {
                     return 1;
                 }
                 const phaseDB = lg.getDescriptors(phaseID);
-                for (const [key, passBlock] of passDB.blocks) {
-                    const index: DescriptorBlockIndex = JSON.parse(key);
-                    if (index.updateFrequency !== UpdateFrequency.PER_PASS) {
-                        error(`phase: ${lg.getName(phaseID)} update frequency is not PER_PASS`);
-                        return 1;
-                    }
-                    if (passBlock.count === 0) {
-                        error(`pass: ${lg.getName(passID)} count is 0`);
-                        return 1;
-                    }
-                    if (passBlock.capacity !== passBlock.count) {
-                        error(`pass: ${lg.getName(passID)} capacity does not equal count`);
-                        return 1;
-                    }
-                    const phaseBlock = this.getDescriptorBlock(key, phaseDB);
-                    phaseBlock.descriptors.clear();
-                    phaseBlock.uniformBlocks.clear();
-                    phaseBlock.capacity = passBlock.capacity;
-                    phaseBlock.count = passBlock.count;
-                    for (const [name, d] of passBlock.descriptors) {
-                        phaseBlock.descriptors.set(name, d);
-                    }
-                    for (const [name, b] of passBlock.uniformBlocks) {
-                        phaseBlock.uniformBlocks.set(name, b);
-                    }
+                if (this.buildDescriptorBlocks(lg, passDB.blocks, passID, phaseDB, phaseID)) {
+                    return 1;
+                }
+                if (this.buildDescriptorGroupBlocks(lg, passDB.groupBlocks, passID, phaseDB, phaseID)) {
+                    return 1;
                 }
             }
         }
@@ -1028,6 +1380,29 @@ function buildLayoutGraphDataImpl (graph: LayoutGraph, builder: LayoutGraphBuild
                 builder.reserveDescriptorBlock(v, index, flattened);
             }
         });
+
+        const flattenedGroupBlocks = Array.from(db.groupBlocks).sort(sortDescriptorGroupBlocks);
+        flattenedGroupBlocks.forEach((value: [string, DescriptorBlock]): void => {
+            const key = value[0];
+            const block = value[1];
+            const index: DescriptorGroupBlockIndex = JSON.parse(key);
+            if (index.updateFrequency > maxLevel || index.updateFrequency < minLevel) {
+                return;
+            }
+            const flattened = convertDescriptorBlock(block);
+            if (block.capacity === 0) {
+                error('block capacity is 0');
+                return;
+            }
+            if (index.updateFrequency > UpdateFrequency.PER_BATCH) {
+                builder.addDescriptorGroupBlock(v, index, flattened);
+                for (let i = 0; i < flattened.uniformBlockNames.length; ++i) {
+                    builder.addGroupUniformBlock(v, index, flattened.uniformBlockNames[i], flattened.uniformBlocks[i]);
+                }
+            } else {
+                builder.reserveDescriptorGroupBlock(v, index, flattened);
+            }
+        });
     }
 }
 
@@ -1094,6 +1469,15 @@ class LayoutGraphBuilder2 {
         }
         return data;
     }
+    private getDescriptorGroupData (ppl: PipelineLayoutData, rate: UpdateFrequency): DescriptorSetData {
+        const data = ppl.descriptorGroups.get(rate);
+        if (data === undefined) {
+            const newData = new DescriptorSetData();
+            ppl.descriptorGroups.set(rate, newData);
+            return newData;
+        }
+        return data;
+    }
     addDescriptorBlock (nodeID: number, index: DescriptorBlockIndex, block: Readonly<DescriptorBlockFlattened>): void {
         if (block.capacity <= 0) {
             error('empty block');
@@ -1136,10 +1520,72 @@ class LayoutGraphBuilder2 {
             layout.samplerTextureCapacity += block.capacity;
         }
     }
+    addDescriptorGroupBlock (nodeID: number, index: DescriptorGroupBlockIndex, block: Readonly<DescriptorBlockFlattened>): void {
+        if (block.capacity <= 0) {
+            error('empty block');
+            return;
+        }
+        if (block.descriptorNames.length !== block.descriptors.length) {
+            error('error descriptor');
+            return;
+        }
+        if (block.uniformBlockNames.length !== block.uniformBlocks.length) {
+            error('error uniform');
+            return;
+        }
+        if (!(index.updateFrequency >= UpdateFrequency.PER_INSTANCE
+            && index.updateFrequency <= UpdateFrequency.PER_PASS)) {
+            error('invalid update frequency');
+            return;
+        }
+
+        const lg = this.lg;
+        const ppl: PipelineLayoutData = lg.getLayout(nodeID);
+        const setData = this.getDescriptorGroupData(ppl, index.updateFrequency);
+        const layout = setData.descriptorSetLayoutData;
+
+        const dstBlock = new DescriptorBlockData(
+            index.descriptorType,
+            index.visibility,
+            block.capacity,
+            index.accessType,
+            index.viewDimension,
+            index.sampleType,
+            index.format,
+        );
+        dstBlock.offset = layout.capacity;
+        layout.descriptorBlocks.push(dstBlock);
+        for (let j = 0; j < block.descriptors.length; ++j) {
+            const name: string = block.descriptorNames[j];
+            const d: Descriptor = block.descriptors[j];
+            const nameID = getOrCreateDescriptorID(lg, name);
+            const data = new DescriptorData(nameID, d.type, d.count);
+            dstBlock.descriptors.push(data);
+        }
+        layout.capacity += block.capacity;
+        if (index.descriptorType === DescriptorTypeOrder.UNIFORM_BUFFER
+            || index.descriptorType === DescriptorTypeOrder.DYNAMIC_UNIFORM_BUFFER) {
+            layout.uniformBlockCapacity += block.capacity;
+        } else if (index.descriptorType === DescriptorTypeOrder.SAMPLER_TEXTURE) {
+            layout.samplerTextureCapacity += block.capacity;
+        }
+    }
     addUniformBlock (nodeID: number, index: DescriptorBlockIndex, name: string, uniformBlock: UniformBlock): void {
         const g: LayoutGraphData = this.lg;
         const ppl: PipelineLayoutData = g.getLayout(nodeID);
         const setData = this.getDescriptorSetData(ppl, index.updateFrequency);
+        const layout = setData.descriptorSetLayoutData;
+        const nameID = getOrCreateDescriptorID(g, name);
+        layout.uniformBlocks.set(nameID, uniformBlock);
+        // register constant names
+        for (const member of uniformBlock.members) {
+            getOrCreateConstantID(g, member.name);
+        }
+    }
+    addGroupUniformBlock (nodeID: number, index: DescriptorGroupBlockIndex, name: string, uniformBlock: UniformBlock): void {
+        const g: LayoutGraphData = this.lg;
+        const ppl: PipelineLayoutData = g.getLayout(nodeID);
+        const setData = this.getDescriptorGroupData(ppl, index.updateFrequency);
         const layout = setData.descriptorSetLayoutData;
         const nameID = getOrCreateDescriptorID(g, name);
         layout.uniformBlocks.set(nameID, uniformBlock);
@@ -1159,6 +1605,35 @@ class LayoutGraphBuilder2 {
         const layout = setData.descriptorSetLayoutData;
 
         const dstBlock = new DescriptorBlockData(index.descriptorType, index.visibility, block.capacity);
+        dstBlock.offset = layout.capacity;
+        layout.descriptorBlocks.push(dstBlock);
+        layout.capacity += block.capacity;
+        if (index.descriptorType === DescriptorTypeOrder.UNIFORM_BUFFER
+            || index.descriptorType === DescriptorTypeOrder.DYNAMIC_UNIFORM_BUFFER) {
+            layout.uniformBlockCapacity += block.capacity;
+        } else if (index.descriptorType === DescriptorTypeOrder.SAMPLER_TEXTURE) {
+            layout.samplerTextureCapacity += block.capacity;
+        }
+    }
+    reserveDescriptorGroupBlock (nodeID: number, index: DescriptorGroupBlockIndex, block: DescriptorBlockFlattened): void {
+        if (block.capacity <= 0) {
+            error('empty block');
+            return;
+        }
+        const g: LayoutGraphData = this.lg;
+        const ppl: PipelineLayoutData = g.getLayout(nodeID);
+        const setData = this.getDescriptorGroupData(ppl, index.updateFrequency);
+        const layout = setData.descriptorSetLayoutData;
+
+        const dstBlock = new DescriptorBlockData(
+            index.descriptorType,
+            index.visibility,
+            block.capacity,
+            index.accessType,
+            index.viewDimension,
+            index.sampleType,
+            index.format,
+        );
         dstBlock.offset = layout.capacity;
         layout.descriptorBlocks.push(dstBlock);
         layout.capacity += block.capacity;

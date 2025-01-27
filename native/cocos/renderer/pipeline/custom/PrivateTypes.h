@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner, bugprone-easily-swappable-parameters)
 #pragma once
 #include "cocos/renderer/core/ProgramLib.h"
 #include "cocos/renderer/pipeline/custom/PrivateFwd.h"
@@ -87,4 +88,5 @@ public:
 
 } // namespace cc
 
+// NOLINTEND(misc-include-cleaner, bugprone-easily-swappable-parameters)
 // clang-format on

@@ -30,7 +30,7 @@ import { FormatInfos } from '../../gfx';
 
 const _col = new Vec4();
 
-export function fillMeshVertices3D (node: Node, renderer: IBatcher, renderData: RenderData, color: Color): void {
+export function fillMeshVertices3D(node: Node, renderer: IBatcher, renderData: RenderData, color: Color): void {
     const chunk = renderData.chunk;
     const dataList = renderData.data;
     const vData = chunk.vb;
@@ -55,7 +55,7 @@ export function fillMeshVertices3D (node: Node, renderer: IBatcher, renderData: 
         vData[vertexOffset + 1] = (m01 * x + m05 * y + m13) * rhw;
         vData[vertexOffset + 2] = (m02 * x + m06 * y + m14) * rhw;
         Vec4.toArray(vData, _col, vertexOffset + 5);
-        vertexOffset += 9;
+        vertexOffset += renderData.floatStride;
     }
 
     // fill index data
@@ -77,7 +77,7 @@ export function fillMeshVertices3D (node: Node, renderer: IBatcher, renderData: 
     meshBuffer.setDirty();
 }
 
-export function updateOpacity (renderData: RenderData, opacity: number): void {
+export function updateOpacity(renderData: RenderData, opacity: number): void {
     const vfmt = renderData.vertexFormat;
     const vb = renderData.chunk.vb;
     let attr; let format; let stride;

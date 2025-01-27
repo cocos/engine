@@ -23,12 +23,12 @@
 */
 
 import { EDITOR, DEV, SUPPORT_JIT, DEBUG } from 'internal:constants';
-import { CCObject, isValid } from '../core/data/object';
+import { CCObjectFlags, isValid } from '../core/data/object';
 import { array, Pool } from '../core/utils/js';
 import { tryCatchFunctor_EDITOR } from '../core/utils/misc';
-import { invokeOnEnable, createInvokeImpl, createInvokeImplJit, OneOffInvoker, LifeCycleInvoker } from './component-scheduler';
+import { invokeOnEnable, createInvokeImpl, createInvokeImplJit, OneOffInvoker, LifeCycleInvoker, InvokeFunc } from './component-scheduler';
 import { legacyCC } from '../core/global-exports';
-import { assert, errorID, getError } from '../core/platform/debug';
+import { assert, errorID, getError, log } from '../core/platform/debug';
 import { NodeEventType } from './node-event';
 import { assertIsTrue } from '../core/data/utils/asserts';
 import type { Component } from './component';
@@ -36,14 +36,18 @@ import type { Node } from './node';
 
 const MAX_POOL_SIZE = 4;
 
-const IsPreloadStarted = CCObject.Flags.IsPreloadStarted;
-const IsOnLoadStarted = CCObject.Flags.IsOnLoadStarted;
-const IsOnLoadCalled = CCObject.Flags.IsOnLoadCalled;
-const IsOnEnableCalled = CCObject.Flags.IsOnEnableCalled;
-const Deactivating = CCObject.Flags.Deactivating;
+const IsPreloadStarted = CCObjectFlags.IsPreloadStarted;
+const IsOnLoadStarted = CCObjectFlags.IsOnLoadStarted;
+const IsOnLoadCalled = CCObjectFlags.IsOnLoadCalled;
+const IsOnEnableCalled = CCObjectFlags.IsOnEnableCalled;
+const Deactivating = CCObjectFlags.Deactivating;
 
 // for __preload: used internally, no sort
 class UnsortedInvoker extends LifeCycleInvoker {
+    constructor (invokeFunc: InvokeFunc) {
+        super(invokeFunc);
+    }
+
     public add (comp: Component): void {
         this._zero.array.push(comp);
     }
@@ -116,7 +120,7 @@ activateTasksPool.get = function getActivateTask (): ActivateTask {
 
 function _componentCorrupted (node: Node, comp: Component, index: number): void {
     errorID(3817, node.name, index);
-    console.log('Corrupted component value:', comp);
+    log('Corrupted component value:', comp);
     if (comp) {
         node._removeComponent(comp);
     } else {

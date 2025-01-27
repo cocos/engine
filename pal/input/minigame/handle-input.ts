@@ -109,30 +109,31 @@ export class HandleInputDevice {
     }
 
     private _initInputSource (): void {
-        this._buttonNorth = new InputSourceButton();
-        this._buttonNorth.getValue = (): number => 0;
-        this._buttonEast = new InputSourceButton();
-        this._buttonEast.getValue = (): number => 0;
-        this._buttonWest = new InputSourceButton();
-        this._buttonWest.getValue = (): number => 0;
-        this._buttonSouth = new InputSourceButton();
-        this._buttonSouth.getValue = (): number => 0;
+        const self = this;
+        self._buttonNorth = new InputSourceButton();
+        self._buttonNorth.getValue = (): number => 0;
+        self._buttonEast = new InputSourceButton();
+        self._buttonEast.getValue = (): number => 0;
+        self._buttonWest = new InputSourceButton();
+        self._buttonWest.getValue = (): number => 0;
+        self._buttonSouth = new InputSourceButton();
+        self._buttonSouth.getValue = (): number => 0;
 
-        this._buttonTriggerLeft = new InputSourceButton();
-        this._buttonTriggerLeft.getValue = (): number => 0;
-        this._buttonTriggerRight = new InputSourceButton();
-        this._buttonTriggerRight.getValue = (): number => 0;
-        this._triggerLeft = new InputSourceButton();
-        this._triggerLeft.getValue = (): number => 0;
-        this._triggerRight = new InputSourceButton();
-        this._triggerRight.getValue = (): number => 0;
-        this._gripLeft = new InputSourceButton();
-        this._gripLeft.getValue = (): number => 0;
-        this._gripRight = new InputSourceButton();
-        this._gripRight.getValue = (): number => 0;
+        self._buttonTriggerLeft = new InputSourceButton();
+        self._buttonTriggerLeft.getValue = (): number => 0;
+        self._buttonTriggerRight = new InputSourceButton();
+        self._buttonTriggerRight.getValue = (): number => 0;
+        self._triggerLeft = new InputSourceButton();
+        self._triggerLeft.getValue = (): number => 0;
+        self._triggerRight = new InputSourceButton();
+        self._triggerRight.getValue = (): number => 0;
+        self._gripLeft = new InputSourceButton();
+        self._gripLeft.getValue = (): number => 0;
+        self._gripRight = new InputSourceButton();
+        self._gripRight.getValue = (): number => 0;
 
-        this._buttonLeftStick = new InputSourceButton();
-        this._buttonLeftStick.getValue = (): number => 0;
+        self._buttonLeftStick = new InputSourceButton();
+        self._buttonLeftStick.getValue = (): number => 0;
         const leftStickUp = new InputSourceButton();
         leftStickUp.getValue = (): number => 0;
         const leftStickDown = new InputSourceButton();
@@ -141,10 +142,10 @@ export class HandleInputDevice {
         leftStickLeft.getValue = (): number => 0;
         const leftStickRight = new InputSourceButton();
         leftStickRight.getValue = (): number => 0;
-        this._leftStick = new InputSourceStick({ up: leftStickUp, down: leftStickDown, left: leftStickLeft, right: leftStickRight });
+        self._leftStick = new InputSourceStick({ up: leftStickUp, down: leftStickDown, left: leftStickLeft, right: leftStickRight });
 
-        this._buttonRightStick = new InputSourceButton();
-        this._buttonRightStick.getValue = (): number => 0;
+        self._buttonRightStick = new InputSourceButton();
+        self._buttonRightStick.getValue = (): number => 0;
         const rightStickUp = new InputSourceButton();
         rightStickUp.getValue = (): number => 0;
         const rightStickDown = new InputSourceButton();
@@ -153,48 +154,48 @@ export class HandleInputDevice {
         rightStickLeft.getValue = (): number => 0;
         const rightStickRight = new InputSourceButton();
         rightStickRight.getValue = (): number => 0;
-        this._rightStick = new InputSourceStick({ up: rightStickUp, down: rightStickDown, left: rightStickLeft, right: rightStickRight });
+        self._rightStick = new InputSourceStick({ up: rightStickUp, down: rightStickDown, left: rightStickLeft, right: rightStickRight });
 
-        this._buttonOptions = new InputSourceButton();
-        this._buttonOptions.getValue = (): number => 0;
-        this._buttonStart = new InputSourceButton();
-        this._buttonStart.getValue = (): number => 0;
+        self._buttonOptions = new InputSourceButton();
+        self._buttonOptions.getValue = (): number => 0;
+        self._buttonStart = new InputSourceButton();
+        self._buttonStart.getValue = (): number => 0;
 
-        this._handLeftPosition = new InputSourcePosition();
-        this._handLeftPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
-        this._handLeftOrientation = new InputSourceOrientation();
-        this._handLeftOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
+        self._handLeftPosition = new InputSourcePosition();
+        self._handLeftPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
+        self._handLeftOrientation = new InputSourceOrientation();
+        self._handLeftOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
 
-        this._handRightPosition = new InputSourcePosition();
-        this._handRightPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
-        this._handRightOrientation = new InputSourceOrientation();
-        this._handRightOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
+        self._handRightPosition = new InputSourcePosition();
+        self._handRightPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
+        self._handRightOrientation = new InputSourceOrientation();
+        self._handRightOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
 
-        this._aimLeftPosition = new InputSourcePosition();
-        this._aimLeftPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
-        this._aimLeftOrientation = new InputSourceOrientation();
-        this._aimLeftOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
+        self._aimLeftPosition = new InputSourcePosition();
+        self._aimLeftPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
+        self._aimLeftOrientation = new InputSourceOrientation();
+        self._aimLeftOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
 
-        this._aimRightPosition = new InputSourcePosition();
-        this._aimRightPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
-        this._aimRightOrientation = new InputSourceOrientation();
-        this._aimRightOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
+        self._aimRightPosition = new InputSourcePosition();
+        self._aimRightPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
+        self._aimRightOrientation = new InputSourceOrientation();
+        self._aimRightOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
 
-        this._touchButtonA = new InputSourceTouch();
-        this._touchButtonA.getValue = (): number => 0;
-        this._touchButtonB = new InputSourceTouch();
-        this._touchButtonB.getValue = (): number => 0;
-        this._touchButtonX = new InputSourceTouch();
-        this._touchButtonX.getValue = (): number => 0;
-        this._touchButtonY = new InputSourceTouch();
-        this._touchButtonY.getValue = (): number => 0;
-        this._touchButtonTriggerLeft = new InputSourceTouch();
-        this._touchButtonTriggerLeft.getValue = (): number => 0;
-        this._touchButtonTriggerRight = new InputSourceTouch();
-        this._touchButtonTriggerRight.getValue = (): number => 0;
-        this._touchButtonThumbStickLeft = new InputSourceTouch();
-        this._touchButtonThumbStickLeft.getValue = (): number => 0;
-        this._touchButtonThumbStickRight = new InputSourceTouch();
-        this._touchButtonThumbStickRight.getValue = (): number => 0;
+        self._touchButtonA = new InputSourceTouch();
+        self._touchButtonA.getValue = (): number => 0;
+        self._touchButtonB = new InputSourceTouch();
+        self._touchButtonB.getValue = (): number => 0;
+        self._touchButtonX = new InputSourceTouch();
+        self._touchButtonX.getValue = (): number => 0;
+        self._touchButtonY = new InputSourceTouch();
+        self._touchButtonY.getValue = (): number => 0;
+        self._touchButtonTriggerLeft = new InputSourceTouch();
+        self._touchButtonTriggerLeft.getValue = (): number => 0;
+        self._touchButtonTriggerRight = new InputSourceTouch();
+        self._touchButtonTriggerRight.getValue = (): number => 0;
+        self._touchButtonThumbStickLeft = new InputSourceTouch();
+        self._touchButtonThumbStickLeft.getValue = (): number => 0;
+        self._touchButtonThumbStickRight = new InputSourceTouch();
+        self._touchButtonThumbStickRight.getValue = (): number => 0;
     }
 }

@@ -171,7 +171,7 @@ public:
     void setUniformArray(uint32_t handle, const MaterialPropertyList &value);
 
     /**
-     * @en Bind a GFX [[Texture]] the the given uniform binding
+     * @en Bind a GFX [[Texture]] the given uniform binding
      * @zh 绑定实际 GFX [[Texture]] 到指定 binding。
      * @param binding The binding for target uniform of texture type
      * @param value Target texture
@@ -179,7 +179,7 @@ public:
     void bindTexture(uint32_t binding, gfx::Texture *value, uint32_t index = 0);
 
     /**
-     * @en Bind a GFX [[Sampler]] the the given uniform binding
+     * @en Bind a GFX [[Sampler]] the given uniform binding
      * @zh 绑定实际 GFX [[Sampler]] 到指定 binding。
      * @param binding The binding for target uniform of sampler type
      * @param value Target sampler

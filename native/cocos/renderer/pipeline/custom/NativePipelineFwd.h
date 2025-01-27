@@ -84,7 +84,7 @@ struct ProgramResource;
 struct LayoutGraphNodeResource;
 struct QuadResource;
 
-enum class ResourceType;
+enum class ResourceType : uint8_t;
 
 struct SceneResource;
 struct FrustumCullingKey;

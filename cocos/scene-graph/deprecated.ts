@@ -30,7 +30,7 @@ import { Node } from './node';
 import { Vec2 } from '../core/math/vec2';
 import { Size } from '../core/math/size';
 import { legacyCC } from '../core/global-exports';
-import { CCObject } from '../core/data/object';
+import { CCObjectFlags } from '../core/data/object';
 import { warnID } from '../core/platform/debug';
 import { SceneGlobals } from './scene-globals';
 import { SystemEventType } from '../input/types';
@@ -53,40 +53,40 @@ replaceProperty(Node.prototype, 'Node', [
         name: 'width',
         targetName: 'node.getComponent(UITransform)',
         customGetter (this: Node): number {
-            return this._uiProps.uiTransformComp!.width;
+            return this._getUITransformComp()!.width;
         },
         customSetter (this: Node, value: number): void {
-            this._uiProps.uiTransformComp!.width = value;
+            this._getUITransformComp()!.width = value;
         },
     },
     {
         name: 'height',
         targetName: 'node.getComponent(UITransform)',
         customGetter (this: Node): number {
-            return this._uiProps.uiTransformComp!.height;
+            return this._getUITransformComp()!.height;
         },
         customSetter (this: Node, value: number): void {
-            this._uiProps.uiTransformComp!.height = value;
+            this._getUITransformComp()!.height = value;
         },
     },
     {
         name: 'anchorX',
         targetName: 'node.getComponent(UITransform)',
         customGetter (this: Node): number {
-            return this._uiProps.uiTransformComp!.anchorX;
+            return this._getUITransformComp()!.anchorX;
         },
         customSetter (this: Node, value: number): void {
-            this._uiProps.uiTransformComp!.anchorX = value;
+            this._getUITransformComp()!.anchorX = value;
         },
     },
     {
         name: 'anchorY',
         targetName: 'node.getComponent(UITransform)',
         customGetter (this: Node): number {
-            return this._uiProps.uiTransformComp!.anchorY;
+            return this._getUITransformComp()!.anchorY;
         },
         customSetter (this: Node, value: number): void {
-            this._uiProps.uiTransformComp!.anchorY = value;
+            this._getUITransformComp()!.anchorY = value;
         },
     },
     {
@@ -96,7 +96,7 @@ replaceProperty(Node.prototype, 'Node', [
             if (!out) {
                 out = new Vec2();
             }
-            out.set(this._uiProps.uiTransformComp!.anchorPoint);
+            out.set(this._getUITransformComp()!.anchorPoint);
             return out;
         },
     },
@@ -104,7 +104,7 @@ replaceProperty(Node.prototype, 'Node', [
         name: 'setAnchorPoint',
         targetName: 'node.getComponent(UITransform)',
         customFunction (this: Node, point: Vec2 | number, y?: number): void {
-            this._uiProps.uiTransformComp!.setAnchorPoint(point, y);
+            this._getUITransformComp()!.setAnchorPoint(point, y);
         },
     },
     {
@@ -115,7 +115,7 @@ replaceProperty(Node.prototype, 'Node', [
                 out = new Size();
             }
 
-            out.set(this._uiProps.uiTransformComp!.contentSize);
+            out.set(this._getUITransformComp()!.contentSize);
             return out;
         },
     },
@@ -124,9 +124,9 @@ replaceProperty(Node.prototype, 'Node', [
         targetName: 'node.getComponent(UITransform)',
         customFunction (this: Node, size: Size | number, height?: number): void {
             if (typeof size === 'number') {
-                this._uiProps.uiTransformComp!.setContentSize(size, height!);
+                this._getUITransformComp()!.setContentSize(size, height!);
             } else {
-                this._uiProps.uiTransformComp!.setContentSize(size);
+                this._getUITransformComp()!.setContentSize(size);
             }
         },
     },
@@ -298,8 +298,8 @@ removeProperty(Layers.BitMask, 'Layers.BitMask', [
     },
 ]);
 
-const HideInHierarchy = CCObject.Flags.HideInHierarchy;
-const DontSave = CCObject.Flags.DontSave;
+const HideInHierarchy = CCObjectFlags.HideInHierarchy;
+const DontSave = CCObjectFlags.DontSave;
 
 /**
  * @internal

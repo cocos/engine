@@ -27,7 +27,7 @@
  * The following section is auto-generated.
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
-import { DescriptorTypeOrder, UpdateFrequency } from './types'
+import { UpdateFrequency } from './types';
 
 export function getUpdateFrequencyName (e: UpdateFrequency): string {
     switch (e) {
@@ -41,31 +41,6 @@ export function getUpdateFrequencyName (e: UpdateFrequency): string {
         return 'PER_PASS';
     case UpdateFrequency.COUNT:
         return 'COUNT';
-    default:
-        return '';
-    }
-}
-
-export function getDescriptorTypeOrderName (e: DescriptorTypeOrder): string {
-    switch (e) {
-    case DescriptorTypeOrder.UNIFORM_BUFFER:
-        return 'UNIFORM_BUFFER';
-    case DescriptorTypeOrder.DYNAMIC_UNIFORM_BUFFER:
-        return 'DYNAMIC_UNIFORM_BUFFER';
-    case DescriptorTypeOrder.SAMPLER_TEXTURE:
-        return 'SAMPLER_TEXTURE';
-    case DescriptorTypeOrder.SAMPLER:
-        return 'SAMPLER';
-    case DescriptorTypeOrder.TEXTURE:
-        return 'TEXTURE';
-    case DescriptorTypeOrder.STORAGE_BUFFER:
-        return 'STORAGE_BUFFER';
-    case DescriptorTypeOrder.DYNAMIC_STORAGE_BUFFER:
-        return 'DYNAMIC_STORAGE_BUFFER';
-    case DescriptorTypeOrder.STORAGE_IMAGE:
-        return 'STORAGE_IMAGE';
-    case DescriptorTypeOrder.INPUT_ATTACHMENT:
-        return 'INPUT_ATTACHMENT';
     default:
         return '';
     }

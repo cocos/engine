@@ -169,7 +169,8 @@ class Simple implements IAssembler {
         colorV[2] = color.b / 255;
         colorV[3] = color.a / 255;
         const rs = tiled.tiledDataArray;
-        for (const r of rs) {
+        for (let index = 0; index < rs.length; index++) {
+            const r = rs[index];
             if (!(r as any).renderData) continue;
             const renderData = (r as any).renderData;
             const vs = renderData.vData;

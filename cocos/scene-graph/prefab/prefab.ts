@@ -157,7 +157,15 @@ export class Prefab extends Asset {
         return this._createFunction!(rootToRedirect);  // this.data._instantiate();
     }
 
-    private _instantiate (): Node {
+    /**
+     * @dontmangle
+     * NOTE: the protected method `_instantiate` is invoked by dynamically without type information.
+     * See `instantiate` in cocos/serialization/instantiate.ts.
+     * ```ts
+     * clone = original._instantiate(null, true); // original is any, so _instantiate should not be mangled.
+     * ```
+     */
+    protected _instantiate (): Node {
         let node: Node;
         let useJit = false;
         if (SUPPORT_JIT) {

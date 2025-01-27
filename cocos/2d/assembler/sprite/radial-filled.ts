@@ -45,7 +45,15 @@ const _center = new Vec2();
 const _triangles: Vec2[] = [new Vec2(), new Vec2(), new Vec2(), new Vec2()];
 let QUAD_INDICES: Uint16Array | null = null;
 
-function _calcIntersectedPoints (left, right, bottom, top, center: Vec2, angle: number, intersectPoints: Vec2[]): void {
+function _calcIntersectedPoints (
+    left: number,
+    right: number,
+    bottom: number,
+    top: number,
+    center: Vec2,
+    angle: number,
+    intersectPoints: Vec2[],
+): void {
     // left bottom, right, top
     let sinAngle = Math.sin(angle);
     sinAngle = Math.abs(sinAngle) > EPSILON ? sinAngle : 0;
@@ -86,7 +94,7 @@ function _calcIntersectedPoints (left, right, bottom, top, center: Vec2, angle: 
 }
 
 function _calculateVertices (sprite: Sprite): void {
-    const uiTrans = sprite.node._uiProps.uiTransformComp!;
+    const uiTrans = sprite.node._getUITransformComp()!;
     const width = uiTrans.width;
     const height = uiTrans.height;
     const appX = uiTrans.anchorX * width;
@@ -112,9 +120,9 @@ function _calculateVertices (sprite: Sprite): void {
     _vertPos[0].y = _vertPos[1].y = b;
     _vertPos[2].y = _vertPos[3].y = t;
 
-    for (const num of _triangles) {
+    _triangles.forEach((num) => {
         Vec2.set(num, 0, 0);
-    }
+    });
 
     if (cx !== vertices[0]) {
         Vec2.set(_triangles[0], 3, 0);

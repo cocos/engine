@@ -286,7 +286,7 @@ export class QuatCurve extends KeyframeCurve<QuatKeyframeValue> {
         if (values !== undefined) {
             assertIsTrue(Array.isArray(times));
             this.setKeyframes(
-                times.slice(),
+                (times as number[]).slice(),
                 values.map((value) => createQuatKeyframeValue(value)),
             );
         } else {

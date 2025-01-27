@@ -24,15 +24,33 @@
  ****************************************************************************/
 
 #include "platform/openharmony/modules/CanvasRenderingContext2DDelegate.h"
-#include "platform/openharmony/OpenHarmonyPlatform.h"
 #include <native_drawing/drawing_text_typography.h>
 #include <native_drawing/drawing_canvas.h>
 #include <native_drawing/drawing_font_collection.h>
-#include <native_drawing/drawing_types.h>
+#include <native_drawing/drawing_pen.h>
 #include <native_drawing/drawing_path.h>
 #include <native_drawing/drawing_brush.h>
 
 namespace cc {
+namespace {
+#define CLAMP(V, HI) std::min((V), (HI))
+
+void unMultiplyAlpha(unsigned char *ptr, ssize_t size) {
+    float alpha;
+    for (int i = 0; i < size; i += 4) {
+        alpha = (float)ptr[i + 3];
+        if (alpha > 0) {
+            ptr[i] = CLAMP((int)((float)ptr[i] / alpha * 255), 255);
+            ptr[i + 1] = CLAMP((int)((float)ptr[i + 1] / alpha * 255), 255);
+            ptr[i + 2] = CLAMP((int)((float)ptr[i + 2] / alpha * 255), 255);
+        }
+    }
+}
+}
+enum class TextAlign { LEFT, CENTER, RIGHT };
+
+enum class TextBaseline { TOP, MIDDLE, BOTTOM, ALPHABETIC };
+
 class CanvasRenderingContext2DDelegate::ScopedTypography {
 public:
     ScopedTypography(OH_Drawing_Typography* typography) :_typegraphy(typography) {}
@@ -74,6 +92,11 @@ CanvasRenderingContext2DDelegate::~CanvasRenderingContext2DDelegate() {
         _textStyle = nullptr;
     }
 
+    if (_strokeTextStyle) {
+        OH_Drawing_DestroyTextStyle(_strokeTextStyle);
+        _strokeTextStyle = nullptr;
+    }
+
     if(_canvas) {
         OH_Drawing_CanvasDestroy(_canvas);
         _canvas = nullptr;
@@ -82,6 +105,11 @@ CanvasRenderingContext2DDelegate::~CanvasRenderingContext2DDelegate() {
     if(_bitmap) {
         OH_Drawing_BitmapDestroy(_bitmap);
         _bitmap = nullptr;
+    }
+
+    if (_pen) {
+        OH_Drawing_PenDestroy(_pen);
+        _pen = nullptr;
     }
 }
 
@@ -170,20 +198,51 @@ void CanvasRenderingContext2DDelegate::fillRect(float x, float y, float w, float
     OH_Drawing_CanvasDrawPath(_canvas, path);
 }
 
+void CanvasRenderingContext2DDelegate::setPremultiply(bool multiply) { _premultiply = multiply; }
+
+
 void CanvasRenderingContext2DDelegate::fillText(const ccstd::string &text, float x, float y, float /*maxWidth*/) {
     if (text.empty() || _bufferWidth < 1.0F || _bufferHeight < 1.0F) {
         return;
     }
     Size  textSize    = {0, 0};
-    Point offsetPoint = convertDrawPoint(Point{x, y}, text);
+    Point offsetPoint = convertDrawPoint(Point{x, y}, text, _textStyle);
     drawText(text, (int)offsetPoint[0], (int)offsetPoint[1]);
+    if (!_premultiply) {
+        unMultiplyAlpha(_imageData.getBytes(), _imageData.getSize());
+    }
 }
 
-void CanvasRenderingContext2DDelegate::strokeText(const ccstd::string &text, float /*x*/, float /*y*/, float /*maxWidth*/) const {
+void CanvasRenderingContext2DDelegate::strokeText(const ccstd::string &text, float x, float y, float /*maxWidth*/) {
+    if (_pen) {
+        OH_Drawing_PenDestroy(_pen);
+        _pen = nullptr;
+    }
+    
+    if (_strokeTextStyle) {
+        OH_Drawing_DestroyTextStyle(_strokeTextStyle);
+        _strokeTextStyle = nullptr;
+    }
+
+    uint8_t r = static_cast<uint8_t>(_strokeStyle[0]);
+    uint8_t g = static_cast<uint8_t>(_strokeStyle[1]);
+    uint8_t b = static_cast<uint8_t>(_strokeStyle[2]);
+    uint8_t a = static_cast<uint8_t>(_strokeStyle[3]);
+
+    _strokeTextStyle = OH_Drawing_CreateTextStyle();
+    setTextStyle(_strokeTextStyle);
+    _pen = OH_Drawing_PenCreate();
+    OH_Drawing_PenSetColor(_pen, OH_Drawing_ColorSetArgb(a, r, g, b));
+    OH_Drawing_PenSetWidth(_pen, _lineWidth);
+    OH_Drawing_SetTextStyleForegroundPen(_strokeTextStyle, _pen);
+
+    Point offsetPoint = convertDrawPoint(Point{x, y}, text, _strokeTextStyle);
+    auto typography = createTypography(text, _strokeTextStyle);
+    OH_Drawing_TypographyPaint(typography->get(), _canvas, offsetPoint[0], offsetPoint[1]);
 }
 
 CanvasRenderingContext2DDelegate::Size CanvasRenderingContext2DDelegate::measureText(const ccstd::string &text) {
-    auto typography = createTypography(text);
+    auto typography = createTypography(text, _textStyle);
     return ccstd::array<float, 2>{static_cast<float>(OH_Drawing_TypographyGetMaxIntrinsicWidth(typography->get())),
                                 static_cast<float>(OH_Drawing_TypographyGetHeight(typography->get()))};
 }
@@ -196,6 +255,9 @@ void CanvasRenderingContext2DDelegate::updateFont(const ccstd::string &fontName,
                                                   bool /* smallCaps */) {
     _fontName = fontName;
     _fontSize = static_cast<int>(fontSize);
+    _italic = italic;
+    _bold = bold;
+
     if (_typographyCreate) {
         OH_Drawing_DestroyTypographyHandler(_typographyCreate);
     }
@@ -216,20 +278,24 @@ void CanvasRenderingContext2DDelegate::updateFont(const ccstd::string &fontName,
     _typographyCreate = OH_Drawing_CreateTypographyHandler(_typographyStyle, _fontCollection);
     _textStyle = OH_Drawing_CreateTextStyle();
 
+    setTextStyle(_textStyle);
+}
+
+void CanvasRenderingContext2DDelegate::setTextStyle(OH_Drawing_TextStyle *textStyle) {
     const char *fontFamilies[1];
-    fontFamilies[0] = fontName.c_str();
-    OH_Drawing_SetTextStyleFontFamilies(_textStyle, 1, fontFamilies);
-        
+    fontFamilies[0] = _fontName.c_str();
+    OH_Drawing_SetTextStyleFontFamilies(textStyle, 1, fontFamilies);
+
     if (_fontSize)
-        OH_Drawing_SetTextStyleFontSize(_textStyle, _fontSize);
-    if (bold)
-        OH_Drawing_SetTextStyleFontWeight(_textStyle, FONT_WEIGHT_700);
-    else 
-        OH_Drawing_SetTextStyleFontWeight(_textStyle, FONT_WEIGHT_400);
-    if(italic) 
-        OH_Drawing_SetTextStyleFontStyle(_textStyle, FONT_STYLE_ITALIC);
-    else 
-        OH_Drawing_SetTextStyleFontStyle(_textStyle, FONT_STYLE_NORMAL);
+        OH_Drawing_SetTextStyleFontSize(textStyle, _fontSize);
+    if (_bold)
+        OH_Drawing_SetTextStyleFontWeight(textStyle, FONT_WEIGHT_700);
+    else
+        OH_Drawing_SetTextStyleFontWeight(textStyle, FONT_WEIGHT_400);
+    if (_italic)
+        OH_Drawing_SetTextStyleFontStyle(textStyle, FONT_STYLE_ITALIC);
+    else
+        OH_Drawing_SetTextStyleFontStyle(textStyle, FONT_STYLE_NORMAL);
 }
 
 void CanvasRenderingContext2DDelegate::setTextAlign(TextAlign align) {
@@ -264,8 +330,8 @@ void CanvasRenderingContext2DDelegate::removeCustomFont() {
 
 // x, y offset value
 int CanvasRenderingContext2DDelegate::drawText(const ccstd::string &text, int x, int y) {
-    auto typography = createTypography(text);
-    OH_Drawing_TypographyPaint(typography->get(), _canvas, x, y);
+    auto typography = createTypography(text, _textStyle);
+    OH_Drawing_TypographyPaint(typography->get(), _canvas, (double)x, (double)y);
     return 0;
 }
 
@@ -282,10 +348,11 @@ void CanvasRenderingContext2DDelegate::deleteBitmap() {
 void CanvasRenderingContext2DDelegate::fillTextureData() {
 }
 
-ccstd::array<float, 2> CanvasRenderingContext2DDelegate::convertDrawPoint(Point point, const ccstd::string &text) {
-    auto typography = createTypography(text);
+ccstd::array<float, 2> CanvasRenderingContext2DDelegate::convertDrawPoint(Point point, const ccstd::string &text, OH_Drawing_TextStyle *textStyle) {
+    auto typography = createTypography(text, textStyle);
     Size textSize {static_cast<float>(OH_Drawing_TypographyGetMaxIntrinsicWidth(typography->get())),
                    static_cast<float>(OH_Drawing_TypographyGetHeight(typography->get()))};
+    
     if (_textAlign == TextAlign::CENTER) {
         point[0] -= textSize[0] / 2.0f;
     } else if (_textAlign == TextAlign::RIGHT) {
@@ -306,8 +373,8 @@ ccstd::array<float, 2> CanvasRenderingContext2DDelegate::convertDrawPoint(Point 
     return point;
 }
 
-std::unique_ptr<CanvasRenderingContext2DDelegate::ScopedTypography> CanvasRenderingContext2DDelegate::createTypography(const ccstd::string &text) {
-    OH_Drawing_TypographyHandlerPushTextStyle(_typographyCreate, _textStyle);
+std::unique_ptr<CanvasRenderingContext2DDelegate::ScopedTypography> CanvasRenderingContext2DDelegate::createTypography(const ccstd::string &text, OH_Drawing_TextStyle *textStyle) {
+    OH_Drawing_TypographyHandlerPushTextStyle(_typographyCreate, textStyle);
     OH_Drawing_TypographyHandlerAddText(_typographyCreate, text.c_str());
     OH_Drawing_TypographyHandlerPopTextStyle(_typographyCreate);
     OH_Drawing_Typography* typography = OH_Drawing_CreateTypography(_typographyCreate);
@@ -330,12 +397,6 @@ void CanvasRenderingContext2DDelegate::fillImageData(const Data & /* imageData *
                                                      float /* imageHeight */,
                                                      float /* offsetX */,
                                                      float /* offsetY */) {
-}
-
-void CanvasRenderingContext2DDelegate::strokeText(const ccstd::string & /* text */,
-                                                  float /* x */,
-                                                  float /* y */,
-                                                  float /* maxWidth */) {
 }
 
 void CanvasRenderingContext2DDelegate::rect(float /* x */,

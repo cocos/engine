@@ -49,31 +49,38 @@ export interface IBatcher {
     device: Device;
 
     initialize(): boolean;
-    destroy();
+    destroy(): void;
 
-    addScreen (comp: RenderRoot2D);
+    addScreen (comp: RenderRoot2D): void;
     getFirstRenderCamera (node: Node): Camera | null;
-    removeScreen (comp: RenderRoot2D);
+    removeScreen (comp: RenderRoot2D): void;
 
-    sortScreens ();
+    sortScreens (): void;
 
-    update ();
-    uploadBuffers ();
-    reset ();
+    update (): void;
+    uploadBuffers (): void;
+    reset (): void;
 
     switchBufferAccessor (attributes?: Attribute[]): StaticVBAccessor;
 
-    commitComp (comp: UIRenderer, renderData: BaseRenderData|null, frame: TextureBase | SpriteFrame | null, assembler: any, transform: Node | null);
-    commitModel (comp: UIMeshRenderer | UIRenderer, model: Model | null, mat: Material | null);
+    commitComp (
+        comp: UIRenderer,
+        renderData: BaseRenderData|null,
+        textureOrFrame: TextureBase | SpriteFrame | null,
+        assembler: any,
+        transform: Node | null
+    ): void;
 
-    setupStaticBatch (staticComp: UIStaticBatch, bufferAccessor: StaticVBAccessor);
-    endStaticBatch ();
-    commitStaticBatch (comp: UIStaticBatch);
+    commitModel (comp: UIMeshRenderer | UIRenderer, model: Model | null, mat: Material | null): void;
 
-    autoMergeBatches (renderComp?: UIRenderer);
-    forceMergeBatches (material: Material, frame: TextureBase | SpriteFrame | null, renderComp: UIRenderer);
-    finishMergeBatches ();
-    flushMaterial (mat: Material);
+    setupStaticBatch (staticComp: UIStaticBatch, bufferAccessor: StaticVBAccessor): void;
+    endStaticBatch (): void;
+    commitStaticBatch (comp: UIStaticBatch): void;
 
-    walk (node: Node, level?: number);
+    autoMergeBatches (renderComp?: UIRenderer): void;
+    forceMergeBatches (material: Material, textureOrFrame: TextureBase | SpriteFrame | null, renderComp: UIRenderer): void;
+    finishMergeBatches (): void;
+    flushMaterial (mat: Material): void;
+
+    walk (node: Node, level?: number): void;
 }

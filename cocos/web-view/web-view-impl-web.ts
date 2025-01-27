@@ -30,13 +30,15 @@ import { game } from '../game';
 import { mat4 } from '../core/math';
 import { contains } from '../core/utils/misc';
 import { ccwindow } from '../core/global-exports';
+import type { WebView } from './web-view';
 
 const ccdocument = ccwindow.document;
 
 const _mat4_temp = mat4();
 
+/** @mangle */
 export class WebViewImplWeb extends WebViewImpl {
-    constructor (component: any) {
+    constructor (component: WebView) {
         super(component);
     }
 
@@ -70,21 +72,23 @@ export class WebViewImplWeb extends WebViewImpl {
         const wrapper = ccdocument.createElement('div');
         this._wrapper = wrapper;
         wrapper.id = 'webview-wrapper';
-        wrapper.style['-webkit-overflow'] = 'auto';
-        wrapper.style['-webkit-overflow-scrolling'] = 'touch';
-        wrapper.style.position = 'absolute';
-        wrapper.style.bottom = '0px';
-        wrapper.style.left = '0px';
-        wrapper.style.transformOrigin = '0px 100% 0px';
-        wrapper.style['-webkit-transform-origin'] = '0px 100% 0px';
+        const wrapperStyle = wrapper.style;
+        wrapperStyle['-webkit-overflow'] = 'auto';
+        wrapperStyle['-webkit-overflow-scrolling'] = 'touch';
+        wrapperStyle.position = 'absolute';
+        wrapperStyle.bottom = '0px';
+        wrapperStyle.left = '0px';
+        wrapperStyle.transformOrigin = '0px 100% 0px';
+        wrapperStyle['-webkit-transform-origin'] = '0px 100% 0px';
         game.container!.appendChild(wrapper);
 
         const webview = ccdocument.createElement('iframe');
         this._webview = webview;
+        const webviewStyle = webview.style;
         webview.id = 'webview';
-        webview.style.border = 'none';
-        webview.style.width = '100%';
-        webview.style.height = '100%';
+        webviewStyle.border = 'none';
+        webviewStyle.width = '100%';
+        webviewStyle.height = '100%';
         wrapper.appendChild(webview);
         this._bindDomEvent();
     }

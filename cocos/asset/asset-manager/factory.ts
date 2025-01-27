@@ -136,8 +136,9 @@ export class Factory {
         bundle: createBundle,
 
         default: createAsset,
-
     };
+
+    constructor () {}
 
     public register (type: string | Record<string, CreateHandler>, handler?: CreateHandler): void {
         if (typeof type === 'object') {

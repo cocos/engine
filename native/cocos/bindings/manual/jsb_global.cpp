@@ -979,7 +979,7 @@ static bool jsb_createExternalArrayBuffer(se::State &s) { // NOLINT
         SE_PRECONDITION2(ok, false, "Error processing arguments");
         if (byteLength > 0) {
 // NOTE: Currently V8 use shared_ptr which has different abi on win64-debug and win64-release
-#if CC_PLATFORM == CC_PLATFORM_WINDOWS && SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8
+#if (CC_PLATFORM == CC_PLATFORM_WINDOWS && SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_V8) || (SCRIPT_ENGINE_TYPE == SCRIPT_ENGINE_JSVM)
             se::HandleObject arrayBuffer{se::Object::createArrayBufferObject(nullptr, byteLength)};
 #else
             void *buffer = malloc(byteLength);
@@ -1336,12 +1336,12 @@ static bool js_TextDecoder_constructor(se::State &s) // NOLINT(readability-ident
             // https://developer.mozilla.org/en-US/docs/Web/API/Encoding_API/Encodings
             // NOTE: We only support utf-8 and utf-16 encoding now.
             auto label = args[0].toString();
-            
+
             // Convert to lowercase to support 'UTF-8', 'UTF-16'
-            std::transform(label.begin(), label.end(), label.begin(), [](char c){
+            std::transform(label.begin(), label.end(), label.begin(), [](char c) {
                 return ::tolower(c);
             });
-            
+
             if (label == "unicode-1-1-utf-8" || label == "utf-8" || label == "utf8") {
                 encoding = "utf-8";
             } else if (label == "utf-16" || label == "utf-16le") {
@@ -1575,7 +1575,7 @@ bool jsb_register_global_variables(se::Object *global) { // NOLINT
     __jsbObj->defineFunction("copyTextToClipboard", _SE(JSB_copyTextToClipboard));
     __jsbObj->defineFunction("setPreferredFramesPerSecond", _SE(JSB_setPreferredFramesPerSecond));
     __jsbObj->defineFunction("destroyImage", _SE(js_destroyImage));
-    
+
 #if CC_USE_EDITBOX
     __jsbObj->defineFunction("showInputBox", _SE(JSB_showInputBox));
     __jsbObj->defineFunction("hideInputBox", _SE(JSB_hideInputBox));

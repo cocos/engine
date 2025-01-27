@@ -30,8 +30,9 @@ import { WebGLCmdFuncCreateInputAssember, WebGLCmdFuncDestroyInputAssembler } fr
 import { WebGLDeviceManager } from './webgl-define';
 import { IWebGLGPUInputAssembler, IWebGLGPUBuffer } from './webgl-gpu-objects';
 
+/** @mangle */
 export class WebGLInputAssembler extends InputAssembler {
-    get gpuInputAssembler (): IWebGLGPUInputAssembler {
+    getGpuInputAssembler (): IWebGLGPUInputAssembler {
         return  this._gpuInputAssembler!;
     }
 
@@ -41,7 +42,7 @@ export class WebGLInputAssembler extends InputAssembler {
         super();
     }
 
-    public initialize (info: Readonly<InputAssemblerInfo>): void {
+    public override initialize (info: Readonly<InputAssemblerInfo>): void {
         if (info.vertexBuffers.length === 0) {
             errorID(16331);
             return;
@@ -109,7 +110,7 @@ export class WebGLInputAssembler extends InputAssembler {
         WebGLCmdFuncCreateInputAssember(WebGLDeviceManager.instance, this._gpuInputAssembler);
     }
 
-    public destroy (): void {
+    public override destroy (): void {
         const device = WebGLDeviceManager.instance;
         if (this._gpuInputAssembler && device.extensions.useVAO) {
             WebGLCmdFuncDestroyInputAssembler(device, this._gpuInputAssembler);

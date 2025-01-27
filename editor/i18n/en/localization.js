@@ -1043,8 +1043,8 @@ module.exports = link(mixin({
             label: "Tiled Map",
             description: "Tiled map support.",
         },
-        vendor: {
-            label: "Vendor",
+        vendor_google: {
+            label: "Vendor Google",
             description: "Vendor support.",
         },
         spine: {

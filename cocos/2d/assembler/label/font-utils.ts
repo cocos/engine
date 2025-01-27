@@ -30,6 +30,7 @@ import { BufferTextureCopy } from '../../../gfx';
 import { safeMeasureText, BASELINE_RATIO, MIDDLE_RATIO, getBaselineOffset, getSymbolCodeAt } from '../../utils/text-utils';
 import { director, DirectorEvent } from '../../../game/director';
 import { ccwindow } from '../../../core/global-exports';
+import { TextureBase } from '../../../asset/assets/texture-base';
 
 export interface ISharedLabelData {
     canvas: HTMLCanvasElement;
@@ -45,6 +46,9 @@ export class CanvasPool {
         }
         return _canvasPool;
     }
+
+    private constructor () {}
+
     public pool: ISharedLabelData[] = [];
     public get (): ISharedLabelData {
         let data = this.pool.pop();
@@ -366,12 +370,11 @@ export class LetterAtlas {
         this.reset();
         const dict = this.fontDefDictionary;
         if (dict && dict.texture) {
-            dict.texture.destroy();
             dict.texture = null;
         }
     }
 
-    getTexture (): any {
+    getTexture (): TextureBase | null {
         return this.fontDefDictionary.getTexture();
     }
 

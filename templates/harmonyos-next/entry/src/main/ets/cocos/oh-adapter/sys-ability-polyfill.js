@@ -26,7 +26,6 @@ import display from '@ohos.display';
 import I18n from '@ohos.i18n';
 import deviceInfo from '@ohos.deviceInfo';
 import batteryInfo from '@ohos.batteryInfo';
-import sensor from '@ohos.sensor';
 import connection from '@ohos.net.connection'
 import vibrator from '@ohos.vibrator';
 import process from '@ohos.process';
@@ -88,58 +87,6 @@ globalThis.getDeviceOrientation = function () {
     return displayClass.rotation;
 }
 
-function radiansToDegrees(radians)  {
-    var pi = Math.PI;
-    return radians * (180/pi);
-}
-
-let sDeviceMotionValues = [];
-try {
-    sensor.on(sensor.SensorId.ACCELEROMETER, function (data) {
-        sDeviceMotionValues[0] = data.x;
-        sDeviceMotionValues[1] = data.y;
-        sDeviceMotionValues[2] = -data.z;
-    },
-        { interval: 200000000 }
-    );
-} catch (err) {
-    sDeviceMotionValues[0] = 0;
-    sDeviceMotionValues[1] = 0;
-    sDeviceMotionValues[2] = 0;
-}
-
-try {
-    sensor.on(sensor.SensorId.LINEAR_ACCELEROMETER, function(data){
-        sDeviceMotionValues[3] = data.x;
-        sDeviceMotionValues[4] = data.y;
-        sDeviceMotionValues[5] = data.z;
-    },
-        {interval: 200000000}
-    );
-} catch (err) {
-    sDeviceMotionValues[3] = 0;
-    sDeviceMotionValues[4] = 0;
-    sDeviceMotionValues[5] = 0;
-}
-try {
-    sensor.on(sensor.SensorId.GYROSCOPE, function(data){
-        sDeviceMotionValues[6] = radiansToDegrees(data.x);
-        sDeviceMotionValues[7] = radiansToDegrees(data.y);
-        sDeviceMotionValues[8] = radiansToDegrees(data.z);
-    },
-        {interval: 200000000}
-    );
-} catch (err) {
-    sDeviceMotionValues[6] = 0;
-    sDeviceMotionValues[7] = 0;
-    sDeviceMotionValues[8] = 0;
-}
-
-globalThis.getDeviceMotionValue = function () {
-    return sDeviceMotionValues;
-}
-
-
 globalThis.getNetworkType = function () {
     let netHandle = connection.getDefaultNetSync();
     if(netHandle && netHandle.netId != 0) {
@@ -182,11 +129,11 @@ globalThis.initScreenInfo = function () {
         if (data.boundingRects.length == 0) {
             return;
         }
-        const rc = data.boundingRects[0];
-        cutout.left = rc.left;
-        cutout.top = rc.top;
-        cutout.width = rc.width;
-        cutout.height = rc.height;
+
+        cutout.left = data.boundingRects[0].left;
+        cutout.top = data.boundingRects[0].top;
+        cutout.width = data.boundingRects[0].width;
+        cutout.height = data.boundingRects[0].height;
     }).catch((err) => {
         console.log("get cutout info error!");
     });

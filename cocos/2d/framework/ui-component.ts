@@ -28,6 +28,7 @@ import { Component } from '../../scene-graph/component';
 import { UITransform } from './ui-transform';
 import { Node } from '../../scene-graph';
 import { Stage } from '../renderer/stencil-manager';
+import type { UIRenderer } from './ui-renderer';
 
 /**
  * @en Legacy 2D base class for rendering component, please use [[UIRenderer]] instead.
@@ -52,7 +53,7 @@ export class UIComponent extends Component {
         // TODO: UIComponent should not be assigned to UIMeshRenderer | UIRenderer @holycanvas
         // workaround: mark this as any
         // issue: https://github.com/cocos/cocos-engine/issues/14637
-        (this as any).node._uiProps.uiComp = this;
+        this.node._uiProps.uiComp = this as unknown as UIRenderer;
     }
 
     public onEnable (): void {
@@ -66,8 +67,9 @@ export class UIComponent extends Component {
         // TODO: UIComponent should not be assigned to UIMeshRenderer | UIRenderer @holycanvas
         // workaround: mark this as any
         // issue: https://github.com/cocos/cocos-engine/issues/14637
-        if ((this as any).node._uiProps.uiComp === this) {
-            (this as any).node._uiProps.uiComp = null;
+        const uiProps = this.node._uiProps;
+        if (uiProps.uiComp === this as unknown as UIRenderer) {
+            uiProps.uiComp = null;
         }
     }
 

@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner, bugprone-easily-swappable-parameters)
 #include "LayoutGraphTypes.h"
 
 namespace cc {
@@ -35,13 +36,16 @@ namespace cc {
 namespace render {
 
 DescriptorDB::DescriptorDB(const allocator_type& alloc) noexcept
-: blocks(alloc) {}
+: blocks(alloc),
+  groupBlocks(alloc) {}
 
 DescriptorDB::DescriptorDB(DescriptorDB&& rhs, const allocator_type& alloc)
-: blocks(std::move(rhs.blocks), alloc) {}
+: blocks(std::move(rhs.blocks), alloc),
+  groupBlocks(std::move(rhs.groupBlocks), alloc) {}
 
 DescriptorDB::DescriptorDB(DescriptorDB const& rhs, const allocator_type& alloc)
-: blocks(rhs.blocks, alloc) {}
+: blocks(rhs.blocks, alloc),
+  groupBlocks(rhs.groupBlocks, alloc) {}
 
 RenderPhase::RenderPhase(const allocator_type& alloc) noexcept
 : shaders(alloc) {}
@@ -111,6 +115,16 @@ UniformBlockData::UniformBlockData(UniformBlockData const& rhs, const allocator_
 DescriptorBlockData::DescriptorBlockData(const allocator_type& alloc) noexcept
 : descriptors(alloc) {}
 
+DescriptorBlockData::DescriptorBlockData(DescriptorTypeOrder typeIn, gfx::ShaderStageFlagBit visibilityIn, uint32_t capacityIn, gfx::MemoryAccessBit accessTypeIn, gfx::ViewDimension viewDimensionIn, gfx::SampleType sampleTypeIn, gfx::Format formatIn, const allocator_type& alloc) noexcept // NOLINT
+: type(typeIn),
+  visibility(visibilityIn),
+  capacity(capacityIn),
+  accessType(accessTypeIn),
+  viewDimension(viewDimensionIn),
+  sampleType(sampleTypeIn),
+  format(formatIn),
+  descriptors(alloc) {}
+
 DescriptorBlockData::DescriptorBlockData(DescriptorTypeOrder typeIn, gfx::ShaderStageFlagBit visibilityIn, uint32_t capacityIn, const allocator_type& alloc) noexcept // NOLINT
 : type(typeIn),
   visibility(visibilityIn),
@@ -122,6 +136,10 @@ DescriptorBlockData::DescriptorBlockData(DescriptorBlockData&& rhs, const alloca
   visibility(rhs.visibility),
   offset(rhs.offset),
   capacity(rhs.capacity),
+  accessType(rhs.accessType),
+  viewDimension(rhs.viewDimension),
+  sampleType(rhs.sampleType),
+  format(rhs.format),
   descriptors(std::move(rhs.descriptors), alloc) {}
 
 DescriptorBlockData::DescriptorBlockData(DescriptorBlockData const& rhs, const allocator_type& alloc)
@@ -129,6 +147,10 @@ DescriptorBlockData::DescriptorBlockData(DescriptorBlockData const& rhs, const a
   visibility(rhs.visibility),
   offset(rhs.offset),
   capacity(rhs.capacity),
+  accessType(rhs.accessType),
+  viewDimension(rhs.viewDimension),
+  sampleType(rhs.sampleType),
+  format(rhs.format),
   descriptors(rhs.descriptors, alloc) {}
 
 DescriptorSetLayoutData::DescriptorSetLayoutData(const allocator_type& alloc) noexcept
@@ -136,7 +158,7 @@ DescriptorSetLayoutData::DescriptorSetLayoutData(const allocator_type& alloc) no
   uniformBlocks(alloc),
   bindingMap(alloc) {}
 
-DescriptorSetLayoutData::DescriptorSetLayoutData(uint32_t slotIn, uint32_t capacityIn, ccstd::pmr::vector<DescriptorBlockData> descriptorBlocksIn, PmrUnorderedMap<NameLocalID, gfx::UniformBlock> uniformBlocksIn, PmrFlatMap<NameLocalID, uint32_t> bindingMapIn, const allocator_type& alloc) noexcept // NOLINT
+DescriptorSetLayoutData::DescriptorSetLayoutData(uint32_t slotIn, uint32_t capacityIn, ccstd::pmr::vector<DescriptorBlockData> descriptorBlocksIn, PmrUnorderedMap<NameLocalID, gfx::UniformBlock> uniformBlocksIn, PmrFlatMap<NameLocalID, uint32_t> bindingMapIn, const allocator_type& alloc) // NOLINT
 : slot(slotIn),
   capacity(capacityIn),
   descriptorBlocks(std::move(descriptorBlocksIn), alloc),
@@ -155,7 +177,7 @@ DescriptorSetLayoutData::DescriptorSetLayoutData(DescriptorSetLayoutData&& rhs, 
 DescriptorSetData::DescriptorSetData(const allocator_type& alloc) noexcept
 : descriptorSetLayoutData(alloc) {}
 
-DescriptorSetData::DescriptorSetData(DescriptorSetLayoutData descriptorSetLayoutDataIn, IntrusivePtr<gfx::DescriptorSetLayout> descriptorSetLayoutIn, IntrusivePtr<gfx::DescriptorSet> descriptorSetIn, const allocator_type& alloc) noexcept
+DescriptorSetData::DescriptorSetData(DescriptorSetLayoutData descriptorSetLayoutDataIn, IntrusivePtr<gfx::DescriptorSetLayout> descriptorSetLayoutIn, IntrusivePtr<gfx::DescriptorSet> descriptorSetIn, const allocator_type& alloc)
 : descriptorSetLayoutData(std::move(descriptorSetLayoutDataIn), alloc),
   descriptorSetLayout(std::move(descriptorSetLayoutIn)),
   descriptorSet(std::move(descriptorSetIn)) {}
@@ -167,10 +189,12 @@ DescriptorSetData::DescriptorSetData(DescriptorSetData&& rhs, const allocator_ty
   descriptorSet(std::move(rhs.descriptorSet)) {}
 
 PipelineLayoutData::PipelineLayoutData(const allocator_type& alloc) noexcept
-: descriptorSets(alloc) {}
+: descriptorSets(alloc),
+  descriptorGroups(alloc) {}
 
 PipelineLayoutData::PipelineLayoutData(PipelineLayoutData&& rhs, const allocator_type& alloc)
-: descriptorSets(std::move(rhs.descriptorSets), alloc) {}
+: descriptorSets(std::move(rhs.descriptorSets), alloc),
+  descriptorGroups(std::move(rhs.descriptorGroups), alloc) {}
 
 ShaderBindingData::ShaderBindingData(const allocator_type& alloc) noexcept
 : descriptorBindings(alloc) {}
@@ -277,4 +301,5 @@ LayoutGraphData::Vertex::Vertex(Vertex const& rhs, const allocator_type& alloc)
 
 } // namespace cc
 
+// NOLINTEND(misc-include-cleaner, bugprone-easily-swappable-parameters)
 // clang-format on

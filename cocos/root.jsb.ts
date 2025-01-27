@@ -118,6 +118,11 @@ rootProto.createModel = function (ModelCtor) {
     return model;
 };
 
+jsb.buildRenderPipeline = function () {
+    const director = cclegacy.director;
+    director.buildRenderPipeline();
+}
+
 rootProto.destroyModel = function (m) {
     const p = this._modelPools.get(m.constructor);
     if (p) {

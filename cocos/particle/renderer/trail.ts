@@ -32,7 +32,7 @@ import { Color, Mat4, Quat, toRadian, Vec3, Pool, warnID, cclegacy } from '../..
 import { scene } from '../../render-scene';
 import CurveRange from '../animator/curve-range';
 import GradientRange from '../animator/gradient-range';
-import { Space, TextureMode, TrailMode } from '../enum';
+import { ParticleSpace, ParticleTextureMode, ParticleTrailMode } from '../enum';
 import { Particle } from '../particle';
 import { TransformBit } from '../../scene-graph/node-enum';
 import type { ParticleSystem } from '../particle-system';
@@ -206,11 +206,11 @@ export default class TrailModule {
     /**
      * 设定粒子生成轨迹的方式。
      */
-    @type(TrailMode)
+    @type(ParticleTrailMode)
     @serializable
     @displayOrder(1)
     @tooltip('i18n:trailSegment.mode')
-    public mode = TrailMode.Particles;
+    public mode = ParticleTrailMode.Particles;
 
     /**
      * 轨迹存在的生命周期。
@@ -242,7 +242,7 @@ export default class TrailModule {
         this._minSquaredDistance = val * val;
     }
 
-    @type(Space)
+    @type(ParticleSpace)
     @displayOrder(6)
     @tooltip('i18n:trailSegment.space')
     public get space (): number {
@@ -266,11 +266,11 @@ export default class TrailModule {
     /**
      * 设定纹理填充方式。
      */
-    @type(TextureMode)
+    @type(ParticleTextureMode)
     @serializable
     @displayOrder(8)
     @tooltip('i18n:trailSegment.textureMode')
-    public textureMode = TextureMode.Stretch;
+    public textureMode = ParticleTextureMode.Stretch;
 
     @serializable
     @displayOrder(9)
@@ -316,8 +316,8 @@ export default class TrailModule {
     /**
      * 轨迹设定时的坐标系。
      */
-    @type(Space)
-    private _space = Space.World;
+    @type(ParticleSpace)
+    private _space = ParticleSpace.World;
 
     @serializable
     private _particleSystem: ParticleSystem | null = null;
@@ -347,7 +347,7 @@ export default class TrailModule {
     public get inited (): boolean {
         return this._inited;
     }
-    private _inited: boolean;
+    private declare _inited: boolean;
 
     constructor () {
         this._vertAttrs = [
@@ -357,13 +357,9 @@ export default class TrailModule {
             new Attribute(AttributeName.ATTR_TEX_COORD1, Format.RGB32F), // xyz:velocity
             new Attribute(AttributeName.ATTR_COLOR, Format.RGBA8, true),
         ];
-        this._vertSize = 0;
-        for (const a of this._vertAttrs) {
-            this._vertSize += FormatInfos[a.format].size;
-        }
+        this._vertSize = this._vertAttrs.reduce((size, attr) => size + FormatInfos[attr.format].size, 0);
 
         this._particleTrail = new Map<Particle, TrailSegment>();
-
         this._inited = false;
     }
 
@@ -458,7 +454,7 @@ export default class TrailModule {
     public updateMaterial (): void {
         if (this._particleSystem) {
             this._material = this._particleSystem.getMaterialInstance(1)
-                || (this._particleSystem.processor as any)._defaultTrailMat;
+                || this._particleSystem.processor.getDefaultTrailMaterial();
             if (this._trailModel) {
                 this._trailModel.setSubModelMaterial(0, this._material!);
             }
@@ -467,7 +463,7 @@ export default class TrailModule {
 
     public update (): void {
         this._trailLifetime = this.lifeTime.evaluate(this._particleSystem!.time, 1)!;
-        if (this.space === Space.World && this._particleSystem!.simulationSpace === Space.Local) {
+        if (this.space === ParticleSpace.World && this._particleSystem!.simulationSpace === ParticleSpace.Local) {
             this._needTransform = true;
             this._particleSystem!.node.getWorldMatrix(this._psTransform);
             this._particleSystem!.node.getWorldRotation(_temp_quat);
@@ -597,12 +593,16 @@ export default class TrailModule {
             if (trailNum === 1 || trailNum === 2) {
                 const lastSecondTrail = trailSeg.getElement(trailSeg.end - 1)!;
                 Vec3.subtract(lastSecondTrail.velocity, _temp_trailEle.position, lastSecondTrail.position);
-                this._vbF32![this.vbOffset - this._vertSize / 4 - 4] = lastSecondTrail.velocity.x;
-                this._vbF32![this.vbOffset - this._vertSize / 4 - 3] = lastSecondTrail.velocity.y;
-                this._vbF32![this.vbOffset - this._vertSize / 4 - 2] = lastSecondTrail.velocity.z;
-                this._vbF32![this.vbOffset - 4] = lastSecondTrail.velocity.x;
-                this._vbF32![this.vbOffset - 3] = lastSecondTrail.velocity.y;
-                this._vbF32![this.vbOffset - 2] = lastSecondTrail.velocity.z;
+                const vbF32 = this._vbF32!;
+                const vbOffset = this.vbOffset;
+                const vertSizeDiv4 = this._vertSize / 4;
+                const lastSecondTrailVelocity = lastSecondTrail.velocity;
+                vbF32[vbOffset - vertSizeDiv4 - 4] = lastSecondTrailVelocity.x;
+                vbF32[vbOffset - vertSizeDiv4 - 3] = lastSecondTrailVelocity.y;
+                vbF32[vbOffset - vertSizeDiv4 - 2] = lastSecondTrailVelocity.z;
+                vbF32[vbOffset - 4] = lastSecondTrailVelocity.x;
+                vbF32[vbOffset - 3] = lastSecondTrailVelocity.y;
+                vbF32[vbOffset - 2] = lastSecondTrailVelocity.z;
                 Vec3.subtract(_temp_trailEle.velocity, _temp_trailEle.position, lastSecondTrail.position);
                 this._checkDirectionReverse(_temp_trailEle, lastSecondTrail);
             } else if (trailNum > 2) {
@@ -674,37 +674,38 @@ export default class TrailModule {
     }
 
     private rebuild (): void {
+        const self = this;
         const device: Device = director.root!.device;
         const vertexBuffer = device.createBuffer(new BufferInfo(
             BufferUsageBit.VERTEX | BufferUsageBit.TRANSFER_DST,
             MemoryUsageBit.HOST | MemoryUsageBit.DEVICE,
-            this._vertSize * (this._trailNum + 1) * 2,
-            this._vertSize,
+            self._vertSize * (self._trailNum + 1) * 2,
+            self._vertSize,
         ));
-        const vBuffer: ArrayBuffer = new ArrayBuffer(this._vertSize * (this._trailNum + 1) * 2);
-        this._vbF32 = new Float32Array(vBuffer);
-        this._vbUint32 = new Uint32Array(vBuffer);
+        const vBuffer: ArrayBuffer = new ArrayBuffer(self._vertSize * (self._trailNum + 1) * 2);
+        self._vbF32 = new Float32Array(vBuffer);
+        self._vbUint32 = new Uint32Array(vBuffer);
         vertexBuffer.update(vBuffer);
 
         const indexBuffer = device.createBuffer(new BufferInfo(
             BufferUsageBit.INDEX | BufferUsageBit.TRANSFER_DST,
             MemoryUsageBit.HOST | MemoryUsageBit.DEVICE,
-            Math.max(1, this._trailNum) * 6 * Uint16Array.BYTES_PER_ELEMENT,
+            Math.max(1, self._trailNum) * 6 * Uint16Array.BYTES_PER_ELEMENT,
             Uint16Array.BYTES_PER_ELEMENT,
         ));
-        this._iBuffer = new Uint16Array(Math.max(1, this._trailNum) * 6);
-        indexBuffer.update(this._iBuffer);
+        self._iBuffer = new Uint16Array(Math.max(1, self._trailNum) * 6);
+        indexBuffer.update(self._iBuffer);
 
-        this._iaVertCount = (this._trailNum + 1) * 2;
-        this._iaIndexCount = this._trailNum * 6;
+        self._iaVertCount = (self._trailNum + 1) * 2;
+        self._iaIndexCount = self._trailNum * 6;
 
-        this._subMeshData = new RenderingSubMesh([vertexBuffer], this._vertAttrs, PrimitiveMode.TRIANGLE_LIST, indexBuffer);
+        self._subMeshData = new RenderingSubMesh([vertexBuffer], self._vertAttrs, PrimitiveMode.TRIANGLE_LIST, indexBuffer);
 
-        const trailModel = this._trailModel;
-        if (trailModel && this._material) {
-            trailModel.node = trailModel.transform = this._particleSystem!.node;
-            trailModel.visFlags = this._particleSystem!.visibility;
-            trailModel.initSubModel(0, this._subMeshData, this._material);
+        const trailModel = self._trailModel;
+        if (trailModel && self._material) {
+            trailModel.node = trailModel.transform = self._particleSystem!.node;
+            trailModel.visFlags = self._particleSystem!.visibility;
+            trailModel.initSubModel(0, self._subMeshData, self._material);
             trailModel.enabled = true;
         }
     }

@@ -28,6 +28,7 @@ import { B2Joint } from './joint-2d';
 import { FixedJoint2D } from '../../framework';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework/physics-types';
 
+/** @mangle */
 export class B2FixedJoint extends B2Joint implements IFixedJoint {
     setFrequency (v: number): void {
         if (this._b2joint) {

@@ -53,12 +53,23 @@ export class TTF extends TTFUtils implements IAssembler {
 
         const vData = renderData.chunk.vb;
 
-        vData[3] = vData[21] = vData[22] = vData[31] = 0;
-        vData[4] = vData[12] = vData[13] = vData[30] = 1;
+        const stride = renderData.floatStride;
+        const uvs = [
+            { u: 0, v: 1 },
+            { u: 1, v: 1 },
+            { u: 0, v: 0 },
+            { u: 1, v: 0 },
+        ];
+        let uvOffset = 3;
+        for (let i = 0, len = renderData.dataLength; i < len; ++i) {
+            vData[uvOffset] = uvs[i].u;
+            vData[uvOffset + 1] = uvs[i].v;
+            uvOffset += stride;
+        }
         let offset = 5;
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < renderData.dataLength; i++) {
             Color.toArray(vData, WHITE, offset);
-            offset += 9;
+            offset += stride;
         }
         renderData.chunk.setIndexBuffer(QUAD_INDICES);
         return renderData;
@@ -112,7 +123,7 @@ export class TTF extends TTFUtils implements IAssembler {
         if (!renderData) {
             return;
         }
-        const uiTrans = comp.node._uiProps.uiTransformComp!;
+        const uiTrans = comp.node._getUITransformComp()!;
         const width = uiTrans.width;
         const height = uiTrans.height;
         const appX = uiTrans.anchorX * width;
@@ -136,14 +147,14 @@ export class TTF extends TTFUtils implements IAssembler {
         }
         const vData = renderData.chunk.vb;
         const uv = comp.ttfSpriteFrame.uv;
-        vData[3] = uv[0];
-        vData[4] = uv[1];
-        vData[12] = uv[2];
-        vData[13] = uv[3];
-        vData[21] = uv[4];
-        vData[22] = uv[5];
-        vData[30] = uv[6];
-        vData[31] = uv[7];
+        const stride = renderData.floatStride;
+        let uvOffset = 3;
+        for (let i = 0; i < renderData.dataLength; ++i) {
+            const index = i * 2;
+            vData[uvOffset] = uv[index];
+            vData[uvOffset + 1] = uv[index + 1];
+            uvOffset += stride;
+        }
     }
 
     updateColor (comp: Label): void {
@@ -152,3 +163,4 @@ export class TTF extends TTFUtils implements IAssembler {
 }
 
 export const ttf = new TTF();
+

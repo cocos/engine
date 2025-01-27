@@ -55,8 +55,8 @@ export class SpriteAtlas extends Asset {
     @editable
     public spriteFrames: ISpriteFrameList = js.createMap();
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     /**
@@ -101,7 +101,7 @@ export class SpriteAtlas extends Asset {
         const frames: Array<SpriteFrame | null> = [];
         const spriteFrames = this.spriteFrames;
 
-        for (const key of Object.keys(spriteFrames)) {
+        for (const key in spriteFrames) {
             frames.push(spriteFrames[key]);
         }
 
@@ -114,7 +114,7 @@ export class SpriteAtlas extends Asset {
     public _serialize (ctxForExporting: any): any {
         if (EDITOR || TEST) {
             const frames: string[] = [];
-            for (const key of Object.keys(this.spriteFrames)) {
+            for (const key in this.spriteFrames) {
                 const spriteFrame = this.spriteFrames[key];
                 let id = spriteFrame ? spriteFrame._uuid : '';
                 if (id && ctxForExporting && ctxForExporting._compressUuid) {

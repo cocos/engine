@@ -71,6 +71,19 @@ import { BrowserType, OS } from '../../../pal/system-info/enum-type';
 import type { WebGL2StateCache } from './webgl2-state-cache';
 import { WebGLConstants } from '../gl-constants';
 
+function setFormatFeature (formatFeatures: FormatFeature[], indexArray: Format[], feature: FormatFeature): void {
+    for (let i = 0; i < indexArray.length; ++i) {
+        formatFeatures[indexArray[i]] = feature;
+    }
+}
+
+function setTextureExclusive (textureExclusive: boolean[], indexArray: Format[], isExclusive: boolean): void {
+    for (let i = 0; i < indexArray.length; ++i) {
+        textureExclusive[indexArray[i]] = isExclusive;
+    }
+}
+
+/** @mangle */
 export class WebGL2Device extends Device {
     constructor () {
         super();
@@ -137,8 +150,8 @@ export class WebGL2Device extends Device {
             samplerTextureOffsets[curSet] -= mapping.maxBlockCounts[curSet];
         }
         this._bindingMappings = {
-            blockOffsets: blockOffsets,
-            samplerTextureOffsets: samplerTextureOffsets,
+            blockOffsets,
+            samplerTextureOffsets,
             flexibleSet: mapping.setIndices[mapping.setIndices.length - 1],
         };
 
@@ -183,9 +196,9 @@ export class WebGL2Device extends Device {
         const extensions = gl.getSupportedExtensions();
         let extStr = '';
         if (extensions) {
-            for (const ext of extensions) {
+            extensions.forEach((ext) => {
                 extStr += `${ext} `;
-            }
+            });
         }
 
         const exts = getExtensions(gl);
@@ -288,31 +301,32 @@ export class WebGL2Device extends Device {
         let tempFeature: FormatFeature = FormatFeatureBit.RENDER_TARGET | FormatFeatureBit.SAMPLED_TEXTURE
             | FormatFeatureBit.STORAGE_TEXTURE | FormatFeatureBit.LINEAR_FILTER | FormatFeatureBit.VERTEX_ATTRIBUTE;
 
-        formatFeatures[Format.R8] = tempFeature;
-        formatFeatures[Format.RG8] = tempFeature;
-        formatFeatures[Format.RGB8] = tempFeature;
-        formatFeatures[Format.RGBA8] = tempFeature;
+        setFormatFeature(formatFeatures, [
+            Format.R8,
+            Format.RG8,
+            Format.RGB8,
+            Format.RGBA8,
+        ], tempFeature);
 
         tempFeature = FormatFeatureBit.RENDER_TARGET | FormatFeatureBit.SAMPLED_TEXTURE
             | FormatFeatureBit.STORAGE_TEXTURE | FormatFeatureBit.LINEAR_FILTER;
 
-        formatFeatures[Format.R8SN] = tempFeature;
-        formatFeatures[Format.RG8SN] = tempFeature;
-        formatFeatures[Format.RGB8SN] = tempFeature;
-        formatFeatures[Format.RGBA8SN] = tempFeature;
-        formatFeatures[Format.R5G6B5] = tempFeature;
-        formatFeatures[Format.RGBA4] = tempFeature;
-        formatFeatures[Format.RGB5A1] = tempFeature;
-        formatFeatures[Format.RGB10A2] = tempFeature;
-
-        formatFeatures[Format.SRGB8] = tempFeature;
-        formatFeatures[Format.SRGB8_A8] = tempFeature;
-
-        formatFeatures[Format.R11G11B10F] = tempFeature;
-        formatFeatures[Format.RGB9E5] = tempFeature;
-
-        formatFeatures[Format.DEPTH] = tempFeature;
-        formatFeatures[Format.DEPTH_STENCIL] = tempFeature;
+        setFormatFeature(formatFeatures, [
+            Format.R8SN,
+            Format.RG8SN,
+            Format.RGB8SN,
+            Format.RGBA8SN,
+            Format.R5G6B5,
+            Format.RGBA4,
+            Format.RGB5A1,
+            Format.RGB10A2,
+            Format.SRGB8,
+            Format.SRGB8_A8,
+            Format.R11G11B10F,
+            Format.RGB9E5,
+            Format.DEPTH,
+            Format.DEPTH_STENCIL,
+        ], tempFeature);
 
         formatFeatures[Format.RGB10A2UI] = FormatFeatureBit.RENDER_TARGET | FormatFeatureBit.STORAGE_TEXTURE
             | FormatFeatureBit.SAMPLED_TEXTURE | FormatFeatureBit.LINEAR_FILTER;
@@ -320,17 +334,21 @@ export class WebGL2Device extends Device {
         tempFeature = FormatFeatureBit.RENDER_TARGET | FormatFeatureBit.SAMPLED_TEXTURE
             | FormatFeatureBit.STORAGE_TEXTURE | FormatFeatureBit.VERTEX_ATTRIBUTE;
 
-        formatFeatures[Format.R16F] = tempFeature;
-        formatFeatures[Format.RG16F] = tempFeature;
-        formatFeatures[Format.RGB16F] = tempFeature;
-        formatFeatures[Format.RGBA16F] = tempFeature;
+        setFormatFeature(formatFeatures, [
+            Format.R16F,
+            Format.RG16F,
+            Format.RGB16F,
+            Format.RGBA16F,
+        ], tempFeature);
 
         tempFeature = FormatFeatureBit.STORAGE_TEXTURE | FormatFeatureBit.SAMPLED_TEXTURE | FormatFeatureBit.VERTEX_ATTRIBUTE;
 
-        formatFeatures[Format.R32F] = tempFeature;
-        formatFeatures[Format.RG32F] = tempFeature;
-        formatFeatures[Format.RGB32F] = tempFeature;
-        formatFeatures[Format.RGBA32F] = tempFeature;
+        setFormatFeature(formatFeatures, [
+            Format.R32F,
+            Format.RG32F,
+            Format.RGB32F,
+            Format.RGBA32F,
+        ], tempFeature);
 
         formatFeatures[Format.RGB10A2UI] = FormatFeatureBit.RENDER_TARGET | FormatFeatureBit.STORAGE_TEXTURE
             | FormatFeatureBit.SAMPLED_TEXTURE | FormatFeatureBit.LINEAR_FILTER;
@@ -338,84 +356,92 @@ export class WebGL2Device extends Device {
         tempFeature = FormatFeatureBit.RENDER_TARGET | FormatFeatureBit.STORAGE_TEXTURE
             | FormatFeatureBit.SAMPLED_TEXTURE | FormatFeatureBit.LINEAR_FILTER | FormatFeatureBit.VERTEX_ATTRIBUTE;
 
-        formatFeatures[Format.R8I] = tempFeature;
-        formatFeatures[Format.R8UI] = tempFeature;
-        formatFeatures[Format.R16I] = tempFeature;
-        formatFeatures[Format.R16UI] = tempFeature;
-        formatFeatures[Format.R32I] = tempFeature;
-        formatFeatures[Format.R32UI] = tempFeature;
+        setFormatFeature(formatFeatures, [
+            Format.R8I,
+            Format.R8UI,
+            Format.R16I,
+            Format.R16UI,
+            Format.R32I,
+            Format.R32UI,
 
-        formatFeatures[Format.RG8I] = tempFeature;
-        formatFeatures[Format.RG8UI] = tempFeature;
-        formatFeatures[Format.RG16I] = tempFeature;
-        formatFeatures[Format.RG16UI] = tempFeature;
-        formatFeatures[Format.RG32I] = tempFeature;
-        formatFeatures[Format.RG32UI] = tempFeature;
+            Format.RG8I,
+            Format.RG8UI,
+            Format.RG16I,
+            Format.RG16UI,
+            Format.RG32I,
+            Format.RG32UI,
 
-        formatFeatures[Format.RGB8I] = tempFeature;
-        formatFeatures[Format.RGB8UI] = tempFeature;
-        formatFeatures[Format.RGB16I] = tempFeature;
-        formatFeatures[Format.RGB16UI] = tempFeature;
-        formatFeatures[Format.RGB32I] = tempFeature;
-        formatFeatures[Format.RGB32UI] = tempFeature;
+            Format.RGB8I,
+            Format.RGB8UI,
+            Format.RGB16I,
+            Format.RGB16UI,
+            Format.RGB32I,
+            Format.RGB32UI,
 
-        formatFeatures[Format.RGBA8I] = tempFeature;
-        formatFeatures[Format.RGBA8UI] = tempFeature;
-        formatFeatures[Format.RGBA16I] = tempFeature;
-        formatFeatures[Format.RGBA16UI] = tempFeature;
-        formatFeatures[Format.RGBA32I] = tempFeature;
-        formatFeatures[Format.RGBA32UI] = tempFeature;
+            Format.RGBA8I,
+            Format.RGBA8UI,
+            Format.RGBA16I,
+            Format.RGBA16UI,
+            Format.RGBA32I,
+            Format.RGBA32UI,
+        ], tempFeature);
 
-        textureExclusive[Format.R8] = false;
-        textureExclusive[Format.RG8] = false;
-        textureExclusive[Format.RGB8] = false;
-        textureExclusive[Format.R5G6B5] = false;
-        textureExclusive[Format.RGBA4] = false;
+        setTextureExclusive(textureExclusive, [
+            Format.R8,
+            Format.RG8,
+            Format.RGB8,
+            Format.R5G6B5,
+            Format.RGBA4,
 
-        textureExclusive[Format.RGB5A1] = false;
-        textureExclusive[Format.RGBA8] = false;
-        textureExclusive[Format.RGB10A2] = false;
-        textureExclusive[Format.RGB10A2UI] = false;
-        textureExclusive[Format.SRGB8_A8] = false;
+            Format.RGB5A1,
+            Format.RGBA8,
+            Format.RGB10A2,
+            Format.RGB10A2UI,
+            Format.SRGB8_A8,
 
-        textureExclusive[Format.R8I] = false;
-        textureExclusive[Format.R8UI] = false;
-        textureExclusive[Format.R16I] = false;
-        textureExclusive[Format.R16UI] = false;
-        textureExclusive[Format.R32I] = false;
-        textureExclusive[Format.R32UI] = false;
+            Format.R8I,
+            Format.R8UI,
+            Format.R16I,
+            Format.R16UI,
+            Format.R32I,
+            Format.R32UI,
 
-        textureExclusive[Format.RG8I] = false;
-        textureExclusive[Format.RG8UI] = false;
-        textureExclusive[Format.RG16I] = false;
-        textureExclusive[Format.RG16UI] = false;
-        textureExclusive[Format.RG32I] = false;
-        textureExclusive[Format.RG32UI] = false;
+            Format.RG8I,
+            Format.RG8UI,
+            Format.RG16I,
+            Format.RG16UI,
+            Format.RG32I,
+            Format.RG32UI,
 
-        textureExclusive[Format.RGBA8I] = false;
-        textureExclusive[Format.RGBA8UI] = false;
-        textureExclusive[Format.RGBA16I] = false;
-        textureExclusive[Format.RGBA16UI] = false;
-        textureExclusive[Format.RGBA32I] = false;
-        textureExclusive[Format.RGBA32UI] = false;
+            Format.RGBA8I,
+            Format.RGBA8UI,
+            Format.RGBA16I,
+            Format.RGBA16UI,
+            Format.RGBA32I,
+            Format.RGBA32UI,
 
-        textureExclusive[Format.DEPTH] = false;
-        textureExclusive[Format.DEPTH_STENCIL] = false;
+            Format.DEPTH,
+            Format.DEPTH_STENCIL,
+        ], false);
 
         if (exts.EXT_color_buffer_float) {
             formatFeatures[Format.R32F] |= FormatFeatureBit.RENDER_TARGET;
             formatFeatures[Format.RG32F] |= FormatFeatureBit.RENDER_TARGET;
             formatFeatures[Format.RGBA32F] |= FormatFeatureBit.RENDER_TARGET;
 
-            textureExclusive[Format.R32F] = false;
-            textureExclusive[Format.RG32F] = false;
-            textureExclusive[Format.RGBA32F] = false;
+            setTextureExclusive(textureExclusive, [
+                Format.R32F,
+                Format.RG32F,
+                Format.RGBA32F,
+            ], false);
         }
 
         if (exts.EXT_color_buffer_half_float) {
-            textureExclusive[Format.R16F] = false;
-            textureExclusive[Format.RG16F] = false;
-            textureExclusive[Format.RGBA16F] = false;
+            setTextureExclusive(textureExclusive, [
+                Format.R16F,
+                Format.RG16F,
+                Format.RGBA16F,
+            ], false);
         }
 
         if (exts.OES_texture_float_linear) {
@@ -439,62 +465,70 @@ export class WebGL2Device extends Device {
         }
 
         if (exts.WEBGL_compressed_texture_etc) {
-            formatFeatures[Format.ETC2_RGB8] = compressedFeature;
-            formatFeatures[Format.ETC2_RGBA8] = compressedFeature;
-            formatFeatures[Format.ETC2_SRGB8] = compressedFeature;
-            formatFeatures[Format.ETC2_SRGB8_A8] = compressedFeature;
-            formatFeatures[Format.ETC2_RGB8_A1] = compressedFeature;
-            formatFeatures[Format.ETC2_SRGB8_A1] = compressedFeature;
+            setFormatFeature(formatFeatures, [
+                Format.ETC2_RGB8,
+                Format.ETC2_RGBA8,
+                Format.ETC2_SRGB8,
+                Format.ETC2_SRGB8_A8,
+                Format.ETC2_RGB8_A1,
+                Format.ETC2_SRGB8_A1,
+            ], compressedFeature);
         }
 
         if (exts.WEBGL_compressed_texture_s3tc) {
-            formatFeatures[Format.BC1] = compressedFeature;
-            formatFeatures[Format.BC1_ALPHA] = compressedFeature;
-            formatFeatures[Format.BC1_SRGB] = compressedFeature;
-            formatFeatures[Format.BC1_SRGB_ALPHA] = compressedFeature;
-            formatFeatures[Format.BC2] = compressedFeature;
-            formatFeatures[Format.BC2_SRGB] = compressedFeature;
-            formatFeatures[Format.BC3] = compressedFeature;
-            formatFeatures[Format.BC3_SRGB] = compressedFeature;
+            setFormatFeature(formatFeatures, [
+                Format.BC1,
+                Format.BC1_ALPHA,
+                Format.BC1_SRGB,
+                Format.BC1_SRGB_ALPHA,
+                Format.BC2,
+                Format.BC2_SRGB,
+                Format.BC3,
+                Format.BC3_SRGB,
+            ], compressedFeature);
         }
 
         if (exts.WEBGL_compressed_texture_pvrtc) {
-            formatFeatures[Format.PVRTC_RGB2] = compressedFeature;
-            formatFeatures[Format.PVRTC_RGBA2] = compressedFeature;
-            formatFeatures[Format.PVRTC_RGB4] = compressedFeature;
-            formatFeatures[Format.PVRTC_RGBA4] = compressedFeature;
+            setFormatFeature(formatFeatures, [
+                Format.PVRTC_RGB2,
+                Format.PVRTC_RGBA2,
+                Format.PVRTC_RGB4,
+                Format.PVRTC_RGBA4,
+            ], compressedFeature);
         }
 
         if (exts.WEBGL_compressed_texture_astc) {
-            formatFeatures[Format.ASTC_RGBA_4X4] = compressedFeature;
-            formatFeatures[Format.ASTC_RGBA_5X4] = compressedFeature;
-            formatFeatures[Format.ASTC_RGBA_5X5] = compressedFeature;
-            formatFeatures[Format.ASTC_RGBA_6X5] = compressedFeature;
-            formatFeatures[Format.ASTC_RGBA_6X6] = compressedFeature;
-            formatFeatures[Format.ASTC_RGBA_8X5] = compressedFeature;
-            formatFeatures[Format.ASTC_RGBA_8X6] = compressedFeature;
-            formatFeatures[Format.ASTC_RGBA_8X8] = compressedFeature;
-            formatFeatures[Format.ASTC_RGBA_10X5] = compressedFeature;
-            formatFeatures[Format.ASTC_RGBA_10X6] = compressedFeature;
-            formatFeatures[Format.ASTC_RGBA_10X8] = compressedFeature;
-            formatFeatures[Format.ASTC_RGBA_10X10] = compressedFeature;
-            formatFeatures[Format.ASTC_RGBA_12X10] = compressedFeature;
-            formatFeatures[Format.ASTC_RGBA_12X12] = compressedFeature;
+            setFormatFeature(formatFeatures, [
+                Format.ASTC_RGBA_4X4,
+                Format.ASTC_RGBA_5X4,
+                Format.ASTC_RGBA_5X5,
+                Format.ASTC_RGBA_6X5,
+                Format.ASTC_RGBA_6X6,
+                Format.ASTC_RGBA_8X5,
+                Format.ASTC_RGBA_8X6,
+                Format.ASTC_RGBA_8X8,
+                Format.ASTC_RGBA_10X5,
+                Format.ASTC_RGBA_10X6,
+                Format.ASTC_RGBA_10X8,
+                Format.ASTC_RGBA_10X10,
+                Format.ASTC_RGBA_12X10,
+                Format.ASTC_RGBA_12X12,
 
-            formatFeatures[Format.ASTC_SRGBA_4X4] = compressedFeature;
-            formatFeatures[Format.ASTC_SRGBA_5X4] = compressedFeature;
-            formatFeatures[Format.ASTC_SRGBA_5X5] = compressedFeature;
-            formatFeatures[Format.ASTC_SRGBA_6X5] = compressedFeature;
-            formatFeatures[Format.ASTC_SRGBA_6X6] = compressedFeature;
-            formatFeatures[Format.ASTC_SRGBA_8X5] = compressedFeature;
-            formatFeatures[Format.ASTC_SRGBA_8X6] = compressedFeature;
-            formatFeatures[Format.ASTC_SRGBA_8X8] = compressedFeature;
-            formatFeatures[Format.ASTC_SRGBA_10X5] = compressedFeature;
-            formatFeatures[Format.ASTC_SRGBA_10X6] = compressedFeature;
-            formatFeatures[Format.ASTC_SRGBA_10X8] = compressedFeature;
-            formatFeatures[Format.ASTC_SRGBA_10X10] = compressedFeature;
-            formatFeatures[Format.ASTC_SRGBA_12X10] = compressedFeature;
-            formatFeatures[Format.ASTC_SRGBA_12X12] = compressedFeature;
+                Format.ASTC_SRGBA_4X4,
+                Format.ASTC_SRGBA_5X4,
+                Format.ASTC_SRGBA_5X5,
+                Format.ASTC_SRGBA_6X5,
+                Format.ASTC_SRGBA_6X6,
+                Format.ASTC_SRGBA_8X5,
+                Format.ASTC_SRGBA_8X6,
+                Format.ASTC_SRGBA_8X8,
+                Format.ASTC_SRGBA_10X5,
+                Format.ASTC_SRGBA_10X6,
+                Format.ASTC_SRGBA_10X8,
+                Format.ASTC_SRGBA_10X10,
+                Format.ASTC_SRGBA_12X10,
+                Format.ASTC_SRGBA_12X12,
+            ], compressedFeature);
         }
     }
 

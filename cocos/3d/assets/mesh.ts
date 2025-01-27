@@ -380,8 +380,8 @@ export class Mesh extends Asset {
 
     private _jointBufferIndices: number[] | null = null;
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     /**
@@ -455,18 +455,19 @@ export class Mesh extends Asset {
                     subVBs.push(vertexBuffers[idx]);
                 }
 
-                const attributes: Attribute[] = [];
+                const allAttributes: Attribute[] = [];
                 for (let k = 0; k < primitive.vertexBundelIndices.length; k++) {
                     const idx = primitive.vertexBundelIndices[k];
-                    const vertexBundle = this._struct.vertexBundles[idx];
-                    for (const attr of vertexBundle.attributes) {
+                    const attributes = this._struct.vertexBundles[idx].attributes;
+                    for (let j = 0; j < attributes.length; j++) {
+                        const attr = attributes[j];
                         const attribute = new Attribute();
                         attribute.copy(attr);
-                        attributes.push(attribute);
+                        allAttributes.push(attribute);
                     }
                 }
 
-                const subMesh = new RenderingSubMesh(subVBs, attributes, primitive.primitiveMode, indexBuffer);
+                const subMesh = new RenderingSubMesh(subVBs, allAttributes, primitive.primitiveMode, indexBuffer);
                 subMesh.drawInfo = new DrawInfo();
                 subMesh.mesh = this;
                 subMesh.subMeshIdx = i;
@@ -657,13 +658,13 @@ export class Mesh extends Asset {
 
             const subMin = new Vec3();
             const subMax = new Vec3();
-            for (const bound of dynamic.bounds) {
+            dynamic.bounds.forEach((bound) => {
                 if (bound) {
                     bound.getBoundary(subMin, subMax);
                     Vec3.min(minPos, subMin, minPos);
                     Vec3.max(maxPos, subMax, maxPos);
                 }
-            }
+            });
 
             this._struct.minPosition = new Vec3(minPos.x, minPos.y, minPos.z);
             this._struct.maxPosition = new Vec3(maxPos.x, maxPos.y, maxPos.z);
@@ -1310,8 +1311,9 @@ export class Mesh extends Asset {
         if (primitiveIndex >= this._struct.primitives.length) {
             return;
         }
-        const primitive = this._struct.primitives[primitiveIndex];
-        for (const vertexBundleIndex of primitive.vertexBundelIndices) {
+        const vertexBundelIndices = this._struct.primitives[primitiveIndex].vertexBundelIndices;
+        for (let i = 0; i < vertexBundelIndices.length; i++) {
+            const vertexBundleIndex = vertexBundelIndices[i];
             const vertexBundle = this._struct.vertexBundles[vertexBundleIndex];
             const iAttribute = vertexBundle.attributes.findIndex((a) => a.name === (attributeName as string));
             if (iAttribute < 0) {
@@ -1528,7 +1530,7 @@ export function decodeMesh (mesh: Mesh.ICreateInfo): Mesh.ICreateInfo {
         const bound = view.count * view.stride;
         const buffer = new Uint8Array(bound);
         const vertex = new Uint8Array(mesh.data.buffer, view.offset, view.length);
-        const res = MeshoptDecoder.decodeVertexBuffer(buffer, view.count, view.stride, vertex) as number;
+        const res = MeshoptDecoder.decodeVertexBuffer(buffer, view.count, view.stride, vertex);
         res_checker(res);
 
         bufferBlob.setNextAlignment(view.stride);
@@ -1551,7 +1553,7 @@ export function decodeMesh (mesh: Mesh.ICreateInfo): Mesh.ICreateInfo {
         const bound = view.count * view.stride;
         const buffer = new Uint8Array(bound);
         const index = new Uint8Array(mesh.data.buffer, view.offset, view.length);
-        const res = MeshoptDecoder.decodeIndexBuffer(buffer, view.count, view.stride, index) as number;
+        const res = MeshoptDecoder.decodeIndexBuffer(buffer, view.count, view.stride, index);
         res_checker(res);
 
         bufferBlob.setNextAlignment(view.stride);

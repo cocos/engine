@@ -26,7 +26,7 @@ import { ccclass, type, serializable, editable } from 'cc.decorator';
 import { EDITOR, EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
 import { Color, Enum, Gradient, AlphaKey, ColorKey } from '../../core';
 import { Texture2D } from '../../asset/assets';
-import { PixelFormat, Filter, WrapMode } from '../../asset/assets/asset-enum';
+import { PixelFormat, TextureFilter, WrapMode } from '../../asset/assets/asset-enum';
 
 const SerializableTable = EDITOR && [
     ['_mode', 'color'],
@@ -247,7 +247,7 @@ export function packGradientRange (
         }
         tex = new Texture2D();
         tex.create(samples, height, PixelFormat.RGBA8888);
-        tex.setFilters(Filter.LINEAR, Filter.LINEAR);
+        tex.setFilters(TextureFilter.LINEAR, TextureFilter.LINEAR);
         tex.setWrapMode(WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE);
     }
     tex.uploadData(data);

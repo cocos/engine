@@ -35,6 +35,21 @@ namespace cc {
 
 namespace render {
 
+void save(OutputArchive& ar, const Descriptor& v);
+void load(InputArchive& ar, Descriptor& v);
+
+void save(OutputArchive& ar, const DescriptorBlock& v);
+void load(InputArchive& ar, DescriptorBlock& v);
+
+void save(OutputArchive& ar, const DescriptorBlockFlattened& v);
+void load(InputArchive& ar, DescriptorBlockFlattened& v);
+
+void save(OutputArchive& ar, const DescriptorBlockIndex& v);
+void load(InputArchive& ar, DescriptorBlockIndex& v);
+
+void save(OutputArchive& ar, const DescriptorGroupBlockIndex& v);
+void load(InputArchive& ar, DescriptorGroupBlockIndex& v);
+
 void save(OutputArchive& ar, const DescriptorDB& v);
 void load(InputArchive& ar, DescriptorDB& v);
 

@@ -29,6 +29,7 @@ import { B2Joint } from './joint-2d';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework/physics-types';
 import { toRadian } from '../../../core';
 
+/** @mangle */
 export class B2WheelJoint extends B2Joint implements IWheelJoint {
     setFrequency (v: number): void {
         if (this._b2joint) {

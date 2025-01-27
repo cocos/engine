@@ -10,17 +10,20 @@ module.exports = {
         cloneToDirectoryIllegal: '保存路径请限制在当前项目 /assets 路径内',
         preview: {
             header: '预览',
+            resetCameraView: '复位摄像机视图',
         },
         spine: {
             skin: '皮肤',
             animation: '动画',
             loop: '循环',
             timeScale: '速率',
-            premultipliedAlpha: '启用贴图预乘',
-            useTint: '启用染色效果',
-            debugSlots: '调试槽',
-            debugBones: '调试骨骼',
-            debugMesh: '调试网格',
+            enable: '启用',
+            premultipliedAlpha: '贴图预乘',
+            useTint: '染色效果',
+            debug: '调试',
+            debugSlots: '槽',
+            debugBones: '骨骼',
+            debugMesh: '网格',
         },
     },
 
@@ -492,6 +495,10 @@ module.exports = {
             assetMessage: '${assetName} 修改的数据尚未保存，是否保存修改？',
             save: '保存',
             abort: '丢弃',
+        },
+        spine_data: {
+            atlas: '图集',
+            atlas_warn: '设置图集失败，需要后缀为 .atlas 的文本文件',
         },
     },
 

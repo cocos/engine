@@ -175,7 +175,7 @@ export class GooglePlayPackTool extends NativePackTool {
             if (options.androidInstant) {
                 buildMode = `bundle${outputMode}`;
             } else {
-                buildMode = `${this.params.projectName}:bundle${outputMode}`;
+                buildMode = `${this.projectNameASCII()}:bundle${outputMode}`;
             }
             await cchelper.runCmd(gradle, [buildMode], false, projDir);
         }
@@ -504,7 +504,7 @@ export class GooglePlayPackTool extends NativePackTool {
         }
 
         if (options.appBundle) {
-            apkName = `${this.params.projectName}-${suffix}.aab`;
+            apkName = `${this.projectNameASCII()}-${suffix}.aab`;
             apkPath = ps.join(this.outputsDir(), `bundle/${suffix}/${apkName}`);
             if (!fs.existsSync(apkPath)) {
                 throw new Error(`instant apk not found at ${apkPath}`);

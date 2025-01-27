@@ -26,7 +26,7 @@ import { ccclass } from 'cc.decorator';
 import { DEV } from 'internal:constants';
 import { TextureFlagBit, TextureUsageBit, API, Texture, TextureInfo, TextureViewInfo, Device, BufferTextureCopy } from '../../gfx';
 import { assertID, error, js, macro, cclegacy } from '../../core';
-import { Filter } from './asset-enum';
+import { TextureFilter } from './asset-enum';
 import { ImageAsset } from './image-asset';
 import { TextureBase } from './texture-base';
 import dependUtil from '../asset-manager/depend-util';
@@ -81,8 +81,8 @@ export class SimpleTexture extends TextureBase {
      */
     protected _maxLevel = 1000;
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     /**
@@ -307,7 +307,7 @@ export class SimpleTexture extends TextureBase {
     protected _createTexture (device: Device): void {
         if (this._width === 0 || this._height === 0) { return; }
         let flags = TextureFlagBit.NONE;
-        if (this._mipFilter !== Filter.NONE && canGenerateMipmap(device, this._width, this._height)) {
+        if (this._mipFilter !== TextureFilter.NONE && canGenerateMipmap(device, this._width, this._height)) {
             this._mipmapLevel = getMipLevel(this._width, this._height);
             if (!this.isUsingOfflineMipmaps() && !this.isCompressed) {
                 flags = TextureFlagBit.GEN_MIPMAP;

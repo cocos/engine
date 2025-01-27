@@ -22,12 +22,12 @@
  THE SOFTWARE.
 */
 import { EDITOR_NOT_IN_PREVIEW, JSB } from 'internal:constants';
-import { ccclass, executeInEditMode, help, menu, serializable, type, displayName, override, displayOrder, editable, tooltip } from 'cc.decorator';
+import { ccclass, executeInEditMode, help, menu, serializable, type, override, displayOrder, editable, visible } from 'cc.decorator';
 import { Material, Texture2D } from '../asset/assets';
 import { error, logID, warn } from '../core/platform/debug';
 import { Enum, EnumType, ccenum } from '../core/value-types/enum';
 import { Node, NodeEventType } from '../scene-graph';
-import { CCObject, Color, RecyclePool, js } from '../core';
+import { CCObjectFlags, Color, RecyclePool, js } from '../core';
 import { SkeletonData } from './skeleton-data';
 import { Graphics, RenderData, UIRenderer } from '../2d';
 import { Batcher2D } from '../2d/renderer/batcher-2d';
@@ -370,6 +370,7 @@ export class Skeleton extends UIRenderer {
     /**
      * @engineInternal
      */
+    @visible(true)
     @type(DefaultSkinsEnum)
     get _defaultSkinIndex (): number {
         if (this.skeletonData) {
@@ -419,6 +420,7 @@ export class Skeleton extends UIRenderer {
     /**
      * @engineInternal
      */
+    @visible(true)
     @type(SpineDefaultAnimsEnum)
     get _animationIndex (): number {
         const animationName = EDITOR_NOT_IN_PREVIEW ? this.defaultAnimation : this.animation;
@@ -495,6 +497,7 @@ export class Skeleton extends UIRenderer {
      * @en Whether play animations in loop mode.
      * @zh 是否循环播放当前骨骼动画。
      */
+    @visible(true)
     @serializable
     public loop = true;
 
@@ -770,8 +773,12 @@ export class Skeleton extends UIRenderer {
         this._textures = skeletonData.textures;
 
         this._refreshInspector();
-        if (this.defaultAnimation) this.animation = this.defaultAnimation.toString();
+        /* The animation must be configured after the skin because the animation depends on the skin.
+           If the animation is set before the skin,
+           it will cause rendering issues when a prefab with Spine assets is added to the scene node tree.
+        */
         if (this.defaultSkin && this.defaultSkin !== '') this.setSkin(this.defaultSkin);
+        if (this.defaultAnimation) this.animation = this.defaultAnimation.toString();
         this._updateUseTint();
         this._indexBoneSockets();
         this._updateSocketBindings();
@@ -1608,7 +1615,7 @@ export class Skeleton extends UIRenderer {
             if (!this._debugRenderer) {
                 const debugDrawNode = new Node('DEBUG_DRAW_NODE');
                 debugDrawNode.layer = this.node.layer;
-                debugDrawNode.hideFlags |= CCObject.Flags.DontSave | CCObject.Flags.HideInHierarchy;
+                debugDrawNode.hideFlags |= CCObjectFlags.DontSave | CCObjectFlags.HideInHierarchy;
                 const debugDraw = debugDrawNode.addComponent(Graphics);
                 debugDraw.lineWidth = 5;
                 debugDraw.strokeColor = new Color(255, 0, 0, 255);
@@ -1635,7 +1642,7 @@ export class Skeleton extends UIRenderer {
     }
 
     private _updateUITransform (): void {
-        const uiTrans = this.node._uiProps.uiTransformComp!;
+        const uiTrans = this.node._getUITransformComp()!;
         const skeletonData = this._runtimeData;
         if (!skeletonData) {
             uiTrans.setContentSize(100, 100);
@@ -1656,19 +1663,25 @@ export class Skeleton extends UIRenderer {
      * @engineInternal
      */
     public _updateColor (): void {
-        const a = this.node._uiProps.opacity;
-        // eslint-disable-next-line max-len
-        if (this._tempColor.r === this._color.r && this._tempColor.g === this._color.g && this._tempColor.b === this._color.b && this._tempColor.a === a) {
+        const self = this;
+        const uiProps = self.node._uiProps;
+        const tempColor = self._tempColor;
+        const color = self._color;
+        const parentOpacity = self.node.parent ? self.node.parent._uiProps.opacity : 1.0;
+        //Calculate the final opacity here, because the first frame affected by parent's opacity
+        const a = uiProps.localOpacity * parentOpacity * color.a / 255;
+
+        if (tempColor.r === color.r && tempColor.g === color.g && tempColor.b === color.b && tempColor.a === a) {
             return;
         }
-        this.node._uiProps.colorDirty = true;
-        this._tempColor.r = this._color.r;
-        this._tempColor.g = this._color.g;
-        this._tempColor.b = this._color.b;
-        this._tempColor.a = a;
-        const r = this._color.r / 255.0;
-        const g = this._color.g / 255.0;
-        const b = this._color.b / 255.0;
+        uiProps.colorDirty = true;
+        tempColor.r = color.r;
+        tempColor.g = color.g;
+        tempColor.b = color.b;
+        tempColor.a = a;
+        const r = color.r / 255.0;
+        const g = color.g / 255.0;
+        const b = color.b / 255.0;
         this._instance!.setColor(r, g, b, a);
     }
 

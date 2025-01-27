@@ -122,37 +122,38 @@ export class GamepadInputDevice {
     }
 
     private _initInputSource (): void {
-        this._buttonNorth = new InputSourceButton();
-        this._buttonNorth.getValue = (): number => 0;
-        this._buttonEast = new InputSourceButton();
-        this._buttonEast.getValue = (): number => 0;
-        this._buttonWest = new InputSourceButton();
-        this._buttonWest.getValue = (): number => 0;
-        this._buttonSouth = new InputSourceButton();
-        this._buttonSouth.getValue = (): number => 0;
+        const self = this;
+        self._buttonNorth = new InputSourceButton();
+        self._buttonNorth.getValue = (): number => 0;
+        self._buttonEast = new InputSourceButton();
+        self._buttonEast.getValue = (): number => 0;
+        self._buttonWest = new InputSourceButton();
+        self._buttonWest.getValue = (): number => 0;
+        self._buttonSouth = new InputSourceButton();
+        self._buttonSouth.getValue = (): number => 0;
 
-        this._buttonL1 = new InputSourceButton();
-        this._buttonL1.getValue = (): number => 0;
-        this._buttonL2 = new InputSourceButton();
-        this._buttonL2.getValue = (): number => 0;
-        this._buttonL3 = new InputSourceButton();
-        this._buttonL3.getValue = (): number => 0;
-        this._buttonR1 = new InputSourceButton();
-        this._buttonR1.getValue = (): number => 0;
-        this._buttonR2 = new InputSourceButton();
-        this._buttonR2.getValue = (): number => 0;
-        this._buttonR3 = new InputSourceButton();
-        this._buttonR3.getValue = (): number => 0;
+        self._buttonL1 = new InputSourceButton();
+        self._buttonL1.getValue = (): number => 0;
+        self._buttonL2 = new InputSourceButton();
+        self._buttonL2.getValue = (): number => 0;
+        self._buttonL3 = new InputSourceButton();
+        self._buttonL3.getValue = (): number => 0;
+        self._buttonR1 = new InputSourceButton();
+        self._buttonR1.getValue = (): number => 0;
+        self._buttonR2 = new InputSourceButton();
+        self._buttonR2.getValue = (): number => 0;
+        self._buttonR3 = new InputSourceButton();
+        self._buttonR3.getValue = (): number => 0;
 
-        // this._buttonTouchPad = new InputSourceButton();
-        // this._buttonTouchPad.getValue = () => 0;
-        // this._buttonHome = new InputSourceButton();
-        // this._buttonHome.getValue = () => 0;
+        // self._buttonTouchPad = new InputSourceButton();
+        // self._buttonTouchPad.getValue = () => 0;
+        // self._buttonHome = new InputSourceButton();
+        // self._buttonHome.getValue = () => 0;
 
-        this._buttonShare = new InputSourceButton();
-        this._buttonShare.getValue = (): number => 0;
-        this._buttonOptions = new InputSourceButton();
-        this._buttonOptions.getValue = (): number => 0;
+        self._buttonShare = new InputSourceButton();
+        self._buttonShare.getValue = (): number => 0;
+        self._buttonOptions = new InputSourceButton();
+        self._buttonOptions.getValue = (): number => 0;
 
         const dpadUp = new InputSourceButton();
         dpadUp.getValue = (): number => 0;
@@ -162,7 +163,7 @@ export class GamepadInputDevice {
         dpadLeft.getValue = (): number => 0;
         const dpadRight = new InputSourceButton();
         dpadRight.getValue = (): number => 0;
-        this._dpad = new InputSourceDpad({ up: dpadUp, down: dpadDown, left: dpadLeft, right: dpadRight });
+        self._dpad = new InputSourceDpad({ up: dpadUp, down: dpadDown, left: dpadLeft, right: dpadRight });
 
         const leftStickUp = new InputSourceButton();
         leftStickUp.getValue = (): number => 0;
@@ -172,7 +173,7 @@ export class GamepadInputDevice {
         leftStickLeft.getValue = (): number => 0;
         const leftStickRight = new InputSourceButton();
         leftStickRight.getValue = (): number => 0;
-        this._leftStick = new InputSourceStick({ up: leftStickUp, down: leftStickDown, left: leftStickLeft, right: leftStickRight });
+        self._leftStick = new InputSourceStick({ up: leftStickUp, down: leftStickDown, left: leftStickLeft, right: leftStickRight });
 
         const rightStickUp = new InputSourceButton();
         rightStickUp.getValue = (): number => 0;
@@ -182,34 +183,34 @@ export class GamepadInputDevice {
         rightStickLeft.getValue = (): number => 0;
         const rightStickRight = new InputSourceButton();
         rightStickRight.getValue = (): number => 0;
-        this._rightStick = new InputSourceStick({ up: rightStickUp, down: rightStickDown, left: rightStickLeft, right: rightStickRight });
+        self._rightStick = new InputSourceStick({ up: rightStickUp, down: rightStickDown, left: rightStickLeft, right: rightStickRight });
 
-        this._buttonStart = new InputSourceButton();
-        this._buttonStart.getValue = (): number => 0;
+        self._buttonStart = new InputSourceButton();
+        self._buttonStart.getValue = (): number => 0;
 
-        this._gripLeft = new InputSourceButton();
-        this._gripLeft.getValue = (): number => 0;
-        this._gripRight = new InputSourceButton();
-        this._gripRight.getValue = (): number => 0;
+        self._gripLeft = new InputSourceButton();
+        self._gripLeft.getValue = (): number => 0;
+        self._gripRight = new InputSourceButton();
+        self._gripRight.getValue = (): number => 0;
 
-        this._handLeftPosition = new InputSourcePosition();
-        this._handLeftPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
-        this._handLeftOrientation = new InputSourceOrientation();
-        this._handLeftOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
+        self._handLeftPosition = new InputSourcePosition();
+        self._handLeftPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
+        self._handLeftOrientation = new InputSourceOrientation();
+        self._handLeftOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
 
-        this._handRightPosition = new InputSourcePosition();
-        this._handRightPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
-        this._handRightOrientation = new InputSourceOrientation();
-        this._handRightOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
+        self._handRightPosition = new InputSourcePosition();
+        self._handRightPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
+        self._handRightOrientation = new InputSourceOrientation();
+        self._handRightOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
 
-        this._aimLeftPosition = new InputSourcePosition();
-        this._aimLeftPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
-        this._aimLeftOrientation = new InputSourceOrientation();
-        this._aimLeftOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
+        self._aimLeftPosition = new InputSourcePosition();
+        self._aimLeftPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
+        self._aimLeftOrientation = new InputSourceOrientation();
+        self._aimLeftOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
 
-        this._aimRightPosition = new InputSourcePosition();
-        this._aimRightPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
-        this._aimRightOrientation = new InputSourceOrientation();
-        this._aimRightOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
+        self._aimRightPosition = new InputSourcePosition();
+        self._aimRightPosition.getValue = (): Readonly<Vec3> => Vec3.ZERO;
+        self._aimRightOrientation = new InputSourceOrientation();
+        self._aimRightOrientation.getValue = (): Readonly<Quat> => Quat.IDENTITY;
     }
 }

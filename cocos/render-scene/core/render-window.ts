@@ -276,9 +276,9 @@ export class RenderWindow {
             ));
         }
 
-        for (const camera of this._cameras) {
+        this._cameras.forEach((camera) => {
             camera.resize(width, height);
-        }
+        });
 
         // This resize should only be handled by the render pipeline
         this._isResized = true;

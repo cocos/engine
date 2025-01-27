@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner, bugprone-easily-swappable-parameters)
 #pragma once
 #include "cocos/core/ArrayBuffer.h"
 #include "cocos/core/assets/EffectAsset.h"
@@ -243,7 +244,7 @@ public:
  * Different types of pipeline have different hardward capabilities and interfaces.
  * @zh 管线类型，不同类型的管线具有不同的硬件能力与接口
  */
-enum class PipelineType {
+enum class PipelineType : uint8_t {
     /**
      * @en Basic render pipeline.
      * Basic render pipeline is available on all platforms.
@@ -283,7 +284,7 @@ enum class PipelineType {
  * 在编写渲染算法时，应该查询当前设备的能力，来选择合适的tile-based算法。
  * 使用硬件不支持的特性，会导致未定义行为。
  */
-enum class SubpassCapabilities : uint32_t {
+enum class SubpassCapabilities : uint32_t { // NOLINT(performance-enum-size)
     NONE = 0,
     /**
      * @en Supports read depth/stencil value at current pixel.
@@ -1817,4 +1818,5 @@ public:
 
 } // namespace cc
 
+// NOLINTEND(misc-include-cleaner, bugprone-easily-swappable-parameters)
 // clang-format on

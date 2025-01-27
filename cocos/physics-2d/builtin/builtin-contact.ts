@@ -30,10 +30,12 @@ import { BuiltinCircleShape } from './shapes/circle-shape-2d';
 import { error } from '../../core';
 import { Contact2DType } from '../framework';
 
+/** @mangle */
 export class BuiltinContact {
     shape1?: BuiltinShape2D;
     shape2?: BuiltinShape2D;
 
+    // eslint-disable-next-line @typescript-eslint/ban-types
     testFunc?: Function;
     touching = false;
 
@@ -85,7 +87,8 @@ export class BuiltinContact {
         } else if (this.testFunc === Intersection2D.polygonCircle) {
             return Intersection2D.polygonCircle(
                 (s1 as BuiltinPolygonShape).worldPoints,
-                (s2 as BuiltinCircleShape).worldPosition, (s2 as BuiltinCircleShape).worldRadius,
+                (s2 as BuiltinCircleShape).worldPosition,
+                (s2 as BuiltinCircleShape).worldRadius,
             );
         }
 

@@ -28,7 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 /* eslint-disable max-len */
-import { ResolveMode, ShaderStageFlagBit, Type, UniformBlock } from '../../gfx';
+import { ResolveMode } from '../../gfx';
 import type { ReflectionProbe } from '../../render-scene/scene/reflection-probe';
 import type { Light } from '../../render-scene/scene';
 import { RecyclePool } from '../../core/memop';
@@ -161,73 +161,6 @@ export class LightInfo {
     declare /*pointer*/ probe: ReflectionProbe | null;
     declare level: number;
     declare culledByLight: boolean;
-}
-
-export const enum DescriptorTypeOrder {
-    UNIFORM_BUFFER,
-    DYNAMIC_UNIFORM_BUFFER,
-    SAMPLER_TEXTURE,
-    SAMPLER,
-    TEXTURE,
-    STORAGE_BUFFER,
-    DYNAMIC_STORAGE_BUFFER,
-    STORAGE_IMAGE,
-    INPUT_ATTACHMENT,
-}
-
-export class Descriptor {
-    constructor (type: Type = Type.UNKNOWN) {
-        this.type = type;
-    }
-    reset (type: Type): void {
-        this.type = type;
-        this.count = 1;
-    }
-    declare type: Type;
-    count = 1;
-}
-
-export class DescriptorBlock {
-    reset (): void {
-        this.descriptors.clear();
-        this.uniformBlocks.clear();
-        this.capacity = 0;
-        this.count = 0;
-    }
-    readonly descriptors: Map<string, Descriptor> = new Map<string, Descriptor>();
-    readonly uniformBlocks: Map<string, UniformBlock> = new Map<string, UniformBlock>();
-    capacity = 0;
-    count = 0;
-}
-
-export class DescriptorBlockFlattened {
-    reset (): void {
-        this.descriptorNames.length = 0;
-        this.uniformBlockNames.length = 0;
-        this.descriptors.length = 0;
-        this.uniformBlocks.length = 0;
-        this.capacity = 0;
-        this.count = 0;
-    }
-    readonly descriptorNames: string[] = [];
-    readonly uniformBlockNames: string[] = [];
-    readonly descriptors: Descriptor[] = [];
-    readonly uniformBlocks: UniformBlock[] = [];
-    capacity = 0;
-    count = 0;
-}
-
-export class DescriptorBlockIndex {
-    constructor (updateFrequency: UpdateFrequency = UpdateFrequency.PER_INSTANCE, parameterType: ParameterType = ParameterType.CONSTANTS, descriptorType: DescriptorTypeOrder = DescriptorTypeOrder.UNIFORM_BUFFER, visibility: ShaderStageFlagBit = ShaderStageFlagBit.NONE) {
-        this.updateFrequency = updateFrequency;
-        this.parameterType = parameterType;
-        this.descriptorType = descriptorType;
-        this.visibility = visibility;
-    }
-    declare updateFrequency: UpdateFrequency;
-    declare parameterType: ParameterType;
-    declare descriptorType: DescriptorTypeOrder;
-    declare visibility: ShaderStageFlagBit;
 }
 
 export const enum ResolveFlags {
@@ -453,10 +386,6 @@ export class RenderCommonObjectPool {
     }
     reset (): void {
         this.li.reset(); // LightInfo
-        this.d.reset(); // Descriptor
-        this.db.reset(); // DescriptorBlock
-        this.dbf.reset(); // DescriptorBlockFlattened
-        this.dbi.reset(); // DescriptorBlockIndex
         this.rp.reset(); // ResolvePair
         this.cp.reset(); // CopyPair
         this.up.reset(); // UploadPair
@@ -471,36 +400,6 @@ export class RenderCommonObjectPool {
     ): LightInfo {
         const v = this.li.add(); // LightInfo
         v.reset(light, level, culledByLight, probe);
-        return v;
-    }
-    createDescriptor (
-        type: Type = Type.UNKNOWN,
-    ): Descriptor {
-        const v = this.d.add(); // Descriptor
-        v.reset(type);
-        return v;
-    }
-    createDescriptorBlock (): DescriptorBlock {
-        const v = this.db.add(); // DescriptorBlock
-        v.reset();
-        return v;
-    }
-    createDescriptorBlockFlattened (): DescriptorBlockFlattened {
-        const v = this.dbf.add(); // DescriptorBlockFlattened
-        v.reset();
-        return v;
-    }
-    createDescriptorBlockIndex (
-        updateFrequency: UpdateFrequency = UpdateFrequency.PER_INSTANCE,
-        parameterType: ParameterType = ParameterType.CONSTANTS,
-        descriptorType: DescriptorTypeOrder = DescriptorTypeOrder.UNIFORM_BUFFER,
-        visibility: ShaderStageFlagBit = ShaderStageFlagBit.NONE,
-    ): DescriptorBlockIndex {
-        const v = this.dbi.add(); // DescriptorBlockIndex
-        v.updateFrequency = updateFrequency;
-        v.parameterType = parameterType;
-        v.descriptorType = descriptorType;
-        v.visibility = visibility;
         return v;
     }
     createResolvePair (
@@ -561,10 +460,6 @@ export class RenderCommonObjectPool {
         return v;
     }
     private readonly li: RecyclePool<LightInfo> = createPool(LightInfo);
-    private readonly d: RecyclePool<Descriptor> = createPool(Descriptor);
-    private readonly db: RecyclePool<DescriptorBlock> = createPool(DescriptorBlock);
-    private readonly dbf: RecyclePool<DescriptorBlockFlattened> = createPool(DescriptorBlockFlattened);
-    private readonly dbi: RecyclePool<DescriptorBlockIndex> = createPool(DescriptorBlockIndex);
     private readonly rp: RecyclePool<ResolvePair> = createPool(ResolvePair);
     private readonly cp: RecyclePool<CopyPair> = createPool(CopyPair);
     private readonly up: RecyclePool<UploadPair> = createPool(UploadPair);
@@ -584,116 +479,6 @@ export function loadLightInfo (a: InputArchive, v: LightInfo): void {
     // skip, v.probe: ReflectionProbe
     v.level = a.n();
     v.culledByLight = a.b();
-}
-
-export function saveDescriptor (a: OutputArchive, v: Descriptor): void {
-    a.n(v.type);
-    a.n(v.count);
-}
-
-export function loadDescriptor (a: InputArchive, v: Descriptor): void {
-    v.type = a.n();
-    v.count = a.n();
-}
-
-export function saveDescriptorBlock (a: OutputArchive, v: DescriptorBlock): void {
-    a.n(v.descriptors.size); // Map<string, Descriptor>
-    for (const [k1, v1] of v.descriptors) {
-        a.s(k1);
-        saveDescriptor(a, v1);
-    }
-    a.n(v.uniformBlocks.size); // Map<string, UniformBlock>
-    for (const [k1, v1] of v.uniformBlocks) {
-        a.s(k1);
-        saveUniformBlock(a, v1);
-    }
-    a.n(v.capacity);
-    a.n(v.count);
-}
-
-export function loadDescriptorBlock (a: InputArchive, v: DescriptorBlock): void {
-    let sz = 0;
-    sz = a.n(); // Map<string, Descriptor>
-    for (let i1 = 0; i1 !== sz; ++i1) {
-        const k1 = a.s();
-        const v1 = new Descriptor();
-        loadDescriptor(a, v1);
-        v.descriptors.set(k1, v1);
-    }
-    sz = a.n(); // Map<string, UniformBlock>
-    for (let i1 = 0; i1 !== sz; ++i1) {
-        const k1 = a.s();
-        const v1 = new UniformBlock();
-        loadUniformBlock(a, v1);
-        v.uniformBlocks.set(k1, v1);
-    }
-    v.capacity = a.n();
-    v.count = a.n();
-}
-
-export function saveDescriptorBlockFlattened (a: OutputArchive, v: DescriptorBlockFlattened): void {
-    a.n(v.descriptorNames.length); // string[]
-    for (const v1 of v.descriptorNames) {
-        a.s(v1);
-    }
-    a.n(v.uniformBlockNames.length); // string[]
-    for (const v1 of v.uniformBlockNames) {
-        a.s(v1);
-    }
-    a.n(v.descriptors.length); // Descriptor[]
-    for (const v1 of v.descriptors) {
-        saveDescriptor(a, v1);
-    }
-    a.n(v.uniformBlocks.length); // UniformBlock[]
-    for (const v1 of v.uniformBlocks) {
-        saveUniformBlock(a, v1);
-    }
-    a.n(v.capacity);
-    a.n(v.count);
-}
-
-export function loadDescriptorBlockFlattened (a: InputArchive, v: DescriptorBlockFlattened): void {
-    let sz = 0;
-    sz = a.n(); // string[]
-    v.descriptorNames.length = sz;
-    for (let i1 = 0; i1 !== sz; ++i1) {
-        v.descriptorNames[i1] = a.s();
-    }
-    sz = a.n(); // string[]
-    v.uniformBlockNames.length = sz;
-    for (let i1 = 0; i1 !== sz; ++i1) {
-        v.uniformBlockNames[i1] = a.s();
-    }
-    sz = a.n(); // Descriptor[]
-    v.descriptors.length = sz;
-    for (let i1 = 0; i1 !== sz; ++i1) {
-        const v1 = new Descriptor();
-        loadDescriptor(a, v1);
-        v.descriptors[i1] = v1;
-    }
-    sz = a.n(); // UniformBlock[]
-    v.uniformBlocks.length = sz;
-    for (let i1 = 0; i1 !== sz; ++i1) {
-        const v1 = new UniformBlock();
-        loadUniformBlock(a, v1);
-        v.uniformBlocks[i1] = v1;
-    }
-    v.capacity = a.n();
-    v.count = a.n();
-}
-
-export function saveDescriptorBlockIndex (a: OutputArchive, v: DescriptorBlockIndex): void {
-    a.n(v.updateFrequency);
-    a.n(v.parameterType);
-    a.n(v.descriptorType);
-    a.n(v.visibility);
-}
-
-export function loadDescriptorBlockIndex (a: InputArchive, v: DescriptorBlockIndex): void {
-    v.updateFrequency = a.n();
-    v.parameterType = a.n();
-    v.descriptorType = a.n();
-    v.visibility = a.n();
 }
 
 export function saveResolvePair (a: OutputArchive, v: ResolvePair): void {

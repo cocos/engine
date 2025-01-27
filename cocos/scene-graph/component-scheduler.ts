@@ -23,7 +23,7 @@
 */
 
 import { EDITOR, SUPPORT_JIT, DEV, TEST } from 'internal:constants';
-import { CCObject } from '../core/data/object';
+import { CCObjectFlags } from '../core/data/object';
 import { js } from '../core';
 import { tryCatchFunctor_EDITOR } from '../core/utils/misc';
 import { legacyCC } from '../core/global-exports';
@@ -32,9 +32,9 @@ import type { Component } from './component';
 
 const fastRemoveAt = js.array.fastRemoveAt;
 
-const IsStartCalled = CCObject.Flags.IsStartCalled;
-const IsOnEnableCalled = CCObject.Flags.IsOnEnableCalled;
-const IsEditorOnEnableCalled = CCObject.Flags.IsEditorOnEnableCalled;
+const IsStartCalled = CCObjectFlags.IsStartCalled;
+const IsOnEnableCalled = CCObjectFlags.IsOnEnableCalled;
+const IsEditorOnEnableCalled = CCObjectFlags.IsEditorOnEnableCalled;
 
 const callerFunctor: any = EDITOR && tryCatchFunctor_EDITOR;
 const callOnEnableInTryCatch: any = EDITOR && callerFunctor('onEnable');
@@ -85,7 +85,7 @@ function stableRemoveInactive (iterator, flagToClear): void {
     }
 }
 
-type InvokeFunc = (...args: unknown[]) => void;
+export type InvokeFunc = (...args: unknown[]) => void;
 
 // This class contains some queues used to invoke life-cycle methods by script execution order
 export class LifeCycleInvoker {
@@ -173,6 +173,10 @@ export class OneOffInvoker extends LifeCycleInvoker {
 
 // for update: sort every time new component registered, invoke many times
 class ReusableInvoker extends LifeCycleInvoker {
+    constructor (invokeFunc: InvokeFunc) {
+        super(invokeFunc);
+    }
+
     public add (comp: Component): void {
         const order = (comp.constructor as typeof Component)._executionOrder;
         if (order === 0) {

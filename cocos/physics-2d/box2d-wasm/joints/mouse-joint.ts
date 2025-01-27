@@ -35,6 +35,7 @@ import { find } from '../../../scene-graph';
 
 const tempB2Vec2 = { x: 0, y: 0 };//new b2.Vec2();
 
+/** @mangle */
 export class B2MouseJoint extends B2Joint implements IMouseJoint {
     _touchPoint = new Vec2();
     _isTouched = false;

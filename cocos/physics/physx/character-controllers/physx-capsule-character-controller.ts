@@ -34,6 +34,8 @@ import { degreesToRadians } from '../../../core/utils/misc';
 
 const v3_0 = new Vec3(0, 0, 0);
 const upDir = new Vec3(0, 1, 0);//temp
+
+/** @mangle */
 export class PhysXCapsuleCharacterController extends PhysXCharacterController implements ICapsuleCharacterController {
     get component (): CapsuleCharacterController {
         return this._comp as CapsuleCharacterController;

@@ -266,6 +266,8 @@ ccstd::unordered_map<uint32_t, ccstd::string> debugInfos = {
 { 5200, "Warning: localStorage isn't enabled. Please confirm browser cookie or privacy option" },
 { 5201, "browser don't support web audio" },
 { 5202, "This feature supports WebGL render mode only." },
+{ 5203, "Audio buffer cache %s has not been added." },
+{ 5204, "Audio buffer %s has been cached." },
 { 5300, "Type of target to deserialize not matched with data: target is %s, data is %s" },
 { 5301, "Can not find script '%s'" },
 { 5302, "Can not find class '%s'" },
@@ -423,6 +425,8 @@ ccstd::unordered_map<uint32_t, ccstd::string> debugInfos = {
 { 9005, "BATCHER2D_MEM_INCREMENT is too large, the Max value for BATCHER2D_MEM_INCREMENT is 2303KB (smaller than 65536 *9* 4 / 1024 = 2304KB)" },
 { 9006, "QuadRenderData is removed, please use MeshRenderData instead." },
 { 9007, "Since v3.6, Because mask changes the inheritance relationship, you can directly manipulate the rendering components under the same node to complete the operation." },
+{ 9008, "request fullscreen is not supported on this platform." },
+{ 9009, "exit fullscreen is not supported on this platform." },
 { 9100, "texture size exceeds current device limits %d/%d" },
 { 9101, "The length of the TypedArrayBuffer must be an integer." },
 { 9201, "Cannot access game frame or container." },
@@ -441,6 +445,7 @@ ccstd::unordered_map<uint32_t, ccstd::string> debugInfos = {
 { 9641, "[Physics][cannon.js]: sweep functions are not supported in cannon.js" },
 { 9642, "[Physics] PhysicsSystem initDefaultMaterial() Failed to load builtinMaterial." },
 { 9643, "[Physics] Failed to load user customized default physics material: %s, will fallback to built-in default physics material" },
+{ 9644, "[Physics] Failed to find ear. There might be self-intersection in the polygon." },
 { 10001, "The sub-mesh contains %d vertices, which beyonds the capability (%d vertices most) of renderer of your platform." },
 { 10002, "Sub-mesh may include at most %d morph targets, but you specified %d." },
 { 11000, "WebGL context lost." },
@@ -600,6 +605,7 @@ ccstd::unordered_map<uint32_t, ccstd::string> debugInfos = {
 { 16405, "This device does not support WebGL2" },
 { 16406, "Can't find the spriteFrame of tilesets %s" },
 { 16407, "Spline error: invalid mode" },
+{ 16408, "[Physics2D] b2PolygonShape failed to decompose polygon into convex polygons, node name: %s" },
 
 };
 }//namespace cc

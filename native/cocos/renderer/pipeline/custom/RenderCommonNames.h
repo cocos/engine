@@ -134,24 +134,6 @@ inline const char* getName(ClearValueType e) noexcept {
     return "";
 }
 inline const char* getName(const LightInfo& /*v*/) noexcept { return "LightInfo"; }
-inline const char* getName(DescriptorTypeOrder e) noexcept {
-    switch (e) {
-        case DescriptorTypeOrder::UNIFORM_BUFFER: return "UNIFORM_BUFFER";
-        case DescriptorTypeOrder::DYNAMIC_UNIFORM_BUFFER: return "DYNAMIC_UNIFORM_BUFFER";
-        case DescriptorTypeOrder::SAMPLER_TEXTURE: return "SAMPLER_TEXTURE";
-        case DescriptorTypeOrder::SAMPLER: return "SAMPLER";
-        case DescriptorTypeOrder::TEXTURE: return "TEXTURE";
-        case DescriptorTypeOrder::STORAGE_BUFFER: return "STORAGE_BUFFER";
-        case DescriptorTypeOrder::DYNAMIC_STORAGE_BUFFER: return "DYNAMIC_STORAGE_BUFFER";
-        case DescriptorTypeOrder::STORAGE_IMAGE: return "STORAGE_IMAGE";
-        case DescriptorTypeOrder::INPUT_ATTACHMENT: return "INPUT_ATTACHMENT";
-    }
-    return "";
-}
-inline const char* getName(const Descriptor& /*v*/) noexcept { return "Descriptor"; }
-inline const char* getName(const DescriptorBlock& /*v*/) noexcept { return "DescriptorBlock"; }
-inline const char* getName(const DescriptorBlockFlattened& /*v*/) noexcept { return "DescriptorBlockFlattened"; }
-inline const char* getName(const DescriptorBlockIndex& /*v*/) noexcept { return "DescriptorBlockIndex"; }
 inline const char* getName(const ResolvePair& /*v*/) noexcept { return "ResolvePair"; }
 inline const char* getName(const CopyPair& /*v*/) noexcept { return "CopyPair"; }
 inline const char* getName(const UploadPair& /*v*/) noexcept { return "UploadPair"; }

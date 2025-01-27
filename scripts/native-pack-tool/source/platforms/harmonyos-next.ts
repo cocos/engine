@@ -71,10 +71,10 @@ export class HarmonyOSNextPackTool extends NativePackTool {
             moduleJSON.module.abilities[0].orientation = 'auto_rotation';
         }
         else if (cfg.landscapeRight && !cfg.landscapeLeft) {
-            moduleJSON.module.abilities[0].orientation = 'landscape';
+            moduleJSON.module.abilities[0].orientation = 'landscape_inverted';
         }
         else if (!cfg.landscapeRight && cfg.landscapeLeft) {
-            moduleJSON.module.abilities[0].orientation = 'landscape_inverted';
+            moduleJSON.module.abilities[0].orientation = 'landscape';
         }
         else if (cfg.landscapeRight && cfg.landscapeLeft) {
             moduleJSON.module.abilities[0].orientation = 'auto_rotation_landscape';
@@ -108,6 +108,8 @@ export class HarmonyOSNextPackTool extends NativePackTool {
         const packageJson = this.readJSON5Sync(packageJsonPath);
         packageJson.name = this.params.projectName;
         writeFileSync(packageJsonPath, JSON5.stringify(packageJson, null, 4));
+        
+        await this.encrypteScripts();
         return true;
     }
 

@@ -76,7 +76,7 @@ class PointerEventDispatcher implements IEventDispatcher {
         return true;
     }
 
-    public addPointerEventProcessor (pointerEventProcessor: NodeEventProcessor): void {
+    private addPointerEventProcessor (pointerEventProcessor: NodeEventProcessor): void {
         if (this._inDispatchCount === 0) {
             if (!this._pointerEventProcessorList.includes(pointerEventProcessor)) {
                 this._pointerEventProcessorList.push(pointerEventProcessor);
@@ -88,7 +88,7 @@ class PointerEventDispatcher implements IEventDispatcher {
         js.array.remove(this._processorListToRemove, pointerEventProcessor);
     }
 
-    public removePointerEventProcessor (pointerEventProcessor: NodeEventProcessor): void {
+    private removePointerEventProcessor (pointerEventProcessor: NodeEventProcessor): void {
         if (this._inDispatchCount === 0) {
             js.array.remove(this._pointerEventProcessorList, pointerEventProcessor);
             this._isListDirty = true;
@@ -98,7 +98,7 @@ class PointerEventDispatcher implements IEventDispatcher {
         js.array.remove(this._processorListToAdd, pointerEventProcessor);
     }
 
-    public dispatchEventMouse (eventMouse: EventMouse): boolean {
+    private dispatchEventMouse (eventMouse: EventMouse): boolean {
         this._inDispatchCount++;
         this._sortPointerEventProcessorList();
         const pointerEventProcessorList = this._pointerEventProcessorList;
@@ -122,7 +122,7 @@ class PointerEventDispatcher implements IEventDispatcher {
         return dispatchToNextEventDispatcher;
     }
 
-    public dispatchEventTouch (eventTouch: EventTouch): boolean {
+    private dispatchEventTouch (eventTouch: EventTouch): boolean {
         this._inDispatchCount++;
         this._sortPointerEventProcessorList();
         const pointerEventProcessorList = this._pointerEventProcessorList;
@@ -216,7 +216,7 @@ class PointerEventDispatcher implements IEventDispatcher {
             const pointerEventProcessor = pointerEventProcessorList[i];
             const node = pointerEventProcessor.node;
             if (node._uiProps) {
-                const trans = node._uiProps.uiTransformComp;
+                const trans = node._getUITransformComp();
                 pointerEventProcessor.cachedCameraPriority = trans!.cameraPriority;
             }
         }
@@ -227,16 +227,18 @@ class PointerEventDispatcher implements IEventDispatcher {
     private _sortByPriority (p1: NodeEventProcessor, p2: NodeEventProcessor): number {
         const node1: Node = p1.node;
         const node2: Node = p2.node;
-        if (!p2 || !node2 || !node2.activeInHierarchy || !node2._uiProps.uiTransformComp) {
+        if (!p2 || !node2 || !node2.activeInHierarchy || !node2._getUITransformComp()) {
             return -1;
-        } else if (!p1 || !node1 || !node1.activeInHierarchy || !node1._uiProps.uiTransformComp) {
+        } else if (!p1 || !node1 || !node1.activeInHierarchy || !node1._getUITransformComp()) {
             return 1;
         }
 
         if (p1.cachedCameraPriority !== p2.cachedCameraPriority) {
             return p2.cachedCameraPriority - p1.cachedCameraPriority;
         }
-        let n1: Node | null = node1; let n2: Node | null = node2; let ex = false;
+        let n1: Node | null = node1;
+        let n2: Node | null = node2;
+        let ex = false;
         while (n1!.parent?.uuid !== n2!.parent?.uuid) {
             n1 = n1?.parent?.parent === null ? (ex = true) && node2 : n1 && n1.parent;
             n2 = n2?.parent?.parent === null ? (ex = true) && node1 : n2 && n2.parent;
@@ -251,8 +253,8 @@ class PointerEventDispatcher implements IEventDispatcher {
             }
         }
 
-        const priority1 = n1 ? n1.getSiblingIndex() : 0;
-        const priority2 = n2 ? n2.getSiblingIndex() : 0;
+        const priority1 = n1 ? n1.siblingIndex : 0;
+        const priority2 = n2 ? n2.siblingIndex : 0;
 
         return ex ? priority1 - priority2 : priority2 - priority1;
     }

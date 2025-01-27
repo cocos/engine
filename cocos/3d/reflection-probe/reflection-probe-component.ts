@@ -23,7 +23,7 @@
 */
 import { ccclass, executeInEditMode, help, menu, playOnFocus, serializable, tooltip, type, visible } from 'cc.decorator';
 import { EDITOR, EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
-import { CCBoolean, CCObject, Color, screen, Enum, Vec3, warn } from '../../core';
+import { CCBoolean, Color, screen, Enum, Vec3, warn, CCObjectFlags } from '../../core';
 
 import { TextureCube } from '../../asset/assets';
 import { scene } from '../../render-scene';
@@ -64,8 +64,8 @@ export enum ProbeResolution {
 @playOnFocus
 @help('i18n:cc.ReflectionProbe')
 export class ReflectionProbe extends Component {
-    protected static readonly DEFAULT_CUBE_SIZE: Readonly<Vec3> =  new Vec3(1, 1, 1);
-    protected static readonly DEFAULT_PLANER_SIZE: Readonly<Vec3> =  new Vec3(5, 0.5, 5);
+    protected static readonly DEFAULT_CUBE_SIZE: Readonly<Vec3> = new Vec3(1, 1, 1);
+    protected static readonly DEFAULT_PLANER_SIZE: Readonly<Vec3> = new Vec3(5, 0.5, 5);
     protected readonly _lastSize = new Vec3();
     @serializable
     protected _resolution = 256;
@@ -145,15 +145,15 @@ export class ReflectionProbe extends Component {
                 }
                 this.probe.switchProbeType(value, null);
                 if (EDITOR) {
-                    this._objFlags |= CCObject.Flags.IsRotationLocked;
+                    this._objFlags |= CCObjectFlags.IsRotationLocked;
                 }
                 ReflectionProbeManager.probeManager.clearPlanarReflectionMap(this.probe);
             } else {
                 if (lastSizeIsNoExist) {
                     this._size.set(ReflectionProbe.DEFAULT_PLANER_SIZE);
                 }
-                if (EDITOR && this._objFlags & CCObject.Flags.IsRotationLocked) {
-                    this._objFlags ^= CCObject.Flags.IsRotationLocked;
+                if (EDITOR && this._objFlags & CCObjectFlags.IsRotationLocked) {
+                    this._objFlags ^= CCObjectFlags.IsRotationLocked;
                 }
                 if (!this._sourceCamera) {
                     warn('the reflection camera is invalid, please set the reflection camera');
@@ -426,7 +426,7 @@ export class ReflectionProbe extends Component {
         this._probe = new scene.ReflectionProbe(this._probeId);
         if (this._probe) {
             const cameraNode = new Node('ReflectionProbeCamera');
-            cameraNode.hideFlags |= CCObject.Flags.DontSave | CCObject.Flags.HideInHierarchy;
+            cameraNode.hideFlags |= CCObjectFlags.DontSave | CCObjectFlags.HideInHierarchy;
             this.node.scene.addChild(cameraNode);
 
             this._probe.initialize(this.node, cameraNode);

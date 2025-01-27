@@ -30,6 +30,7 @@ import { WebGL2DeviceManager } from '../webgl2-define';
 import { WebGL2Device } from '../webgl2-device';
 import { IWebGL2GPUSampler } from '../webgl2-gpu-objects';
 
+/** @mangle */
 export class WebGL2Sampler extends Sampler {
     public get gpuSampler (): IWebGL2GPUSampler {
         return  this._gpuSampler!;

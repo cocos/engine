@@ -22,11 +22,11 @@
  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  THE SOFTWARE.
 */
-import { toRadian, cclegacy,  CCBoolean, CCFloat, _decorator } from '../../core';
+import { toRadian,  CCBoolean, CCFloat, _decorator } from '../../core';
 import { scene } from '../../render-scene';
 import { Light, PhotometricTerm } from './light-component';
-import { Root } from '../../root';
 import { Camera, PCFType, ShadowType } from '../../render-scene/scene';
+import { getPipelineSceneData } from '../../rendering/pipeline-scene-data-utils';
 
 const { ccclass, range, slide, type, editable, displayOrder, help, executeInEditMode,
     menu, tooltip, serializable, formerlySerializedAs, visible, property } = _decorator;
@@ -80,7 +80,7 @@ export class SpotLight extends Light {
     @displayOrder(-1)
     @range([0, Number.POSITIVE_INFINITY, 100])
     get luminousFlux (): number {
-        const isHDR = (cclegacy.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._luminanceHDR * scene.nt2lm(this._size);
         } else {
@@ -89,7 +89,7 @@ export class SpotLight extends Light {
     }
 
     set luminousFlux (val) {
-        const isHDR = (cclegacy.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         let result = 0;
         if (isHDR) {
             this._luminanceHDR = val / scene.nt2lm(this._size);
@@ -109,7 +109,7 @@ export class SpotLight extends Light {
     @displayOrder(-1)
     @range([0, Number.POSITIVE_INFINITY, 10])
     get luminance (): number {
-        const isHDR = (cclegacy.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             return this._luminanceHDR;
         } else {
@@ -118,7 +118,7 @@ export class SpotLight extends Light {
     }
 
     set luminance (val) {
-        const isHDR = (cclegacy.director.root as Root).pipeline.pipelineSceneData.isHDR;
+        const isHDR = getPipelineSceneData().isHDR;
         if (isHDR) {
             this._luminanceHDR = val;
             this._light && ((this._light as scene.SpotLight).luminanceHDR = this._luminanceHDR);
@@ -219,7 +219,7 @@ export class SpotLight extends Light {
      * @zh 是否启用阴影？
      */
     @tooltip('i18n:lights.shadowEnabled')
-    @visible(() => (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap)
+    @visible(() => getPipelineSceneData().shadows.type === ShadowType.ShadowMap)
     @property({ group: { name: 'DynamicShadowSettings', displayOrder: 1 } })
     @editable
     @type(CCBoolean)
@@ -238,7 +238,7 @@ export class SpotLight extends Light {
      * @zh 获取或者设置阴影 pcf 等级。
      */
     @tooltip('i18n:lights.shadowPcf')
-    @visible(() => (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap)
+    @visible(() => getPipelineSceneData().shadows.type === ShadowType.ShadowMap)
     @property({ group: { name: 'DynamicShadowSettings', displayOrder: 2  } })
     @editable
     @type(PCFType)
@@ -257,7 +257,7 @@ export class SpotLight extends Light {
      * @zh 阴影的深度偏移, 可以减弱跨像素导致的条纹状失真
      */
     @tooltip('i18n:lights.shadowBias')
-    @visible(() => (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap)
+    @visible(() => getPipelineSceneData().shadows.type === ShadowType.ShadowMap)
     @property({ group: { name: 'DynamicShadowSettings', displayOrder: 3 } })
     @editable
     @type(CCFloat)
@@ -276,7 +276,7 @@ export class SpotLight extends Light {
      * @zh 设置或者获取法线偏移。
      */
     @tooltip('i18n:lights.shadowNormalBias')
-    @visible(() => (cclegacy.director.root as Root).pipeline.pipelineSceneData.shadows.type === ShadowType.ShadowMap)
+    @visible(() => getPipelineSceneData().shadows.type === ShadowType.ShadowMap)
     @property({ group: { name: 'DynamicShadowSettings', displayOrder: 4 } })
     @editable
     @type(CCFloat)

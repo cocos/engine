@@ -29,17 +29,43 @@
 import { getError } from '../core';
 import  zlib  from '../../external/compression/zlib.min';
 
+interface PNGAnimationFrame {
+    width: number;
+    height: number;
+    xOffset: number;
+    yOffset: number;
+    delay: number;
+    disposeOp: number;
+    blendOp: number;
+    data: number[];
+}
+
+interface PNGTransparency {
+    indexed?: number[];
+    rgb?: number[];
+    grayscale?: number;
+}
+
 /**
  * A png file reader
  * @name PNGReader
+ * @mangle
  */
 export class PNGReader {
-    private declare data;
+    private declare data: Uint8Array | number[];
     private pos = 8;
-    private palette: any[] = [];
+    private palette: ArrayLike<number> = [];
     private imgData: Uint8Array | number[] = [];
-    private declare transparency: any;
-    private declare animation: any;
+    private transparency: PNGTransparency = {
+        indexed: [],
+        rgb: [],
+        grayscale: 0,
+    };
+    private declare animation: {
+        numFrames: number;
+        numPlays: number;
+        frames: PNGAnimationFrame[],
+    };
     private text = {};
     private width = 0;
     private height = 0;
@@ -48,42 +74,40 @@ export class PNGReader {
     private compressionMethod = 0;
     private filterMethod = 0;
     private interlaceMethod = 0;
-    private colors: any = 0;
+    private colors: number | undefined = 0;
     private hasAlphaChannel = false;
     private pixelBitlength = 0;
-    private declare colorSpace: any;
-    private declare _decodedPalette: Uint8Array;
+    private declare colorSpace: string | undefined;
+    private _decodedPalette: Uint8Array | null = null;
 
-    constructor (data) {
-        this.data = data;
-        this.transparency = {
-            indexed: [],
-            rgb: 0,
-            grayscale: 0,
-        };
+    constructor (data: number[]) {
+        const thisData = this.data = data;
 
-        let frame: any;
-        let i = 0; let _i = 0; let _j = 0; let chunkSize = 0;
+        let frame: PNGAnimationFrame | undefined;
+        let chunkSize = 0;
 
         while (true) {
             chunkSize = this.readUInt32();
-            const section = (((): any[] => {
-                const _results: any[] = [];
-                for (i = _i = 0; _i < 4; i = ++_i) {
-                    _results.push(String.fromCharCode(this.data[this.pos++]));
+            const section: string = (((): string[] => {
+                const results: string[] = [];
+                for (let _i = 0; _i < 4; ++_i) {
+                    results.push(String.fromCharCode(thisData[this.pos++]));
                 }
-                return _results;
+                return results;
             }).call(this)).join('');
+
             switch (section) {
             case 'IHDR':
+            {
                 this.width = this.readUInt32();
                 this.height = this.readUInt32();
-                this.bits = this.data[this.pos++];
-                this.colorType = this.data[this.pos++];
-                this.compressionMethod = this.data[this.pos++];
-                this.filterMethod = this.data[this.pos++];
-                this.interlaceMethod = this.data[this.pos++];
+                this.bits = thisData[this.pos++];
+                this.colorType = thisData[this.pos++];
+                this.compressionMethod = thisData[this.pos++];
+                this.filterMethod = thisData[this.pos++];
+                this.interlaceMethod = thisData[this.pos++];
                 break;
+            }
             case 'acTL':
                 this.animation = {
                     numFrames: this.readUInt32(),
@@ -95,6 +119,7 @@ export class PNGReader {
                 this.palette = this.read(chunkSize);
                 break;
             case 'fcTL':
+            {
                 if (frame) {
                     this.animation.frames.push(frame);
                 }
@@ -104,51 +129,66 @@ export class PNGReader {
                     height: this.readUInt32(),
                     xOffset: this.readUInt32(),
                     yOffset: this.readUInt32(),
+                    delay: 0,
+                    disposeOp: 0,
+                    blendOp: 0,
+                    data: [],
                 };
                 const delayNum = this.readUInt16();
                 const delayDen = this.readUInt16() || 100;
                 frame.delay = 1000 * delayNum / delayDen;
-                frame.disposeOp = this.data[this.pos++];
-                frame.blendOp = this.data[this.pos++];
-                frame.data = [];
+                frame.disposeOp = thisData[this.pos++];
+                frame.blendOp = thisData[this.pos++];
                 break;
+            }
             case 'IDAT':
             case 'fdAT':
+            {
                 if (section === 'fdAT') {
                     this.pos += 4;
                     chunkSize -= 4;
                 }
-                data = (frame != null ? frame.data : void 0) || this.imgData;
-                for (i = _i = 0; chunkSize >= 0 ? _i < chunkSize : _i > chunkSize; i = chunkSize >= 0 ? ++_i : --_i) {
-                    data.push(this.data[this.pos++]);
+                // FIXME(cjh): Remove 'as number[]' since this.imgData is possible to be Uint8Array
+                data = (frame != null ? frame.data : undefined) || this.imgData as number[];
+                for (let _i = 0; chunkSize >= 0 ? _i < chunkSize : _i > chunkSize; chunkSize >= 0 ? ++_i : --_i) {
+                    data.push(thisData[this.pos++]);
                 }
                 break;
+            }
             case 'tRNS':
                 this.transparency = {};
                 switch (this.colorType) {
                 case 3:
+                {
                     this.transparency.indexed = this.read(chunkSize);
                     const ccshort = 255 - this.transparency.indexed.length;
                     if (ccshort > 0) {
-                        for (i = _j = 0; ccshort >= 0 ? _j < ccshort : _j > ccshort; i = ccshort >= 0 ? ++_j : --_j) {
+                        for (let _j = 0; ccshort >= 0 ? _j < ccshort : _j > ccshort; ccshort >= 0 ? ++_j : --_j) {
                             this.transparency.indexed.push(255);
                         }
                     }
                     break;
+                }
                 case 0:
                     this.transparency.grayscale = this.read(chunkSize)[0];
                     break;
                 case 2:
                     this.transparency.rgb = this.read(chunkSize);
+                    break;
+                default:
+                    break;
                 }
                 break;
             case 'tEXt':
+            {
                 const text = this.read(chunkSize);
                 const index = text.indexOf(0);
                 const key = String.fromCharCode.apply(String, text.slice(0, index));
                 this.text[key] = String.fromCharCode.apply(String, text.slice(index + 1));
                 break;
+            }
             case 'IEND':
+            {
                 if (frame) {
                     this.animation.frames.push(frame);
                 }
@@ -161,11 +201,13 @@ export class PNGReader {
                     case 2:
                     case 6:
                         return 3;
+                    default:
+                        return undefined;
                     }
                 }).call(this);
                 const _ref = this.colorType;
                 this.hasAlphaChannel = _ref === 4 || _ref === 6;
-                const colors = this.colors + (this.hasAlphaChannel ? 1 : 0);
+                const colors = this.colors! + (this.hasAlphaChannel ? 1 : 0);
                 this.pixelBitlength = this.bits * colors;
                 this.colorSpace = ((): string | undefined => {
                     switch (this.colors) {
@@ -173,25 +215,29 @@ export class PNGReader {
                         return 'DeviceGray';
                     case 3:
                         return 'DeviceRGB';
+                    default:
+                        return undefined;
                     }
                 }).call(this);
                 if (!(this.imgData instanceof Uint8Array)) {
                     this.imgData = new Uint8Array(this.imgData);
                 }
                 return;
+            }
             default:
                 this.pos += chunkSize;
             }
             this.pos += 4;
-            if (this.pos > this.data.length) {
+            if (this.pos > thisData.length) {
                 throw new Error(getError(6017));
             }
         }
     }
 
-    public read (bytes): any[] {
-        let i = 0; let _i = 0;
-        const _results: any[] = [];
+    public read (bytes: number): number[] {
+        let i = 0;
+        let _i = 0;
+        const _results: number[] = [];
         for (i = _i = 0; bytes >= 0 ? _i < bytes : _i > bytes; i = bytes >= 0 ? ++_i : --_i) {
             _results.push(this.data[this.pos++]);
         }
@@ -199,10 +245,11 @@ export class PNGReader {
     }
 
     public readUInt32 (): number {
-        const b1 = this.data[this.pos++] << 24;
-        const b2 = this.data[this.pos++] << 16;
-        const b3 = this.data[this.pos++] << 8;
-        const b4 = this.data[this.pos++];
+        const data = this.data;
+        const b1 = data[this.pos++] << 24;
+        const b2 = data[this.pos++] << 16;
+        const b3 = data[this.pos++] << 8;
+        const b4 = data[this.pos++];
         return b1 | b2 | b3 | b4;
     }
 
@@ -212,7 +259,7 @@ export class PNGReader {
         return b1 | b2;
     }
 
-    public decodePixels (data): Uint8Array {
+    public decodePixels (data: Uint8Array | number[] | null): Uint8Array {
         if (data == null) {
             data = this.imgData;
         }
@@ -220,14 +267,30 @@ export class PNGReader {
             return new Uint8Array(0);
         }
         const inflate = new zlib.Inflate(data, { index: 0, verify: false });
-        data = inflate.decompress();
+        data = inflate.decompress() as Uint8Array;
         const pixelBytes = this.pixelBitlength / 8;
         const scanlineLength = pixelBytes * this.width;
         const pixels = new Uint8Array(scanlineLength * this.height);
         const length = data.length;
-        let row = 0; let pos = 0; let c = 0; let ccbyte = 0; let col = 0;
-        let i = 0; let _i = 0; let _j = 0; let _k = 0; let _l = 0; let _m = 0;
-        let left = 0; let p = 0; let pa = 0; let paeth = 0; let pb = 0; let pc = 0; let upper = 0; let upperLeft = 0;
+        let row = 0;
+        let pos = 0;
+        let c = 0;
+        let ccbyte = 0;
+        let col = 0;
+        let i = 0;
+        let _i = 0;
+        let _j = 0;
+        let _k = 0;
+        let _l = 0;
+        let _m = 0;
+        let left = 0;
+        let p = 0;
+        let pa = 0;
+        let paeth = 0;
+        let pb = 0;
+        let pc = 0;
+        let upper = 0;
+        let upperLeft = 0;
         while (pos < length) {
             switch (data[pos++]) {
             case 0:
@@ -292,9 +355,9 @@ export class PNGReader {
         return pixels;
     }
 
-    public copyToImageData (imageData, pixels): void {
+    public copyToImageData (imageData: ImageData, pixels: Uint8Array): void {
         let alpha = this.hasAlphaChannel;
-        let palette: any;
+        let palette: Uint8Array | undefined;
         let colors = this.colors;
         if (this.palette.length) {
             palette = this._decodedPalette != null ? this._decodedPalette : this._decodedPalette = this.decodePalette();
@@ -344,12 +407,13 @@ export class PNGReader {
         return ret;
     }
 
-    render (canvas): any {
+    render (canvas: HTMLCanvasElement): void {
         canvas.width = this.width;
         canvas.height = this.height;
         const ctx = canvas.getContext('2d');
+        if (!ctx) return;
         const data = ctx.createImageData(this.width, this.height);
         this.copyToImageData(data, this.decodePixels(null));
-        return ctx.putImageData(data, 0, 0);
+        ctx.putImageData(data, 0, 0);
     }
 }

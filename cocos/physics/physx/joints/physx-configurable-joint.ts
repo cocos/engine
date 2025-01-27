@@ -46,6 +46,7 @@ function getConstraintFlag (v: EConstraintMode): any {
     }
 }
 
+/** @mangle */
 export class PhysXConfigurableJoint extends PhysXJoint implements IConfigurableConstraint {
     protected _setLinearLimit (): void {
         const linearLimit = this.constraint.linearLimitSettings;

@@ -33,6 +33,7 @@ import { bt } from '../instantiated';
 import { cocos2BulletQuat, cocos2BulletVec3, force2Impulse } from '../bullet-utils';
 import { toRadian } from '../../../core/math';
 
+/** @mangle */
 export class BulletHingeConstraint extends BulletConstraint implements IHingeConstraint {
     setPivotA (v: IVec3Like): void {
         this.updateFrames();

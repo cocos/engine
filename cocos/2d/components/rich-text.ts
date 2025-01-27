@@ -27,7 +27,7 @@ import { ccclass, executeInEditMode, executionOrder, help, menu, multiline, type
 import { DEBUG, DEV, EDITOR } from 'internal:constants';
 import { Font, SpriteAtlas, TTFFont, SpriteFrame } from '../assets';
 import { EventTouch } from '../../input/types';
-import { assert, warnID, Color, Vec2, CCObject, cclegacy, js, Size } from '../../core';
+import { assert, warnID, Color, Vec2, CCObjectFlags, cclegacy, js, Size } from '../../core';
 import { HtmlTextParser, IHtmlTextParserResultObj, IHtmlTextParserStack } from '../utils/html-text-parser';
 import { Node } from '../../scene-graph';
 import { CacheMode, HorizontalTextAlignment, Label, VerticalTextAlignment } from './label';
@@ -103,7 +103,7 @@ function getSegmentByPool (type: string, content: string | SpriteFrame): ISegmen
     if (!node) {
         node = new Node(type);
     }
-    node.hideFlags |= CCObject.Flags.DontSave | CCObject.Flags.HideInHierarchy;
+    node.hideFlags |= CCObjectFlags.DontSave | CCObjectFlags.HideInHierarchy;
     node.active = true; // Reset node state when use node
     if (type === RichTextChildImageName) {
         seg.comp = node.getComponent(Sprite) || node.addComponent(Sprite);
@@ -118,7 +118,7 @@ function getSegmentByPool (type: string, content: string | SpriteFrame): ISegmen
         seg.comp.underlineHeight = 2;
     }
     node.setPosition(0, 0, 0);
-    const trans = node._uiProps.uiTransformComp!;
+    const trans = node._getUITransformComp()!;
     trans.setAnchorPoint(0.5, 0.5);
 
     seg.node = node;
@@ -547,14 +547,14 @@ export class RichText extends Component {
     }
 
     public onDestroy (): void {
-        for (const seg of this._segments) {
+        this._segments.forEach((seg) => {
             seg.node.removeFromParent();
             if (seg.type === RichTextChildName) {
                 labelPool.put(seg);
             } else if (seg.type === RichTextChildImageName) {
                 imagePool.put(seg);
             }
-        }
+        });
 
         this.node.off(NodeEventType.ANCHOR_CHANGED, this._updateRichTextPosition, this);
         this.node.off(NodeEventType.LAYER_CHANGED, this._applyLayer, this);
@@ -758,7 +758,7 @@ export class RichText extends Component {
         }
         label.styleIndex = styleIndex;
         this._applyTextAttribute(label);
-        const size = label.node._uiProps.uiTransformComp!.contentSize;
+        const size = label.node._getUITransformComp()!.contentSize;
         Vec2.set(out, size.x, size.y);
         return out;
     }
@@ -766,7 +766,7 @@ export class RichText extends Component {
     protected _onTouchEnded (event: EventTouch): void {
         const components = this.node.getComponents(Component);
 
-        for (const seg of this._segments) {
+        this._segments.forEach((seg) => {
             const clickHandler = seg.clickHandler;
             const clickParam = seg.clickParam;
             if (clickHandler && this._containsTouchLocation(seg, event.touch!.getUILocation())) {
@@ -778,7 +778,7 @@ export class RichText extends Component {
                 });
                 event.propagationStopped = true;
             }
-        }
+        });
     }
 
     protected _containsTouchLocation (label: ISegment, point: Vec2): boolean {
@@ -855,7 +855,7 @@ export class RichText extends Component {
 
         labelSegment.styleIndex = styleIndex;
         labelSegment.lineCount = this._lineCount;
-        labelSegment.node._uiProps.uiTransformComp!.setAnchorPoint(0, 0);
+        labelSegment.node._getUITransformComp()!.setAnchorPoint(0, 0);
         labelSegment.node.layer = this.node.layer;
         this.node.insertChild(labelSegment.node, this._labelChildrenNum++);
         this._applyTextAttribute(labelSegment);
@@ -901,7 +901,7 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
             for (let k = 0; k < fragments.length; ++k) {
                 const splitString = fragments[k];
                 labelSegment = this._addLabelSegment(splitString, styleIndex);
-                const labelSize = labelSegment.node._uiProps.uiTransformComp!.contentSize;
+                const labelSize = labelSegment.node._getUITransformComp()!.contentSize;
                 this._lineOffsetX += labelSize.width;
                 if (fragments.length > 1 && k < fragments.length - 1) {
                     this._updateLineInfo();
@@ -984,13 +984,13 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
             const sprite = segment.comp;
             switch (style.imageAlign) {
             case 'top':
-                segment.node._uiProps.uiTransformComp!.setAnchorPoint(0, 1);
+                segment.node._getUITransformComp()!.setAnchorPoint(0, 1);
                 break;
             case 'center':
-                segment.node._uiProps.uiTransformComp!.setAnchorPoint(0, 0.5);
+                segment.node._getUITransformComp()!.setAnchorPoint(0, 0.5);
                 break;
             default:
-                segment.node._uiProps.uiTransformComp!.setAnchorPoint(0, 0);
+                segment.node._getUITransformComp()!.setAnchorPoint(0, 0);
                 break;
             }
 
@@ -1033,7 +1033,7 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
                     this._labelWidth = this._lineOffsetX;
                 }
             }
-            segment.node._uiProps.uiTransformComp!.setContentSize(spriteWidth, spriteHeight);
+            segment.node._getUITransformComp()!.setContentSize(spriteWidth, spriteHeight);
             segment.lineCount = this._lineCount;
 
             segment.clickHandler = '';
@@ -1126,7 +1126,7 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
                 } else {
                     label = this._addLabelSegment(labelString, i);
 
-                    this._lineOffsetX += label.node._uiProps.uiTransformComp!.width;
+                    this._lineOffsetX += label.node._getUITransformComp()!.width;
                     if (this._lineOffsetX > this._labelWidth) {
                         this._labelWidth = this._lineOffsetX;
                     }
@@ -1147,7 +1147,7 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
         this._labelHeight = (this._lineCount + BASELINE_RATIO) * this._lineHeight;
 
         // trigger "size-changed" event
-        this.node._uiProps.uiTransformComp!.setContentSize(this._labelWidth, this._labelHeight);
+        this.node._getUITransformComp()!.setContentSize(this._labelWidth, this._labelHeight);
 
         this._updateRichTextPosition();
         this._layoutDirty = false;
@@ -1176,7 +1176,7 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
         let nextTokenX = 0;
         let nextLineIndex = 1;
         const totalLineCount = this._lineCount;
-        const trans = this.node._uiProps.uiTransformComp!;
+        const trans = this.node._getUITransformComp()!;
         const anchorX = trans.anchorX;
         const anchorY = trans.anchorY;
         for (let i = 0; i < this._segments.length; ++i) {
@@ -1209,7 +1209,7 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
             );
 
             if (lineCount === nextLineIndex) {
-                nextTokenX += segment.node._uiProps.uiTransformComp!.width;
+                nextTokenX += segment.node._getUITransformComp()!.width;
             }
 
             const sprite = segment.node.getComponent(Sprite);
@@ -1218,7 +1218,7 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
                 // adjust img align (from <img align=top|center|bottom>)
                 const lineHeightSet = this._lineHeight;
                 const lineHeightReal = this._lineHeight * (1 + BASELINE_RATIO); // single line node height
-                switch (segment.node._uiProps.uiTransformComp!.anchorY) {
+                switch (segment.node._getUITransformComp()!.anchorY) {
                 case 1:
                     position.y += (lineHeightSet + ((lineHeightReal - lineHeightSet) / 2));
                     break;
@@ -1330,9 +1330,9 @@ this._measureText(styleIndex) as unknown as (s: string) => number,
     }
 
     protected _applyLayer (): void {
-        for (const seg of this._segments) {
+        this._segments.forEach((seg) => {
             seg.node.layer = this.node.layer;
-        }
+        });
     }
 
     protected _resetLabelState (label: Label): void {

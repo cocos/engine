@@ -46,6 +46,7 @@ let IDCounter = 0;
  * shared object, node : shared = 1 : 1
  * body for static \ dynamic \ kinematic (collider)
  * ghost for trigger
+ * @mangle
  */
 export class BulletSharedBody {
     private static idCounter = 0;
@@ -425,7 +426,7 @@ export class BulletSharedBody {
         const bt_quat = BulletCache.instance.BT_QUAT_0;
         const bt_transform = BulletCache.instance.BT_TRANSFORM_0;
         bt.RigidBody_getWorldTransform(this.body, bt_transform);
-        const originPosPtr = bt.Transform_getRotationAndOrigin(bt_transform, bt_quat) as number;
+        const originPosPtr = bt.Transform_getRotationAndOrigin(bt_transform, bt_quat);
         this.node.worldRotation = bullet2CocosQuat(quat_0, bt_quat);
         this.node.worldPosition = bullet2CocosVec3(v3_0, originPosPtr);
 

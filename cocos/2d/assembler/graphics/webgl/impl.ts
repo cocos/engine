@@ -66,6 +66,7 @@ export class Path {
     }
 }
 
+/** @mangle */
 export class Impl {
     public dataOffset = 0;
     public updatePathOffset = false;

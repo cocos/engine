@@ -52,10 +52,29 @@ export interface ILetterDefinition {
 
 export class FontAtlas {
     public letterDefinitions: ILetterDefinition = {};
-    public declare texture: TextureBase | null;
+    public _texture: TextureBase | null = null;
 
     constructor (texture: TextureBase | null) {
         this.texture = texture;
+    }
+
+    public set texture (texture: TextureBase | null) {
+        const oldTexture = this._texture;
+        if (oldTexture === texture) return;
+        if (oldTexture) {
+            oldTexture.decRef(false);
+            if (oldTexture.refCount <= 0) {
+                oldTexture.destroy();
+            }
+        }
+        if (texture) {
+            texture.addRef();
+        }
+        this._texture = texture;
+    }
+
+    public get texture (): TextureBase | null {
+        return this._texture;
     }
 
     public addLetterDefinitions (letter: string, letterDefinition: FontLetterDefinition): void {
@@ -64,7 +83,7 @@ export class FontAtlas {
 
     public cloneLetterDefinition (): ILetterDefinition {
         const copyLetterDefinitions: ILetterDefinition = {};
-        for (const key of Object.keys(this.letterDefinitions)) {
+        for (const key in this.letterDefinitions) {
             const value = new FontLetterDefinition();
             js.mixin(value, this.letterDefinitions[key]);
             copyLetterDefinitions[key] = value;
@@ -73,7 +92,7 @@ export class FontAtlas {
     }
 
     public getTexture (): TextureBase | null {
-        return this.texture;
+        return this._texture;
     }
 
     public getLetter (key: string): FontLetterDefinition {

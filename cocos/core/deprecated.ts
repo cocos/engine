@@ -27,7 +27,7 @@ import * as math from './math';
 import { Scheduler } from './scheduler';
 import { legacyCC } from './global-exports';
 
-import { System } from './system';
+import { SystemPriority } from './system';
 
 // VMATH
 
@@ -205,7 +205,7 @@ replaceProperty(Scheduler, 'Scheduler', [
         name: 'PRIORITY_SYSTEM',
         newName: 'System.Priority.SCHEDULER',
         customGetter (): number {
-            return System.Priority.SCHEDULER;
+            return SystemPriority.SCHEDULER;
         },
     },
 ]);

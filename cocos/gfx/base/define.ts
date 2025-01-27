@@ -284,6 +284,13 @@ export enum FormatType {
     FLOAT,
 }
 
+export enum SampleType {
+    FLOAT,
+    UNFILTERABLE_FLOAT,
+    SINT,
+    UINT,
+}
+
 export enum Type {
     UNKNOWN,
     BOOL,
@@ -375,6 +382,21 @@ export enum TextureType {
     CUBE,
     TEX1D_ARRAY,
     TEX2D_ARRAY,
+}
+
+export enum ViewDimension {
+    UNKNOWN,
+    BUFFER,
+    TEX1D,
+    TEX1D_ARRAY,
+    TEX2D,
+    TEX2D_ARRAY,
+    TEX2DMS,
+    TEX2DMS_ARRAY,
+    TEX3D,
+    TEXCUBE,
+    TEXCUBE_ARRAY,
+    RAYTRACING_ACCELERATION_STRUCTURE,
 }
 
 export enum TextureUsageBit {
@@ -1790,6 +1812,10 @@ export class DescriptorSetLayoutBinding {
         public descriptorType: DescriptorType = DescriptorType.UNKNOWN,
         public count: number = 0,
         public stageFlags: ShaderStageFlags = ShaderStageFlagBit.NONE,
+        public access: MemoryAccess = MemoryAccessBit.READ_ONLY,
+        public viewDimension: ViewDimension = ViewDimension.UNKNOWN,
+        public sampleType: SampleType = SampleType.FLOAT,
+        public format: Format = Format.UNKNOWN,
         public immutableSamplers: Sampler[] = [],
     ) {}
 
@@ -1798,6 +1824,10 @@ export class DescriptorSetLayoutBinding {
         this.descriptorType = info.descriptorType;
         this.count = info.count;
         this.stageFlags = info.stageFlags;
+        this.access = info.access;
+        this.viewDimension = info.viewDimension;
+        this.sampleType = info.sampleType;
+        this.format = info.format;
         this.immutableSamplers = info.immutableSamplers.slice();
         return this;
     }
@@ -2017,8 +2047,11 @@ export class GFXObject extends GCObject {
         return this._typedID;
     }
 
+    /** @mangle */
     protected _objectType = ObjectType.UNKNOWN;
+    /** @mangle */
     protected _objectID = 0;
+    /** @mangle */
     protected _typedID = 0;
 
     private static _idTable = Array(ObjectType.COUNT).fill(1 << 16);
@@ -2061,137 +2094,157 @@ export enum AttributeName {
     ATTR_BATCH_UV = 'a_batch_uv',
 }
 
+function createFormatInfo (
+    name: string,
+    size?: number,
+    count?: number,
+    type?: FormatType,
+    hasAlpha?: boolean,
+    hasDepth?: boolean,
+    hasStencil?: boolean,
+    isCompressed?: boolean,
+): FormatInfo {
+    return new FormatInfo(name, size, count, type, hasAlpha, hasDepth, hasStencil, isCompressed);
+}
+
+function createFormatInfo_ASTC_SRGBA (nameSuffix: string): FormatInfo {
+    return new FormatInfo(`ASTC_SRGBA_${nameSuffix}`, 1, 4, FormatType.UNORM, true, false, false, true);
+}
+
+function createFormatInfo_ASTC_RGBA (nameSuffix: string): FormatInfo {
+    return new FormatInfo(`ASTC_RGBA_${nameSuffix}`, 1, 4, FormatType.UNORM, true, false, false, true);
+}
+
 export const FormatInfos = Object.freeze([
+    createFormatInfo('UNKNOWN'),
 
-    new FormatInfo('UNKNOWN', 0, 0, FormatType.NONE, false, false, false, false),
+    createFormatInfo('A8', 1, 1, FormatType.UNORM, true),
+    createFormatInfo('L8', 1, 1, FormatType.UNORM),
+    createFormatInfo('LA8', 1, 2, FormatType.UNORM, true),
 
-    new FormatInfo('A8', 1, 1, FormatType.UNORM, true, false, false, false),
-    new FormatInfo('L8', 1, 1, FormatType.UNORM, false, false, false, false),
-    new FormatInfo('LA8', 1, 2, FormatType.UNORM, true, false, false, false),
+    createFormatInfo('R8', 1, 1, FormatType.UNORM),
+    createFormatInfo('R8SN', 1, 1, FormatType.SNORM),
+    createFormatInfo('R8UI', 1, 1, FormatType.UINT),
+    createFormatInfo('R8I', 1, 1, FormatType.INT),
+    createFormatInfo('R16F', 2, 1, FormatType.FLOAT),
+    createFormatInfo('R16UI', 2, 1, FormatType.UINT),
+    createFormatInfo('R16I', 2, 1, FormatType.INT),
+    createFormatInfo('R32F', 4, 1, FormatType.FLOAT),
+    createFormatInfo('R32UI', 4, 1, FormatType.UINT),
+    createFormatInfo('R32I', 4, 1, FormatType.INT),
 
-    new FormatInfo('R8', 1, 1, FormatType.UNORM, false, false, false, false),
-    new FormatInfo('R8SN', 1, 1, FormatType.SNORM, false, false, false, false),
-    new FormatInfo('R8UI', 1, 1, FormatType.UINT, false, false, false, false),
-    new FormatInfo('R8I', 1, 1, FormatType.INT, false, false, false, false),
-    new FormatInfo('R16F', 2, 1, FormatType.FLOAT, false, false, false, false),
-    new FormatInfo('R16UI', 2, 1, FormatType.UINT, false, false, false, false),
-    new FormatInfo('R16I', 2, 1, FormatType.INT, false, false, false, false),
-    new FormatInfo('R32F', 4, 1, FormatType.FLOAT, false, false, false, false),
-    new FormatInfo('R32UI', 4, 1, FormatType.UINT, false, false, false, false),
-    new FormatInfo('R32I', 4, 1, FormatType.INT, false, false, false, false),
+    createFormatInfo('RG8', 2, 2, FormatType.UNORM),
+    createFormatInfo('RG8SN', 2, 2, FormatType.SNORM),
+    createFormatInfo('RG8UI', 2, 2, FormatType.UINT),
+    createFormatInfo('RG8I', 2, 2, FormatType.INT),
+    createFormatInfo('RG16F', 4, 2, FormatType.FLOAT),
+    createFormatInfo('RG16UI', 4, 2, FormatType.UINT),
+    createFormatInfo('RG16I', 4, 2, FormatType.INT),
+    createFormatInfo('RG32F', 8, 2, FormatType.FLOAT),
+    createFormatInfo('RG32UI', 8, 2, FormatType.UINT),
+    createFormatInfo('RG32I', 8, 2, FormatType.INT),
 
-    new FormatInfo('RG8', 2, 2, FormatType.UNORM, false, false, false, false),
-    new FormatInfo('RG8SN', 2, 2, FormatType.SNORM, false, false, false, false),
-    new FormatInfo('RG8UI', 2, 2, FormatType.UINT, false, false, false, false),
-    new FormatInfo('RG8I', 2, 2, FormatType.INT, false, false, false, false),
-    new FormatInfo('RG16F', 4, 2, FormatType.FLOAT, false, false, false, false),
-    new FormatInfo('RG16UI', 4, 2, FormatType.UINT, false, false, false, false),
-    new FormatInfo('RG16I', 4, 2, FormatType.INT, false, false, false, false),
-    new FormatInfo('RG32F', 8, 2, FormatType.FLOAT, false, false, false, false),
-    new FormatInfo('RG32UI', 8, 2, FormatType.UINT, false, false, false, false),
-    new FormatInfo('RG32I', 8, 2, FormatType.INT, false, false, false, false),
+    createFormatInfo('RGB8', 3, 3, FormatType.UNORM),
+    createFormatInfo('SRGB8', 3, 3, FormatType.UNORM),
+    createFormatInfo('RGB8SN', 3, 3, FormatType.SNORM),
+    createFormatInfo('RGB8UI', 3, 3, FormatType.UINT),
+    createFormatInfo('RGB8I', 3, 3, FormatType.INT),
+    createFormatInfo('RGB16F', 6, 3, FormatType.FLOAT),
+    createFormatInfo('RGB16UI', 6, 3, FormatType.UINT),
+    createFormatInfo('RGB16I', 6, 3, FormatType.INT),
+    createFormatInfo('RGB32F', 12, 3, FormatType.FLOAT),
+    createFormatInfo('RGB32UI', 12, 3, FormatType.UINT),
+    createFormatInfo('RGB32I', 12, 3, FormatType.INT),
 
-    new FormatInfo('RGB8', 3, 3, FormatType.UNORM, false, false, false, false),
-    new FormatInfo('SRGB8', 3, 3, FormatType.UNORM, false, false, false, false),
-    new FormatInfo('RGB8SN', 3, 3, FormatType.SNORM, false, false, false, false),
-    new FormatInfo('RGB8UI', 3, 3, FormatType.UINT, false, false, false, false),
-    new FormatInfo('RGB8I', 3, 3, FormatType.INT, false, false, false, false),
-    new FormatInfo('RGB16F', 6, 3, FormatType.FLOAT, false, false, false, false),
-    new FormatInfo('RGB16UI', 6, 3, FormatType.UINT, false, false, false, false),
-    new FormatInfo('RGB16I', 6, 3, FormatType.INT, false, false, false, false),
-    new FormatInfo('RGB32F', 12, 3, FormatType.FLOAT, false, false, false, false),
-    new FormatInfo('RGB32UI', 12, 3, FormatType.UINT, false, false, false, false),
-    new FormatInfo('RGB32I', 12, 3, FormatType.INT, false, false, false, false),
+    createFormatInfo('RGBA8', 4, 4, FormatType.UNORM, true),
+    createFormatInfo('BGRA8', 4, 4, FormatType.UNORM, true),
+    createFormatInfo('SRGB8_A8', 4, 4, FormatType.UNORM, true),
+    createFormatInfo('RGBA8SN', 4, 4, FormatType.SNORM, true),
+    createFormatInfo('RGBA8UI', 4, 4, FormatType.UINT, true),
+    createFormatInfo('RGBA8I', 4, 4, FormatType.INT, true),
+    createFormatInfo('RGBA16F', 8, 4, FormatType.FLOAT, true),
+    createFormatInfo('RGBA16UI', 8, 4, FormatType.UINT, true),
+    createFormatInfo('RGBA16I', 8, 4, FormatType.INT, true),
+    createFormatInfo('RGBA32F', 16, 4, FormatType.FLOAT, true),
+    createFormatInfo('RGBA32UI', 16, 4, FormatType.UINT, true),
+    createFormatInfo('RGBA32I', 16, 4, FormatType.INT, true),
 
-    new FormatInfo('RGBA8', 4, 4, FormatType.UNORM, true, false, false, false),
-    new FormatInfo('BGRA8', 4, 4, FormatType.UNORM, true, false, false, false),
-    new FormatInfo('SRGB8_A8', 4, 4, FormatType.UNORM, true, false, false, false),
-    new FormatInfo('RGBA8SN', 4, 4, FormatType.SNORM, true, false, false, false),
-    new FormatInfo('RGBA8UI', 4, 4, FormatType.UINT, true, false, false, false),
-    new FormatInfo('RGBA8I', 4, 4, FormatType.INT, true, false, false, false),
-    new FormatInfo('RGBA16F', 8, 4, FormatType.FLOAT, true, false, false, false),
-    new FormatInfo('RGBA16UI', 8, 4, FormatType.UINT, true, false, false, false),
-    new FormatInfo('RGBA16I', 8, 4, FormatType.INT, true, false, false, false),
-    new FormatInfo('RGBA32F', 16, 4, FormatType.FLOAT, true, false, false, false),
-    new FormatInfo('RGBA32UI', 16, 4, FormatType.UINT, true, false, false, false),
-    new FormatInfo('RGBA32I', 16, 4, FormatType.INT, true, false, false, false),
+    createFormatInfo('R5G6B5', 2, 3, FormatType.UNORM),
+    createFormatInfo('R11G11B10F', 4, 3, FormatType.FLOAT),
+    createFormatInfo('RGB5A1', 2, 4, FormatType.UNORM, true),
+    createFormatInfo('RGBA4', 2, 4, FormatType.UNORM, true),
+    createFormatInfo('RGB10A2', 2, 4, FormatType.UNORM, true),
+    createFormatInfo('RGB10A2UI', 2, 4, FormatType.UINT, true),
+    createFormatInfo('RGB9E5', 2, 4, FormatType.FLOAT, true),
 
-    new FormatInfo('R5G6B5', 2, 3, FormatType.UNORM, false, false, false, false),
-    new FormatInfo('R11G11B10F', 4, 3, FormatType.FLOAT, false, false, false, false),
-    new FormatInfo('RGB5A1', 2, 4, FormatType.UNORM, true, false, false, false),
-    new FormatInfo('RGBA4', 2, 4, FormatType.UNORM, true, false, false, false),
-    new FormatInfo('RGB10A2', 2, 4, FormatType.UNORM, true, false, false, false),
-    new FormatInfo('RGB10A2UI', 2, 4, FormatType.UINT, true, false, false, false),
-    new FormatInfo('RGB9E5', 2, 4, FormatType.FLOAT, true, false, false, false),
+    createFormatInfo('DEPTH', 4, 1, FormatType.FLOAT, false, true),
+    createFormatInfo('DEPTH_STENCIL', 5, 2, FormatType.FLOAT, false, true, true),
 
-    new FormatInfo('DEPTH', 4, 1, FormatType.FLOAT, false, true, false, false),
-    new FormatInfo('DEPTH_STENCIL', 5, 2, FormatType.FLOAT, false, true, true, false),
+    createFormatInfo('BC1', 1, 3, FormatType.UNORM, false, false, false, true),
+    createFormatInfo('BC1_ALPHA', 1, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('BC1_SRGB', 1, 3, FormatType.UNORM, false, false, false, true),
+    createFormatInfo('BC1_SRGB_ALPHA', 1, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('BC2', 1, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('BC2_SRGB', 1, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('BC3', 1, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('BC3_SRGB', 1, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('BC4', 1, 1, FormatType.UNORM, false, false, false, true),
+    createFormatInfo('BC4_SNORM', 1, 1, FormatType.SNORM, false, false, false, true),
+    createFormatInfo('BC5', 1, 2, FormatType.UNORM, false, false, false, true),
+    createFormatInfo('BC5_SNORM', 1, 2, FormatType.SNORM, false, false, false, true),
+    createFormatInfo('BC6H_UF16', 1, 3, FormatType.UFLOAT, false, false, false, true),
+    createFormatInfo('BC6H_SF16', 1, 3, FormatType.FLOAT, false, false, false, true),
+    createFormatInfo('BC7', 1, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('BC7_SRGB', 1, 4, FormatType.UNORM, true, false, false, true),
 
-    new FormatInfo('BC1', 1, 3, FormatType.UNORM, false, false, false, true),
-    new FormatInfo('BC1_ALPHA', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('BC1_SRGB', 1, 3, FormatType.UNORM, false, false, false, true),
-    new FormatInfo('BC1_SRGB_ALPHA', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('BC2', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('BC2_SRGB', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('BC3', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('BC3_SRGB', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('BC4', 1, 1, FormatType.UNORM, false, false, false, true),
-    new FormatInfo('BC4_SNORM', 1, 1, FormatType.SNORM, false, false, false, true),
-    new FormatInfo('BC5', 1, 2, FormatType.UNORM, false, false, false, true),
-    new FormatInfo('BC5_SNORM', 1, 2, FormatType.SNORM, false, false, false, true),
-    new FormatInfo('BC6H_UF16', 1, 3, FormatType.UFLOAT, false, false, false, true),
-    new FormatInfo('BC6H_SF16', 1, 3, FormatType.FLOAT, false, false, false, true),
-    new FormatInfo('BC7', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('BC7_SRGB', 1, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('ETC_RGB8', 1, 3, FormatType.UNORM, false, false, false, true),
+    createFormatInfo('ETC2_RGB8', 1, 3, FormatType.UNORM, false, false, false, true),
+    createFormatInfo('ETC2_SRGB8', 1, 3, FormatType.UNORM, false, false, false, true),
+    createFormatInfo('ETC2_RGB8_A1', 1, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('ETC2_SRGB8_A1', 1, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('ETC2_RGBA8', 2, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('ETC2_SRGB8_A8', 2, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('EAC_R11', 1, 1, FormatType.UNORM, false, false, false, true),
+    createFormatInfo('EAC_R11SN', 1, 1, FormatType.SNORM, false, false, false, true),
+    createFormatInfo('EAC_RG11', 2, 2, FormatType.UNORM, false, false, false, true),
+    createFormatInfo('EAC_RG11SN', 2, 2, FormatType.SNORM, false, false, false, true),
 
-    new FormatInfo('ETC_RGB8', 1, 3, FormatType.UNORM, false, false, false, true),
-    new FormatInfo('ETC2_RGB8', 1, 3, FormatType.UNORM, false, false, false, true),
-    new FormatInfo('ETC2_SRGB8', 1, 3, FormatType.UNORM, false, false, false, true),
-    new FormatInfo('ETC2_RGB8_A1', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ETC2_SRGB8_A1', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ETC2_RGBA8', 2, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ETC2_SRGB8_A8', 2, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('EAC_R11', 1, 1, FormatType.UNORM, false, false, false, true),
-    new FormatInfo('EAC_R11SN', 1, 1, FormatType.SNORM, false, false, false, true),
-    new FormatInfo('EAC_RG11', 2, 2, FormatType.UNORM, false, false, false, true),
-    new FormatInfo('EAC_RG11SN', 2, 2, FormatType.SNORM, false, false, false, true),
+    createFormatInfo('PVRTC_RGB2', 2, 3, FormatType.UNORM, false, false, false, true),
+    createFormatInfo('PVRTC_RGBA2', 2, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('PVRTC_RGB4', 2, 3, FormatType.UNORM, false, false, false, true),
+    createFormatInfo('PVRTC_RGBA4', 2, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('PVRTC2_2BPP', 2, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo('PVRTC2_4BPP', 2, 4, FormatType.UNORM, true, false, false, true),
 
-    new FormatInfo('PVRTC_RGB2', 2, 3, FormatType.UNORM, false, false, false, true),
-    new FormatInfo('PVRTC_RGBA2', 2, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('PVRTC_RGB4', 2, 3, FormatType.UNORM, false, false, false, true),
-    new FormatInfo('PVRTC_RGBA4', 2, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('PVRTC2_2BPP', 2, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('PVRTC2_4BPP', 2, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo_ASTC_RGBA('4x4'),
+    createFormatInfo_ASTC_RGBA('5x4'),
+    createFormatInfo_ASTC_RGBA('5x5'),
+    createFormatInfo_ASTC_RGBA('6x5'),
+    createFormatInfo_ASTC_RGBA('6x6'),
+    createFormatInfo_ASTC_RGBA('8x5'),
+    createFormatInfo_ASTC_RGBA('8x6'),
+    createFormatInfo_ASTC_RGBA('8x8'),
+    createFormatInfo_ASTC_RGBA('10x5'),
+    createFormatInfo_ASTC_RGBA('10x6'),
+    createFormatInfo_ASTC_RGBA('10x8'),
+    createFormatInfo_ASTC_RGBA('10x10'),
+    createFormatInfo_ASTC_RGBA('12x10'),
+    createFormatInfo_ASTC_RGBA('12x12'),
 
-    new FormatInfo('ASTC_RGBA_4x4', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_RGBA_5x4', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_RGBA_5x5', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_RGBA_6x5', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_RGBA_6x6', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_RGBA_8x5', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_RGBA_8x6', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_RGBA_8x8', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_RGBA_10x5', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_RGBA_10x6', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_RGBA_10x8', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_RGBA_10x10', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_RGBA_12x10', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_RGBA_12x12', 1, 4, FormatType.UNORM, true, false, false, true),
-
-    new FormatInfo('ASTC_SRGBA_4x4', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_SRGBA_5x4', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_SRGBA_5x5', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_SRGBA_6x5', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_SRGBA_6x6', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_SRGBA_8x5', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_SRGBA_8x6', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_SRGBA_8x8', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_SRGBA_10x5', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_SRGBA_10x6', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_SRGBA_10x8', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_SRGBA_10x10', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_SRGBA_12x10', 1, 4, FormatType.UNORM, true, false, false, true),
-    new FormatInfo('ASTC_SRGBA_12x12', 1, 4, FormatType.UNORM, true, false, false, true),
+    createFormatInfo_ASTC_SRGBA('4x4'),
+    createFormatInfo_ASTC_SRGBA('5x4'),
+    createFormatInfo_ASTC_SRGBA('5x5'),
+    createFormatInfo_ASTC_SRGBA('6x5'),
+    createFormatInfo_ASTC_SRGBA('6x6'),
+    createFormatInfo_ASTC_SRGBA('8x5'),
+    createFormatInfo_ASTC_SRGBA('8x6'),
+    createFormatInfo_ASTC_SRGBA('8x8'),
+    createFormatInfo_ASTC_SRGBA('10x5'),
+    createFormatInfo_ASTC_SRGBA('10x6'),
+    createFormatInfo_ASTC_SRGBA('10x8'),
+    createFormatInfo_ASTC_SRGBA('10x10'),
+    createFormatInfo_ASTC_SRGBA('12x10'),
+    createFormatInfo_ASTC_SRGBA('12x12'),
 ]);
 
 export const DESCRIPTOR_BUFFER_TYPE = DescriptorType.UNIFORM_BUFFER | DescriptorType.DYNAMIC_UNIFORM_BUFFER

@@ -24,12 +24,13 @@
 
 import { legacyCC } from '../core/global-exports';
 import { UITransform } from '../2d/framework';
-import { VideoPlayer } from './video-player';
 import { VideoPlayerEventType } from './video-player-enums';
 import { error } from '../core/platform';
 import { director } from '../game/director';
 import { Node } from '../scene-graph';
 import type { Camera } from '../render-scene/scene';
+import type { VideoPlayer } from './video-player';
+import type { VideoClip } from './assets/video-clip';
 
 export abstract class VideoPlayerImpl {
     protected _componentEventList: Map<string, () => void> = new Map();
@@ -71,7 +72,7 @@ export abstract class VideoPlayerImpl {
     protected _m12 = 0;
     protected _m13 = 0;
 
-    constructor (component) {
+    constructor (component: VideoPlayer) {
         this._component = component;
         this._node = component.node;
         this._uiTrans = component.node.getComponent(UITransform);
@@ -107,7 +108,7 @@ export abstract class VideoPlayerImpl {
     public abstract disable(noPause?: boolean): void;
 
     // synchronizing video player data
-    public abstract syncClip(clip: any): void;
+    public abstract syncClip(clip: VideoClip | null): void;
     public abstract syncURL(url: string): void;
     public abstract syncStayOnBottom(enabled: boolean): void;
     public abstract syncKeepAspectRatio(enabled: boolean): void;
@@ -225,18 +226,19 @@ export abstract class VideoPlayerImpl {
         }
     }
 
-    protected dispatchEvent (key): void {
+    protected dispatchEvent (key: string): void {
         const callback = this._componentEventList.get(key);
         if (callback) {
-            this._state = key;
+            this._state = key as VideoPlayerEventType;
             callback.call(this);
         }
     }
 
-    protected syncUITransform (width, height): void {
-        if (this._uiTrans) {
-            this._uiTrans.width = width;
-            this._uiTrans.height = height;
+    protected syncUITransform (width: number, height: number): void {
+        const uiTrans = this._uiTrans;
+        if (uiTrans) {
+            uiTrans.width = width;
+            uiTrans.height = height;
         }
     }
 

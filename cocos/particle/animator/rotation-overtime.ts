@@ -27,10 +27,10 @@ import { ccclass, tooltip, displayOrder, range, type, radian, serializable, visi
 import { Mat4, pseudoRandom, Quat, Vec3 } from '../../core';
 import { Particle, ParticleModuleBase, PARTICLE_MODULE_NAME } from '../particle';
 import CurveRange from './curve-range';
-import { ModuleRandSeed, RenderMode } from '../enum';
+import { ParticleModuleRandSeed, ParticleRenderMode } from '../enum';
 import { isCurveTwoValues } from '../particle-general-function';
 
-const ROTATION_OVERTIME_RAND_OFFSET = ModuleRandSeed.ROTATION;
+const ROTATION_OVERTIME_RAND_OFFSET = ParticleModuleRandSeed.ROTATION;
 
 /**
  * @en
@@ -127,8 +127,8 @@ export default class RotationOvertimeModule extends ParticleModuleBase {
     private _processRotation (p: Particle, r2d: number): void {
         // Same as the particle-vs-legacy.chunk glsl statemants
         const renderMode = p.particleSystem.processor.getInfo().renderMode;
-        if (renderMode !== RenderMode.Mesh) {
-            if (renderMode === RenderMode.StrecthedBillboard) {
+        if (renderMode !== ParticleRenderMode.Mesh) {
+            if (renderMode === ParticleRenderMode.StrecthedBillboard) {
                 this._quatRot.set(0, 0, 0, 1);
             }
         }
@@ -151,7 +151,7 @@ export default class RotationOvertimeModule extends ParticleModuleBase {
         const randZ = isCurveTwoValues(this.z) ? pseudoRandom(p.randomSeed + ROTATION_OVERTIME_RAND_OFFSET) : 0;
         const renderMode = p.particleSystem.processor.getInfo().renderMode;
 
-        if ((!this._separateAxes) || (renderMode === RenderMode.VerticalBillboard || renderMode === RenderMode.HorizontalBillboard)) {
+        if ((!this._separateAxes) || (renderMode === ParticleRenderMode.VerticalBillboard || renderMode === ParticleRenderMode.HorizontalBillboard)) {
             Quat.fromEuler(p.deltaQuat, 0, 0, this.z.evaluate(normalizedTime, randZ)! * dt * Particle.R2D);
         } else {
             const randX = isCurveTwoValues(this.x) ? pseudoRandom(p.randomSeed + ROTATION_OVERTIME_RAND_OFFSET) : 0;
@@ -164,10 +164,10 @@ export default class RotationOvertimeModule extends ParticleModuleBase {
         p.localMat = p.localMat.multiply(p.deltaMat); // accumulate rotation
 
         if (!p.startRotated) {
-            if (renderMode !== RenderMode.Mesh) {
-                if (renderMode === RenderMode.StrecthedBillboard) {
+            if (renderMode !== ParticleRenderMode.Mesh) {
+                if (renderMode === ParticleRenderMode.StrecthedBillboard) {
                     p.startEuler.set(0, 0, 0);
-                } else if (renderMode !== RenderMode.Billboard) {
+                } else if (renderMode !== ParticleRenderMode.Billboard) {
                     p.startEuler.set(0, 0, p.startEuler.z);
                 }
             }

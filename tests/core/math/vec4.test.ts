@@ -474,4 +474,9 @@ describe('Test Vec4', () => {
         expect(Vec4.equals(v4_0, v4_1)).toBeTruthy();
         expect(Vec4.equals(v4_0, v4_2)).toBeFalsy();
     });
+
+    test('toString', () => {
+        const v = new Vec4(100, 100, 1283.3892389, 0);
+        expect(v.toString()).toBe('(100, 100, 1283.3892389, 0)');
+    });
 });

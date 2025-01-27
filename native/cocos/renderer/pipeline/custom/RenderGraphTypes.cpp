@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner, bugprone-easily-swappable-parameters)
 #include "RenderGraphTypes.h"
 
 namespace cc {
@@ -38,7 +39,7 @@ RasterView::RasterView(const allocator_type& alloc) noexcept
 : slotName(alloc),
   slotName1(alloc) {}
 
-RasterView::RasterView(ccstd::pmr::string slotNameIn, AccessType accessTypeIn, AttachmentType attachmentTypeIn, gfx::LoadOp loadOpIn, gfx::StoreOp storeOpIn, gfx::ClearFlagBit clearFlagsIn, const gfx::Color& clearColorIn, gfx::ShaderStageFlagBit shaderStageFlagsIn, const allocator_type& alloc) noexcept // NOLINT
+RasterView::RasterView(ccstd::pmr::string slotNameIn, AccessType accessTypeIn, AttachmentType attachmentTypeIn, gfx::LoadOp loadOpIn, gfx::StoreOp storeOpIn, gfx::ClearFlagBit clearFlagsIn, const gfx::Color& clearColorIn, gfx::ShaderStageFlagBit shaderStageFlagsIn, const allocator_type& alloc) // NOLINT
 : slotName(std::move(slotNameIn), alloc),
   slotName1(alloc),
   accessType(accessTypeIn),
@@ -49,7 +50,7 @@ RasterView::RasterView(ccstd::pmr::string slotNameIn, AccessType accessTypeIn, A
   clearColor(clearColorIn),
   shaderStageFlags(shaderStageFlagsIn) {}
 
-RasterView::RasterView(ccstd::pmr::string slotNameIn, ccstd::pmr::string slotName1In, AccessType accessTypeIn, AttachmentType attachmentTypeIn, gfx::LoadOp loadOpIn, gfx::StoreOp storeOpIn, gfx::ClearFlagBit clearFlagsIn, const gfx::Color& clearColorIn, gfx::ShaderStageFlagBit shaderStageFlagsIn, const allocator_type& alloc) noexcept // NOLINT
+RasterView::RasterView(ccstd::pmr::string slotNameIn, ccstd::pmr::string slotName1In, AccessType accessTypeIn, AttachmentType attachmentTypeIn, gfx::LoadOp loadOpIn, gfx::StoreOp storeOpIn, gfx::ClearFlagBit clearFlagsIn, const gfx::Color& clearColorIn, gfx::ShaderStageFlagBit shaderStageFlagsIn, const allocator_type& alloc) // NOLINT
 : slotName(std::move(slotNameIn), alloc),
   slotName1(std::move(slotName1In), alloc),
   accessType(accessTypeIn),
@@ -87,7 +88,7 @@ RasterView::RasterView(RasterView const& rhs, const allocator_type& alloc)
 ComputeView::ComputeView(const allocator_type& alloc) noexcept
 : name(alloc) {}
 
-ComputeView::ComputeView(ccstd::pmr::string nameIn, AccessType accessTypeIn, gfx::ClearFlagBit clearFlagsIn, ClearValueType clearValueTypeIn, ClearValue clearValueIn, gfx::ShaderStageFlagBit shaderStageFlagsIn, const allocator_type& alloc) noexcept
+ComputeView::ComputeView(ccstd::pmr::string nameIn, AccessType accessTypeIn, gfx::ClearFlagBit clearFlagsIn, ClearValueType clearValueTypeIn, ClearValue clearValueIn, gfx::ShaderStageFlagBit shaderStageFlagsIn, const allocator_type& alloc)
 : name(std::move(nameIn), alloc),
   accessType(accessTypeIn),
   clearFlags(clearFlagsIn),
@@ -95,7 +96,7 @@ ComputeView::ComputeView(ccstd::pmr::string nameIn, AccessType accessTypeIn, gfx
   clearValue(clearValueIn),
   shaderStageFlags(shaderStageFlagsIn) {}
 
-ComputeView::ComputeView(ccstd::pmr::string nameIn, AccessType accessTypeIn, uint32_t planeIn, gfx::ClearFlagBit clearFlagsIn, ClearValueType clearValueTypeIn, ClearValue clearValueIn, gfx::ShaderStageFlagBit shaderStageFlagsIn, const allocator_type& alloc) noexcept
+ComputeView::ComputeView(ccstd::pmr::string nameIn, AccessType accessTypeIn, uint32_t planeIn, gfx::ClearFlagBit clearFlagsIn, ClearValueType clearValueTypeIn, ClearValue clearValueIn, gfx::ShaderStageFlagBit shaderStageFlagsIn, const allocator_type& alloc)
 : name(std::move(nameIn), alloc),
   accessType(accessTypeIn),
   plane(planeIn),
@@ -378,7 +379,7 @@ RaytracePass::RaytracePass(RaytracePass const& rhs, const allocator_type& alloc)
 ClearView::ClearView(const allocator_type& alloc) noexcept
 : slotName(alloc) {}
 
-ClearView::ClearView(ccstd::pmr::string slotNameIn, gfx::ClearFlagBit clearFlagsIn, const gfx::Color& clearColorIn, const allocator_type& alloc) noexcept
+ClearView::ClearView(ccstd::pmr::string slotNameIn, gfx::ClearFlagBit clearFlagsIn, const gfx::Color& clearColorIn, const allocator_type& alloc)
 : slotName(std::move(slotNameIn), alloc),
   clearFlags(clearFlagsIn),
   clearColor(clearColorIn) {}
@@ -495,4 +496,5 @@ RenderGraph::Vertex::Vertex(Vertex const& rhs, const allocator_type& alloc)
 
 } // namespace cc
 
+// NOLINTEND(misc-include-cleaner, bugprone-easily-swappable-parameters)
 // clang-format on

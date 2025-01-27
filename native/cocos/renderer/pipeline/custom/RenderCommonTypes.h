@@ -28,9 +28,9 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner, bugprone-easily-swappable-parameters)
 #pragma once
 #include "cocos/base/Ptr.h"
-#include "cocos/base/std/container/map.h"
 #include "cocos/base/std/container/string.h"
 #include "cocos/base/std/hash/hash.h"
 #include "cocos/renderer/gfx-base/GFXDef-common.h"
@@ -51,7 +51,7 @@ namespace cc {
 
 namespace render {
 
-enum class UpdateFrequency {
+enum class UpdateFrequency : uint8_t {
     PER_INSTANCE,
     PER_BATCH,
     PER_PHASE,
@@ -59,7 +59,7 @@ enum class UpdateFrequency {
     COUNT,
 };
 
-enum class ParameterType {
+enum class ParameterType : uint8_t {
     CONSTANTS,
     CBV,
     UAV,
@@ -77,7 +77,7 @@ struct CopyTag {};
 struct MoveTag {};
 struct RaytraceTag {};
 
-enum class ResourceResidency {
+enum class ResourceResidency : uint8_t {
     MANAGED,
     MEMORYLESS,
     PERSISTENT,
@@ -85,7 +85,7 @@ enum class ResourceResidency {
     BACKBUFFER,
 };
 
-enum class QueueHint {
+enum class QueueHint : uint8_t {
     NONE,
     OPAQUE,
     MASK,
@@ -95,14 +95,14 @@ enum class QueueHint {
     RENDER_TRANSPARENT = BLEND,
 };
 
-enum class ResourceDimension {
+enum class ResourceDimension : uint8_t {
     BUFFER,
     TEXTURE1D,
     TEXTURE2D,
     TEXTURE3D,
 };
 
-enum class ResourceFlags : uint32_t {
+enum class ResourceFlags : uint32_t { // NOLINT(performance-enum-size)
     NONE = 0,
     UNIFORM = 0x1,
     INDIRECT = 0x2,
@@ -147,12 +147,12 @@ constexpr bool any(ResourceFlags e) noexcept {
 struct BufferTag {};
 struct TextureTag {};
 
-enum class TaskType {
+enum class TaskType : uint8_t {
     SYNC,
     ASYNC,
 };
 
-enum class SceneFlags : uint32_t {
+enum class SceneFlags : uint32_t { // NOLINT(performance-enum-size)
     NONE = 0,
     OPAQUE = 0x1,
     MASK = 0x2,
@@ -204,25 +204,25 @@ constexpr bool any(SceneFlags e) noexcept {
     return !!e;
 }
 
-enum class LightingMode : uint32_t {
+enum class LightingMode : uint8_t {
     NONE,
     DEFAULT,
     CLUSTERED,
 };
 
-enum class AttachmentType {
+enum class AttachmentType : uint8_t {
     RENDER_TARGET,
     DEPTH_STENCIL,
     SHADING_RATE,
 };
 
-enum class AccessType {
+enum class AccessType : uint8_t {
     READ,
     READ_WRITE,
     WRITE,
 };
 
-enum class ClearValueType {
+enum class ClearValueType : uint8_t {
     NONE,
     FLOAT_TYPE,
     INT_TYPE,
@@ -245,63 +245,7 @@ struct LightInfo {
     bool culledByLight{false};
 };
 
-enum class DescriptorTypeOrder {
-    UNIFORM_BUFFER,
-    DYNAMIC_UNIFORM_BUFFER,
-    SAMPLER_TEXTURE,
-    SAMPLER,
-    TEXTURE,
-    STORAGE_BUFFER,
-    DYNAMIC_STORAGE_BUFFER,
-    STORAGE_IMAGE,
-    INPUT_ATTACHMENT,
-};
-
-struct Descriptor {
-    Descriptor() = default;
-    Descriptor(gfx::Type typeIn) noexcept // NOLINT
-    : type(typeIn) {}
-
-    gfx::Type type{gfx::Type::UNKNOWN};
-    uint32_t count{1};
-};
-
-struct DescriptorBlock {
-    ccstd::map<ccstd::string, Descriptor> descriptors;
-    ccstd::map<ccstd::string, gfx::UniformBlock> uniformBlocks;
-    uint32_t capacity{0};
-    uint32_t count{0};
-};
-
-struct DescriptorBlockFlattened {
-    ccstd::vector<ccstd::string> descriptorNames;
-    ccstd::vector<ccstd::string> uniformBlockNames;
-    ccstd::vector<Descriptor> descriptors;
-    ccstd::vector<gfx::UniformBlock> uniformBlocks;
-    uint32_t capacity{0};
-    uint32_t count{0};
-};
-
-struct DescriptorBlockIndex {
-    DescriptorBlockIndex() = default;
-    DescriptorBlockIndex(UpdateFrequency updateFrequencyIn, ParameterType parameterTypeIn, DescriptorTypeOrder descriptorTypeIn, gfx::ShaderStageFlagBit visibilityIn) noexcept
-    : updateFrequency(updateFrequencyIn),
-      parameterType(parameterTypeIn),
-      descriptorType(descriptorTypeIn),
-      visibility(visibilityIn) {}
-
-    UpdateFrequency updateFrequency{UpdateFrequency::PER_INSTANCE};
-    ParameterType parameterType{ParameterType::CONSTANTS};
-    DescriptorTypeOrder descriptorType{DescriptorTypeOrder::UNIFORM_BUFFER};
-    gfx::ShaderStageFlagBit visibility{gfx::ShaderStageFlagBit::NONE};
-};
-
-inline bool operator<(const DescriptorBlockIndex& lhs, const DescriptorBlockIndex& rhs) noexcept {
-    return std::forward_as_tuple(lhs.updateFrequency, lhs.parameterType, lhs.descriptorType, lhs.visibility) <
-           std::forward_as_tuple(rhs.updateFrequency, rhs.parameterType, rhs.descriptorType, rhs.visibility);
-}
-
-enum class ResolveFlags : uint32_t {
+enum class ResolveFlags : uint32_t { // NOLINT(performance-enum-size)
     NONE = 0,
     COLOR = 1 << 0,
     DEPTH = 1 << 1,
@@ -343,13 +287,13 @@ struct ResolvePair {
     }
 
     ResolvePair(const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept; // NOLINT
-    ResolvePair(ccstd::pmr::string sourceIn, ccstd::pmr::string targetIn, ResolveFlags resolveFlagsIn, gfx::ResolveMode modeIn, gfx::ResolveMode mode1In, const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept;
+    ResolvePair(ccstd::pmr::string sourceIn, ccstd::pmr::string targetIn, ResolveFlags resolveFlagsIn, gfx::ResolveMode modeIn, gfx::ResolveMode mode1In, const allocator_type& alloc = boost::container::pmr::get_default_resource());
     ResolvePair(ResolvePair&& rhs, const allocator_type& alloc);
     ResolvePair(ResolvePair const& rhs, const allocator_type& alloc);
 
     ResolvePair(ResolvePair&& rhs) noexcept = default;
     ResolvePair(ResolvePair const& rhs) = delete;
-    ResolvePair& operator=(ResolvePair&& rhs) = default;
+    ResolvePair& operator=(ResolvePair&& rhs) noexcept = default;
     ResolvePair& operator=(ResolvePair const& rhs) = default;
 
     ccstd::pmr::string source;
@@ -375,13 +319,13 @@ struct CopyPair {
     }
 
     CopyPair(const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept; // NOLINT
-    CopyPair(ccstd::pmr::string sourceIn, ccstd::pmr::string targetIn, uint32_t mipLevelsIn, uint32_t numSlicesIn, uint32_t sourceMostDetailedMipIn, uint32_t sourceFirstSliceIn, uint32_t sourcePlaneSliceIn, uint32_t targetMostDetailedMipIn, uint32_t targetFirstSliceIn, uint32_t targetPlaneSliceIn, const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept;
+    CopyPair(ccstd::pmr::string sourceIn, ccstd::pmr::string targetIn, uint32_t mipLevelsIn, uint32_t numSlicesIn, uint32_t sourceMostDetailedMipIn, uint32_t sourceFirstSliceIn, uint32_t sourcePlaneSliceIn, uint32_t targetMostDetailedMipIn, uint32_t targetFirstSliceIn, uint32_t targetPlaneSliceIn, const allocator_type& alloc = boost::container::pmr::get_default_resource());
     CopyPair(CopyPair&& rhs, const allocator_type& alloc);
     CopyPair(CopyPair const& rhs, const allocator_type& alloc);
 
     CopyPair(CopyPair&& rhs) noexcept = default;
     CopyPair(CopyPair const& rhs) = delete;
-    CopyPair& operator=(CopyPair&& rhs) = default;
+    CopyPair& operator=(CopyPair&& rhs) noexcept = default;
     CopyPair& operator=(CopyPair const& rhs) = default;
 
     ccstd::pmr::string source;
@@ -403,12 +347,12 @@ struct UploadPair {
     }
 
     UploadPair(const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept; // NOLINT
-    UploadPair(ccstd::vector<uint8_t> sourceIn, ccstd::pmr::string targetIn, uint32_t mipLevelsIn, uint32_t numSlicesIn, uint32_t targetMostDetailedMipIn, uint32_t targetFirstSliceIn, uint32_t targetPlaneSliceIn, const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept;
+    UploadPair(ccstd::vector<uint8_t> sourceIn, ccstd::pmr::string targetIn, uint32_t mipLevelsIn, uint32_t numSlicesIn, uint32_t targetMostDetailedMipIn, uint32_t targetFirstSliceIn, uint32_t targetPlaneSliceIn, const allocator_type& alloc = boost::container::pmr::get_default_resource());
     UploadPair(UploadPair&& rhs, const allocator_type& alloc);
 
     UploadPair(UploadPair&& rhs) noexcept = default;
     UploadPair(UploadPair const& rhs) = delete;
-    UploadPair& operator=(UploadPair&& rhs) = default;
+    UploadPair& operator=(UploadPair&& rhs) noexcept = default;
     UploadPair& operator=(UploadPair const& rhs) = delete;
 
     ccstd::vector<uint8_t> source;
@@ -427,13 +371,13 @@ struct MovePair {
     }
 
     MovePair(const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept; // NOLINT
-    MovePair(ccstd::pmr::string sourceIn, ccstd::pmr::string targetIn, uint32_t mipLevelsIn, uint32_t numSlicesIn, uint32_t targetMostDetailedMipIn, uint32_t targetFirstSliceIn, uint32_t targetPlaneSliceIn, const allocator_type& alloc = boost::container::pmr::get_default_resource()) noexcept;
+    MovePair(ccstd::pmr::string sourceIn, ccstd::pmr::string targetIn, uint32_t mipLevelsIn, uint32_t numSlicesIn, uint32_t targetMostDetailedMipIn, uint32_t targetFirstSliceIn, uint32_t targetPlaneSliceIn, const allocator_type& alloc = boost::container::pmr::get_default_resource());
     MovePair(MovePair&& rhs, const allocator_type& alloc);
     MovePair(MovePair const& rhs, const allocator_type& alloc);
 
     MovePair(MovePair&& rhs) noexcept = default;
     MovePair(MovePair const& rhs) = delete;
-    MovePair& operator=(MovePair&& rhs) = default;
+    MovePair& operator=(MovePair&& rhs) noexcept = default;
     MovePair& operator=(MovePair const& rhs) = default;
 
     ccstd::pmr::string source;
@@ -477,4 +421,5 @@ inline hash_t hash<cc::render::ResolvePair>::operator()(const cc::render::Resolv
 
 } // namespace ccstd
 
+// NOLINTEND(misc-include-cleaner, bugprone-easily-swappable-parameters)
 // clang-format on

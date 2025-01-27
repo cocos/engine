@@ -222,7 +222,7 @@ export class KeyframeCurve<TKeyframeValue> implements CurveBase, Iterable<KeyFra
         if (values !== undefined) {
             assertIsTrue(Array.isArray(times));
             this.setKeyframes(
-                times.slice(),
+                (times as number[]).slice(),
                 values.slice(),
             );
         } else {
@@ -280,9 +280,18 @@ export class KeyframeCurve<TKeyframeValue> implements CurveBase, Iterable<KeyFra
         return iNext;
     }
 
-    // Times are always sorted and 1-1 correspond to values.
+    /**
+     * Times are always sorted and 1-1 correspond to values.
+     * @dontmangle
+     * NOTE: _times is a serializable property set by `CCClass.fastDefine`,
+     * so it should not be mangled while `mangleProtected` is true in `<<ProjectRoot>>/engine-mangle-config.json`.
+     */
     protected _times: number[] = [];
-
+    /**
+     * @dontmangle
+     * NOTE: _values is a serializable property set by `CCClass.fastDefine`,
+     * so it should not be mangled while `mangleProtected` is true in `<<ProjectRoot>>/engine-mangle-config.json`.
+     */
     protected _values: TKeyframeValue[] = [];
 }
 

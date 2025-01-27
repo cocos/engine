@@ -28,6 +28,7 @@ import { b2Joint } from './joint-2d';
 import { DistanceJoint2D } from '../../framework';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework/physics-types';
 
+/** @mangle */
 export class b2DistanceJoint extends b2Joint implements IDistanceJoint {
     setMaxLength (v: number): void {
         if (this._b2joint) {

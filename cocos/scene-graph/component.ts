@@ -26,7 +26,7 @@
 import { ccclass, tooltip, displayName, type, serializable, disallowAnimation } from 'cc.decorator';
 import { EDITOR, TEST } from 'internal:constants';
 import { Script } from '../asset/assets/scripts';
-import { CCObject } from '../core/data/object';
+import { CCObject, CCObjectFlags } from '../core/data/object';
 import { IDGenerator } from '../core/utils/id-generator';
 import { getClassName, value } from '../core/utils/js';
 import { RenderScene } from '../render-scene/core/render-scene';
@@ -39,7 +39,7 @@ import { CompPrefabInfo } from './prefab/prefab-info';
 import { EventHandler } from './component-event-handler';
 
 const idGenerator = new IDGenerator('Comp');
-const IsOnLoadCalled = CCObject.Flags.IsOnLoadCalled;
+const IsOnLoadCalled = CCObjectFlags.IsOnLoadCalled;
 
 const NullNode = null as unknown as Node;
 

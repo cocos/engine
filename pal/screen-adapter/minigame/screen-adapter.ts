@@ -26,7 +26,7 @@ import { ALIPAY, BYTEDANCE, TAOBAO_MINIGAME, VIVO } from 'internal:constants';
 import { minigame } from 'pal/minigame';
 import { IScreenOptions, SafeAreaEdge } from 'pal/screen-adapter';
 import { systemInfo } from 'pal/system-info';
-import { warnID } from '../../../cocos/core/platform/debug';
+import { getError, warnID } from '../../../cocos/core/platform/debug';
 import { EventTarget } from '../../../cocos/core/event/event-target';
 import { Size } from '../../../cocos/core/math';
 import { OS } from '../../system-info/enum-type';
@@ -161,10 +161,10 @@ class ScreenAdapter extends EventTarget {
     }
 
     public requestFullScreen (): Promise<void> {
-        return Promise.reject(new Error('request fullscreen is not supported on this platform.'));
+        return Promise.reject(new Error(getError(9008)));
     }
     public exitFullScreen (): Promise<void> {
-        return Promise.reject(new Error('exit fullscreen is not supported on this platform.'));
+        return Promise.reject(new Error(getError(9009)));
     }
 }
 

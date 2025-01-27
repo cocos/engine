@@ -34,7 +34,7 @@ describe('Test Size', () => {
 
     test('toString', () => {
         const size = new Size(100, 100);
-        expect(size.toString()).toBe('(100.00, 100.00)');
+        expect(size.toString()).toBe('(100, 100)');
     });
 
 });

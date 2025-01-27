@@ -66,7 +66,7 @@ public:
     void            clearRect(float /*x*/, float /*y*/, float w, float h) override;
     void            fillRect(float x, float y, float w, float h) override;
     void            fillText(const ccstd::string &text, float x, float y, float /*maxWidth*/) override;
-    void            strokeText(const ccstd::string &text, float /*x*/, float /*y*/, float /*maxWidth*/) const;
+    void            strokeText(const ccstd::string &text, float /*x*/, float /*y*/, float /*maxWidth*/) override;
     Size            measureText(const ccstd::string &text) override;
     void            updateFont(const ccstd::string &fontName, float fontSize, bool bold, bool italic, bool oblique, bool smallCaps) override;
     void            setTextAlign(TextAlign align) override;
@@ -79,13 +79,13 @@ public:
     void            setLineCap(const ccstd::string &lineCap) override;
     void            setLineJoin(const ccstd::string &lineCap) override;
     void            fillImageData(const Data &imageData, float imageWidth, float imageHeight, float offsetX, float offsetY) override;
-    void            strokeText(const ccstd::string &text, float /*x*/, float /*y*/, float /*maxWidth*/) override;
     void            rect(float x, float y, float w, float h) override;
     void            setShadowBlur(float blur)override{}
     void            setShadowColor(uint8_t r, uint8_t g, uint8_t b, uint8_t a) override{}
     void            setShadowOffsetX(float offsetX) override{}
     void            setShadowOffsetY(float offsetY) override{}
     void            updateData() override;
+    void            setTextStyle(OH_Drawing_TextStyle *textStyle);
 private:
     static wchar_t *     utf8ToUtf16(const ccstd::string &str, int *pRetLen = nullptr);
     void                 removeCustomFont();
@@ -94,10 +94,11 @@ private:
     void                 prepareBitmap(int nWidth, int nHeight);
     void                 deleteBitmap();
     void                 fillTextureData();
-    ccstd::array<float, 2> convertDrawPoint(Point point, const ccstd::string &text);
+    ccstd::array<float, 2> convertDrawPoint(Point point, const ccstd::string &text, OH_Drawing_TextStyle *textStyle);
 
     class ScopedTypography;
-    std::unique_ptr<ScopedTypography> createTypography(const ccstd::string &text);
+    std::unique_ptr<ScopedTypography> createTypography(const ccstd::string &text, OH_Drawing_TextStyle *textStyle);
+    void setPremultiply(bool multiply);
 public:
     int          _screen{0};
 
@@ -116,6 +117,9 @@ private:
     OH_Drawing_TypographyCreate* _typographyCreate{nullptr};
     OH_Drawing_FontCollection* _fontCollection{nullptr};
     OH_Drawing_TextStyle* _textStyle{nullptr};
+    OH_Drawing_TextStyle *_strokeTextStyle{nullptr};
+    OH_Drawing_Pen *_pen{nullptr};
+
     cc::Data    _imageData;
     ccstd::string _curFontPath;
     int         _savedDC{0};
@@ -131,6 +135,10 @@ private:
     TextBaseline       _textBaseLine{TextBaseline::TOP};
     Color4F            _fillStyle{0};
     Color4F            _strokeStyle{0};
+    bool               _bold{false};
+    bool               _italic{false};
+    bool               _premultiply{true};
+    
 };
 
 } // namespace cc

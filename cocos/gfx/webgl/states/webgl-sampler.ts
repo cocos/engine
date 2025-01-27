@@ -34,6 +34,7 @@ const WebGLWraps: GLenum[] = [
     0x812F, // WebGLRenderingContext.CLAMP_TO_EDGE,
 ];
 
+/** @mangle */
 export class WebGLSampler extends Sampler {
     public get gpuSampler (): IWebGLGPUSampler {
         return  this._gpuSampler!;

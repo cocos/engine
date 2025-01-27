@@ -26,7 +26,7 @@ import{ cclegacy } from '../../core';
 import './asset';
 import { patch_cc_EffectAsset } from '../../native-binding/decorators';
 import type { EffectAsset as JsbEffectAsset } from './effect-asset';
-import type { BlendState, DepthStencilState, RasterizerState, DynamicStateFlags, PrimitiveMode, ShaderStageFlags, Type, Uniform, MemoryAccess, Format} from "../../gfx/index.jsb";
+import type { BlendState, DepthStencilState, RasterizerState, DynamicStateFlags, PrimitiveMode, ShaderStageFlags, Type, Uniform, MemoryAccess, Format, SampleType } from "../../gfx/index.jsb";
 import type { RenderPassStage } from '../../rendering/define';
 import type { MacroRecord } from '../../render-scene/core/pass-utils';
 import { TextureBase } from './texture-base';
@@ -92,6 +92,7 @@ export declare namespace EffectAsset {
         type: Type;
         count: number;
         stageFlags: ShaderStageFlags;
+        sampleType: SampleType;
     }
     export interface ISamplerInfo {
         set: number;
@@ -107,6 +108,7 @@ export declare namespace EffectAsset {
         type: Type;
         count: number;
         stageFlags: ShaderStageFlags;
+        sampleType: SampleType;
     }
     export interface IBufferInfo {
         binding: number;

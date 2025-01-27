@@ -312,10 +312,10 @@
                 "2d"
             ]
         },
-        "vendor": {
+        "vendor-google": {
             "default": false,
-            "label": "i18n:ENGINE.features.vendor.label",
-            "description": "i18n:ENGINE.features.vendor.description",
+            "label": "i18n:ENGINE.features.vendor_google.label",
+            "description": "i18n:ENGINE.features.vendor_google.description",
             "enginePlugin": false,
             "isNativeModule": true,
             "cmakeConfig": "USE_VENDOR",

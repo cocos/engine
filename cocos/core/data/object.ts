@@ -30,52 +30,56 @@ import { legacyCC } from '../global-exports';
 import { EditorExtendableObject, editorExtrasTag } from './editor-extras-tag';
 import { copyAllProperties } from '../utils/js';
 
-// definitions for CCObject.Flags
+// definitions for CCObjectFlags
 
-const Destroyed = 1 << 0;
-const RealDestroyed = 1 << 1;
-const ToDestroy = 1 << 2;
-const DontSave = 1 << 3;
-const EditorOnly = 1 << 4;
-const Dirty = 1 << 5;
-const DontDestroy = 1 << 6;
-const Destroying = 1 << 7;
-const Deactivating = 1 << 8;
-const LockedInEditor = 1 << 9;
-const HideInHierarchy = 1 << 10;
+export enum CCObjectFlags {
+    Destroyed = 1 << 0,
+    RealDestroyed = 1 << 1,
+    ToDestroy = 1 << 2,
+    DontSave = 1 << 3,
+    EditorOnly = 1 << 4,
+    Dirty = 1 << 5,
+    DontDestroy = 1 << 6,
+    Destroying = 1 << 7,
+    Deactivating = 1 << 8,
+    LockedInEditor = 1 << 9,
+    HideInHierarchy = 1 << 10,
 
-const IsOnEnableCalled = 1 << 11;
-const IsEditorOnEnableCalled = 1 << 12;
-const IsPreloadStarted = 1 << 13;
-const IsOnLoadCalled = 1 << 14;
-const IsOnLoadStarted = 1 << 15;
-const IsStartCalled = 1 << 16;
+    IsOnEnableCalled = 1 << 11,
+    IsEditorOnEnableCalled = 1 << 12,
+    IsPreloadStarted = 1 << 13,
+    IsOnLoadCalled = 1 << 14,
+    IsOnLoadStarted = 1 << 15,
+    IsStartCalled = 1 << 16,
 
-const IsRotationLocked = 1 << 17;
-const IsScaleLocked = 1 << 18;
-const IsAnchorLocked = 1 << 19;
-const IsSizeLocked = 1 << 20;
-const IsPositionLocked = 1 << 21;
+    IsRotationLocked = 1 << 17,
+    IsScaleLocked = 1 << 18,
+    IsAnchorLocked = 1 << 19,
+    IsSizeLocked = 1 << 20,
+    IsPositionLocked = 1 << 21,
 
-// var Hide = HideInGame | HideInEditor;
-// should not clone or serialize these flags
-const PersistentMask = ~(ToDestroy | Dirty | Destroying | DontDestroy | Deactivating
-                       | IsPreloadStarted | IsOnLoadStarted | IsOnLoadCalled | IsStartCalled
-                       | IsOnEnableCalled | IsEditorOnEnableCalled
-                       | IsRotationLocked | IsScaleLocked | IsAnchorLocked | IsSizeLocked | IsPositionLocked
-/* RegisteredInEditor */);
+    // var Hide = HideInGame | HideInEditor,
+    // should not clone or serialize these flags
+    PersistentMask = ~(ToDestroy | Dirty | Destroying | DontDestroy | Deactivating
+                           | IsPreloadStarted | IsOnLoadStarted | IsOnLoadCalled | IsStartCalled
+                           | IsOnEnableCalled | IsEditorOnEnableCalled
+                           | IsRotationLocked | IsScaleLocked | IsAnchorLocked | IsSizeLocked | IsPositionLocked
+    /* RegisteredInEditor */),
 
-// all the hideFlags
-const AllHideMasks = DontSave | EditorOnly | LockedInEditor | HideInHierarchy;
+    // all the hideFlags
+    AllHideMasks = DontSave | EditorOnly | LockedInEditor | HideInHierarchy,
+}
 
 const objectsToDestroy: CCObject[] = [];
 let deferredDestroyTimer: number | null = null;
 
-function compileDestruct (obj, ctor): Function {
+type DestructFunction = (o: CCObject) => void;
+
+function compileDestruct (obj: any, ctor: any): DestructFunction {
     const shouldSkipId = obj instanceof legacyCC.Node || obj instanceof legacyCC.Component;
     const idToSkip = shouldSkipId ? '_id' : null;
 
-    let key;
+    let key: string;
     const propsToReset = {};
     for (key in obj) {
         // eslint-disable-next-line no-prototype-builtins
@@ -146,7 +150,7 @@ function compileDestruct (obj, ctor): Function {
             func += (`${statement + val};\n`);
         }
         // eslint-disable-next-line @typescript-eslint/no-implied-eval,no-new-func
-        return Function('o', func);
+        return Function('o', func) as DestructFunction;
     } else {
         return (o): void => {
             for (const _key in propsToReset) {
@@ -168,7 +172,7 @@ class CCObject implements EditorExtendableObject {
         const deleteCount = objectsToDestroy.length;
         for (let i = 0; i < deleteCount; ++i) {
             const obj = objectsToDestroy[i];
-            if (!(obj._objFlags & Destroyed)) {
+            if (!(obj._objFlags & CCObjectFlags.Destroyed)) {
                 obj._destroyImmediate();
             }
         }
@@ -194,6 +198,12 @@ class CCObject implements EditorExtendableObject {
      * @internal
      */
     public _objFlags: number = 0;
+
+    /**
+     * @dontmangle
+     * NOTE: _name is a serializable property set by `CCClass.fastDefine`,
+     * so it should not be mangled while `mangleProtected` is true in `<<ProjectRoot>>/engine-mangle-config.json`.
+     */
     protected declare _name: string;
 
     constructor (name = '') {
@@ -232,11 +242,11 @@ class CCObject implements EditorExtendableObject {
      * @zh 在继承 CCObject 对象后，控制是否需要隐藏，锁定，序列化等功能。
      */
     public set hideFlags (hideFlags: CCObject.Flags) {
-        const flags = hideFlags & CCObject.Flags.AllHideMasks;
-        this._objFlags = (this._objFlags & ~CCObject.Flags.AllHideMasks) | flags;
+        const flags = hideFlags & CCObjectFlags.AllHideMasks;
+        this._objFlags = (this._objFlags & ~CCObjectFlags.AllHideMasks) | flags;
     }
     public get hideFlags (): CCObject.Flags {
-        return this._objFlags & CCObject.Flags.AllHideMasks;
+        return this._objFlags & CCObjectFlags.AllHideMasks;
     }
 
     /**
@@ -266,7 +276,7 @@ class CCObject implements EditorExtendableObject {
      * ```
      */
     get isValid (): boolean {
-        return !(this._objFlags & Destroyed);
+        return !(this._objFlags & CCObjectFlags.Destroyed);
     }
 
     /**
@@ -286,17 +296,17 @@ class CCObject implements EditorExtendableObject {
      * ```
      */
     public destroy (): boolean {
-        if (this._objFlags & Destroyed) {
+        if (this._objFlags & CCObjectFlags.Destroyed) {
             warnID(5000);
             return false;
         }
-        if (this._objFlags & ToDestroy) {
+        if (this._objFlags & CCObjectFlags.ToDestroy) {
             return false;
         }
-        this._objFlags |= ToDestroy;
+        this._objFlags |= CCObjectFlags.ToDestroy;
         objectsToDestroy.push(this);
 
-        if (EDITOR && deferredDestroyTimer === null && legacyCC.engine && !legacyCC.engine._isUpdating) {
+        if (EDITOR_NOT_IN_PREVIEW && deferredDestroyTimer === null && legacyCC.engine && !legacyCC.engine._isUpdating) {
             // auto destroy immediate in edit mode
             deferredDestroyTimer = setTimeout(CCObject._deferredDestroy);
         }
@@ -341,12 +351,12 @@ class CCObject implements EditorExtendableObject {
      */
     public _destruct (): void {
         const ctor: any = this.constructor;
-        let destruct;
+        let destruct: DestructFunction;
         if (Object.prototype.hasOwnProperty.call(ctor, '__destruct__')) {
             destruct = ctor.__destruct__;
         } else {
             destruct = compileDestruct(this, ctor);
-            js.value(ctor, '__destruct__', destruct, true);
+            js.value(ctor as Record<string, any>, '__destruct__', destruct, true);
         }
 
         destruct(this);
@@ -356,7 +366,7 @@ class CCObject implements EditorExtendableObject {
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
      */
     public _destroyImmediate (): void {
-        if (this._objFlags & Destroyed) {
+        if (this._objFlags & CCObjectFlags.Destroyed) {
             errorID(5000);
             return;
         }
@@ -376,14 +386,14 @@ class CCObject implements EditorExtendableObject {
             this._destruct();
         }
 
-        this._objFlags |= Destroyed;
+        this._objFlags |= CCObjectFlags.Destroyed;
     }
 }
 
 const prototype = CCObject.prototype;
 if (EDITOR || TEST) {
     js.get(prototype, 'isRealValid', function (this: CCObject) {
-        return !(this._objFlags & RealDestroyed);
+        return !(this._objFlags & CCObjectFlags.RealDestroyed);
     });
 
     /**
@@ -397,7 +407,7 @@ if (EDITOR || TEST) {
         function (this: CCObject) {
             return this._objFlags;
         },
-        function (this: CCObject, objFlags: CCObject.Flags) {
+        function (this: CCObject, objFlags: CCObjectFlags) {
             this._objFlags = objFlags;
         },
     );
@@ -415,16 +425,16 @@ if (EDITOR || TEST) {
     * issue: https://github.com/cocos/cocos-engine/issues/14643
     */
     (prototype as any).realDestroyInEditor = function (): void {
-        if (!(this._objFlags & Destroyed)) {
+        if (!(this._objFlags & CCObjectFlags.Destroyed)) {
             warnID(5001);
             return;
         }
-        if (this._objFlags & RealDestroyed) {
+        if (this._objFlags & CCObjectFlags.RealDestroyed) {
             warnID(5000);
             return;
         }
         this._destruct();
-        this._objFlags |= RealDestroyed;
+        this._objFlags |= CCObjectFlags.RealDestroyed;
     };
 }
 
@@ -466,35 +476,18 @@ if (EDITOR) {
     CCClass.fastDefine('cc.Object', CCObject, { _name: '', _objFlags: 0 });
 }
 
+const CCObjectFlagsEnum = {};
+for (const key in CCObjectFlags) {
+    if (typeof key === 'string' && typeof CCObjectFlags[key] === 'number') {
+        CCObjectFlagsEnum[key] = CCObjectFlags[key];
+    }
+}
 /**
  * Bit mask that controls object states.
  * @enum Object.Flags
  * @private
  */
-js.value(CCObject, 'Flags', {
-    Destroyed,
-    DontSave,
-    EditorOnly,
-    Dirty,
-    DontDestroy,
-    PersistentMask,
-    Destroying,
-    Deactivating,
-    LockedInEditor,
-    HideInHierarchy,
-    AllHideMasks,
-    IsPreloadStarted,
-    IsOnLoadStarted,
-    IsOnLoadCalled,
-    IsOnEnableCalled,
-    IsStartCalled,
-    IsEditorOnEnableCalled,
-    IsPositionLocked,
-    IsRotationLocked,
-    IsScaleLocked,
-    IsAnchorLocked,
-    IsSizeLocked,
-});
+js.value(CCObject, 'Flags', CCObjectFlagsEnum);
 
 declare namespace CCObject {
     export enum Flags {
@@ -655,7 +648,7 @@ export function isCCObject (object: any): object is CCObject {
  */
 export function isValid (value: any, strictMode?: boolean): boolean {
     if (typeof value === 'object') {
-        return !!value && !(value._objFlags & (strictMode ? (Destroyed | ToDestroy) : Destroyed));
+        return !!value && !(value._objFlags & (strictMode ? (CCObjectFlags.Destroyed | CCObjectFlags.ToDestroy) : CCObjectFlags.Destroyed));
     } else {
         return typeof value !== 'undefined';
     }
@@ -663,9 +656,9 @@ export function isValid (value: any, strictMode?: boolean): boolean {
 legacyCC.isValid = isValid;
 
 if (EDITOR || TEST) {
-    js.value(CCObject, '_willDestroy', (obj) => !(obj._objFlags & Destroyed) && (obj._objFlags & ToDestroy) > 0);
+    js.value(CCObject, '_willDestroy', (obj) => !(obj._objFlags & CCObjectFlags.Destroyed) && (obj._objFlags & CCObjectFlags.ToDestroy) > 0);
     js.value(CCObject, '_cancelDestroy', (obj) => {
-        obj._objFlags &= ~ToDestroy;
+        obj._objFlags &= ~CCObjectFlags.ToDestroy;
         js.array.fastRemove(objectsToDestroy, obj);
     });
 }

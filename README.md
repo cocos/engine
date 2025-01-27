@@ -33,18 +33,18 @@ Cocos Creator inherited many good qualities and cool features from its previous 
 
 Furthermore, Cocos Creator has pushed the engine technology to a whole new level for high performance with scalability on various platforms, full extensibility and easy development.
 
-1. **Modern Graphics**: The GFX implementation is designed to adapt to the modern graphics APIs, it uses Vulkan on Windows and Android, Metal on Mac OS and iOS, WebGL on Web platform.
-2. **High Performance**: The runtime engine is built with half C++ and half TypeScript, low level infrastructure, native platform adaptation, renderer and scene management are all written in C++ to ensure high runtime performance. We continue to move heavy lifting work to native as much as possible.
-3. **Customizable Render Pipeline**: The render pipeline is designed to be fully customizable, it has supported the builtin forward and deferred render pipeline across all platforms. Developers can customize their own render pipeline following the same approach.
-4. **Extensible Surface Shader**: The material system is built on Cocos effect format which uses GLSL 300, the shader programs will be converted to suitable runtime format automatically. The surface shader permit to fully customize the surface material while ensuring universal lighting model.
-5. **Physically Based Rendering (PBR)**: The standard effect adopts physically based rendering, along with the physically based camera and the lighting based on physical metrics, developers can easily achieve realistic and seamless rendering results across different environment.
-6. **Easy TypeScript API**: The user level API set is provided in TypeScript, along with the powerful VSCode editor, development with Cocos Creator is incredibly efficient.
+1. **Modern Graphics**: The GFX implementation is designed to adapt to the modern graphics APIs, it uses Vulkan on Windows and Android, Metal on Mac OS and iOS, and WebGL on Web platforms.
+2. **High Performance**: The runtime engine is built with half C++ and half TypeScript, low-level infrastructure, native platform adaptation, renderer, and scene management are all written in C++ to ensure high runtime performance. We continue to move heavy lifting work to native as much as possible.
+3. **Customizable Render Pipeline**: The render pipeline is designed to be fully customizable, it has supported the builtin forward and deferred render pipeline across all platforms. Developers can customize their render pipeline following the same approach.
+4. **Extensible Surface Shader**: The material system is built on Coco's effect format which uses GLSL 300, the shader programs will be converted to a suitable runtime format automatically. The surface shader permits to fully customize the surface material while ensuring a universal lighting model.
+5. **Physically Based Rendering (PBR)**: The standard effect adopts physically based rendering, along with the physically based camera and the lighting based on physical metrics, developers can easily achieve realistic and seamless rendering results across different environments.
+6. **Easy TypeScript API**: The user-level API set is provided in TypeScript, along with the powerful VSCode editor, development with Cocos Creator is incredibly efficient.
 
-Besides all these highlights, Cocos Creator also provides builtin animation system, physics system, particle system, terrain editing support, complex UI system, instant preview etc.
+Besides all these highlights, Cocos Creator also provides a built-in animation system, physics system, particle system, terrain editing support, complex UI system, instant preview, etc.
 
 ![image](https://user-images.githubusercontent.com/1503156/111037166-f27c7600-845d-11eb-988f-4c2c8b5c7321.png)
 
-This open source repository is the runtime engine of Cocos Creator, the engine is naturally integrated within Cocos Creator, designed to only be the essential runtime library and not to be used independently.
+This open-source repository is the runtime engine of Cocos Creator, the engine is naturally integrated within Cocos Creator, designed to only be the essential runtime library and not to be used independently.
 
 ## Development and Contribution Notice
 
@@ -61,14 +61,14 @@ Clone this repository into your local environment.
 
 ### Install
 
-In the cloned engine folder, run the following command to setup development environment:
+In the cloned engine folder, run the following command to set the development environment:
 
 ```bash
 # download & build engine dependencies
 npm install
 ```
 
-This is all you have to do to setup engine development environment.
+This is all you have to do to set up the engine development environment.
 
 ### Build
 
@@ -83,23 +83,23 @@ Please refer to [native readme](native/README.md) if you want to develop native 
 
 ### Contribution
 
-You can contribute to the Cocos Creator open source engine in many ways, they are very much appreciated:
+You can contribute to the Cocos Creator open-source engine in many ways, they are very much appreciated:
 
-1. Report bug or feature requests by [creating an issue](https://github.com/cocos/cocos-engine/issues/new/choose).
-2. Participate discussions in the [issues](https://github.com/cocos/cocos-engine/issues/).
-3. Create a pull request if you have fixed or improved anything, implemented any features.
-4. Improve the documentations with pull request to the [usage documentation repository](https://github.com/cocos/cocos-docs).
+1. Report bugs or feature requests by [creating an issue](https://github.com/cocos/cocos-engine/issues/new/choose).
+2. Participate in discussions in the [issues](https://github.com/cocos/cocos-engine/issues/).
+3. Create a pull request if you have fixed or improved anything, or implemented any features.
+4. Improve the documentation with pull requests to the [usage documentation repository](https://github.com/cocos/cocos-docs).
 5. Help other developers in our [Forum](https://discuss.cocos2d-x.org/c/creator).
 
 ### Contribution notice
 
-If you are trying to make a pull request, there are some requirements that must be met so that your pull request can be accepted:
+If you are trying to make a pull request, some requirements must be met so that your pull request can be accepted:
 
 1. Follow our [Cpp Coding Style Guide](./docs/CPP_CODING_STYLE.md) and [TypeScript Coding Style Reference](./docs/TS_CODING_STYLE.md).
 2. Try to integrate ESLint and [CPP auto fix tools](./docs/CPP_LINTER_AUTOFIX_GUIDE.md) in your coding environment.
 3. Link related issues or discussions in your pull request and clearly state the purpose of your pull request.
 4. Pass all automatic continuous integration tests.
-5. Request file owner or engine developers to review your pull request.
+5. Request file owners or engine developers to review your pull request.
 6. Get one valid approval from the engine architects.
 
 ## Example Project

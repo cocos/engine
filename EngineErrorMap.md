@@ -2195,6 +2195,14 @@ browser don't support web audio
 
 This feature supports WebGL render mode only.
 
+### 5203
+
+Audio buffer cache %s has not been added.
+
+### 5204
+
+Audio buffer %s has been cached.
+
 ### 5300
 
 Type of target to deserialize not matched with data: target is %s, data is %s
@@ -3169,6 +3177,14 @@ QuadRenderData is removed, please use MeshRenderData instead.
 
 Since v3.6, Because mask changes the inheritance relationship, you can directly manipulate the rendering components under the same node to complete the operation.
 
+### 9008
+
+request fullscreen is not supported on this platform.
+
+### 9009
+
+exit fullscreen is not supported on this platform.
+
 ### 9100
 
 texture size exceeds current device limits %d/%d
@@ -3245,6 +3261,10 @@ Can't getGFXSampler with out device
 ### 9643
 
 [Physics] Failed to load user customized default physics material: %s, will fallback to built-in default physics material
+
+### 9644
+
+[Physics] Failed to find ear. There might be self-intersection in the polygon.
 
 ### 10001
 
@@ -3888,3 +3908,7 @@ Can't find the spriteFrame of tilesets %s
 ### 16407
 
 Spline error: invalid mode
+
+### 16408
+
+[Physics2D] b2PolygonShape failed to decompose polygon into convex polygons, node name: %s

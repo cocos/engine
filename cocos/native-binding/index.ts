@@ -1262,10 +1262,31 @@ export declare namespace native {
          * @en call Objective-C/Java static methods
          * @zh 调用 Objective-C/Java 静态方法
          *
-         * @param className : @en the class name of the Objective-C/Java class @zh Objective-C/Java 类的类名
-         * @param methodName : @en the method name of the Objective-C/Java class @zh Objective-C/Java 类的方法名
-         * @param methodSignature : @en the method signature of the Objective-C/Java class @zh Objective-C/Java 方法签名
-         * @param parameters : @en the parameters of the Objective-C/Java class to translate @zh 传递至该 Objective-C/Java 方法的参数
+         * @param className : @en the class name of the Objective-C/Java/ArkTs class @zh Objective-C/Java/ArkTs 类的类名
+         * @param methodName : @en the method name of the Objective-C/Java/ArkT class @zh Objective-C/Java/ArkT 类的方法名
+         * @param methodSignature :
+         *        @en
+         *          - On the Android platform: Represents the method signature of the Java class.
+         *          - On the Mac/iOS platform: Represents the first parameter of the Objective-C method.
+         *          - On the HarmonyOS Next platform: Represents all parameters of the ArkTs method.
+         *            If multiple parameters are required, can be converted into a JSON string.
+         *        @zh
+         *          - 在 Android 平台：表示 Java 方法的签名。
+         *          - 在 Mac 或 iOS 平台：表示 Objective-C 方法的第一个参数。
+         *          - 在 HarmonyOS Next 平台：表示 ArkTs 方法的所有参数。如果需要传入多个参数，可以将它们转换为 JSON 字符串。
+         *
+         * @param parameters :
+         *        @en
+         *          - On the Android platform: Represents the parameters passed to the Java method.
+         *          - On the Mac/iOS platform: Represents the second or subsequent parameters of the Objective-C method.
+         *          - On the HarmonyOS Next platform: Indicates whether the ArkTs method is synchronous or asynchronous.
+         *            The default is `true`, meaning the ArkTs method is called synchronously.
+         *            Note that calling asynchronous ArkTs methods may block while waiting for results.
+         *        @zh
+         *          - 在 Android 平台：传递到 Java 方法的参数。
+         *          - 在 Mac 或 iOS 平台：传递到 Objective-C 方法的第二个或更多参数。
+         *          - 在 HarmonyOS Next 平台：表示调用 ArkTs 方法是同步还是异步。
+         *            默认值为 `true`，表示调用ArkTs的同步方法。注意，调用异步方法可能会阻塞以等待结果。
          */
         export function callStaticMethod(className: string, methodName: string, methodSignature: string, ...parameters: any): any;
     }

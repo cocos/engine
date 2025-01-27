@@ -27,11 +27,11 @@ import { EDITOR } from 'internal:constants';
 import { builtinResMgr } from '../asset/asset-manager';
 import { ModelRenderer } from '../misc/model-renderer';
 import { EffectAsset, Texture2D } from '../asset/assets';
-import { Filter, PixelFormat, WrapMode } from '../asset/assets/asset-enum';
+import { TextureFilter, PixelFormat, WrapMode } from '../asset/assets/asset-enum';
 import { Material } from '../asset/assets/material';
 import { RenderingSubMesh } from '../asset/assets/rendering-sub-mesh';
 import { Component } from '../scene-graph/component';
-import { CCObject, isValid } from '../core/data/object';
+import { CCObjectFlags, isValid } from '../core/data/object';
 import { director } from '../game/director';
 import { AttributeName, BufferUsageBit, Format, MemoryUsageBit, PrimitiveMode, Attribute, Buffer, BufferInfo, deviceManager, Texture } from '../gfx';
 import { clamp, Rect, Size, Vec2, Vec3, Vec4 } from '../core/math';
@@ -418,7 +418,7 @@ export class TerrainBlock {
 
         this._node = new Node('TerrainBlock');
         this._node.setParent(this._terrain.node);
-        this._node.hideFlags |= CCObject.Flags.DontSave | CCObject.Flags.HideInHierarchy;
+        this._node.hideFlags |= CCObjectFlags.DontSave | CCObjectFlags.HideInHierarchy;
         this._node.layer = this._terrain.node.layer;
 
         this._renderable = this._node.addComponent(TerrainRenderable);
@@ -926,7 +926,7 @@ export class TerrainBlock {
         if (this._weightMap == null) {
             this._weightMap = new Texture2D();
             this._weightMap.create(this._terrain.weightMapSize, this._terrain.weightMapSize, PixelFormat.RGBA8888);
-            this._weightMap.setFilters(Filter.LINEAR, Filter.LINEAR);
+            this._weightMap.setFilters(TextureFilter.LINEAR, TextureFilter.LINEAR);
             this._weightMap.setWrapMode(WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE);
         }
 

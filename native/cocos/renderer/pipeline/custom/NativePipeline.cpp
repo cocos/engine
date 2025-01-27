@@ -39,6 +39,7 @@
 #include "cocos/scene/ReflectionProbeManager.h"
 #include "cocos/scene/RenderScene.h"
 #include "cocos/scene/RenderWindow.h"
+#include "bindings/jswrapper/SeApi.h"
 
 #if CC_USE_DEBUG_RENDERER
     #include "profiler/DebugRenderer.h"
@@ -1310,6 +1311,22 @@ void buildLayoutGraphNodeBuffer(
     }
 }
 
+se::Value buildRPVal;
+void buildRenderPipeline() {
+    if (buildRPVal.isUndefined()) {
+        auto *global = se::ScriptEngine::getInstance()->getGlobalObject();
+        se::Value jsbVal;
+        if(global->getProperty("jsb", &jsbVal) && jsbVal.isObject()) {
+            jsbVal.toObject()->getProperty("buildRenderPipeline", &buildRPVal);
+        }
+        se::ScriptEngine::getInstance()->addBeforeCleanupHook([]() {
+            buildRPVal.setUndefined();
+        });
+    }
+    se::ValueArray args;
+    buildRPVal.toObject()->call(args, nullptr);
+}
+
 } // namespace
 
 // NOLINTNEXTLINE
@@ -1491,7 +1508,7 @@ void NativePipeline::render(const ccstd::vector<scene::Camera *> &cameras) {
     std::ignore = cameras;
     const auto *sceneData = pipelineSceneData.get();
     auto *commandBuffer = device->getCommandBuffer();
-
+    buildRenderPipeline();
     executeRenderGraph(renderGraph);
 }
 

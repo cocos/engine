@@ -25,10 +25,11 @@
 
 import { DEV } from 'internal:constants';
 
-function deepFlatten (strList, array): void {
+function deepFlatten (strList: string[], array: (string | string[])[]): void {
     for (const item of array) {
         if (Array.isArray(item)) {
             deepFlatten(strList, item);
+        // eslint-disable-next-line brace-style
         }
         // else if (item instanceof Declaration) {
         //     strList.push(item.toString());
@@ -43,7 +44,7 @@ function deepFlatten (strList, array): void {
  *
  * @engineInternal
  */
-export function flattenCodeArray (array): string {
+export function flattenCodeArray (array: (string | string[])[]): string {
     const separator = DEV ? '\n' : '';
     const strList = [];
     deepFlatten(strList, array);

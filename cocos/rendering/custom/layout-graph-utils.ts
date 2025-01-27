@@ -23,13 +23,29 @@
 ****************************************************************************/
 
 /* eslint-disable max-len */
-import type { LayoutGraphData, PipelineLayoutData, RenderPhaseData } from './layout-graph';
-import { DescriptorBlockData, DescriptorData, DescriptorSetLayoutData, LayoutGraphDataValue } from './layout-graph';
+import { HTML5 } from 'internal:constants';
 import { EffectAsset } from '../../asset/assets';
 import { assert, error, warn } from '../../core';
-import { DescriptorSetInfo, DescriptorSetLayout, DescriptorSetLayoutBinding, DescriptorSetLayoutInfo, DescriptorType, Device, Feature, Format, FormatFeatureBit, GetTypeSize, PipelineLayout, PipelineLayoutInfo, ShaderStageFlagBit, Type, Uniform, UniformBlock } from '../../gfx';
-import { UBOForwardLight, UBOForwardLightEnum, UBOSkinning } from '../define';
-import { UpdateFrequency, DescriptorBlockIndex, DescriptorTypeOrder, ParameterType } from './types';
+import { API, DescriptorSetInfo, DescriptorSetLayout, DescriptorSetLayoutBinding, DescriptorSetLayoutInfo, DescriptorType, Device, Feature, Format, FormatFeatureBit, GetTypeSize, MemoryAccessBit, PipelineLayout, PipelineLayoutInfo, SampleType, ShaderStageFlagBit, Type, Uniform, UniformBlock, ViewDimension } from '../../gfx';
+import { UBOForwardLightEnum, UBOSkinning } from '../define';
+import type {
+    DescriptorGroupBlockIndex,
+    LayoutGraphData,
+    PipelineLayoutData, RenderPhaseData,
+} from './layout-graph';
+import {
+    DescriptorBlockData,
+    DescriptorBlockIndex,
+    DescriptorData,
+    DescriptorSetLayoutData,
+    DescriptorTypeOrder,
+    Layout,
+    LayoutGraphDataValue,
+    LayoutType,
+} from './layout-graph';
+import {
+    ParameterType, UpdateFrequency,
+} from './types';
 
 export const INVALID_ID = 0xFFFFFFFF;
 export const ENABLE_SUBPASS = true;
@@ -169,6 +185,29 @@ export function sortDescriptorBlocks<T> (lhs: [string, T], rhs: [string, T]): nu
     return lhsValue - rhsValue;
 }
 
+export function sortDescriptorGroupBlocks<T> (lhs: [string, T], rhs: [string, T]): number {
+    const lhsIndex: DescriptorGroupBlockIndex = JSON.parse(lhs[0]);
+    const rhsIndex: DescriptorGroupBlockIndex = JSON.parse(rhs[0]);
+
+    const lhsValue = lhsIndex.updateFrequency * 1000000000
+        + lhsIndex.parameterType * 100000000
+        + lhsIndex.descriptorType * 10000000
+        + lhsIndex.visibility * 1000000
+        + lhsIndex.accessType * 100000
+        + lhsIndex.viewDimension * 10000
+        + lhsIndex.sampleType * 1000
+        + lhsIndex.format;
+    const rhsValue = rhsIndex.updateFrequency * 1000000000
+        + rhsIndex.parameterType * 100000000
+        + rhsIndex.descriptorType * 10000000
+        + rhsIndex.visibility * 1000000
+        + rhsIndex.accessType * 100000
+        + rhsIndex.viewDimension * 10000
+        + rhsIndex.sampleType * 1000
+        + rhsIndex.format;
+    return lhsValue - rhsValue;
+}
+
 // get descriptor nameID from name
 export function getOrCreateDescriptorID (lg: LayoutGraphData, name: string): number {
     const nameID = lg.attributeIndex.get(name);
@@ -182,6 +221,7 @@ export function getOrCreateDescriptorID (lg: LayoutGraphData, name: string): num
 }
 
 function createDescriptorInfo (layoutData: DescriptorSetLayoutData, info: DescriptorSetLayoutInfo): void {
+    info.bindings.length = 0;
     for (let i = 0; i < layoutData.descriptorBlocks.length; ++i) {
         const block = layoutData.descriptorBlocks[i];
         let slot = block.offset;
@@ -213,7 +253,8 @@ function createDescriptorSetLayout (device: Device | null, layoutData: Descripto
 export function createGfxDescriptorSetsAndPipelines (device: Device | null, g: LayoutGraphData): void {
     for (let i = 0; i < g._layouts.length; ++i) {
         const ppl: PipelineLayoutData = g.getLayout(i);
-        ppl.descriptorSets.forEach((value, key): void => {
+        const sets = ppl.getSets();
+        sets.forEach((value, key): void => {
             const level = value;
             const layoutData = level.descriptorSetLayoutData;
             if (device) {
@@ -241,6 +282,52 @@ function getDescriptorBlockData (map: Map<string, DescriptorBlockData>, index: D
     return newBlock;
 }
 
+function getDescriptorGroupBlockData (map: Map<string, DescriptorBlockData>, index: DescriptorGroupBlockIndex): DescriptorBlockData {
+    const key = JSON.stringify(index);
+    const block = map.get(key);
+    if (block) {
+        return block;
+    }
+    const newBlock = new DescriptorBlockData(
+        index.descriptorType,
+        index.visibility,
+        0,
+        index.accessType,
+        index.viewDimension,
+        index.sampleType,
+        index.format,
+    );
+    map.set(key, newBlock);
+    return newBlock;
+}
+
+function getViewDimension (type: Type): ViewDimension  {
+    switch (type) {
+    case Type.SAMPLER1D:
+    case Type.TEXTURE1D:
+    case Type.IMAGE1D:
+        return ViewDimension.TEX1D;
+    case Type.SAMPLER2D:
+    case Type.TEXTURE2D:
+    case Type.IMAGE2D:
+        return ViewDimension.TEX2D;
+    case Type.SAMPLER2D_ARRAY:
+    case Type.TEXTURE2D_ARRAY:
+    case Type.IMAGE2D_ARRAY:
+        return ViewDimension.TEX2D_ARRAY;
+    case Type.SAMPLER_CUBE:
+    case Type.TEXTURE_CUBE:
+    case Type.IMAGE_CUBE:
+        return ViewDimension.TEXCUBE;
+    case Type.SAMPLER3D:
+    case Type.TEXTURE3D:
+    case Type.IMAGE3D:
+        return ViewDimension.TEX3D;
+    default:
+        return ViewDimension.UNKNOWN;
+    }
+}
+
 // make DescriptorSetLayoutData from effect directly
 export function makeDescriptorSetLayoutData (
     lg: LayoutGraphData,
@@ -250,14 +337,26 @@ export function makeDescriptorSetLayoutData (
 ): DescriptorSetLayoutData {
     const map = new Map<string, DescriptorBlockData>();
     const uniformBlocks: Map<number, UniformBlock> = new Map<number, UniformBlock>();
+
     for (let i = 0; i < descriptors.blocks.length; i++) {
         const cb = descriptors.blocks[i];
-        const block = getDescriptorBlockData(map, {
-            updateFrequency: rate,
-            parameterType: ParameterType.TABLE,
-            descriptorType: DescriptorTypeOrder.UNIFORM_BUFFER,
-            visibility: cb.stageFlags,
-        });
+        const block = HTML5 && Layout.isWebGPU
+            ? getDescriptorGroupBlockData(map, {
+                updateFrequency: rate,
+                parameterType: ParameterType.TABLE,
+                descriptorType: DescriptorTypeOrder.UNIFORM_BUFFER,
+                visibility: cb.stageFlags,
+                accessType: MemoryAccessBit.READ_ONLY,
+                viewDimension: ViewDimension.BUFFER,
+                sampleType: SampleType.FLOAT,
+                format: Format.UNKNOWN,
+            })
+            : getDescriptorBlockData(map, {
+                updateFrequency: rate,
+                parameterType: ParameterType.TABLE,
+                descriptorType: DescriptorTypeOrder.UNIFORM_BUFFER,
+                visibility: cb.stageFlags,
+            });
         const nameID = getOrCreateDescriptorID(lg, cb.name);
         block.descriptors.push(new DescriptorData(nameID, Type.UNKNOWN, 1));
         // add uniform buffer
@@ -265,78 +364,147 @@ export function makeDescriptorSetLayoutData (
     }
     for (let i = 0; i < descriptors.samplerTextures.length; i++) {
         const samplerTexture = descriptors.samplerTextures[i];
-        const block = getDescriptorBlockData(map, {
-            updateFrequency: rate,
-            parameterType: ParameterType.TABLE,
-            descriptorType: DescriptorTypeOrder.SAMPLER_TEXTURE,
-            visibility: samplerTexture.stageFlags,
-        });
+        const block = HTML5 && Layout.isWebGPU
+            ? getDescriptorGroupBlockData(map, {
+                updateFrequency: rate,
+                parameterType: ParameterType.TABLE,
+                descriptorType: DescriptorTypeOrder.SAMPLER_TEXTURE,
+                visibility: samplerTexture.stageFlags,
+                accessType: MemoryAccessBit.READ_ONLY,
+                viewDimension: getViewDimension(samplerTexture.type),
+                sampleType: samplerTexture.sampleType,
+                format: Format.UNKNOWN,
+            })
+            : getDescriptorBlockData(map, {
+                updateFrequency: rate,
+                parameterType: ParameterType.TABLE,
+                descriptorType: DescriptorTypeOrder.SAMPLER_TEXTURE,
+                visibility: samplerTexture.stageFlags,
+            });
         const nameID = getOrCreateDescriptorID(lg, samplerTexture.name);
         block.descriptors.push(new DescriptorData(nameID, samplerTexture.type, samplerTexture.count));
     }
     for (let i = 0; i < descriptors.samplers.length; i++) {
         const sampler = descriptors.samplers[i];
-        const block = getDescriptorBlockData(map, {
-            updateFrequency: rate,
-            parameterType: ParameterType.TABLE,
-            descriptorType: DescriptorTypeOrder.SAMPLER,
-            visibility: sampler.stageFlags,
-        });
+        const block = HTML5 && Layout.isWebGPU
+            ? getDescriptorGroupBlockData(map, {
+                updateFrequency: rate,
+                parameterType: ParameterType.TABLE,
+                descriptorType: DescriptorTypeOrder.SAMPLER,
+                visibility: sampler.stageFlags,
+                accessType: MemoryAccessBit.READ_ONLY,
+                viewDimension: ViewDimension.UNKNOWN,
+                sampleType: SampleType.FLOAT,
+                format: Format.UNKNOWN,
+            })
+            : getDescriptorBlockData(map, {
+                updateFrequency: rate,
+                parameterType: ParameterType.TABLE,
+                descriptorType: DescriptorTypeOrder.SAMPLER,
+                visibility: sampler.stageFlags,
+            });
         const nameID = getOrCreateDescriptorID(lg, sampler.name);
         block.descriptors.push(new DescriptorData(nameID, Type.SAMPLER, sampler.count));
     }
     for (let i = 0; i < descriptors.textures.length; i++) {
         const texture = descriptors.textures[i];
-        const block = getDescriptorBlockData(map, {
-            updateFrequency: rate,
-            parameterType: ParameterType.TABLE,
-            descriptorType: DescriptorTypeOrder.TEXTURE,
-            visibility: texture.stageFlags,
-        });
+        const block = HTML5 && Layout.isWebGPU
+            ? getDescriptorGroupBlockData(map, {
+                updateFrequency: rate,
+                parameterType: ParameterType.TABLE,
+                descriptorType: DescriptorTypeOrder.TEXTURE,
+                visibility: texture.stageFlags,
+                accessType: MemoryAccessBit.READ_ONLY,
+                viewDimension: getViewDimension(texture.type),
+                sampleType: texture.sampleType,
+                format: Format.UNKNOWN,
+            })
+            : getDescriptorBlockData(map, {
+                updateFrequency: rate,
+                parameterType: ParameterType.TABLE,
+                descriptorType: DescriptorTypeOrder.TEXTURE,
+                visibility: texture.stageFlags,
+            });
         const nameID = getOrCreateDescriptorID(lg, texture.name);
         block.descriptors.push(new DescriptorData(nameID, texture.type, texture.count));
     }
     for (let i = 0; i < descriptors.buffers.length; i++) {
         const buffer = descriptors.buffers[i];
-        const block = getDescriptorBlockData(map, {
-            updateFrequency: rate,
-            parameterType: ParameterType.TABLE,
-            descriptorType: DescriptorTypeOrder.STORAGE_BUFFER,
-            visibility: buffer.stageFlags,
-        });
+        const block = HTML5 && Layout.isWebGPU
+            ? getDescriptorGroupBlockData(map, {
+                updateFrequency: rate,
+                parameterType: ParameterType.TABLE,
+                descriptorType: DescriptorTypeOrder.STORAGE_BUFFER,
+                visibility: buffer.stageFlags,
+                accessType: MemoryAccessBit.READ_ONLY,
+                viewDimension: ViewDimension.BUFFER,
+                sampleType: SampleType.FLOAT,
+                format: Format.UNKNOWN,
+            })
+            : getDescriptorBlockData(map, {
+                updateFrequency: rate,
+                parameterType: ParameterType.TABLE,
+                descriptorType: DescriptorTypeOrder.STORAGE_BUFFER,
+                visibility: buffer.stageFlags,
+            });
         const nameID = getOrCreateDescriptorID(lg, buffer.name);
         block.descriptors.push(new DescriptorData(nameID, Type.UNKNOWN, 1));
     }
     for (let i = 0; i < descriptors.images.length; i++) {
         const image = descriptors.images[i];
-        const block = getDescriptorBlockData(map, {
-            updateFrequency: rate,
-            parameterType: ParameterType.TABLE,
-            descriptorType: DescriptorTypeOrder.STORAGE_IMAGE,
-            visibility: image.stageFlags,
-        });
+        const block = HTML5 && Layout.isWebGPU
+            ? getDescriptorGroupBlockData(map, {
+                updateFrequency: rate,
+                parameterType: ParameterType.TABLE,
+                descriptorType: DescriptorTypeOrder.STORAGE_IMAGE,
+                visibility: image.stageFlags,
+                accessType: MemoryAccessBit.READ_ONLY,
+                viewDimension: getViewDimension(image.type),
+                sampleType: SampleType.FLOAT,
+                format: Format.UNKNOWN, // TODO(zhouzhenglong): Add storage image format
+            })
+            : getDescriptorBlockData(map, {
+                updateFrequency: rate,
+                parameterType: ParameterType.TABLE,
+                descriptorType: DescriptorTypeOrder.STORAGE_IMAGE,
+                visibility: image.stageFlags,
+            });
         const nameID = getOrCreateDescriptorID(lg, image.name);
         block.descriptors.push(new DescriptorData(nameID, image.type, image.count));
     }
     for (let i = 0; i < descriptors.subpassInputs.length; i++) {
         const subpassInput = descriptors.subpassInputs[i];
-        const block = getDescriptorBlockData(map, {
-            updateFrequency: rate,
-            parameterType: ParameterType.TABLE,
-            descriptorType: DescriptorTypeOrder.INPUT_ATTACHMENT,
-            visibility: subpassInput.stageFlags,
-        });
+        const block = HTML5 && Layout.isWebGPU
+            ? getDescriptorGroupBlockData(map, {
+                updateFrequency: rate,
+                parameterType: ParameterType.TABLE,
+                descriptorType: DescriptorTypeOrder.INPUT_ATTACHMENT,
+                visibility: subpassInput.stageFlags,
+                accessType: MemoryAccessBit.READ_ONLY,
+                viewDimension: ViewDimension.TEX2D,
+                sampleType: SampleType.FLOAT,
+                format: Format.UNKNOWN,
+            })
+            : getDescriptorBlockData(map, {
+                updateFrequency: rate,
+                parameterType: ParameterType.TABLE,
+                descriptorType: DescriptorTypeOrder.INPUT_ATTACHMENT,
+                visibility: subpassInput.stageFlags,
+            });
         const nameID = getOrCreateDescriptorID(lg, subpassInput.name);
         block.descriptors.push(new DescriptorData(nameID, Type.UNKNOWN, subpassInput.count));
     }
 
     // sort blocks
-    const flattenedBlocks = Array.from(map).sort(sortDescriptorBlocks);
+    const flattenedBlocks = HTML5 && Layout.isWebGPU
+        ? Array.from(map).sort(sortDescriptorGroupBlocks)
+        : Array.from(map).sort(sortDescriptorBlocks);
+
     const data = new DescriptorSetLayoutData(set, 0);
     // calculate bindings
     let capacity = 0;
     for (const [key, block] of flattenedBlocks) {
-        const index = JSON.parse(key) as DescriptorBlockIndex;
+        const index = JSON.parse(key) as DescriptorBlockIndex | DescriptorGroupBlockIndex;
         block.offset = capacity;
         for (const d of block.descriptors) {
             if (index.descriptorType === DescriptorTypeOrder.UNIFORM_BUFFER) {
@@ -378,6 +546,7 @@ export function initializeDescriptorSetLayoutInfo (
     layoutData: DescriptorSetLayoutData,
     info: DescriptorSetLayoutInfo,
 ): void {
+    info.bindings.length = 0;
     for (let i = 0; i < layoutData.descriptorBlocks.length; ++i) {
         const block = layoutData.descriptorBlocks[i];
         let slot = block.offset;
@@ -403,7 +572,7 @@ export function populatePipelineLayoutInfo (
     rate: UpdateFrequency,
     info: PipelineLayoutInfo,
 ): void {
-    const set = layout.descriptorSets.get(rate);
+    const set = layout.getSet(rate);
     if (set && set.descriptorSetLayout) {
         info.setLayouts.push(set.descriptorSetLayout);
     } else {
@@ -426,12 +595,15 @@ export function generateConstantMacros (device: Device, constantMacros: string):
 
 // initialize layout graph module
 export function initializeLayoutGraphData (device: Device, lg: LayoutGraphData): void {
+    Layout.type = device.gfxAPI === API.WEBGPU ? LayoutType.WEBGPU : LayoutType.VULKAN;
+    Layout.isWebGPU = device.gfxAPI === API.WEBGPU;
     // create descriptor sets
     _emptyDescriptorSetLayout = device.createDescriptorSetLayout(new DescriptorSetLayoutInfo());
     _emptyPipelineLayout = device.createPipelineLayout(new PipelineLayoutInfo());
     for (const v of lg.v()) {
         const layoutData = lg.getLayout(v);
-        for (const [_, set] of layoutData.descriptorSets) {
+        const sets = layoutData.getSets();
+        for (const [_, set] of sets) {
             if (set.descriptorSetLayout !== null) {
                 warn('descriptor set layout already initialized. It will be overwritten');
             }
@@ -465,7 +637,8 @@ export function initializeLayoutGraphData (device: Device, lg: LayoutGraphData):
 export function terminateLayoutGraphData (lg: LayoutGraphData): void {
     for (const v of lg.v()) {
         const layoutData = lg.getLayout(v);
-        for (const [_, set] of layoutData.descriptorSets) {
+        const sets = layoutData.getSets();
+        for (const [_, set] of sets) {
             if (set.descriptorSetLayout !== null) {
                 set.descriptorSetLayout.destroy();
             }
@@ -494,7 +667,7 @@ export function getOrCreateDescriptorSetLayout (
 ): DescriptorSetLayout {
     if (rate < UpdateFrequency.PER_PASS) {
         const phaseData = lg.getLayout(phaseID);
-        const data = phaseData.descriptorSets.get(rate);
+        const data = phaseData.getSet(rate);
         if (data) {
             if (!data.descriptorSetLayout) {
                 error('descriptor set layout not initialized');
@@ -509,7 +682,7 @@ export function getOrCreateDescriptorSetLayout (
     assert(subpassOrPassID === lg.getParent(phaseID));
 
     const passData = lg.getLayout(subpassOrPassID);
-    const data = passData.descriptorSets.get(rate);
+    const data = passData.getSet(rate);
     if (data) {
         if (!data.descriptorSetLayout) {
             error('descriptor set layout not initialized');
@@ -529,7 +702,7 @@ export function getDescriptorSetLayout (
 ): DescriptorSetLayout | null {
     if (rate < UpdateFrequency.PER_PASS) {
         const phaseData = lg.getLayout(phaseID);
-        const data = phaseData.descriptorSets.get(rate);
+        const data = phaseData.getSet(rate);
         if (data) {
             if (!data.descriptorSetLayout) {
                 error('descriptor set layout not initialized');
@@ -544,7 +717,7 @@ export function getDescriptorSetLayout (
     assert(subpassOrPassID === lg.getParent(phaseID));
 
     const passData = lg.getLayout(subpassOrPassID);
-    const data = passData.descriptorSets.get(rate);
+    const data = passData.getSet(rate);
     if (data) {
         if (!data.descriptorSetLayout) {
             error('descriptor set layout not initialized');
@@ -553,23 +726,6 @@ export function getDescriptorSetLayout (
         return data.descriptorSetLayout;
     }
     return null;
-}
-
-// get or create DescriptorBlockData from DescriptorSetLayoutData
-export function getOrCreateDescriptorBlockData (
-    data: DescriptorSetLayoutData,
-    type: DescriptorType,
-    vis: ShaderStageFlagBit,
-): DescriptorBlockData {
-    const order = getDescriptorTypeOrder(type);
-    for (const block of data.descriptorBlocks) {
-        if (block.type === order && block.visibility === vis) {
-            return block;
-        }
-    }
-    const block = new DescriptorBlockData(order, vis);
-    data.descriptorBlocks.push(block);
-    return block;
 }
 
 export function getProgramID (lg: LayoutGraphData, phaseID: number, programName: string): number {
@@ -603,7 +759,7 @@ export function getPerPassDescriptorSetLayoutData (
 ): DescriptorSetLayoutData | null {
     assert(subpassOrPassID !== lg.N);
     const node = lg.getLayout(subpassOrPassID);
-    const set = node.descriptorSets.get(UpdateFrequency.PER_PASS);
+    const set = node.getSet(UpdateFrequency.PER_PASS);
     if (set === undefined) {
         return null;
     }
@@ -616,7 +772,7 @@ export function getPerPhaseDescriptorSetLayoutData (
 ): DescriptorSetLayoutData | null {
     assert(phaseID !== lg.N);
     const node = lg.getLayout(phaseID);
-    const set = node.descriptorSets.get(UpdateFrequency.PER_PHASE);
+    const set = node.getSet(UpdateFrequency.PER_PHASE);
     if (set === undefined) {
         return null;
     }
@@ -626,13 +782,13 @@ export function getPerPhaseDescriptorSetLayoutData (
 export function getPerBatchDescriptorSetLayoutData (
     lg: LayoutGraphData,
     phaseID: number,
-    programID,
+    programID: number,
 ): DescriptorSetLayoutData | null {
     assert(phaseID !== lg.N);
     const phase = lg.j<RenderPhaseData>(phaseID);
     assert(programID < phase.shaderPrograms.length);
     const program = phase.shaderPrograms[programID];
-    const set = program.layout.descriptorSets.get(UpdateFrequency.PER_BATCH);
+    const set = program.layout.getSet(UpdateFrequency.PER_BATCH);
     if (set === undefined) {
         return null;
     }
@@ -642,13 +798,13 @@ export function getPerBatchDescriptorSetLayoutData (
 export function getPerInstanceDescriptorSetLayoutData (
     lg: LayoutGraphData,
     phaseID: number,
-    programID,
+    programID: number,
 ): DescriptorSetLayoutData | null {
     assert(phaseID !== lg.N);
     const phase = lg.j<RenderPhaseData>(phaseID);
     assert(programID < phase.shaderPrograms.length);
     const program = phase.shaderPrograms[programID];
-    const set = program.layout.descriptorSets.get(UpdateFrequency.PER_INSTANCE);
+    const set = program.layout.getSet(UpdateFrequency.PER_INSTANCE);
     if (set === undefined) {
         return null;
     }

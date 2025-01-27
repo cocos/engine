@@ -46,6 +46,7 @@ const WebGLPrimitives: GLenum[] = [
     0x0000, // WebGLRenderingContext.NONE,
 ];
 
+/** @mangle */
 export class WebGLPipelineState extends PipelineState {
     get gpuPipelineState (): IWebGLGPUPipelineState {
         return  this._gpuPipelineState!;

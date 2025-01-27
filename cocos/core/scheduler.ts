@@ -25,7 +25,7 @@
 
 import { IDGenerator } from './utils/id-generator';
 import { createMap } from './utils/js';
-import { System } from './system';
+import { System, SystemPriority } from './system';
 import { legacyCC } from './global-exports';
 import { errorID, warnID, logID, assertID } from './platform/debug';
 
@@ -44,6 +44,7 @@ export interface ISchedulable {
  * @en A list double-linked list used for "updates with priority".
  * @zh 用于“优先更新”的列表。
  * @class ListEntry
+ * @mangle
  */
 class ListEntry {
     public static get (target: ISchedulable, priority: number, paused: boolean, markedForDeletion: boolean): ListEntry {
@@ -105,6 +106,7 @@ class ListEntry {
  * @param entry @en Entry in the list. @zh 所述的条目。
  * @param target @en Hash key (retained). @zh 哈希键所对应的目标(被持有的)。
  * @param callback @en The callback function. @zh 所回调的函数。
+ * @mangle
  */
 class HashUpdateEntry {
     public static get (list: ListEntry[], entry: ListEntry, target: ISchedulable, callback: AnyFunction | null): HashUpdateEntry {
@@ -151,6 +153,7 @@ class HashUpdateEntry {
  * @param currentTimer
  * @param currentTimerSalvaged
  * @param paused
+ * @mangle
  */
 class HashTimerEntry {
     public static get (timers: CallbackTimer[] | null, target: ISchedulable, timerIndex: number, currentTimer: CallbackTimer | null, currentTimerSalvaged: boolean, paused: boolean): HashTimerEntry {
@@ -196,8 +199,9 @@ class HashTimerEntry {
 
 type CallbackType = (dt?: number) => void;
 
-/*
+/**
  * Light weight timer
+ * @mangle
  */
 class CallbackTimer {
     public static _timers: CallbackTimer[] = [];
@@ -755,6 +759,7 @@ export class Scheduler extends System {
      * @param timerToUnschedule The timer to be unscheduled.
      * @param target The target of the timer.
      * @engineInternal
+     * @mangle
      */
     public unscheduleForTimer (timerToUnschedule: CallbackTimer, target: ISchedulable): void {
         const targetId = (target.uuid || target.id) as string;
@@ -859,7 +864,7 @@ export class Scheduler extends System {
      * 不要调用此函数，除非你确定你在做什么。
      */
     public unscheduleAll (): void {
-        this.unscheduleAllWithMinPriority(System.Priority.SCHEDULER);
+        this.unscheduleAllWithMinPriority(SystemPriority.SCHEDULER);
     }
 
     /**
@@ -976,7 +981,7 @@ export class Scheduler extends System {
      * 不要调用这个方法，除非你知道你正在做什么。
      */
     public pauseAllTargets (): ISchedulable[] {
-        return this.pauseAllTargetsWithMinPriority(System.Priority.SCHEDULER);
+        return this.pauseAllTargetsWithMinPriority(SystemPriority.SCHEDULER);
     }
 
     /**

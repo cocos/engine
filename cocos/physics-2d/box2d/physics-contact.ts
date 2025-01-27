@@ -30,7 +30,7 @@ import { b2Shape2D } from './shapes/shape-2d';
 import { IPhysics2DContact, IPhysics2DImpulse, IPhysics2DManifoldPoint, IPhysics2DWorldManifold } from '../spec/i-physics-contact';
 
 export type b2ContactExtends = b2.Contact & {
-    m_userData: any
+    m_userData: any;
 }
 
 const pools: PhysicsContact[] = [];
@@ -66,6 +66,7 @@ const impulse: IPhysics2DImpulse = {
     tangentImpulses: [] as number[],
 };
 
+/** @mangle */
 export class PhysicsContact implements IPhysics2DContact {
     static get (b2contact: b2ContactExtends): PhysicsContact {
         let c = pools.pop();

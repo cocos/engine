@@ -13,11 +13,9 @@ import { LayoutGraphData } from './layout-graph';
 import { CullingFlags, RenderGraph, RenderGraphValue, SceneData, RenderQueue as RenderQueue0 } from './render-graph';
 import { SceneFlags } from './types';
 import { RenderQueue, RenderQueueQuery, instancePool } from './web-pipeline-types';
-import { ObjectPool } from './utils';
 import { getUniformBlockSize } from './layout-graph-utils';
 import { WebProgramLibrary } from './web-program-library';
 
-const vec3Pool = new ObjectPool(() => new Vec3());
 class CullingPools {
     frustumCullingKeyRecycle = new RecyclePool(() => new FrustumCullingKey(), 8);
     frustumCullingsRecycle = new RecyclePool(() => new FrustumCulling(), 8);
@@ -94,7 +92,7 @@ class LightBoundsCulling {
 }
 
 class LightBoundsCullingResult {
-    instances: Array<Model> = new Array<Model>();
+    instances: Model[] = [];
     lightByteOffset: number = 0xFFFFFFFF;
     update (): LightBoundsCullingResult {
         this.instances.length = 0;
@@ -285,11 +283,11 @@ const rangedDirLightBoundingBox = new AABB(0, 0, 0, 0.5, 0.5, 0.5);
 const lightAABB = new AABB();
 export class SceneCulling {
     frustumCullings: Map<RenderScene, FrustumCulling> = new Map<RenderScene, FrustumCulling>();
-    frustumCullingResults: Array<Array<Model>> = new Array<Array<Model>>();
+    frustumCullingResults: Array<Array<Model>> = [];
     lightBoundsCullings: Map<RenderScene, LightBoundsCulling> = new Map<RenderScene, LightBoundsCulling>();
-    lightBoundsCullingResults: Array<LightBoundsCullingResult> = new Array<LightBoundsCullingResult>();
+    lightBoundsCullingResults: Array<LightBoundsCullingResult> = [];
     renderQueueIndex: Map<string, number> = new Map<string, RenderQueueID>();
-    renderQueues: Array<RenderQueue> = new Array<RenderQueue>();
+    renderQueues: Array<RenderQueue> = [];
     renderQueueQueryIndex: Map<number, RenderQueueQuery> = new Map<number, RenderQueueQuery>();
     cullingPools = new CullingPools();
     // source id

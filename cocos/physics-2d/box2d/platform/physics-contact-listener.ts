@@ -24,32 +24,39 @@
 
 import b2 from '@cocos/box2d';
 import { js } from '../../../core';
+import type { b2ContactExtends } from '../physics-contact';
 
+type BeginContactCallback = (contact: b2ContactExtends) => void;
+type EndContactCallback = (contact: b2ContactExtends) => void;
+type PreSolveCallback = (contact: b2ContactExtends, oldManifold: b2.Manifold) => void;
+type PostSolveCallback = (contact: b2ContactExtends, impulse: b2.ContactImpulse) => void;
+
+/** @mangle */
 export class PhysicsContactListener extends b2.ContactListener {
     _contactFixtures: b2.Fixture[] = [];
 
-    _BeginContact: Function | null = null;
-    _EndContact: Function | null = null;
-    _PreSolve: Function | null = null;
-    _PostSolve: Function | null = null;
+    _BeginContact: BeginContactCallback | null = null;
+    _EndContact: EndContactCallback | null = null;
+    _PreSolve: PreSolveCallback | null = null;
+    _PostSolve: PostSolveCallback | null = null;
 
-    setBeginContact (cb): void {
+    setBeginContact (cb: BeginContactCallback): void {
         this._BeginContact = cb;
     }
 
-    setEndContact (cb): void {
+    setEndContact (cb: EndContactCallback): void {
         this._EndContact = cb;
     }
 
-    setPreSolve (cb): void {
+    setPreSolve (cb: PreSolveCallback): void {
         this._PreSolve = cb;
     }
 
-    setPostSolve (cb): void {
+    setPostSolve (cb: PostSolveCallback): void {
         this._PostSolve = cb;
     }
 
-    BeginContact (contact: b2.Contact): void {
+    BeginContact (contact: b2ContactExtends): void {
         if (!this._BeginContact) return;
 
         const fixtureA = contact.GetFixtureA();
@@ -64,30 +71,30 @@ export class PhysicsContactListener extends b2.ContactListener {
         }
     }
 
-    EndContact (contact: b2.Contact): void {
+    EndContact (contact: b2ContactExtends): void {
         if (this._EndContact && (contact as any)._shouldReport) {
             (contact as any)._shouldReport = false;
             this._EndContact(contact);
         }
     }
 
-    PreSolve (contact: b2.Contact, oldManifold: b2.Manifold): void {
+    PreSolve (contact: b2ContactExtends, oldManifold: b2.Manifold): void {
         if (this._PreSolve && (contact as any)._shouldReport) {
             this._PreSolve(contact, oldManifold);
         }
     }
 
-    PostSolve (contact: b2.Contact, impulse: b2.ContactImpulse): void {
+    PostSolve (contact: b2ContactExtends, impulse: b2.ContactImpulse): void {
         if (this._PostSolve && (contact as any)._shouldReport) {
             this._PostSolve(contact, impulse);
         }
     }
 
-    registerContactFixture (fixture): void {
+    registerContactFixture (fixture: b2.Fixture): void {
         this._contactFixtures.push(fixture);
     }
 
-    unregisterContactFixture (fixture): void {
+    unregisterContactFixture (fixture: b2.Fixture): void {
         js.array.remove(this._contactFixtures, fixture);
     }
 }

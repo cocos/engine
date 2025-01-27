@@ -578,6 +578,16 @@ se::Class *__jsb_XMLHttpRequest_class = nullptr; //NOLINT(readability-identifier
 
 static bool XMLHttpRequest_finalize(se::State &s) { //NOLINT(readability-identifier-naming, google-runtime-references)
     auto *request = static_cast<XMLHttpRequest *>(s.nativeThisObject());
+    if(se::ScriptEngine::getInstance()->isInCleanup()) {
+        request->onloadstart = nullptr;
+        request->onload = nullptr;
+        request->onloadend = nullptr;
+        request->onreadystatechange = nullptr;
+        request->onabort = nullptr;
+        request->onerror = nullptr;
+        request->ontimeout = nullptr;
+        return true;
+    }
     SE_LOGD("XMLHttpRequest_finalize, %p ... \n", request);
     request->clearCallbacks();
     return true;

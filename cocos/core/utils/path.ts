@@ -26,9 +26,9 @@
 import { systemInfo } from 'pal/system-info';
 import { OS } from '../../../pal/system-info/enum-type';
 
-const EXTNAME_RE = /(\.[^\.\/\?\\]*)(\?.*)?$/;
+const EXTNAME_RE = /(\.[^./?\\]*)(\?.*)?$/;
 const DIRNAME_RE = /((.*)(\/|\\|\\\\))?(.*?\..*$)?/;
-const NORMALIZE_RE = /[^\.\/]+\/\.\.\//;
+const NORMALIZE_RE = /[^./]+\/\.\.\//;
 
 /**
  * @en Joins strings to be a path.
@@ -39,9 +39,9 @@ const NORMALIZE_RE = /[^\.\/]+\/\.\.\//;
  */
 export function join (...segments: string[]): string {
     let result = '';
-    for (const segment of segments) {
+    segments.forEach((segment) => {
         result = (result + (result === '' ? '' : '/') + segment).replace(/(\/|\\\\)$/, '');
-    }
+    });
     return result;
 }
 
@@ -85,7 +85,7 @@ export function basename (path: string, extName?: string): string {
     if (index > 0) {
         path = path.substring(0, index);
     }
-    const reg = /(\/|\\)([^\/\\]+)$/g;
+    const reg = /(\/|\\)([^/\\]+)$/g;
     const result = reg.exec(path.replace(/(\/|\\)$/, ''));
     if (!result) {
         return path;
@@ -177,7 +177,7 @@ export function _normalize (url): any {
  * @zh 路径最后分隔符的新路径。
  */
 export function stripSep (path: string): string {
-    return path.replace(/[\/\\]$/, '');
+    return path.replace(/[/\\]$/, '');
 }
 
 /**

@@ -35,8 +35,8 @@ namespace cc {
 
 namespace render {
 
-enum class UpdateFrequency;
-enum class ParameterType;
+enum class UpdateFrequency : uint8_t;
+enum class ParameterType : uint8_t;
 
 struct RasterPassTag;
 struct RasterSubpassTag;
@@ -47,29 +47,22 @@ struct CopyTag;
 struct MoveTag;
 struct RaytraceTag;
 
-enum class ResourceResidency;
-enum class QueueHint;
-enum class ResourceDimension;
+enum class ResourceResidency : uint8_t;
+enum class QueueHint : uint8_t;
+enum class ResourceDimension : uint8_t;
 enum class ResourceFlags : uint32_t;
 
 struct BufferTag;
 struct TextureTag;
 
-enum class TaskType;
+enum class TaskType : uint8_t;
 enum class SceneFlags : uint32_t;
-enum class LightingMode : uint32_t;
-enum class AttachmentType;
-enum class AccessType;
-enum class ClearValueType;
+enum class LightingMode : uint8_t;
+enum class AttachmentType : uint8_t;
+enum class AccessType : uint8_t;
+enum class ClearValueType : uint8_t;
 
 struct LightInfo;
-
-enum class DescriptorTypeOrder;
-
-struct Descriptor;
-struct DescriptorBlock;
-struct DescriptorBlockFlattened;
-struct DescriptorBlockIndex;
 
 enum class ResolveFlags : uint32_t;
 

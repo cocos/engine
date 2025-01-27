@@ -32,6 +32,7 @@ import { legacyCC } from '../global-exports';
  * @zh 所有值类型的基类。
  */
 export class ValueType {
+    constructor () {}
     /**
      * @en
      * Clone the current object. The clone result of the object should be equal to the current object,

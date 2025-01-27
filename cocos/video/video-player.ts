@@ -372,22 +372,24 @@ export class VideoPlayer extends Component {
     }
 
     protected syncSource (): void {
-        if (!this._impl) { return; }
+        const impl = this._impl;
+        if (!impl) { return; }
+
         if (this._resourceType === ResourceType.REMOTE) {
-            this._impl.syncURL(this._remoteURL);
+            impl.syncURL(this._remoteURL);
         } else {
-            this._impl.syncClip(this._clip);
+            impl.syncClip(this._clip);
         }
         this._cachedCurrentTime = 0;
 
-        this._impl.syncLoop(this._loop);
-        this._impl.syncVolume(this._volume);
-        this._impl.syncMute(this._mute);
-        this._impl.seekTo(this._cachedCurrentTime);
-        this._impl.syncPlaybackRate(this._playbackRate);
-        this._impl.syncStayOnBottom(this._stayOnBottom);
-        this._impl.syncKeepAspectRatio(this._keepAspectRatio);
-        this._impl.syncFullScreenOnAwake(this._fullScreenOnAwake);
+        impl.syncLoop(this._loop);
+        impl.syncVolume(this._volume);
+        impl.syncMute(this._mute);
+        impl.seekTo(this._cachedCurrentTime);
+        impl.syncPlaybackRate(this._playbackRate);
+        impl.syncStayOnBottom(this._stayOnBottom);
+        impl.syncKeepAspectRatio(this._keepAspectRatio);
+        impl.syncFullScreenOnAwake(this._fullScreenOnAwake);
     }
 
     public __preload (): void {
@@ -397,14 +399,15 @@ export class VideoPlayer extends Component {
         this._impl = VideoPlayerImplManager.getImpl(this);
         this.syncSource();
 
-        this._impl.componentEventList.set(VideoPlayerEventType.META_LOADED, this.onMetaLoaded.bind(this));
-        this._impl.componentEventList.set(VideoPlayerEventType.READY_TO_PLAY, this.onReadyToPlay.bind(this));
-        this._impl.componentEventList.set(VideoPlayerEventType.PLAYING, this.onPlaying.bind(this));
-        this._impl.componentEventList.set(VideoPlayerEventType.PAUSED, this.onPaused.bind(this));
-        this._impl.componentEventList.set(VideoPlayerEventType.STOPPED, this.onStopped.bind(this));
-        this._impl.componentEventList.set(VideoPlayerEventType.COMPLETED, this.onCompleted.bind(this));
-        this._impl.componentEventList.set(VideoPlayerEventType.ERROR, this.onError.bind(this));
-        this._impl.componentEventList.set(VideoPlayerEventType.CLICKED, this.onClicked.bind(this));
+        const { componentEventList } = this._impl;
+        componentEventList.set(VideoPlayerEventType.META_LOADED, this.onMetaLoaded.bind(this));
+        componentEventList.set(VideoPlayerEventType.READY_TO_PLAY, this.onReadyToPlay.bind(this));
+        componentEventList.set(VideoPlayerEventType.PLAYING, this.onPlaying.bind(this));
+        componentEventList.set(VideoPlayerEventType.PAUSED, this.onPaused.bind(this));
+        componentEventList.set(VideoPlayerEventType.STOPPED, this.onStopped.bind(this));
+        componentEventList.set(VideoPlayerEventType.COMPLETED, this.onCompleted.bind(this));
+        componentEventList.set(VideoPlayerEventType.ERROR, this.onError.bind(this));
+        componentEventList.set(VideoPlayerEventType.CLICKED, this.onClicked.bind(this));
         if (this._playOnAwake && this._impl.loaded) {
             this.play();
         }
@@ -435,43 +438,43 @@ export class VideoPlayer extends Component {
         }
     }
 
-    public onMetaLoaded (): void {
+    private onMetaLoaded (): void {
         ComponentEventHandler.emitEvents(this.videoPlayerEvent, this, VideoPlayerEventType.META_LOADED);
         this.node.emit('meta-loaded', this);
     }
 
-    public onReadyToPlay (): void {
+    private onReadyToPlay (): void {
         if (this._playOnAwake && !this.isPlaying) { this.play(); }
         ComponentEventHandler.emitEvents(this.videoPlayerEvent, this, VideoPlayerEventType.READY_TO_PLAY);
         this.node.emit(VideoPlayerEventType.READY_TO_PLAY, this);
     }
 
-    public onPlaying (): void {
+    private onPlaying (): void {
         ComponentEventHandler.emitEvents(this.videoPlayerEvent, this, VideoPlayerEventType.PLAYING);
         this.node.emit(VideoPlayerEventType.PLAYING, this);
     }
 
-    public onPaused (): void {
+    private onPaused (): void {
         ComponentEventHandler.emitEvents(this.videoPlayerEvent, this, VideoPlayerEventType.PAUSED);
         this.node.emit(VideoPlayerEventType.PAUSED, this);
     }
 
-    public onStopped (): void {
+    private onStopped (): void {
         ComponentEventHandler.emitEvents(this.videoPlayerEvent, this, VideoPlayerEventType.STOPPED);
         this.node.emit(VideoPlayerEventType.STOPPED, this);
     }
 
-    public onCompleted (): void {
+    private onCompleted (): void {
         ComponentEventHandler.emitEvents(this.videoPlayerEvent, this, VideoPlayerEventType.COMPLETED);
         this.node.emit(VideoPlayerEventType.COMPLETED, this);
     }
 
-    public onError (): void {
+    private onError (): void {
         ComponentEventHandler.emitEvents(this.videoPlayerEvent, this, VideoPlayerEventType.ERROR);
         this.node.emit(VideoPlayerEventType.ERROR, this);
     }
 
-    public onClicked (): void {
+    private onClicked (): void {
         ComponentEventHandler.emitEvents(this.videoPlayerEvent, this, VideoPlayerEventType.CLICKED);
         this.node.emit(VideoPlayerEventType.CLICKED, this);
     }

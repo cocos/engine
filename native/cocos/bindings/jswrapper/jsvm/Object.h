@@ -24,39 +24,36 @@
 ****************************************************************************/
 
 #pragma once
+#include <set>
 #include <cassert>
+#include "../PrivateObject.h"
 #include "../RefCounter.h"
 #include "../Value.h"
 #include "../config.h"
 #include "CommonHeader.h"
 #include "HelperMacros.h"
-#include "../PrivateObject.h"
+#include "Utils.h"
 
 namespace se {
 class Class;
-    namespace internal {
-        struct PrivateData;
-    }
+namespace internal {
+struct PrivateData;
+}
 
 class ObjectRef {
 private:
-    JSVM_Ref   _ref       = nullptr;
-    int        _refCounts = 0;
-    JSVM_Env   _env       = nullptr;
-    JSVM_Value _obj       = nullptr;
+    JSVM_Ref _ref = nullptr;
+    int _refCounts = 0;
+    JSVM_Env _env = nullptr;
+    JSVM_Value _obj = nullptr;
 
 public:
     ~ObjectRef() {
         deleteRef();
     }
-    JSVM_Value getValue(JSVM_Env env) const {
-        JSVM_Value  result;
-        JSVM_Status status;
-        NODE_API_CALL(status, env, OH_JSVM_GetReferenceValue(env, _ref, &result));
-        assert(status == JSVM_OK);
-        assert(result != nullptr);
-        return result;
-    }
+    
+    JSVM_Value getValue(JSVM_Env env) const;
+
     void initWeakref(JSVM_Env env, JSVM_Value obj) {
         assert(_ref == nullptr);
         _obj = obj;
@@ -70,7 +67,7 @@ public:
     void initStrongRef(JSVM_Env env, JSVM_Value obj) {
         assert(_ref == nullptr);
         _refCounts = 1;
-        _obj       = obj;
+        _obj = obj;
         OH_JSVM_CreateReference(env, obj, _refCounts, &_ref);
         _env = env;
     }
@@ -78,7 +75,7 @@ public:
         assert(_refCounts == 0);
         if (_refCounts == 0) {
             uint32_t result = 0;
-            _refCounts      = 1;
+            _refCounts = 1;
             OH_JSVM_ReferenceRef(env, _ref, &result);
         }
     }
@@ -88,7 +85,7 @@ public:
         if (_refCounts > 0) {
             _refCounts--;
             if (_refCounts == 0) {
-               OH_JSVM_ReferenceUnref(env, _ref, &result);
+                OH_JSVM_ReferenceUnref(env, _ref, &result);
             }
         }
     }
@@ -100,7 +97,7 @@ public:
         OH_JSVM_DeleteReference(_env, _ref);
         _ref = nullptr;
     }
-};   
+};
 
 class Object;
 
@@ -121,6 +118,12 @@ public:
         BIGUINT64
     };
 
+    static std::set<Object*> objBaseSet;
+    static bool restarting;
+    static void resetBaseSet() {
+          objBaseSet.erase(objBaseSet.begin(), objBaseSet.end());
+    }
+    
     using BufferContentsFreeFunc = void (*)(void *contents, size_t byteLength, void *userData);
 
     struct ExternalArrayBufferCallbackParams {
@@ -128,7 +131,7 @@ public:
         void *contents{nullptr};
         size_t byteLength{0};
         void *userData{0};
-        };
+    };
 
     Object();
     ~Object();
@@ -159,7 +162,7 @@ public:
     inline bool getProperty(const std::string &name, Value *value) {
         return getProperty(name.c_str(), value);
     }
-    
+
     void setPrivateObject(PrivateObjectBase *data);
     PrivateObjectBase *getPrivateObject() const;
 
@@ -187,19 +190,18 @@ public:
         return static_cast<se::CCIntrusivePtrPrivateObject<T> *>(_privateObject)->getData();
     }
 
-
     /**
-         *  @brief Delete a property of an object.
-         *  @param[in] name A utf-8 string containing the property's name.
-         *  @return true if the property is deleted successfully, otherwise false.
-         */
+     *  @brief Delete a property of an object.
+     *  @param[in] name A utf-8 string containing the property's name.
+     *  @return true if the property is deleted successfully, otherwise false.
+     */
     bool deleteProperty(const char *name);
 
     /**
      *  @brief Gets an object's private data.
      *  @return A void* that is the object's private data, if the object has private data, otherwise nullptr.
      */
-    void* getPrivateData() const;
+    void *getPrivateData() const;
 
     /**
      *  @brief Sets a pointer to private data on an object.
@@ -255,7 +257,6 @@ public:
       *  @param clearMapping Whether to clear the mapping of native object & se::Object.
       */
     void clearPrivateData(bool clearMapping = true);
-
 
     /**
      * @brief Sets whether to clear the mapping of native object & se::Object in finalizer
@@ -467,9 +468,9 @@ public:
          */
     static Object *getObjectWithPtr(void *ptr);
 
-    Class *    _getClass() const; // NOLINT(readability-identifier-naming)
+    Class *_getClass() const; // NOLINT(readability-identifier-naming)
     JSVM_Value _getJSObject() const;
-    void       _setFinalizeCallback(JSVM_Finalize finalizeCb); // NOLINT(readability-identifier-naming)
+    void _setFinalizeCallback(JSVM_Finalize finalizeCb); // NOLINT(readability-identifier-naming)
     /**
          *  @brief Returns the string for describing current object.
          *  @return The string for describing current object.
@@ -478,27 +479,27 @@ public:
 
     bool init(JSVM_Env env, JSVM_Value js_object, Class *cls);
 
-    static Object *createUTF8String(const std::string& str);
+    static Object *createUTF8String(const std::string &str);
 
 private:
-//     Object();
-//     virtual ~Object();
+    //     Object();
+    //     virtual ~Object();
     static void sendWeakCallback(JSVM_Env env, void *nativeObject, void * /*finalize_hint*/);
     static void weakCallback(JSVM_Env env, void *nativeObject, void * /*finalize_hint*/);
     static void setup();
     static void cleanup();
 
 private:
-    ObjectRef     _objRef;
-    JSVM_Finalize _finalizeCb  = nullptr;
+    ObjectRef _objRef;
+    JSVM_Finalize _finalizeCb = nullptr;
     bool _clearMappingInFinalizer = true;
-    void* _privateData = nullptr;
-     PrivateObjectBase *_privateObject = nullptr;
-    JSVM_Env      _env         = nullptr;
-    Class *       _cls         = nullptr;
-    uint32_t      _rootCount   = 0;
-    bool          _onCleaingPrivateData = false;
-    internal::PrivateData* _internalData;
+    void *_privateData = nullptr;
+    PrivateObjectBase *_privateObject = nullptr;
+    JSVM_Env _env = nullptr;
+    Class *_cls = nullptr;
+    uint32_t _rootCount = 0;
+    bool _onCleaingPrivateData = false;
+    internal::PrivateData *_internalData;
 
     friend class ScriptEngine;
 };

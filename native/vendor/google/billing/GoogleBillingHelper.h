@@ -29,7 +29,7 @@
 #include <map>
 
 #include "base/Macros.h"
-
+#include "vendor/google/billing/GoogleBilling.h"
 namespace cc {
 class BillingResult;
 class ProductDetails;
@@ -45,73 +45,66 @@ class BillingConfig;
 class AlternativeBillingOnlyReportingDetails;
 class ExternalOfferReportingDetails;
 class InAppMessageResult;
+class BillingFlowParams;
+class ConsumeParams;
+class AcknowledgePurchaseParams;
 
 class CC_DLL GoogleBillingHelper {
 public:
-    static void removeProductDetails(int productDetailsID);
-    static void removePurchase(int purchaseID);
-    static void startConnection();
-    static void endConnection();
-    static int getConnectionState();
-    static bool isReady();
-    static void queryProductDetailsParams(const std::vector<std::string> &productIds, const std::string &type);
+    static int createGoogleBilling(BillingClient::Builder *builder);
+    static void removeGoogleBilling(int tag);
+    static void removeProductDetails(int tag, int productDetailsID);
+    static void removePurchase(int tag, int purchaseID);
+    static void startConnection(int tag, int callbackID);
+    static void endConnection(int tag);
+    static int getConnectionState(int tag);
+    static bool isReady(int tag);
+    static void queryProductDetailsAsync(int tag, int callbackID, const std::vector<std::string> &productIds, const std::vector<std::string> &productTypes);
 
-    static void launchBillingFlow(const std::vector<ProductDetails *> &productDetailsList, const std::string &selectedOfferToken);
-    static void consumePurchases(const std::vector<Purchase *> &purchases);
-    static void acknowledgePurchase(const std::vector<Purchase *> &purchases);
-    static void queryPurchasesAsync(const std::string &productType);
-    static void getBillingConfigAsync();
+    static void launchBillingFlow(int tag, BillingFlowParams *params);
+    static void consumeAsync(int tag, int callbackId, ConsumeParams *purchase);
+    static void acknowledgePurchase(int tag, int callbackId, AcknowledgePurchaseParams *purchase);
+    static void queryPurchasesAsync(int tag, int callbackId, const std::string &productType);
+    static void getBillingConfigAsync(int tag, int callbackId);
 
-    static void createAlternativeBillingOnlyReportingDetailsAsync();
-    static void isAlternativeBillingOnlyAvailableAsync();
-    static void createExternalOfferReportingDetailsAsync();
-    static void isExternalOfferAvailableAsync();
-    static BillingResult *isFeatureSupported(const std::string &feature);
+    static void createAlternativeBillingOnlyReportingDetailsAsync(int tag, int callbackId);
+    static void isAlternativeBillingOnlyAvailableAsync(int tag, int callbackId);
+    static void createExternalOfferReportingDetailsAsync(int tag, int callbackId);
+    static void isExternalOfferAvailableAsync(int tag, int callbackId);
+    static BillingResult *isFeatureSupported(int tag, const std::string &feature);
 
-    static BillingResult *showAlternativeBillingOnlyInformationDialog();
-    static BillingResult *showExternalOfferInformationDialog();
-    static BillingResult *showInAppMessages();
+    static void showAlternativeBillingOnlyInformationDialog(int tag, int callbackId);
+    static void showExternalOfferInformationDialog(int tag, int callbackId);
+    static void showInAppMessages(int tag, int callbackId, const std::vector<int> &inAppMessageCategoryId);
 
-    static void onBillingSetupFinished(JNIEnv *env, jclass clazz, jobject billingResultObj);
-    static void onBillingServiceDisconnected(JNIEnv *env, jclass clazz);
-    static void onProductDetailsResponse(JNIEnv *env, jclass clazz,
+    static void onBillingSetupFinished(JNIEnv *env, jclass clazz, jint tag, jint callbackID, jobject billingResultObj);
+    static void onBillingServiceDisconnected(JNIEnv *env, jclass clazz, jint tag, jint callbackID);
+    static void onProductDetailsResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackID,
                                          jobject billingResultObj,
                                          jobject productDetailsListObj,
                                          jint startID);
     static void onPurchasesUpdated(JNIEnv *env, jclass clazz,
+                                   jint tag,
                                    jobject billingResultObj,
                                    jobject purchaseListObj,
                                    jint startID);
-    static void onConsumeResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jstring purchaseToken);
-    static void onQueryPurchasesResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject purchaseListObj, jint startID);
-    static void onAcknowledgePurchaseResponse(JNIEnv *env, jclass clazz, jobject billingResultObj);
-    static void onBillingConfigResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject billingConfigObj);
-    static void onAlternativeBillingOnlyTokenResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject alternativeBillingOnlyReportingDetailsObj);
-    static void onExternalOfferReportingDetailsResponse(JNIEnv *env, jclass clazz, jobject billingResultObj, jobject externalOfferReportingDetailsObj);
-    static void onAlternativeBillingOnlyAvailabilityResponse(JNIEnv *env, jclass clazz, jobject billingResultObj);
-    static void onExternalOfferAvailabilityResponse(JNIEnv *env, jclass clazz, jobject billingResultObj);
-    static void onAlternativeBillingOnlyInformationDialogResponse(JNIEnv *env, jclass clazz, jobject billingResultObj);
-    static void onExternalOfferInformationDialogResponse(JNIEnv *env, jclass clazz, jobject billingResultObj);
-    static void onInAppMessageResponse(JNIEnv *env, jclass clazz, jobject inAppMessageResultObj);
+    static void onConsumeResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj, jstring purchaseToken);
+    static void onQueryPurchasesResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj, jobject purchaseListObj, jint startID);
+    static void onAcknowledgePurchaseResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj);
+    static void onBillingConfigResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj, jobject billingConfigObj);
+    static void onAlternativeBillingOnlyTokenResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj, jobject alternativeBillingOnlyReportingDetailsObj);
+    static void onExternalOfferReportingDetailsResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj, jobject externalOfferReportingDetailsObj);
+    static void onAlternativeBillingOnlyAvailabilityResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj);
+    static void onExternalOfferAvailabilityResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj);
+    static void onAlternativeBillingOnlyInformationDialogResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj);
+    static void onExternalOfferInformationDialogResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj);
+    static void onInAppMessageResponse(JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject inAppMessageResultObj);
+    static void userSelectedAlternativeBilling(JNIEnv *env, jclass clazz, jint tag, jobject userChoiceDetailsObj);
 
 private:
-    static BillingResult *toBillingResult(JNIEnv *env, jobject obj);
-    static std::vector<ProductDetails *> toProductDetailList(JNIEnv *env, jobject productsObj, jint startID);
-    static std::vector<Purchase *> toPurchaseList(JNIEnv *env, jobject productsObj, jint startID);
-    static BillingConfig *toBillingConfig(JNIEnv *env, jobject billingConfigObj);
-    static AlternativeBillingOnlyReportingDetails *toAlternativeBillingOnlyReportingDetails(JNIEnv *env, jobject alternativeBillingOnlyReportingDetailsObj);
-    static ExternalOfferReportingDetails *toExternalOfferReportingDetails(JNIEnv *env, jobject externalOfferReportingDetailsObj);
-    static InAppMessageResult *toInAppMessageResult(JNIEnv *env, jobject inAppMessageResultObj);
-    static ProductDetails *toProductDetail(JNIEnv *env, jobject productObj);
-    static Purchase *toPurchase(JNIEnv *env, jobject purchaseObj);
-    static OneTimePurchaseOfferDetails *toOneTimePurchaseOfferDetails(JNIEnv *env, jobject obj);
-    static InstallmentPlanDetails *toInstallmentPlanDetails(JNIEnv *env, jobject obj);
-    static SubscriptionOfferDetails *toSubscriptionOfferDetails(JNIEnv *env, jobject obj);
-    static AccountIdentifiers *toAccountIdentifiers(JNIEnv *env, jobject obj);
-    static PendingPurchaseUpdate *toPendingPurchaseUpdate(JNIEnv *env, jobject obj);
-    static PricingPhase *toPricingPhase(JNIEnv *env, jobject obj);
-    static PricingPhases *toPricingPhases(JNIEnv* env, jobject obj);
-    static BillingResult *callFunctionAndReturnBillingResult(const std::string &functionName);
+    static void responseOnlyWithBillingResult(const std::string &functionName, JNIEnv *env, jclass clazz, jint tag, jint callbackId, jobject billingResultObj);
+
+private:
 };
 
 } // namespace cc

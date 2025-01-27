@@ -29,7 +29,7 @@
 
 import { DEBUG, EDITOR, BUILD, TEST, EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
 import { SceneAsset } from '../asset/assets/scene-asset';
-import { System, EventTarget, Scheduler, js, errorID, error, assertID, warnID, macro, CCObject, cclegacy, isValid } from '../core';
+import { System, EventTarget, Scheduler, js, errorID, error, assertID, warnID, macro, CCObject, CCObjectFlags, cclegacy, isValid } from '../core';
 import { input } from '../input';
 import { Root } from '../root';
 import { Node, NodeEventType, Scene } from '../scene-graph';
@@ -372,7 +372,10 @@ export class Director extends EventTarget {
         }
 
         // Clear scene
-        this.getScene()?.destroy();
+        const scene = this.getScene();
+        if (scene) {
+            scene.destroy();
+        }
 
         this.emit(DirectorEvent.RESET);
 
@@ -417,14 +420,14 @@ export class Director extends EventTarget {
             const existNode = scene.uuid === node._originalSceneId && scene.getChildByUuid(node.uuid);
             if (existNode) {
                 // scene also contains the persist node, select the old one
-                const index = existNode.getSiblingIndex();
+                const index = existNode.siblingIndex;
                 // restore to the old saving flag
-                node.hideFlags &= ~CCObject.Flags.DontSave;
-                node.hideFlags |= CCObject.Flags.DontSave & existNode.hideFlags;
+                node.hideFlags &= ~CCObjectFlags.DontSave;
+                node.hideFlags |= CCObjectFlags.DontSave & existNode.hideFlags;
                 existNode._destroyImmediate();
                 scene.insertChild(node, index);
             } else {
-                node.hideFlags |= CCObject.Flags.DontSave;
+                node.hideFlags |= CCObjectFlags.DontSave;
                 node.parent = scene;
             }
         }
@@ -806,10 +809,11 @@ export class Director extends EventTarget {
     }
 
     /**
+     * @engineInternal
      * @en Build custom render pipeline
      * @zh 构建自定义渲染管线
      */
-    private buildRenderPipeline (): void {
+    public buildRenderPipeline (): void {
         if (!this._root) {
             return;
         }
@@ -831,11 +835,6 @@ export class Director extends EventTarget {
         // 2. cclegacy.rendering is available
         // 3. The root node is created and uses custom pipeline
         if (macro.CUSTOM_PIPELINE_NAME !== '' && cclegacy.rendering && this._root && this._root.usesCustomPipeline) {
-            this.on(
-                DirectorEvent.BEFORE_RENDER,
-                this.buildRenderPipeline,
-                this,
-            );
             this.on(
                 DirectorEvent.BEFORE_SCENE_LAUNCH,
                 cclegacy.rendering.forceResizeAllWindows,

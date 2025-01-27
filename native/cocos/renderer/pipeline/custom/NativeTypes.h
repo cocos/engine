@@ -28,6 +28,7 @@
  * ========================= !DO NOT CHANGE THE FOLLOWING SECTION MANUALLY! =========================
  */
 // clang-format off
+// NOLINTBEGIN(misc-include-cleaner, bugprone-easily-swappable-parameters)
 #pragma once
 #include "cocos/base/std/container/string.h"
 #include "cocos/base/std/hash/hash.h"
@@ -49,13 +50,13 @@ struct ProgramInfo {
     }
 
     ProgramInfo(const allocator_type& alloc) noexcept; // NOLINT
-    ProgramInfo(IProgramInfo programInfoIn, gfx::ShaderInfo shaderInfoIn, ccstd::pmr::vector<gfx::Attribute> attributesIn, ccstd::vector<signed> blockSizesIn, ccstd::unordered_map<ccstd::string, uint32_t> handleMapIn, const allocator_type& alloc) noexcept;
+    ProgramInfo(IProgramInfo programInfoIn, gfx::ShaderInfo shaderInfoIn, ccstd::pmr::vector<gfx::Attribute> attributesIn, ccstd::vector<signed> blockSizesIn, ccstd::unordered_map<ccstd::string, uint32_t> handleMapIn, const allocator_type& alloc);
     ProgramInfo(ProgramInfo&& rhs, const allocator_type& alloc);
     ProgramInfo(ProgramInfo const& rhs, const allocator_type& alloc);
 
     ProgramInfo(ProgramInfo&& rhs) noexcept = default;
     ProgramInfo(ProgramInfo const& rhs) = delete;
-    ProgramInfo& operator=(ProgramInfo&& rhs) = default;
+    ProgramInfo& operator=(ProgramInfo&& rhs) noexcept = default;
     ProgramInfo& operator=(ProgramInfo const& rhs) = default;
 
     IProgramInfo programInfo;
@@ -77,7 +78,7 @@ struct ProgramGroup {
 
     ProgramGroup(ProgramGroup&& rhs) noexcept = default;
     ProgramGroup(ProgramGroup const& rhs) = delete;
-    ProgramGroup& operator=(ProgramGroup&& rhs) = default;
+    ProgramGroup& operator=(ProgramGroup&& rhs) noexcept = default;
     ProgramGroup& operator=(ProgramGroup const& rhs) = default;
 
     PmrTransparentMap<ccstd::pmr::string, ProgramInfo> programInfos;
@@ -88,4 +89,5 @@ struct ProgramGroup {
 
 } // namespace cc
 
+// NOLINTEND(misc-include-cleaner, bugprone-easily-swappable-parameters)
 // clang-format on

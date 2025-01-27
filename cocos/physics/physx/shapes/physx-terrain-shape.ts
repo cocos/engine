@@ -30,6 +30,7 @@ import { createHeightField, createHeightFieldGeometry, getTempTransform, PX } fr
 import { PhysXInstance } from '../physx-instance';
 import { EPhysXShapeType, PhysXShape } from './physx-shape';
 
+/** @mangle */
 export class PhysXTerrainShape extends PhysXShape implements ITerrainShape {
     static heightScale = 1 / 512;
 

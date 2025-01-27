@@ -28,7 +28,7 @@ import { legacyCC } from '../global-exports';
 legacyCC._decorator = _decorator;
 export { _decorator };
 export { CCClass, isCCClassOrFastDefined } from './class';
-export { CCObject } from './object';
+export { CCObject, CCObjectFlags } from './object';
 export { CCInteger, CCFloat, CCBoolean, CCString } from './utils/attribute';
 export { CompactValueTypeArray } from './utils/compact-value-type-array';
 export { editorExtrasTag } from './editor-extras-tag';

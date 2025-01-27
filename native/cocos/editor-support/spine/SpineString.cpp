@@ -29,7 +29,6 @@
 
 #include <spine/SpineString.h>
 
-
 // Required for sprintf on MSVC
 #ifdef _MSC_VER
     #pragma warning(disable : 4996)
@@ -55,7 +54,8 @@ String::String(const char *chars, size_t len, bool own) {
     }
 }
 
-String::String(const char *chars, bool own/* = false*/): String(chars, strlen(chars), own) {
+String::String(const char *chars, bool own /* = false*/)
+: String(chars, (chars ? strlen(chars) : 0), own) {
 }
 
 String::String(const String &other) {
@@ -189,4 +189,3 @@ String::~String() {
 }
 
 } // namespace spine
-

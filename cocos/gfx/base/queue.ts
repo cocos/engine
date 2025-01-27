@@ -38,6 +38,7 @@ export abstract class Queue extends GFXObject {
         return this._type;
     }
 
+    /** @mangle */
     protected _type: QueueType = QueueType.GRAPHICS;
 
     constructor () {

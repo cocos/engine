@@ -38,12 +38,23 @@ namespace cc {
 
 namespace render {
 
+enum class LayoutType : uint8_t;
+
+struct Layout;
+
+enum class DescriptorTypeOrder : uint8_t;
+
+struct Descriptor;
+struct DescriptorBlock;
+struct DescriptorBlockFlattened;
+struct DescriptorBlockIndex;
+struct DescriptorGroupBlockIndex;
 struct DescriptorDB;
 struct RenderStageTag;
 struct RenderPhaseTag;
 struct RenderPhase;
 
-enum class RenderPassType : uint32_t;
+enum class RenderPassType : uint8_t;
 
 struct LayoutGraph;
 

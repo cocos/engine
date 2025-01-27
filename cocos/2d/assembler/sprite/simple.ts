@@ -66,7 +66,8 @@ class Simple implements IAssembler {
     }
 
     private updateWorldVerts (sprite: Sprite, chunk: StaticVBChunk): void {
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const vData = chunk.vb;
 
         const dataList: IRenderData[] = renderData.data;
@@ -99,7 +100,8 @@ class Simple implements IAssembler {
             return;
         }
 
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const chunk = renderData.chunk;
         if (sprite._flagChangedVersion !== sprite.node.flagChangedVersion || renderData.vertDirty) {
             // const vb = chunk.vertexAccessor.getVertexBuffer(chunk.bufferId);
@@ -142,7 +144,7 @@ class Simple implements IAssembler {
             return;
         }
 
-        const uiTrans = sprite.node._uiProps.uiTransformComp!;
+        const uiTrans = sprite.node._getUITransformComp()!;
         const dataList: IRenderData[] = renderData.data;
         const cw = uiTrans.width;
         const ch = uiTrans.height;
@@ -187,22 +189,23 @@ class Simple implements IAssembler {
     }
 
     updateUVs (sprite: Sprite): void {
-        if (!sprite.spriteFrame) return;
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!sprite.spriteFrame || !renderData) return;
         const vData = renderData.chunk.vb;
         const uv = sprite.spriteFrame.uv;
-        vData[3] = uv[0];
-        vData[4] = uv[1];
-        vData[12] = uv[2];
-        vData[13] = uv[3];
-        vData[21] = uv[4];
-        vData[22] = uv[5];
-        vData[30] = uv[6];
-        vData[31] = uv[7];
+        const stride = renderData.floatStride;
+        let uvOffset = 3;
+        for (let i = 0; i < renderData.dataLength; ++i) {
+            const index = i * 2;
+            vData[uvOffset] = uv[index];
+            vData[uvOffset + 1] = uv[index + 1];
+            uvOffset += stride;
+        }
     }
 
     updateColor (sprite: Sprite): void {
-        const renderData = sprite.renderData!;
+        const renderData = sprite.renderData;
+        if (!renderData) return;
         const vData = renderData.chunk.vb;
         let colorOffset = 5;
         const color = sprite.color;

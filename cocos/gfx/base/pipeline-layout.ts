@@ -34,6 +34,7 @@ export abstract class PipelineLayout extends GFXObject {
         return this._setLayouts;
     }
 
+    /** @mangle */
     protected _setLayouts: DescriptorSetLayout[] = [];
 
     constructor () {

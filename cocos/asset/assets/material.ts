@@ -28,7 +28,7 @@ import { EffectAsset } from './effect-asset';
 import { Texture, Type } from '../../gfx';
 import { TextureBase } from './texture-base';
 import { IPassInfoFull, Pass, PassOverrides } from '../../render-scene/core/pass';
-import { MacroRecord, MaterialProperty } from '../../render-scene/core/pass-utils';
+import { getTypeFromHandle, MacroRecord, MaterialProperty } from '../../render-scene/core/pass-utils';
 import { Color, warnID, Vec4, cclegacy } from '../../core';
 import { SRGBToLinear } from '../../rendering/pipeline-funcs';
 import { Renderer } from '../../misc/renderer';
@@ -139,8 +139,8 @@ export class Material extends Asset {
      */
     protected _hash = 0;
 
-    constructor () {
-        super();
+    constructor (name?: string) {
+        super(name);
     }
 
     /**
@@ -474,7 +474,7 @@ export class Material extends Asset {
     protected _uploadProperty (pass: Pass, name: string, val: MaterialPropertyFull | MaterialPropertyFull[]): boolean {
         const handle = pass.getHandle(name);
         if (!handle) { return false; }
-        const type = Pass.getTypeFromHandle(handle);
+        const type = getTypeFromHandle(handle);
         if (type < (Type.SAMPLER1D as number)) {
             if (Array.isArray(val)) {
                 pass.setUniformArray(handle, val as MaterialProperty[]);

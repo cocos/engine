@@ -69,17 +69,17 @@ export class Animation extends Eventify(Component) {
             this._crossFade.clear();
         }
         // Remove state for old automatic clips.
-        for (const clip of this._clips) {
+        this._clips.forEach((clip) => {
             if (clip) {
                 this._removeStateOfAutomaticClip(clip);
             }
-        }
+        });
         // Create state for new clips.
-        for (const clip of value) {
+        value.forEach((clip) => {
             if (clip) {
                 this.createState(clip);
             }
-        }
+        });
         // Default clip should be in the list of automatic clips.
         const newDefaultClip = value.find((clip) => equalClips(clip, this._defaultClip));
         if (newDefaultClip) {

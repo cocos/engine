@@ -256,7 +256,7 @@ export class Pass {
     public getBinding (name: string): number {
         const handle = this.getHandle(name);
         if (!handle) { return -1; }
-        return Pass.getBindingFromHandle(handle);
+        return getBindingFromHandle(handle);
     }
 
     /**
@@ -266,9 +266,9 @@ export class Pass {
      * @param value New value
      */
     public setUniform (handle: number, value: MaterialProperty): void {
-        const binding = Pass.getBindingFromHandle(handle);
-        const type = Pass.getTypeFromHandle(handle);
-        const ofs = Pass.getOffsetFromHandle(handle);
+        const binding = getBindingFromHandle(handle);
+        const type = getTypeFromHandle(handle);
+        const ofs = getOffsetFromHandle(handle);
         const block = this._getBlockView(type, binding);
         if (DEBUG) {
             const validator = type2validator[type];
@@ -285,9 +285,9 @@ export class Pass {
      * @param out The output property to store the result
      */
     public getUniform<T extends MaterialProperty> (handle: number, out: T): T {
-        const binding = Pass.getBindingFromHandle(handle);
-        const type = Pass.getTypeFromHandle(handle);
-        const ofs = Pass.getOffsetFromHandle(handle);
+        const binding = getBindingFromHandle(handle);
+        const type = getTypeFromHandle(handle);
+        const ofs = getOffsetFromHandle(handle);
         const block = this._getBlockView(type, binding);
         return type2reader[type](block, out, ofs) as T;
     }
@@ -299,11 +299,11 @@ export class Pass {
      * @param value New value
      */
     public setUniformArray (handle: number, value: MaterialProperty[]): void {
-        const binding = Pass.getBindingFromHandle(handle);
-        const type = Pass.getTypeFromHandle(handle);
+        const binding = getBindingFromHandle(handle);
+        const type = getTypeFromHandle(handle);
         const stride = GetTypeSize(type) >> 2;
         const block = this._getBlockView(type, binding);
-        let ofs = Pass.getOffsetFromHandle(handle);
+        let ofs = getOffsetFromHandle(handle);
         for (let i = 0; i < value.length; i++, ofs += stride) {
             if (value[i] === null) { continue; }
             type2writer[type](block, value[i], ofs);
@@ -312,7 +312,7 @@ export class Pass {
     }
 
     /**
-     * @en Bind a GFX [[gfx.Texture]] the the given uniform binding
+     * @en Bind a GFX [[gfx.Texture]] the given uniform binding
      * @zh 绑定实际 GFX [[gfx.Texture]] 到指定 binding。
      * @param binding The binding for target uniform of texture type
      * @param value Target texture
@@ -322,7 +322,7 @@ export class Pass {
     }
 
     /**
-     * @en Bind a GFX [[gfx.Sampler]] the the given uniform binding
+     * @en Bind a GFX [[gfx.Sampler]] the given uniform binding
      * @zh 绑定实际 GFX [[gfx.Sampler]] 到指定 binding。
      * @param binding The binding for target uniform of sampler type
      * @param value Target sampler
@@ -408,10 +408,10 @@ export class Pass {
     public resetUniform (name: string): void {
         const handle = this.getHandle(name);
         if (!handle) { return; }
-        const type = Pass.getTypeFromHandle(handle);
-        const binding = Pass.getBindingFromHandle(handle);
-        const ofs = Pass.getOffsetFromHandle(handle);
-        const count = Pass.getCountFromHandle(handle);
+        const type = getTypeFromHandle(handle);
+        const binding = getBindingFromHandle(handle);
+        const ofs = getOffsetFromHandle(handle);
+        const count = getCountFromHandle(handle);
         const block = this._getBlockView(type, binding);
         const info = this._properties[name];
         const givenDefault = info && info.value;
@@ -428,8 +428,8 @@ export class Pass {
     public resetTexture (name: string, index?: number): void {
         const handle = this.getHandle(name);
         if (!handle) { return; }
-        const type = Pass.getTypeFromHandle(handle);
-        const binding = Pass.getBindingFromHandle(handle);
+        const type = getTypeFromHandle(handle);
+        const binding = getBindingFromHandle(handle);
         const info = this._properties[name];
         const value = info && info.value;
         let textureBase: TextureBase;
@@ -475,11 +475,11 @@ export class Pass {
     public resetTextures (): void {
         if (cclegacy.rendering) {
             const set = this._shaderInfo.descriptors[SetIndex.MATERIAL];
-            for (const combined of set.samplerTextures) {
+            set.samplerTextures.forEach((combined) => {
                 for (let j = 0; j < combined.count; ++j) {
                     this.resetTexture(combined.name, j);
                 }
-            }
+            });
         } else {
             for (let i = 0; i < this._shaderInfo.samplerTextures.length; i++) {
                 const u = this._shaderInfo.samplerTextures[i];
@@ -582,13 +582,7 @@ export class Pass {
     }
 
     protected get _isBlend (): boolean {
-        let bBlend = false;
-        for (const target of this.blendState.targets) {
-            if (target.blend) {
-                bBlend = true;
-            }
-        }
-        return bBlend;
+        return this.blendState.targets.some((target) => target.blend);
     }
 
     // internal use
@@ -910,10 +904,10 @@ export class Pass {
 
 function serializeBlendState (bs: BlendState): string {
     let res = `,bs,${bs.isA2C}`;
-    for (const t of bs.targets) {
+    bs.targets.forEach((t) => {
         res += `,bt,${t.blend},${t.blendEq},${t.blendAlphaEq},${t.blendColorMask}`;
         res += `,${t.blendSrc},${t.blendDst},${t.blendSrcAlpha},${t.blendDstAlpha}`;
-    }
+    });
     return res;
 }
 

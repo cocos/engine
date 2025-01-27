@@ -29,6 +29,7 @@ import { getTempTransform, PX, _trans } from '../physx-adapter';
 import { PhysXInstance } from '../physx-instance';
 import { EPhysXShapeType, PhysXShape } from './physx-shape';
 
+/** @mangle */
 export class PhysXPlaneShape extends PhysXShape implements IPlaneShape {
     static PLANE_GEOMETRY: any;
 

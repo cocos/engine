@@ -286,11 +286,11 @@ export class RenderScene {
      * @zh 从渲染场景移除所有相机
      */
     public removeCameras (): void {
-        for (const camera of this._cameras) {
+        this._cameras.forEach((camera) => {
             camera.detachFromScene();
             this._lodStateCache.removeCamera(camera);
-        }
-        this._cameras.splice(0);
+        });
+        this._cameras.length = 0;
     }
 
     /**
@@ -525,11 +525,11 @@ export class RenderScene {
      * @zh 删除所有模型。
      */
     public removeModels (): void {
-        for (const m of this._models) {
+        this._models.forEach((m) => {
             this._lodStateCache.removeModel(m);
             m.detachFromScene();
             m.destroy();
-        }
+        });
         this._models.length = 0;
     }
 
@@ -603,9 +603,9 @@ export class RenderScene {
      * @zh 删除所有LOD 组。
      */
     removeLODGroups (): void {
-        for (const group of this._lodGroups) {
+        this._lodGroups.forEach((group) => {
             this._lodStateCache.removeLodGroup(group);
-        }
+        });
         this._lodGroups.length = 0;
     }
 
@@ -614,9 +614,9 @@ export class RenderScene {
      * @zh 通知所有模型全局管线状态已更新，需要更新自身状态。
      */
     public onGlobalPipelineStateChanged (): void {
-        for (const m of this._models) {
+        this._models.forEach((m) => {
             m.onGlobalPipelineStateChanged();
-        }
+        });
     }
 
     /**
@@ -650,8 +650,9 @@ class LodStateCache {
     }
 
     addCamera (camera: Camera): void {
-        const needRegisterChanged = false;
-        for (const lodGroup of this._renderScene.lodGroups) {
+        const lodGroups = this._renderScene.lodGroups;
+        for (let i = 0; i < lodGroups.length; i++) {
+            const lodGroup = lodGroups[i];
             const layer = lodGroup.node.layer;
             if ((camera.visibility & layer) === layer) {
                 if (!this._lodStateInCamera.has(camera)) {
@@ -671,7 +672,9 @@ class LodStateCache {
     addLodGroup (lodGroup: LODGroup): void {
         this._newAddedLodGroupVec.push(lodGroup);
 
-        for (const camera of this._renderScene.cameras) {
+        const cameras = this._renderScene.cameras;
+        for (let i = 0; i < cameras.length; i++) {
+            const camera = cameras[i];
             if (this._lodStateInCamera.has(camera)) {
                 continue;
             }
@@ -685,9 +688,9 @@ class LodStateCache {
     removeLodGroup (lodGroup: LODGroup): void {
         for (let index = 0; index < lodGroup.lodCount; index++) {
             const lod = lodGroup.lodDataArray[index];
-            for (const model of lod.models) {
+            lod.models.forEach((model): void => {
                 this._modelsInLODGroup.delete(model);
-            }
+            });
         }
         for (const visibleCamera of this._lodStateInCamera) {
             visibleCamera[1].delete(lodGroup);
@@ -704,19 +707,20 @@ class LodStateCache {
     // Update list of visible cameras on _modelsInLODGroup and update lod usage level under specified camera.
     updateLodState (): void {
         // insert vecAddedLodGroup's model into modelsByAnyLODGroup
-        for (const addedLodGroup of this._newAddedLodGroupVec) {
+        this._newAddedLodGroupVec.forEach((addedLodGroup): void => {
             let levelModels = this._levelModels.get(addedLodGroup);
             if (!levelModels) {
                 levelModels = new Map<number, Array<Model>>();
                 this._levelModels.set(addedLodGroup, levelModels);
             }
-            for (let index = 0; index < addedLodGroup.lodCount; index++) {
-                let lodModels = levelModels.get(index);
+            for (let i = 0; i < addedLodGroup.lodCount; i++) {
+                let lodModels = levelModels.get(i);
                 if (!lodModels) {
-                    lodModels = new Array<Model>();
+                    lodModels = [] as Model[];
                 }
-                const lod = addedLodGroup.lodDataArray[index];
-                for (const model of lod.models) {
+                const models = addedLodGroup.lodDataArray[i].models;
+                for (let j = 0; j < models.length; j++) {
+                    const model = models[j];
                     let modelInfo = this._modelsInLODGroup.get(model);
                     if (!modelInfo) {
                         modelInfo = new Map<Camera, boolean>();
@@ -724,13 +728,15 @@ class LodStateCache {
                     this._modelsInLODGroup.set(model, modelInfo);
                     lodModels.push(model);
                 }
-                levelModels.set(index, lodModels);
+                levelModels.set(i, lodModels);
             }
-        }
+        });
         this._newAddedLodGroupVec.length = 0;
 
         // update current visible lod index & model's visible cameras list
-        for (const lodGroup of this._renderScene.lodGroups) {
+        const lodGroups = this._renderScene.lodGroups;
+        for (let i = 0; i < lodGroups.length; i++) {
+            const lodGroup = lodGroups[i];
             if (lodGroup.enabled) {
                 const lodLevels = lodGroup.getLockedLODLevels();
                 const count = lodLevels.length;
@@ -765,7 +771,7 @@ class LodStateCache {
                                 });
                             });
 
-                            for (const visibleIndex of lodLevels) {
+                            lodLevels.forEach((visibleIndex) => {
                                 const vecModels = lodModels.get(visibleIndex);
                                 if (vecModels) {
                                     vecModels.forEach((model): void => {
@@ -777,7 +783,7 @@ class LodStateCache {
                                         }
                                     });
                                 }
-                            }
+                            });
                         }
                     }
                     continue;
@@ -906,7 +912,7 @@ class LodStateCache {
       * @zh 上一帧添加的lodgroup
       * @en The lodgroup added in the previous frame.
       */
-    private _newAddedLodGroupVec: Array<LODGroup> = new Array<LODGroup>();
+    private _newAddedLodGroupVec: Array<LODGroup> = [];
 
     private _levelModels: Map<LODGroup, Map<number, Array<Model>>> = new Map<LODGroup, Map<number, Array<Model>>>();
 }

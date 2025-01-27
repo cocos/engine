@@ -30,6 +30,7 @@ export * from './canvas';
 export * from './ui-component';
 export * from './ui-renderer';
 export * from './ui-transform';
+export * from './ui-skew';
 export * from './deprecated';
 export * from './render-root-2d';
 export * from './sprite-renderer';

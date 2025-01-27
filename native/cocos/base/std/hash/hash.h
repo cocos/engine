@@ -779,5 +779,5 @@ namespace ccstd
 
 #if !defined(CCSTD_HASH_NO_EXTENSIONS) \
     && !defined(CCSTD_FUNCTIONAL_HASH_EXTENSIONS_HPP)
-#include "base/std/hash/extensions.hpp"
+#include "base/std/hash/extensions.hpp" // NOLINT(misc-header-include-cycle)
 #endif

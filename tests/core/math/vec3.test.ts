@@ -343,4 +343,9 @@ describe('Test Vec3', () => {
         expect(vec2.x).toBe(1);
         expect(vec2.y).toBe(2);
     });
+
+    test('toString', () => {
+        const v = new Vec3(100, 100, 1283.3892389);
+        expect(v.toString()).toBe('(100, 100, 1283.3892389)');
+    });
 });

@@ -23,12 +23,12 @@
 ****************************************************************************/
 
 #include "GLES3Wrangler.h"
-#include <string>
-#include "base/Log.h"
-#include "base/memory/Memory.h"
 
 #if defined(_WIN32) && !defined(ANDROID)
     #define WIN32_LEAN_AND_MEAN 1
+    #include <string>
+    #include "base/Log.h"
+    #include "base/memory/Memory.h"
     #include <windows.h>
 
 static HMODULE libegl = NULL;
@@ -100,10 +100,17 @@ void *gles3wLoad(const char *proc) {
 }
 #else
     #include <dlfcn.h>
+    #include "BasePlatform.h"
+    #include "../gfx-gles-common/eglw.h"
+    #include "../gfx-gles-common/gles2w.h"
+    #include "../gfx-gles-common/gles3w.h"
 
-static void *libegl = nullptr;
-static void *libgles = nullptr;
-static PFNGLES3WLOADPROC pfnGles3wLoad = nullptr;
+
+namespace {
+    void *libegl = nullptr;
+    void *libgles = nullptr;
+    PFNGLES3WLOADPROC pfnGles3wLoad = nullptr;
+}
 
 bool gles3wOpen() {
     libegl = dlopen("libEGL.so", RTLD_LAZY | RTLD_GLOBAL);
@@ -129,7 +136,17 @@ bool gles3wClose() {
 void *gles3wLoad(const char *proc) {
     void *res = nullptr;
     if (eglGetProcAddress) res = reinterpret_cast<void *>(eglGetProcAddress(proc));
+    
+#if CC_PLATFORM != CC_PLATFORM_OPENHARMONY
+    auto sdkVersion = cc::BasePlatform::getPlatform()->getSdkVersion();
+    if (sdkVersion <= 23) {
+        if (!res) res = dlsym(libgles, proc);
+    } else {
+        if (!res) res = dlsym(libegl, proc);
+    }
+#else
     if (!res) res = dlsym(libegl, proc);
+#endif
     return res;
 }
 #endif

@@ -26,11 +26,14 @@ import { AudioPlayer, OneShotAudio } from 'pal/audio';
 import { js } from '../core';
 
 type ManagedAudio = AudioPlayer | OneShotAudio;
+
+/** @mangle */
 interface AudioInfo<T> {
     audio: T;
     playTime: number;
 }
 
+/** @mangle */
 export class AudioManager {
     private _oneShotAudioInfoList: AudioInfo<OneShotAudio>[] = [];
     private _audioPlayerInfoList: AudioInfo<AudioPlayer>[] = [];

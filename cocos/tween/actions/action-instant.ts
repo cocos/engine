@@ -35,15 +35,15 @@ import type { Node } from '../../scene-graph';
  * @extends FiniteTimeAction
  */
 export abstract class ActionInstant extends FiniteTimeAction {
-    isDone (): boolean {
+    override isDone (): boolean {
         return true;
     }
 
-    step (_dt: number): void {
+    override step (_dt: number): void {
         this.update(1);
     }
 
-    update (_dt: number): void {
+    override update (_dt: number): void {
         // nothing
     }
 
@@ -54,13 +54,13 @@ export abstract class ActionInstant extends FiniteTimeAction {
      * - The reversed action will be x of 100 move to 0.
      * @returns {Action}
      */
-    reverse (): ActionInstant {
+    override reverse (): ActionInstant {
         return this.clone();
     }
 
     abstract clone (): ActionInstant;
 
-    isUnknownDuration (): boolean {
+    override isUnknownDuration (): boolean {
         return false;
     }
 }
@@ -71,7 +71,7 @@ export abstract class ActionInstant extends FiniteTimeAction {
  * @extends ActionInstant
  */
 export class Show<T extends Node> extends ActionInstant {
-    update (_dt: number): void {
+    override update (_dt: number): void {
         const target = this._getWorkerTarget<T>();
         if (!target) return;
         const _renderComps = target.getComponentsInChildren(Renderer);
@@ -81,14 +81,18 @@ export class Show<T extends Node> extends ActionInstant {
         }
     }
 
-    reverse (): Hide<T> {
+    override reverse (): Hide<T> {
         return new Hide<T>();
     }
 
-    clone (): Show<T> {
+    override clone (): Show<T> {
         const action = new Show<T>();
         action._id = this._id;
         return action;
+    }
+
+    override toString (): string {
+        return '<Show>';
     }
 }
 
@@ -111,7 +115,7 @@ export function show<T extends Node> (): Show<T> {
  * @extends ActionInstant
  */
 export class Hide<T extends Node> extends ActionInstant {
-    update (_dt: number): void {
+    override update (_dt: number): void {
         const target = this._getWorkerTarget<T>();
         if (!target) return;
         const _renderComps = target.getComponentsInChildren(Renderer);
@@ -121,14 +125,18 @@ export class Hide<T extends Node> extends ActionInstant {
         }
     }
 
-    reverse (): Show<T> {
+    override reverse (): Show<T> {
         return new Show<T>();
     }
 
-    clone (): Hide<T> {
+    override clone (): Hide<T> {
         const action = new Hide<T>();
         action._id = this._id;
         return action;
+    }
+
+    override toString (): string {
+        return '<Hide>';
     }
 }
 
@@ -151,7 +159,7 @@ export function hide<T extends Node> (): Hide<T> {
  * @extends ActionInstant
  */
 export class ToggleVisibility<T extends Node> extends ActionInstant {
-    update (_dt: number): void {
+    override update (_dt: number): void {
         const target = this._getWorkerTarget<T>();
         if (!target) return;
         const _renderComps = target.getComponentsInChildren(Renderer);
@@ -161,14 +169,18 @@ export class ToggleVisibility<T extends Node> extends ActionInstant {
         }
     }
 
-    reverse (): ToggleVisibility<T> {
+    override reverse (): ToggleVisibility<T> {
         return new ToggleVisibility<T>();
     }
 
-    clone (): ToggleVisibility<T> {
+    override clone (): ToggleVisibility<T> {
         const action = new ToggleVisibility<T>();
         action._id = this._id;
         return action;
+    }
+
+    override toString (): string {
+        return '<ToggleVisibility>';
     }
 }
 
@@ -203,7 +215,7 @@ export class RemoveSelf<T extends Node> extends ActionInstant {
         if (isNeedCleanUp !== undefined) this.init(isNeedCleanUp);
     }
 
-    update (_dt: number): void {
+    override update (_dt: number): void {
         const target = this._getWorkerTarget<T>();
         if (!target) return;
         target.removeFromParent();
@@ -217,14 +229,18 @@ export class RemoveSelf<T extends Node> extends ActionInstant {
         return true;
     }
 
-    reverse (): RemoveSelf<T> {
+    override reverse (): RemoveSelf<T> {
         return new RemoveSelf<T>(this._isNeedCleanUp);
     }
 
-    clone (): RemoveSelf<T> {
+    override clone (): RemoveSelf<T> {
         const action = new RemoveSelf<T>(this._isNeedCleanUp);
         action._id = this._id;
         return action;
+    }
+
+    override toString (): string {
+        return '<RemoveSelf>';
     }
 }
 
@@ -307,13 +323,13 @@ export class CallFunc<CallbackThis, Target, Data> extends ActionInstant {
         }
     }
 
-    update (_dt: number): void {
+    override update (_dt: number): void {
         this.execute();
     }
 
     /*
      * Get selectorTarget.
-     * @return {object}
+     * @mangle
      */
     getTargetCallback (): CallbackThis | undefined {
         return this._callbackThis;
@@ -321,7 +337,7 @@ export class CallFunc<CallbackThis, Target, Data> extends ActionInstant {
 
     /*
      * Set selectorTarget.
-     * @param {object} sel
+     * @mangle
      */
     setTargetCallback (sel: CallbackThis): void {
         if (sel !== this._callbackThis) {
@@ -329,11 +345,15 @@ export class CallFunc<CallbackThis, Target, Data> extends ActionInstant {
         }
     }
 
-    clone (): CallFunc<CallbackThis, Target, Data> {
+    override clone (): CallFunc<CallbackThis, Target, Data> {
         const action = new CallFunc<CallbackThis, Target, Data>();
         action._id = this._id;
         if (this._callback) action.initWithFunction(this._callback, this._callbackThis, this._data);
         return action;
+    }
+
+    override toString (): string {
+        return `<CallFunc>`;
     }
 }
 

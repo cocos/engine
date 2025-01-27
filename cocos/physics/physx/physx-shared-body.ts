@@ -38,6 +38,7 @@ import { PhysXJoint } from './joints/physx-joint';
 import { PhysicsGroup } from '../framework/physics-enum';
 import { Node } from '../../scene-graph';
 
+/** @mangle */
 export class PhysXSharedBody {
     private static idCounter = 0;
     private static readonly sharedBodesMap = new Map<string, PhysXSharedBody>();

@@ -331,13 +331,13 @@ export class EditBoxImpl extends EditBoxImplBase {
         const dpr = screenAdapter.devicePixelRatio;
 
         node.getWorldMatrix(_matrix);
-        const transform = node._uiProps.uiTransformComp;
+        const transform = node._getUITransformComp();
         if (transform) {
             Vec3.set(_vec3, -transform.anchorX * transform.width, -transform.anchorY * transform.height, _vec3.z);
             Mat4.transform(_matrix, _matrix, _vec3);
         }
 
-        if (!node._uiProps.uiTransformComp) {
+        if (!node._getUITransformComp()) {
             return;
         }
 
@@ -646,7 +646,7 @@ export class EditBoxImpl extends EditBoxImplBase {
             const delegate = this._delegate;
             // input of number type doesn't support maxLength attribute
             const maxLength = delegate!.maxLength;
-            if (maxLength >= 0) {
+            if (maxLength >= 0 && elem.type !== 'number') {
                 elem.value = elem.value.slice(0, maxLength);
             }
             delegate!._editBoxTextChanged(elem.value);

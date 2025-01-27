@@ -29,7 +29,19 @@ import { sys, logID, error } from '../../core';
 import { game } from '../../game';
 import { NativeCodeBundleMode } from '../../misc/webassembly-support';
 
-export const MeshoptDecoder = {} as any;
+/** @mangle */
+interface IMeshoptDecoder {
+    supported: boolean;
+    ready: Promise<void>;
+    decodeVertexBuffer: (target: Uint8Array, count: number, size: number, source: Uint8Array) => number;
+    decodeIndexBuffer: (target: Uint8Array, count: number, size: number, source: Uint8Array) => number;
+    decodeIndexSequence: (target: Uint8Array, count: number, size: number, source: Uint8Array) => number;
+    decodeGltfBuffer: (target: Uint8Array, count: number, size: number, source: Uint8Array, mode: string) => void;
+    useWorkers: boolean;
+    decodeGltfBufferAsync: (count: number, size: number, source: Uint8Array, mode: string) => Promise<Uint8Array>;
+}
+
+export const MeshoptDecoder: IMeshoptDecoder = {} as any;
 
 function initDecoderASM (asm_factory: any): Promise<void> {
     return Promise.all([asm_factory.ready]).then(() => {

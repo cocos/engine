@@ -26,6 +26,7 @@ import { RenderPassInfo } from '../base/define';
 import { RenderPass } from '../base/render-pass';
 import { IWebGLGPURenderPass } from './webgl-gpu-objects';
 
+/** @mangle */
 export class WebGLRenderPass extends RenderPass {
     public get gpuRenderPass (): IWebGLGPURenderPass {
         return  this._gpuRenderPass!;

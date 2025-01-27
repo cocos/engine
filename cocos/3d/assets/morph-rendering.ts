@@ -33,7 +33,7 @@ import { UBOMorph, UBOMorphEnum, UNIFORM_NORMAL_MORPH_TEXTURE_BINDING,
 import { Morph, SubMeshMorph } from './morph';
 import { assertIsNonNullable, assertIsTrue, warn, bits, nextPow2, cclegacy, warnID } from '../../core';
 import { IMacroPatch } from '../../render-scene';
-import { Filter, PixelFormat, WrapMode } from '../../asset/assets/asset-enum';
+import { TextureFilter, PixelFormat, WrapMode } from '../../asset/assets/asset-enum';
 
 /**
  * True if force to use cpu computing based sub-mesh rendering.
@@ -176,9 +176,9 @@ export class StdMorphRendering implements MorphRendering {
             },
 
             destroy: (): void => {
-                for (const subMeshInstance of subMeshInstances) {
-                    subMeshInstance?.destroy();
-                }
+                subMeshInstances.forEach((subMeshInstance) => {
+                    if (subMeshInstance) subMeshInstance.destroy();
+                });
             },
         };
     }
@@ -289,9 +289,9 @@ class GpuComputing implements SubMeshMorphRendering {
     }
 
     public destroy (): void {
-        for (const attribute of this._attributes) {
+        this._attributes.forEach((attribute) => {
             attribute.morphTexture.destroy();
-        }
+        });
     }
 
     public createInstance (): {
@@ -313,7 +313,8 @@ class GpuComputing implements SubMeshMorphRendering {
             requiredPatches: (): IMacroPatch[] => [{ name: 'CC_MORPH_TARGET_USE_TEXTURE', value: true }],
 
             adaptPipelineState: (descriptorSet: DescriptorSet): void => {
-                for (const attribute of this._attributes) {
+                for (let i = 0; i < this._attributes.length; ++i) {
+                    const attribute = this._attributes[i];
                     let binding: number | undefined;
                     switch (attribute.name) {
                     case AttributeName.ATTR_POSITION: binding = UNIFORM_POSITION_MORPH_TEXTURE_BINDING; break;
@@ -451,7 +452,8 @@ class CpuComputingRenderingInstance implements SubMeshMorphRenderingInstance {
     }
 
     public adaptPipelineState (descriptorSet: DescriptorSet): void {
-        for (const attribute of this._attributes) {
+        for (let i = 0; i < this._attributes.length; ++i) {
+            const attribute = this._attributes[i];
             const attributeName = attribute.attributeName;
             let binding: number | undefined;
             switch (attributeName) {
@@ -583,8 +585,8 @@ function createVec4TextureFactory (gfxDevice: Device, vec4Capacity: number): {
                 format: pixelFormat,
             });
             const textureAsset = new Texture2D();
-            textureAsset.setFilters(Filter.NEAREST, Filter.NEAREST);
-            textureAsset.setMipFilter(Filter.NONE);
+            textureAsset.setFilters(TextureFilter.NEAREST, TextureFilter.NEAREST);
+            textureAsset.setMipFilter(TextureFilter.NONE);
             textureAsset.setWrapMode(WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE, WrapMode.CLAMP_TO_EDGE);
             textureAsset.image = image;
             if (!textureAsset.getGFXTexture()) {

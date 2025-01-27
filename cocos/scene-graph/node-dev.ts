@@ -23,13 +23,13 @@
 */
 
 import { EDITOR, DEV, TEST } from 'internal:constants';
-import { CCObject } from '../core/data/object';
+import { CCObjectFlags } from '../core/data/object';
 import * as js from '../core/utils/js';
 import { legacyCC } from '../core/global-exports';
 import { error, errorID, getError } from '../core/platform/debug';
 import { Component } from './component';
 
-const Destroying = CCObject.Flags.Destroying;
+const Destroying = CCObjectFlags.Destroying;
 const IS_PREVIEW = !!legacyCC.GAME_VIEW;
 
 export function nodePolyfill (Node): void {
@@ -50,9 +50,9 @@ export function nodePolyfill (Node): void {
             const existing = this.getComponent(ctor._disallowMultiple);
             if (existing) {
                 if (existing.constructor === ctor) {
-                    throw Error(getError(3805, js.getClassName(ctor), this._name));
+                    throw Error(getError(3805, js.getClassName(ctor), this._name as string));
                 } else {
-                    throw Error(getError(3806, js.getClassName(ctor), this._name, js.getClassName(existing)));
+                    throw Error(getError(3806, js.getClassName(ctor), this._name as string, js.getClassName(existing)));
                 }
             }
             return true;
@@ -65,9 +65,9 @@ export function nodePolyfill (Node): void {
         Node.prototype._getDependComponent = function (depended): Component[] {
             const dependant: Component[] = [];
             for (let i = 0; i < this._components.length; i++) {
-                const comp = this._components[i];
+                const comp: Component = this._components[i];
                 if (comp !== depended && comp.isValid && !legacyCC.Object._willDestroy(comp)) {
-                    const reqComps = comp.constructor._requireComponent;
+                    const reqComps = (comp.constructor as typeof Component)._requireComponent;
                     if (reqComps) {
                         if (Array.isArray(reqComps)) {
                             for (let i = 0; i < reqComps.length; i++) {
@@ -89,7 +89,7 @@ export function nodePolyfill (Node): void {
          * @param {Component} comp
          * @param {Number} index
          */
-        Node.prototype._addComponentAt = function (comp, index): void {
+        Node.prototype._addComponentAt = function (comp: Component, index: number): void {
             if (this._objFlags & Destroying) {
                 return error('isDestroying');
             }
@@ -101,7 +101,7 @@ export function nodePolyfill (Node): void {
             }
 
             // recheck attributes because script may changed
-            const ctor = comp.constructor;
+            const ctor = comp.constructor as any;
             if (ctor._disallowMultiple) {
                 if (!this._checkMultipleComp(ctor)) {
                     return undefined;
@@ -125,7 +125,7 @@ export function nodePolyfill (Node): void {
             comp.node = this;
             this._components.splice(index, 0, comp);
             if (EDITOR && !IS_PREVIEW && EditorExtends.Node && EditorExtends.Component) {
-                const node = EditorExtends.Node.getNode(this._id);
+                const node = EditorExtends.Node.getNode(this._id as string);
                 if (node) {
                     EditorExtends.Component.add(comp._id, comp);
                 }
@@ -147,32 +147,35 @@ export function nodePolyfill (Node): void {
 
         Node.prototype._registerIfAttached = function (register): void {
             if (!this._id) {
+                // eslint-disable-next-line no-console
                 console.warn(`Node(${this && this.name}}) is invalid or its data is corrupted.`);
                 return;
             }
             if (EditorExtends.Node && EditorExtends.Component) {
                 if (register) {
-                    EditorExtends.Node.add(this._id, this);
+                    EditorExtends.Node.add(this._id as string, this);
 
                     for (let i = 0; i < this._components.length; i++) {
                         const comp = this._components[i];
                         if (!comp || !comp._id) {
+                            // eslint-disable-next-line no-console
                             console.warn(`Component attached to node:${this.name} is corrupted`);
                         } else {
-                            EditorExtends.Component.add(comp._id, comp);
+                            EditorExtends.Component.add(comp._id as string, comp);
                         }
                     }
                 } else {
                     for (let i = 0; i < this._components.length; i++) {
                         const comp = this._components[i];
                         if (!comp || !comp._id) {
+                            // eslint-disable-next-line no-console
                             console.warn(`Component attached to node:${this.name} is corrupted`);
                         } else {
-                            EditorExtends.Component.remove(comp._id);
+                            EditorExtends.Component.remove(comp._id as string);
                         }
                     }
 
-                    EditorExtends.Node.remove(this._id);
+                    EditorExtends.Node.remove(this._id as string);
                 }
             }
 
@@ -186,7 +189,7 @@ export function nodePolyfill (Node): void {
 
     if (DEV) {
         // promote debug info
-        js.get(Node.prototype, ' INFO ', function (this: any) {
+        js.get(Node.prototype as Record<string, any>, ' INFO ', function (this: any) {
             let path = '';
             // eslint-disable-next-line @typescript-eslint/no-this-alias
             let node: any = this;
