@@ -179,6 +179,10 @@ export class BaseRenderData {
         }
     }
 
+    /**
+     * @engineInternal
+     * @mangle
+     */
     protected setRenderDrawInfoAttributes (): void {
         if (JSB) {
             if (!this._renderDrawInfo) {
@@ -347,7 +351,7 @@ export class RenderData extends BaseRenderData {
         }
     }
 
-    protected setRenderDrawInfoAttributes (): void {
+    protected override setRenderDrawInfoAttributes (): void {
         if (JSB) {
             if (!this._renderDrawInfo) {
                 return;
@@ -759,28 +763,33 @@ export class MeshRenderData extends BaseRenderData {
         }
     }
 
-    public setRenderDrawInfoAttributes (): void {
+    public override setRenderDrawInfoAttributes (): void {
         if (JSB) {
-            if (!this._renderDrawInfo) {
+            const renderDrawInfo = this._renderDrawInfo;
+            if (!renderDrawInfo) {
                 return;
             }
-            this._renderDrawInfo.setVData(this.vData.buffer);
-            this._renderDrawInfo.setIData(this.iData.buffer);
-            this._renderDrawInfo.setVBCount(this._vc);
-            this._renderDrawInfo.setIBCount(this._ic);
-            this._renderDrawInfo.setVertexOffset(this.vertexStart);
-            this._renderDrawInfo.setIndexOffset(this.indexStart);
+            renderDrawInfo.setVData(this.vData.buffer);
+            renderDrawInfo.setIData(this.iData.buffer);
+            renderDrawInfo.setVBCount(this._vc);
+            renderDrawInfo.setIBCount(this._ic);
+            renderDrawInfo.setVertexOffset(this.vertexStart);
+            renderDrawInfo.setIndexOffset(this.indexStart);
 
-            this._renderDrawInfo.setIsMeshBuffer(this._isMeshBuffer);
-            this._renderDrawInfo.setMaterial(this.material!);
+            renderDrawInfo.setIsMeshBuffer(this._isMeshBuffer);
+            renderDrawInfo.setMaterial(this.material!);
             if (this.frame) {
-                this._renderDrawInfo.setTexture(this.frame.getGFXTexture());
-                this._renderDrawInfo.setSampler(this.frame.getGFXSampler());
+                renderDrawInfo.setTexture(this.frame.getGFXTexture());
+                renderDrawInfo.setSampler(this.frame.getGFXSampler());
             }
         }
     }
 
-    //  only for particle2d
+    /**
+     * only for particle2d
+     * @engineInternal
+     * @mangle
+     */
     public particleInitRenderDrawInfo (entity: RenderEntity): void {
         if (JSB) {
             if (entity.renderEntityType === RenderEntityType.STATIC) {
