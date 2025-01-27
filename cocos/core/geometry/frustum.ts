@@ -41,6 +41,9 @@ const _nearTemp = v3();
 const _farTemp = v3();
 const _temp_v3 = v3();
 
+const planeFromPoints = Plane.fromPoints;
+const vec3Set = Vec3.set;
+const vec3TransformMat4 = Vec3.transformMat4;
 /**
  * @en
  * Basic Geometry: frustum.
@@ -62,22 +65,22 @@ export class Frustum {
     public static createOrthographic (out: Frustum, width: number, height: number, near: number, far: number, transform: Mat4): void {
         const halfWidth = width / 2;
         const halfHeight = height / 2;
-        Vec3.set(_temp_v3, halfWidth, halfHeight, -near);
-        Vec3.transformMat4(out.vertices[0], _temp_v3, transform);
-        Vec3.set(_temp_v3, -halfWidth, halfHeight, -near);
-        Vec3.transformMat4(out.vertices[1], _temp_v3, transform);
-        Vec3.set(_temp_v3, -halfWidth, -halfHeight, -near);
-        Vec3.transformMat4(out.vertices[2], _temp_v3, transform);
-        Vec3.set(_temp_v3, halfWidth, -halfHeight, -near);
-        Vec3.transformMat4(out.vertices[3], _temp_v3, transform);
-        Vec3.set(_temp_v3, halfWidth, halfHeight, -far);
-        Vec3.transformMat4(out.vertices[4], _temp_v3, transform);
-        Vec3.set(_temp_v3, -halfWidth, halfHeight, -far);
-        Vec3.transformMat4(out.vertices[5], _temp_v3, transform);
-        Vec3.set(_temp_v3, -halfWidth, -halfHeight, -far);
-        Vec3.transformMat4(out.vertices[6], _temp_v3, transform);
-        Vec3.set(_temp_v3, halfWidth, -halfHeight, -far);
-        Vec3.transformMat4(out.vertices[7], _temp_v3, transform);
+        vec3Set(_temp_v3, halfWidth, halfHeight, -near);
+        vec3TransformMat4(out.vertices[0], _temp_v3, transform);
+        vec3Set(_temp_v3, -halfWidth, halfHeight, -near);
+        vec3TransformMat4(out.vertices[1], _temp_v3, transform);
+        vec3Set(_temp_v3, -halfWidth, -halfHeight, -near);
+        vec3TransformMat4(out.vertices[2], _temp_v3, transform);
+        vec3Set(_temp_v3, halfWidth, -halfHeight, -near);
+        vec3TransformMat4(out.vertices[3], _temp_v3, transform);
+        vec3Set(_temp_v3, halfWidth, halfHeight, -far);
+        vec3TransformMat4(out.vertices[4], _temp_v3, transform);
+        vec3Set(_temp_v3, -halfWidth, halfHeight, -far);
+        vec3TransformMat4(out.vertices[5], _temp_v3, transform);
+        vec3Set(_temp_v3, -halfWidth, -halfHeight, -far);
+        vec3TransformMat4(out.vertices[6], _temp_v3, transform);
+        vec3Set(_temp_v3, halfWidth, -halfHeight, -far);
+        vec3TransformMat4(out.vertices[7], _temp_v3, transform);
 
         out.updatePlanes();
     }
@@ -118,23 +121,23 @@ export class Frustum {
         const vertexes = out.vertices;
         // startHalfWidth startHalfHeight
         _temp_v3.set(_nearTemp.x, _nearTemp.y, -_nearTemp.z);
-        Vec3.transformMat4(vertexes[0], _temp_v3, transform);
+        vec3TransformMat4(vertexes[0], _temp_v3, transform);
         _temp_v3.set(-_nearTemp.x, _nearTemp.y, -_nearTemp.z);
-        Vec3.transformMat4(vertexes[1], _temp_v3, transform);
+        vec3TransformMat4(vertexes[1], _temp_v3, transform);
         _temp_v3.set(-_nearTemp.x, -_nearTemp.y, -_nearTemp.z);
-        Vec3.transformMat4(vertexes[2], _temp_v3, transform);
+        vec3TransformMat4(vertexes[2], _temp_v3, transform);
         _temp_v3.set(_nearTemp.x, -_nearTemp.y, -_nearTemp.z);
-        Vec3.transformMat4(vertexes[3], _temp_v3, transform);
+        vec3TransformMat4(vertexes[3], _temp_v3, transform);
 
         // endHalfWidth, endHalfHeight
         _temp_v3.set(_farTemp.x, _farTemp.y, -_farTemp.z);
-        Vec3.transformMat4(vertexes[4], _temp_v3, transform);
+        vec3TransformMat4(vertexes[4], _temp_v3, transform);
         _temp_v3.set(-_farTemp.x, _farTemp.y, -_farTemp.z);
-        Vec3.transformMat4(vertexes[5], _temp_v3, transform);
+        vec3TransformMat4(vertexes[5], _temp_v3, transform);
         _temp_v3.set(-_farTemp.x, -_farTemp.y, -_farTemp.z);
-        Vec3.transformMat4(vertexes[6], _temp_v3, transform);
+        vec3TransformMat4(vertexes[6], _temp_v3, transform);
         _temp_v3.set(_farTemp.x, -_farTemp.y, -_farTemp.z);
-        Vec3.transformMat4(vertexes[7], _temp_v3, transform);
+        vec3TransformMat4(vertexes[7], _temp_v3, transform);
 
         out.updatePlanes();
     }
@@ -153,14 +156,16 @@ export class Frustum {
         Vec3.subtract(vec3_min, aabb.center, aabb.halfExtents);
         Vec3.add(vec3_max, aabb.center, aabb.halfExtents);
 
-        out.vertices[0].set(vec3_max.x, vec3_max.y, -vec3_min.z);
-        out.vertices[1].set(vec3_min.x, vec3_max.y, -vec3_min.z);
-        out.vertices[2].set(vec3_min.x, vec3_min.y, -vec3_min.z);
-        out.vertices[3].set(vec3_max.x, vec3_min.y, -vec3_min.z);
-        out.vertices[4].set(vec3_max.x, vec3_max.y, -vec3_max.z);
-        out.vertices[5].set(vec3_min.x, vec3_max.y, -vec3_max.z);
-        out.vertices[6].set(vec3_min.x, vec3_min.y, -vec3_max.z);
-        out.vertices[7].set(vec3_max.x, vec3_min.y, -vec3_max.z);
+        const vertices = out.vertices;
+
+        vertices[0].set(vec3_max.x, vec3_max.y, -vec3_min.z);
+        vertices[1].set(vec3_min.x, vec3_max.y, -vec3_min.z);
+        vertices[2].set(vec3_min.x, vec3_min.y, -vec3_min.z);
+        vertices[3].set(vec3_max.x, vec3_min.y, -vec3_min.z);
+        vertices[4].set(vec3_max.x, vec3_max.y, -vec3_max.z);
+        vertices[5].set(vec3_min.x, vec3_max.y, -vec3_max.z);
+        vertices[6].set(vec3_min.x, vec3_min.y, -vec3_max.z);
+        vertices[7].set(vec3_max.x, vec3_min.y, -vec3_max.z);
 
         out.updatePlanes();
 
@@ -288,31 +293,32 @@ export class Frustum {
      * @param inv @en The inverse view-projection matrix. @zh 视图投影逆矩阵。
      */
     public update (m: Mat4, inv: Mat4): void {
+        const planes = this.planes;
         // RTR4, ch. 22.14.1, p. 983
         // extract frustum planes from view-proj matrix.
 
         // left plane
-        Vec3.set(this.planes[0].n, m.m03 + m.m00, m.m07 + m.m04, m.m11 + m.m08);
-        this.planes[0].d = -(m.m15 + m.m12);
+        vec3Set(planes[0].n, m.m03 + m.m00, m.m07 + m.m04, m.m11 + m.m08);
+        planes[0].d = -(m.m15 + m.m12);
         // right plane
-        Vec3.set(this.planes[1].n, m.m03 - m.m00, m.m07 - m.m04, m.m11 - m.m08);
-        this.planes[1].d = -(m.m15 - m.m12);
+        vec3Set(planes[1].n, m.m03 - m.m00, m.m07 - m.m04, m.m11 - m.m08);
+        planes[1].d = -(m.m15 - m.m12);
         // bottom plane
-        Vec3.set(this.planes[2].n, m.m03 + m.m01, m.m07 + m.m05, m.m11 + m.m09);
-        this.planes[2].d = -(m.m15 + m.m13);
+        vec3Set(planes[2].n, m.m03 + m.m01, m.m07 + m.m05, m.m11 + m.m09);
+        planes[2].d = -(m.m15 + m.m13);
         // top plane
-        Vec3.set(this.planes[3].n, m.m03 - m.m01, m.m07 - m.m05, m.m11 - m.m09);
-        this.planes[3].d = -(m.m15 - m.m13);
+        vec3Set(planes[3].n, m.m03 - m.m01, m.m07 - m.m05, m.m11 - m.m09);
+        planes[3].d = -(m.m15 - m.m13);
         // near plane
-        Vec3.set(this.planes[4].n, m.m03 + m.m02, m.m07 + m.m06, m.m11 + m.m10);
-        this.planes[4].d = -(m.m15 + m.m14);
+        vec3Set(planes[4].n, m.m03 + m.m02, m.m07 + m.m06, m.m11 + m.m10);
+        planes[4].d = -(m.m15 + m.m14);
         // far plane
-        Vec3.set(this.planes[5].n, m.m03 - m.m02, m.m07 - m.m06, m.m11 - m.m10);
-        this.planes[5].d = -(m.m15 - m.m14);
+        vec3Set(planes[5].n, m.m03 - m.m02, m.m07 - m.m06, m.m11 - m.m10);
+        planes[5].d = -(m.m15 - m.m14);
 
         // normalize planes
         for (let i = 0; i < 6; i++) {
-            const pl = this.planes[i];
+            const pl = planes[i];
             const invDist = 1 / pl.n.length();
             Vec3.multiplyScalar(pl.n, pl.n, invDist);
             pl.d *= invDist;
@@ -320,7 +326,7 @@ export class Frustum {
 
         // update frustum vertices
         for (let i = 0; i < 8; i++) {
-            Vec3.transformMat4(this.vertices[i], _v[i], inv);
+            vec3TransformMat4(this.vertices[i], _v[i], inv);
         }
     }
 
@@ -333,7 +339,7 @@ export class Frustum {
      */
     public transform (mat: Mat4): void {
         for (let i = 0; i < 8; i++) {
-            Vec3.transformMat4(this.vertices[i], this.vertices[i], mat);
+            vec3TransformMat4(this.vertices[i], this.vertices[i], mat);
         }
         this.updatePlanes();
     }
@@ -357,17 +363,19 @@ export class Frustum {
      * @zh 更新视锥体的所有面数据。
      */
     public updatePlanes (): void {
+        const planes = this.planes;
+        const vertices = this.vertices;
         // left plane
-        Plane.fromPoints(this.planes[0], this.vertices[1], this.vertices[6], this.vertices[5]);
+        planeFromPoints(planes[0], vertices[1], vertices[6], vertices[5]);
         // right plane
-        Plane.fromPoints(this.planes[1], this.vertices[3], this.vertices[4], this.vertices[7]);
+        planeFromPoints(planes[1], vertices[3], vertices[4], vertices[7]);
         // bottom plane
-        Plane.fromPoints(this.planes[2], this.vertices[6], this.vertices[3], this.vertices[7]);
+        planeFromPoints(planes[2], vertices[6], vertices[3], vertices[7]);
         // top plane
-        Plane.fromPoints(this.planes[3], this.vertices[0], this.vertices[5], this.vertices[4]);
+        planeFromPoints(planes[3], vertices[0], vertices[5], vertices[4]);
         // near plane
-        Plane.fromPoints(this.planes[4], this.vertices[2], this.vertices[0], this.vertices[3]);
+        planeFromPoints(planes[4], vertices[2], vertices[0], vertices[3]);
         // far plane
-        Plane.fromPoints(this.planes[5], this.vertices[7], this.vertices[5], this.vertices[6]);
+        planeFromPoints(planes[5], vertices[7], vertices[5], vertices[6]);
     }
 }
