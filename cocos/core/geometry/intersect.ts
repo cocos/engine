@@ -22,7 +22,7 @@
  THE SOFTWARE.
 */
 
-import { EPSILON, Mat3, Vec3 } from '../math';
+import { EPSILON, Mat3, v3, Vec3 } from '../math';
 import { AABB } from './aabb';
 import { Capsule } from './capsule';
 import * as distance from './distance';
@@ -48,6 +48,10 @@ const vec3Cross = Vec3.cross;
 const vec3MultiplyScalar = Vec3.multiplyScalar;
 const vec3Copy = Vec3.copy;
 const vec3Add = Vec3.add;
+const vec3ScaleAndAdd = Vec3.scaleAndAdd;
+const mathMax = Math.max;
+const mathMin = Math.min;
+const mathAbs = Math.abs;
 
 /**
  * @en
@@ -61,7 +65,7 @@ const vec3Add = Vec3.add;
 const rayPlane = (function () {
     return function (ray: Ray, plane: Plane): number {
         const denom = vec3Dot(ray.d, plane.n);
-        if (Math.abs(denom) < Number.EPSILON) { return 0; }
+        if (mathAbs(denom) < Number.EPSILON) { return 0; }
         const d = distance.point_plane(ray.o, plane);
         const t = -d / denom;
         if (t < 0) { return 0; }
@@ -81,11 +85,11 @@ const rayPlane = (function () {
  * @returns @zh 0 或 非 0，0 表示没有相交。@en 0 or not 0, 0 indicates there is no intersection.
  */
 const rayTriangle = (function (): (ray: Ray, triangle: Triangle, doubleSided?: boolean) => number {
-    const ab = new Vec3(0, 0, 0);
-    const ac = new Vec3(0, 0, 0);
-    const pvec = new Vec3(0, 0, 0);
-    const tvec = new Vec3(0, 0, 0);
-    const qvec = new Vec3(0, 0, 0);
+    const ab = v3();
+    const ac = v3();
+    const pvec = v3();
+    const tvec = v3();
+    const qvec = v3();
 
     return function (ray: Ray, triangle: Triangle, doubleSided?: boolean): number {
         vec3Subtract(ab, triangle.b, triangle.a);
@@ -126,7 +130,7 @@ const rayTriangle = (function (): (ray: Ray, triangle: Triangle, doubleSided?: b
  * @returns @zh 如果没有相交，返回 0 ，否则返回非 0。 @en zero if no intersection, otherwise returns a non-zero value.
  */
 const raySphere = (function (): (ray: Ray, sphere: Sphere) => number {
-    const e = new Vec3(0, 0, 0);
+    const e = v3();
     return function (ray: Ray, sphere: Sphere): number {
         const r = sphere.radius;
         const c = sphere.center;
@@ -157,8 +161,8 @@ const raySphere = (function (): (ray: Ray, sphere: Sphere) => number {
  * @returns @zh 如果没有相交，返回 0 ，否则返回非 0。 @en zero if no intersection, otherwise returns a non-zero value.
  */
 const rayAABB = (function (): (ray: Ray, aabb: AABB) => number {
-    const min = new Vec3();
-    const max = new Vec3();
+    const min = v3();
+    const max = v3();
     return function (ray: Ray, aabb: AABB): number {
         vec3Subtract(min, aabb.center, aabb.halfExtents);
         vec3Add(max, aabb.center, aabb.halfExtents);
@@ -175,8 +179,8 @@ function rayAABB2 (ray: Ray, min: IVec3Like, max: IVec3Like): number {
     const t4 = (max.y - o.y) * iy;
     const t5 = (min.z - o.z) * iz;
     const t6 = (max.z - o.z) * iz;
-    const tmin = Math.max(Math.max(Math.min(t1, t2), Math.min(t3, t4)), Math.min(t5, t6));
-    const tmax = Math.min(Math.min(Math.max(t1, t2), Math.max(t3, t4)), Math.max(t5, t6));
+    const tmin = mathMax(mathMax(mathMin(t1, t2), mathMin(t3, t4)), mathMin(t5, t6));
+    const tmax = mathMin(mathMin(mathMax(t1, t2), mathMax(t3, t4)), mathMax(t5, t6));
     if (tmax < 0 || tmin > tmax) { return 0; }
     return tmin > 0 ? tmin : tmax; // ray origin inside aabb
 }
@@ -191,13 +195,13 @@ function rayAABB2 (ray: Ray, min: IVec3Like, max: IVec3Like): number {
  * @returns @zh 如果没有相交，返回 0 ，否则返回非 0。 @en zero if no intersection, otherwise returns a non-zero value.
  */
 const rayOBB = (function (): (ray: Ray, obb: OBB) => number {
-    let center = new Vec3();
-    let o = new Vec3();
-    let d = new Vec3();
-    const X = new Vec3();
-    const Y = new Vec3();
-    const Z = new Vec3();
-    const p = new Vec3();
+    let center = v3();
+    let o = v3();
+    let d = v3();
+    const X = v3();
+    const Y = v3();
+    const Z = v3();
+    const p = v3();
     const size = new Array<number>(3);
     const f = new Array<number>(3);
     const e = new Array<number>(3);
@@ -240,19 +244,19 @@ const rayOBB = (function (): (ray: Ray, obb: OBB) => number {
             // max
             t[i * 2 + 1] = (e[i] - size[i]) / f[i];
         }
-        const tmin = Math.max(
-            Math.max(
-                Math.min(t[0], t[1]),
-                Math.min(t[2], t[3]),
+        const tmin = mathMax(
+            mathMax(
+                mathMin(t[0], t[1]),
+                mathMin(t[2], t[3]),
             ),
-            Math.min(t[4], t[5]),
+            mathMin(t[4], t[5]),
         );
-        const tmax = Math.min(
-            Math.min(
-                Math.max(t[0], t[1]),
-                Math.max(t[2], t[3]),
+        const tmax = mathMin(
+            mathMin(
+                mathMax(t[0], t[1]),
+                mathMax(t[2], t[3]),
             ),
-            Math.max(t[4], t[5]),
+            mathMax(t[4], t[5]),
         );
         if (tmax < 0 || tmin > tmax) {
             return 0;
@@ -272,13 +276,13 @@ const rayOBB = (function (): (ray: Ray, obb: OBB) => number {
  * @returns @zh 如果没有相交，返回 0 ，否则返回非 0。 @en zero if no intersection, otherwise returns a non-zero value.
  */
 const rayCapsule = (function (): (ray: Ray, capsule: Capsule) => number {
-    const v3_0 = new Vec3();
-    const v3_1 = new Vec3();
-    const v3_2 = new Vec3();
-    const v3_3 = new Vec3();
-    const v3_4 = new Vec3();
-    const v3_5 = new Vec3();
-    const v3_6 = new Vec3();
+    const v3_0 = v3();
+    const v3_1 = v3();
+    const v3_2 = v3();
+    const v3_3 = v3();
+    const v3_4 = v3();
+    const v3_5 = v3();
+    const v3_6 = v3();
     const sphere_0 = new Sphere();
     return function (ray: Ray, capsule: Capsule): number {
         const A = capsule.ellipseCenter0;
@@ -328,7 +332,7 @@ const rayCapsule = (function (): (ray: Ray, capsule: Capsule) => number {
             return intersect.raySphere(ray, sphere_0);
         } else {
             // Limit intersection between the bounds of the cylinder's end caps.
-            const iPos = Vec3.scaleAndAdd(v3_5, ray.o, vRayNorm, t);
+            const iPos = vec3ScaleAndAdd(v3_5, ray.o, vRayNorm, t);
             const iPosLen = vec3Subtract(v3_6, iPos, A);
             const tLimit = vec3Dot(iPosLen, BA) / ab2;
 
@@ -359,7 +363,7 @@ const rayCapsule = (function (): (ray: Ray, capsule: Capsule) => number {
  * @returns @zh 如果没有相交，返回 0 ，否则返回非 0。 @en zero if no intersection, otherwise returns a non-zero value.
  */
 const linePlane = (function (): (line: Line, plane: Plane) => number {
-    const ab = new Vec3(0, 0, 0);
+    const ab = v3();
 
     return function (line: Line, plane: Plane): number {
         vec3Subtract(ab, line.e, line.s);
@@ -380,12 +384,12 @@ const linePlane = (function (): (line: Line, plane: Plane) => number {
  * @returns @zh 如果没有相交，返回 0 ，否则返回非 0。 @en zero if no intersection, otherwise returns a non-zero value.
  */
 const lineTriangle = (function (): (line: Line, triangle: Triangle, outPt?: Vec3) => number {
-    const ab = new Vec3(0, 0, 0);
-    const ac = new Vec3(0, 0, 0);
-    const qp = new Vec3(0, 0, 0);
-    const ap = new Vec3(0, 0, 0);
-    const n = new Vec3(0, 0, 0);
-    const e = new Vec3(0, 0, 0);
+    const ab = v3();
+    const ac = v3();
+    const qp = v3();
+    const ap = v3();
+    const n = v3();
+    const e = v3();
 
     return function (line: Line, triangle: Triangle, outPt?: Vec3): number {
         vec3Subtract(ab, triangle.b, triangle.a);
@@ -512,10 +516,10 @@ function lineSphere (line: Line, sphere: Sphere): number {
  * @returns @zh 如果没有相交，返回 0 ，否则返回非 0。 @en zero if no intersection, otherwise returns a non-zero value.no intersection
  */
 const aabbWithAABB = (function (): (aabb1: AABB, aabb2: AABB) => boolean {
-    const aMin = new Vec3();
-    const aMax = new Vec3();
-    const bMin = new Vec3();
-    const bMax = new Vec3();
+    const aMin = v3();
+    const aMax = v3();
+    const bMin = v3();
+    const bMax = v3();
     return function (aabb1: AABB, aabb2: AABB): boolean {
         vec3Subtract(aMin, aabb1.center, aabb1.halfExtents);
         vec3Add(aMax, aabb1.center, aabb1.halfExtents);
@@ -612,16 +616,16 @@ function getInterval (vertices: IVec3Like[], axis: Vec3): number[] {
 const aabbWithOBB = (function (): (aabb: AABB, obb: OBB) => number {
     const test = new Array<Vec3>(15);
     for (let i = 0; i < 15; i++) {
-        test[i] = new Vec3(0, 0, 0);
+        test[i] = v3();
     }
     const vertices = new Array<Vec3>(8);
     const vertices2 = new Array<Vec3>(8);
     for (let i = 0; i < 8; i++) {
-        vertices[i] = new Vec3(0, 0, 0);
-        vertices2[i] = new Vec3(0, 0, 0);
+        vertices[i] = v3();
+        vertices2[i] = v3();
     }
-    const min = new Vec3();
-    const max = new Vec3();
+    const min = v3();
+    const max = v3();
     return function (aabb: AABB, obb: OBB): number {
         const orientation = obb.orientation;
         vec3Set(test[0], 1, 0, 0);
@@ -664,9 +668,9 @@ const aabbWithOBB = (function (): (aabb: AABB, obb: OBB) => number {
  * @returns @zh 检测结果, 包含为 -1, 不包含为 0, 相交为 1 @en Test result, inside(back) = -1, outside(front) = 0, intersect = 1
  */
 const aabbPlane = function (aabb: AABB, plane: Plane): number {
-    const r = aabb.halfExtents.x * Math.abs(plane.n.x)
-        + aabb.halfExtents.y * Math.abs(plane.n.y)
-        + aabb.halfExtents.z * Math.abs(plane.n.z);
+    const r = aabb.halfExtents.x * mathAbs(plane.n.x)
+        + aabb.halfExtents.y * mathAbs(plane.n.y)
+        + aabb.halfExtents.z * mathAbs(plane.n.z);
     const dot = vec3Dot(plane.n, aabb.center);
     if (dot + r < plane.d) { return -1; } else if (dot - r > plane.d) { return 0; }
     return 1;
@@ -724,7 +728,7 @@ const aabbFrustumAccurate = (function (): (aabb: AABB, frustum: Frustum) => numb
     const tmp = new Array(8);
     let out1 = 0; let out2 = 0;
     for (let i = 0; i < tmp.length; i++) {
-        tmp[i] = new Vec3(0, 0, 0);
+        tmp[i] = v3();
     }
     return function (aabb: AABB, frustum: Frustum): number {
         const frustumVertices = frustum.vertices;
@@ -773,8 +777,9 @@ const aabbFrustumAccurate = (function (): (aabb: AABB, frustum: Frustum) => numb
  * @returns @zh 是否相交 @en The value indicates if there is an intersection.
  */
 const obbPoint = (function (): (obb: OBB, point: Vec3) => boolean {
-    const tmp = new Vec3(0, 0, 0); const m3 = new Mat3();
-    const lessThan = function (a: Vec3, b: Vec3): boolean { return Math.abs(a.x) < b.x && Math.abs(a.y) < b.y && Math.abs(a.z) < b.z; };
+    const tmp = v3();
+    const m3 = new Mat3();
+    const lessThan = function (a: Vec3, b: Vec3): boolean { return mathAbs(a.x) < b.x && mathAbs(a.y) < b.y && mathAbs(a.z) < b.z; };
     return function (obb: OBB, point: Vec3): boolean {
         vec3Subtract(tmp, point, obb.center);
         Vec3.transformMat3(tmp, tmp, Mat3.transpose(m3, obb.orientation));
@@ -793,7 +798,7 @@ const obbPoint = (function (): (obb: OBB, point: Vec3) => boolean {
  */
 const obbPlane = (function (): (obb: OBB, plane: Plane) => number {
     const absDot = function (n: Vec3, x: number, y: number, z: number): number {
-        return Math.abs(n.x * x + n.y * y + n.z * z);
+        return mathAbs(n.x * x + n.y * y + n.z * z);
     };
     return function (obb: OBB, plane: Plane): number {
         const orientation = obb.orientation;
@@ -841,7 +846,7 @@ const obbFrustumAccurate = (function (): (obb: OBB, frustum: Frustum) => number 
     const tmp = new Array<Vec3>(8);
     let dist = 0; let out1 = 0; let out2 = 0;
     for (let i = 0; i < tmp.length; i++) {
-        tmp[i] = new Vec3(0, 0, 0);
+        tmp[i] = v3();
     }
     const dot = function (n: Vec3, x: number, y: number, z: number): number {
         return n.x * x + n.y * y + n.z * z;
@@ -899,14 +904,14 @@ const obbFrustumAccurate = (function (): (obb: OBB, frustum: Frustum) => number 
 const obbWithOBB = (function (): (obb1: OBB, obb2: OBB) => number {
     const test = new Array<Vec3>(15);
     for (let i = 0; i < 15; i++) {
-        test[i] = new Vec3(0, 0, 0);
+        test[i] = v3();
     }
 
     const vertices = new Array<Vec3>(8);
     const vertices2 = new Array<Vec3>(8);
     for (let i = 0; i < 8; i++) {
-        vertices[i] = new Vec3(0, 0, 0);
-        vertices2[i] = new Vec3(0, 0, 0);
+        vertices[i] = v3();
+        vertices2[i] = v3();
     }
 
     return function (obb1: OBB, obb2: OBB): number {
@@ -953,13 +958,13 @@ const obbWithOBB = (function (): (obb1: OBB, obb2: OBB) => number {
  */
 const obbCapsule = (function (): (obb: OBB, capsule: Capsule) => boolean | 1 | 0 {
     const sphere_0 = new Sphere();
-    const v3_0 = new Vec3();
-    const v3_1 = new Vec3();
-    const v3_2 = new Vec3();
+    const v3_0 = v3();
+    const v3_1 = v3();
+    const v3_2 = v3();
     const v3_verts8 = new Array<Vec3>(8);
-    for (let i = 0; i < 8; i++) { v3_verts8[i] = new Vec3(); }
+    for (let i = 0; i < 8; i++) { v3_verts8[i] = v3(); }
     const v3_axis8 = new Array<Vec3>(8);
-    for (let i = 0; i < 8; i++) { v3_axis8[i] = new Vec3(); }
+    for (let i = 0; i < 8; i++) { v3_axis8[i] = v3(); }
     return function (obb: OBB, capsule: Capsule): boolean | 1 | 0 {
         const h = vec3SquaredDistance(capsule.ellipseCenter0, capsule.ellipseCenter1);
         if (h === 0) {
@@ -995,8 +1000,8 @@ const obbCapsule = (function (): (obb: OBB, capsule: Capsule) => boolean | 1 | 0
                 const a = getInterval(v3_verts8, axes[i]);
                 const d0 = vec3Dot(axes[i], capsule.ellipseCenter0);
                 const d1 = vec3Dot(axes[i], capsule.ellipseCenter1);
-                const max_d = Math.max(d0, d1);
-                const min_d = Math.min(d0, d1);
+                const max_d = mathMax(d0, d1);
+                const min_d = mathMin(d0, d1);
                 const d_min = min_d - capsule.radius;
                 const d_max = max_d + capsule.radius;
                 if (d_min > a[1] || a[0] > d_max) {
@@ -1055,7 +1060,7 @@ const sphereFrustum = function (sphere: Sphere, frustum: Frustum): number {
  * @returns @zh 如果没有相交，返回 0 ，否则返回非 0。 @en zero if no intersection, otherwise returns a non-zero value.no intersection
  */
 const sphereFrustumAccurate = (function (): (sphere: Sphere, frustum: Frustum) => number {
-    const pt = new Vec3(0, 0, 0); const map = [1, -1, 1, -1, 1, -1];
+    const pt = v3(); const map = [1, -1, 1, -1, 1, -1];
     return function (sphere: Sphere, frustum: Frustum): number {
         for (let i = 0; i < 6; i++) {
             const plane = frustum.planes[i];
@@ -1102,7 +1107,7 @@ const sphereWithSphere = function (sphere0: Sphere, sphere1: Sphere): boolean {
  * @returns @zh 是否发生碰撞 @en true or false which indicates if there is an intersection
  */
 const sphereAABB = (function (): (sphere: Sphere, aabb: AABB) => boolean {
-    const pt = new Vec3();
+    const pt = v3();
     return function (sphere: Sphere, aabb: AABB): boolean {
         distance.pt_point_aabb(pt, sphere.center, aabb);
         return vec3SquaredDistance(sphere.center, pt) < sphere.radius * sphere.radius;
@@ -1119,7 +1124,7 @@ const sphereAABB = (function (): (sphere: Sphere, aabb: AABB) => boolean {
  * @returns @zh 是否发生碰撞。 @en true or false which indicates if there is an intersection.
  */
 const sphereOBB = (function (): (sphere: Sphere, obb: OBB) => boolean {
-    const pt = new Vec3();
+    const pt = v3();
     return function (sphere: Sphere, obb: OBB): boolean {
         distance.pt_point_obb(pt, sphere.center, obb);
         return vec3SquaredDistance(sphere.center, pt) < sphere.radius * sphere.radius;
@@ -1136,8 +1141,8 @@ const sphereOBB = (function (): (sphere: Sphere, obb: OBB) => boolean {
  * @returns @zh 是否发生碰撞。 @en true or false which indicates if there is an intersection.
  */
 const sphereCapsule = (function (): (sphere: Sphere, capsule: Capsule) => boolean {
-    const v3_0 = new Vec3();
-    const v3_1 = new Vec3();
+    const v3_0 = v3();
+    const v3_1 = v3();
     return function (sphere: Sphere, capsule: Capsule): boolean {
         const r = sphere.radius + capsule.radius;
         const squaredR = r * r;
@@ -1153,7 +1158,7 @@ const sphereCapsule = (function (): (sphere: Sphere, capsule: Capsule) => boolea
             } else if (t > 1) {
                 return vec3SquaredDistance(sphere.center, capsule.ellipseCenter1) < squaredR;
             } else {
-                Vec3.scaleAndAdd(v3_0, capsule.ellipseCenter0, v3_1, t);
+                vec3ScaleAndAdd(v3_0, capsule.ellipseCenter0, v3_1, t);
                 return vec3SquaredDistance(sphere.center, v3_0) < squaredR;
             }
         }
@@ -1171,12 +1176,12 @@ const sphereCapsule = (function (): (sphere: Sphere, capsule: Capsule) => boolea
  * @returns @zh 如果相交，返回 true，否则返回 false。 @en true if there is an intersection, otherwise returns false.
  */
 const capsuleWithCapsule = (function (): (capsuleA: Capsule, capsuleB: Capsule) => boolean {
-    const v3_0 = new Vec3();
-    const v3_1 = new Vec3();
-    const v3_2 = new Vec3();
-    const v3_3 = new Vec3();
-    const v3_4 = new Vec3();
-    const v3_5 = new Vec3();
+    const v3_0 = v3();
+    const v3_1 = v3();
+    const v3_2 = v3();
+    const v3_3 = v3();
+    const v3_4 = v3();
+    const v3_5 = v3();
     return function capsuleWithCapsule (capsuleA: Capsule, capsuleB: Capsule): boolean {
         const u = vec3Subtract(v3_0, capsuleA.ellipseCenter1, capsuleA.ellipseCenter0);
         const v = vec3Subtract(v3_1, capsuleB.ellipseCenter1, capsuleB.ellipseCenter0);
@@ -1236,8 +1241,8 @@ const capsuleWithCapsule = (function (): (capsuleA: Capsule, capsuleB: Capsule) 
             }
         }
         // finally do the division to get sc and tc
-        const sc = (Math.abs(sN) < EPSILON ? 0.0 : sN / sD);
-        const tc = (Math.abs(tN) < EPSILON ? 0.0 : tN / tD);
+        const sc = (mathAbs(sN) < EPSILON ? 0.0 : sN / sD);
+        const tc = (mathAbs(tN) < EPSILON ? 0.0 : tN / tD);
 
         // get the difference of the two closest points
         const dP = v3_3;
@@ -1308,7 +1313,8 @@ const intersect = {
      *              @zh 可选，用于保存相交点的输出对象。（注：仅部分形状的检测带有这个返回值）
      */
     resolve (g1: any, g2: any, outPt = null): number {
-        const type1 = g1._type; const type2 = g2._type;
+        const type1 = g1._type;
+        const type2 = g2._type;
         const resolver = this[type1 | type2] as (...args: any) => number;
         return type1 < type2 ? resolver(g1, g2, outPt) : resolver(g2, g1, outPt);
     },
