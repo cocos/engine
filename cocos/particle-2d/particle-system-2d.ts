@@ -1071,7 +1071,7 @@ export class ParticleSystem2D extends UIRenderer {
                             myPngObj.render(canvasObj);
                         } else {
                             tiffReader.parseTIFF(buffer, canvasObj);
-                            tiffReader.reset();
+                            tiffReader.reset(); // Reset the tiff reader to avoid memory cached in it.
                         }
                         imageAsset = new ImageAsset(canvasObj);
                         assetManager.assets.add(imgPathName, imageAsset);
