@@ -1053,7 +1053,9 @@ export class Label extends UIRenderer {
                 const letterTexture = (this._assembler as LetterFont).getAssemblerData();
                 if (letterTexture !== oldLetterTexture) {
                     this.destroyLetterTexture();
-                    letterTexture.addRef();
+                    if (letterTexture) {
+                        letterTexture.addRef();
+                    }
                 }
                 this._texture = this._letterTexture = letterTexture;
             } else if (!this._ttfSpriteFrame) {

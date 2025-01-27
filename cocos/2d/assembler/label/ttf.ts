@@ -163,4 +163,3 @@ export class TTF extends TTFUtils implements IAssembler {
 }
 
 export const ttf = new TTF();
-

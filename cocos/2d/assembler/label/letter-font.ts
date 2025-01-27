@@ -22,8 +22,8 @@
  THE SOFTWARE.
 */
 
-import { Color } from '../../../core/math/color';
 import type { Label } from '../../components';
+import { IAssembler } from '../../renderer/base';
 import { BmfontUtils } from './bmfontUtils';
 import { shareLabelInfo, LetterAtlas, computeHash, LetterRenderTexture } from './font-utils';
 
@@ -33,7 +33,7 @@ const _isBold = false;
 
 let _shareAtlas: LetterAtlas | null  = null;
 
-export class LetterFont extends BmfontUtils {
+export class LetterFont extends BmfontUtils implements IAssembler {
     getAssemblerData (): LetterRenderTexture | null {
         if (!_shareAtlas) {
             _shareAtlas = new LetterAtlas(_atlasWidth, _atlasHeight);
