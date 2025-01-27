@@ -208,14 +208,16 @@ const rayOBB = (function (): (ray: Ray, obb: OBB) => number {
     const t = new Array<number>(6);
 
     return function (ray: Ray, obb: OBB): number {
-        size[0] = obb.halfExtents.x;
-        size[1] = obb.halfExtents.y;
-        size[2] = obb.halfExtents.z;
+        const halfExtents = obb.halfExtents;
+        const orientation = obb.orientation;
+
+        size[0] = halfExtents.x;
+        size[1] = halfExtents.y;
+        size[2] = halfExtents.z;
         center = obb.center;
         o = ray.o;
         d = ray.d;
 
-        const orientation = obb.orientation;
         vec3Set(X, orientation.m00, orientation.m01, orientation.m02);
         vec3Set(Y, orientation.m03, orientation.m04, orientation.m05);
         vec3Set(Z, orientation.m06, orientation.m07, orientation.m08);
@@ -668,10 +670,12 @@ const aabbWithOBB = (function (): (aabb: AABB, obb: OBB) => number {
  * @returns @zh 检测结果, 包含为 -1, 不包含为 0, 相交为 1 @en Test result, inside(back) = -1, outside(front) = 0, intersect = 1
  */
 const aabbPlane = function (aabb: AABB, plane: Plane): number {
-    const r = aabb.halfExtents.x * mathAbs(plane.n.x)
-        + aabb.halfExtents.y * mathAbs(plane.n.y)
-        + aabb.halfExtents.z * mathAbs(plane.n.z);
-    const dot = vec3Dot(plane.n, aabb.center);
+    const aabbHalfExtents = aabb.halfExtents;
+    const planeN = plane.n;
+    const r = aabbHalfExtents.x * mathAbs(planeN.x)
+        + aabbHalfExtents.y * mathAbs(planeN.y)
+        + aabbHalfExtents.z * mathAbs(planeN.z);
+    const dot = vec3Dot(planeN, aabb.center);
     if (dot + r < plane.d) { return -1; } else if (dot - r > plane.d) { return 0; }
     return 1;
 };
@@ -686,9 +690,10 @@ const aabbPlane = function (aabb: AABB, plane: Plane): number {
  * @returns @zh 如果没有相交，返回 0 ，否则返回非 0。 @en zero if no intersection, otherwise returns a non-zero value.no intersection
  */
 const aabbFrustum = function (aabb: AABB, frustum: Readonly<Frustum>): number {
-    for (let i = 0; i < frustum.planes.length; i++) {
+    const frustumPlanes = frustum.planes;
+    for (let i = 0; i < frustumPlanes.length; i++) {
         // frustum plane normal points to the inside
-        if (aabbPlane(aabb, frustum.planes[i]) === -1) {
+        if (aabbPlane(aabb, frustumPlanes[i]) === -1) {
             return 0;
         }
     } // completely outside
@@ -705,9 +710,10 @@ const aabbFrustum = function (aabb: AABB, frustum: Readonly<Frustum>): number {
  * @returns {number} aabb completely inside the frustum = 1, otherwise = 0
  */
 const aabbFrustumCompletelyInside = function (aabb: AABB, frustum: Readonly<Frustum>): number {
-    for (let i = 0; i < frustum.planes.length; i++) {
+    const frustumPlanes = frustum.planes;
+    for (let i = 0; i < frustumPlanes.length; i++) {
         // frustum plane normal points to the inside
-        if (aabbPlane(aabb, frustum.planes[i]) !== 0) {
+        if (aabbPlane(aabb, frustumPlanes[i]) !== 0) {
             return 0;
         }
     } // completely inside
@@ -726,12 +732,14 @@ const aabbFrustumCompletelyInside = function (aabb: AABB, frustum: Readonly<Frus
  */
 const aabbFrustumAccurate = (function (): (aabb: AABB, frustum: Frustum) => number {
     const tmp = new Array(8);
-    let out1 = 0; let out2 = 0;
+    let out1 = 0;
+    let out2 = 0;
     for (let i = 0; i < tmp.length; i++) {
         tmp[i] = v3();
     }
     return function (aabb: AABB, frustum: Frustum): number {
         const frustumVertices = frustum.vertices;
+        const aabbHalfExtents = aabb.halfExtents;
         let result = 0;
         let intersects = false;
         // 1. aabb inside/outside frustum test
@@ -750,17 +758,17 @@ const aabbFrustumAccurate = (function (): (aabb: AABB, frustum: Frustum) => numb
         out1 = 0;
         out2 = 0;
         for (let i = 0; i < frustumVertices.length; i++) {
-            if (tmp[i].x > aabb.halfExtents.x) { out1++; } else if (tmp[i].x < -aabb.halfExtents.x) { out2++; }
+            if (tmp[i].x > aabbHalfExtents.x) { out1++; } else if (tmp[i].x < -aabbHalfExtents.x) { out2++; }
         }
         if (out1 === frustumVertices.length || out2 === frustumVertices.length) { return 0; }
         out1 = 0; out2 = 0;
         for (let i = 0; i < frustumVertices.length; i++) {
-            if (tmp[i].y > aabb.halfExtents.y) { out1++; } else if (tmp[i].y < -aabb.halfExtents.y) { out2++; }
+            if (tmp[i].y > aabbHalfExtents.y) { out1++; } else if (tmp[i].y < -aabbHalfExtents.y) { out2++; }
         }
         if (out1 === frustumVertices.length || out2 === frustumVertices.length) { return 0; }
         out1 = 0; out2 = 0;
         for (let i = 0; i < frustumVertices.length; i++) {
-            if (tmp[i].z > aabb.halfExtents.z) { out1++; } else if (tmp[i].z < -aabb.halfExtents.z) { out2++; }
+            if (tmp[i].z > aabbHalfExtents.z) { out1++; } else if (tmp[i].z < -aabbHalfExtents.z) { out2++; }
         }
         if (out1 === frustumVertices.length || out2 === frustumVertices.length) { return 0; }
         return 1;
@@ -801,14 +809,17 @@ const obbPlane = (function (): (obb: OBB, plane: Plane) => number {
         return mathAbs(n.x * x + n.y * y + n.z * z);
     };
     return function (obb: OBB, plane: Plane): number {
-        const orientation = obb.orientation;
+        const obbOrientation = obb.orientation;
+        const obbHalfExtents = obb.halfExtents;
+        const planeN = plane.n;
+        const planeD = plane.d;
         // Real-Time Collision Detection, Christer Ericson, p. 163.
-        const r = obb.halfExtents.x * absDot(plane.n, orientation.m00, orientation.m01, orientation.m02)
-            + obb.halfExtents.y * absDot(plane.n, orientation.m03, orientation.m04, orientation.m05)
-            + obb.halfExtents.z * absDot(plane.n, orientation.m06, orientation.m07, orientation.m08);
+        const r = obbHalfExtents.x * absDot(planeN, obbOrientation.m00, obbOrientation.m01, obbOrientation.m02)
+            + obbHalfExtents.y * absDot(planeN, obbOrientation.m03, obbOrientation.m04, obbOrientation.m05)
+            + obbHalfExtents.z * absDot(planeN, obbOrientation.m06, obbOrientation.m07, obbOrientation.m08);
 
-        const dot = vec3Dot(plane.n, obb.center);
-        if (dot + r < plane.d) { return -1; } else if (dot - r > plane.d) { return 0; }
+        const dot = vec3Dot(planeN, obb.center);
+        if (dot + r < planeD) { return -1; } else if (dot - r > planeD) { return 0; }
         return 1;
     };
 }());
@@ -823,9 +834,10 @@ const obbPlane = (function (): (obb: OBB, plane: Plane) => number {
  * @returns @zh 如果没有相交，返回 0 ，否则返回非 0。 @en zero if no intersection, otherwise returns a non-zero value.
  */
 const obbFrustum = function (obb: OBB, frustum: Frustum): number {
-    for (let i = 0; i < frustum.planes.length; i++) {
+    const frustumPlanes = frustum.planes;
+    for (let i = 0; i < frustumPlanes.length; i++) {
         // frustum plane normal points to the inside
-        if (obbPlane(obb, frustum.planes[i]) === -1) {
+        if (obbPlane(obb, frustumPlanes[i]) === -1) {
             return 0;
         }
     } // completely outside
@@ -852,14 +864,15 @@ const obbFrustumAccurate = (function (): (obb: OBB, frustum: Frustum) => number 
         return n.x * x + n.y * y + n.z * z;
     };
     return function (obb: OBB, frustum: Frustum): number {
-        const orientation = obb.orientation;
-        const halfExtents = obb.halfExtents;
+        const obbOrientation = obb.orientation;
+        const obbHalfExtents = obb.halfExtents;
         const frustumVertices = frustum.vertices;
+        const frustumPlanes = frustum.planes;
         let result = 0;
         let intersects = false;
         // 1. obb inside/outside frustum test
-        for (let i = 0; i < frustum.planes.length; i++) {
-            result = obbPlane(obb, frustum.planes[i]);
+        for (let i = 0; i < frustumPlanes.length; i++) {
+            result = obbPlane(obb, frustumPlanes[i]);
             // frustum plane normal points to the inside
             if (result === -1) return 0; // completely outside
             else if (result === 1) { intersects = true; }
@@ -872,20 +885,20 @@ const obbFrustumAccurate = (function (): (obb: OBB, frustum: Frustum) => number 
         }
         out1 = 0, out2 = 0;
         for (let i = 0; i < frustumVertices.length; i++) {
-            dist = dot(tmp[i], orientation.m00, orientation.m01, orientation.m02);
-            if (dist > halfExtents.x) { out1++; } else if (dist < -halfExtents.x) { out2++; }
+            dist = dot(tmp[i], obbOrientation.m00, obbOrientation.m01, obbOrientation.m02);
+            if (dist > obbHalfExtents.x) { out1++; } else if (dist < -obbHalfExtents.x) { out2++; }
         }
         if (out1 === frustumVertices.length || out2 === frustumVertices.length) { return 0; }
         out1 = 0; out2 = 0;
         for (let i = 0; i < frustumVertices.length; i++) {
-            dist = dot(tmp[i], orientation.m03, orientation.m04, orientation.m05);
-            if (dist > halfExtents.y) { out1++; } else if (dist < -halfExtents.y) { out2++; }
+            dist = dot(tmp[i], obbOrientation.m03, obbOrientation.m04, obbOrientation.m05);
+            if (dist > obbHalfExtents.y) { out1++; } else if (dist < -obbHalfExtents.y) { out2++; }
         }
         if (out1 === frustumVertices.length || out2 === frustumVertices.length) { return 0; }
         out1 = 0; out2 = 0;
         for (let i = 0; i < frustumVertices.length; i++) {
-            dist = dot(tmp[i], orientation.m06, orientation.m07, orientation.m08);
-            if (dist > halfExtents.z) { out1++; } else if (dist < -halfExtents.z) { out2++; }
+            dist = dot(tmp[i], obbOrientation.m06, obbOrientation.m07, obbOrientation.m08);
+            if (dist > obbHalfExtents.z) { out1++; } else if (dist < -obbHalfExtents.z) { out2++; }
         }
         if (out1 === frustumVertices.length || out2 === frustumVertices.length) { return 0; }
         return 1;
@@ -966,10 +979,13 @@ const obbCapsule = (function (): (obb: OBB, capsule: Capsule) => boolean | 1 | 0
     const v3_axis8 = new Array<Vec3>(8);
     for (let i = 0; i < 8; i++) { v3_axis8[i] = v3(); }
     return function (obb: OBB, capsule: Capsule): boolean | 1 | 0 {
-        const h = vec3SquaredDistance(capsule.ellipseCenter0, capsule.ellipseCenter1);
+        const capsuleEllipseCenter0 = capsule.ellipseCenter0;
+        const capsuleEllipseCenter1 = capsule.ellipseCenter1;
+        const capsuleRadius = capsule.radius;
+        const h = vec3SquaredDistance(capsuleEllipseCenter0, capsuleEllipseCenter1);
         if (h === 0) {
             sphere_0.radius = capsule.radius;
-            sphere_0.center.set(capsule.ellipseCenter0);
+            sphere_0.center.set(capsuleEllipseCenter0);
             return intersect.sphereOBB(sphere_0, obb);
         } else {
             const orientation = obb.orientation;
@@ -990,7 +1006,7 @@ const obbCapsule = (function (): (obb: OBB, capsule: Capsule) => boolean | 1 | 0
             const a2 = vec3Copy(axes[2], v3_2);
             const C = vec3Subtract(axes[3], capsule.center, obb.center);
             C.normalize();
-            const B = vec3Subtract(axes[4], capsule.ellipseCenter0, capsule.ellipseCenter1);
+            const B = vec3Subtract(axes[4], capsuleEllipseCenter0, capsuleEllipseCenter1);
             B.normalize();
             vec3Cross(axes[5], a0, B);
             vec3Cross(axes[6], a1, B);
@@ -998,12 +1014,12 @@ const obbCapsule = (function (): (obb: OBB, capsule: Capsule) => boolean | 1 | 0
 
             for (let i = 0; i < 8; ++i) {
                 const a = getInterval(v3_verts8, axes[i]);
-                const d0 = vec3Dot(axes[i], capsule.ellipseCenter0);
-                const d1 = vec3Dot(axes[i], capsule.ellipseCenter1);
+                const d0 = vec3Dot(axes[i], capsuleEllipseCenter0);
+                const d1 = vec3Dot(axes[i], capsuleEllipseCenter1);
                 const max_d = mathMax(d0, d1);
                 const min_d = mathMin(d0, d1);
-                const d_min = min_d - capsule.radius;
-                const d_max = max_d + capsule.radius;
+                const d_min = min_d - capsuleRadius;
+                const d_max = max_d + capsuleRadius;
                 if (d_min > a[1] || a[0] > d_max) {
                     return 0; // Seperating axis found
                 }
@@ -1040,9 +1056,10 @@ const spherePlane = function (sphere: Sphere, plane: Plane): number {
  * @returns @zh 如果没有相交，返回 0 ，否则返回非 0。 @en zero if no intersection, otherwise returns a non-zero value.no intersection
  */
 const sphereFrustum = function (sphere: Sphere, frustum: Frustum): number {
-    for (let i = 0; i < frustum.planes.length; i++) {
+    const frustumPlanes = frustum.planes;
+    for (let i = 0; i < frustumPlanes.length; i++) {
         // frustum plane normal points to the inside
-        if (spherePlane(sphere, frustum.planes[i]) === -1) {
+        if (spherePlane(sphere, frustumPlanes[i]) === -1) {
             return 0;
         }
     } // completely outside
@@ -1060,12 +1077,15 @@ const sphereFrustum = function (sphere: Sphere, frustum: Frustum): number {
  * @returns @zh 如果没有相交，返回 0 ，否则返回非 0。 @en zero if no intersection, otherwise returns a non-zero value.no intersection
  */
 const sphereFrustumAccurate = (function (): (sphere: Sphere, frustum: Frustum) => number {
-    const pt = v3(); const map = [1, -1, 1, -1, 1, -1];
+    const pt = v3();
+    const map = [1, -1, 1, -1, 1, -1];
     return function (sphere: Sphere, frustum: Frustum): number {
         for (let i = 0; i < 6; i++) {
             const plane = frustum.planes[i];
-            const r = sphere.radius; const c = sphere.center;
-            const n = plane.n; const d = plane.d;
+            const r = sphere.radius;
+            const c = sphere.center;
+            const n = plane.n;
+            const d = plane.d;
             const dot = vec3Dot(n, c);
             // frustum plane normal points to the inside
             if (dot + r < d) return 0; // completely outside
@@ -1109,8 +1129,9 @@ const sphereWithSphere = function (sphere0: Sphere, sphere1: Sphere): boolean {
 const sphereAABB = (function (): (sphere: Sphere, aabb: AABB) => boolean {
     const pt = v3();
     return function (sphere: Sphere, aabb: AABB): boolean {
+        const sphereRadius = sphere.radius;
         distance.pt_point_aabb(pt, sphere.center, aabb);
-        return vec3SquaredDistance(sphere.center, pt) < sphere.radius * sphere.radius;
+        return vec3SquaredDistance(sphere.center, pt) < sphereRadius * sphereRadius;
     };
 }());
 
@@ -1126,8 +1147,9 @@ const sphereAABB = (function (): (sphere: Sphere, aabb: AABB) => boolean {
 const sphereOBB = (function (): (sphere: Sphere, obb: OBB) => boolean {
     const pt = v3();
     return function (sphere: Sphere, obb: OBB): boolean {
+        const sphereRadius = sphere.radius;
         distance.pt_point_obb(pt, sphere.center, obb);
-        return vec3SquaredDistance(sphere.center, pt) < sphere.radius * sphere.radius;
+        return vec3SquaredDistance(sphere.center, pt) < sphereRadius * sphereRadius;
     };
 }());
 
@@ -1144,22 +1166,25 @@ const sphereCapsule = (function (): (sphere: Sphere, capsule: Capsule) => boolea
     const v3_0 = v3();
     const v3_1 = v3();
     return function (sphere: Sphere, capsule: Capsule): boolean {
+        const capsuleEllipseCenter0 = capsule.ellipseCenter0;
+        const capsuleEllipseCenter1 = capsule.ellipseCenter1;
+        const sphereCenter = sphere.center;
         const r = sphere.radius + capsule.radius;
         const squaredR = r * r;
-        const h = vec3SquaredDistance(capsule.ellipseCenter0, capsule.ellipseCenter1);
+        const h = vec3SquaredDistance(capsuleEllipseCenter0, capsuleEllipseCenter1);
         if (h === 0) {
-            return vec3SquaredDistance(sphere.center, capsule.center) < squaredR;
+            return vec3SquaredDistance(sphereCenter, capsule.center) < squaredR;
         } else {
-            vec3Subtract(v3_0, sphere.center, capsule.ellipseCenter0);
-            vec3Subtract(v3_1, capsule.ellipseCenter1, capsule.ellipseCenter0);
+            vec3Subtract(v3_0, sphereCenter, capsuleEllipseCenter0);
+            vec3Subtract(v3_1, capsuleEllipseCenter1, capsuleEllipseCenter0);
             const t = vec3Dot(v3_0, v3_1) / h;
             if (t < 0) {
-                return vec3SquaredDistance(sphere.center, capsule.ellipseCenter0) < squaredR;
+                return vec3SquaredDistance(sphereCenter, capsuleEllipseCenter0) < squaredR;
             } else if (t > 1) {
-                return vec3SquaredDistance(sphere.center, capsule.ellipseCenter1) < squaredR;
+                return vec3SquaredDistance(sphereCenter, capsuleEllipseCenter1) < squaredR;
             } else {
-                vec3ScaleAndAdd(v3_0, capsule.ellipseCenter0, v3_1, t);
-                return vec3SquaredDistance(sphere.center, v3_0) < squaredR;
+                vec3ScaleAndAdd(v3_0, capsuleEllipseCenter0, v3_1, t);
+                return vec3SquaredDistance(sphereCenter, v3_0) < squaredR;
             }
         }
     };
@@ -1183,9 +1208,13 @@ const capsuleWithCapsule = (function (): (capsuleA: Capsule, capsuleB: Capsule) 
     const v3_4 = v3();
     const v3_5 = v3();
     return function capsuleWithCapsule (capsuleA: Capsule, capsuleB: Capsule): boolean {
-        const u = vec3Subtract(v3_0, capsuleA.ellipseCenter1, capsuleA.ellipseCenter0);
-        const v = vec3Subtract(v3_1, capsuleB.ellipseCenter1, capsuleB.ellipseCenter0);
-        const w = vec3Subtract(v3_2, capsuleA.ellipseCenter0, capsuleB.ellipseCenter0);
+        const capsuleAEllipseCenter0 = capsuleA.ellipseCenter0;
+        const capsuleAEllipseCenter1 = capsuleA.ellipseCenter1;
+        const capsuleBEllipseCenter1 = capsuleB.ellipseCenter1;
+        const capsuleBEllipseCenter0 = capsuleB.ellipseCenter0;
+        const u = vec3Subtract(v3_0, capsuleAEllipseCenter1, capsuleAEllipseCenter0);
+        const v = vec3Subtract(v3_1, capsuleBEllipseCenter1, capsuleBEllipseCenter0);
+        const w = vec3Subtract(v3_2, capsuleAEllipseCenter0, capsuleBEllipseCenter0);
         const a = vec3Dot(u, u);         // always >= 0
         const b = vec3Dot(u, v);
         const c = vec3Dot(v, v);         // always >= 0
