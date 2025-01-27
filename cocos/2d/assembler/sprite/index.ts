@@ -23,7 +23,7 @@
 */
 
 import { UIRenderer } from '../../framework/ui-renderer';
-import { IAssemblerManager } from '../../renderer/base';
+import { IAssembler, IAssemblerManager } from '../../renderer/base';
 import { Sprite } from '../../components';
 import { barFilled } from './bar-filled';
 import { radialFilled } from './radial-filled';
@@ -38,7 +38,7 @@ const FillType = Sprite.FillType;
 
 const spriteAssembler: IAssemblerManager = {
     getAssembler (spriteComp: UIRenderer) {
-        let util = simple;
+        let util: IAssembler = simple;
 
         const comp = spriteComp as Sprite;
         switch (comp.type) {

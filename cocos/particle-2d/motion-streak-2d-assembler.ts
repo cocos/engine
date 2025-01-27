@@ -24,17 +24,16 @@
 */
 
 import { JSB } from 'internal:constants';
-import { IAssembler, IAssemblerManager } from '../2d/renderer/base';
-import { MotionStreak } from './motion-streak-2d';
+import type { IAssembler, IAssemblerManager } from '../2d/renderer/base';
+import { MotionStreak, MotionStreakPoint } from './motion-streak-2d';
 import { Vec2, Color } from '../core';
-import { IBatcher } from '../2d/renderer/i-batcher';
-import { RenderData } from '../2d/renderer/render-data';
+import type { IBatcher } from '../2d/renderer/i-batcher';
+import type { RenderData } from '../2d/renderer/render-data';
+import type { UIRenderer } from '../2d';
 
-const _tangent = new Vec2();
-// const _miter = new Vec2();
 const _normal = new Vec2();
 const _vec2 = new Vec2();
-let QUAD_INDICES;
+let QUAD_INDICES: Uint16Array | null = null;
 
 function normal (out: Vec2, dir: Vec2): Vec2 {
     // get perpendicular
@@ -43,32 +42,17 @@ function normal (out: Vec2, dir: Vec2): Vec2 {
     return out;
 }
 
-function computeMiter (miter, lineA, lineB, halfThick, maxMultiple): number {
-    // get tangent line
-    lineA.add(lineB, _tangent);
-    _tangent.normalize();
-
-    // get miter as a unit vector
-    miter.x = -_tangent.y;
-    miter.y = _tangent.x;
-    _vec2.x = -lineA.y;
-    _vec2.y = lineA.x;
-
-    // get the necessary length of our miter
-    let multiple = 1 / miter.dot(_vec2);
-    if (maxMultiple) {
-        multiple = Math.min(multiple, maxMultiple);
+class MotionStreakAssembler implements IAssembler {
+    updateUVs (comp: UIRenderer, ...args: any[]): void {
+        throw new Error('Method not implemented.');
     }
-    return halfThick * multiple;
-}
 
-export const MotionStreakAssembler: IAssembler = {
     createData (comp: MotionStreak): RenderData {
         const renderData = comp.requestRenderData();
         renderData.dataLength = 4;
         renderData.resize(16, (16 - 2) * 3);
         return renderData;
-    },
+    }
 
     update (comp: MotionStreak, dt: number): void {
         const stroke = comp.stroke / 2;
@@ -80,7 +64,7 @@ export const MotionStreakAssembler: IAssembler = {
 
         const points = comp.points;
 
-        let cur;
+        let cur: MotionStreakPoint | undefined;
         if (points.length > 1) {
             const point = points[0];
             const difx = point.point.x - tx;
@@ -91,7 +75,7 @@ export const MotionStreakAssembler: IAssembler = {
         }
 
         if (!cur) {
-            cur = new MotionStreak.Point();
+            cur = new MotionStreakPoint();
             points.unshift(cur);
         }
 
@@ -178,7 +162,7 @@ export const MotionStreakAssembler: IAssembler = {
         if (JSB) {
             const indexCount = renderData.indexCount;
             this.createQuadIndices(comp, indexCount);
-            renderData.chunk.setIndexBuffer(QUAD_INDICES);
+            renderData.chunk.setIndexBuffer(QUAD_INDICES!);
 
             //  Fill all dataList to vData
             this.updateWorldVertexAllData(comp);
@@ -186,9 +170,9 @@ export const MotionStreakAssembler: IAssembler = {
             renderData.updateRenderData(comp, comp.texture!);
             comp.markForUpdateRenderData();
         }
-    },
+    }
 
-    updateWorldVertexAllData (comp: MotionStreak): void {
+    private updateWorldVertexAllData (comp: MotionStreak): void {
         const renderData = comp.renderData!;
         const stride = renderData.floatStride;
         const dataList = renderData.data;
@@ -202,9 +186,9 @@ export const MotionStreakAssembler: IAssembler = {
             vData[offset + 4] = dataList[i].v;
             Color.toArray(vData, dataList[i].color, offset + 5);
         }
-    },
+    }
 
-    createQuadIndices (comp: MotionStreak, indexCount: number): void {
+    private createQuadIndices (comp: MotionStreak, indexCount: number): void {
         const renderData = comp.renderData!;
         const chunk = renderData.chunk;
         const vid = 0;
@@ -221,9 +205,9 @@ export const MotionStreakAssembler: IAssembler = {
             QUAD_INDICES[indexOffset++] = start + 2;
             QUAD_INDICES[indexOffset++] = start + 3;
         }
-    },
+    }
 
-    updateRenderDataCache (comp: MotionStreak, renderData: RenderData): void {
+    private updateRenderDataCache (comp: MotionStreak, renderData: RenderData): void {
         if (renderData.passDirty) {
             renderData.updatePass(comp);
         }
@@ -237,7 +221,7 @@ export const MotionStreakAssembler: IAssembler = {
         if (renderData.hashDirty) {
             renderData.updateHash();
         }
-    },
+    }
 
     updateRenderData (comp: MotionStreak): void {
         if (JSB) {
@@ -247,11 +231,7 @@ export const MotionStreakAssembler: IAssembler = {
             comp.renderData!.renderDrawInfo.setVertDirty(false);
             comp.node.hasChangedFlags = 0;
         }
-    },
-
-    updateColor (comp: MotionStreak): void {
-        // do nothing
-    },
+    }
 
     fillBuffers (comp: MotionStreak, renderer: IBatcher): void {
         const renderData = comp.renderData!;
@@ -292,12 +272,14 @@ export const MotionStreakAssembler: IAssembler = {
 
         meshBuffer.indexOffset += renderData.indexCount;
         meshBuffer.setDirty();
-    },
-};
+    }
+}
+
+const motionStreakAssembler = new MotionStreakAssembler();
 
 export const MotionStreakAssemblerManager: IAssemblerManager = {
     getAssembler (comp: MotionStreak): IAssembler {
-        return MotionStreakAssembler;
+        return motionStreakAssembler;
     },
 };
 

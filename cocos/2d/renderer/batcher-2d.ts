@@ -437,7 +437,7 @@ export class Batcher2D implements IBatcher {
             }
         }
 
-        assembler.fillBuffers(comp, this);
+        if (assembler.fillBuffers) assembler.fillBuffers(comp, this);
     }
 
     /**

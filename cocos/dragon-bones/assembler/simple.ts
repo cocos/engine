@@ -27,17 +27,17 @@ import { Color, Mat4, Vec3, cclegacy } from '../../core';
 import { BlendFactor } from '../../gfx';
 import { vfmtPosUvColor } from '../../2d/renderer/vertex-format';
 import { MaterialInstance } from '../../render-scene/core/material-instance';
-import { IAssembler } from '../../2d/renderer/base';
-import { Batcher2D } from '../../2d/renderer/batcher-2d';
+import type { IAssembler } from '../../2d/renderer/base';
 import { ArmatureFrame } from '../ArmatureCache';
 import { ArmatureDisplay } from '../ArmatureDisplay';
 import { CCSlot } from '../CCSlot';
 import { StaticVBAccessor } from '../../2d/renderer/static-vb-accessor';
 import { RenderData } from '../../2d/renderer/render-data';
-import { Texture2D } from '../../asset/assets';
-import { TextureBase } from '../../asset/assets/texture-base';
-import { Node } from '../../scene-graph';
+import type { Texture2D } from '../../asset/assets';
+import type { TextureBase } from '../../asset/assets/texture-base';
+import type { Node } from '../../scene-graph';
 import { director } from '../../game';
+import type { IBatcher } from '../../2d/renderer/i-batcher';
 
 const NEED_COLOR = 0x01;
 const NEED_BATCH = 0x10;
@@ -128,9 +128,9 @@ let _accessor: StaticVBAccessor = null!;
  * simple 组装器
  * 可通过 `UI.simple` 获取该组装器。
  */
-export const simple: IAssembler = {
-    accessor: _accessor,
-    vCount: 32767,
+class Simple implements IAssembler {
+    private accessor = _accessor;
+    private vCount = 32767;
     ensureAccessor (): StaticVBAccessor {
         if (!_accessor) {
             const device = director.root!.device;
@@ -140,13 +140,13 @@ export const simple: IAssembler = {
             // Register to batcher so that batcher can upload buffers after batching process
             batcher.registerBufferAccessor(Number.parseInt('DRAGONBONES', 36), _accessor);
         }
-        return this.accessor as StaticVBAccessor;
-    },
+        return this.accessor;
+    }
 
     createData (comp: ArmatureDisplay): RenderData {
         let rd = comp.renderData;
         if (!rd) {
-            this.ensureAccessor() as StaticVBAccessor;
+            this.ensureAccessor();
             const slots = comp._armature!._slots;
             let vCount = 0;
             let iCount = 0;
@@ -168,22 +168,25 @@ export const simple: IAssembler = {
             }
         }
         return rd;
-    },
+    }
 
-    updateRenderData (comp: ArmatureDisplay, batcher: Batcher2D): void {
+    updateRenderData (comp: ArmatureDisplay): void {
         _comp = comp;
         const armature = comp._armature;
         if (armature) {
-            updateComponentRenderData(comp, batcher);
+            updateComponentRenderData(comp);
         }
-    },
+    }
 
     updateColor (comp: ArmatureDisplay): void {
         if (!comp) return;
         _comp = comp;
         _comp.markForUpdateRenderData();
-    },
-};
+    }
+}
+
+export const simple = new Simple();
+
 function realTimeTraverse (armature: Armature, parentOpacity: number, worldMat?: Mat4): void {
     const rd = _renderData!;
     _vbuf = rd.chunk.vb;
@@ -406,7 +409,7 @@ function cacheTraverse (frame: ArmatureFrame | null, parentMat?: Mat4): void {
     }
 }
 
-function updateComponentRenderData (comp: ArmatureDisplay, batcher: Batcher2D): void {
+function updateComponentRenderData (comp: ArmatureDisplay): void {
     // comp.node._renderFlag |= RenderFlow.FLAG_UPDATE_RENDER_DATA;
 
     const armature = comp._armature;

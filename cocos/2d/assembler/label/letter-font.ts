@@ -22,9 +22,9 @@
  THE SOFTWARE.
 */
 
-import { js } from '../../../core';
-import { Label } from '../../components';
-import { bmfontUtils } from './bmfontUtils';
+import type { Label } from '../../components';
+import { IAssembler } from '../../renderer/base';
+import { BmfontUtils } from './bmfontUtils';
 import { shareLabelInfo, LetterAtlas, computeHash, LetterRenderTexture } from './font-utils';
 
 const _atlasWidth = 1024;
@@ -33,16 +33,16 @@ const _isBold = false;
 
 let _shareAtlas: LetterAtlas | null  = null;
 
-export const letterFont = js.mixin(bmfontUtils, {
-    getAssemblerData () {
+export class LetterFont extends BmfontUtils {
+    getAssemblerData (): LetterRenderTexture | null {
         if (!_shareAtlas) {
             _shareAtlas = new LetterAtlas(_atlasWidth, _atlasHeight);
         }
 
         return _shareAtlas.getTexture() as LetterRenderTexture | null;
-    },
+    }
 
-    _updateFontFamily (comp: Label) {
+    protected _updateFontFamily (comp: Label): void {
         shareLabelInfo.fontAtlas = _shareAtlas;
         shareLabelInfo.fontFamily = this._getFontFamily(comp);
 
@@ -57,9 +57,9 @@ export const letterFont = js.mixin(bmfontUtils, {
             shareLabelInfo.isOutlined = false;
             shareLabelInfo.margin = 0;
         }
-    },
+    }
 
-    _getFontFamily (comp: Label) {
+    protected _getFontFamily (comp: Label): string {
         let fontFamily = 'Arial';
         if (!comp.useSystemFont) {
             if (comp.font) {
@@ -70,15 +70,15 @@ export const letterFont = js.mixin(bmfontUtils, {
         }
 
         return fontFamily;
-    },
+    }
 
-    _updateLabelInfo (comp: Label) {
+    protected _updateLabelInfo (comp: Label): void {
         shareLabelInfo.fontDesc = this._getFontDesc();
         shareLabelInfo.color.set(comp.color);
         shareLabelInfo.hash = computeHash(shareLabelInfo);
-    },
+    }
 
-    _getFontDesc () {
+    protected _getFontDesc (): string {
         let fontDesc = `${shareLabelInfo.fontSize.toString()}px `;
         fontDesc += shareLabelInfo.fontFamily;
         if (_isBold) {
@@ -86,5 +86,5 @@ export const letterFont = js.mixin(bmfontUtils, {
         }
 
         return fontDesc;
-    },
-});
+    }
+}

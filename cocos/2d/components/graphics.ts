@@ -30,8 +30,7 @@ import { InstanceMaterialType, UIRenderer } from '../framework/ui-renderer';
 import { director } from '../../game/director';
 import { Color, warnID, cclegacy } from '../../core';
 import { scene } from '../../render-scene';
-import { IAssembler } from '../renderer/base';
-import { IBatcher } from '../renderer/i-batcher';
+import type { IBatcher } from '../renderer/i-batcher';
 import { LineCap, LineJoin } from '../assembler/graphics/types';
 import { Impl } from '../assembler/graphics/webgl/impl';
 import { Material, RenderingSubMesh } from '../../asset/assets';
@@ -39,6 +38,7 @@ import { Format, PrimitiveMode, Attribute, Device, BufferUsageBit, BufferInfo, M
 import { vfmtPosColor, getAttributeStride, getComponentPerVertex } from '../renderer/vertex-format';
 import { NativeUIModelProxy } from '../renderer/native-2d';
 import { RenderEntity, RenderEntityType } from '../renderer/render-entity';
+import type { GraphicsAssembler } from '../assembler/graphics/webgl/graphics-assembler';
 
 const attributes = vfmtPosColor.concat([
     new Attribute('a_dist', Format.R32F),
@@ -589,7 +589,7 @@ export class Graphics extends UIRenderer {
 
         this._isDrawing = true;
         this._isNeedUploadData = true;
-        (this._assembler as IAssembler).stroke!(this);
+        (this._assembler as GraphicsAssembler).stroke(this);
     }
 
     /**
@@ -606,7 +606,7 @@ export class Graphics extends UIRenderer {
 
         this._isDrawing = true;
         this._isNeedUploadData = true;
-        (this._assembler as IAssembler).fill!(this);
+        (this._assembler as GraphicsAssembler).fill(this);
     }
 
     private _updateMtlForGraphics (): void {

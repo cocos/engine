@@ -25,7 +25,6 @@ import { JSB } from 'internal:constants';
 import { Color, Vec3 } from '../../../../core';
 import { IAssembler } from '../../../renderer/base';
 import { MeshRenderData } from '../../../renderer/render-data';
-import { IBatcher } from '../../../renderer/i-batcher';
 import { Graphics } from '../../../components';
 import { LineCap, LineJoin, PointFlags } from '../types';
 import { earcut as Earcut } from './earcut';
@@ -72,25 +71,16 @@ function clamp (v: number, minNum: number, maxNum: number): number {
  * graphics 组装器
  * 可通过 `UI.graphicsAssembler` 获取该组装器。
  */
-export const graphicsAssembler: IAssembler = {
-    useModel: true,
-
+export class GraphicsAssembler implements IAssembler {
     updateRenderData (graphics: Graphics): void {
         if (JSB) {
             if (graphics.renderData) {
                 graphics.renderData.material = graphics.getMaterialInstance(0);
             }
         }
-    },
+    }
 
-    fillBuffers (graphics: Graphics, renderer: IBatcher): void {
-        // this.renderIA!(graphics, renderer);
-    },
-
-    renderIA (graphics: Graphics, renderer: IBatcher): void {
-    },
-
-    getRenderData (graphics: Graphics, vertexCount: number): MeshRenderData | null {
+    private getRenderData (graphics: Graphics, vertexCount: number): MeshRenderData | null {
         if (!_impl) {
             return null;
         }
@@ -122,7 +112,7 @@ export const graphicsAssembler: IAssembler = {
         }
 
         return renderData;
-    },
+    }
 
     stroke (graphics: Graphics): void {
         Color.copy(_curColor, graphics.strokeColor);
@@ -137,7 +127,7 @@ export const graphicsAssembler: IAssembler = {
         graphics.impl.updatePathOffset = true;
 
         this.end(graphics);
-    },
+    }
 
     fill (graphics: Graphics): void {
         Color.copy(_curColor, graphics.fillColor);
@@ -149,13 +139,13 @@ export const graphicsAssembler: IAssembler = {
         }
 
         this.end(graphics);
-    },
+    }
 
     end (graphics: Graphics): void {
         graphics.markForUpdateRenderData();
-    },
+    }
 
-    _expandStroke (graphics: Graphics): void {
+    private _expandStroke (graphics: Graphics): void {
         const w = graphics.lineWidth * 0.5;
         const lineCap = graphics.lineCap;
         const lineJoin = graphics.lineJoin;
@@ -296,9 +286,9 @@ export const graphicsAssembler: IAssembler = {
         }
         _renderData = null;
         _impl = null;
-    },
+    }
 
-    _expandFill (graphics: Graphics): void {
+    private _expandFill (graphics: Graphics): void {
         _impl = graphics.impl;
         if (!_impl) {
             return;
@@ -374,9 +364,9 @@ export const graphicsAssembler: IAssembler = {
 
         _renderData = null;
         _impl = null;
-    },
+    }
 
-    _calculateJoins (impl: Impl, w: number, lineJoin: LineJoin, miterLimit: number): void {
+    private _calculateJoins (impl: Impl, w: number, lineJoin: LineJoin, miterLimit: number): void {
         let iw = 0.0;
 
         if (w > 0.0) {
@@ -450,9 +440,9 @@ export const graphicsAssembler: IAssembler = {
                 p1 = pts[j + 1];
             }
         }
-    },
+    }
 
-    _flattenPaths (impl: Impl): void {
+    private _flattenPaths (impl: Impl): void {
         const paths = impl.paths;
         for (let i = impl.pathOffset, l = impl.pathLength; i < l; i++) {
             const path = paths[i];
@@ -482,9 +472,9 @@ export const graphicsAssembler: IAssembler = {
                 p1 = pts[j + 1];
             }
         }
-    },
+    }
 
-    _chooseBevel (bevel: number, p0: Point, p1: Point, w: number) {
+    private _chooseBevel (bevel: number, p0: Point, p1: Point, w: number): [number, number, number, number] {
         const x = p1.x;
         const y = p1.y;
         let x0 = 0;
@@ -503,9 +493,9 @@ export const graphicsAssembler: IAssembler = {
         }
 
         return [x0, y0, x1, y1];
-    },
+    }
 
-    _buttCapStart (p: Point, dx: number, dy: number, w: number, d: number): void {
+    private _buttCapStart (p: Point, dx: number, dy: number, w: number, d: number): void {
         const px = p.x - dx * d;
         const py = p.y - dy * d;
         const dlx = dy;
@@ -513,9 +503,9 @@ export const graphicsAssembler: IAssembler = {
 
         this._vSet(px + dlx * w, py + dly * w, 1);
         this._vSet(px - dlx * w, py - dly * w, -1);
-    },
+    }
 
-    _buttCapEnd (p: Point, dx: number, dy: number, w: number, d: number): void {
+    private _buttCapEnd (p: Point, dx: number, dy: number, w: number, d: number): void {
         const px = p.x + dx * d;
         const py = p.y + dy * d;
         const dlx = dy;
@@ -523,9 +513,9 @@ export const graphicsAssembler: IAssembler = {
 
         this._vSet(px + dlx * w, py + dly * w, 1);
         this._vSet(px - dlx * w, py - dly * w, -1);
-    },
+    }
 
-    _roundCapStart (p: Point, dx: number, dy: number, w: number, nCap: number): void {
+    private _roundCapStart (p: Point, dx: number, dy: number, w: number, nCap: number): void {
         const px = p.x;
         const py = p.y;
         const dlx = dy;
@@ -540,9 +530,9 @@ export const graphicsAssembler: IAssembler = {
         }
         this._vSet(px + dlx * w, py + dly * w, 1);
         this._vSet(px - dlx * w, py - dly * w, -1);
-    },
+    }
 
-    _roundCapEnd (p: Point, dx: number, dy: number, w: number, nCap: number): void {
+    private _roundCapEnd (p: Point, dx: number, dy: number, w: number, nCap: number): void {
         const px = p.x;
         const py = p.y;
         const dlx = dy;
@@ -557,9 +547,9 @@ export const graphicsAssembler: IAssembler = {
             this._vSet(px, py, 0);
             this._vSet(px - dlx * ax + dx * ay, py - dly * ax + dy * ay, 1);
         }
-    },
+    }
 
-    _roundJoin (p0: Point, p1: Point, lw: number, rw: number, nCap: number): void {
+    private _roundJoin (p0: Point, p1: Point, lw: number, rw: number, nCap: number): void {
         const dlx0 = p0.dy;
         const dly0 = -p0.dx;
         const dlx1 = p1.dy;
@@ -621,9 +611,9 @@ export const graphicsAssembler: IAssembler = {
             this._vSet(p1x + dlx1 * rw, p1y + dly1 * rw, 1);
             this._vSet(rx1, ry1, -1);
         }
-    },
+    }
 
-    _bevelJoin (p0: Point, p1: Point, lw: number, rw: number): void {
+    private _bevelJoin (p0: Point, p1: Point, lw: number, rw: number): void {
         let rx0 = 0;
         let ry0 = 0;
         let rx1 = 0;
@@ -662,9 +652,9 @@ export const graphicsAssembler: IAssembler = {
             this._vSet(p1.x + dlx1 * lw, p1.y + dly1 * lw, 1);
             this._vSet(rx1, ry1, -1);
         }
-    },
+    }
 
-    _vSet (x: number, y: number, distance = 0): void {
+    private _vSet (x: number, y: number, distance = 0): void {
         if (!_renderData) {
             return;
         }
@@ -682,5 +672,7 @@ export const graphicsAssembler: IAssembler = {
         dataOffset += 4;
         vData[dataOffset++] = distance;
         meshBuffer.vertexStart++;
-    },
-};
+    }
+}
+
+export const graphicsAssembler = new GraphicsAssembler();

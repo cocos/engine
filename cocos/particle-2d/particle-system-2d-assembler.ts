@@ -23,32 +23,31 @@
  THE SOFTWARE.
 */
 
-import { IAssembler, IAssemblerManager } from '../2d/renderer/base';
+import type { IAssembler, IAssemblerManager } from '../2d/renderer/base';
 import { ParticleSystem2D } from './particle-system-2d';
 import { MeshRenderData } from '../2d/renderer/render-data';
-import { IBatcher } from '../2d/renderer/i-batcher';
 import { cclegacy } from '../core';
 
-export const ParticleAssembler: IAssembler = {
-    maxParticleDeltaTime: 0,
-    createData (comp: ParticleSystem2D) {
+export class Particle2DAssembler implements IAssembler {
+    maxParticleDeltaTime = 0;
+
+    createData (comp: ParticleSystem2D): MeshRenderData {
         return MeshRenderData.add();
-    },
-    removeData (data) {
+    }
+
+    removeData (data: MeshRenderData): void {
         MeshRenderData.remove(data);
-    },
-    updateRenderData () {
-    },
-    fillBuffers (comp: ParticleSystem2D, renderer: IBatcher) {
-    },
-};
+    }
+}
+
+export const particle2DAssembler = new Particle2DAssembler();
 
 export const ParticleSystem2DAssembler: IAssemblerManager = {
-    getAssembler (comp: ParticleSystem2D) {
-        if (!ParticleAssembler.maxParticleDeltaTime) {
-            ParticleAssembler.maxParticleDeltaTime = cclegacy.game.frameTime / 1000 * 2;
+    getAssembler (comp: ParticleSystem2D): IAssembler {
+        if (!particle2DAssembler.maxParticleDeltaTime) {
+            particle2DAssembler.maxParticleDeltaTime = cclegacy.game.frameTime / 1000 * 2;
         }
-        return ParticleAssembler;
+        return particle2DAssembler;
     },
 };
 
