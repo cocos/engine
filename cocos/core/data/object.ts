@@ -646,9 +646,9 @@ export function isCCObject (object: any): object is CCObject {
  * log(isValid(node));    // false, destroyed in the end of last frame
  * ```
  */
-export function isValid (value: any, strictMode?: boolean): boolean {
+export function isValid<T> (value: T | null | undefined, strictMode?: boolean): value is T {
     if (typeof value === 'object') {
-        return !!value && !(value._objFlags & (strictMode ? (CCObjectFlags.Destroyed | CCObjectFlags.ToDestroy) : CCObjectFlags.Destroyed));
+        return !!value && !((value as any)._objFlags & (strictMode ? (CCObjectFlags.Destroyed | CCObjectFlags.ToDestroy) : CCObjectFlags.Destroyed));
     } else {
         return typeof value !== 'undefined';
     }
