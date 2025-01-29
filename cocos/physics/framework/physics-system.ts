@@ -22,10 +22,10 @@
  THE SOFTWARE.
 */
 
-import { BUILD, EDITOR, EDITOR_NOT_IN_PREVIEW, LOAD_BULLET_MANUALLY, LOAD_PHYSX_MANUALLY, PREVIEW } from 'internal:constants';
+import { BUILD, EDITOR_NOT_IN_PREVIEW, LOAD_BULLET_MANUALLY, LOAD_PHYSX_MANUALLY } from 'internal:constants';
 import { Vec3, RecyclePool, Enum, System, cclegacy, settings, geometry, warn, IQuatLike, IVec3Like, SettingsCategory, errorID, warnID } from '../../core';
 import { IPhysicsWorld, IRaycastOptions } from '../spec/i-physics-world';
-import { director, Director, DirectorEvent, game } from '../../game';
+import { director, DirectorEvent, game } from '../../game';
 import { PhysicsMaterial } from './assets/physics-material';
 import { PhysicsRayResult, PhysicsLineStripCastResult } from './physics-ray-result';
 import { IPhysicsConfig, ICollisionMatrix } from './physics-config';
@@ -35,6 +35,8 @@ import { constructDefaultWorld, IWorldInitData, selector } from './physics-selec
 import { assetManager, builtinResMgr } from '../../asset/asset-manager';
 
 cclegacy.internal.PhysicsGroup = PhysicsGroup;
+
+const querySettings = settings.querySettings.bind(settings);
 
 /**
  * @en
@@ -227,7 +229,7 @@ export class PhysicsSystem extends System implements IWorldInitData {
             return Promise.resolve();
         }
 
-        const userMaterial: string | null = settings.querySettings(SettingsCategory.PHYSICS, 'defaultMaterial');
+        const userMaterial: string | null = querySettings(SettingsCategory.PHYSICS, 'defaultMaterial');
         if (!userMaterial) { //use built-in default physics material
             this.setDefaultPhysicsMaterial(builtinMaterial);
             return Promise.resolve();
@@ -385,27 +387,27 @@ export class PhysicsSystem extends System implements IWorldInitData {
      * 重置物理配置。
      */
     resetConfiguration (config?: IPhysicsConfig): void {
-        const allowSleep = config ? config.allowSleep : settings.querySettings(SettingsCategory.PHYSICS, 'allowSleep');
+        const allowSleep = config ? config.allowSleep : querySettings(SettingsCategory.PHYSICS, 'allowSleep');
         if (typeof allowSleep === 'boolean') this._allowSleep = allowSleep;
-        const fixedTimeStep = config ? config.fixedTimeStep : settings.querySettings(SettingsCategory.PHYSICS, 'fixedTimeStep');
+        const fixedTimeStep = config ? config.fixedTimeStep : querySettings(SettingsCategory.PHYSICS, 'fixedTimeStep');
         if (typeof fixedTimeStep === 'number') this._fixedTimeStep = fixedTimeStep;
-        const maxSubSteps = config ? config.maxSubSteps : settings.querySettings(SettingsCategory.PHYSICS, 'maxSubSteps');
+        const maxSubSteps = config ? config.maxSubSteps : querySettings(SettingsCategory.PHYSICS, 'maxSubSteps');
         if (typeof maxSubSteps === 'number') this._maxSubSteps = maxSubSteps;
-        const sleepThreshold = config ? config.sleepThreshold : settings.querySettings(SettingsCategory.PHYSICS, 'sleepThreshold');
+        const sleepThreshold = config ? config.sleepThreshold : querySettings(SettingsCategory.PHYSICS, 'sleepThreshold');
         if (typeof sleepThreshold === 'number') this._sleepThreshold = sleepThreshold;
-        const autoSimulation = config ? config.autoSimulation : settings.querySettings(SettingsCategory.PHYSICS, 'autoSimulation');
+        const autoSimulation = config ? config.autoSimulation : querySettings(SettingsCategory.PHYSICS, 'autoSimulation');
         if (typeof autoSimulation === 'boolean') this.autoSimulation = autoSimulation;
 
-        const gravity = config ? config.gravity : settings.querySettings(SettingsCategory.PHYSICS, 'gravity');
+        const gravity = config ? config.gravity : querySettings(SettingsCategory.PHYSICS, 'gravity');
         if (gravity) Vec3.copy(this._gravity, gravity);
 
-        const collisionMatrix = config ? config.collisionMatrix : settings.querySettings(SettingsCategory.PHYSICS, 'collisionMatrix');
+        const collisionMatrix = config ? config.collisionMatrix : querySettings(SettingsCategory.PHYSICS, 'collisionMatrix');
         if (collisionMatrix) {
             for (const i in collisionMatrix) {
                 this.collisionMatrix[`${1 << parseInt(i)}`] = collisionMatrix[i];
             }
         }
-        const collisionGroups = config ? config.collisionGroups : settings.querySettings<Array<{ name: string, index: number }>>(SettingsCategory.PHYSICS, 'collisionGroups');
+        const collisionGroups = config ? config.collisionGroups : querySettings<Array<{ name: string, index: number }>>(SettingsCategory.PHYSICS, 'collisionGroups');
         if (collisionGroups) {
             const cg = collisionGroups;
             if (cg instanceof Array) {
@@ -884,7 +886,7 @@ export class PhysicsSystem extends System implements IWorldInitData {
     }
 
     private static doConstructAndRegister (): PhysicsSystem | null {
-        const enabled = settings.querySettings(SettingsCategory.PHYSICS, 'enabled') ?? true;
+        const enabled = querySettings(SettingsCategory.PHYSICS, 'enabled') ?? true;
         if (!enabled) { return null; }
         if (!PhysicsSystem._instance) {
             // Construct physics world and physics system only once

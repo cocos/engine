@@ -259,6 +259,7 @@ export class ImageAsset extends Asset {
      * @param file 解析压缩纹理。
      * @param type 压缩纹理类型。
      * @engineInternal
+     * @mangle
      */
     public static parseCompressedTextures (file: ArrayBuffer | ArrayBufferView, type: number): IMemoryImageSource {
         const out: IMemoryImageSource = {

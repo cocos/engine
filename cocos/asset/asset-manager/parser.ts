@@ -23,7 +23,7 @@
 */
 
 import { ImageAsset, IMemoryImageSource } from '../assets/image-asset';
-import { js, warn } from '../../core';
+import { getError, js, warn } from '../../core';
 import Cache from './cache';
 import deserialize from './deserialize';
 import { isScene } from './helper';
@@ -176,7 +176,7 @@ export class Parser {
         onComplete: ((err: Error | null, data?: Asset | null) => void),
     ): void {
         if (!file) {
-            onComplete(new Error(`The json file of asset ${options.__uuid__ as string} is empty or missing`));
+            onComplete(new Error(getError(3702, options.__uuid__ as string)));
             return;
         }
         let result: Asset | null = null;

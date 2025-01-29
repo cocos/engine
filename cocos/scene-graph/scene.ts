@@ -170,6 +170,7 @@ export class Scene extends Node {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public _load (): void {
         if (!this._inited) {
@@ -188,6 +189,7 @@ export class Scene extends Node {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public _activate (active = true): void {
         if (EDITOR) {

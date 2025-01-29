@@ -202,10 +202,8 @@ class TerrainRenderable extends ModelRenderer {
      * @deprecated since v3.5.0, this is an engine private interface that will be removed in the future.
      */
     public _currentMaterialLayers = 0;
-    /**
-     * @engineInternal
-     */
-    public _lightmap: Texture2D|null = null;
+
+    private _lightmap: Texture2D | null = null;
 
     public destroy (): boolean {
         // this._invalidMaterial();

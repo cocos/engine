@@ -49,23 +49,25 @@ export class PassInstance extends Pass {
         this._parent = parent;
         this._owner = owner;
         this._doInit(this._parent, true); // defines may change now
-        for (let i = 0; i < this._shaderInfo.blocks.length; i++) {
-            const u = this._shaderInfo.blocks[i];
+
+        this._shaderInfo.blocks.forEach((u) => {
             const block = this._blocks[u.binding];
             const parentBlock = this._parent.blocks[u.binding];
             block.set(parentBlock);
-        }
+        });
         this._rootBufferDirty = true;
-        const paren = this._parent as PassInstance;
-        for (let i = 0; i < this._shaderInfo.samplerTextures.length; i++) {
-            const u = this._shaderInfo.samplerTextures[i];
+        const parentInstance = this._parent as PassInstance;
+        const thisDescriptorSet = this._descriptorSet;
+        this._shaderInfo.samplerTextures.forEach((u) => {
             for (let j = 0; j < u.count; j++) {
-                const sampler = paren._descriptorSet.getSampler(u.binding, j);
-                const texture = paren._descriptorSet.getTexture(u.binding, j);
-                this._descriptorSet.bindSampler(u.binding, sampler, j);
-                this._descriptorSet.bindTexture(u.binding, texture, j);
+                const parentDescriptorSet = parentInstance._descriptorSet;
+                const binding = u.binding;
+                const sampler = parentDescriptorSet.getSampler(binding, j);
+                const texture = parentDescriptorSet.getTexture(binding, j);
+                thisDescriptorSet.bindSampler(binding, sampler, j);
+                thisDescriptorSet.bindTexture(binding, texture, j);
             }
-        }
+        });
         super.tryCompile();
     }
 

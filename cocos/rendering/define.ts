@@ -686,6 +686,7 @@ export class UBOSkinning {
 
 /**
  * @internal This method only used to init localDescriptorSetLayout.layouts[UBOSkinning.NAME]
+ * @engineInternal
 */
 export function localDescriptorSetLayout_ResizeMaxJoints (maxCount: number): void {
     UBOSkinning.initLayout(maxCount);

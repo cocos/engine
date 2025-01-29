@@ -157,14 +157,16 @@ export class PipelineSceneData {
 
     public initGeometryRendererMaterials (): void {
         let offset = 0;
+        const geometryRendererMaterials = this._geometryRendererMaterials;
         for (let tech = 0; tech < GEOMETRY_RENDERER_TECHNIQUE_COUNT; tech++) {
-            this._geometryRendererMaterials[tech] = new Material();
-            this._geometryRendererMaterials[tech]._uuid = `geometry-renderer-material-${tech}`;
-            this._geometryRendererMaterials[tech].initialize({ effectName: 'internal/builtin-geometry-renderer', technique: tech });
+            geometryRendererMaterials[tech] = new Material();
+            geometryRendererMaterials[tech]._uuid = `geometry-renderer-material-${tech}`;
+            geometryRendererMaterials[tech].initialize({ effectName: 'internal/builtin-geometry-renderer', technique: tech });
 
-            for (let pass = 0; pass < this._geometryRendererMaterials[tech].passes.length; ++pass) {
-                this._geometryRendererPasses[offset] = this._geometryRendererMaterials[tech].passes[pass];
-                this._geometryRendererShaders[offset] = this._geometryRendererMaterials[tech].passes[pass].getShaderVariant()!;
+            const passes = geometryRendererMaterials[tech].passes;
+            for (let pass = 0; pass < passes.length; ++pass) {
+                this._geometryRendererPasses[offset] = passes[pass];
+                this._geometryRendererShaders[offset] = passes[pass].getShaderVariant()!;
                 offset++;
             }
         }

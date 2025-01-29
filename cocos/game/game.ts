@@ -43,6 +43,9 @@ import { bindingMappingInfo } from '../rendering/define';
 import { ICustomJointTextureLayout } from '../3d/skeletal-animation/skeletal-animation-utils';
 import { IPhysicsConfig } from '../physics/framework/physics-config';
 import { effectSettings } from '../core/effect-settings';
+
+const querySettings = settings.querySettings.bind(settings);
+
 /**
  * @zh
  * 游戏配置。
@@ -783,7 +786,7 @@ export class Game extends EventTarget {
                 return deviceManager.init(this.canvas, bindingMappingInfo);
             })
             .then(() => {
-                const usesCustomPipeline = settings.querySettings(
+                const usesCustomPipeline = querySettings(
                     SettingsCategory.RENDERING,
                     'customPipeline',
                 );
@@ -819,13 +822,13 @@ export class Game extends EventTarget {
                 this.emit(Game.EVENT_PRE_SUBSYSTEM_INIT);
                 return this.onPreSubsystemInitDelegate.dispatch();
             })
-            .then((): Promise<void> => effectSettings.init(settings.querySettings(SettingsCategory.RENDERING, 'effectSettingsPath') as string))
+            .then((): Promise<void> => effectSettings.init(querySettings(SettingsCategory.RENDERING, 'effectSettingsPath') as string))
             .then((): void => {
                 // initialize custom render pipeline
                 if (!cclegacy.rendering || !cclegacy.rendering.enableEffectImport) {
                     return;
                 }
-                const renderMode = settings.querySettings(SettingsCategory.RENDERING, 'renderMode');
+                const renderMode = querySettings(SettingsCategory.RENDERING, 'renderMode');
                 if (renderMode === LegacyRenderMode.HEADLESS) {
                     cclegacy.rendering.init(deviceManager.gfxDevice, null);
                     return;
@@ -838,7 +841,7 @@ export class Game extends EventTarget {
                 cclegacy.rendering.init(deviceManager.gfxDevice, data);
             })
             .then((): Promise<any[]> => {
-                const scriptPackages = settings.querySettings<string[]>(SettingsCategory.SCRIPTING, 'scriptPackages');
+                const scriptPackages = querySettings<string[]>(SettingsCategory.SCRIPTING, 'scriptPackages');
                 if (scriptPackages) {
                     return Promise.all(scriptPackages.map((pack): Promise<any> => import(pack)));
                 }
@@ -876,7 +879,7 @@ export class Game extends EventTarget {
                     // eslint-disable-next-line no-console
                     console.time('Init Project');
                 }
-                const jsList = settings.querySettings<string[]>(SettingsCategory.PLUGINS, 'jsList');
+                const jsList = querySettings<string[]>(SettingsCategory.PLUGINS, 'jsList');
                 let promise = Promise.resolve();
                 if (jsList) {
                     jsList.forEach((jsListFile): void => {
@@ -916,14 +919,14 @@ export class Game extends EventTarget {
             globalThis.__globalXR = {};
         }
         const globalXR = globalThis.__globalXR;
-        globalXR.webxrCompatible = settings.querySettings(SettingsCategory.XR, 'webxrCompatible') ?? false;
+        globalXR.webxrCompatible = querySettings(SettingsCategory.XR, 'webxrCompatible') ?? false;
 
         if (sys.isXR) {
             // XrEntry must not be destroyed
             xr.entry = xr.XrEntry.getInstance();
 
-            const xrMSAA = settings.querySettings(SettingsCategory.RENDERING, 'msaa') ?? 1;
-            const xrRenderingScale = settings.querySettings(SettingsCategory.RENDERING, 'renderingScale') ?? 1.0;
+            const xrMSAA = querySettings(SettingsCategory.RENDERING, 'msaa') ?? 1;
+            const xrRenderingScale = querySettings(SettingsCategory.RENDERING, 'renderingScale') ?? 1.0;
             xr.entry.setMultisamplesRTT(xrMSAA);
             xr.entry.setRenderingScale(xrRenderingScale);
         }
@@ -970,7 +973,7 @@ export class Game extends EventTarget {
     }
 
     private _loadPreloadAssets (): Promise<any[]> {
-        const preloadAssets = settings.querySettings<string[]>(SettingsCategory.ASSETS, 'preloadAssets');
+        const preloadAssets = querySettings<string[]>(SettingsCategory.ASSETS, 'preloadAssets');
         if (!preloadAssets) return Promise.resolve([]);
         return Promise.all(preloadAssets.map((uuid): Promise<void> => new Promise<void>((resolve, reject): void => {
             assetManager.loadAny(uuid, (err): void => {
@@ -1002,7 +1005,7 @@ export class Game extends EventTarget {
      * @internal only for game-view
      */
     public _loadProjectBundles (): Promise<void[]> {
-        const preloadBundles = settings.querySettings<{ bundle: string, version: string }[]>(SettingsCategory.ASSETS, 'preloadBundles');
+        const preloadBundles = querySettings<{ bundle: string, version: string }[]>(SettingsCategory.ASSETS, 'preloadBundles');
         if (!preloadBundles) return Promise.resolve([]);
         return Promise.all(preloadBundles.map(({ bundle, version }): Promise<void> => new Promise<void>((resolve, reject): void => {
             const opts: Record<string, any> = {};
@@ -1062,7 +1065,7 @@ export class Game extends EventTarget {
                 SplashScreen.releaseInstance();
             }
             this._shouldLoadLaunchScene = false;
-            const launchScene = settings.querySettings(SettingsCategory.LAUNCH, 'launchScene') as string;
+            const launchScene = querySettings(SettingsCategory.LAUNCH, 'launchScene') as string;
             if (launchScene) {
                 // load scene
                 director.loadScene(launchScene, (): void => {
@@ -1082,7 +1085,7 @@ export class Game extends EventTarget {
     }
 
     private initPacer (): void {
-        const frameRate = settings.querySettings(SettingsCategory.SCREEN, 'frameRate') ?? 60;
+        const frameRate = querySettings(SettingsCategory.SCREEN, 'frameRate') ?? 60;
         assert(typeof frameRate === 'number');
         this._pacer = new Pacer();
         this._pacer.onTick = this._updateCallback.bind(this);
@@ -1147,7 +1150,7 @@ export class Game extends EventTarget {
     }
 
     private _setupRenderPipeline (): void | Promise<void> {
-        const usesCustomPipeline = settings.querySettings(
+        const usesCustomPipeline = querySettings(
             SettingsCategory.RENDERING,
             'customPipeline',
         );

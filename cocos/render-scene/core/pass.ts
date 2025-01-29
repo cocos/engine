@@ -808,6 +808,7 @@ export class Pass {
 
     /**
      * @engineInternal
+     * @mangle
      * Only for UI
      */
     public _initPassFromTarget (target: Pass, dss: DepthStencilState, hashFactor: number): void {
@@ -848,6 +849,7 @@ export class Pass {
     // Only for UI
     /**
      * @engineInternal
+     * @mangle
      */
     public _updatePassHash (): void {
         this._hash = Pass.getPassHash(this);

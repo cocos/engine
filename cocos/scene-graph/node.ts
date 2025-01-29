@@ -50,6 +50,8 @@ import type { UITransform, UISkew } from '../2d/framework';
 const Destroying = CCObjectFlags.Destroying;
 const DontDestroy = CCObjectFlags.DontDestroy;
 const Deactivating = CCObjectFlags.Deactivating;
+const TRANSFORM_CHANGED = NodeEventType.TRANSFORM_CHANGED;
+const ACTIVE_CHANGED = NodeEventType.ACTIVE_CHANGED;
 
 export const TRANSFORM_ON = 1 << 0;
 const ACTIVE_ON = 1 << 1;
@@ -209,6 +211,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
     /**
      * @engineInternal please don't use this method.
+     * @mangle
      */
     public _setActiveInHierarchy (v: boolean): void {
         this._activeInHierarchy = v;
@@ -380,6 +383,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     /**
      * NOTE: components getter is typeof ReadonlyArray
      * @engineInternal
+     * @mangle
      */
     public getWritableComponents (): Component[] { return this._components; }
     @serializable
@@ -1172,10 +1176,10 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
      */
     public on (type: string | NodeEventType, callback: AnyFunction, target?: unknown, useCapture: boolean = false): void {
         switch (type) {
-        case NodeEventType.TRANSFORM_CHANGED:
+        case TRANSFORM_CHANGED:
             this._eventMask |= TRANSFORM_ON;
             break;
-        case NodeEventType.ACTIVE_CHANGED:
+        case ACTIVE_CHANGED:
             this._eventMask |= ACTIVE_ON;
             break;
         default:
@@ -1207,10 +1211,10 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         // All listener removed
         if (!hasListeners) {
             switch (type) {
-            case NodeEventType.TRANSFORM_CHANGED:
+            case TRANSFORM_CHANGED:
                 this._eventMask &= ~TRANSFORM_ON;
                 break;
-            case NodeEventType.ACTIVE_CHANGED:
+            case ACTIVE_CHANGED:
                 this._eventMask &= ~ACTIVE_ON;
                 break;
             default:
@@ -1288,11 +1292,11 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     public targetOff (target: unknown): void {
         this._eventProcessor.targetOff(target);
         // Check for event mask reset
-        if ((this._eventMask & TRANSFORM_ON) && !this._eventProcessor.hasEventListener(NodeEventType.TRANSFORM_CHANGED)) {
+        if ((this._eventMask & TRANSFORM_ON) && !this._eventProcessor.hasEventListener(TRANSFORM_CHANGED)) {
             this._eventMask &= ~TRANSFORM_ON;
         }
 
-        if ((this._eventMask & ACTIVE_ON) && !this._eventProcessor.hasEventListener(NodeEventType.ACTIVE_CHANGED)) {
+        if ((this._eventMask & ACTIVE_ON) && !this._eventProcessor.hasEventListener(ACTIVE_CHANGED)) {
             this._eventMask &= ~ACTIVE_ON;
         }
     }
@@ -1513,8 +1517,8 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     public static TransformDirtyBit = TransformBit;
 
     /**
-     * @en Bit masks for Node transformation parts, can be used to determine which part changed in [[NodeEventType.TRANSFORM_CHANGED]] event
-     * @zh 节点变换更新的具体部分，可用于判断 [[NodeEventType.TRANSFORM_CHANGED]] 事件的具体类型
+     * @en Bit masks for Node transformation parts, can be used to determine which part changed in [[TRANSFORM_CHANGED]] event
+     * @zh 节点变换更新的具体部分，可用于判断 [[TRANSFORM_CHANGED]] 事件的具体类型
      */
     public static TransformBit = TransformBit;
 
@@ -1776,7 +1780,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
         this.invalidateChildren(TransformBit.ROTATION);
         if (this._eventMask & TRANSFORM_ON) {
-            this.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.ROTATION);
+            this.emit(TRANSFORM_CHANGED, TransformBit.ROTATION);
         }
     }
 
@@ -1830,7 +1834,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         this.invalidateChildren(TransformBit.TRS);
         this._eulerDirty = true;
         if (this._eventMask & TRANSFORM_ON) {
-            this.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.TRS);
+            this.emit(TRANSFORM_CHANGED, TransformBit.TRS);
         }
     }
 
@@ -2067,7 +2071,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     public _onBatchCreated (dontSyncChildPrefab: boolean): void {
         if (this._eventMask & ACTIVE_ON) {
             if (!this._activeInHierarchy) {
-                this.emit(NodeEventType.ACTIVE_CHANGED, this, false);
+                this.emit(ACTIVE_CHANGED, this, false);
             }
         }
 
@@ -2092,7 +2096,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
     public _onPostActivated (active: boolean): void {
         const self = this;
         if (self._eventMask & ACTIVE_ON) {
-            self.emit(NodeEventType.ACTIVE_CHANGED, self, active);
+            self.emit(ACTIVE_CHANGED, self, active);
         }
 
         const eventProcessor = this._eventProcessor;
@@ -2159,7 +2163,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         }
         this.invalidateChildren(TransformBit.POSITION);
         if (this._eventMask & TRANSFORM_ON) {
-            this.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.POSITION);
+            this.emit(TRANSFORM_CHANGED, TransformBit.POSITION);
         }
     }
 
@@ -2185,7 +2189,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         this._eulerDirty = true;
         this.invalidateChildren(TransformBit.ROTATION);
         if (this._eventMask & TRANSFORM_ON) {
-            this.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.ROTATION);
+            this.emit(TRANSFORM_CHANGED, TransformBit.ROTATION);
         }
     }
 
@@ -2359,7 +2363,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
         this.invalidateChildren(TransformBit.POSITION);
         if (this._eventMask & TRANSFORM_ON) {
-            this.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.POSITION);
+            this.emit(TRANSFORM_CHANGED, TransformBit.POSITION);
         }
     }
 
@@ -2405,7 +2409,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         this._eulerDirty = true;
         this.invalidateChildren(TransformBit.ROTATION);
         if (this._eventMask & TRANSFORM_ON) {
-            this.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.ROTATION);
+            this.emit(TRANSFORM_CHANGED, TransformBit.ROTATION);
         }
     }
 
@@ -2439,7 +2443,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
         this.invalidateChildren(TransformBit.ROTATION);
         if (this._eventMask & TRANSFORM_ON) {
-            this.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.ROTATION);
+            this.emit(TRANSFORM_CHANGED, TransformBit.ROTATION);
         }
     }
 
@@ -2487,7 +2491,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         this.invalidateChildren(TransformBit.SCALE);
 
         if (this._eventMask & TRANSFORM_ON) {
-            this.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.SCALE);
+            this.emit(TRANSFORM_CHANGED, TransformBit.SCALE);
         }
     }
 
@@ -2568,7 +2572,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
         this.invalidateChildren(TransformBit.POSITION);
         if (this._eventMask & TRANSFORM_ON) {
-            this.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.POSITION);
+            this.emit(TRANSFORM_CHANGED, TransformBit.POSITION);
         }
     }
 
@@ -2621,7 +2625,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
         this.invalidateChildren(TransformBit.ROTATION);
         if (this._eventMask & TRANSFORM_ON) {
-            this.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.ROTATION);
+            this.emit(TRANSFORM_CHANGED, TransformBit.ROTATION);
         }
     }
 
@@ -2734,7 +2738,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
         self.invalidateChildren(TransformBit.SCALE | rotationFlag);
         if (self._eventMask & TRANSFORM_ON) {
-            self.emit(NodeEventType.TRANSFORM_CHANGED, TransformBit.SCALE | rotationFlag);
+            self.emit(TRANSFORM_CHANGED, TransformBit.SCALE | rotationFlag);
         }
     }
 
@@ -2821,7 +2825,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         if (dirtyBit) {
             this.invalidateChildren(dirtyBit);
             if (this._eventMask & TRANSFORM_ON) {
-                this.emit(NodeEventType.TRANSFORM_CHANGED, dirtyBit);
+                this.emit(TRANSFORM_CHANGED, dirtyBit);
             }
         }
     }

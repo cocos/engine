@@ -1653,6 +1653,10 @@ internal error: _prefab is undefined
 
 Failed to load prefab asset for node '%s'
 
+### 3702
+
+The json file of asset %s is empty or missing.
+
 ### 3800
 
 The target can not be made persist because it's not a cc.Node or it doesn't have _id property.
