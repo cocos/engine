@@ -1518,7 +1518,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
     /**
      * @en Bit masks for Node transformation parts, can be used to determine which part changed in [[TRANSFORM_CHANGED]] event
-     * @zh 节点变换更新的具体部分，可用于判断 [[TRANSFORM_CHANGED]] 事件的具体类型
+     * @zh 节点变换更新的具体部分，可用于判断 [[NodeEventType.TRANSFORM_CHANGED]] 事件的具体类型
      */
     public static TransformBit = TransformBit;
 

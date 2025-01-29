@@ -136,24 +136,27 @@ export class ForwardPipeline extends RenderPipeline {
         const device = this.device;
 
         this._commandBuffers.push(device.commandBuffer);
-
+        const descriptorSet = this._descriptorSet;
         const shadowMapSampler = this.globalDSManager.pointSampler;
-        this._descriptorSet.bindSampler(UNIFORM_SHADOWMAP_BINDING, shadowMapSampler);
-        this._descriptorSet.bindTexture(UNIFORM_SHADOWMAP_BINDING, getDefaultShadowTexture(this.device));
-        this._descriptorSet.bindSampler(UNIFORM_SPOT_SHADOW_MAP_TEXTURE_BINDING, shadowMapSampler);
-        this._descriptorSet.bindTexture(UNIFORM_SPOT_SHADOW_MAP_TEXTURE_BINDING, getDefaultShadowTexture(this.device));
-        this._descriptorSet.update();
+        descriptorSet.bindSampler(UNIFORM_SHADOWMAP_BINDING, shadowMapSampler);
+        descriptorSet.bindTexture(UNIFORM_SHADOWMAP_BINDING, getDefaultShadowTexture(this.device));
+        descriptorSet.bindSampler(UNIFORM_SPOT_SHADOW_MAP_TEXTURE_BINDING, shadowMapSampler);
+        descriptorSet.bindTexture(UNIFORM_SPOT_SHADOW_MAP_TEXTURE_BINDING, getDefaultShadowTexture(this.device));
+
+        descriptorSet.update();
 
         return true;
     }
 
     private _destroyUBOs (): void {
-        if (this._descriptorSet) {
-            this._descriptorSet.getBuffer(UBOGlobal.BINDING).destroy();
-            this._descriptorSet.getBuffer(UBOShadow.BINDING).destroy();
-            this._descriptorSet.getBuffer(UBOCamera.BINDING).destroy();
-            this._descriptorSet.getTexture(UNIFORM_SHADOWMAP_BINDING).destroy();
-            this._descriptorSet.getTexture(UNIFORM_SPOT_SHADOW_MAP_TEXTURE_BINDING).destroy();
+        const descriptorSet = this._descriptorSet;
+        if (descriptorSet) {
+            descriptorSet.getBuffer(UBOGlobal.BINDING).destroy();
+            descriptorSet.getBuffer(UBOShadow.BINDING).destroy();
+            descriptorSet.getBuffer(UBOCamera.BINDING).destroy();
+
+            descriptorSet.getTexture(UNIFORM_SHADOWMAP_BINDING).destroy();
+            descriptorSet.getTexture(UNIFORM_SPOT_SHADOW_MAP_TEXTURE_BINDING).destroy();
         }
     }
 }

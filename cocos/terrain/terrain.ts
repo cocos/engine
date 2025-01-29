@@ -203,7 +203,11 @@ class TerrainRenderable extends ModelRenderer {
      */
     public _currentMaterialLayers = 0;
 
-    private _lightmap: Texture2D | null = null;
+    /**
+     * @engineInternal
+     * @mangle
+     */
+    public _lightmap: Texture2D | null = null;
 
     public destroy (): boolean {
         // this._invalidMaterial();
