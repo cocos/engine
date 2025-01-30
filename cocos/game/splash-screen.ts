@@ -409,9 +409,10 @@ export class SplashScreen {
         descriptorSet.bindSampler(binding, this.sampler);
         descriptorSet.update();
         const region = new BufferTextureCopy();
-        region.texExtent.width = this.bgImage.width;
-        region.texExtent.height = this.bgImage.height;
-        region.texExtent.depth = 1;
+        const regionTexExtent = region.texExtent;
+        regionTexExtent.width = this.bgImage.width;
+        regionTexExtent.height = this.bgImage.height;
+        regionTexExtent.depth = 1;
         device.copyTexImagesToTexture([this.bgImage], this.bgTexture, [region]);
     }
 
@@ -443,9 +444,10 @@ export class SplashScreen {
         descriptorSet.bindSampler(binding, this.sampler);
         descriptorSet.update();
         const region = new BufferTextureCopy();
-        region.texExtent.width = this.logoImage.width;
-        region.texExtent.height = this.logoImage.height;
-        region.texExtent.depth = 1;
+        const regionTexExtent = region.texExtent;
+        regionTexExtent.width = this.logoImage.width;
+        regionTexExtent.height = this.logoImage.height;
+        regionTexExtent.depth = 1;
         device.copyTexImagesToTexture([this.logoImage], this.logoTexture, [region]);
 
         const logoRatio = this.logoImage.width / this.logoImage.height;
@@ -473,9 +475,10 @@ export class SplashScreen {
         ctx.font = `${this.textSize * this.scaleSize}px Arial`; ctx.textBaseline = 'top'; ctx.textAlign = 'center'; ctx.fillStyle = '#707070';
         ctx.fillText(text, watermarkImg.width / 2, 0);
         const region = new BufferTextureCopy();
-        region.texExtent.width = watermarkImg.width;
-        region.texExtent.height = watermarkImg.height;
-        region.texExtent.depth = 1;
+        const regionTexExtent = region.texExtent;
+        regionTexExtent.width = watermarkImg.width;
+        regionTexExtent.height = watermarkImg.height;
+        regionTexExtent.depth = 1;
         this.watermarkTexture = this.device.createTexture(new TextureInfo(
             TextureType.TEX2D,
             TextureUsageBit.SAMPLED | TextureUsageBit.TRANSFER_DST,

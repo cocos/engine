@@ -141,7 +141,7 @@ export class DependUtil {
      *
      */
     public getDepsRecursively (uuid: string): string[] {
-        const exclude = Object.create(null);
+        const exclude: Record<string, any> = Object.create(null);
         const depends = [];
         this._descend(uuid, exclude, depends);
         return depends;

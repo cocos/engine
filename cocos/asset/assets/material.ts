@@ -490,9 +490,9 @@ export class Material extends Asset {
                 pass.resetUniform(name);
             }
         } else if (Array.isArray(val)) {
-            for (let i = 0; i < val.length; i++) {
-                this._bindTexture(pass, handle, val[i], i);
-            }
+            val.forEach((v, i) => {
+                this._bindTexture(pass, handle, v, i);
+            });
         } else if (val) {
             this._bindTexture(pass, handle, val);
         } else {

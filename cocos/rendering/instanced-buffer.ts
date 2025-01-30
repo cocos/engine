@@ -61,11 +61,10 @@ export class InstancedBuffer {
     }
 
     public destroy (): void {
-        for (let i = 0; i < this.instances.length; ++i) {
-            const instance = this.instances[i];
+        this.instances.forEach((instance) => {
             instance.vb.destroy();
             instance.ia.destroy();
-        }
+        });
         this.instances.length = 0;
     }
 
@@ -74,10 +73,11 @@ export class InstancedBuffer {
         const stride = attrs.buffer.length;
         if (!stride) { return; } // we assume per-instance attributes are always present
         const sourceIA = subModel.inputAssembler;
-        const lightingMap = subModel.descriptorSet.getTexture(UNIFORM_LIGHTMAP_TEXTURE_BINDING);
-        const reflectionProbeCubemap = subModel.descriptorSet.getTexture(UNIFORM_REFLECTION_PROBE_CUBEMAP_BINDING);
-        const reflectionProbePlanarMap = subModel.descriptorSet.getTexture(UNIFORM_REFLECTION_PROBE_TEXTURE_BINDING);
-        const reflectionProbeBlendCubemap = subModel.descriptorSet.getTexture(UNIFORM_REFLECTION_PROBE_BLEND_CUBEMAP_BINDING);
+        const subModelDescriptorSet = subModel.descriptorSet;
+        const lightingMap = subModelDescriptorSet.getTexture(UNIFORM_LIGHTMAP_TEXTURE_BINDING);
+        const reflectionProbeCubemap = subModelDescriptorSet.getTexture(UNIFORM_REFLECTION_PROBE_CUBEMAP_BINDING);
+        const reflectionProbePlanarMap = subModelDescriptorSet.getTexture(UNIFORM_REFLECTION_PROBE_TEXTURE_BINDING);
+        const reflectionProbeBlendCubemap = subModelDescriptorSet.getTexture(UNIFORM_REFLECTION_PROBE_BLEND_CUBEMAP_BINDING);
         const useReflectionProbeType = subModel.useReflectionProbeType;
         let shader = shaderImplant;
         if (!shader) {
@@ -163,10 +163,9 @@ export class InstancedBuffer {
     }
 
     public clear (): void {
-        for (let i = 0; i < this.instances.length; ++i) {
-            const instance = this.instances[i];
+        this.instances.forEach((instance) => {
             instance.count = 0;
-        }
+        });
         this.hasPendingModels = false;
     }
 }

@@ -216,19 +216,21 @@ export class Profiler extends System {
         }
 
         const { textureWidth, textureHeight } = _constants;
+        const canvas = this._canvas;
+        const ctx = this._ctx;
 
-        if (!this._ctx || !this._canvas) {
+        if (!ctx || !canvas) {
             return;
         }
 
-        this._canvas.width = textureWidth;
-        this._canvas.height = textureHeight;
-        this._canvas.style.width = `${this._canvas.width}`;
-        this._canvas.style.height = `${this._canvas.height}`;
+        canvas.width = textureWidth;
+        canvas.height = textureHeight;
+        canvas.style.width = `${canvas.width}`;
+        canvas.style.height = `${canvas.height}`;
 
-        this._ctx.font = `${_constants.fontSize}px Arial`;
-        this._ctx.textBaseline = 'top';
-        this._ctx.fillStyle = '#fff';
+        ctx.font = `${_constants.fontSize}px Arial`;
+        ctx.textBaseline = 'top';
+        ctx.fillStyle = '#fff';
 
         this._texture = this._device!.createTexture(new TextureInfo(
             TextureType.TEX2D,
@@ -238,8 +240,9 @@ export class Profiler extends System {
             textureHeight,
         ));
 
-        this._region.texExtent.width = textureWidth;
-        this._region.texExtent.height = textureHeight;
+        const texExtent = this._region.texExtent;
+        texExtent.width = textureWidth;
+        texExtent.height = textureHeight;
     }
 
     public generateStats (): void {
