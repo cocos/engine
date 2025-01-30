@@ -335,6 +335,7 @@ export class DirectionalLight extends Light {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public activate (): void {
         const root = cclegacy.director.root;

@@ -73,6 +73,7 @@ export class NodeUIProperties {
     /**
      * NOTE: engineInternal tag cannot only mark opacity setter as internal.
      * @engineInternal
+     * @mangle
      */
     public setOpacity (v: number): void { this._opacity = v; }
     public get opacity (): number { return this._opacity; }

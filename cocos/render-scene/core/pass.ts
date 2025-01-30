@@ -808,6 +808,7 @@ export class Pass {
 
     /**
      * @engineInternal
+     * @mangle
      * Only for UI
      */
     public _initPassFromTarget (target: Pass, dss: DepthStencilState, hashFactor: number): void {
@@ -848,6 +849,7 @@ export class Pass {
     // Only for UI
     /**
      * @engineInternal
+     * @mangle
      */
     public _updatePassHash (): void {
         this._hash = Pass.getPassHash(this);
@@ -877,6 +879,7 @@ export class Pass {
     get rootBufferDirty (): boolean { return this._rootBufferDirty; }
     /**
      * @engineInternal
+     * @mangle
      * Currently, can not just mark setter as engine internal, so change to a function.
      */
     setRootBufferDirty (val: boolean): void { this._rootBufferDirty = val; }
@@ -884,6 +887,7 @@ export class Pass {
     get priority (): RenderPriority { return this._priority; }
     /**
      * @engineInternal
+     * @mangle
      * Currently, can not just mark setter as engine internal, so change to a function.
      */
     setPriority (val: RenderPriority): void { this._priority = val; }

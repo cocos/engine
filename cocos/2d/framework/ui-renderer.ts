@@ -208,6 +208,7 @@ export class UIRenderer extends Renderer {
     /**
      * As can not set setter internal individually, so add setRenderData();
      * @engineInternal
+     * @mangle
      */
     setRenderData (renderData: RenderData | null): void {
         this._renderData = renderData;
@@ -277,6 +278,7 @@ export class UIRenderer extends Renderer {
     public _internalId = -1;
     /**
      * @engineInternal
+     * @mangle
      */
     public _flagChangedVersion = -1;
 
@@ -460,6 +462,7 @@ export class UIRenderer extends Renderer {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public updateMaterial (): void {
         if (this._customMaterial) {

@@ -746,6 +746,7 @@ export class Model {
 
     /**
      * @engineInternal
+     * @mangle
      * @en Invalidate local data
      * @zh 使本地数据失效
      */

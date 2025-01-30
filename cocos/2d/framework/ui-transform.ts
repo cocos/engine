@@ -795,6 +795,7 @@ export class UITransform extends Component {
     /**
      * @deprecated Since v3.7.0, this is an engine private interface that will be removed in the future.
      * @engineInternal
+     * @mangle
      */
     public static _sortSiblings (): void {
         UITransform.priorityChangeNodeMap.forEach((node, ID): void => {
@@ -808,6 +809,7 @@ export class UITransform extends Component {
     /**
      * @deprecated Since v3.7.0, this is an engine private interface that will be removed in the future.
      * @engineInternal
+     * @mangle
      */
     public static _cleanChangeMap (): void {
         UITransform.priorityChangeNodeMap.clear();

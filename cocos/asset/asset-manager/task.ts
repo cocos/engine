@@ -43,6 +43,7 @@ export interface ITaskOption {
 export default class Task {
     /**
      * @engineInternal
+     * @mangle
      */
     public static MAX_DEAD_NUM = 500;
 

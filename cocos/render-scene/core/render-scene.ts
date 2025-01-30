@@ -584,6 +584,7 @@ export class RenderScene {
 
     /**
      * @engineInternal
+     * @mangle
      * @en Remove a LOD group, the LOD group removed will no longer be submitted for rendering.
      * @zh 删除一个LOD 组，移除的LOD 组将不再被提交渲染。
      * @param lodGroup the LOD group
@@ -599,6 +600,7 @@ export class RenderScene {
 
     /**
      * @engineInternal
+     * @mangle
      * @en Remove all LOD groups.
      * @zh 删除所有LOD 组。
      */

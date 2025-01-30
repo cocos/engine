@@ -663,6 +663,7 @@ export class TerrainBlock {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public _updateLevel (camPos: Vec3): void {
         const maxLevel = TERRAIN_LOD_LEVELS - 1;

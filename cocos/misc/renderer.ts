@@ -256,6 +256,7 @@ export class Renderer extends Component {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public _onRebuildPSO (index: number, material: Material | null): void {
         /* empty */

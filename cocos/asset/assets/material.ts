@@ -388,6 +388,7 @@ export class Material extends Asset {
 
     /**
      * @engineInternal
+     * @mangle
      */
     protected _fillInfo (info: IMaterialInfo): void {
         if (info.technique !== undefined) { this._techIdx = info.technique; }
@@ -402,6 +403,7 @@ export class Material extends Asset {
 
     /**
      * @engineInternal
+     * @mangle
      */
     protected _prepareInfo (patch: Record<string, unknown> | Record<string, unknown>[], cur: Record<string, unknown>[]): void {
         let patchArray = patch;
@@ -416,6 +418,7 @@ export class Material extends Asset {
 
     /**
      * @engineInternal
+     * @mangle
      */
     protected _createPasses (): Pass[] {
         const tech = this._effectAsset!.techniques[this._techIdx || 0];
@@ -443,6 +446,7 @@ export class Material extends Asset {
 
     /**
      * @engineInternal
+     * @mangle
      */
     protected _update (keepProps = true): void {
         if (this._effectAsset) {
@@ -470,6 +474,7 @@ export class Material extends Asset {
 
     /**
      * @engineInternal
+     * @mangle
      */
     protected _uploadProperty (pass: Pass, name: string, val: MaterialPropertyFull | MaterialPropertyFull[]): boolean {
         const handle = pass.getHandle(name);
@@ -503,6 +508,7 @@ export class Material extends Asset {
 
     /**
      * @engineInternal
+     * @mangle
      */
     protected _bindTexture (pass: Pass, handle: number, val: MaterialPropertyFull, index?: number): void {
         const binding = Pass.getBindingFromHandle(handle);
@@ -521,6 +527,7 @@ export class Material extends Asset {
 
     /**
      * @engineInternal
+     * @mangle
      */
     protected _doDestroy (): void {
         if (this._passes && this._passes.length) {

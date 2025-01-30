@@ -475,6 +475,7 @@ export class NodeEventProcessor {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public _handleEventMouse (eventMouse: EventMouse): boolean {
         switch (eventMouse.type) {
@@ -612,6 +613,7 @@ export class NodeEventProcessor {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public _handleEventTouch (eventTouch: EventTouch): boolean | void {
         try {

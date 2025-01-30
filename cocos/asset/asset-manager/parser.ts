@@ -79,6 +79,7 @@ export class Parser {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public parseImage (
         file: HTMLImageElement | Blob,
@@ -98,6 +99,7 @@ export class Parser {
 
     /**
      * @engineInternal
+     * Don't mangle this function since it's used in platform adapter code.
      */
     public parsePVRTex (
         file: ArrayBuffer | ArrayBufferView,
@@ -117,6 +119,7 @@ export class Parser {
 
     /**
      * @engineInternal
+     * Don't mangle this function since it's used in platform adapter code.
      */
     public parsePKMTex (
         file: ArrayBuffer | ArrayBufferView,
@@ -136,6 +139,7 @@ export class Parser {
 
     /**
      * @engineInternal
+     * Don't mangle this function since it's used in platform adapter code.
      */
     public parseASTCTex (
         file: ArrayBuffer | ArrayBufferView,
@@ -155,6 +159,7 @@ export class Parser {
 
     /**
      * @engineInternal
+     * Don't mangle this function since it's used in platform adapter code.
      */
     public parsePlist (
         file: string,
@@ -169,6 +174,7 @@ export class Parser {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public parseImport (
         file: Record<string, any> | CCON,
@@ -191,6 +197,7 @@ export class Parser {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public init (): void {
         this._parsing.clear();

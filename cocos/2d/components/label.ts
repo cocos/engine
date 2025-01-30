@@ -1093,6 +1093,7 @@ export class Label extends UIRenderer {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public _updateBlendFunc (): void {
         // override for BYTEDANCE

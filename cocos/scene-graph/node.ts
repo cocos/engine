@@ -209,6 +209,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
 
     /**
      * @engineInternal please don't use this method.
+     * @mangle
      */
     public _setActiveInHierarchy (v: boolean): void {
         this._activeInHierarchy = v;
