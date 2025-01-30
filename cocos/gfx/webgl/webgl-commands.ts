@@ -2592,14 +2592,16 @@ export function WebGLCmdFuncCopyTexImagesToTexture (
     case WebGLConstants.TEXTURE_CUBE_MAP: {
         for (let i = 0; i < regions.length; i++) {
             const region = regions[i];
+            const regionTexOffset = region.texOffset;
+            const regionTexSubres = region.texSubres;
             // console.debug('Copying image to texture cube: ' + region.texExtent.width + ' x ' + region.texExtent.height);
-            const fcount = region.texSubres.baseArrayLayer + region.texSubres.layerCount;
-            for (f = region.texSubres.baseArrayLayer; f < fcount; ++f) {
+            const fcount = regionTexSubres.baseArrayLayer + regionTexSubres.layerCount;
+            for (f = regionTexSubres.baseArrayLayer; f < fcount; ++f) {
                 gl.texSubImage2D(
                     WebGLConstants.TEXTURE_CUBE_MAP_POSITIVE_X + f,
-                    region.texSubres.mipLevel,
-                    region.texOffset.x,
-                    region.texOffset.y,
+                    regionTexSubres.mipLevel,
+                    regionTexOffset.x,
+                    regionTexOffset.y,
                     gpuTexture.glFormat,
                     gpuTexture.glType,
                     texImages[n++],
@@ -2762,11 +2764,11 @@ export function WebGLCmdFuncCopyBuffersToTexture (
 
             const regionTexOffset = region.texOffset;
             const regionTexExtent = region.texExtent;
+            const regionTexSubres = region.texSubres;
             const regionTexExtentWidth = regionTexExtent.width;
             const regionTexExtentHeight = regionTexExtent.height;
             const blockSizeWidth = blockSize.width;
             const blockSizeHeight = blockSize.height;
-            const regionBuffStride = region.buffStride;
 
             offset.x =  regionTexOffset.x === 0 ? 0 : alignTo(regionTexOffset.x, blockSizeWidth);
             offset.y =  regionTexOffset.y === 0 ? 0 : alignTo(regionTexOffset.y, blockSizeHeight);
@@ -2779,8 +2781,8 @@ export function WebGLCmdFuncCopyBuffersToTexture (
             const destWidth  = (regionTexExtentWidth + offset.x === (gpuTexture.width >> mipLevel)) ? regionTexExtentWidth : extent.width;
             const destHeight = (regionTexExtentHeight + offset.y === (gpuTexture.height >> mipLevel)) ? regionTexExtentHeight : extent.height;
 
-            const fcount = region.texSubres.baseArrayLayer + region.texSubres.layerCount;
-            for (f = region.texSubres.baseArrayLayer; f < fcount; ++f) {
+            const fcount = regionTexSubres.baseArrayLayer + regionTexSubres.layerCount;
+            for (f = regionTexSubres.baseArrayLayer; f < fcount; ++f) {
                 let pixels: ArrayBufferView;
                 const buffer = buffers[n++];
                 if (stride.width === extent.width && stride.height === extent.height) {
