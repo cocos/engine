@@ -22,11 +22,13 @@
  THE SOFTWARE.
 */
 
-import { JSB } from 'internal:constants';
-import { clamp, Vec3 } from '../math';
+import { clamp, v3, Vec3 } from '../math';
 import { assertID, warnID } from '../platform/debug';
 import { ShapeType } from './enums';
 import { assertsArrayIndex } from '../data/utils/asserts';
+
+const vec3MultiplyScalar = Vec3.multiplyScalar;
+const vec3Add = Vec3.add;
 
 export enum SplineMode {
     /**
@@ -77,10 +79,10 @@ export enum SplineMode {
 
 const SPLINE_WHOLE_INDEX = 0xffffffff;
 
-const _v0 = new Vec3();
-const _v1 = new Vec3();
-const _v2 = new Vec3();
-const _v3 = new Vec3();
+const _v0 = v3();
+const _v1 = v3();
+const _v2 = v3();
+const _v3 = v3();
 
 /**
  * @en
@@ -99,7 +101,7 @@ export class Spline {
         this._mode = mode;
 
         for (let i = 0; i < knots.length; i++) {
-            this._knots[i] = new Vec3(knots[i]);
+            this._knots[i] = v3(knots[i]);
         }
     }
 
@@ -144,7 +146,7 @@ export class Spline {
         const knots = s.knots;
         const length = knots.length;
         for (let i = 0; i < length; i++) {
-            out._knots[i] = new Vec3(knots[i]);
+            out._knots[i] = v3(knots[i]);
         }
 
         return out;
@@ -193,7 +195,7 @@ export class Spline {
         this._knots.length = 0;
 
         for (let i = 0; i < knots.length; i++) {
-            this._knots[i] = new Vec3(knots[i]);
+            this._knots[i] = v3(knots[i]);
         }
     }
 
@@ -226,7 +228,7 @@ export class Spline {
      * @param knot @en The knot to add to this Spline instance. @zh 要添加到当前 Spline 实例的结点。
      */
     public addKnot (knot: Vec3): void {
-        this._knots.push(new Vec3(knot));
+        this._knots.push(v3(knot));
     }
 
     /**
@@ -238,7 +240,7 @@ export class Spline {
      * @param knot @en The knot to be inserted. @zh 要插入的结点。
      */
     public insertKnot (index: number, knot: Vec3): void {
-        const item = new Vec3(knot);
+        const item = v3(knot);
         if (index >= this._knots.length) {
             this._knots.push(item);
             return;
@@ -302,7 +304,7 @@ export class Spline {
 
         const segments = this.getSegments();
         if (segments === 0) {
-            return new Vec3();
+            return v3();
         }
 
         if (index === SPLINE_WHOLE_INDEX) {
@@ -315,7 +317,7 @@ export class Spline {
         const knots = this._knots;
 
         if (index >= segments) {
-            return new Vec3(knots[knots.length - 1]);
+            return v3(knots[knots.length - 1]);
         }
 
         switch (this._mode) {
@@ -331,7 +333,7 @@ export class Spline {
             return Spline.calcCatmullRom(v0, knots[index], knots[index + 1], v3, t);
         }
         default:
-            return new Vec3();
+            return v3();
         }
     }
 
@@ -394,9 +396,9 @@ export class Spline {
 
     private static calcLinear (v0: Vec3, v1: Vec3, t: number): Vec3 {
         const result = new Vec3();
-        Vec3.multiplyScalar(_v0, v0, (1.0 - t));
-        Vec3.multiplyScalar(_v1, v1, t);
-        Vec3.add(result, _v0, _v1);
+        vec3MultiplyScalar(_v0, v0, (1.0 - t));
+        vec3MultiplyScalar(_v1, v1, t);
+        vec3Add(result, _v0, _v1);
 
         return result;
     }
@@ -404,13 +406,13 @@ export class Spline {
     private static calcBezier (v0: Vec3, v1: Vec3, v2: Vec3, v3: Vec3, t: number): Vec3 {
         const result = new Vec3();
         const s = 1.0 - t;
-        Vec3.multiplyScalar(_v0, v0, s * s * s);
-        Vec3.multiplyScalar(_v1, v1, 3.0 * t * s * s);
-        Vec3.multiplyScalar(_v2, v2, 3.0 * t * t * s);
-        Vec3.multiplyScalar(_v3, v3, t * t * t);
-        Vec3.add(_v0, _v0, _v1);
-        Vec3.add(_v2, _v2, _v3);
-        Vec3.add(result, _v0, _v2);
+        vec3MultiplyScalar(_v0, v0, s * s * s);
+        vec3MultiplyScalar(_v1, v1, 3.0 * t * s * s);
+        vec3MultiplyScalar(_v2, v2, 3.0 * t * t * s);
+        vec3MultiplyScalar(_v3, v3, t * t * t);
+        vec3Add(_v0, _v0, _v1);
+        vec3Add(_v2, _v2, _v3);
+        vec3Add(result, _v0, _v2);
 
         return result;
     }
@@ -418,13 +420,13 @@ export class Spline {
         const result = new Vec3();
         const t2 = t * t;
         const t3 = t2 * t;
-        Vec3.multiplyScalar(_v0, v0, -0.5 * t3 + t2 - 0.5 * t);
-        Vec3.multiplyScalar(_v1, v1, 1.5 * t3 - 2.5 * t2 + 1.0);
-        Vec3.multiplyScalar(_v2, v2, -1.5 * t3 + 2.0 * t2 + 0.5 * t);
-        Vec3.multiplyScalar(_v3, v3, 0.5 * t3 - 0.5 * t2);
-        Vec3.add(_v0, _v0, _v1);
-        Vec3.add(_v2, _v2, _v3);
-        Vec3.add(result, _v0, _v2);
+        vec3MultiplyScalar(_v0, v0, -0.5 * t3 + t2 - 0.5 * t);
+        vec3MultiplyScalar(_v1, v1, 1.5 * t3 - 2.5 * t2 + 1.0);
+        vec3MultiplyScalar(_v2, v2, -1.5 * t3 + 2.0 * t2 + 0.5 * t);
+        vec3MultiplyScalar(_v3, v3, 0.5 * t3 - 0.5 * t2);
+        vec3Add(_v0, _v0, _v1);
+        vec3Add(_v2, _v2, _v3);
+        vec3Add(result, _v0, _v2);
 
         return result;
     }

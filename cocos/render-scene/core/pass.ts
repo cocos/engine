@@ -601,7 +601,8 @@ export class Pass {
     protected _doInit (info: IPassInfoFull, copyDefines = false): void {
         this._priority = RenderPriority.DEFAULT;
         this._stage = RenderPassStage.DEFAULT;
-        if (cclegacy.rendering && cclegacy.rendering.enableEffectImport) {
+        const enableEffectImport: boolean = cclegacy.rendering?.enableEffectImport;
+        if (enableEffectImport) {
             const r = cclegacy.rendering;
             if (typeof info.phase === 'number') {
                 this._passID = (info as Pass)._passID;
@@ -647,7 +648,7 @@ export class Pass {
         this._propertyIndex = info.propertyIndex !== undefined ? info.propertyIndex : info.passIndex;
         this._programName = info.program;
         this._defines = copyDefines ? ({ ...info.defines }) : info.defines;
-        if (cclegacy.rendering && cclegacy.rendering.enableEffectImport) {
+        if (enableEffectImport) {
             this._shaderInfo = (cclegacy.rendering.programLib as ProgramLibrary)
                 .getProgramInfo(this._phaseID, this._programName);
         } else {
@@ -661,7 +662,7 @@ export class Pass {
         if (info.stateOverrides) { Pass.fillPipelineInfo(this, info.stateOverrides); }
 
         // init descriptor set
-        if (cclegacy.rendering && cclegacy.rendering.enableEffectImport) {
+        if (enableEffectImport) {
             _dsInfo.layout = (cclegacy.rendering.programLib as ProgramLibrary)
                 .getMaterialDescriptorSetLayout(this._device, this._phaseID, info.program);
         } else {
@@ -673,7 +674,7 @@ export class Pass {
         const blocks = this._shaderInfo.blocks;
         let blockSizes: number[];
         let handleMap: Record<string, number>;
-        if (cclegacy.rendering && cclegacy.rendering.enableEffectImport) {
+        if (enableEffectImport) {
             const programLib = (cclegacy.rendering.programLib as ProgramLibrary);
             blockSizes = programLib.getBlockSizes(this._phaseID, this._programName);
             handleMap = programLib.getHandleMap(this._phaseID, this._programName);
@@ -684,7 +685,7 @@ export class Pass {
         }
 
         // build uniform blocks
-        if (cclegacy.rendering && cclegacy.rendering.enableEffectImport) {
+        if (enableEffectImport) {
             const programLib = (cclegacy.rendering.programLib as ProgramLibrary);
             const shaderInfo = programLib.getShaderInfo(this._phaseID, this.program);
             this._buildMaterialUniformBlocks(device, shaderInfo.blocks, blockSizes);

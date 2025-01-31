@@ -45,6 +45,9 @@ const INSET_BOTTOM = 3;
 const temp_vec3 = v3();
 const temp_matrix = mat4();
 
+const vec3TransformMat4 = Vec3.transformMat4;
+const vec3ToArray = Vec3.toArray;
+
 enum MeshType {
     RECT = 0,
     POLYGON = 1, // Todo: Polygon mode need add
@@ -1214,7 +1217,7 @@ export class SpriteFrame extends Asset {
                 const posArray = [];
                 for (let i = 0; i < this.vertices.rawPosition.length; i++) {
                     const pos = this.vertices.rawPosition[i];
-                    Vec3.toArray(posArray, pos, 3 * i);
+                    vec3ToArray(posArray, pos, 3 * i);
                 }
                 vertices = {
                     rawPosition: posArray,
@@ -1532,11 +1535,11 @@ export class SpriteFrame extends Asset {
 
         for (let i = 0; i < vertices.rawPosition.length; i++) {
             const pos = vertices.rawPosition[i];
-            Vec3.transformMat4(temp_vec3, pos, temp_matrix);
-            Vec3.toArray(vertices.positions, temp_vec3, 3 * i);
+            vec3TransformMat4(temp_vec3, pos, temp_matrix);
+            vec3ToArray(vertices.positions, temp_vec3, 3 * i);
         }
-        Vec3.transformMat4(this._minPos, vertices.minPos, temp_matrix);
-        Vec3.transformMat4(this._maxPos, vertices.maxPos, temp_matrix);
+        vec3TransformMat4(this._minPos, vertices.minPos, temp_matrix);
+        vec3TransformMat4(this._maxPos, vertices.maxPos, temp_matrix);
     }
 
     protected _createMesh (): void {
