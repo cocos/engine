@@ -610,9 +610,10 @@ export class SkyboxInfo {
     public setMaterialProperty (name: string, val: MaterialPropertyFull | MaterialPropertyFull[], passIdx?: number): void {
         const resource = this._resource;
         if (!resource) return;
-        if (resource.enabled && resource.editableMaterial) {
-            resource.editableMaterial.setProperty(name, val, passIdx);
-            resource.editableMaterial.passes.forEach((pass) => {
+        const editableMaterial = resource.editableMaterial;
+        if (resource.enabled && editableMaterial) {
+            editableMaterial.setProperty(name, val, passIdx);
+            editableMaterial.passes.forEach((pass) => {
                 pass.update();
             });
         }
