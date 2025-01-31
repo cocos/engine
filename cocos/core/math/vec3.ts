@@ -45,20 +45,24 @@ const ceil = Math.ceil;
 const floor = Math.floor;
 const round = Math.round;
 
+function freezeVec3 (x: number, y: number, z: number): Readonly<Vec3> {
+    return Object.freeze(new Vec3(x, y, z));
+}
+
 /**
  * @en Representation of 3D vectors and points.
  * @zh 三维向量。
  */
 export class Vec3 extends ValueType {
-    public static UNIT_X = Object.freeze(new Vec3(1, 0, 0));
-    public static UNIT_Y = Object.freeze(new Vec3(0, 1, 0));
-    public static UNIT_Z = Object.freeze(new Vec3(0, 0, 1));
-    public static RIGHT = Object.freeze(new Vec3(1, 0, 0));
-    public static UP = Object.freeze(new Vec3(0, 1, 0));
-    public static FORWARD = Object.freeze(new Vec3(0, 0, -1)); // we use -z for view-dir
-    public static ZERO = Object.freeze(new Vec3(0, 0, 0));
-    public static ONE = Object.freeze(new Vec3(1, 1, 1));
-    public static NEG_ONE = Object.freeze(new Vec3(-1, -1, -1));
+    public static UNIT_X = freezeVec3(1, 0, 0);
+    public static UNIT_Y = freezeVec3(0, 1, 0);
+    public static UNIT_Z = freezeVec3(0, 0, 1);
+    public static RIGHT = freezeVec3(1, 0, 0);
+    public static UP = freezeVec3(0, 1, 0);
+    public static FORWARD = freezeVec3(0, 0, -1); // we use -z for view-dir
+    public static ZERO = freezeVec3(0, 0, 0);
+    public static ONE = freezeVec3(1, 1, 1);
+    public static NEG_ONE = freezeVec3(-1, -1, -1);
 
     /**
      * @en return a Vec3 object with x = 0, y = 0, z = 0.

@@ -27,14 +27,18 @@ import * as bits from './bits';
 import { ValueType } from '../value-types';
 import { IVec3Like } from './type-define';
 
-const _d2r = Math.PI / 180.0;
+const mathAbs = Math.abs;
+const mathFloor = Math.floor;
+const PI = Math.PI;
 
-const _r2d = 180.0 / Math.PI;
+const _d2r = PI / 180.0;
+
+const _r2d = 180.0 / PI;
 
 let _random = Math.random;
 
-export const HALF_PI = Math.PI * 0.5;
-export const TWO_PI = Math.PI * 2.0;
+export const HALF_PI = PI * 0.5;
+export const TWO_PI = PI * 2.0;
 
 export const EPSILON = 0.000001;
 
@@ -49,7 +53,7 @@ export const EPSILON = 0.000001;
  * @return True if the numbers are approximately equal, false otherwise.
  */
 export function equals (a: number, b: number): boolean {
-    return Math.abs(a - b) <= EPSILON * Math.max(1.0, Math.abs(a), Math.abs(b));
+    return mathAbs(a - b) <= EPSILON * Math.max(1.0, mathAbs(a), mathAbs(b));
 }
 
 /**
@@ -62,7 +66,7 @@ export function equals (a: number, b: number): boolean {
  */
 export function approx (a: number, b: number, maxDiff?: number): boolean {
     maxDiff = maxDiff || EPSILON;
-    return Math.abs(a - b) <= maxDiff;
+    return mathAbs(a - b) <= maxDiff;
 }
 
 /**
@@ -156,7 +160,7 @@ export function randomRange (min: number, max: number): number {
  * @return The random integer.
  */
 export function randomRangeInt (min: number, max: number): number {
-    return Math.floor(randomRange(min, max));
+    return mathFloor(randomRange(min, max));
 }
 
 /**
@@ -197,7 +201,7 @@ export function pseudoRandomRange (seed: number, min: number, max: number): numb
  * @return The random integer.
  */
 export function pseudoRandomRangeInt (seed: number, min: number, max: number): number {
-    return Math.floor(pseudoRandomRange(seed, min, max));
+    return mathFloor(pseudoRandomRange(seed, min, max));
 }
 
 /**
@@ -221,7 +225,7 @@ export function nextPow2 (val: number): number {
  * @return The Time wrapped in the first cycle.
  */
 export function repeat (t: number, length: number): number {
-    return t - Math.floor(t / length) * length;
+    return t - mathFloor(t / length) * length;
 }
 
 /**
@@ -236,7 +240,7 @@ export function repeat (t: number, length: number): number {
  */
 export function pingPong (t: number, length: number): number {
     t = repeat(t, length * 2);
-    t = length - Math.abs(t - length);
+    t = length - mathAbs(t - length);
     return t;
 }
 
@@ -259,13 +263,13 @@ export function inverseLerp (from: number, to: number, value: number): number {
  * @returns max absolute component
  */
 export function absMaxComponent (v: IVec3Like): number {
-    if (Math.abs(v.x) > Math.abs(v.y)) {
-        if (Math.abs(v.x) > Math.abs(v.z)) {
+    if (mathAbs(v.x) > mathAbs(v.y)) {
+        if (mathAbs(v.x) > mathAbs(v.z)) {
             return v.x;
         } else {
             return v.z;
         }
-    } else if (Math.abs(v.y) > Math.abs(v.z)) {
+    } else if (mathAbs(v.y) > mathAbs(v.z)) {
         return v.y;
     } else {
         return v.z;
@@ -279,7 +283,7 @@ export function absMaxComponent (v: IVec3Like): number {
  * @param b number
  */
 export function absMax (a: number, b: number): number {
-    if (Math.abs(a) > Math.abs(b)) {
+    if (mathAbs(a) > mathAbs(b)) {
         return a;
     } else {
         return b;

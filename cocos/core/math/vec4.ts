@@ -43,18 +43,22 @@ const ceil = Math.ceil;
 const floor = Math.floor;
 const round = Math.round;
 
+function freezeVec4 (x: number, y: number, z: number, w: number): Readonly<Vec4> {
+    return Object.freeze(new Vec4(x, y, z, w));
+}
+
 /**
  * @en Representation of four-dimensional vectors.
  * @zh 四维向量。
  */
 export class Vec4 extends ValueType {
-    public static ZERO = Object.freeze(new Vec4(0, 0, 0, 0));
-    public static ONE = Object.freeze(new Vec4(1, 1, 1, 1));
-    public static NEG_ONE = Object.freeze(new Vec4(-1, -1, -1, -1));
-    public static UNIT_X = Object.freeze(new Vec4(1, 0, 0, 0));
-    public static UNIT_Y = Object.freeze(new Vec4(0, 1, 0, 0));
-    public static UNIT_Z = Object.freeze(new Vec4(0, 0, 1, 0));
-    public static UNIT_W = Object.freeze(new Vec4(0, 0, 0, 1));
+    public static ZERO = freezeVec4(0, 0, 0, 0);
+    public static ONE = freezeVec4(1, 1, 1, 1);
+    public static NEG_ONE = freezeVec4(-1, -1, -1, -1);
+    public static UNIT_X = freezeVec4(1, 0, 0, 0);
+    public static UNIT_Y = freezeVec4(0, 1, 0, 0);
+    public static UNIT_Z = freezeVec4(0, 0, 1, 0);
+    public static UNIT_W = freezeVec4(0, 0, 0, 1);
 
     /**
      * @en Obtains a clone of the given vector object

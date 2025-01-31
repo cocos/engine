@@ -40,6 +40,8 @@ import type { IRaySubMeshOptions, IRayModelOptions, IRayMeshOptions } from './sp
 import type { Model } from '../../render-scene/scene';
 import type { Mesh } from '../../3d';
 
+const mathAbs = Math.abs;
+
 /**
  * @en
  * ray-plane intersect detect.
@@ -52,7 +54,7 @@ import type { Mesh } from '../../3d';
 const rayPlane = (function () {
     return function (ray: Ray, plane: Plane): number {
         const denom = Vec3.dot(ray.d, plane.n);
-        if (Math.abs(denom) < Number.EPSILON) { return 0; }
+        if (mathAbs(denom) < Number.EPSILON) { return 0; }
         const d = distance.point_plane(ray.o, plane);
         const t = -d / denom;
         if (t < 0) { return 0; }
@@ -653,9 +655,9 @@ const aabbWithOBB = (function (): (aabb: AABB, obb: OBB) => number {
  * @returns @zh 检测结果, 包含为 -1, 不包含为 0, 相交为 1 @en Test result, inside(back) = -1, outside(front) = 0, intersect = 1
  */
 const aabbPlane = function (aabb: AABB, plane: Plane): number {
-    const r = aabb.halfExtents.x * Math.abs(plane.n.x)
-        + aabb.halfExtents.y * Math.abs(plane.n.y)
-        + aabb.halfExtents.z * Math.abs(plane.n.z);
+    const r = aabb.halfExtents.x * mathAbs(plane.n.x)
+        + aabb.halfExtents.y * mathAbs(plane.n.y)
+        + aabb.halfExtents.z * mathAbs(plane.n.z);
     const dot = Vec3.dot(plane.n, aabb.center);
     if (dot + r < plane.d) { return -1; } else if (dot - r > plane.d) { return 0; }
     return 1;
@@ -760,7 +762,7 @@ const aabbFrustumAccurate = (function (): (aabb: AABB, frustum: Frustum) => numb
  */
 const obbPoint = (function (): (obb: OBB, point: Vec3) => boolean {
     const tmp = new Vec3(0, 0, 0); const m3 = new Mat3();
-    const lessThan = function (a: Vec3, b: Vec3): boolean { return Math.abs(a.x) < b.x && Math.abs(a.y) < b.y && Math.abs(a.z) < b.z; };
+    const lessThan = function (a: Vec3, b: Vec3): boolean { return mathAbs(a.x) < b.x && mathAbs(a.y) < b.y && mathAbs(a.z) < b.z; };
     return function (obb: OBB, point: Vec3): boolean {
         Vec3.subtract(tmp, point, obb.center);
         Vec3.transformMat3(tmp, tmp, Mat3.transpose(m3, obb.orientation));
@@ -779,7 +781,7 @@ const obbPoint = (function (): (obb: OBB, point: Vec3) => boolean {
  */
 const obbPlane = (function (): (obb: OBB, plane: Plane) => number {
     const absDot = function (n: Vec3, x: number, y: number, z: number): number {
-        return Math.abs(n.x * x + n.y * y + n.z * z);
+        return mathAbs(n.x * x + n.y * y + n.z * z);
     };
     return function (obb: OBB, plane: Plane): number {
         // Real-Time Collision Detection, Christer Ericson, p. 163.
@@ -1213,8 +1215,8 @@ const capsuleWithCapsule = (function (): (capsuleA: Capsule, capsuleB: Capsule) 
             }
         }
         // finally do the division to get sc and tc
-        const sc = (Math.abs(sN) < EPSILON ? 0.0 : sN / sD);
-        const tc = (Math.abs(tN) < EPSILON ? 0.0 : tN / tD);
+        const sc = (mathAbs(sN) < EPSILON ? 0.0 : sN / sD);
+        const tc = (mathAbs(tN) < EPSILON ? 0.0 : tN / tD);
 
         // get the difference of the two closest points
         const dP = v3_3;

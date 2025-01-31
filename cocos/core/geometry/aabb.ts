@@ -36,11 +36,13 @@ const _v3_tmp3 = new Vec3();
 const _v3_tmp4 = new Vec3();
 const _m3_tmp = new Mat3();
 
+const mathAbs = Math.abs;
+
 // https://zeuxcg.org/2010/10/17/aabb-from-obb-with-component-wise-abs/
 const transform_extent_m4 = (out: Vec3, extent: Vec3, m4: Mat4 | Readonly<Mat4>): void => {
-    _m3_tmp.m00 = Math.abs(m4.m00); _m3_tmp.m01 = Math.abs(m4.m01); _m3_tmp.m02 = Math.abs(m4.m02);
-    _m3_tmp.m03 = Math.abs(m4.m04); _m3_tmp.m04 = Math.abs(m4.m05); _m3_tmp.m05 = Math.abs(m4.m06);
-    _m3_tmp.m06 = Math.abs(m4.m08); _m3_tmp.m07 = Math.abs(m4.m09); _m3_tmp.m08 = Math.abs(m4.m10);
+    _m3_tmp.m00 = mathAbs(m4.m00); _m3_tmp.m01 = mathAbs(m4.m01); _m3_tmp.m02 = mathAbs(m4.m02);
+    _m3_tmp.m03 = mathAbs(m4.m04); _m3_tmp.m04 = mathAbs(m4.m05); _m3_tmp.m05 = mathAbs(m4.m06);
+    _m3_tmp.m06 = mathAbs(m4.m08); _m3_tmp.m07 = mathAbs(m4.m09); _m3_tmp.m08 = mathAbs(m4.m10);
     Vec3.transformMat3(out, extent, _m3_tmp);
 };
 

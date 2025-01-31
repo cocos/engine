@@ -47,16 +47,20 @@ const ceil = Math.ceil;
 const floor = Math.floor;
 const round = Math.round;
 
+function freezeVec2 (x: number, y: number): Readonly<Vec2> {
+    return Object.freeze(new Vec2(x, y));
+}
+
 /**
  * @en Representation of 2D vectors and points.
  * @zh 二维向量。
  */
 export class Vec2 extends ValueType {
-    public static ZERO = Object.freeze(new Vec2(0, 0));
-    public static ONE = Object.freeze(new Vec2(1, 1));
-    public static NEG_ONE = Object.freeze(new Vec2(-1, -1));
-    public static UNIT_X = Object.freeze(new Vec2(1, 0));
-    public static UNIT_Y = Object.freeze(new Vec2(0, 1));
+    public static ZERO = freezeVec2(0, 0);
+    public static ONE = freezeVec2(1, 1);
+    public static NEG_ONE = freezeVec2(-1, -1);
+    public static UNIT_X = freezeVec2(1, 0);
+    public static UNIT_Y = freezeVec2(0, 1);
 
     /**
      * @en Obtains a clone of the given vector object
