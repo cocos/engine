@@ -181,12 +181,12 @@ export class HtmlTextParser {
             tagName = header[0].trim();
             if (tagName.startsWith('img') && tagName[tagName.length - 1] === '/') {
                 header = imageAttrReg.exec(attribute);
-                let tagValue;
+                let tagValue: string;
                 let isValidImageTag = false;
                 while (header) {
                     // skip the invalid tags at first
                     attribute = attribute.substring(attribute.indexOf(header[0]));
-                    tagName = attribute.substr(0, header[0].length);
+                    tagName = attribute.substring(0, header[0].length);
                     const originTagNameLength = tagName.length;
                     tagName = tagName.replace(/[^a-zA-Z]/g, '').trim();
                     tagName = tagName.toLowerCase();
@@ -199,7 +199,7 @@ export class HtmlTextParser {
                         rightQuot = -1;
                     }
                     nextSpace = remainingArgument.indexOf(' ', rightQuot + 1 >= remainingArgument.length ? -1 : rightQuot + 1);
-                    tagValue = (nextSpace > -1) ? remainingArgument.substr(0, nextSpace) : remainingArgument;
+                    tagValue = (nextSpace > -1) ? remainingArgument.substring(0, nextSpace) : remainingArgument;
                     attribute = remainingArgument.substring(nextSpace).trim();
 
                     if (tagValue.endsWith('/')) {
@@ -259,16 +259,16 @@ export class HtmlTextParser {
             if (attribute) {
                 const outlineAttrReg = /(\s)*color(\s)*=|(\s)*width(\s)*=|(\s)*click(\s)*=|(\s)*param(\s)*=/;
                 header = outlineAttrReg.exec(attribute);
-                let tagValue;
+                let tagValue: string;
                 while (header) {
                     // skip the invalid tags at first
                     attribute = attribute.substring(attribute.indexOf(header[0]));
-                    tagName = attribute.substr(0, header[0].length);
+                    tagName = attribute.substring(0, header[0].length);
                     // remove space and = character
                     remainingArgument = attribute.substring(tagName.length).trim();
                     nextSpace = remainingArgument.indexOf(' ');
                     if (nextSpace > -1) {
-                        tagValue = remainingArgument.substr(0, nextSpace);
+                        tagValue = remainingArgument.substring(0, nextSpace);
                     } else {
                         tagValue = remainingArgument;
                     }

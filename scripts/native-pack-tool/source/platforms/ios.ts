@@ -169,7 +169,7 @@ export class IOSPackTool extends MacOSPackTool {
                 .filter(
                     (x) => x.startsWith('iPhone') && x.indexOf('Simulator') >= 0);
         const exact = (l: string) => {
-            const p = l.split('(')[0].substr(6);
+            const p = l.split('(')[0].substring(6);
             const m = l.match(/\((\d+\.\d+)\)/);
             if (m) {
                 return parseInt(m[1]) + m.index!;

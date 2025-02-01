@@ -334,7 +334,7 @@ export class AssetManager {
     /**
      * @engineInternal
      */
-    public get files(): Cache {
+    public get files (): Cache {
         return this._files;
     }
 
@@ -445,11 +445,11 @@ export class AssetManager {
         this.dependUtil.init();
         let importBase = options.importBase || settings.querySettings(SettingsCategory.ASSETS, 'importBase') || '';
         if (importBase && importBase.endsWith('/')) {
-            importBase = importBase.substr(0, importBase.length - 1);
+            importBase = importBase.substring(0, importBase.length - 1);
         }
         let nativeBase = options.nativeBase || settings.querySettings(SettingsCategory.ASSETS, 'nativeBase') || '';
         if (nativeBase && nativeBase.endsWith('/')) {
-            nativeBase = nativeBase.substr(0, nativeBase.length - 1);
+            nativeBase = nativeBase.substring(0, nativeBase.length - 1);
         }
         this.generalImportBase = importBase;
         this.generalNativeBase = nativeBase;
