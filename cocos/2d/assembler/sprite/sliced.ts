@@ -46,32 +46,33 @@ export const sliced: IAssembler = {
         // 0-4 for local vertex
         renderData.dataLength = 16;
         renderData.resize(16, 54);
-        this.QUAD_INDICES = new Uint16Array(54);
+        const quadIndices = this.QUAD_INDICES = new Uint16Array(54);
         this.createQuadIndices(4, 4);
-        renderData.chunk.setIndexBuffer(this.QUAD_INDICES as Uint16Array);
+        renderData.chunk.setIndexBuffer(quadIndices);
         return renderData;
     },
 
     createQuadIndices (vertexRow: number, vertexCol: number) {
         let offset = 0;
+        const quadIndices = this.QUAD_INDICES;
         for (let curRow = 0; curRow < vertexRow - 1; curRow++) {
             for (let curCol = 0; curCol < vertexCol - 1; curCol++) {
                 // vid is the index of the left bottom vertex in each rect.
                 const vid = curRow * vertexCol + curCol;
 
                 // left bottom
-                this.QUAD_INDICES[offset++] = vid;
+                quadIndices[offset++] = vid;
                 // right bottom
-                this.QUAD_INDICES[offset++] = vid + 1;
+                quadIndices[offset++] = vid + 1;
                 // left top
-                this.QUAD_INDICES[offset++] = vid + vertexCol;
+                quadIndices[offset++] = vid + vertexCol;
 
                 // right bottom
-                this.QUAD_INDICES[offset++] = vid + 1;
+                quadIndices[offset++] = vid + 1;
                 // right top
-                this.QUAD_INDICES[offset++] = vid + 1 + vertexCol;
+                quadIndices[offset++] = vid + 1 + vertexCol;
                 // left top
-                this.QUAD_INDICES[offset++] = vid + vertexCol;
+                quadIndices[offset++] = vid + vertexCol;
             }
         }
     },

@@ -284,11 +284,13 @@ export class MeshBuffer {
         // Destroy InputAssemblers
         for (let i = 0; i < this._iaPool.length; ++i) {
             const iaRef = this._iaPool[i];
-            if (iaRef.vertexBuffers[0]) {
-                iaRef.vertexBuffers[0].destroy();
+            const vertexBuffer0 = iaRef.vertexBuffers[0];
+            if (vertexBuffer0) {
+                vertexBuffer0.destroy();
             }
-            if (iaRef.indexBuffer) {
-                iaRef.indexBuffer.destroy();
+            const indexBuffer = iaRef.indexBuffer;
+            if (indexBuffer) {
+                indexBuffer.destroy();
             }
             iaRef.ia.destroy();
         }
