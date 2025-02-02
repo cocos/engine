@@ -73,7 +73,7 @@ interface IMaterialInfo {
     states?: PassOverrides | PassOverrides[];
 }
 
-type MaterialPropertyFull = MaterialProperty | TextureBase | Texture | null;
+export type MaterialPropertyFull = MaterialProperty | TextureBase | Texture | null;
 
 declare const jsb: any;
 const matProto: any = jsb.Material.prototype;
