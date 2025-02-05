@@ -33,7 +33,7 @@ import {
     fillRequiredPipelineSettings, makePipelineSettings, PipelineSettings,
 } from './builtin-pipeline-types';
 
-const { ccclass, disallowMultiple, executeInEditMode, menu, property, requireComponent } = _decorator;
+const { ccclass, disallowMultiple, executeInEditMode, menu, property, requireComponent, type } = _decorator;
 
 @ccclass('BuiltinPipelineSettings')
 @menu('Rendering/BuiltinPipelineSettings')
@@ -170,6 +170,90 @@ export class BuiltinPipelineSettings extends Component {
         return this._settings.shadingScale;
     }
 
+    // Bloom
+    @property({
+        group: { id: 'Bloom', name: 'Bloom (PostProcessing)', style: 'section' },
+        type: CCBoolean,
+    })
+    set bloomEnable(value: boolean) {
+        this._settings.bloom.enabled = value;
+        if (EDITOR) {
+            this._tryEnableEditorPreview();
+        }
+    }
+    get bloomEnable(): boolean {
+        return this._settings.bloom.enabled;
+    }
+
+    @property({
+        group: { id: 'Bloom', name: 'Bloom (PostProcessing)', style: 'section' },
+        type: Material,
+    })
+    set bloomMaterial(value: Material) {
+        if (this._settings.bloom.material === value) {
+            return;
+        }
+        this._settings.bloom.material = value;
+        if (EDITOR) {
+            this._tryEnableEditorPreview();
+        }
+    }
+    get bloomMaterial(): Material {
+        return this._settings.bloom.material!;
+    }
+
+    @property({
+        tooltip: 'i18n:bloom.enableAlphaMask',
+        group: { id: 'Bloom', name: 'Bloom (PostProcessing)', style: 'section' },
+        type: CCBoolean,
+    })
+    set bloomEnableAlphaMask(value: boolean) {
+        this._settings.bloom.enableAlphaMask = value;
+        if (EDITOR) {
+            this._tryEnableEditorPreview();
+        }
+    }
+    get bloomEnableAlphaMask(): boolean {
+        return this._settings.bloom.enableAlphaMask;
+    }
+
+    @property({
+        tooltip: 'i18n:bloom.iterations',
+        group: { id: 'Bloom', name: 'Bloom (PostProcessing)', style: 'section' },
+        type: CCInteger,
+        range: [1, 6, 1],
+        slide: true,
+    })
+    set bloomIterations(value: number) {
+        this._settings.bloom.iterations = value;
+        if (EDITOR) {
+            this._tryEnableEditorPreview();
+        }
+    }
+    get bloomIterations(): number {
+        return this._settings.bloom.iterations;
+    }
+
+    @property({
+        tooltip: 'i18n:bloom.threshold',
+        group: { id: 'Bloom', name: 'Bloom (PostProcessing)', style: 'section' },
+        type: CCFloat,
+        min: 0,
+    })
+    set bloomThreshold(value: number) {
+        this._settings.bloom.threshold = value;
+    }
+    get bloomThreshold(): number {
+        return this._settings.bloom.threshold;
+    }
+
+    set bloomIntensity(value: number) {
+        this._settings.bloom.intensity = value;
+    }
+    get bloomIntensity(): number {
+        return this._settings.bloom.intensity;
+    }
+
     // Color Grading (LDR)
     @property({
         group: { id: 'Color Grading', name: 'ColorGrading (LDR) (PostProcessing)', style: 'section' },
@@ -229,6 +313,83 @@ export class BuiltinPipelineSettings extends Component {
     }
     get colorGradingMap(): Texture2D {
         return this._settings.colorGrading.colorGradingMap!;
+    }
+
+    // FXAA
+    @property({
+        group: { id: 'FXAA', name: 'Fast Approximate Anti-Aliasing (PostProcessing)', style: 'section' },
+        type: CCBoolean,
+    })
+    set fxaaEnable(value: boolean) {
+        this._settings.fxaa.enabled = value;
+        if (EDITOR) {
+            this._tryEnableEditorPreview();
+        }
+    }
+    get fxaaEnable(): boolean {
+        return this._settings.fxaa.enabled;
+    }
+
+    @property({
+        group: { id: 'FXAA', name: 'Fast Approximate Anti-Aliasing (PostProcessing)', style: 'section' },
+        type: Material,
+    })
+    set fxaaMaterial(value: Material) {
+        if (this._settings.fxaa.material === value) {
+            return;
+        }
+        this._settings.fxaa.material = value;
+        if (EDITOR) {
+            this._tryEnableEditorPreview();
+        }
+    }
+    get fxaaMaterial(): Material {
+        return this._settings.fxaa.material!;
+    }
+
+    // FSR
+    @property({
+        group: { id: 'FSR', name: 'FidelityFX Super Resolution', style: 'section' },
+        type: CCBoolean,
+    })
+    set fsrEnable(value: boolean) {
+        this._settings.fsr.enabled = value;
+        if (EDITOR) {
+            this._tryEnableEditorPreview();
+        }
+    }
+    get fsrEnable(): boolean {
+        return this._settings.fsr.enabled;
+    }
+
+    @property({
+        group: { id: 'FSR', name: 'FidelityFX Super Resolution', style: 'section' },
+        type: Material,
+    })
+    set fsrMaterial(value: Material) {
+        if (this._settings.fsr.material === value) {
+            return;
+        }
+        this._settings.fsr.material = value;
+        if (EDITOR) {
+            this._tryEnableEditorPreview();
+        }
+    }
+    get fsrMaterial(): Material {
+        return this._settings.fsr.material!;
+    }
+
+    @property({
+        group: { id: 'FSR', name: 'FidelityFX Super Resolution', style: 'section' },
+        type: CCFloat,
+        range: [0, 1, 0.01],
+        slide: true,
+    })
+    set fsrSharpness(value: number) {
+        this._settings.fsr.sharpness = value;
+    }
+    get fsrSharpness(): number {
+        return this._settings.fsr.sharpness;
     }
 
     @property({
