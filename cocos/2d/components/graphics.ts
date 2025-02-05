@@ -589,7 +589,7 @@ export class Graphics extends UIRenderer {
 
         this._isDrawing = true;
         this._isNeedUploadData = true;
-        (this._assembler as IAssembler).stroke!(this);
+        (this._assembler as IAssembler).stroke(this);
     }
 
     /**
@@ -606,7 +606,7 @@ export class Graphics extends UIRenderer {
 
         this._isDrawing = true;
         this._isNeedUploadData = true;
-        (this._assembler as IAssembler).fill!(this);
+        (this._assembler as IAssembler).fill(this);
     }
 
     private _updateMtlForGraphics (): void {
