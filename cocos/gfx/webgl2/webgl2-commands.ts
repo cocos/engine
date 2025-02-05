@@ -2884,7 +2884,7 @@ export function WebGL2CmdFuncCopyBuffersToTexture (
             offset.y =  regionTexOffset.y === 0 ? 0 : alignTo(regionTexOffset.y, blockSizeHeight);
             extent.width = regionTexExtentWidth < blockSizeWidth ? regionTexExtentWidth : alignTo(regionTexExtentWidth, blockSizeWidth);
             extent.height = regionTexExtentHeight < blockSizeHeight ? regionTexExtentWidth
-                : alignTo(regionTexExtent.height, blockSizeHeight);
+                : alignTo(regionTexExtentHeight, blockSizeHeight);
             extent.depth = 1;
             stride.width = regionBuffStride > 0 ?  regionBuffStride : extent.width;
             stride.height = region.buffTexHeight > 0 ? region.buffTexHeight : extent.height;

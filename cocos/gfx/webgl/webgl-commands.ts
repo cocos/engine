@@ -2772,8 +2772,8 @@ export function WebGLCmdFuncCopyBuffersToTexture (
 
             offset.x =  regionTexOffset.x === 0 ? 0 : alignTo(regionTexOffset.x, blockSizeWidth);
             offset.y =  regionTexOffset.y === 0 ? 0 : alignTo(regionTexOffset.y, blockSizeHeight);
-            extent.width = regionTexExtentWidth < blockSizeWidth ? regionTexExtent.width : alignTo(regionTexExtentWidth, blockSizeWidth);
-            extent.height = regionTexExtentHeight < blockSizeHeight ? regionTexExtent.width
+            extent.width = regionTexExtentWidth < blockSizeWidth ? regionTexExtentWidth : alignTo(regionTexExtentWidth, blockSizeWidth);
+            extent.height = regionTexExtentHeight < blockSizeHeight ? regionTexExtentWidth
                 : alignTo(regionTexExtentHeight, blockSizeHeight);
             stride.width = region.buffStride > 0 ?  region.buffStride : extent.width;
             stride.height = region.buffTexHeight > 0 ? region.buffTexHeight : extent.height;
