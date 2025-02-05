@@ -250,6 +250,9 @@ export class UIMeshRenderer extends Component {
     }
 
     /**
+     * An internal method that marks the render data of the current component as modified so that the render data is recalculated.
+     * Adding this method is to minify the function name by `@mangle` since this method is frequently used in the engine.
+     * To keep the compatibility, the original method is still kept.
      * @engineInternal
      * @mangle
      */
