@@ -358,6 +358,8 @@ ccstd::unordered_map<uint32_t, ccstd::string> debugInfos = {
 { 7239, "cc.TMXLayer.setTileGID(): invalid gid: %s" },
 { 7240, "cc.TMXLayer.getTileFlagsAt(): TMXLayer: the tiles map has been released" },
 { 7241, "cc.TiledMap.initWithXML(): Map not found. Please check the filename." },
+{ 7242, "TiledLayer.addUserNode node has been added." },
+{ 7243, "TiledLayer.removeUserNode node is not exist" },
 { 7401, "Failed to set _defaultArmatureIndex for '%s' because the index is out of range." },
 { 7402, "Failed to set _animationIndex for '%s' because the index is out of range." },
 { 7501, "Failed to set _defaultSkinIndex for '%s' because the index is out of range." },
