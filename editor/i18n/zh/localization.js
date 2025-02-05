@@ -969,6 +969,10 @@ module.exports = link(mixin({
             label: "基于 Box2D-wasm 的 2D 物理系统",
             description: "基于 Box2D-wasm 的 2D 物理系统支持。",
         },
+        physics_2d_box2d_jsb: {
+            label: "基于 Box2D JSB 的 2D 物理系统",
+            description: "基于 Box2D JSB 的 2D 物理系统支持。",
+        },
         intersection_2d: {
             label: "2D 相交检测算法",
             description: "包含用于二维相交检测的算法。",

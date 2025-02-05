@@ -54,6 +54,11 @@
 #include "cocos/editor-support/spine-creator-support/Vector2.h"
 #endif
 
+#if CC_USE_BOX2D_JSB
+#include "bindings/auto/jsb_box2d_auto.h"
+#include "box2d/box2d.h"
+#endif
+
 ///////////////////////// utils /////////////////////////
 
 #define CHECK_ASSIGN_PRVOBJ_RET(jsObj, nativeObj)                            \
@@ -1780,3 +1785,65 @@ bool sevalue_to_native(const se::Value &from, cc::physics::RaycastOptions *to, s
 }
 
 #endif // CC_USE_PHYSICS_PHYSX
+
+#if CC_USE_BOX2D_JSB
+bool sevalue_to_native(const se::Value &from, b2Vec2 *to, se::Object * /*unused*/) {
+    SE_PRECONDITION2(from.isObject(), false, "Convert parameter to Vec2 failed!");
+
+    se::Object *obj = from.toObject();
+    CHECK_ASSIGN_PRVOBJ_RET(obj, to)
+    se::Value tmp;
+    set_member_field(obj, to, "x", &b2Vec2::x, tmp);
+    set_member_field(obj, to, "y", &b2Vec2::y, tmp);
+    return true;
+}
+
+bool sevalue_to_native(const se::Value &from, b2Vec3 *to, se::Object * /*unused*/) {
+    SE_PRECONDITION2(from.isObject(), false, "Convert parameter to Vec3 failed!");
+
+    se::Object *obj = from.toObject();
+    CHECK_ASSIGN_PRVOBJ_RET(obj, to)
+    se::Value tmp;
+    set_member_field(obj, to, "x", &b2Vec3::x, tmp);
+    set_member_field(obj, to, "y", &b2Vec3::y, tmp);
+    set_member_field(obj, to, "z", &b2Vec3::z, tmp);
+    return true;
+}
+
+bool sevalue_to_native(const se::Value &from, b2Color *to, se::Object * /*unused*/) {
+    SE_PRECONDITION2(from.isObject(), false, "Convert parameter to Color failed!");
+    se::Object *obj = from.toObject();
+    CHECK_ASSIGN_PRVOBJ_RET(obj, to)
+    se::Value t;
+    set_member_field(obj, to, "r", &b2Color::r, t);
+    set_member_field(obj, to, "g", &b2Color::g, t);
+    set_member_field(obj, to, "b", &b2Color::b, t);
+    set_member_field(obj, to, "a", &b2Color::a, t);
+    return true;
+}
+
+bool nativevalue_to_se(const b2Vec2 &from, se::Value &to, se::Object * /*ctx*/) { // NOLINT(readability-identifier-naming)
+    auto *obj = se::Object::createObjectWithClass(__jsb_b2Vec2_class);
+    to.setObject(obj, true);
+    obj->setPrivateData(ccnew b2Vec2(from));
+    obj->getPrivateObject()->tryAllowDestroyInGC();
+    return true;
+}
+//
+bool nativevalue_to_se(const b2Vec3 &from, se::Value &to, se::Object * /*ctx*/) { // NOLINT(readability-identifier-naming)
+    auto *obj = se::Object::createObjectWithClass(__jsb_b2Vec3_class);
+    to.setObject(obj, true);
+    obj->setPrivateData(ccnew b2Vec3(from));
+    obj->getPrivateObject()->tryAllowDestroyInGC();
+    return true;
+}
+bool nativevalue_to_se(const b2Color &from, se::Value &to, se::Object * /*ctx*/) { // NOLINT(readability-identifier-naming)
+    se::HandleObject obj(se::Object::createPlainObject());
+    obj->setProperty("r", se::Value(from.r));
+    obj->setProperty("g", se::Value(from.g));
+    obj->setProperty("b", se::Value(from.b));
+    obj->setProperty("a", se::Value(from.a));
+    to.setObject(obj);
+    return true;
+}
+#endif // CC_USE_BOX2D_JSB
