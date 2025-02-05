@@ -168,6 +168,7 @@ ccstd::unordered_map<uint32_t, ccstd::string> debugInfos = {
 { 3660, "You are explicitly specifying `undefined` type to cc property '%s' of cc class '%s'.\nIs this intended? If not, this may indicate a circular reference.\nFor example:\n\n \n// foo.ts\nimport { _decorator } from 'cc';\nimport { Bar } from './bar';  // Given that './bar' also reference 'foo.ts'.\n                              // When importing './bar', execution of './bar' is hung on to wait execution of 'foo.ts',\n                              // the `Bar` imported here is `undefined` until './bar' finish its execution.\n                              // It leads to that\n@_decorator.ccclass           //  ↓\nexport class Foo {            //  ↓\n    @_decorator.type(Bar)     //  → is equivalent to `@_decorator.type(undefined)`\n    public bar: Bar;          // To eliminate this error, either:\n                              // - Refactor your module structure(recommended), or\n                              // - specify the type as cc class name: `@_decorator.type('Bar'/* or any name you specified for `Bar` */)`\n}" },
 { 3700, "internal error: _prefab is undefined" },
 { 3701, "Failed to load prefab asset for node '%s'" },
+{ 3702, "The json file of asset %s is empty or missing." },
 { 3800, "The target can not be made persist because it's not a cc.Node or it doesn't have _id property." },
 { 3801, "The node can not be made persist because it's not under root node." },
 { 3802, "The node can not be made persist because it's not in current scene." },
