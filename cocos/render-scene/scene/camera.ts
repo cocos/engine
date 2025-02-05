@@ -387,9 +387,9 @@ export interface ICameraInfo {
     usage?: CameraUsage;
 }
 
-const v_a = new Vec3();
-const v_b = new Vec3();
-const _tempMat1 = new Mat4();
+const v_a = v3();
+const v_b = v3();
+const _tempMat1 = mat4();
 
 export enum SkyBoxFlagValue {
     VALUE = ClearFlagBit.STENCIL << 1,
@@ -1021,14 +1021,18 @@ export class Camera {
             const wndXREye = xr.webXRWindowMap.get(this._window);
             this.setViewportInOrientedSpace(new Rect(x * wndXREye, 0, x, 1));
         }
+
+        const forward = this._forward;
+        const matView = this._matView;
+        const matProj = this._matProj;
         // view matrix
         if (this._node.hasChangedFlags || forceUpdate) {
-            Mat4.invert(this._matView, this._node.worldMatrix);
-            this._forward.x = -this._matView.m02;
-            this._forward.y = -this._matView.m06;
-            this._forward.z = -this._matView.m10;
+            Mat4.invert(matView, this._node.worldMatrix);
+            forward.x = -matView.m02;
+            forward.y = -matView.m06;
+            forward.z = -matView.m10;
             // Remove scale
-            Mat4.multiply(this._matView, new Mat4().scale(this._node.worldScale), this._matView);
+            Mat4.multiply(matView, new Mat4().scale(this._node.worldScale), matView);
             this._node.getWorldPosition(this._position);
             viewProjDirty = true;
         }
@@ -1043,10 +1047,10 @@ export class Camera {
             if (this._proj === CameraProjection.PERSPECTIVE) {
                 if (xr && xr.isWebXR && xr.webXRWindowMap && xr.webXRMatProjs) {
                     const wndXREye = xr.webXRWindowMap.get(this._window);
-                    this._matProj.set(xr.webXRMatProjs[wndXREye] as Mat4);
+                    matProj.set(xr.webXRMatProjs[wndXREye] as Mat4);
                 } else {
                     Mat4.perspective(
-                        this._matProj,
+                        matProj,
                         this._fov,
                         this._aspect,
                         this._nearClip,
@@ -1061,7 +1065,7 @@ export class Camera {
                 const x = this._orthoHeight * this._aspect;
                 const y = this._orthoHeight;
                 Mat4.ortho(
-                    this._matProj,
+                    matProj,
                     -x,
                     x,
                     -y,
@@ -1073,14 +1077,14 @@ export class Camera {
                     orientation,
                 );
             }
-            Mat4.invert(this._matProjInv, this._matProj);
+            Mat4.invert(this._matProjInv, matProj);
             viewProjDirty = true;
             this._isProjDirty = false;
         }
 
         // view-projection
         if (viewProjDirty) {
-            Mat4.multiply(this._matViewProj, this._matProj, this._matView);
+            Mat4.multiply(this._matViewProj, matProj, matView);
             Mat4.invert(this._matViewProjInv, this._matViewProj);
             this._frustum.update(this._matViewProj, this._matViewProjInv);
         }

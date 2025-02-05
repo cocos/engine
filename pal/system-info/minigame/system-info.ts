@@ -125,7 +125,7 @@ class SystemInfo extends EventTarget {
 
         // init languageCode and language
         this.nativeLanguage = minigameSysInfo.language;
-        this.language = minigameSysInfo.language.substr(0, 2) as Language;
+        this.language = minigameSysInfo.language.substring(0, 2) as Language;
 
         // init os, osVersion and osMainVersion
         const minigamePlatform = minigameSysInfo.platform.toLocaleLowerCase();

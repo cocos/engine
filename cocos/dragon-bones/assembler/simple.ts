@@ -181,7 +181,7 @@ class Simple implements IAssembler {
     updateColor (comp: ArmatureDisplay): void {
         if (!comp) return;
         _comp = comp;
-        _comp.markForUpdateRenderData();
+        _comp._markForUpdateRenderData();
     }
 }
 

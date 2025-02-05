@@ -467,7 +467,7 @@ class RadialFilled implements IAssembler {
     updateUVs (sprite: Sprite): void {
         const renderData = sprite.renderData!;
         renderData.vertDirty = true;
-        sprite.markForUpdateRenderData();
+        sprite._markForUpdateRenderData();
     }
 
     // fill color here

@@ -327,14 +327,14 @@ export class UIRenderer extends Renderer {
         this.updateMaterial();
         this._colorDirty();
         uiRendererManager.addRenderer(this);
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     // For Redo, Undo
     public onRestore (): void {
         this.updateMaterial();
         // restore render data
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     public onDisable (): void {
@@ -369,6 +369,17 @@ export class UIRenderer extends Renderer {
      * @param enable Marked necessary to update or not
      */
     public markForUpdateRenderData (enable = true): void {
+        this._markForUpdateRenderData(enable);
+    }
+
+    /**
+     * An internal method that marks the render data of the current component as modified so that the render data is recalculated.
+     * Adding this method is to minify the function name by `@mangle` since this method is frequently used in the engine.
+     * To keep the compatibility, the original method is still kept.
+     * @engineInternal
+     * @mangle
+     */
+    public _markForUpdateRenderData (enable = true): void {
         if (enable) {
             const renderData = this._renderData;
             if (renderData) {
@@ -377,7 +388,6 @@ export class UIRenderer extends Renderer {
             uiRendererManager.markDirtyRenderer(this);
         }
     }
-
     /**
      * @en Request new render data object.
      * @zh 请求新的渲染数据对象。
@@ -573,14 +583,14 @@ export class UIRenderer extends Renderer {
     // pos, rot, scale changed
     protected _nodeStateChange (transformType: TransformBit): void {
         if (this._renderData) {
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
         }
 
         for (let i = 0; i < this.node.children.length; ++i) {
             const child = this.node.children[i];
             const renderComp = child.getComponent(UIRenderer);
             if (renderComp) {
-                renderComp.markForUpdateRenderData();
+                renderComp._markForUpdateRenderData();
             }
         }
     }
@@ -592,7 +602,7 @@ export class UIRenderer extends Renderer {
 
     protected _onMaterialModified (idx: number, material: Material | null): void {
         if (this._renderData) {
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
             this._renderData.passDirty = true;
         }
         super._onMaterialModified(idx, material);

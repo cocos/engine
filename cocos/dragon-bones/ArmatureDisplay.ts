@@ -305,7 +305,7 @@ export class ArmatureDisplay extends UIRenderer {
         } else {
             errorID(7401, this.name);
         }
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -706,7 +706,7 @@ export class ArmatureDisplay extends UIRenderer {
     set customMaterial (val) {
         this._customMaterial = val;
         this.updateMaterial();
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -826,7 +826,7 @@ export class ArmatureDisplay extends UIRenderer {
                 this._factory!._dragonBones.clock.add(this._armature);
             }
             this._updateSocketBindings();
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
         }
     }
 
@@ -888,7 +888,7 @@ export class ArmatureDisplay extends UIRenderer {
      * @param dt @en Delta time, unit is second. @zh 时间差，单位为秒。
      */
     updateAnimation (dt): void {
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
         if (!this.isAnimationCached()) return;
         if (!this._frameCache) return;
 
@@ -1010,7 +1010,7 @@ export class ArmatureDisplay extends UIRenderer {
         } else if (this._debugDraw) {
             this._debugDraw.node.parent = null;
         }
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
     /**
      * @en Update related data due to batching settings.
@@ -1018,7 +1018,7 @@ export class ArmatureDisplay extends UIRenderer {
      */
     protected _updateBatch (): void {
         this._cleanMaterialCache();
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
     /**
      * @en Building data of armature.
@@ -1148,7 +1148,7 @@ export class ArmatureDisplay extends UIRenderer {
             this._updateCacheModeEnum();
             // Editor.Utils.refreshSelectedInspector('node', this.node.uuid);
         }
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     private _cacheModeEnum: any;
@@ -1283,7 +1283,7 @@ export class ArmatureDisplay extends UIRenderer {
         } else if (this._armature) {
             return this._armature.animation.play(animName, this.playTimes);
         }
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
         return null;
     }
 
@@ -1475,7 +1475,7 @@ export class ArmatureDisplay extends UIRenderer {
                 this.maxVertexCount = this._renderData.vertexCount;
                 this.maxIndexCount = this._renderData.indexCount;
             }
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
             this._updateColor();
         }
     }
@@ -1526,9 +1526,9 @@ export class ArmatureDisplay extends UIRenderer {
      * @zh 标记组件渲染数据更新。
      */
     public markForUpdateRenderData (enable = true): void {
-        super.markForUpdateRenderData(enable);
+        super._markForUpdateRenderData(enable);
         if (this._debugDraw) {
-            this._debugDraw.markForUpdateRenderData(enable);
+            this._debugDraw._markForUpdateRenderData(enable);
         }
     }
 

@@ -142,7 +142,7 @@ export class GraphicsAssembler implements IAssembler {
     }
 
     end (graphics: Graphics): void {
-        graphics.markForUpdateRenderData();
+        graphics._markForUpdateRenderData();
     }
 
     private _expandStroke (graphics: Graphics): void {

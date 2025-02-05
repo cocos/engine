@@ -419,7 +419,7 @@ function traverseGrids (
                 const nodes = comp.requestSubNodesData();
                 const celData = comp.getNodesByRowCol(row, col);
                 if (celData && celData.count > 0) {
-                    (nodes as any).subNodes = celData.list as any;
+                    nodes.subNodes = celData.list;
                 }
             }
 

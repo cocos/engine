@@ -1540,7 +1540,7 @@ export function WebGL2CmdFuncCreateShader (device: WebGL2Device, gpuShader: IWeb
             let varName: string;
             const nameOffset = attribInfo.name.indexOf('[');
             if (nameOffset !== -1) {
-                varName = attribInfo.name.substr(0, nameOffset);
+                varName = attribInfo.name.substring(0, nameOffset);
             } else {
                 varName = attribInfo.name;
             }
@@ -1576,7 +1576,7 @@ export function WebGL2CmdFuncCreateShader (device: WebGL2Device, gpuShader: IWeb
             blockName = gl.getActiveUniformBlockName(gpuShader.glProgram, b)!;
             const nameOffset = blockName.indexOf('[');
             if (nameOffset !== -1) {
-                blockName = blockName.substr(0, nameOffset);
+                blockName = blockName.substring(0, nameOffset);
             }
 
             // blockIdx = gl.getUniformBlockIndex(gpuShader.glProgram, blockName);

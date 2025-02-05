@@ -298,7 +298,7 @@ export default class Task {
             }
             break;
         default: {
-            const str = `on${event[0].toUpperCase()}${event.substr(1)}`;
+            const str = `on${event[0].toUpperCase()}${event.substring(1)}`;
             if (typeof this[str] === 'function') {
                 this[str](param1, param2, param3, param4);
             }

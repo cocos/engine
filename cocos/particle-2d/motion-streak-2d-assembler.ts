@@ -168,7 +168,7 @@ class MotionStreakAssembler implements IAssembler {
             this.updateWorldVertexAllData(comp);
 
             renderData.updateRenderData(comp, comp.texture!);
-            comp.markForUpdateRenderData();
+            comp._markForUpdateRenderData();
         }
     }
 

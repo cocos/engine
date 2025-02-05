@@ -174,7 +174,7 @@ export class CCArmatureDisplay extends DisplayData implements IEventDispatcher {
      */
     dbUpdate (): void {
         if (this._ccComponent) {
-            this._ccComponent.markForUpdateRenderData();
+            this._ccComponent._markForUpdateRenderData();
         }
     }
     /**

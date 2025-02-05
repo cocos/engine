@@ -1181,7 +1181,7 @@ export function WebGLCmdFuncCreateShader (device: WebGLDevice, gpuShader: IWebGL
             let varName: string;
             const nameOffset = attribName.indexOf('[');
             if (nameOffset !== -1) {
-                varName = attribName.substr(0, nameOffset);
+                varName = attribName.substring(0, nameOffset);
             } else {
                 varName = attribName;
             }
@@ -1287,7 +1287,7 @@ export function WebGLCmdFuncCreateShader (device: WebGLDevice, gpuShader: IWebGL
                     let varName: string;
                     const nameOffset = uniformInfo.name.indexOf('[');
                     if (nameOffset !== -1) {
-                        varName = uniformInfo.name.substr(0, nameOffset);
+                        varName = uniformInfo.name.substring(0, nameOffset);
                     } else {
                         varName = uniformInfo.name;
                     }
