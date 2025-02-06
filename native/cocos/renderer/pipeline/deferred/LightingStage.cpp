@@ -122,8 +122,8 @@ void LightingStage::gatherLights(scene::Camera *camera) {
     geometry::Sphere sphere;
     auto exposure = camera->getExposure();
     uint32_t idx = 0;
-    int elementLen = sizeof(cc::Vec4) / sizeof(float);
-    uint32_t fieldLen = elementLen * _maxDeferredLights;
+    const int elementLen = sizeof(cc::Vec4) / sizeof(float);
+    const uint32_t fieldLen = elementLen * _maxDeferredLights;
     uint32_t offset = 0;
     cc::Vec4 tmpArray;
 
@@ -360,11 +360,11 @@ void LightingStage::initLightingBuffer() {
 
     // color/pos/dir/angle 都是vec4存储, 最后一个vec4只要x存储光源个数
     auto stride = utils::alignTo<uint32_t>(sizeof(Vec4) * 4, device->getCapabilities().uboOffsetAlignment);
-    uint32_t totalSize = stride * _maxDeferredLights;
+    const uint32_t totalSize = stride * _maxDeferredLights;
 
     // create lighting buffer and view
     if (_deferredLitsBufs == nullptr) {
-        gfx::BufferInfo bfInfo = {
+        const gfx::BufferInfo bfInfo = {
             gfx::BufferUsageBit::UNIFORM | gfx::BufferUsageBit::TRANSFER_DST,
             gfx::MemoryUsageBit::HOST | gfx::MemoryUsageBit::DEVICE,
             totalSize,
@@ -374,7 +374,7 @@ void LightingStage::initLightingBuffer() {
     }
 
     if (_deferredLitsBufView == nullptr) {
-        gfx::BufferViewInfo bvInfo = {_deferredLitsBufs, 0, totalSize};
+        const gfx::BufferViewInfo bvInfo = {_deferredLitsBufs, 0, totalSize};
         _deferredLitsBufView = device->createBuffer(bvInfo);
         _descriptorSet->bindBuffer(static_cast<uint32_t>(ModelLocalBindings::UBO_FORWARD_LIGHTS), _deferredLitsBufView);
     }
@@ -388,8 +388,8 @@ void LightingStage::activate(RenderPipeline *pipeline, RenderFlow *flow) {
     auto *const device = pipeline->getDevice();
 
     for (const auto &descriptor : _renderQueueDescriptors) {
-        uint32_t phase = convertPhase(descriptor->stages);
-        RenderQueueSortFunc sortFunc = convertQueueSortFunc(descriptor->sortMode);
+        const uint32_t phase = convertPhase(descriptor->stages);
+        const RenderQueueSortFunc sortFunc = convertQueueSortFunc(descriptor->sortMode);
         RenderQueueCreateInfo info = {descriptor->isTransparent, phase, sortFunc};
         _renderQueues.emplace_back(ccnew RenderQueue(_pipeline, std::move(info), true));
     }
@@ -397,10 +397,10 @@ void LightingStage::activate(RenderPipeline *pipeline, RenderFlow *flow) {
     // not use cluster shading, go normal deferred render path
     if (!pipeline->isClusterEnabled()) {
         // create descriptor set/layout
-        gfx::DescriptorSetLayoutInfo layoutInfo = {localDescriptorSetLayout.bindings};
+        const gfx::DescriptorSetLayoutInfo layoutInfo = {localDescriptorSetLayout.bindings};
         _descLayout = device->createDescriptorSetLayout(layoutInfo);
 
-        gfx::DescriptorSetInfo setInfo = {_descLayout};
+        const gfx::DescriptorSetInfo setInfo = {_descLayout};
         _descriptorSet = device->createDescriptorSet(setInfo);
 
         // create lighting buffer and view
@@ -520,7 +520,7 @@ void LightingStage::fgLightingPass(scene::Camera *camera) {
 
         // no need to bind localSet in cluster
         if (!_pipeline->isClusterEnabled()) {
-            ccstd::vector<uint32_t> dynamicOffsets = {0};
+            const ccstd::vector<uint32_t> dynamicOffsets = {0};
             cmdBuff->bindDescriptorSet(localSet, _descriptorSet, dynamicOffsets);
         }
 
@@ -584,7 +584,7 @@ void LightingStage::fgTransparent(scene::Camera *camera) {
         colorAttachmentInfo.endAccesses = gfx::AccessFlagBit::FRAGMENT_SHADER_READ_TEXTURE;
 
         data.outputTex = framegraph::TextureHandle(builder.readFromBlackboard(DeferredPipeline::fgStrHandleOutColorTexture));
-        bool lightingPassValid = data.outputTex.isValid();
+        const bool lightingPassValid = data.outputTex.isValid();
         if (!lightingPassValid) {
             framegraph::Texture::Descriptor colorTexInfo;
             colorTexInfo.format = gfx::Format::RGBA16F;
@@ -609,7 +609,7 @@ void LightingStage::fgTransparent(scene::Camera *camera) {
 
         data.depth = framegraph::TextureHandle(builder.readFromBlackboard(DeferredPipeline::fgStrHandleOutDepthTexture));
         if (!data.depth.isValid()) { // when there is no opaque object present
-            gfx::TextureInfo depthTexInfo = {
+            const gfx::TextureInfo depthTexInfo = {
                 gfx::TextureType::TEX2D,
                 gfx::TextureUsageBit::DEPTH_STENCIL_ATTACHMENT,
                 gfx::Format::DEPTH_STENCIL,
@@ -632,7 +632,7 @@ void LightingStage::fgTransparent(scene::Camera *camera) {
 
         // no need to bind localSet in cluster
         if (!_pipeline->isClusterEnabled()) {
-            ccstd::vector<uint32_t> dynamicOffsets = {0};
+            const ccstd::vector<uint32_t> dynamicOffsets = {0};
             cmdBuff->bindDescriptorSet(localSet, _descriptorSet, dynamicOffsets);
         }
 

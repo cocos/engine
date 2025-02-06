@@ -66,10 +66,10 @@ struct ConstantBuffer {
 void ReflectionComp::applyTexSize(uint32_t width, uint32_t height, const Mat4 &matView,
                                   const Mat4 &matViewProj, const Mat4 &matViewProjInv,
                                   const Mat4 &matProjInv, const Vec4 &viewPort) {
-    uint32_t globalWidth = width;
-    uint32_t globalHeight = height;
-    uint32_t groupWidth = this->getGroupSizeX();
-    uint32_t groupHeight = this->getGroupSizeY();
+    const uint32_t globalWidth = width;
+    const uint32_t globalHeight = height;
+    const uint32_t groupWidth = this->getGroupSizeX();
+    const uint32_t groupHeight = this->getGroupSizeY();
 
     _dispatchInfo = {(globalWidth - 1) / groupWidth + 1, (globalHeight - 1) / groupHeight + 1, 1};
     _denoiseDispatchInfo = {((globalWidth - 1) / 2) / groupWidth + 1, ((globalHeight - 1) / 2) / groupHeight + 1, 1};
@@ -80,7 +80,7 @@ void ReflectionComp::applyTexSize(uint32_t width, uint32_t height, const Mat4 &m
     constants.matViewProj = matViewProj;
     constants.matViewProjInv = matViewProjInv;
     constants.viewPort = viewPort;
-    constants.texSize = {float(width), float(height)};
+    constants.texSize = {static_cast<float>(width), static_cast<float>(height)};
     constants.viewPort = viewPort;
 
     if (_compConstantsBuffer) {
@@ -100,29 +100,29 @@ void ReflectionComp::init(gfx::Device *dev, uint32_t groupSizeX, uint32_t groupS
     samplerInfo.magFilter = gfx::Filter::POINT;
     _sampler = _device->getSampler(samplerInfo);
 
-    uint32_t maxInvocations = _device->getCapabilities().maxComputeWorkGroupInvocations;
+    const uint32_t maxInvocations = _device->getCapabilities().maxComputeWorkGroupInvocations;
     CC_ASSERT(_groupSizeX * _groupSizeY <= maxInvocations); // maxInvocations is too small
     CC_LOG_INFO(" work group size: %dx%d", _groupSizeX, _groupSizeY);
 
-    gfx::DescriptorSetLayoutInfo layoutInfo = {pipeline::localDescriptorSetLayout.bindings};
+    const gfx::DescriptorSetLayoutInfo layoutInfo = {pipeline::localDescriptorSetLayout.bindings};
     _localDescriptorSetLayout = _device->createDescriptorSetLayout(layoutInfo);
 
-    gfx::GeneralBarrierInfo infoPre = {
+    const gfx::GeneralBarrierInfo infoPre = {
         gfx::AccessFlagBit::COLOR_ATTACHMENT_WRITE,
         gfx::AccessFlagBit::COMPUTE_SHADER_READ_TEXTURE,
     };
 
-    gfx::TextureBarrierInfo infoBeforeDenoise = {
+    const gfx::TextureBarrierInfo infoBeforeDenoise = {
         gfx::AccessFlagBit::COMPUTE_SHADER_WRITE,
         gfx::AccessFlagBit::COMPUTE_SHADER_READ_TEXTURE,
     };
 
-    gfx::TextureBarrierInfo infoBeforeDenoise2 = {
+    const gfx::TextureBarrierInfo infoBeforeDenoise2 = {
         gfx::AccessFlagBit::NONE,
         gfx::AccessFlagBit::COMPUTE_SHADER_WRITE,
     };
 
-    gfx::TextureBarrierInfo infoAfterDenoise = {
+    const gfx::TextureBarrierInfo infoAfterDenoise = {
         gfx::AccessFlagBit::COMPUTE_SHADER_WRITE,
         gfx::AccessFlagBit::FRAGMENT_SHADER_READ_TEXTURE,
     };
@@ -332,6 +332,7 @@ void ReflectionComp::initReflectionRes() {
 void ReflectionComp::getDenoiseShader(ShaderSources<ComputeShaderSource> &sources, bool useEnvmap) const {
     std::ignore = sources;
     std::ignore = useEnvmap;
+    std::ignore = _device;
 }
 
 void ReflectionComp::initDenoiseRes() {

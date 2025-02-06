@@ -32,12 +32,12 @@ namespace pipeline {
 
 namespace {
 
-constexpr uint32_t globalUBOCount = static_cast<uint32_t>(PipelineGlobalBindings::SAMPLER_SHADOWMAP);
-constexpr uint32_t globalSamplerCount = static_cast<uint32_t>(PipelineGlobalBindings::COUNT) - globalUBOCount;
+constexpr uint32_t GLOBAL_UBO_COUNT = static_cast<uint32_t>(PipelineGlobalBindings::SAMPLER_SHADOWMAP);
+constexpr uint32_t GLOBAL_SAMPLER_COUNT = static_cast<uint32_t>(PipelineGlobalBindings::COUNT) - GLOBAL_UBO_COUNT;
 
-constexpr uint32_t localUBOCount = static_cast<uint32_t>(ModelLocalBindings::SAMPLER_JOINTS);
-constexpr uint32_t localSamplerCount = static_cast<uint32_t>(ModelLocalBindings::COUNT) - localUBOCount;
-constexpr uint32_t localStorageImageCount = static_cast<uint32_t>(ModelLocalBindings::COUNT) - localUBOCount - localSamplerCount;
+constexpr uint32_t LOCAL_UBO_COUNT = static_cast<uint32_t>(ModelLocalBindings::SAMPLER_JOINTS);
+constexpr uint32_t LOCAL_SAMPLER_COUNT = static_cast<uint32_t>(ModelLocalBindings::COUNT) - LOCAL_UBO_COUNT;
+constexpr uint32_t LOCAL_STORAGE_IMAGE_COUNT = static_cast<uint32_t>(ModelLocalBindings::COUNT) - LOCAL_UBO_COUNT - LOCAL_SAMPLER_COUNT;
 
 } // namespace
 
@@ -46,12 +46,12 @@ uint32_t materialSet = static_cast<uint32_t>(SetIndex::MATERIAL);
 uint32_t localSet = static_cast<uint32_t>(SetIndex::LOCAL);
 
 gfx::BindingMappingInfo bindingMappingInfo = {
-    {globalUBOCount, 0, localUBOCount, 0},         // Uniform Buffer Counts
-    {globalSamplerCount, 0, localSamplerCount, 0}, // Combined Sampler Texture Counts
+    {GLOBAL_UBO_COUNT, 0, LOCAL_UBO_COUNT, 0},         // Uniform Buffer Counts
+    {GLOBAL_SAMPLER_COUNT, 0, LOCAL_SAMPLER_COUNT, 0}, // Combined Sampler Texture Counts
     {0, 0, 0, 0},                                  // Sampler Counts
     {0, 0, 0, 0},                                  // Texture Counts
     {0, 0, 0, 0},                                  // Storage Buffer Counts
-    {0, 0, localStorageImageCount, 0},             // Storage Image Counts
+    {0, 0, LOCAL_STORAGE_IMAGE_COUNT, 0},             // Storage Image Counts
     {0, 0, 0, 0},                                  // Subpass Input Counts
     {0, 2, 1, 3},                                  // Set Order Indices
 };

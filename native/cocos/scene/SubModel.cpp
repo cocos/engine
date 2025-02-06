@@ -280,7 +280,7 @@ void SubModel::updateInstancedWorldMatrix(const Mat4 &mat, int32_t idx) {
     auto &v2 = ccstd::get<Float32Array>(attrs[idx + 1]);
     auto &v3 = ccstd::get<Float32Array>(attrs[idx + +2]);
     const uint32_t copyBytes = sizeof(float) * 3;
-    auto *buffer = const_cast<uint8_t *>(v1.buffer()->getData());
+    auto *buffer = v1.buffer()->getData();
 
     uint8_t *dst = buffer + v1.byteOffset();
     memcpy(dst, mat.m, copyBytes);
