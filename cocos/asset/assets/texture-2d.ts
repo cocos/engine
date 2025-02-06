@@ -172,6 +172,7 @@ export class Texture2D extends SimpleTexture {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public initialize (): void {
         this.mipmaps = this._mipmaps;
@@ -330,7 +331,7 @@ export class Texture2D extends SimpleTexture {
     /**
      * @engineInternal
      */
-    protected _getGfxTextureCreateInfo (presumed: PresumedGFXTextureInfo): TextureInfo {
+    protected override _getGfxTextureCreateInfo (presumed: PresumedGFXTextureInfo): TextureInfo {
         const texInfo = new TextureInfo(TextureType.TEX2D);
         texInfo.width = this._width;
         texInfo.height = this._height;
@@ -341,7 +342,7 @@ export class Texture2D extends SimpleTexture {
     /**
      * @engineInternal
      */
-    protected _getGfxTextureViewCreateInfo (presumed: PresumedGFXTextureViewInfo): TextureViewInfo {
+    protected override _getGfxTextureViewCreateInfo (presumed: PresumedGFXTextureViewInfo): TextureViewInfo {
         const texViewInfo = new TextureViewInfo();
         texViewInfo.type = TextureType.TEX2D;
         Object.assign(texViewInfo, presumed);

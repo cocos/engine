@@ -23,7 +23,7 @@
 */
 
 import { ImageAsset, IMemoryImageSource } from '../assets/image-asset';
-import { js, warn } from '../../core';
+import { getError, js, warn } from '../../core';
 import Cache from './cache';
 import deserialize from './deserialize';
 import { isScene } from './helper';
@@ -79,6 +79,7 @@ export class Parser {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public parseImage (
         file: HTMLImageElement | Blob,
@@ -98,6 +99,7 @@ export class Parser {
 
     /**
      * @engineInternal
+     * Don't mangle this function since it's used in platform adapter code.
      */
     public parsePVRTex (
         file: ArrayBuffer | ArrayBufferView,
@@ -117,6 +119,7 @@ export class Parser {
 
     /**
      * @engineInternal
+     * Don't mangle this function since it's used in platform adapter code.
      */
     public parsePKMTex (
         file: ArrayBuffer | ArrayBufferView,
@@ -136,6 +139,7 @@ export class Parser {
 
     /**
      * @engineInternal
+     * Don't mangle this function since it's used in platform adapter code.
      */
     public parseASTCTex (
         file: ArrayBuffer | ArrayBufferView,
@@ -155,6 +159,7 @@ export class Parser {
 
     /**
      * @engineInternal
+     * Don't mangle this function since it's used in platform adapter code.
      */
     public parsePlist (
         file: string,
@@ -169,6 +174,7 @@ export class Parser {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public parseImport (
         file: Record<string, any> | CCON,
@@ -176,7 +182,7 @@ export class Parser {
         onComplete: ((err: Error | null, data?: Asset | null) => void),
     ): void {
         if (!file) {
-            onComplete(new Error(`The json file of asset ${options.__uuid__ as string} is empty or missing`));
+            onComplete(new Error(getError(3702, options.__uuid__ as string)));
             return;
         }
         let result: Asset | null = null;
@@ -191,6 +197,7 @@ export class Parser {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public init (): void {
         this._parsing.clear();

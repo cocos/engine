@@ -890,7 +890,7 @@ export class ParticleSystem2D extends UIRenderer {
     public resetSystem (): void {
         this._stopped = false;
         this._simulator.reset();
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -1159,7 +1159,7 @@ export class ParticleSystem2D extends UIRenderer {
                 this._syncAspect();
                 this._updateMaterial();
                 this._stopped = false;
-                this.markForUpdateRenderData();
+                this._markForUpdateRenderData();
             }
         } else {
             this.resetSystem();
@@ -1202,7 +1202,7 @@ export class ParticleSystem2D extends UIRenderer {
         }
         this.resetSystem();
         this.stopSystem();
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
         if (this.autoRemoveOnFinish && this._stopped) {
             this.node.destroy();
         }

@@ -70,8 +70,8 @@ export abstract class RenderPass extends GFXObject {
                 }
                 if (subpass.colors.length) {
                     res += 'ca';
-                    for (let j = 0; j < subpass.inputs.length; ++j) {
-                        const ca = this._colorInfos[subpass.inputs[j]];
+                    for (let j = 0; j < subpass.colors.length; ++j) {
+                        const ca = this._colorInfos[subpass.colors[j]];
                         res += `,${ca.format},${ca.sampleCount}`;
                     }
                 }

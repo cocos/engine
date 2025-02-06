@@ -71,6 +71,7 @@ export class ReflectionProbeManager {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public registerEvent (): void {
         if (!this._registeredEvent) {
@@ -125,6 +126,7 @@ export class ReflectionProbeManager {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public clearPlanarReflectionMap (probe: ReflectionProbe): void {
         for (const entry of this._usePlanarModels.entries()) {
@@ -136,6 +138,7 @@ export class ReflectionProbeManager {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public register (probe: ReflectionProbe): void {
         const index = this._probes.indexOf(probe);
@@ -147,6 +150,7 @@ export class ReflectionProbeManager {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public unregister (probe: ReflectionProbe): void {
         for (let i = 0; i < this._probes.length; i++) {
@@ -163,6 +167,7 @@ export class ReflectionProbeManager {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public exists (probeId: number): boolean {
         if (this._probes.length === 0) return false;
@@ -176,6 +181,7 @@ export class ReflectionProbeManager {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public getNewReflectionProbeId (): number {
         let probeId = 0;
@@ -212,6 +218,7 @@ export class ReflectionProbeManager {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public clearAll (): void {
         this._probes = [];
@@ -219,6 +226,7 @@ export class ReflectionProbeManager {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public getProbeByCamera (camera: Camera): ReflectionProbe | null {
         for (let i = 0; i < this._probes.length; i++) {
@@ -276,6 +284,7 @@ export class ReflectionProbeManager {
      * @zh 更新使用反射探针进行平面反射的物体。
      * @param probe update the model for reflection probe
      * @engineInternal
+     * @mangle
      */
     public selectPlanarReflectionProbe (model: Model): void {
         if (!model.node || !model.worldBounds || model.reflectionProbeType !== ReflectionProbeType.PLANAR_REFLECTION) return;
@@ -494,6 +503,7 @@ export class ReflectionProbeManager {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public updateProbeOfModels (): void {
         if (this._probes.length === 0) return;

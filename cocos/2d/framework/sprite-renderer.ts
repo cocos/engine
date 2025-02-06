@@ -213,7 +213,7 @@ export class SpriteRenderer extends ModelRenderer {
     /**
      * @engineInternal
      */
-    public _onRebuildPSO (idx: number, material: Material): void {
+    public override _onRebuildPSO (idx: number, material: Material): void {
         if (!this._model || !this._model.inited) { return; }
         this._model.setSubModelMaterial(idx, material);
         this._onUpdateLocalDescriptorSet();

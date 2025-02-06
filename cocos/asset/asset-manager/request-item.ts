@@ -49,6 +49,7 @@ export default class RequestItem {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public static MAX_DEAD_NUM = 500;
 

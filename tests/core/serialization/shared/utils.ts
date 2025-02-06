@@ -10,7 +10,7 @@ export const runTest: RunTest = runTest_;
 export function getCaseName(fileName: string) {
     const baseName = ps.basename(fileName, ps.dirname(fileName));
     if (baseName.endsWith('.test.ts')) {
-        return baseName.substr(0, baseName.length - '.test.ts'.length);
+        return baseName.substring(0, baseName.length - '.test.ts'.length);
     } else {
         return baseName;
     }

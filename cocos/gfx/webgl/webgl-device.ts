@@ -171,18 +171,19 @@ export class WebGLDevice extends Device {
 
         const glGetParameter = gl.getParameter.bind(gl);
 
-        this._caps.maxVertexAttributes = glGetParameter(WebGLConstants.MAX_VERTEX_ATTRIBS);
-        this._caps.maxVertexUniformVectors = glGetParameter(WebGLConstants.MAX_VERTEX_UNIFORM_VECTORS);
-        this._caps.maxFragmentUniformVectors = glGetParameter(WebGLConstants.MAX_FRAGMENT_UNIFORM_VECTORS);
-        this._caps.maxTextureUnits = glGetParameter(WebGLConstants.MAX_TEXTURE_IMAGE_UNITS);
-        this._caps.maxVertexTextureUnits = glGetParameter(WebGLConstants.MAX_VERTEX_TEXTURE_IMAGE_UNITS);
-        this._caps.maxTextureSize = glGetParameter(WebGLConstants.MAX_TEXTURE_SIZE);
-        this._caps.maxCubeMapTextureSize = glGetParameter(WebGLConstants.MAX_CUBE_MAP_TEXTURE_SIZE);
-        this._caps.maxArrayTextureLayers = 0;
-        this._caps.max3DTextureSize = 0;
+        const caps = this._caps;
+        caps.maxVertexAttributes = glGetParameter(WebGLConstants.MAX_VERTEX_ATTRIBS);
+        caps.maxVertexUniformVectors = glGetParameter(WebGLConstants.MAX_VERTEX_UNIFORM_VECTORS);
+        caps.maxFragmentUniformVectors = glGetParameter(WebGLConstants.MAX_FRAGMENT_UNIFORM_VECTORS);
+        caps.maxTextureUnits = glGetParameter(WebGLConstants.MAX_TEXTURE_IMAGE_UNITS);
+        caps.maxVertexTextureUnits = glGetParameter(WebGLConstants.MAX_VERTEX_TEXTURE_IMAGE_UNITS);
+        caps.maxTextureSize = glGetParameter(WebGLConstants.MAX_TEXTURE_SIZE);
+        caps.maxCubeMapTextureSize = glGetParameter(WebGLConstants.MAX_CUBE_MAP_TEXTURE_SIZE);
+        caps.maxArrayTextureLayers = 0;
+        caps.max3DTextureSize = 0;
         // WebGL doesn't support UBOs at all, so here we return
         // the guaranteed minimum number of available bindings in WebGL2
-        this._caps.maxUniformBufferBindings = 16;
+        caps.maxUniformBufferBindings = 16;
 
         const extensions = gl.getSupportedExtensions();
         let extStr = '';
@@ -203,25 +204,25 @@ export class WebGLDevice extends Device {
         }
 
         const version: string = glGetParameter(WebGLConstants.VERSION);
-
-        this._features.fill(false);
+        const features = this._features;
+        features.fill(false);
 
         this.initFormatFeatures(exts);
 
         if (exts.EXT_blend_minmax) {
-            this._features[Feature.BLEND_MINMAX] = true;
+            features[Feature.BLEND_MINMAX] = true;
         }
 
         if (exts.OES_element_index_uint) {
-            this._features[Feature.ELEMENT_INDEX_UINT] = true;
+            features[Feature.ELEMENT_INDEX_UINT] = true;
         }
 
         if (exts.ANGLE_instanced_arrays) {
-            this._features[Feature.INSTANCED_ARRAYS] = true;
+            features[Feature.INSTANCED_ARRAYS] = true;
         }
 
         if (exts.WEBGL_draw_buffers) {
-            this._features[Feature.MULTIPLE_RENDER_TARGETS] = true;
+            features[Feature.MULTIPLE_RENDER_TARGETS] = true;
         }
 
         let compressedFormat = '';

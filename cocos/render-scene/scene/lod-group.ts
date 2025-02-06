@@ -30,6 +30,7 @@ import { Camera, CameraProjection } from './camera';
 
 /**
  * @engineInternal
+ * @mangle
  */
 export class LODData {
     // Range in [0, 1].
@@ -59,6 +60,7 @@ export class LODData {
 
 /**
  * @engineInternal
+ * @mangle
  */
 export class LODGroup {
     public scene?: RenderScene;

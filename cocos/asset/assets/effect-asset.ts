@@ -351,6 +351,7 @@ export class EffectAsset extends Asset {
 
     /**
      * @engineInternal
+     * @mangle
      */
     protected _precompile (): void {
         if (cclegacy.rendering && cclegacy.rendering.enableEffectImport) {

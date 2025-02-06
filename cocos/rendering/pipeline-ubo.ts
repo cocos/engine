@@ -46,6 +46,10 @@ const _vec4ShadowInfo = new Vec4();
 const _lightDir = new Vec4(0.0, 0.0, 1.0, 0.0);
 const _tempVec3 = new Vec3();
 
+const mat4ToArray = Mat4.toArray;
+const vec4ToArray = Vec4.toArray;
+const colorToArray = Color.toArray;
+
 export class PipelineUBO {
     public static updateGlobalUBOView (window: RenderWindow, bufferView: Float32Array): void {
         const director = cclegacy.director;
@@ -125,7 +129,7 @@ export class PipelineUBO {
             const shadowEnable = (mainLight.shadowEnabled && shadowInfo.type === ShadowType.ShadowMap) ? 1.0 : 0.0;
             const mainLightDir = mainLight.direction;
             _lightDir.set(mainLightDir.x, mainLightDir.y, mainLightDir.z, shadowEnable);
-            Vec4.toArray(cv, _lightDir, UBOCameraEnum.MAIN_LIT_DIR_OFFSET);
+            vec4ToArray(cv, _lightDir, UBOCameraEnum.MAIN_LIT_DIR_OFFSET);
             Vec3.toArray(cv, mainLight.color, UBOCameraEnum.MAIN_LIT_COLOR_OFFSET);
             if (mainLight.useColorTemperature) {
                 const colorTempRGB = mainLight.colorTemperatureRGB;
@@ -141,8 +145,8 @@ export class PipelineUBO {
             }
         } else {
             _lightDir.set(0, 0, 1, 0);
-            Vec4.toArray(cv, _lightDir, UBOCameraEnum.MAIN_LIT_DIR_OFFSET);
-            Vec4.toArray(cv, Vec4.ZERO, UBOCameraEnum.MAIN_LIT_COLOR_OFFSET);
+            vec4ToArray(cv, _lightDir, UBOCameraEnum.MAIN_LIT_DIR_OFFSET);
+            vec4ToArray(cv, Vec4.ZERO, UBOCameraEnum.MAIN_LIT_COLOR_OFFSET);
         }
 
         const skyColor = ambient.skyColor;
@@ -160,14 +164,14 @@ export class PipelineUBO {
         cv[UBOCameraEnum.AMBIENT_GROUND_OFFSET + 2] = ambient.groundAlbedo.z;
         cv[UBOCameraEnum.AMBIENT_GROUND_OFFSET + 3] = skybox.envmap ? skybox.envmap?.mipmapLevel : 1.0;
 
-        Mat4.toArray(cv, camera.matView, UBOCameraEnum.MAT_VIEW_OFFSET);
-        Mat4.toArray(cv, camera.node.worldMatrix, UBOCameraEnum.MAT_VIEW_INV_OFFSET);
+        mat4ToArray(cv, camera.matView, UBOCameraEnum.MAT_VIEW_OFFSET);
+        mat4ToArray(cv, camera.node.worldMatrix, UBOCameraEnum.MAT_VIEW_INV_OFFSET);
         Vec3.toArray(cv, camera.position, UBOCameraEnum.CAMERA_POS_OFFSET);
 
-        Mat4.toArray(cv, camera.matProj, UBOCameraEnum.MAT_PROJ_OFFSET);
-        Mat4.toArray(cv, camera.matProjInv, UBOCameraEnum.MAT_PROJ_INV_OFFSET);
-        Mat4.toArray(cv, camera.matViewProj, UBOCameraEnum.MAT_VIEW_PROJ_OFFSET);
-        Mat4.toArray(cv, camera.matViewProjInv, UBOCameraEnum.MAT_VIEW_PROJ_INV_OFFSET);
+        mat4ToArray(cv, camera.matProj, UBOCameraEnum.MAT_PROJ_OFFSET);
+        mat4ToArray(cv, camera.matProjInv, UBOCameraEnum.MAT_PROJ_INV_OFFSET);
+        mat4ToArray(cv, camera.matViewProj, UBOCameraEnum.MAT_VIEW_PROJ_OFFSET);
+        mat4ToArray(cv, camera.matViewProjInv, UBOCameraEnum.MAT_VIEW_PROJ_INV_OFFSET);
         cv[UBOCameraEnum.CAMERA_POS_OFFSET + 3] = this.getCombineSignY();
 
         cv[UBOCameraEnum.SURFACE_TRANSFORM_OFFSET] = camera.surfaceTransform;
@@ -258,7 +262,7 @@ export class PipelineUBO {
                             levelCount = 1;
                         }
 
-                        Mat4.toArray(sv, matShadowView, UBOShadowEnum.MAT_LIGHT_VIEW_OFFSET);
+                        mat4ToArray(sv, matShadowView, UBOShadowEnum.MAT_LIGHT_VIEW_OFFSET);
 
                         sv[UBOShadowEnum.SHADOW_PROJ_DEPTH_INFO_OFFSET + 0] = matShadowProj.m10;
                         sv[UBOShadowEnum.SHADOW_PROJ_DEPTH_INFO_OFFSET + 1] = matShadowProj.m14;
@@ -270,30 +274,30 @@ export class PipelineUBO {
                         sv[UBOShadowEnum.SHADOW_PROJ_INFO_OFFSET + 2] = 1.0 / matShadowProj.m00;
                         sv[UBOShadowEnum.SHADOW_PROJ_INFO_OFFSET + 3] = 1.0 / matShadowProj.m05;
 
-                        Mat4.toArray(sv, matShadowViewProj, UBOShadowEnum.MAT_LIGHT_VIEW_PROJ_OFFSET);
+                        mat4ToArray(sv, matShadowViewProj, UBOShadowEnum.MAT_LIGHT_VIEW_PROJ_OFFSET);
 
                         _vec4ShadowInfo.set(near, far, 0, 1.0 - mainLight.shadowSaturation);
-                        Vec4.toArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_NEAR_FAR_LINEAR_SATURATION_INFO_OFFSET);
+                        vec4ToArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_NEAR_FAR_LINEAR_SATURATION_INFO_OFFSET);
 
                         _vec4ShadowInfo.set(LightType.DIRECTIONAL, packing, mainLight.shadowNormalBias, levelCount);
-                        Vec4.toArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_LIGHT_PACKING_NBIAS_NULL_INFO_OFFSET);
+                        vec4ToArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_LIGHT_PACKING_NBIAS_NULL_INFO_OFFSET);
                     } else {
                         const layerThreshold = this.getPCFRadius(shadowInfo, mainLight);
                         for (let i = 0; i < mainLight.csmLevel; i++) {
                             const layer = csmLayers.layers[i];
                             const matShadowView = layer.matShadowView;
                             _vec4ShadowInfo.set(matShadowView.m00, matShadowView.m04, matShadowView.m08, layerThreshold);
-                            Vec4.toArray(cv, _vec4ShadowInfo, UBOCSMEnum.CSM_VIEW_DIR_0_OFFSET + 4 * i);
+                            vec4ToArray(cv, _vec4ShadowInfo, UBOCSMEnum.CSM_VIEW_DIR_0_OFFSET + 4 * i);
                             _vec4ShadowInfo.set(matShadowView.m01, matShadowView.m05, matShadowView.m09, layer.splitCameraNear);
-                            Vec4.toArray(cv, _vec4ShadowInfo, UBOCSMEnum.CSM_VIEW_DIR_1_OFFSET + 4 * i);
+                            vec4ToArray(cv, _vec4ShadowInfo, UBOCSMEnum.CSM_VIEW_DIR_1_OFFSET + 4 * i);
                             _vec4ShadowInfo.set(matShadowView.m02, matShadowView.m06, matShadowView.m10, layer.splitCameraFar);
-                            Vec4.toArray(cv, _vec4ShadowInfo, UBOCSMEnum.CSM_VIEW_DIR_2_OFFSET + 4 * i);
+                            vec4ToArray(cv, _vec4ShadowInfo, UBOCSMEnum.CSM_VIEW_DIR_2_OFFSET + 4 * i);
 
                             const csmAtlas = layer.csmAtlas;
-                            Vec4.toArray(cv, csmAtlas, UBOCSMEnum.CSM_ATLAS_OFFSET + 4 * i);
+                            vec4ToArray(cv, csmAtlas, UBOCSMEnum.CSM_ATLAS_OFFSET + 4 * i);
 
                             const matShadowViewProj = layer.matShadowViewProj;
-                            Mat4.toArray(cv, matShadowViewProj, UBOCSMEnum.MAT_CSM_VIEW_PROJ_OFFSET + 16 * i);
+                            mat4ToArray(cv, matShadowViewProj, UBOCSMEnum.MAT_CSM_VIEW_PROJ_OFFSET + 16 * i);
 
                             const matShadowProj = layer.matShadowProj;
                             cv[UBOCSMEnum.CSM_PROJ_DEPTH_INFO_OFFSET + 0 + 4 * i] = matShadowProj.m10;
@@ -307,24 +311,24 @@ export class PipelineUBO {
                             cv[UBOCSMEnum.CSM_PROJ_INFO_OFFSET + 3 + 4 * i] = 1.0 / matShadowProj.m05;
                         }
                         _vec4ShadowInfo.set(mainLight.csmTransitionRange, 0, 0, 0);
-                        Vec4.toArray(cv, _vec4ShadowInfo, UBOCSMEnum.CSM_SPLITS_INFO_OFFSET);
+                        vec4ToArray(cv, _vec4ShadowInfo, UBOCSMEnum.CSM_SPLITS_INFO_OFFSET);
 
                         _vec4ShadowInfo.set(0.1, mainLight.shadowDistance, 0, 1.0 - mainLight.shadowSaturation);
-                        Vec4.toArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_NEAR_FAR_LINEAR_SATURATION_INFO_OFFSET);
+                        vec4ToArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_NEAR_FAR_LINEAR_SATURATION_INFO_OFFSET);
 
                         _vec4ShadowInfo.set(LightType.DIRECTIONAL, packing, mainLight.shadowNormalBias, mainLight.csmLevel);
-                        Vec4.toArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_LIGHT_PACKING_NBIAS_NULL_INFO_OFFSET);
+                        vec4ToArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_LIGHT_PACKING_NBIAS_NULL_INFO_OFFSET);
                     }
                     _vec4ShadowInfo.set(shadowInfo.size.x, shadowInfo.size.y, mainLight.shadowPcf, mainLight.shadowBias);
-                    Vec4.toArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_WIDTH_HEIGHT_PCF_BIAS_INFO_OFFSET);
+                    vec4ToArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_WIDTH_HEIGHT_PCF_BIAS_INFO_OFFSET);
                 }
             } else {
                 PipelineUBO.updatePlanarNormalAndDistance(shadowInfo, sv);
                 _vec4ShadowInfo.set(0, 0, 0, shadowInfo.planeBias);
-                Vec4.toArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_WIDTH_HEIGHT_PCF_BIAS_INFO_OFFSET);
+                vec4ToArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_WIDTH_HEIGHT_PCF_BIAS_INFO_OFFSET);
             }
 
-            Color.toArray(sv, shadowInfo.shadowColor, UBOShadowEnum.SHADOW_COLOR_OFFSET);
+            colorToArray(sv, shadowInfo.shadowColor, UBOShadowEnum.SHADOW_COLOR_OFFSET);
         }
     }
 
@@ -363,7 +367,7 @@ export class PipelineUBO {
                             levelCount = 1;
                         }
                         _vec4ShadowInfo.set(LightType.DIRECTIONAL, packing, mainLight.shadowNormalBias, 0);
-                        Vec4.toArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_LIGHT_PACKING_NBIAS_NULL_INFO_OFFSET);
+                        vec4ToArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_LIGHT_PACKING_NBIAS_NULL_INFO_OFFSET);
                     } else {
                         const layer = csmLayers.layers[level];
                         matShadowView = layer.matShadowView;
@@ -375,7 +379,7 @@ export class PipelineUBO {
                         levelCount = mainLight.csmLevel;
                     }
 
-                    Mat4.toArray(sv, matShadowView, UBOShadowEnum.MAT_LIGHT_VIEW_OFFSET);
+                    mat4ToArray(sv, matShadowView, UBOShadowEnum.MAT_LIGHT_VIEW_OFFSET);
 
                     sv[UBOShadowEnum.SHADOW_PROJ_DEPTH_INFO_OFFSET + 0] = matShadowProj.m10;
                     sv[UBOShadowEnum.SHADOW_PROJ_DEPTH_INFO_OFFSET + 1] = matShadowProj.m14;
@@ -387,16 +391,16 @@ export class PipelineUBO {
                     sv[UBOShadowEnum.SHADOW_PROJ_INFO_OFFSET + 2] = 1.0 / matShadowProj.m00;
                     sv[UBOShadowEnum.SHADOW_PROJ_INFO_OFFSET + 3] = 1.0 / matShadowProj.m05;
 
-                    Mat4.toArray(sv, matShadowViewProj, UBOShadowEnum.MAT_LIGHT_VIEW_PROJ_OFFSET);
+                    mat4ToArray(sv, matShadowViewProj, UBOShadowEnum.MAT_LIGHT_VIEW_PROJ_OFFSET);
 
                     _vec4ShadowInfo.set(near, far, 0, 1.0 - mainLight.shadowSaturation);
-                    Vec4.toArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_NEAR_FAR_LINEAR_SATURATION_INFO_OFFSET);
+                    vec4ToArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_NEAR_FAR_LINEAR_SATURATION_INFO_OFFSET);
 
                     _vec4ShadowInfo.set(LightType.DIRECTIONAL, packing, mainLight.shadowNormalBias, levelCount);
-                    Vec4.toArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_LIGHT_PACKING_NBIAS_NULL_INFO_OFFSET);
+                    vec4ToArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_LIGHT_PACKING_NBIAS_NULL_INFO_OFFSET);
 
                     _vec4ShadowInfo.set(shadowInfo.size.x, shadowInfo.size.y, mainLight.shadowPcf, mainLight.shadowBias);
-                    Vec4.toArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_WIDTH_HEIGHT_PCF_BIAS_INFO_OFFSET);
+                    vec4ToArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_WIDTH_HEIGHT_PCF_BIAS_INFO_OFFSET);
                 }
             }
             break;
@@ -405,7 +409,7 @@ export class PipelineUBO {
             const spotLight = light as SpotLight;
             if (shadowInfo.enabled && spotLight && spotLight.shadowEnabled) {
                 Mat4.invert(_matShadowView, (light as any).node.getWorldMatrix());
-                Mat4.toArray(sv, _matShadowView, UBOShadowEnum.MAT_LIGHT_VIEW_OFFSET);
+                mat4ToArray(sv, _matShadowView, UBOShadowEnum.MAT_LIGHT_VIEW_OFFSET);
 
                 Mat4.perspective(
                     _matShadowProj,
@@ -420,23 +424,23 @@ export class PipelineUBO {
                 );
 
                 Mat4.multiply(_matShadowViewProj, _matShadowProj, _matShadowView);
-                Mat4.toArray(sv, _matShadowViewProj, UBOShadowEnum.MAT_LIGHT_VIEW_PROJ_OFFSET);
+                mat4ToArray(sv, _matShadowViewProj, UBOShadowEnum.MAT_LIGHT_VIEW_PROJ_OFFSET);
 
                 _vec4ShadowInfo.set(0.01, (light as SpotLight).range, 0.0, 0.0);
-                Vec4.toArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_NEAR_FAR_LINEAR_SATURATION_INFO_OFFSET);
+                vec4ToArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_NEAR_FAR_LINEAR_SATURATION_INFO_OFFSET);
 
                 _vec4ShadowInfo.set(shadowInfo.size.x, shadowInfo.size.y, spotLight.shadowPcf, spotLight.shadowBias);
-                Vec4.toArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_WIDTH_HEIGHT_PCF_BIAS_INFO_OFFSET);
+                vec4ToArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_WIDTH_HEIGHT_PCF_BIAS_INFO_OFFSET);
 
                 _vec4ShadowInfo.set(LightType.SPOT, packing, spotLight.shadowNormalBias, 0.0);
-                Vec4.toArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_LIGHT_PACKING_NBIAS_NULL_INFO_OFFSET);
+                vec4ToArray(sv, _vec4ShadowInfo, UBOShadowEnum.SHADOW_LIGHT_PACKING_NBIAS_NULL_INFO_OFFSET);
             }
             break;
         }
         default:
         }
 
-        Color.toArray(sv, shadowInfo.shadowColor, UBOShadowEnum.SHADOW_COLOR_OFFSET);
+        colorToArray(sv, shadowInfo.shadowColor, UBOShadowEnum.SHADOW_COLOR_OFFSET);
     }
 
     protected _globalUBO = new Float32Array(UBOGlobalEnum.COUNT);
@@ -560,9 +564,9 @@ export class PipelineUBO {
 
     public updateShadowUBORange (offset: number, data: Mat4 | Color): void {
         if (data instanceof Mat4) {
-            Mat4.toArray(this._shadowUBO, data, offset);
+            mat4ToArray(this._shadowUBO, data, offset);
         } else if (data instanceof Color) {
-            Color.toArray(this._shadowUBO, data, offset);
+            colorToArray(this._shadowUBO, data, offset);
         }
     }
 

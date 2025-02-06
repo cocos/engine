@@ -133,10 +133,12 @@ export class TextureBase extends Asset {
 
     /**
      * @engineInternal
+     * @mangle
      */
     protected _width = 1;
     /**
      * @engineInternal
+     * @mangle
      */
     protected _height = 1;
 

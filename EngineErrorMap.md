@@ -1653,6 +1653,10 @@ internal error: _prefab is undefined
 
 Failed to load prefab asset for node '%s'
 
+### 3702
+
+The json file of asset %s is empty or missing.
+
 ### 3800
 
 The target can not be made persist because it's not a cc.Node or it doesn't have _id property.
@@ -2877,6 +2881,14 @@ cc.TMXLayer.getTileFlagsAt(): TMXLayer: the tiles map has been released
 ### 7241
 
 cc.TiledMap.initWithXML(): Map not found. Please check the filename.
+
+### 7242
+
+TiledLayer.addUserNode node has been added.
+
+### 7243
+
+TiledLayer.removeUserNode node is not exist
 
 ### 7300
 

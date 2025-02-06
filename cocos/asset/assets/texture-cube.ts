@@ -546,7 +546,7 @@ export class TextureCube extends SimpleTexture {
         }
     }
 
-    protected _getGfxTextureCreateInfo (presumed: PresumedGFXTextureInfo): TextureInfo {
+    protected override _getGfxTextureCreateInfo (presumed: PresumedGFXTextureInfo): TextureInfo {
         const texInfo = new TextureInfo(TextureType.CUBE);
         texInfo.width = this._width;
         texInfo.height = this._height;
@@ -555,7 +555,7 @@ export class TextureCube extends SimpleTexture {
         return texInfo;
     }
 
-    protected _getGfxTextureViewCreateInfo (presumed: PresumedGFXTextureViewInfo): TextureViewInfo {
+    protected override _getGfxTextureViewCreateInfo (presumed: PresumedGFXTextureViewInfo): TextureViewInfo {
         const texViewInfo = new TextureViewInfo();
         texViewInfo.type = TextureType.CUBE;
         texViewInfo.baseLayer = 0;

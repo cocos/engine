@@ -123,18 +123,15 @@ export function generateTargetMap (node: Node, targetMap: TargetMap, isRoot: boo
         curTargetMap[prefabInfo.fileId] = node;
     }
 
-    const components = node.components;
-    for (let i = 0; i < components.length; i++) {
-        const comp = components[i];
+    node.components.forEach((comp) => {
         if (comp.__prefab) {
             curTargetMap[comp.__prefab.fileId] = comp;
         }
-    }
+    });
 
-    for (let i = 0; i < node.children.length; i++) {
-        const childNode = node.children[i];
+    node.children.forEach((childNode) => {
         generateTargetMap(childNode, curTargetMap, false);
-    }
+    });
 }
 
 export function getTarget (localID: string[], targetMap: any): Node | Component | null {

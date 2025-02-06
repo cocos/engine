@@ -10,6 +10,11 @@ const ROTATION_OFFSET = 3;
 
 const SCALE_OFFSET = ROTATION_OFFSET + 4;
 
+const vec3FromArray = Vec3.fromArray;
+const vec3ToArray = Vec3.toArray;
+const quatFromArray = Quat.fromArray;
+const quatToArray = Quat.toArray;
+
 /**
  * Array-buffer-based transform array.
  */
@@ -62,9 +67,9 @@ export class TransformArray {
             scale,
         } = out;
         const baseOffset = TRANSFORM_STRIDE_IN_FLOATS * index;
-        Vec3.fromArray(position, data, baseOffset);
-        Quat.fromArray(rotation, data, baseOffset + ROTATION_OFFSET);
-        Vec3.fromArray(scale, data, baseOffset + SCALE_OFFSET);
+        vec3FromArray(position, data, baseOffset);
+        quatFromArray(rotation, data, baseOffset + ROTATION_OFFSET);
+        vec3FromArray(scale, data, baseOffset + SCALE_OFFSET);
         return out;
     }
 
@@ -73,7 +78,7 @@ export class TransformArray {
             _data: data,
         } = this;
         const baseOffset = TRANSFORM_STRIDE_IN_FLOATS * index;
-        Vec3.fromArray(out, data, baseOffset);
+        vec3FromArray(out, data, baseOffset);
         return out;
     }
 
@@ -82,7 +87,7 @@ export class TransformArray {
             _data: data,
         } = this;
         const baseOffset = TRANSFORM_STRIDE_IN_FLOATS * index;
-        Quat.fromArray(out, data, baseOffset + ROTATION_OFFSET);
+        quatFromArray(out, data, baseOffset + ROTATION_OFFSET);
         return out;
     }
 
@@ -91,7 +96,7 @@ export class TransformArray {
             _data: data,
         } = this;
         const baseOffset = TRANSFORM_STRIDE_IN_FLOATS * index;
-        Vec3.fromArray(out, data, baseOffset + SCALE_OFFSET);
+        vec3FromArray(out, data, baseOffset + SCALE_OFFSET);
         return out;
     }
 
@@ -105,9 +110,9 @@ export class TransformArray {
             scale,
         } = value;
         const baseOffset = TRANSFORM_STRIDE_IN_FLOATS * index;
-        Vec3.toArray(data, position, baseOffset);
-        Quat.toArray(data, rotation, baseOffset + ROTATION_OFFSET);
-        Vec3.toArray(data, scale, baseOffset + SCALE_OFFSET);
+        vec3ToArray(data, position, baseOffset);
+        quatToArray(data, rotation, baseOffset + ROTATION_OFFSET);
+        vec3ToArray(data, scale, baseOffset + SCALE_OFFSET);
     }
 
     public setPosition (index: number, value: Readonly<Vec3>): void {
@@ -115,7 +120,7 @@ export class TransformArray {
             _data: data,
         } = this;
         const baseOffset = TRANSFORM_STRIDE_IN_FLOATS * index;
-        Vec3.toArray(data, value, baseOffset);
+        vec3ToArray(data, value, baseOffset);
     }
 
     public setRotation (index: number, value: Readonly<Quat>): void {
@@ -123,7 +128,7 @@ export class TransformArray {
             _data: data,
         } = this;
         const baseOffset = TRANSFORM_STRIDE_IN_FLOATS * index;
-        Quat.toArray(data, value, baseOffset + ROTATION_OFFSET);
+        quatToArray(data, value, baseOffset + ROTATION_OFFSET);
     }
 
     public setScale (index: number, value: Readonly<Vec3>): void {
@@ -131,7 +136,7 @@ export class TransformArray {
             _data: data,
         } = this;
         const baseOffset = TRANSFORM_STRIDE_IN_FLOATS * index;
-        Vec3.toArray(data, value, baseOffset + SCALE_OFFSET);
+        vec3ToArray(data, value, baseOffset + SCALE_OFFSET);
     }
 
     /**

@@ -410,7 +410,7 @@ export class Skeleton extends UIRenderer {
             this.defaultSkin = String(skinName);
             this.setSkin(this.defaultSkin);
             this._refreshInspector();
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
         } else {
             error(`${this.name} skin enums are invalid`);
         }
@@ -489,7 +489,7 @@ export class Skeleton extends UIRenderer {
         if (v !== this._premultipliedAlpha) {
             this._premultipliedAlpha = v;
             this._instance!.setPremultipliedAlpha(v);
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
         }
     }
 
@@ -571,7 +571,7 @@ export class Skeleton extends UIRenderer {
         if (v !== this._debugSlots) {
             this._debugSlots = v;
             this._updateDebugDraw();
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
         }
     }
 
@@ -585,7 +585,7 @@ export class Skeleton extends UIRenderer {
         if (v !== this._debugBones) {
             this._debugBones = v;
             this._updateDebugDraw();
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
         }
     }
 
@@ -599,7 +599,7 @@ export class Skeleton extends UIRenderer {
         if (value !== this._debugMesh) {
             this._debugMesh = value;
             this._updateDebugDraw();
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
         }
     }
     get socketNodes (): Map<number, Node> | null { return this._socketNodes; }
@@ -633,7 +633,7 @@ export class Skeleton extends UIRenderer {
     set customMaterial (val) {
         this._customMaterial = val;
         this.updateMaterial();
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     get customMaterialInstance (): MaterialInstance | null {
@@ -665,7 +665,7 @@ export class Skeleton extends UIRenderer {
      */
     public onRestore (): void {
         this.updateMaterial();
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -947,7 +947,7 @@ export class Skeleton extends UIRenderer {
             this._animationName = name;
             trackEntry = this._instance!.setAnimation(trackIndex, name, loop);
         }
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
         return trackEntry;
     }
     /**
@@ -1040,7 +1040,7 @@ export class Skeleton extends UIRenderer {
      * @param dt @en delta time. @zh 时间差。
      */
     public updateAnimation (dt: number): void {
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
         if (this.paused) return;
         if (this.isAnimationCached()) {
             // On realTime mode, dt is multiplied at native side.
@@ -1143,7 +1143,7 @@ export class Skeleton extends UIRenderer {
         }
         if (this._skeleton && this._assembler) {
             this._renderData = this._assembler.createData(this);
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
             this._updateColor();
         }
     }
@@ -1312,9 +1312,9 @@ export class Skeleton extends UIRenderer {
      * @zh 标记重新更新渲染数据，一般用于强制刷新显示。
      */
     public markForUpdateRenderData (enable = true): void {
-        super.markForUpdateRenderData(enable);
+        super._markForUpdateRenderData(enable);
         if (this._debugRenderer) {
-            this._debugRenderer.markForUpdateRenderData(enable);
+            this._debugRenderer._markForUpdateRenderData(enable);
         }
     }
 
@@ -1353,7 +1353,7 @@ export class Skeleton extends UIRenderer {
                 this._instance.isCache = this.isAnimationCached();
             }
             this._updateSkeletonData();
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
         }
     }
 
@@ -1599,14 +1599,14 @@ export class Skeleton extends UIRenderer {
         }
         if (this._assembler && this._skeleton) {
             this._renderData = this._assembler.createData(this);
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
         }
     }
 
     // if change use batch mode, just clear material cache
     protected _updateBatch (): void {
         this._cleanMaterialCache();
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     protected _updateDebugDraw (): void {

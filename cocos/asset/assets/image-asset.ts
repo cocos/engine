@@ -259,6 +259,7 @@ export class ImageAsset extends Asset {
      * @param file 解析压缩纹理。
      * @param type 压缩纹理类型。
      * @engineInternal
+     * @mangle
      */
     public static parseCompressedTextures (file: ArrayBuffer | ArrayBufferView, type: number): IMemoryImageSource {
         const out: IMemoryImageSource = {
@@ -307,6 +308,7 @@ export class ImageAsset extends Asset {
      * @param type @zh 压缩纹理类型。
      * @param out @zh 压缩纹理输出。
      * @engineInternal
+     * @mangle
      */
     public static parseCompressedTexture (
         file: ArrayBuffer | ArrayBufferView,
@@ -339,6 +341,7 @@ export class ImageAsset extends Asset {
      * @param endOffset @zh 压缩纹理结束时的偏移。
      * @param out @zh 压缩纹理输出。
      * @engineInternal
+     * @mangle
      */
     public static parsePVRTexture (
         file: ArrayBuffer | ArrayBufferView,
@@ -396,6 +399,7 @@ export class ImageAsset extends Asset {
      * @param endOffset @zh 压缩纹理结束时的偏移。
      * @param out @zh 压缩纹理输出。
      * @engineInternal
+     * @mangle
      */
     public static parsePKMTexture (
         file: ArrayBuffer | ArrayBufferView,
@@ -435,6 +439,7 @@ export class ImageAsset extends Asset {
      * @param endOffset @zh 压缩纹理结束时的偏移。
      * @param out @zh 压缩纹理输出。
      * @engineInternal
+     * @mangle
      */
     public static parseASTCTexture (
         file: ArrayBuffer | ArrayBufferView,
@@ -483,6 +488,7 @@ export class ImageAsset extends Asset {
     /**
      * @en extract the first mipmap from a compressed image asset
      * @engineInternal
+     * @mangle
      */
     public extractMipmap0 (): ImageAsset {
         if (this.mipmapLevelDataSize && this.mipmapLevelDataSize.length > 0) {
@@ -508,6 +514,7 @@ export class ImageAsset extends Asset {
     /**
      * @en extract mipmaps from a compressed image asset
      * @engineInternal
+     * @mangle
      */
     public extractMipmaps (): ImageAsset[] {
         const images: ImageAsset[] = [];

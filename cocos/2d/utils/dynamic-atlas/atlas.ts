@@ -31,6 +31,10 @@ import { SpriteFrame } from '../../assets/sprite-frame';
 
 const space = 2;
 
+function drawTextureAt (texture: DynamicAtlasTexture, image: ImageAsset, x: number, y: number): void {
+    texture.drawTextureAt(image, x, y);
+}
+
 export class Atlas {
     private declare _texture: DynamicAtlasTexture;
     private declare _width: number;
@@ -102,22 +106,25 @@ export class Atlas {
                 return null;
             }
 
+            const thisTexture = this._texture;
+            const image = texture.image!;
+
             if (cclegacy.internal.dynamicAtlasManager.textureBleeding) {
                 // Smaller frame is more likely to be affected by linear filter
                 if (width <= 8 || height <= 8) {
-                    this._texture.drawTextureAt(texture.image!, this._x - 1, this._y - 1);
-                    this._texture.drawTextureAt(texture.image!, this._x - 1, this._y + 1);
-                    this._texture.drawTextureAt(texture.image!, this._x + 1, this._y - 1);
-                    this._texture.drawTextureAt(texture.image!, this._x + 1, this._y + 1);
+                    drawTextureAt(thisTexture, image, this._x - 1, this._y - 1);
+                    drawTextureAt(thisTexture, image, this._x - 1, this._y + 1);
+                    drawTextureAt(thisTexture, image, this._x + 1, this._y - 1);
+                    drawTextureAt(thisTexture, image, this._x + 1, this._y + 1);
                 }
 
-                this._texture.drawTextureAt(texture.image!, this._x - 1, this._y);
-                this._texture.drawTextureAt(texture.image!, this._x + 1, this._y);
-                this._texture.drawTextureAt(texture.image!, this._x, this._y - 1);
-                this._texture.drawTextureAt(texture.image!, this._x, this._y + 1);
+                drawTextureAt(thisTexture, image, this._x - 1, this._y);
+                drawTextureAt(thisTexture, image, this._x + 1, this._y);
+                drawTextureAt(thisTexture, image, this._x, this._y - 1);
+                drawTextureAt(thisTexture, image, this._x, this._y + 1);
             }
 
-            this._texture.drawTextureAt(texture.image!, this._x, this._y);
+            drawTextureAt(thisTexture, image, this._x, this._y);
 
             this._innerTextureInfos[texture.getId()] = {
                 x: this._x,

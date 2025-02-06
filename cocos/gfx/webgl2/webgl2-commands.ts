@@ -1540,7 +1540,7 @@ export function WebGL2CmdFuncCreateShader (device: WebGL2Device, gpuShader: IWeb
             let varName: string;
             const nameOffset = attribInfo.name.indexOf('[');
             if (nameOffset !== -1) {
-                varName = attribInfo.name.substr(0, nameOffset);
+                varName = attribInfo.name.substring(0, nameOffset);
             } else {
                 varName = attribInfo.name;
             }
@@ -1576,7 +1576,7 @@ export function WebGL2CmdFuncCreateShader (device: WebGL2Device, gpuShader: IWeb
             blockName = gl.getActiveUniformBlockName(gpuShader.glProgram, b)!;
             const nameOffset = blockName.indexOf('[');
             if (nameOffset !== -1) {
-                blockName = blockName.substr(0, nameOffset);
+                blockName = blockName.substring(0, nameOffset);
             }
 
             // blockIdx = gl.getUniformBlockIndex(gpuShader.glProgram, blockName);
@@ -2703,13 +2703,15 @@ export function WebGL2CmdFuncCopyTexImagesToTexture (
     case WebGLConstants.TEXTURE_CUBE_MAP: {
         for (let k = 0; k < regions.length; k++) {
             const region = regions[k];
-            const fcount = region.texSubres.baseArrayLayer + region.texSubres.layerCount;
-            for (f = region.texSubres.baseArrayLayer; f < fcount; ++f) {
+            const regionTexSubres = region.texSubres;
+            const regionTexOffset = region.texOffset;
+            const fcount = regionTexSubres.baseArrayLayer + regionTexSubres.layerCount;
+            for (f = regionTexSubres.baseArrayLayer; f < fcount; ++f) {
                 gl.texSubImage2D(
                     WebGLConstants.TEXTURE_CUBE_MAP_POSITIVE_X + f,
-                    region.texSubres.mipLevel,
-                    region.texOffset.x,
-                    region.texOffset.y,
+                    regionTexSubres.mipLevel,
+                    regionTexOffset.x,
+                    regionTexOffset.y,
                     gpuTexture.glFormat,
                     gpuTexture.glType,
                     texImages[n++],
@@ -2798,17 +2800,24 @@ export function WebGL2CmdFuncCopyBuffersToTexture (
         for (let k = 0; k < regions.length; k++) {
             const region = regions[k];
             const mipLevel = region.texSubres.mipLevel;
+            const regionTexOffset = region.texOffset;
+            const regionTexExtent = region.texExtent;
+            const regionTexExtentWidth = regionTexExtent.width;
+            const regionTexExtentHeight = regionTexExtent.height;
+            const blockSizeWidth = blockSize.width;
+            const blockSizeHeight = blockSize.height;
+            const regionBuffStride = region.buffStride;
 
-            offset.x =  region.texOffset.x === 0 ? 0 : alignTo(region.texOffset.x, blockSize.width);
-            offset.y =  region.texOffset.y === 0 ? 0 : alignTo(region.texOffset.y, blockSize.height);
-            extent.width = region.texExtent.width < blockSize.width ? region.texExtent.width : alignTo(region.texExtent.width, blockSize.width);
-            extent.height = region.texExtent.height < blockSize.height ? region.texExtent.width
-                : alignTo(region.texExtent.height, blockSize.height);
-            stride.width = region.buffStride > 0 ?  region.buffStride : extent.width;
+            offset.x =  regionTexOffset.x === 0 ? 0 : alignTo(regionTexOffset.x, blockSizeWidth);
+            offset.y =  regionTexOffset.y === 0 ? 0 : alignTo(regionTexOffset.y, blockSizeHeight);
+            extent.width = regionTexExtentWidth < blockSizeWidth ? regionTexExtentWidth : alignTo(regionTexExtentWidth, blockSizeWidth);
+            extent.height = regionTexExtentHeight < blockSizeHeight ? regionTexExtentWidth
+                : alignTo(regionTexExtentHeight, blockSizeHeight);
+            stride.width = regionBuffStride > 0 ?  regionBuffStride : extent.width;
             stride.height = region.buffTexHeight > 0 ? region.buffTexHeight : extent.height;
 
-            const destWidth  = (region.texExtent.width + offset.x === (gpuTexture.width >> mipLevel)) ? region.texExtent.width : extent.width;
-            const destHeight = (region.texExtent.height + offset.y === (gpuTexture.height >> mipLevel)) ? region.texExtent.height : extent.height;
+            const destWidth  = (regionTexExtentWidth + offset.x === (gpuTexture.width >> mipLevel)) ? regionTexExtentWidth : extent.width;
+            const destHeight = (regionTexExtentHeight + offset.y === (gpuTexture.height >> mipLevel)) ? regionTexExtentHeight : extent.height;
 
             let pixels: ArrayBufferView;
             const buffer = buffers[n++];
@@ -2862,20 +2871,29 @@ export function WebGL2CmdFuncCopyBuffersToTexture (
             const region = regions[k];
             const mipLevel = region.texSubres.mipLevel;
 
-            offset.x =  region.texOffset.x === 0 ? 0 : alignTo(region.texOffset.x, blockSize.width);
-            offset.y =  region.texOffset.y === 0 ? 0 : alignTo(region.texOffset.y, blockSize.height);
-            extent.width = region.texExtent.width < blockSize.width ? region.texExtent.width : alignTo(region.texExtent.width, blockSize.width);
-            extent.height = region.texExtent.height < blockSize.height ? region.texExtent.width
-                : alignTo(region.texExtent.height, blockSize.height);
+            const regionTexOffset = region.texOffset;
+            const regionTexExtent = region.texExtent;
+            const regionTexExtentWidth = regionTexExtent.width;
+            const regionTexExtentHeight = regionTexExtent.height;
+            const blockSizeWidth = blockSize.width;
+            const blockSizeHeight = blockSize.height;
+            const regionBuffStride = region.buffStride;
+            const regionTexSubres = region.texSubres;
+
+            offset.x =  regionTexOffset.x === 0 ? 0 : alignTo(regionTexOffset.x, blockSizeWidth);
+            offset.y =  regionTexOffset.y === 0 ? 0 : alignTo(regionTexOffset.y, blockSizeHeight);
+            extent.width = regionTexExtentWidth < blockSizeWidth ? regionTexExtentWidth : alignTo(regionTexExtentWidth, blockSizeWidth);
+            extent.height = regionTexExtentHeight < blockSizeHeight ? regionTexExtentWidth
+                : alignTo(regionTexExtentHeight, blockSizeHeight);
             extent.depth = 1;
-            stride.width = region.buffStride > 0 ?  region.buffStride : extent.width;
+            stride.width = regionBuffStride > 0 ?  regionBuffStride : extent.width;
             stride.height = region.buffTexHeight > 0 ? region.buffTexHeight : extent.height;
 
-            const destWidth  = (region.texExtent.width + offset.x === (gpuTexture.width >> mipLevel)) ? region.texExtent.width : extent.width;
-            const destHeight = (region.texExtent.height + offset.y === (gpuTexture.height >> mipLevel)) ? region.texExtent.height : extent.height;
+            const destWidth  = (regionTexExtentWidth + offset.x === (gpuTexture.width >> mipLevel)) ? regionTexExtentWidth : extent.width;
+            const destHeight = (regionTexExtentHeight + offset.y === (gpuTexture.height >> mipLevel)) ? regionTexExtentHeight : extent.height;
 
-            const fcount = region.texSubres.baseArrayLayer + region.texSubres.layerCount;
-            for (f = region.texSubres.baseArrayLayer; f < fcount; ++f) {
+            const fcount = regionTexSubres.baseArrayLayer + regionTexSubres.layerCount;
+            for (f = regionTexSubres.baseArrayLayer; f < fcount; ++f) {
                 offset.z = f;
 
                 let pixels: ArrayBufferView;
@@ -2935,19 +2953,26 @@ export function WebGL2CmdFuncCopyBuffersToTexture (
         for (let k = 0; k < regions.length; k++) {
             const region = regions[k];
             const mipLevel = region.texSubres.mipLevel;
+            const regionTexOffset = region.texOffset;
+            const regionTexExtent = region.texExtent;
+            const regionTexExtentWidth = regionTexExtent.width;
+            const regionTexExtentHeight = regionTexExtent.height;
+            const blockSizeWidth = blockSize.width;
+            const blockSizeHeight = blockSize.height;
+            const regionBuffStride = region.buffStride;
 
-            offset.x = region.texOffset.x === 0 ? 0 : alignTo(region.texOffset.x, blockSize.width);
-            offset.y = region.texOffset.y === 0 ? 0 : alignTo(region.texOffset.y, blockSize.height);
-            offset.z = region.texOffset.z;
-            extent.width = region.texExtent.width < blockSize.width ? region.texExtent.width : alignTo(region.texExtent.width, blockSize.width);
-            extent.height = region.texExtent.height < blockSize.height ? region.texExtent.width
-                : alignTo(region.texExtent.height, blockSize.height);
-            extent.depth = region.texExtent.depth;
-            stride.width = region.buffStride > 0 ?  region.buffStride : extent.width;
+            offset.x = regionTexOffset.x === 0 ? 0 : alignTo(regionTexOffset.x, blockSizeWidth);
+            offset.y = regionTexOffset.y === 0 ? 0 : alignTo(regionTexOffset.y, blockSizeHeight);
+            offset.z = regionTexOffset.z;
+            extent.width = regionTexExtentWidth < blockSizeWidth ? regionTexExtentWidth : alignTo(regionTexExtentWidth, blockSizeWidth);
+            extent.height = regionTexExtentHeight < blockSizeHeight ? regionTexExtentWidth
+                : alignTo(regionTexExtentHeight, blockSizeHeight);
+            extent.depth = regionTexExtent.depth;
+            stride.width = regionBuffStride > 0 ?  regionBuffStride : extent.width;
             stride.height = region.buffTexHeight > 0 ? region.buffTexHeight : extent.height;
 
-            const destWidth  = (region.texExtent.width + offset.x === (gpuTexture.width >> mipLevel)) ? region.texExtent.width : extent.width;
-            const destHeight = (region.texExtent.height + offset.y === (gpuTexture.height >> mipLevel)) ? region.texExtent.height : extent.height;
+            const destWidth  = (regionTexExtentWidth + offset.x === (gpuTexture.width >> mipLevel)) ? regionTexExtentWidth : extent.width;
+            const destHeight = (regionTexExtentHeight + offset.y === (gpuTexture.height >> mipLevel)) ? regionTexExtentHeight : extent.height;
 
             let pixels: ArrayBufferView;
             const buffer = buffers[n++];
@@ -3006,19 +3031,28 @@ export function WebGL2CmdFuncCopyBuffersToTexture (
             const region = regions[k];
             const mipLevel = region.texSubres.mipLevel;
 
-            offset.x =  region.texOffset.x === 0 ? 0 : alignTo(region.texOffset.x, blockSize.width);
-            offset.y =  region.texOffset.y === 0 ? 0 : alignTo(region.texOffset.y, blockSize.height);
-            extent.width = region.texExtent.width < blockSize.width ? region.texExtent.width : alignTo(region.texExtent.width, blockSize.width);
-            extent.height = region.texExtent.height < blockSize.height ? region.texExtent.width
-                : alignTo(region.texExtent.height, blockSize.height);
-            stride.width = region.buffStride > 0 ?  region.buffStride : extent.width;
+            const regionTexOffset = region.texOffset;
+            const regionTexExtent = region.texExtent;
+            const regionTexExtentWidth = regionTexExtent.width;
+            const regionTexExtentHeight = regionTexExtent.height;
+            const blockSizeWidth = blockSize.width;
+            const blockSizeHeight = blockSize.height;
+            const regionBuffStride = region.buffStride;
+            const regionTexSubres = region.texSubres;
+
+            offset.x =  regionTexOffset.x === 0 ? 0 : alignTo(regionTexOffset.x, blockSizeWidth);
+            offset.y =  regionTexOffset.y === 0 ? 0 : alignTo(regionTexOffset.y, blockSizeHeight);
+            extent.width = regionTexExtentWidth < blockSizeWidth ? regionTexExtentWidth : alignTo(regionTexExtentWidth, blockSizeWidth);
+            extent.height = regionTexExtentHeight < blockSizeHeight ? regionTexExtentWidth
+                : alignTo(regionTexExtentHeight, blockSizeHeight);
+            stride.width = regionBuffStride > 0 ?  regionBuffStride : extent.width;
             stride.height = region.buffTexHeight > 0 ? region.buffTexHeight : extent.height;
 
-            const destWidth  = (region.texExtent.width + offset.x === (gpuTexture.width >> mipLevel)) ? region.texExtent.width : extent.width;
-            const destHeight = (region.texExtent.height + offset.y === (gpuTexture.height >> mipLevel)) ? region.texExtent.height : extent.height;
+            const destWidth  = (regionTexExtentWidth + offset.x === (gpuTexture.width >> mipLevel)) ? regionTexExtentWidth : extent.width;
+            const destHeight = (regionTexExtentHeight + offset.y === (gpuTexture.height >> mipLevel)) ? regionTexExtentHeight : extent.height;
 
-            const fcount = region.texSubres.baseArrayLayer + region.texSubres.layerCount;
-            for (f = region.texSubres.baseArrayLayer; f < fcount; ++f) {
+            const fcount = regionTexSubres.baseArrayLayer + regionTexSubres.layerCount;
+            for (f = regionTexSubres.baseArrayLayer; f < fcount; ++f) {
                 let pixels: ArrayBufferView;
                 const buffer = buffers[n++];
                 if (stride.width === extent.width && stride.height === extent.height) {

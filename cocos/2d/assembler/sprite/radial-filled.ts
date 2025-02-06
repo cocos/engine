@@ -469,7 +469,7 @@ export const radialFilled: IAssembler = {
     updateUVs (sprite: Sprite) {
         const renderData = sprite.renderData!;
         renderData.vertDirty = true;
-        sprite.markForUpdateRenderData();
+        sprite._markForUpdateRenderData();
     },
 
     // fill color here

@@ -228,7 +228,7 @@ export class Label extends UIRenderer {
         }
 
         this._string = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -249,7 +249,7 @@ export class Label extends UIRenderer {
         }
 
         this._horizontalAlign = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -270,7 +270,7 @@ export class Label extends UIRenderer {
         }
 
         this._verticalAlign = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -304,7 +304,7 @@ export class Label extends UIRenderer {
         }
 
         this._fontSize = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -324,7 +324,7 @@ export class Label extends UIRenderer {
         }
 
         this._lineHeight = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -347,7 +347,7 @@ export class Label extends UIRenderer {
         }
 
         this._spacingX = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -368,7 +368,7 @@ export class Label extends UIRenderer {
         }
 
         this._overflow = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -388,7 +388,7 @@ export class Label extends UIRenderer {
         }
 
         this._enableWrapText = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -422,7 +422,7 @@ export class Label extends UIRenderer {
             this.font = null;
         }
         this._flushAssembler();
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -443,7 +443,7 @@ export class Label extends UIRenderer {
         }
 
         this._fontFamily = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -529,7 +529,7 @@ export class Label extends UIRenderer {
         }
 
         this._isBold = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -549,7 +549,7 @@ export class Label extends UIRenderer {
         }
 
         this._isItalic = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -569,7 +569,7 @@ export class Label extends UIRenderer {
         }
 
         this._isUnderline = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -585,7 +585,7 @@ export class Label extends UIRenderer {
     set underlineHeight (value) {
         if (this._underlineHeight === value) return;
         this._underlineHeight = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -604,7 +604,7 @@ export class Label extends UIRenderer {
     set enableOutline (value) {
         if (this._enableOutline === value) return;
         this._enableOutline = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -623,7 +623,7 @@ export class Label extends UIRenderer {
     set outlineColor (value: Readonly<Color>) {
         if (this._outlineColor === value) return;
         this._outlineColor.set(value);
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -642,7 +642,7 @@ export class Label extends UIRenderer {
     set outlineWidth (value) {
         if (this._outlineWidth === value) return;
         this._outlineWidth = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -658,7 +658,7 @@ export class Label extends UIRenderer {
     set enableShadow (value) {
         if (this._enableShadow === value) return;
         this._enableShadow = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -677,7 +677,7 @@ export class Label extends UIRenderer {
     set shadowColor (value: Readonly<Color>) {
         if (this._shadowColor === value) return;
         this._shadowColor.set(value);
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -696,7 +696,7 @@ export class Label extends UIRenderer {
     set shadowOffset (value) {
         if (this._shadowOffset === value) return;
         this._shadowOffset.set(value);
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -715,7 +715,7 @@ export class Label extends UIRenderer {
     set shadowBlur (value) {
         if (this._shadowBlur === value) return;
         this._shadowBlur = value;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -974,7 +974,7 @@ export class Label extends UIRenderer {
     // Cannot use the base class methods directly because BMFont and CHAR cannot be updated in assambler with just color.
     protected _updateColor (): void {
         super._updateColor();
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -1030,7 +1030,7 @@ export class Label extends UIRenderer {
     }
 
     protected _applyFontTexture (): void {
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
         const font = this._font;
         if (font instanceof BitmapFont) {
             const spriteFrame = font.spriteFrame;
@@ -1093,6 +1093,7 @@ export class Label extends UIRenderer {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public _updateBlendFunc (): void {
         // override for BYTEDANCE

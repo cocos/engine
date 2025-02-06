@@ -548,6 +548,7 @@ export class MeshRenderer extends ModelRenderer {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public clearGlobalStandardSkinObjectFlag (): void {
         this._enabledGlobalStandardSkinObject = false;
@@ -1000,6 +1001,7 @@ export class MeshRenderer extends ModelRenderer {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public _detachFromScene (): void {
         if (this._model && this._model.scene) {
@@ -1088,7 +1090,7 @@ export class MeshRenderer extends ModelRenderer {
     /**
      * @engineInternal
      */
-    public _onRebuildPSO (idx: number, material: Material): void {
+    public override _onRebuildPSO (idx: number, material: Material): void {
         if (!this._model || !this._model.inited) { return; }
         this._model.isDynamicBatching = this._isBatchingEnabled();
         this._model.setSubModelMaterial(idx, material);

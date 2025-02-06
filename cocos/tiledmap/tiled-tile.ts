@@ -114,7 +114,7 @@ export class TiledTile extends Component {
     }
     set grid (value: number) {
         if (this._layer) {
-            this._layer.setTileGIDAt(value as unknown as any, this._x, this._y);
+            this._layer.setTileGIDAt(value, this._x, this._y);
         }
     }
 
@@ -151,10 +151,10 @@ export class TiledTile extends Component {
         const p = this._layer.getPositionAt(x, y);
         this.node.setPosition(p!.x, p!.y);
         this._layer.setTiledTileAt(x, y, this);
-        this._layer.markForUpdateRenderData();
+        this._layer._markForUpdateRenderData();
     }
 
     private _updatePosition (): void {
-        this._layer!.markForUpdateRenderData();
+        this._layer!._markForUpdateRenderData();
     }
 }

@@ -379,6 +379,7 @@ export class CallbacksInvoker<EventTypeClass extends EventType = EventType> {
 
     /**
      * @engineInternal
+     * @mangle
      */
     public _registerOffCallback (cb: () => void): void {
         this._offCallback = cb;

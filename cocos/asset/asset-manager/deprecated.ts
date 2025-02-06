@@ -916,7 +916,7 @@ replaceProperty(url, 'url', [
         customFunction: (url: string): string => {
             if (url.startsWith('resources/')) {
                 return transform({
-                    path: path.changeExtname(url.substr(10)),
+                    path: path.changeExtname(url.substring(10)),
                     bundle: BuiltinBundleName.RESOURCES,
                     __isNative__: true,
                     ext: path.extname(url),

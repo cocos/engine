@@ -22,7 +22,9 @@ async function findAutoAtlasFolder(spriteFrameUuid) {
     }
 
     let dir = dirname(filePath);
-    while (dir !== ASSET_DIR) {
+    // Some resources may not be located in the assets directory, 
+    // so it's necessary to perform length checks to avoid infinite loops.
+    while (dir !== ASSET_DIR && dir.length > 1) {
         const files = readdirSync(dir);
         const file = files.find(file => file.endsWith(AUTO_ATLAS_EXTNAME));
         if (file) {

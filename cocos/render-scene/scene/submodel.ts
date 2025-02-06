@@ -239,10 +239,11 @@ export class SubModel {
         this._flushPassInfo();
 
         this.priority = RenderPriority.DEFAULT;
+
         const r = cclegacy.rendering;
         // initialize resources for reflection material
         if (((!r || !r.enableEffectImport) && passes[0].phase === getPhaseID('reflection'))
-        || (isEnableEffect() && passes[0].phaseID === r.getPhaseID(r.getPassID('default'), 'reflection'))) {
+            || (isEnableEffect() && passes[0].phaseID === r.getPhaseID(r.getPassID('default'), 'reflection'))) {
             let texWidth = root.mainWindow!.width;
             let texHeight = root.mainWindow!.height;
             const minSize = 512;
@@ -291,7 +292,9 @@ export class SubModel {
         this._inputAssembler!.destroy();
         this._inputAssembler = null;
 
-        this._worldBoundDescriptorSet?.destroy();
+        if (this._worldBoundDescriptorSet) {
+            this._worldBoundDescriptorSet.destroy();
+        }
         this._worldBoundDescriptorSet = null;
 
         this.priority = RenderPriority.DEFAULT;
@@ -319,7 +322,20 @@ export class SubModel {
             pass.update();
         }
         this._descriptorSet!.update();
-        this._worldBoundDescriptorSet?.update();
+        if (this._worldBoundDescriptorSet) this._worldBoundDescriptorSet.update();
+    }
+
+    private _updatePasses (): void {
+        const passes = this._passes;
+        if (!passes) { return; }
+
+        passes.forEach((pass) => {
+            pass.beginChangeStatesSilently();
+            pass.tryCompile(); // force update shaders
+            pass.endChangeStatesSilently();
+        });
+
+        this._flushPassInfo();
     }
 
     /**
@@ -327,17 +343,7 @@ export class SubModel {
      * @zh 管线更新回调
      */
     public onPipelineStateChanged (): void {
-        const passes = this._passes;
-        if (!passes) { return; }
-
-        for (let i = 0; i < passes.length; i++) {
-            const pass = passes[i];
-            pass.beginChangeStatesSilently();
-            pass.tryCompile(); // force update shaders
-            pass.endChangeStatesSilently();
-        }
-
-        this._flushPassInfo();
+        this._updatePasses();
     }
 
     /**
@@ -357,17 +363,7 @@ export class SubModel {
         }
         this._patches = patches;
 
-        const passes = this._passes;
-        if (!passes) { return; }
-
-        for (let i = 0; i < passes.length; i++) {
-            const pass = passes[i];
-            pass.beginChangeStatesSilently();
-            pass.tryCompile(); // force update shaders
-            pass.endChangeStatesSilently();
-        }
-
-        this._flushPassInfo();
+        this._updatePasses();
     }
 
     /**

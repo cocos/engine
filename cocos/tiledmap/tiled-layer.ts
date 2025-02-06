@@ -31,7 +31,7 @@ import { UIRenderer } from '../2d/framework/ui-renderer';
 import { SpriteFrame } from '../2d/assets/sprite-frame';
 import { Component, Node } from '../scene-graph';
 import { TMXMapInfo } from './tmx-xml-parser';
-import { Color, IVec2Like, Mat4, Size, Vec2, Vec3, warn, logID } from '../core';
+import { Color, IVec2Like, Mat4, Size, Vec2, Vec3, logID, warnID } from '../core';
 import { TiledTile } from './tiled-tile';
 import { RenderData } from '../2d/renderer/render-data';
 import { IBatcher } from '../2d/renderer/i-batcher';
@@ -52,6 +52,10 @@ const _vec2_temp = new Vec2();
 const _vec3_temp = new Vec3();
 const _vec3_temp2 = new Vec3();
 const _tempRowCol = { row: 0, col: 0 };
+
+function isTiledSubNodeData (data: TiledRenderData | TiledSubNodeData): data is TiledSubNodeData {
+    return 'subNodes' in data;
+}
 
 @ccclass('cc.TiledUserNodeData')
 export class TiledUserNodeData extends Component {
@@ -224,7 +228,7 @@ export class TiledLayer extends UIRenderer {
         if (this._enableCulling !== value) {
             this._enableCulling = value;
             this._cullingDirty = true;
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
         }
     }
     get enableCulling (): boolean { return this._enableCulling!; }
@@ -239,7 +243,7 @@ export class TiledLayer extends UIRenderer {
     public addUserNode (node: Node): boolean {
         let dataComp = node.getComponent(TiledUserNodeData);
         if (dataComp) {
-            warn('CCTiledLayer:addUserNode node has been added');
+            warnID(7242);
             return false;
         }
 
@@ -270,7 +274,7 @@ export class TiledLayer extends UIRenderer {
     public removeUserNode (node: Node): boolean {
         const dataComp = node.getComponent(TiledUserNodeData);
         if (!dataComp) {
-            warn('CCTiledLayer:removeUserNode node is not exist');
+            warnID(7243);
             return false;
         }
         node.off(NodeEventType.TRANSFORM_CHANGED, this._userNodePosChange, dataComp);
@@ -349,7 +353,7 @@ export class TiledLayer extends UIRenderer {
         const self = dataComp._tiledLayer!;
         self._updateCullingOffsetByUserNode(node);
         self._userNodeDirty = true;
-        self.markForUpdateRenderData();
+        self._markForUpdateRenderData();
     }
 
     protected _userNodePosChange (): void {
@@ -387,7 +391,7 @@ export class TiledLayer extends UIRenderer {
         dataComp._col = -1;
         dataComp._index = -1;
         this._userNodeDirty = true;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     protected _limitInLayer (rowCol: { row: number, col: number }): void {
@@ -411,7 +415,7 @@ export class TiledLayer extends UIRenderer {
         colData.count++;
         colData.list.push(dataComp);
         this._userNodeDirty = true;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     public isUserNodeDirty (): boolean {
@@ -451,7 +455,7 @@ export class TiledLayer extends UIRenderer {
         this.node.on(NodeEventType.SIZE_CHANGED, this.updateCulling, this);
         this.node.parent!.on(NodeEventType.TRANSFORM_CHANGED, this.updateCulling, this);
         this.node.parent!.on(NodeEventType.SIZE_CHANGED, this.updateCulling, this);
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
         // delay 1 frame, since camera's matrix data is dirty
         this.scheduleOnce(this.updateCulling.bind(this));
     }
@@ -473,7 +477,7 @@ export class TiledLayer extends UIRenderer {
         this._leftDownToCenterX = trans.width * trans.anchorX * scale.x;
         this._leftDownToCenterY = trans.height * trans.anchorY * scale.y;
         this._cullingDirty = true;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -677,7 +681,7 @@ export class TiledLayer extends UIRenderer {
       * tiledLayer.setTileGIDAt(1001, 10, 10, 1)
       */
     public setTileGIDAt (gid: MixedGID, x: number, y: number, flags?: number): void {
-        const ugid = ((gid as unknown as number) & TileFlag.FLIPPED_MASK) >>> 0;
+        const ugid = (gid & TileFlag.FLIPPED_MASK) >>> 0;
 
         x = Math.floor(x);
         y = Math.floor(y);
@@ -688,7 +692,7 @@ export class TiledLayer extends UIRenderer {
             logID(7238);
             return;
         }
-        if (ugid !== 0 && ugid < (this._tilesets[0].firstGid as unknown as number)) {
+        if (ugid !== 0 && ugid < this._tilesets[0].firstGid) {
             logID(7239, gid);
             return;
         }
@@ -704,14 +708,14 @@ export class TiledLayer extends UIRenderer {
         const oldGIDAndFlags = this.tiles[idx];
         if (gidAndFlags === oldGIDAndFlags) return;
 
-        const gid = (((gidAndFlags as unknown as number) & TileFlag.FLIPPED_MASK) >>> 0);
-        const grid = this.texGrids!.get(gid as unknown as GID);
+        const gid = ((gidAndFlags & TileFlag.FLIPPED_MASK) >>> 0);
+        const grid = this.texGrids!.get(gid);
 
         if (grid) {
             this.tiles[idx] = gidAndFlags;
             this._updateVertex(x, y);
         } else {
-            this.tiles[idx] = 0 as unknown as MixedGID;
+            this.tiles[idx] = 0;
         }
         this._cullingDirty = true;
     }
@@ -848,7 +852,7 @@ export class TiledLayer extends UIRenderer {
             this._cullingDirty = true;
         }
 
-        if (this._cullingDirty) this.markForUpdateRenderData();
+        if (this._cullingDirty) this._markForUpdateRenderData();
     }
 
     // the result may not precise, but it dose't matter, it just uses to be got range
@@ -1251,7 +1255,7 @@ export class TiledLayer extends UIRenderer {
       */
     public setTextures (textures: SpriteFrame[]): void {
         this._textures = textures;
-        this.markForUpdateRenderData();
+        this._markForUpdateRenderData();
     }
 
     /**
@@ -1448,10 +1452,11 @@ export class TiledLayer extends UIRenderer {
     }
 
     public requestSubNodesData (): TiledSubNodeData {
-        const arr = this._tiledDataArray as any[];
+        const arr = this._tiledDataArray;
         if (arr.length > 0) {
-            if (arr[arr.length - 1].subNodes && arr[arr.length - 1].subNodes.length === 0) {
-                return arr[arr.length - 1] as TiledSubNodeData;
+            const last = arr[arr.length - 1];
+            if (isTiledSubNodeData(last) && last.subNodes.length === 0) {
+                return last;
             }
         }
         const renderData: (TiledUserNodeData | null)[] = [];
@@ -1476,7 +1481,7 @@ export class TiledLayer extends UIRenderer {
             this._assembler.createData(this);
         }
         if (this._tiledDataArray.length === 0) {
-            this.markForUpdateRenderData();
+            this._markForUpdateRenderData();
             this._updateColor();
         }
     }
@@ -1541,9 +1546,9 @@ export class TiledLayer extends UIRenderer {
         const tiledDataArray = this._tiledDataArray;
         let idx = 0;
         tiledDataArray.forEach((m) => {
-            if ((m as TiledSubNodeData).subNodes) {
+            if (isTiledSubNodeData(m)) {
                 // 提前处理 User Nodes
-                (m as TiledSubNodeData).subNodes.forEach((c) => {
+                m.subNodes.forEach((c) => {
                     if (c) {
                         if (!this._drawInfoList[idx]) {
                             this._drawInfoList[idx] = new RenderDrawInfo();
@@ -1556,7 +1561,7 @@ export class TiledLayer extends UIRenderer {
                     }
                 });
             } else {
-                const td = m as TiledRenderData;
+                const td = m;
                 if (td.texture) {
                     if (!this._drawInfoList[idx]) {
                         this._drawInfoList[idx] = new RenderDrawInfo();
