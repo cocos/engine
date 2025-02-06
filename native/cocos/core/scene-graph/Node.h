@@ -610,7 +610,13 @@ private:
     virtual void onBatchCreated(bool dontChildPrefab);
     virtual void updateScene();
 
-    bool getParentWorldMatrixNoSkew(Node *parent, Mat4 *out);
+    /**
+     * Check whether the node or its parent has skew components and return the original world matrix without skew to `out` parameter.
+     * @param node The node and its parent for finding skew.
+     * @param out The node's original world matrix without skew.
+     * @return true if the node or its parent has skew components, otherwise returns false.
+     */
+    static bool findSkewAndGetOriginalWorldMatrix(Node *node, Mat4 *out);
     void onSetParent(Node *oldParent, bool keepWorldTransform);
     void onHierarchyChanged(Node *);
     void onHierarchyChangedBase(Node *oldParent);
