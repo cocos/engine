@@ -25,8 +25,9 @@
 import { Vec2, Color, js, random, IColorLike, Vec4, clamp, toRadian, toDegree } from '../core';
 import { vfmtPosUvColor, getComponentPerVertex } from '../2d/renderer/vertex-format';
 import { PositionType, EmitterMode, START_SIZE_EQUAL_TO_END_SIZE, START_RADIUS_EQUAL_TO_END_RADIUS } from './define';
-import { ParticleSystem2D } from './particle-system-2d';
-import { MeshRenderData } from '../2d/renderer/render-data';
+import type { ParticleSystem2D } from './particle-system-2d';
+import type { MeshRenderData } from '../2d/renderer/render-data';
+import type { Particle2DAssembler } from './particle-system-2d-assembler';
 
 const _pos = new Vec2();
 const _tpa = new Vec2();
@@ -329,7 +330,7 @@ export class Simulator {
     }
 
     public step (dt: number): void {
-        const assembler = this.sys.assembler!;
+        const assembler = this.sys.assembler as Particle2DAssembler;
         const psys = this.sys;
         const node = psys.node;
         const particles = this.particles;

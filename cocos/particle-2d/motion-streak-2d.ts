@@ -27,10 +27,11 @@ import { ccclass, executeInEditMode, serializable, playOnFocus, menu, help, edit
 import { EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
 import { UIRenderer } from '../2d/framework';
 import { Texture2D } from '../asset/assets/texture-2d';
-import { IBatcher } from '../2d/renderer/i-batcher';
+import type { IBatcher } from '../2d/renderer/i-batcher';
 import { Vec2 } from '../core';
+import type { RenderData } from '../2d/renderer/render-data';
 
-class Point {
+export class MotionStreakPoint {
     public point = new Vec2();
     public dir = new Vec2();
     public distance = 0;
@@ -69,7 +70,7 @@ class Point {
 @menu('Effects/MotionStreak')
 @help('i18n:COMPONENT.help_url.motionStreak')
 export class MotionStreak extends UIRenderer {
-    public static Point = Point;
+    public static Point = MotionStreakPoint;
 
     constructor () {
         super();
@@ -160,7 +161,7 @@ export class MotionStreak extends UIRenderer {
         this._fastMode = val;
     }
 
-    public get points (): Point[] {
+    public get points (): MotionStreakPoint[] {
         return this._points;
     }
 
@@ -176,7 +177,7 @@ export class MotionStreak extends UIRenderer {
     private _texture: Texture2D | null  = null;
     @serializable
     private _fastMode = false;
-    private _points: Point[] = [];
+    private _points: MotionStreakPoint[] = [];
 
     public onEnable (): void {
         super.onEnable();
@@ -192,8 +193,8 @@ export class MotionStreak extends UIRenderer {
 
         if (!this._renderData) {
             if (this._assembler && this._assembler.createData) {
-                this._renderData = this._assembler.createData(this);
-                this._renderData!.material = this.material;
+                this._renderData = this._assembler.createData(this) as RenderData;
+                this._renderData.material = this.material;
                 this._updateColor();
             }
         }
@@ -223,9 +224,11 @@ export class MotionStreak extends UIRenderer {
         if (this._renderData) this._renderData.clear();
     }
 
-    public lateUpdate (dt): void {
+    public lateUpdate (dt: number): void {
         if (EDITOR_NOT_IN_PREVIEW && !this._preview) return;
-        if (this._assembler) this._assembler.update(this, dt);
+        if (this._assembler && this._assembler.update) {
+            this._assembler.update(this, dt);
+        }
     }
 
     /**

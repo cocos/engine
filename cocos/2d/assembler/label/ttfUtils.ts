@@ -22,20 +22,19 @@
  THE SOFTWARE.
 */
 import { CacheMode, Label } from '../../components';
-import { ISharedLabelData } from './font-utils';
-import { UITransform } from '../../framework/ui-transform';
+import type { ISharedLabelData } from './font-utils';
+import type { UITransform } from '../../framework/ui-transform';
 import { dynamicAtlasManager } from '../../utils/dynamic-atlas/atlas-manager';
 import { TextProcessing } from './text-processing';
-import { TextOutputLayoutData, TextOutputRenderData } from './text-output-data';
-import { TextStyle } from './text-style';
-import { TextLayout } from './text-layout';
+import type { TextOutputLayoutData, TextOutputRenderData } from './text-output-data';
+import type { TextStyle } from './text-style';
+import type { TextLayout } from './text-layout';
 import { view } from '../../../ui/view';
 import { approx } from '../../../core';
 
 const Overflow = Label.Overflow;
 
-export const ttfUtils =  {
-
+export class TTFUtils {
     updateProcessingData (
         style: TextStyle,
         layout: TextLayout,
@@ -98,19 +97,19 @@ export const ttfUtils =  {
 
         layout.horizontalAlign = comp.horizontalAlign; // render Only
         layout.verticalAlign = comp.verticalAlign; // render Only
-    },
+    }
 
     getAssemblerData (): ISharedLabelData {
         const sharedLabelData = Label._canvasPool.get();
         sharedLabelData.canvas.width = sharedLabelData.canvas.height = 1;
         return sharedLabelData;
-    },
+    }
 
     resetAssemblerData (assemblerData: ISharedLabelData): void {
         if (assemblerData) {
             Label._canvasPool.put(assemblerData);
         }
-    },
+    }
 
     updateRenderData (comp: Label): void {
         if (!comp.renderData) { return; }
@@ -163,7 +162,7 @@ export const ttfUtils =  {
             const renderData = comp.renderData;
             renderData.updateRenderData(comp, comp.spriteFrame);
         }
-    },
+    }
 
     // callBack function
     generateVertexData (style: TextStyle, outputLayoutData: TextOutputLayoutData, outputRenderData: TextOutputRenderData): void {
@@ -182,15 +181,15 @@ export const ttfUtils =  {
         data[2].y = height - appY; // t
         data[3].x = width - appX; // r
         data[3].y = height - appY; // t
-    },
+    }
 
     updateVertexData (comp: Label): void {
         // no needs to update vertex data
-    },
+    }
 
     updateUVs (comp: Label): void {
         // no needs to update uv data
-    },
+    }
 
     _updateFontFamily (comp: Label): string {
         let _fontFamily = '';
@@ -204,19 +203,19 @@ export const ttfUtils =  {
             _fontFamily = comp.fontFamily || 'Arial';
         }
         return _fontFamily;
-    },
+    }
 
     _calDynamicAtlas (comp: Label, outputLayoutData: TextOutputLayoutData): void {
         if (comp.cacheMode !== CacheMode.BITMAP || outputLayoutData.canvasSize.width <= 0 || outputLayoutData.canvasSize.height <= 0) return;
         const frame = comp.ttfSpriteFrame!;
         dynamicAtlasManager.packToDynamicAtlas(comp, frame);
         // TODO update material and uv
-    },
+    }
 
     _resetDynamicAtlas (comp: Label): void {
         if (comp.cacheMode !== CacheMode.BITMAP) return;
         const frame = comp.ttfSpriteFrame!;
         dynamicAtlasManager.deleteAtlasSpriteFrame(frame);
         frame._resetDynamicAtlasFrame();
-    },
-};
+    }
+}

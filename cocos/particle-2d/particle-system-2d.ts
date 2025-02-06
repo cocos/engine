@@ -38,11 +38,11 @@ import { BlendFactor } from '../gfx';
 import { PNGReader } from './png-reader';
 import { tiffReader } from './tiff-reader';
 import codec from '../../external/compression/ZipUtils';
-import { IBatcher } from '../2d/renderer/i-batcher';
+import type { IBatcher } from '../2d/renderer/i-batcher';
 import { assetManager, builtinResMgr } from '../asset/asset-manager';
 import { PositionType, EmitterMode, DURATION_INFINITY, START_RADIUS_EQUAL_TO_END_RADIUS, START_SIZE_EQUAL_TO_END_SIZE } from './define';
 import { ccwindow } from '../core/global-exports';
-import type { IAssembler } from '../2d';
+import type { IAssembler, MeshRenderData } from '../2d';
 import type { TextureBase } from '../asset/assets/texture-base';
 
 /**
@@ -770,7 +770,7 @@ export class ParticleSystem2D extends UIRenderer {
         // reset uv data so next time simulator will refill buffer uv info when exit edit mode from prefab.
         this._simulator.uvFilled = 0;
 
-        if (this._simulator.renderData && this._assembler) {
+        if (this._simulator.renderData && this._assembler && this._assembler.removeData) {
             this._assembler.removeData(this._simulator.renderData);
         }
     }
@@ -845,7 +845,7 @@ export class ParticleSystem2D extends UIRenderer {
             this._assembler = assembler;
         }
         if (this._assembler && this._assembler.createData) {
-            this._simulator.renderData = this._assembler.createData(this);
+            this._simulator.renderData = this._assembler.createData(this) as MeshRenderData;
             this._simulator.renderData.particleInitRenderDrawInfo(this.renderEntity); // 确保 renderEntity 和 renderData 都是 simulator 上的
             this._simulator.initDrawInfo();
         }
@@ -969,7 +969,7 @@ export class ParticleSystem2D extends UIRenderer {
                     }
                 });
             } else if (dict.textureImageData) {
-                const textureData = dict.textureImageData as string;
+                const textureData: string = dict.textureImageData;
 
                 if (textureData && textureData.length > 0) {
                     let imgPathName = imgPath;

@@ -23,12 +23,12 @@
 */
 
 import { UIRenderer } from '../../../framework/ui-renderer';
-import { IAssemblerManager } from '../../../renderer/base';
+import { IAssembler, IAssemblerManager } from '../../../renderer/base';
 import { Graphics } from '../../../components';
 import { graphicsAssembler as graphics } from './graphics-assembler';
 
 const graphicsAssemblerManager: IAssemblerManager = {
-    getAssembler (sprite: UIRenderer) {
+    getAssembler (sprite: UIRenderer): IAssembler {
         return graphics;
     },
 };

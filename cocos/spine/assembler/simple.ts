@@ -24,17 +24,17 @@
 
 import { IAssembler } from '../../2d/renderer/base';
 
-import { Batcher2D } from '../../2d/renderer/batcher-2d';
 import { StaticVBAccessor } from '../../2d/renderer/static-vb-accessor';
 import { vfmtPosUvColor4B, vfmtPosUvTwoColor4B, getAttributeStride } from '../../2d/renderer/vertex-format';
-import { Skeleton, SpineMaterialType } from '../skeleton';
+import { type Skeleton, SpineMaterialType } from '../skeleton';
 import { BlendFactor } from '../../gfx';
 import { legacyCC } from '../../core/global-exports';
 import { RenderData } from '../../2d/renderer/render-data';
 import { director } from '../../game';
 import spine from '../lib/spine-core';
 import { Color, EPSILON, Vec3 } from '../../core';
-import { MaterialInstance } from '../../render-scene';
+import type { MaterialInstance } from '../../render-scene';
+import type { IBatcher } from '../../2d/renderer/i-batcher';
 
 const _slotColor = new Color(0, 0, 255, 255);
 const _boneColor = new Color(255, 0, 0, 255);
@@ -84,46 +84,48 @@ function _getSlotMaterial (blendMode: number, comp: Skeleton): MaterialInstance 
     return comp.getMaterialForBlendAndTint(src, dst, _useTint ? SpineMaterialType.TWO_COLORED : SpineMaterialType.COLORED_TEXTURED);
 }
 
-export const simple: IAssembler = {
-    vCount: 32767,
-    ensureAccessor (useTint: boolean) {
+class Simple implements IAssembler {
+    vCount = 32767;
+    private ensureAccessor (useTint: boolean): StaticVBAccessor {
         let accessor = useTint ? _tintAccessor : _accessor;
         if (!accessor) {
             const device = director.root!.device;
             const batcher = director.root!.batcher2D;
             const attributes = useTint ? vfmtPosUvTwoColor4B : vfmtPosUvColor4B;
             if (useTint) {
-                accessor = _tintAccessor = new StaticVBAccessor(device, attributes, this.vCount as number);
+                accessor = _tintAccessor = new StaticVBAccessor(device, attributes, this.vCount);
                 // Register to batcher so that batcher can upload buffers after batching process
                 batcher.registerBufferAccessor(Number.parseInt('SPINETINT', 36), _tintAccessor);
             } else {
-                accessor = _accessor = new StaticVBAccessor(device, attributes, this.vCount as number);
+                accessor = _accessor = new StaticVBAccessor(device, attributes, this.vCount);
                 // Register to batcher so that batcher can upload buffers after batching process
                 batcher.registerBufferAccessor(Number.parseInt('SPINE', 36), _accessor);
             }
         }
         return accessor;
-    },
+    }
 
-    createData (comp: Skeleton) {
+    createData (comp: Skeleton): RenderData {
         let rd = comp.renderData;
         if (!rd) {
             const useTint = comp.useTint || comp.isAnimationCached();
-            const accessor = this.ensureAccessor(useTint) as StaticVBAccessor;
+            const accessor = this.ensureAccessor(useTint);
             rd = RenderData.add(useTint ? vfmtPosUvTwoColor4B : vfmtPosUvColor4B, accessor);
         }
         return rd;
-    },
+    }
 
-    updateRenderData (comp: Skeleton, batcher: Batcher2D) {
+    updateRenderData (comp: Skeleton): void {
         const skeleton = comp._skeleton;
         if (skeleton && comp.node.active && comp.skeletonData?.isValid) {
-            updateComponentRenderData(comp, batcher);
+            updateComponentRenderData(comp);
         }
-    },
-};
+    }
+}
 
-function updateComponentRenderData (comp: Skeleton, batcher: Batcher2D): void {
+export const simple = new Simple();
+
+function updateComponentRenderData (comp: Skeleton): void {
     comp.drawList.reset();
     if (comp.color.a === 0) return;
     comp._updateColor();

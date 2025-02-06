@@ -22,13 +22,13 @@
  THE SOFTWARE.
 */
 
-import { Mat4, errorID } from '../../../core';
-import { IRenderData, RenderData } from '../../renderer/render-data';
-import { IBatcher } from '../../renderer/i-batcher';
+import {  Mat4, errorID } from '../../../core';
+import type { IRenderData, RenderData } from '../../renderer/render-data';
+import type { IBatcher } from '../../renderer/i-batcher';
 import { Sprite } from '../../components';
-import { IAssembler } from '../../renderer/base';
+import type { IAssembler } from '../../renderer/base';
 import { dynamicAtlasManager } from '../../utils/dynamic-atlas/atlas-manager';
-import { StaticVBChunk } from '../../renderer/static-vb-accessor';
+import type { StaticVBChunk } from '../../renderer/static-vb-accessor';
 
 const FillType = Sprite.FillType;
 const m = new Mat4();
@@ -38,8 +38,8 @@ const QUAD_INDICES = Uint16Array.from([0, 1, 2, 1, 3, 2]);
  * barFilled 组装器
  * 可通过 `UI.barFilled` 获取该组装器。
  */
-export const barFilled: IAssembler = {
-    updateRenderData (sprite: Sprite) {
+class BarFilled implements IAssembler {
+    updateRenderData (sprite: Sprite): void {
         const frame = sprite.spriteFrame;
         dynamicAtlasManager.packToDynamicAtlas(sprite, frame);
         // TODO update material and uv
@@ -72,9 +72,9 @@ export const barFilled: IAssembler = {
             this.updateVertexData(sprite, fillStart, fillEnd);
             renderData.updateRenderData(sprite, frame);
         }
-    },
+    }
 
-    updateUVs (sprite: Sprite, fillStart: number, fillEnd: number) {
+    updateUVs (sprite: Sprite, fillStart: number, fillEnd: number): void {
         const spriteFrame = sprite.spriteFrame!;
         const renderData = sprite.renderData!;
         const vData = renderData.chunk.vb;
@@ -151,9 +151,9 @@ export const barFilled: IAssembler = {
             errorID(2626);
             break;
         }
-    },
+    }
 
-    updateVertexData (sprite: Sprite, fillStart: number, fillEnd: number) {
+    private updateVertexData (sprite: Sprite, fillStart: number, fillEnd: number): void {
         const renderData: RenderData | null = sprite.renderData;
         const dataList: IRenderData[] = renderData!.data;
         const uiTrans = sprite.node._getUITransformComp()!;
@@ -197,9 +197,9 @@ export const barFilled: IAssembler = {
         dataList[2].y = t;
         dataList[3].x = r;
         dataList[3].y = t;
-    },
+    }
 
-    createData (sprite: Sprite) {
+    createData (sprite: Sprite): RenderData {
         const renderData: RenderData | null = sprite.requestRenderData();
         // 0-4 for local vertex
         renderData.dataLength = 4;
@@ -209,9 +209,9 @@ export const barFilled: IAssembler = {
         // not need
         renderData.data.forEach((data) => { data.z = 0; });
         return renderData;
-    },
+    }
 
-    updateWorldVertexData (sprite: Sprite, chunk: StaticVBChunk) {
+    private updateWorldVertexData (sprite: Sprite, chunk: StaticVBChunk): void {
         const node = sprite.node;
         node.getWorldMatrix(m);
 
@@ -233,9 +233,9 @@ export const barFilled: IAssembler = {
             vData[offset + 1] = (m.m01 * x + m.m05 * y + m.m13) * rhw;
             vData[offset + 2] = (m.m02 * x + m.m06 * y + m.m14) * rhw;
         }
-    },
+    }
 
-    fillBuffers (sprite: Sprite, renderer: IBatcher) {
+    fillBuffers (sprite: Sprite, renderer: IBatcher): void {
         const renderData: RenderData = sprite.renderData!;
         const chunk = renderData.chunk;
         if (sprite._flagChangedVersion !== sprite.node.flagChangedVersion || renderData.vertDirty) {
@@ -256,9 +256,9 @@ export const barFilled: IAssembler = {
         ib[indexOffset++] = vid + 1;
         ib[indexOffset++] = vid + 3;
         meshBuffer.indexOffset += 6;
-    },
+    }
 
-    updateColor (sprite: Sprite) {
+    updateColor (sprite: Sprite): void {
         const renderData = sprite.renderData!;
         const vData = renderData.chunk.vb;
         const stride = renderData.floatStride;
@@ -276,5 +276,7 @@ export const barFilled: IAssembler = {
 
             colorOffset += stride;
         }
-    },
-};
+    }
+}
+
+export const barFilled = new BarFilled();

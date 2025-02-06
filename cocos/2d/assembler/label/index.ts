@@ -24,15 +24,15 @@
 
 import { BitmapFont } from '../../assets';
 import { CacheMode, Label } from '../../components';
-import { IAssemblerManager } from '../../renderer/base';
+import type { IAssembler, IAssemblerManager } from '../../renderer/base';
 import { bmfont } from './bmfont';
 import { letter } from './letter';
 import { ttf } from './ttf';
 import { TextProcessing } from './text-processing';
 
 const labelAssembler: IAssemblerManager = {
-    getAssembler (comp: Label) {
-        let assembler = ttf;
+    getAssembler (comp: Label): IAssembler {
+        let assembler: IAssembler = ttf;
 
         if (comp.font instanceof BitmapFont) {
             assembler = bmfont;

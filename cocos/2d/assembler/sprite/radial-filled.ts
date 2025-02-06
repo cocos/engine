@@ -23,14 +23,14 @@
 */
 
 import { JSB } from 'internal:constants';
-import { SpriteFrame } from '../../assets';
+import type { SpriteFrame } from '../../assets';
 import { Mat4, Vec2 } from '../../../core';
-import { IRenderData, RenderData } from '../../renderer/render-data';
-import { IBatcher } from '../../renderer/i-batcher';
-import { Sprite } from '../../components';
-import { IAssembler } from '../../renderer/base';
+import type { IRenderData, RenderData } from '../../renderer/render-data';
+import type { IBatcher } from '../../renderer/i-batcher';
+import type { Sprite } from '../../components';
+import type { IAssembler } from '../../renderer/base';
 import { dynamicAtlasManager } from '../../utils/dynamic-atlas/atlas-manager';
-import { StaticVBChunk } from '../../renderer/static-vb-accessor';
+import type { StaticVBChunk } from '../../renderer/static-vb-accessor';
 
 const PI_2 = Math.PI * 2;
 const EPSILON = 1e-6;
@@ -240,14 +240,12 @@ function _generateUV (progressX: number, progressY: number, data: IRenderData[],
  * radialFilled 组装器
  * 可通过 `UI.radialFilled` 获取该组装器。
  */
-export const radialFilled: IAssembler = {
-    useModel: false,
-
-    createData (sprite: Sprite) {
+class RadialFilled implements IAssembler {
+    createData (sprite: Sprite): RenderData {
         return sprite.requestRenderData();
-    },
+    }
 
-    updateRenderData (sprite: Sprite) {
+    updateRenderData (sprite: Sprite): void {
         const frame = sprite.spriteFrame;
         dynamicAtlasManager.packToDynamicAtlas(sprite, frame);
         // TODO update material and uv
@@ -388,18 +386,18 @@ export const radialFilled: IAssembler = {
             }
             renderData.updateRenderData(sprite, frame);
         }
-    },
+    }
 
-    createQuadIndices (indexCount: number) {
+    private createQuadIndices (indexCount: number): void {
         QUAD_INDICES = null;
         QUAD_INDICES = new Uint16Array(indexCount);
         let offset = 0;
         for (let i = 0; i < indexCount; i++) {
             QUAD_INDICES[offset++] = i;
         }
-    },
+    }
 
-    fillBuffers (comp: Sprite, renderer: IBatcher) {
+    fillBuffers (comp: Sprite, renderer: IBatcher): void {
         const node = comp.node;
         const renderData: RenderData = comp.renderData!;
         const chunk = renderData.chunk;
@@ -422,9 +420,9 @@ export const radialFilled: IAssembler = {
         }
         meshBuffer.indexOffset += renderData.indexCount;
         meshBuffer.setDirty();
-    },
+    }
 
-    updateWorldUVData (sprite: Sprite, chunk: StaticVBChunk) {
+    private updateWorldUVData (sprite: Sprite): void {
         const renderData = sprite.renderData!;
         const stride = renderData.floatStride;
         const dataList: IRenderData[] = renderData.data;
@@ -434,10 +432,10 @@ export const radialFilled: IAssembler = {
             vData[offset + 3] = dataList[i].u;
             vData[offset + 4] = dataList[i].v;
         }
-    },
+    }
 
     // only for TS
-    updateWorldVertexAndUVData (sprite: Sprite, chunk: StaticVBChunk) {
+    private updateWorldVertexAndUVData (sprite: Sprite, chunk: StaticVBChunk): void {
         const node = sprite.node;
         node.getWorldMatrix(m);
 
@@ -462,18 +460,18 @@ export const radialFilled: IAssembler = {
             vData[vertexOffset + 4] = vert.v;
             vertexOffset += stride;
         }
-    },
+    }
 
     // dirty Mark
     // the real update uv is on updateWorldUVData
-    updateUVs (sprite: Sprite) {
+    updateUVs (sprite: Sprite): void {
         const renderData = sprite.renderData!;
         renderData.vertDirty = true;
         sprite._markForUpdateRenderData();
-    },
+    }
 
     // fill color here
-    updateColorLate (sprite: Sprite) {
+    private updateColorLate (sprite: Sprite): void {
         const renderData = sprite.renderData!;
         const vData = renderData.chunk.vb;
         const stride = renderData.floatStride;
@@ -492,10 +490,12 @@ export const radialFilled: IAssembler = {
             vData[colorOffset + 3] = colorA;
             colorOffset += stride;
         }
-    },
+    }
 
     // Too early
-    updateColor (sprite: Sprite) {
+    updateColor (sprite: Sprite): void {
         // Update color by updateColorLate
-    },
-};
+    }
+}
+
+export const radialFilled = new RadialFilled();

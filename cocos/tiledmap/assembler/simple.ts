@@ -24,17 +24,17 @@
 
 import { JSB } from 'internal:constants';
 import { Mat4, Size, Vec3 } from '../../core/math';
-import { IAssembler } from '../../2d/renderer/base';
-import { IBatcher } from '../../2d/renderer/i-batcher';
+import type { IAssembler } from '../../2d/renderer/base';
+import type { IBatcher } from '../../2d/renderer/i-batcher';
 import { TiledLayer, TiledRenderData, TiledTile } from '..';
 import { GID, MixedGID, RenderOrder, TiledGrid, TileFlag } from '../tiled-types';
 import { director, DirectorEvent } from '../../game';
 import { StaticVBAccessor } from '../../2d/renderer/static-vb-accessor';
 import { vfmtPosUvColor } from '../../2d/renderer/vertex-format';
-import { RenderData } from '../../2d/renderer/render-data';
+import { BaseRenderData, RenderData } from '../../2d/renderer/render-data';
 import { RenderDrawInfoType } from '../../2d/renderer/render-draw-info';
-import { Texture2D } from '../../asset/assets';
-import { Node } from '../../scene-graph';
+import type { Texture2D } from '../../asset/assets';
+import type { Node } from '../../scene-graph';
 
 const MaxGridsLimit = Math.ceil(65535 / 6);
 
@@ -67,26 +67,28 @@ let _accessor: StaticVBAccessor = null!;
  * simple 组装器
  * 可通过 `UI.simple` 获取该组装器。
  */
-export const simple: IAssembler = {
-    ensureAccessor () {
+class Simple implements IAssembler {
+    private ensureAccessor (): void {
         if (!_accessor) {
             const device = director.root!.device;
             const batcher = director.root!.batcher2D;
-            _accessor = new StaticVBAccessor(device, vfmtPosUvColor, this.vCount as number);
+            _accessor = new StaticVBAccessor(device, vfmtPosUvColor);
             //batcher.registerBufferAccessor(Number.parseInt('TILED-MAP', 36), _accessor);
             director.on(DirectorEvent.BEFORE_DRAW, () => {
                 _accessor.reset();
             });
         }
-    },
+    }
 
-    createData (layer: TiledLayer) {
+    createData (layer: TiledLayer): BaseRenderData {
         if (JSB) {
             this.ensureAccessor();
         }
-    },
 
-    fillBuffers (layer: TiledLayer, renderer: IBatcher) {
+        return null as unknown as BaseRenderData;
+    }
+
+    fillBuffers (layer: TiledLayer, renderer: IBatcher): void {
         if (!layer || layer.tiledDataArray.length === 0) return;
 
         const dataArray = layer.tiledDataArray;
@@ -110,9 +112,9 @@ export const simple: IAssembler = {
             vertexId += 4;
         }
         renderData.chunk.meshBuffer.indexOffset = indexOffset;
-    },
+    }
 
-    updateRenderData (comp: TiledLayer) {
+    updateRenderData (comp: TiledLayer): void {
         comp.updateCulling();
         _moveX = comp.leftDownToCenterX;
         _moveY = comp.leftDownToCenterY;
@@ -157,9 +159,9 @@ export const simple: IAssembler = {
         if (JSB) {
             comp.prepareDrawData();
         }
-    },
+    }
 
-    updateColor (tiled: TiledLayer) {
+    updateColor (tiled: TiledLayer): void {
         const color = tiled.color;
         const colorV = new Float32Array(4);
         colorV[0] = color.r / 255;
@@ -176,8 +178,10 @@ export const simple: IAssembler = {
                 vs.set(colorV, i * 9 + 5);
             }
         }
-    },
-};
+    }
+}
+
+export const simple = new Simple();
 
 /*
 texture coordinate
@@ -277,7 +281,7 @@ function _flipDiamondTileTexture (inGrid: TiledGrid, gid: MixedGID): void {
     let tempVal;
 
     // vice
-    if (((gid as unknown as number) & TileFlag.DIAGONAL) >>> 0) {
+    if ((gid & TileFlag.DIAGONAL) >>> 0) {
         tempVal = _uva;
         _uva = _uvb;
         _uvb = tempVal;
@@ -288,14 +292,14 @@ function _flipDiamondTileTexture (inGrid: TiledGrid, gid: MixedGID): void {
     }
 
     // flip x
-    if (((gid as unknown as number) & TileFlag.HORIZONTAL) >>> 0) {
+    if ((gid & TileFlag.HORIZONTAL) >>> 0) {
         tempVal = _uvb;
         _uvb = _uvc;
         _uvc = tempVal;
     }
 
     // flip y
-    if (((gid as unknown as number) & TileFlag.VERTICAL) >>> 0) {
+    if ((gid & TileFlag.VERTICAL) >>> 0) {
         tempVal = _uva;
         _uva = _uvd;
         _uvd = tempVal;
