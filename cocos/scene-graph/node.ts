@@ -877,7 +877,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
       * var test = node.getComponent("Test");
       * ```
       */
-    public getComponent(className: string): Component | null;
+    public getComponent<T extends Component>(className: string): T | null;
 
     public getComponent<T extends Component> (typeOrClassName: string | Constructor<T> | AbstractedConstructor<T>): T | null {
         const constructor = getConstructor(typeOrClassName);
@@ -899,11 +899,11 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
      * @zh 返回节点上指定类型的所有组件。
      * @param className The class name of the target component
      */
-    public getComponents(className: string): Component[];
+    public getComponents<T extends Component>(className: string): T[];
 
-    public getComponents<T extends Component> (typeOrClassName: string | Constructor<T> | AbstractedConstructor<T>): Component[] {
+    public getComponents<T extends Component> (typeOrClassName: string | Constructor<T> | AbstractedConstructor<T>): T[] {
         const constructor = getConstructor(typeOrClassName);
-        const components: Component[] = [];
+        const components: T[] = [];
         if (constructor) {
             Node._findComponents(this, constructor, components);
         }
@@ -930,7 +930,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
      * var Test = node.getComponentInChildren("Test");
      * ```
      */
-    public getComponentInChildren(className: string): Component | null;
+    public getComponentInChildren<T extends Component>(className: string): T | null;
 
     public getComponentInChildren<T extends Component> (typeOrClassName: string | Constructor<T> | AbstractedConstructor<T>): T | null {
         const constructor = getConstructor(typeOrClassName);
@@ -960,11 +960,11 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
      * var tests = node.getComponentsInChildren("Test");
      * ```
      */
-    public getComponentsInChildren(className: string): Component[];
+    public getComponentsInChildren<T extends Component>(className: string): T[];
 
-    public getComponentsInChildren<T extends Component> (typeOrClassName: string | Constructor<T> | AbstractedConstructor<T>): Component[] {
+    public getComponentsInChildren<T extends Component> (typeOrClassName: string | Constructor<T> | AbstractedConstructor<T>): T[] {
         const constructor = getConstructor(typeOrClassName);
-        const components: Component[] = [];
+        const components: T[] = [];
         if (constructor) {
             Node._findComponents(this, constructor, components);
             Node._findChildComponents(this._children, constructor, components);
@@ -994,7 +994,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
      * var test = node.addComponent("Test");
      * ```
      */
-    public addComponent(className: string): Component;
+    public addComponent<T extends Component>(className: string): T;
 
     public addComponent<T extends Component> (typeOrClassName: string | Constructor<T>): T {
         if (EDITOR && (this._objFlags & Destroying)) {
