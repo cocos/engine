@@ -23,7 +23,6 @@
 */
 
 import {
-    graphicsAssembler,
     labelAssembler,
     spriteAssembler,
 } from './assembler';
@@ -48,13 +47,11 @@ export {
     StencilManager,
     spriteAssembler, // use less
     labelAssembler, // use less
-    graphicsAssembler, // use less
 };
 
 cclegacy.UI = {
     MeshBuffer, // use less
     spriteAssembler, // use less
-    graphicsAssembler, // use less
     labelAssembler, // use less
     RenderData,
     MeshRenderData,

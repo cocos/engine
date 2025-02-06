@@ -23,7 +23,7 @@
 */
 
 import { ccclass, editable, serializable, type } from 'cc.decorator';
-import { DEV, DEBUG, EDITOR, EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
+import { DEV, DEBUG, EDITOR, EDITOR_NOT_IN_PREVIEW, USE_UI_SKEW } from 'internal:constants';
 import { Layers } from './layers';
 import { NodeUIProperties } from './node-ui-properties';
 import { cclegacy } from '../core/global-exports';
@@ -45,7 +45,8 @@ import { findSkewAndGetOriginalWorldMatrix, updateLocalMatrixBySkew } from '../2
 import type { Scene } from './scene';
 import type { Director } from '../game/director';
 import type { Game } from '../game/game';
-import type { UITransform, UISkew } from '../2d/framework';
+import type { UITransform } from '../2d/framework';
+import type { UISkew } from '../2d/framework/ui-skew';
 
 const Destroying = CCObjectFlags.Destroying;
 const DontDestroy = CCObjectFlags.DontDestroy;
@@ -82,9 +83,6 @@ const dirtyNodes: Node[] = [];
 
 const reserveContentsForAllSyncablePrefabTag = Symbol('ReserveContentsForAllSyncablePrefab');
 let globalFlagChangeVersion = 0;
-
-// TODO: Make this configurable in cc.config.json
-const HAS_UI_SKEW = true;
 
 let skewCompCount = 0;
 
@@ -2025,7 +2023,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                     self.updateWorldTransform();
                 } else {
                     let newParentMatWithoutSkew = parent._mat;
-                    if (HAS_UI_SKEW) {
+                    if (USE_UI_SKEW) {
                         const hasSkew = skewCompCount > 0;
                         if (hasSkew) {
                             if (oldParent) {
@@ -2282,7 +2280,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                 if (rotationScaleSkewDirty) {
                     let originalWorldMatrix = childMat;
                     Mat4.fromSRT(m4_1, child._lrot, child._lpos, child._lscale); // m4_1 stores local matrix
-                    if (HAS_UI_SKEW && skewCompCount > 0) {
+                    if (USE_UI_SKEW && skewCompCount > 0) {
                         foundSkewInAncestor = findSkewAndGetOriginalWorldMatrix(cur, m4_2); // m4_2 stores parent's world matrix without skew
                         uiSkewComp = child._uiProps._uiSkewComp;
                         if (uiSkewComp || foundSkewInAncestor) {
@@ -2300,7 +2298,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                     const rotTmp = dirtyBits & TransformBit.ROTATION ? child._rot : null;
                     Mat4.toSRT(originalWorldMatrix, rotTmp, childPos, child._scale);
 
-                    if (HAS_UI_SKEW && foundSkewInAncestor) {
+                    if (USE_UI_SKEW && foundSkewInAncestor) {
                         // NOTE: world position from Mat4.toSRT(originalWorldMatrix, ...) will not consider the skew factor.
                         // So we need to update the world position manually here.
                         Vec3.transformMat4(childPos, child._lpos, cur._mat);
@@ -2322,7 +2320,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                     }
                     Mat4.fromSRT(childMat, child._rot, child._pos, child._scale);
 
-                    if (HAS_UI_SKEW && skewCompCount > 0) {
+                    if (USE_UI_SKEW && skewCompCount > 0) {
                         uiSkewComp = child._uiProps._uiSkewComp;
                         if (uiSkewComp) {
                             updateLocalMatrixBySkew(uiSkewComp, childMat);

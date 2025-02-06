@@ -25,7 +25,7 @@
 import { B2, b2Mul } from '../instantiated';
 import { Color } from '../../../core';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework';
-import { Graphics } from '../../../2d';
+import type { Graphics } from '../../../2d/components/graphics';
 
 const _tmp_vec2 = { x: 0, y: 0 };
 const _tmp_vec3 = { x: 0, y: 0 };

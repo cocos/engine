@@ -24,7 +24,7 @@
 
 import { UIRenderer } from '../../../framework/ui-renderer';
 import { IAssemblerManager } from '../../../renderer/base';
-import { Graphics } from '../../../components';
+import { Graphics } from '../../../components/graphics';
 import { graphicsAssembler as graphics } from './graphics-assembler';
 
 const graphicsAssemblerManager: IAssemblerManager = {

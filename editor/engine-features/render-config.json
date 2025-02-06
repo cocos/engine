@@ -71,6 +71,53 @@
             "description": "i18n:ENGINE.features.xr.description",
             "enginePlugin": false
         },
+        "rich-text": {
+            "default": true,
+            "label": "i18n:ENGINE.features.rich_text.label",
+            "description": "i18n:ENGINE.features.rich_text.description",
+            "category": "2d",
+            "dependencies": [
+                "2d"
+            ],
+            "enginePlugin": true
+        },
+        "mask": {
+            "default": true,
+            "label": "i18n:ENGINE.features.mask.label",
+            "description": "i18n:ENGINE.features.mask.description",
+            "category": "2d",
+            "dependencies": [
+                "2d",
+                "graphics"
+            ],
+            "enginePlugin": true
+        },
+        "graphics": {
+            "default": true,
+            "label": "i18n:ENGINE.features.graphics_2d.label",
+            "description": "i18n:ENGINE.features.graphics_2d.description",
+            "category": "2d",
+            "dependencies": [
+                "2d"
+            ],
+            "enginePlugin": true
+        },
+        "ui-skew": {
+            "default": true,
+            "label": "i18n:ENGINE.features.ui_skew.label",
+            "description": "i18n:ENGINE.features.ui_skew.description",
+            "category": "2d",
+            "dependencies": [
+                "2d"
+            ],
+            "enginePlugin": true
+        },
+        "affine-transform": {
+            "label": "i18n:ENGINE.features.affine_transform.label",
+            "description": "i18n:ENGINE.features.affine_transform.description",
+            "default": true,
+            "category": "2d"
+        },
         "ui": {
             "default": true,
             "label": "i18n:ENGINE.features.ui.label",
