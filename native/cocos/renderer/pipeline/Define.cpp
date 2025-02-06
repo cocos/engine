@@ -34,7 +34,7 @@ static uint32_t globalUBOCount = static_cast<uint32_t>(PipelineGlobalBindings::S
 static uint32_t globalSamplerCount = static_cast<uint32_t>(PipelineGlobalBindings::COUNT) - globalUBOCount;
 
 static uint32_t localUBOCount = static_cast<uint32_t>(ModelLocalBindings::SAMPLER_JOINTS);
-static uint32_t localSamplerCount = static_cast<uint32_t>(ModelLocalBindings::STORAGE_REFLECTION) - localUBOCount;
+static uint32_t localSamplerCount = static_cast<uint32_t>(ModelLocalBindings::COUNT) - localUBOCount;
 static uint32_t localStorageImageCount = static_cast<uint32_t>(ModelLocalBindings::COUNT) - localUBOCount - localSamplerCount;
 
 uint32_t globalSet = static_cast<uint32_t>(SetIndex::GLOBAL);
@@ -546,38 +546,6 @@ const gfx::UniformSamplerTexture SPRITETEXTURE::LAYOUT = {
     static_cast<uint32_t>(ModelLocalBindings::SAMPLER_SPRITE),
     "cc_spriteTexture",
     gfx::Type::SAMPLER2D,
-    1,
-};
-
-const ccstd::string REFLECTIONTEXTURE::NAME = "cc_reflectionTexture";
-const gfx::DescriptorSetLayoutBinding REFLECTIONTEXTURE::DESCRIPTOR = {
-    REFLECTIONTEXTURE::BINDING,
-    gfx::DescriptorType::SAMPLER_TEXTURE,
-    1,
-    gfx::ShaderStageFlagBit::FRAGMENT,
-    {},
-};
-const gfx::UniformSamplerTexture REFLECTIONTEXTURE::LAYOUT = {
-    localSet,
-    static_cast<uint32_t>(ModelLocalBindings::SAMPLER_REFLECTION),
-    "cc_reflectionTexture",
-    gfx::Type::SAMPLER2D,
-    1,
-};
-
-const ccstd::string REFLECTIONSTORAGE::NAME = "cc_reflectionStorage";
-const gfx::DescriptorSetLayoutBinding REFLECTIONSTORAGE::DESCRIPTOR = {
-    REFLECTIONSTORAGE::BINDING,
-    gfx::DescriptorType::STORAGE_IMAGE,
-    1,
-    gfx::ShaderStageFlagBit::COMPUTE,
-    {},
-};
-const gfx::UniformStorageImage REFLECTIONSTORAGE::LAYOUT = {
-    localSet,
-    static_cast<uint32_t>(ModelLocalBindings::STORAGE_REFLECTION),
-    "cc_reflectionStorage",
-    gfx::Type::IMAGE2D,
     1,
 };
 

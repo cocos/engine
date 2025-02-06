@@ -154,41 +154,6 @@ void SubModel::initialize(RenderingSubMesh *subMesh, const SharedPassArray &pPas
 
     const auto &passes = *_passes;
     _priority = pipeline::RenderPriority::DEFAULT;
-
-    // initialize resources for reflection material
-    if (passes[0]->getPhase() == pipeline::getPhaseID("reflection")) {
-        const auto *mainWindow = Root::getInstance()->getMainWindow();
-        uint32_t texWidth = mainWindow->getWidth();
-        uint32_t texHeight = mainWindow->getHeight();
-        const uint32_t minSize = 512;
-        if (texHeight < texWidth) {
-            texWidth = minSize * texWidth / texHeight;
-            texHeight = minSize;
-        } else {
-            texWidth = minSize;
-            texHeight = minSize * texHeight / texWidth;
-        }
-        _reflectionTex = _device->createTexture(gfx::TextureInfo{
-            gfx::TextureType::TEX2D,
-            gfx::TextureUsageBit::STORAGE | gfx::TextureUsageBit::TRANSFER_SRC | gfx::TextureUsageBit::SAMPLED,
-            gfx::Format::RGBA8,
-            texWidth,
-            texHeight,
-        });
-        _descriptorSet->bindTexture(pipeline::REFLECTIONTEXTURE::BINDING, _reflectionTex);
-
-        const gfx::SamplerInfo samplerInfo{
-            gfx::Filter::LINEAR,
-            gfx::Filter::LINEAR,
-            gfx::Filter::NONE,
-            gfx::Address::CLAMP,
-            gfx::Address::CLAMP,
-            gfx::Address::CLAMP,
-        };
-        _reflectionSampler = _device->getSampler(samplerInfo);
-        _descriptorSet->bindSampler(pipeline::REFLECTIONTEXTURE::BINDING, _reflectionSampler);
-        _descriptorSet->bindTexture(pipeline::REFLECTIONSTORAGE::BINDING, _reflectionTex);
-    }
 }
 
 void SubModel::destroy() {

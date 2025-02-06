@@ -63,7 +63,6 @@ private:
     void initLightingBuffer();
     void fgLightingPass(scene::Camera *camera);
     void fgTransparent(scene::Camera *camera);
-    void fgSsprPass(scene::Camera *camera);
 
     void putTransparentObj2Queue();
 

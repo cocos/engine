@@ -255,9 +255,6 @@ enum class CC_DLL ModelLocalBindings {
     SAMPLER_MORPH_TANGENT,
     SAMPLER_LIGHTMAP,
     SAMPLER_SPRITE,
-    SAMPLER_REFLECTION,
-
-    STORAGE_REFLECTION,
 
     SAMPLER_REFLECTION_PROBE_CUBE,
     SAMPLER_REFLECTION_PROBE_PLANAR,
@@ -638,20 +635,6 @@ struct CC_DLL SPRITETEXTURE {
     static constexpr uint32_t BINDING = static_cast<uint32_t>(ModelLocalBindings::SAMPLER_SPRITE);
     static const gfx::DescriptorSetLayoutBinding DESCRIPTOR;
     static const gfx::UniformSamplerTexture LAYOUT;
-    static const ccstd::string NAME;
-};
-
-struct CC_DLL REFLECTIONTEXTURE {
-    static constexpr uint32_t BINDING = static_cast<uint32_t>(ModelLocalBindings::SAMPLER_REFLECTION);
-    static const gfx::DescriptorSetLayoutBinding DESCRIPTOR;
-    static const gfx::UniformSamplerTexture LAYOUT;
-    static const ccstd::string NAME;
-};
-
-struct CC_DLL REFLECTIONSTORAGE {
-    static constexpr uint32_t BINDING = static_cast<uint32_t>(ModelLocalBindings::STORAGE_REFLECTION);
-    static const gfx::DescriptorSetLayoutBinding DESCRIPTOR;
-    static const gfx::UniformStorageImage LAYOUT;
     static const ccstd::string NAME;
 };
 

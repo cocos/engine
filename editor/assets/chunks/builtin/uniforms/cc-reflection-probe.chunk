@@ -1,13 +1,13 @@
 // Copyright (c) 2017-2020 Xiamen Yaji Software Co., Ltd.
 
 #pragma builtin(local)
-layout(set = 2, binding = 15) uniform samplerCube cc_reflectionProbeCubemap;
+layout(set = 2, binding = 13) uniform samplerCube cc_reflectionProbeCubemap;
 
 #pragma builtin(local)
-layout(set = 2, binding = 16) uniform sampler2D cc_reflectionProbePlanarMap;
+layout(set = 2, binding = 14) uniform sampler2D cc_reflectionProbePlanarMap;
 
 #pragma builtin(local)
-layout(set = 2, binding = 17) uniform sampler2D cc_reflectionProbeDataMap;
+layout(set = 2, binding = 15) uniform sampler2D cc_reflectionProbeDataMap;
 
 #pragma builtin(local)
-layout(set = 2, binding = 18) uniform samplerCube cc_reflectionProbeBlendCubemap;
+layout(set = 2, binding = 16) uniform samplerCube cc_reflectionProbeBlendCubemap;
