@@ -1,5 +1,6 @@
 import { HtmlTextParser } from "../../cocos/2d";
-import { CacheMode, HorizontalTextAlignment, RichText, Sprite } from "../../cocos/2d/components";
+import { CacheMode, HorizontalTextAlignment, Sprite } from "../../cocos/2d/components";
+import { RichText } from "../../cocos/2d/components/rich-text";
 import { Node } from "../../cocos/scene-graph/node";
 
 test('parse-richtext', () => {
