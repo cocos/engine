@@ -168,30 +168,31 @@ export class WebGL2Device extends Device {
 
         const glGetParameter = gl.getParameter.bind(gl);
 
-        this._caps.maxVertexAttributes = glGetParameter(WebGLConstants.MAX_VERTEX_ATTRIBS);
-        this._caps.maxVertexUniformVectors = glGetParameter(WebGLConstants.MAX_VERTEX_UNIFORM_VECTORS);
+        const caps = this._caps;
+        caps.maxVertexAttributes = glGetParameter(WebGLConstants.MAX_VERTEX_ATTRIBS);
+        caps.maxVertexUniformVectors = glGetParameter(WebGLConstants.MAX_VERTEX_UNIFORM_VECTORS);
         // Implementation of WebGL2 in WECHAT browser and Safari in IOS exist bugs.
         // It seems to be related to Safari's experimental features 'WebGL via Metal'.
         // So limit using vertex uniform vectors no more than 256 in wechat browser,
         // and using vertex uniform vectors no more than 512 in safari.
         if (systemInfo.os === OS.IOS) {
-            const maxVertexUniformVectors = this._caps.maxVertexUniformVectors;
+            const maxVertexUniformVectors = caps.maxVertexUniformVectors;
             if (sys.browserType === BrowserType.WECHAT) {
-                this._caps.maxVertexUniformVectors = maxVertexUniformVectors < 256 ? maxVertexUniformVectors : 256;
+                caps.maxVertexUniformVectors = maxVertexUniformVectors < 256 ? maxVertexUniformVectors : 256;
             } else if (sys.browserType === BrowserType.SAFARI) {
-                this._caps.maxVertexUniformVectors = maxVertexUniformVectors < 512 ? maxVertexUniformVectors : 512;
+                caps.maxVertexUniformVectors = maxVertexUniformVectors < 512 ? maxVertexUniformVectors : 512;
             }
         }
-        this._caps.maxFragmentUniformVectors = glGetParameter(WebGLConstants.MAX_FRAGMENT_UNIFORM_VECTORS);
-        this._caps.maxTextureUnits = glGetParameter(WebGLConstants.MAX_TEXTURE_IMAGE_UNITS);
-        this._caps.maxVertexTextureUnits = glGetParameter(WebGLConstants.MAX_VERTEX_TEXTURE_IMAGE_UNITS);
-        this._caps.maxUniformBufferBindings = glGetParameter(WebGLConstants.MAX_UNIFORM_BUFFER_BINDINGS);
-        this._caps.maxUniformBlockSize = glGetParameter(WebGLConstants.MAX_UNIFORM_BLOCK_SIZE);
-        this._caps.maxTextureSize = glGetParameter(WebGLConstants.MAX_TEXTURE_SIZE);
-        this._caps.maxCubeMapTextureSize = glGetParameter(WebGLConstants.MAX_CUBE_MAP_TEXTURE_SIZE);
-        this._caps.maxArrayTextureLayers = glGetParameter(WebGLConstants.MAX_ARRAY_TEXTURE_LAYERS);
-        this._caps.max3DTextureSize = glGetParameter(WebGLConstants.MAX_3D_TEXTURE_SIZE);
-        this._caps.uboOffsetAlignment = glGetParameter(WebGLConstants.UNIFORM_BUFFER_OFFSET_ALIGNMENT);
+        caps.maxFragmentUniformVectors = glGetParameter(WebGLConstants.MAX_FRAGMENT_UNIFORM_VECTORS);
+        caps.maxTextureUnits = glGetParameter(WebGLConstants.MAX_TEXTURE_IMAGE_UNITS);
+        caps.maxVertexTextureUnits = glGetParameter(WebGLConstants.MAX_VERTEX_TEXTURE_IMAGE_UNITS);
+        caps.maxUniformBufferBindings = glGetParameter(WebGLConstants.MAX_UNIFORM_BUFFER_BINDINGS);
+        caps.maxUniformBlockSize = glGetParameter(WebGLConstants.MAX_UNIFORM_BLOCK_SIZE);
+        caps.maxTextureSize = glGetParameter(WebGLConstants.MAX_TEXTURE_SIZE);
+        caps.maxCubeMapTextureSize = glGetParameter(WebGLConstants.MAX_CUBE_MAP_TEXTURE_SIZE);
+        caps.maxArrayTextureLayers = glGetParameter(WebGLConstants.MAX_ARRAY_TEXTURE_LAYERS);
+        caps.max3DTextureSize = glGetParameter(WebGLConstants.MAX_3D_TEXTURE_SIZE);
+        caps.uboOffsetAlignment = glGetParameter(WebGLConstants.UNIFORM_BUFFER_OFFSET_ALIGNMENT);
 
         const extensions = gl.getSupportedExtensions();
         let extStr = '';
@@ -213,14 +214,15 @@ export class WebGL2Device extends Device {
 
         const version: string = glGetParameter(WebGLConstants.VERSION);
 
-        this._features.fill(false);
+        const features = this._features;
+        features.fill(false);
 
         this.initFormatFeatures(exts);
 
-        this._features[Feature.ELEMENT_INDEX_UINT] = true;
-        this._features[Feature.INSTANCED_ARRAYS] = true;
-        this._features[Feature.MULTIPLE_RENDER_TARGETS] = true;
-        this._features[Feature.BLEND_MINMAX] = true;
+        features[Feature.ELEMENT_INDEX_UINT] = true;
+        features[Feature.INSTANCED_ARRAYS] = true;
+        features[Feature.MULTIPLE_RENDER_TARGETS] = true;
+        features[Feature.BLEND_MINMAX] = true;
 
         let compressedFormat = '';
 
