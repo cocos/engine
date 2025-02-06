@@ -54,6 +54,8 @@ export function getParentWorldMatrixNoSkew (parent: Node | null, out: Mat4): boo
             Mat4.multiply(out, out, m4_1);
         }
         ret = true;
+    } else {
+        out.set(parent._mat);
     }
 
     tempNodes.length = 0;

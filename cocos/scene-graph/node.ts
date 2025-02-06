@@ -2262,7 +2262,8 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
         let dirtyBits = 0;
         let positionDirty = 0;
         let rotationScaleSkewDirty = 0;
-        let uiSkewComp: UISkew | null;
+        let uiSkewComp: UISkew | null = null;
+        let foundSkewInAncestor = false;
 
         while (i) {
             child = dirtyNodes[--i];
@@ -2281,22 +2282,29 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                 if (rotationScaleSkewDirty) {
                     let originalWorldMatrix = childMat;
                     Mat4.fromSRT(m4_1, child._lrot, child._lpos, child._lscale); // m4_1 stores local matrix
-
                     if (HAS_UI_SKEW && skewCompCount > 0) {
+                        foundSkewInAncestor = getParentWorldMatrixNoSkew(cur, m4_2); // m4_2 stores parent's world matrix without skew
                         uiSkewComp = child._uiProps._uiSkewComp;
-                        if (uiSkewComp) {
+                        if (uiSkewComp || foundSkewInAncestor) {
                             // Save the original world matrix without skew side effect.
-                            Mat4.multiply(m4_2, cur._mat, m4_1); // m4_2 stores orignal world matrix with skew
-                            // If skew is dirty, rotation and scale must be also dirty.
-                            // See _updateNodeTransformFlags in ui-skew.ts.
-                            updateLocalMatrixBySkew(uiSkewComp, m4_1);
+                            Mat4.multiply(m4_2, m4_2, m4_1); // m4_2 stores orignal world matrix with skew
+                            if (uiSkewComp) {
+                                updateLocalMatrixBySkew(uiSkewComp, m4_1);
+                            }
                             originalWorldMatrix = m4_2;
                         }
                     }
-                    Mat4.multiply(childMat, cur._mat, m4_1);
+
+                    Mat4.multiply(childMat, cur._mat, m4_1); // m4_1 stores local matrix with skew
 
                     const rotTmp = dirtyBits & TransformBit.ROTATION ? child._rot : null;
                     Mat4.toSRT(originalWorldMatrix, rotTmp, childPos, child._scale);
+
+                    if (HAS_UI_SKEW && foundSkewInAncestor) {
+                        // NOTE: world position from Mat4.toSRT(originalWorldMatrix, ...) will not consider the skew factor.
+                        // So we need to update the world position manually here.
+                        Vec3.transformMat4(childPos, child._lpos, cur._mat);
+                    }
                 }
             } else {
                 if (positionDirty) {
