@@ -400,6 +400,10 @@ export class Skybox {
     }
 
     protected _updateGlobalBinding (): void {
+        // If it is a new pipeline, you should not set it up because it has its own configuration logic.
+        if (cclegacy.rendering) {
+            return;
+        }
         if (this._globalDSManager) {
             const device = deviceManager.gfxDevice;
             if (this.reflectionMap) {

@@ -65,6 +65,7 @@ export class DefaultResources {
     samplersDescLayout: Map<number, WebGPUSampler> = new Map<number, WebGPUSampler>();
     buffer!: WebGPUBuffer;
     texture!: WebGPUTexture;
+    cubeTexture!: WebGPUTexture;
     sampler!: WebGPUSampler;
     setLayout!: DescriptorSetLayout;
     descSet!: DescriptorSet;

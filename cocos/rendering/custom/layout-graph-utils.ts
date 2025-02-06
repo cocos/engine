@@ -232,6 +232,10 @@ function createDescriptorInfo (layoutData: DescriptorSetLayoutData, info: Descri
             binding.descriptorType = getGfxDescriptorType(block.type);
             binding.count = d.count;
             binding.stageFlags = block.visibility;
+            binding.access = block.accessType;
+            binding.viewDimension = block.viewDimension;
+            binding.sampleType = block.sampleType;
+            binding.format = block.format;
             binding.immutableSamplers = [];
             info.bindings.push(binding);
             slot += d.count;
@@ -557,6 +561,10 @@ export function initializeDescriptorSetLayoutInfo (
             binding.descriptorType = getGfxDescriptorType(block.type);
             binding.count = d.count;
             binding.stageFlags = block.visibility;
+            binding.access = block.accessType;
+            binding.viewDimension = block.viewDimension;
+            binding.sampleType = block.sampleType;
+            binding.format = block.format;
             binding.immutableSamplers = [];
             info.bindings.push(binding);
             slot += d.count;

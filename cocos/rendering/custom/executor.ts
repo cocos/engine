@@ -514,7 +514,7 @@ class DeviceComputeQueue implements RecordingInterface {
             ? layoutGraph.j<RenderPhaseData>(value)
             : null;
         const layout = layoutGraph.getLayout(value);
-        this._descSetData = layout.descriptorSets.get(UpdateFrequency.PER_PHASE)!;
+        this._descSetData = layout.getSet(UpdateFrequency.PER_PHASE)!;
     }
     get layoutID (): number { return this._layoutID; }
     get descSetData (): DescriptorSetData | null { return this._descSetData; }
@@ -567,7 +567,7 @@ class DeviceRenderQueue implements RecordingInterface {
             ? layoutGraph.j<RenderPhaseData>(value)
             : null;
         const layout = layoutGraph.getLayout(value);
-        this._descSetData = layout.descriptorSets.get(UpdateFrequency.PER_PHASE)!;
+        this._descSetData = layout.getSet(UpdateFrequency.PER_PHASE)!;
     }
     get layoutID (): number { return this._layoutID; }
     get descSetData (): DescriptorSetData | null { return this._descSetData; }
@@ -659,7 +659,7 @@ class RenderPassLayoutInfo {
         this._stage = lg.j<RenderStageData>(layoutId);
         this._layout = lg.getLayout(layoutId);
 
-        const layoutData = this._layout.descriptorSets.get(UpdateFrequency.PER_PASS);
+        const layoutData = this._layout.getSet(UpdateFrequency.PER_PASS);
         if (!layoutData) {
             return;
         }
@@ -697,21 +697,22 @@ class RenderPassLayoutInfo {
         samplerInfo: SamplerInfo,
         accessType: AccessType,
     ): void {
-        const layoutData = this._layout.descriptorSets.get(UpdateFrequency.PER_PASS)!;
+        const layoutData = this._layout.getSet(UpdateFrequency.PER_PASS)!;
         const desc = context.resourceGraph.getDesc(this._resID);
         for (const block of layoutData.descriptorSetLayoutData.descriptorBlocks) {
             for (let i = 0; i < block.descriptors.length; ++i) {
                 if (descriptorID === block.descriptors[i].descriptorID) {
+                    const offset = block.offset;
                     if (gfxTex) {
-                        layoutDesc.bindTexture(block.offset + i, gfxTex);
+                        layoutDesc.bindTexture(offset + i, gfxTex);
                         const renderData = context.renderGraph.getData(this._vertID);
                         const sampler = renderData.samplers.get(descriptorID) || context.device.getSampler(samplerInfo);
-                        layoutDesc.bindSampler(block.offset + i, sampler);
+                        layoutDesc.bindSampler(offset + i, sampler);
                     } else if (desc.flags & ResourceFlags.STORAGE) {
                         const access = accessType !== AccessType.READ ? AccessFlagBit.COMPUTE_SHADER_WRITE : AccessFlagBit.COMPUTE_SHADER_READ_OTHER;
                         (layoutDesc as any).bindBuffer(block.offset + i, gfxBuf, 0, access);
                     } else {
-                        layoutDesc.bindBuffer(block.offset + i, gfxBuf);
+                        layoutDesc.bindBuffer(offset + i, gfxBuf);
                     }
                     if (!this._descriptorSet) {
                         this._descriptorSet = layoutDesc;
@@ -874,7 +875,7 @@ class DeviceRenderPass implements RecordingInterface {
     getGlobalDescData (): DescriptorSetData {
         const stageId = context.layoutGraph.locateChild(context.layoutGraph.N, 'default');
         const layout = context.layoutGraph.getLayout(stageId);
-        const layoutData = layout.descriptorSets.get(UpdateFrequency.PER_PASS)!;
+        const layoutData = layout.getSet(UpdateFrequency.PER_PASS)!;
         return layoutData;
     }
 
@@ -1102,7 +1103,7 @@ class DeviceComputePass implements RecordingInterface {
     getGlobalDescData (): DescriptorSetData {
         const stageId = context.layoutGraph.locateChild(context.layoutGraph.N, 'default');
         const layout = context.layoutGraph.getLayout(stageId);
-        const layoutData = layout.descriptorSets.get(UpdateFrequency.PER_PASS)!;
+        const layoutData = layout.getSet(UpdateFrequency.PER_PASS)!;
         return layoutData;
     }
 

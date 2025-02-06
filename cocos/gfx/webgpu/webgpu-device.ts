@@ -470,7 +470,7 @@ export class WebGPUDevice extends Device {
         defaultResource.descSet = this.createDescriptorSet(descInfo);
         defaultResource.descSet.bindBuffer(0, defaultResource.buffer);
         defaultResource.descSet.update();
-        (defaultResource.descSet as WebGPUDescriptorSet).prepare(DescUpdateFrequency.NORMAL, [0]);
+        // (defaultResource.descSet as WebGPUDescriptorSet).prepare(DescUpdateFrequency.NORMAL, [0]);
     }
 
     private async initDevice (info: Readonly<DeviceInfo>): Promise<boolean> {
@@ -552,7 +552,7 @@ export class WebGPUDevice extends Device {
         this._features[Feature.ELEMENT_INDEX_UINT] = true;
         this._features[Feature.INSTANCED_ARRAYS] = true;
         this._features[Feature.MULTIPLE_RENDER_TARGETS] = true;
-        this._features[Feature.BLEND_MINMAX] = true;
+        // this._features[Feature.BLEND_MINMAX] = true;
         this.initFormatFeatures(features);
 
         this._queue = this.createQueue(new QueueInfo(QueueType.GRAPHICS));
@@ -560,7 +560,7 @@ export class WebGPUDevice extends Device {
 
         const texInfo = new TextureInfo(
             TextureType.TEX2D,
-            TextureUsageBit.NONE,
+            TextureUsageBit.STORAGE | TextureUsageBit.SAMPLED | TextureUsageBit.TRANSFER_DST,
             Format.RGBA8,
             16,
             16,
@@ -572,9 +572,20 @@ export class WebGPUDevice extends Device {
         );
         const defaultDescTexResc = this.createTexture(texInfo);
 
+        const cubeTexInfo = new TextureInfo(
+            TextureType.CUBE,
+            TextureUsageBit.STORAGE | TextureUsageBit.SAMPLED | TextureUsageBit.TRANSFER_DST,
+            Format.RGBA8,
+            16,
+            16,
+            TextureFlagBit.NONE,
+            6,
+        );
+        const defaultDescCubeTexResc = this.createTexture(cubeTexInfo);
+
         const bufferInfo = new BufferInfo(
-            BufferUsageBit.NONE,
-            MemoryUsageBit.NONE,
+            BufferUsageBit.UNIFORM,
+            MemoryUsageBit.DEVICE,
             16,
             16, // in bytes
             BufferFlagBit.NONE,
@@ -587,6 +598,7 @@ export class WebGPUDevice extends Device {
         defaultResource.buffer = defaultDescBuffResc as WebGPUBuffer;
         defaultResource.texture = defaultDescTexResc as WebGPUTexture;
         defaultResource.sampler = defaultDescSmplResc as WebGPUSampler;
+        defaultResource.cubeTexture = defaultDescCubeTexResc as WebGPUTexture;
         this._createDefaultDescSet();
 
         let compressedFormat = '';
