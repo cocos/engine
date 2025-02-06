@@ -30,14 +30,20 @@ const m4_1 = mat4();
 const tempNodes: Node[] = [];
 const DEG_TO_RAD = Math.PI / 180.0;
 
-export function getParentWorldMatrixNoSkew (parent: Node | null, out: Mat4): boolean {
-    if (!parent) {
+/**
+ * Check whether the node or its parent has skew components and return the original world matrix without skew to `out` parameter.
+ * @param node The node and its parent for finding skew.
+ * @param out The node's original world matrix without skew.
+ * @return true if the node or its parent has skew components, otherwise returns false.
+ */
+export function findSkewAndGetOriginalWorldMatrix (node: Node | null, out: Mat4): boolean {
+    if (!node) {
         return false;
     }
     tempNodes.length = 0;
     const ancestors: Node[] = tempNodes;
     let startNode: Node | null = null;
-    for (let cur: Node | null = parent; cur; cur = cur.parent) {
+    for (let cur: Node | null = node; cur; cur = cur.parent) {
         ancestors.push(cur);
         if (cur._uiProps._uiSkewComp) {
             startNode = cur;
@@ -49,13 +55,13 @@ export function getParentWorldMatrixNoSkew (parent: Node | null, out: Mat4): boo
         out.set(startNode.parent!._mat); // Set the first no-skew node's world matrix to out.
         const start = ancestors.indexOf(startNode);
         for (let i = start; i >= 0; --i) {
-            const node = ancestors[i];
-            Mat4.fromSRT(m4_1, node.rotation, node.position, node.scale);
+            const cur = ancestors[i];
+            Mat4.fromSRT(m4_1, cur.rotation, cur.position, cur.scale);
             Mat4.multiply(out, out, m4_1);
         }
         ret = true;
     } else {
-        out.set(parent._mat);
+        out.set(node._mat);
     }
 
     tempNodes.length = 0;

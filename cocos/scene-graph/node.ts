@@ -40,7 +40,7 @@ import { PrefabInfo, PrefabInstance } from './prefab/prefab-info';
 import { NodeEventType } from './node-event';
 import { Event } from '../input/types';
 import { DispatcherEventType, NodeEventProcessor } from './node-event-processor';
-import { getParentWorldMatrixNoSkew, updateLocalMatrixBySkew } from '../2d/framework/ui-skew-utils';
+import { findSkewAndGetOriginalWorldMatrix, updateLocalMatrixBySkew } from '../2d/framework/ui-skew-utils';
 
 import type { Scene } from './scene';
 import type { Director } from '../game/director';
@@ -2030,7 +2030,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                         if (hasSkew) {
                             if (oldParent) {
                                 // Calculate old parent's world matrix without skew side effect.
-                                const foundSkewInOldParent = getParentWorldMatrixNoSkew(oldParent, m4_2);
+                                const foundSkewInOldParent = findSkewAndGetOriginalWorldMatrix(oldParent, m4_2);
                                 Mat4.fromSRT(m4_1, self._lrot, self._lpos, self._lscale);
                                 const oldParentMatWithoutSkew = foundSkewInOldParent ? m4_2 : oldParent._mat;
                                 // Calculate current node's world matrix without skew side effect.
@@ -2038,7 +2038,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                             }
 
                             // Calculate new parent's world matrix without skew side effect.
-                            const foundSkewInNewParent = getParentWorldMatrixNoSkew(parent, m4_2);
+                            const foundSkewInNewParent = findSkewAndGetOriginalWorldMatrix(parent, m4_2);
                             if (foundSkewInNewParent) {
                                 newParentMatWithoutSkew = m4_2;
                             }
