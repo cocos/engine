@@ -43,6 +43,7 @@ Checks: >
     -readability-identifier-length,
     -bugprone-branch-clone,
     -misc-static-assert,
+    -misc-include-cleaner,
 
 CheckOptions:
     - { key: readability-identifier-naming.NamespaceCase,          value: lower_case }
