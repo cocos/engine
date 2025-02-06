@@ -120,6 +120,7 @@ using RenderFlowList = ccstd::vector<IntrusivePtr<RenderFlow>>;
 using LightList = ccstd::vector<scene::Light *>;
 using UintList = ccstd::vector<uint32_t>;
 
+// NOLINTNEXTLINE(performance-enum-size)
 enum class CC_DLL RenderPassStage {
     DEFAULT = 100,
     UI = 200,
@@ -145,6 +146,7 @@ struct CC_DLL RenderQueueCreateInfo {
     std::function<bool(const RenderPass &a, const RenderPass &b)> sortFunc;
 };
 
+// NOLINTNEXTLINE(performance-enum-size)
 enum class CC_DLL RenderPriority {
     MIN = 0,
     MAX = 0xff,
@@ -152,6 +154,7 @@ enum class CC_DLL RenderPriority {
 };
 CC_ENUM_CONVERSION_OPERATOR(RenderPriority)
 
+// NOLINTNEXTLINE(performance-enum-size)
 enum class CC_DLL RenderQueueSortMode {
     FRONT_TO_BACK,
     BACK_TO_FRONT,
@@ -225,6 +228,7 @@ inline RenderQueueSortFunc convertQueueSortFunc(const RenderQueueSortMode &mode)
     return sortFunc;
 }
 
+// NOLINTNEXTLINE(performance-enum-size)
 enum class CC_DLL PipelineGlobalBindings {
     UBO_GLOBAL,
     UBO_CAMERA,
@@ -240,6 +244,7 @@ enum class CC_DLL PipelineGlobalBindings {
 };
 CC_ENUM_CONVERSION_OPERATOR(PipelineGlobalBindings)
 
+// NOLINTNEXTLINE(performance-enum-size)
 enum class CC_DLL ModelLocalBindings {
     UBO_LOCAL,
     UBO_FORWARD_LIGHTS,
@@ -264,6 +269,7 @@ enum class CC_DLL ModelLocalBindings {
 };
 CC_ENUM_CONVERSION_OPERATOR(ModelLocalBindings)
 
+// NOLINTNEXTLINE(performance-enum-size)
 enum class CC_DLL SetIndex {
     GLOBAL,
     MATERIAL,
@@ -403,6 +409,7 @@ struct CC_DLL UBOSH {
     static const ccstd::string NAME;
 };
 
+// NOLINTNEXTLINE(performance-enum-size)
 enum class CC_DLL ForwardStagePriority {
     AR = 5,
     FORWARD = 10,
@@ -410,6 +417,7 @@ enum class CC_DLL ForwardStagePriority {
 };
 CC_ENUM_CONVERSION_OPERATOR(ForwardStagePriority)
 
+// NOLINTNEXTLINE(performance-enum-size)
 enum class CC_DLL ForwardFlowPriority {
     SHADOW = 0,
     FORWARD = 1,
@@ -417,6 +425,7 @@ enum class CC_DLL ForwardFlowPriority {
 };
 CC_ENUM_CONVERSION_OPERATOR(ForwardFlowPriority)
 
+// NOLINTNEXTLINE(performance-enum-size)
 enum class CC_DLL RenderFlowTag {
     SCENE,
     POSTPROCESS,
@@ -424,6 +433,7 @@ enum class CC_DLL RenderFlowTag {
 };
 CC_ENUM_CONVERSION_OPERATOR(RenderFlowTag)
 
+// NOLINTNEXTLINE(performance-enum-size)
 enum class CC_DLL DeferredStagePriority {
     GBUFFER = 10,
     LIGHTING = 15,
@@ -434,6 +444,7 @@ enum class CC_DLL DeferredStagePriority {
 };
 CC_ENUM_CONVERSION_OPERATOR(DeferredStagePriority)
 
+// NOLINTNEXTLINE(performance-enum-size)
 enum class CC_DLL DeferredFlowPriority {
     SHADOW = 0,
     MAIN = 1,

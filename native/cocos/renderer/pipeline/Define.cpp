@@ -30,12 +30,16 @@
 namespace cc {
 namespace pipeline {
 
-static uint32_t globalUBOCount = static_cast<uint32_t>(PipelineGlobalBindings::SAMPLER_SHADOWMAP);
-static uint32_t globalSamplerCount = static_cast<uint32_t>(PipelineGlobalBindings::COUNT) - globalUBOCount;
+namespace {
 
-static uint32_t localUBOCount = static_cast<uint32_t>(ModelLocalBindings::SAMPLER_JOINTS);
-static uint32_t localSamplerCount = static_cast<uint32_t>(ModelLocalBindings::COUNT) - localUBOCount;
-static uint32_t localStorageImageCount = static_cast<uint32_t>(ModelLocalBindings::COUNT) - localUBOCount - localSamplerCount;
+constexpr uint32_t globalUBOCount = static_cast<uint32_t>(PipelineGlobalBindings::SAMPLER_SHADOWMAP);
+constexpr uint32_t globalSamplerCount = static_cast<uint32_t>(PipelineGlobalBindings::COUNT) - globalUBOCount;
+
+constexpr uint32_t localUBOCount = static_cast<uint32_t>(ModelLocalBindings::SAMPLER_JOINTS);
+constexpr uint32_t localSamplerCount = static_cast<uint32_t>(ModelLocalBindings::COUNT) - localUBOCount;
+constexpr uint32_t localStorageImageCount = static_cast<uint32_t>(ModelLocalBindings::COUNT) - localUBOCount - localSamplerCount;
+
+} // namespace
 
 uint32_t globalSet = static_cast<uint32_t>(SetIndex::GLOBAL);
 uint32_t materialSet = static_cast<uint32_t>(SetIndex::MATERIAL);
