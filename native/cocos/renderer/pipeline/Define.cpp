@@ -30,24 +30,28 @@
 namespace cc {
 namespace pipeline {
 
-static uint32_t globalUBOCount = static_cast<uint32_t>(PipelineGlobalBindings::SAMPLER_SHADOWMAP);
-static uint32_t globalSamplerCount = static_cast<uint32_t>(PipelineGlobalBindings::COUNT) - globalUBOCount;
+namespace {
 
-static uint32_t localUBOCount = static_cast<uint32_t>(ModelLocalBindings::SAMPLER_JOINTS);
-static uint32_t localSamplerCount = static_cast<uint32_t>(ModelLocalBindings::STORAGE_REFLECTION) - localUBOCount;
-static uint32_t localStorageImageCount = static_cast<uint32_t>(ModelLocalBindings::COUNT) - localUBOCount - localSamplerCount;
+constexpr uint32_t GLOBAL_UBO_COUNT = static_cast<uint32_t>(PipelineGlobalBindings::SAMPLER_SHADOWMAP);
+constexpr uint32_t GLOBAL_SAMPLER_COUNT = static_cast<uint32_t>(PipelineGlobalBindings::COUNT) - GLOBAL_UBO_COUNT;
+
+constexpr uint32_t LOCAL_UBO_COUNT = static_cast<uint32_t>(ModelLocalBindings::SAMPLER_JOINTS);
+constexpr uint32_t LOCAL_SAMPLER_COUNT = static_cast<uint32_t>(ModelLocalBindings::COUNT) - LOCAL_UBO_COUNT;
+constexpr uint32_t LOCAL_STORAGE_IMAGE_COUNT = static_cast<uint32_t>(ModelLocalBindings::COUNT) - LOCAL_UBO_COUNT - LOCAL_SAMPLER_COUNT;
+
+} // namespace
 
 uint32_t globalSet = static_cast<uint32_t>(SetIndex::GLOBAL);
 uint32_t materialSet = static_cast<uint32_t>(SetIndex::MATERIAL);
 uint32_t localSet = static_cast<uint32_t>(SetIndex::LOCAL);
 
 gfx::BindingMappingInfo bindingMappingInfo = {
-    {globalUBOCount, 0, localUBOCount, 0},         // Uniform Buffer Counts
-    {globalSamplerCount, 0, localSamplerCount, 0}, // Combined Sampler Texture Counts
+    {GLOBAL_UBO_COUNT, 0, LOCAL_UBO_COUNT, 0},         // Uniform Buffer Counts
+    {GLOBAL_SAMPLER_COUNT, 0, LOCAL_SAMPLER_COUNT, 0}, // Combined Sampler Texture Counts
     {0, 0, 0, 0},                                  // Sampler Counts
     {0, 0, 0, 0},                                  // Texture Counts
     {0, 0, 0, 0},                                  // Storage Buffer Counts
-    {0, 0, localStorageImageCount, 0},             // Storage Image Counts
+    {0, 0, LOCAL_STORAGE_IMAGE_COUNT, 0},             // Storage Image Counts
     {0, 0, 0, 0},                                  // Subpass Input Counts
     {0, 2, 1, 3},                                  // Set Order Indices
 };
@@ -549,38 +553,6 @@ const gfx::UniformSamplerTexture SPRITETEXTURE::LAYOUT = {
     1,
 };
 
-const ccstd::string REFLECTIONTEXTURE::NAME = "cc_reflectionTexture";
-const gfx::DescriptorSetLayoutBinding REFLECTIONTEXTURE::DESCRIPTOR = {
-    REFLECTIONTEXTURE::BINDING,
-    gfx::DescriptorType::SAMPLER_TEXTURE,
-    1,
-    gfx::ShaderStageFlagBit::FRAGMENT,
-    {},
-};
-const gfx::UniformSamplerTexture REFLECTIONTEXTURE::LAYOUT = {
-    localSet,
-    static_cast<uint32_t>(ModelLocalBindings::SAMPLER_REFLECTION),
-    "cc_reflectionTexture",
-    gfx::Type::SAMPLER2D,
-    1,
-};
-
-const ccstd::string REFLECTIONSTORAGE::NAME = "cc_reflectionStorage";
-const gfx::DescriptorSetLayoutBinding REFLECTIONSTORAGE::DESCRIPTOR = {
-    REFLECTIONSTORAGE::BINDING,
-    gfx::DescriptorType::STORAGE_IMAGE,
-    1,
-    gfx::ShaderStageFlagBit::COMPUTE,
-    {},
-};
-const gfx::UniformStorageImage REFLECTIONSTORAGE::LAYOUT = {
-    localSet,
-    static_cast<uint32_t>(ModelLocalBindings::STORAGE_REFLECTION),
-    "cc_reflectionStorage",
-    gfx::Type::IMAGE2D,
-    1,
-};
-
 const ccstd::string REFLECTIONPROBECUBEMAP::NAME = "cc_reflectionProbeCubemap";
 const gfx::DescriptorSetLayoutBinding REFLECTIONPROBECUBEMAP::DESCRIPTOR = {
     REFLECTIONPROBECUBEMAP::BINDING,
@@ -672,8 +644,12 @@ bool supportsRGBA32FloatTexture(const gfx::Device* device) {
     return hasAllFlags(device->getFormatFeatures(gfx::Format::RGBA32F), gfx::FormatFeature::RENDER_TARGET | gfx::FormatFeature::SAMPLED_TEXTURE);
 }
 
-static ccstd::unordered_map<ccstd::string, uint32_t> phases; //cjh how to clear this global variable when exiting game?
-static uint32_t phaseNum = 0;
+namespace {
+
+ccstd::unordered_map<ccstd::string, uint32_t> phases; //cjh how to clear this global variable when exiting game?
+uint32_t phaseNum = 0;
+
+} // namespace
 
 uint32_t getPhaseID(const ccstd::string& phaseName) {
     const auto iter = phases.find(phaseName);

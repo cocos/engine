@@ -40,32 +40,32 @@ using index_t = int32_t;
 #define CC_INVALID_INDEX (-1)
 
 #define CC_ENUM_CONVERSION_OPERATOR(T) \
-    inline std::underlying_type<T>::type toNumber(const T v) { return static_cast<std::underlying_type<T>::type>(v); }
+    inline std::underlying_type_t<T> toNumber(const T v) { return static_cast<std::underlying_type_t<T>>(v); }
 
 #define CC_ENUM_BITWISE_OPERATORS(T)                                                                                                                                              \
-    constexpr bool operator!(const T v) { return !static_cast<std::underlying_type<T>::type>(v); }                                                                                \
-    constexpr T operator~(const T v) { return static_cast<T>(~static_cast<std::underlying_type<T>::type>(v)); }                                                                   \
-    constexpr bool operator||(const T lhs, const T rhs) { return (static_cast<std::underlying_type<T>::type>(lhs) || static_cast<std::underlying_type<T>::type>(rhs)); }          \
-    constexpr bool operator&&(const T lhs, const T rhs) { return (static_cast<std::underlying_type<T>::type>(lhs) && static_cast<std::underlying_type<T>::type>(rhs)); }          \
-    constexpr T operator|(const T lhs, const T rhs) { return static_cast<T>(static_cast<std::underlying_type<T>::type>(lhs) | static_cast<std::underlying_type<T>::type>(rhs)); } \
-    constexpr T operator&(const T lhs, const T rhs) { return static_cast<T>(static_cast<std::underlying_type<T>::type>(lhs) & static_cast<std::underlying_type<T>::type>(rhs)); } \
-    constexpr T operator^(const T lhs, const T rhs) { return static_cast<T>(static_cast<std::underlying_type<T>::type>(lhs) ^ static_cast<std::underlying_type<T>::type>(rhs)); } \
-    constexpr T operator+(const T lhs, const T rhs) { return static_cast<T>(static_cast<std::underlying_type<T>::type>(lhs) + static_cast<std::underlying_type<T>::type>(rhs)); } \
-    constexpr T operator+(const T lhs, bool rhs) { return static_cast<T>(static_cast<std::underlying_type<T>::type>(lhs) + rhs); }                                                \
-    constexpr void operator|=(T &lhs, const T rhs) { lhs = static_cast<T>(static_cast<std::underlying_type<T>::type>(lhs) | static_cast<std::underlying_type<T>::type>(rhs)); }   \
-    constexpr void operator&=(T &lhs, const T rhs) { lhs = static_cast<T>(static_cast<std::underlying_type<T>::type>(lhs) & static_cast<std::underlying_type<T>::type>(rhs)); }   \
-    constexpr void operator^=(T &lhs, const T rhs) { lhs = static_cast<T>(static_cast<std::underlying_type<T>::type>(lhs) ^ static_cast<std::underlying_type<T>::type>(rhs)); }   \
+    constexpr bool operator!(const T v) { return !static_cast<std::underlying_type_t<T>>(v); }                                                                                \
+    constexpr T operator~(const T v) { return static_cast<T>(~static_cast<std::underlying_type_t<T>>(v)); }                                                                   \
+    constexpr bool operator||(const T lhs, const T rhs) { return (static_cast<std::underlying_type_t<T>>(lhs) || static_cast<std::underlying_type_t<T>>(rhs)); }          \
+    constexpr bool operator&&(const T lhs, const T rhs) { return (static_cast<std::underlying_type_t<T>>(lhs) && static_cast<std::underlying_type_t<T>>(rhs)); }          \
+    constexpr T operator|(const T lhs, const T rhs) { return static_cast<T>(static_cast<std::underlying_type_t<T>>(lhs) | static_cast<std::underlying_type_t<T>>(rhs)); } \
+    constexpr T operator&(const T lhs, const T rhs) { return static_cast<T>(static_cast<std::underlying_type_t<T>>(lhs) & static_cast<std::underlying_type_t<T>>(rhs)); } \
+    constexpr T operator^(const T lhs, const T rhs) { return static_cast<T>(static_cast<std::underlying_type_t<T>>(lhs) ^ static_cast<std::underlying_type_t<T>>(rhs)); } \
+    constexpr T operator+(const T lhs, const T rhs) { return static_cast<T>(static_cast<std::underlying_type_t<T>>(lhs) + static_cast<std::underlying_type_t<T>>(rhs)); } \
+    constexpr T operator+(const T lhs, bool rhs) { return static_cast<T>(static_cast<std::underlying_type_t<T>>(lhs) + rhs); }                                                \
+    constexpr void operator|=(T &lhs, const T rhs) { lhs = static_cast<T>(static_cast<std::underlying_type_t<T>>(lhs) | static_cast<std::underlying_type_t<T>>(rhs)); }   \
+    constexpr void operator&=(T &lhs, const T rhs) { lhs = static_cast<T>(static_cast<std::underlying_type_t<T>>(lhs) & static_cast<std::underlying_type_t<T>>(rhs)); }   \
+    constexpr void operator^=(T &lhs, const T rhs) { lhs = static_cast<T>(static_cast<std::underlying_type_t<T>>(lhs) ^ static_cast<std::underlying_type_t<T>>(rhs)); }   \
     constexpr bool hasFlag(const T flags, const T flagToTest) {                                                                                                                   \
-        using ValueType = std::underlying_type<T>::type;                                                                                                                          \
+        using ValueType = std::underlying_type_t<T>;                                                                                                                          \
         CC_ASSERT((static_cast<ValueType>(flagToTest) & (static_cast<ValueType>(flagToTest) - 1)) == 0);                                                                          \
         return (static_cast<ValueType>(flags) & static_cast<ValueType>(flagToTest)) != 0;                                                                                         \
     }                                                                                                                                                                             \
     constexpr bool hasAnyFlags(const T flags, const T flagsToTest) {                                                                                                              \
-        using ValueType = std::underlying_type<T>::type;                                                                                                                          \
+        using ValueType = std::underlying_type_t<T>;                                                                                                                          \
         return (static_cast<ValueType>(flags) & static_cast<ValueType>(flagsToTest)) != 0;                                                                                        \
     }                                                                                                                                                                             \
     constexpr bool hasAllFlags(const T flags, const T flagsToTest) {                                                                                                              \
-        using ValueType = std::underlying_type<T>::type;                                                                                                                          \
+        using ValueType = std::underlying_type_t<T>;                                                                                                                          \
         return (static_cast<ValueType>(flags) & static_cast<ValueType>(flagsToTest)) == static_cast<ValueType>(flagsToTest);                                                      \
     }                                                                                                                                                                             \
     constexpr T addFlags(T &flags, const T flagsToAdd) {                                                                                                                          \

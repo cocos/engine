@@ -23,15 +23,14 @@
 */
 
 import { RenderingSubMesh } from '../../asset/assets/rendering-sub-mesh';
-import { RenderPriority, UNIFORM_REFLECTION_TEXTURE_BINDING, UNIFORM_REFLECTION_STORAGE_BINDING,
-    INST_MAT_WORLD, INST_SH, isEnableEffect,
+import { RenderPriority,
+    INST_MAT_WORLD, INST_SH,
     UBOSHEnum } from '../../rendering/define';
 import { BatchingSchemes, IMacroPatch, Pass } from '../core/pass';
-import { DescriptorSet, DescriptorSetInfo, Device, InputAssembler, Texture, TextureType, TextureUsageBit, TextureInfo,
-    Format, Sampler, Filter, Address, Shader, SamplerInfo, deviceManager,
+import { DescriptorSet, DescriptorSetInfo, Device, InputAssembler, Texture,
+    Sampler, Shader, deviceManager,
     Attribute, Feature, FormatInfos, getTypedArrayConstructor } from '../../gfx';
 import { errorID, Mat4, cclegacy } from '../../core';
-import { getPhaseID } from '../../rendering/pass-phase';
 import { Root } from '../../root';
 
 const _dsInfo = new DescriptorSetInfo(null!);
@@ -239,44 +238,6 @@ export class SubModel {
         this._flushPassInfo();
 
         this.priority = RenderPriority.DEFAULT;
-
-        const r = cclegacy.rendering;
-        // initialize resources for reflection material
-        if (((!r || !r.enableEffectImport) && passes[0].phase === getPhaseID('reflection'))
-            || (isEnableEffect() && passes[0].phaseID === r.getPhaseID(r.getPassID('default'), 'reflection'))) {
-            let texWidth = root.mainWindow!.width;
-            let texHeight = root.mainWindow!.height;
-            const minSize = 512;
-
-            if (texHeight < texWidth) {
-                texWidth = minSize * texWidth / texHeight;
-                texHeight = minSize;
-            } else {
-                texWidth = minSize;
-                texHeight = minSize * texHeight / texWidth;
-            }
-
-            this._reflectionTex = this._device.createTexture(new TextureInfo(
-                TextureType.TEX2D,
-                TextureUsageBit.STORAGE | TextureUsageBit.TRANSFER_SRC | TextureUsageBit.SAMPLED,
-                Format.RGBA8,
-                texWidth,
-                texHeight,
-            ));
-
-            this.descriptorSet.bindTexture(UNIFORM_REFLECTION_TEXTURE_BINDING, this._reflectionTex);
-
-            this._reflectionSampler = this._device.getSampler(new SamplerInfo(
-                Filter.LINEAR,
-                Filter.LINEAR,
-                Filter.NONE,
-                Address.CLAMP,
-                Address.CLAMP,
-                Address.CLAMP,
-            ));
-            this.descriptorSet.bindSampler(UNIFORM_REFLECTION_TEXTURE_BINDING, this._reflectionSampler);
-            this.descriptorSet.bindTexture(UNIFORM_REFLECTION_STORAGE_BINDING, this._reflectionTex);
-        }
     }
 
     /**
