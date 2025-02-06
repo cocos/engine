@@ -2287,7 +2287,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                         uiSkewComp = child._uiProps._uiSkewComp;
                         if (uiSkewComp || foundSkewInAncestor) {
                             // Save the original world matrix without skew side effect.
-                            Mat4.multiply(m4_2, m4_2, m4_1); // m4_2 stores orignal world matrix with skew
+                            Mat4.multiply(m4_2, m4_2, m4_1); // m4_2 stores orignal world matrix without skew
                             if (uiSkewComp) {
                                 updateLocalMatrixBySkew(uiSkewComp, m4_1);
                             }
