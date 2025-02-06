@@ -644,8 +644,12 @@ bool supportsRGBA32FloatTexture(const gfx::Device* device) {
     return hasAllFlags(device->getFormatFeatures(gfx::Format::RGBA32F), gfx::FormatFeature::RENDER_TARGET | gfx::FormatFeature::SAMPLED_TEXTURE);
 }
 
-static ccstd::unordered_map<ccstd::string, uint32_t> phases; //cjh how to clear this global variable when exiting game?
-static uint32_t phaseNum = 0;
+namespace {
+
+ccstd::unordered_map<ccstd::string, uint32_t> phases; //cjh how to clear this global variable when exiting game?
+uint32_t phaseNum = 0;
+
+} // namespace
 
 uint32_t getPhaseID(const ccstd::string& phaseName) {
     const auto iter = phases.find(phaseName);
