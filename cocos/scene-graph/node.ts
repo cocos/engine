@@ -2283,7 +2283,7 @@ export class Node extends CCObject implements ISchedulable, CustomSerializable {
                     let originalWorldMatrix = childMat;
                     Mat4.fromSRT(m4_1, child._lrot, child._lpos, child._lscale); // m4_1 stores local matrix
                     if (HAS_UI_SKEW && skewCompCount > 0) {
-                        foundSkewInAncestor = getParentWorldMatrixNoSkew(cur, m4_2); // m4_2 stores parent's world matrix without skew
+                        foundSkewInAncestor = findSkewAndGetOriginalWorldMatrix(cur, m4_2); // m4_2 stores parent's world matrix without skew
                         uiSkewComp = child._uiProps._uiSkewComp;
                         if (uiSkewComp || foundSkewInAncestor) {
                             // Save the original world matrix without skew side effect.
