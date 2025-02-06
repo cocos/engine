@@ -29,7 +29,7 @@ import { Mat4, Rect, Size, Vec2, Vec3, geometry, warnID, visibleRect, approx, EP
 import { director, DirectorEvent } from '../../game/director';
 import { NodeEventType } from '../../scene-graph/node-event';
 import { IMask } from '../../scene-graph/node-event-processor';
-import { Mask } from '../components/mask';
+import type { Mask } from '../components/mask';
 
 const _vec2a = new Vec2();
 const _vec2b = new Vec2();

@@ -24,9 +24,7 @@
 
 import { EDITOR_NOT_IN_PREVIEW, TEST } from 'internal:constants';
 import { IPhysicsWorld } from '../spec/i-physics-world';
-// import { Graphics } from '../../2d';
 import { CCObjectFlags, Vec3, Color, IVec2Like, Vec2, Rect, js } from '../../core';
-// import { Canvas } from '../../2d/framework';
 import { BuiltinShape2D } from './shapes/shape-2d';
 import { BuiltinBoxShape } from './shapes/box-shape-2d';
 import { BuiltinCircleShape } from './shapes/circle-shape-2d';

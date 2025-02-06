@@ -22,6 +22,7 @@
  THE SOFTWARE.
 */
 
+/** @mangle */
 class Aim {
     // vertex index in coordinates array
     public declare i: number;

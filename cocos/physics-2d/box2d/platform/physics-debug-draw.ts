@@ -25,7 +25,7 @@
 import b2, { Vec2 } from '@cocos/box2d';
 import { Color } from '../../../core';
 import { PHYSICS_2D_PTM_RATIO } from '../../framework';
-import { Graphics } from '../../../2d';
+import type { Graphics } from '../../../2d/components/graphics';
 
 const _tmp_vec2 = new b2.Vec2();
 const _tmp_color = new Color();

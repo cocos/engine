@@ -38,7 +38,6 @@ export { Vec4, v4 } from './vec4';
 export { Quat, quat } from './quat';
 export { Mat3 } from './mat3';
 export { Mat4, mat4 } from './mat4';
-export { AffineTransform } from './affine-transform';
 export { Size, size } from './size';
 export { Rect, rect } from './rect';
 export { Color, color } from './color';

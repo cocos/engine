@@ -26,7 +26,8 @@ import { UIRenderer } from '../2d/framework/ui-renderer';
 import { warnID } from '../core/platform/debug';
 import { UIMeshRenderer } from '../2d';
 import type { Node } from './node';
-import type { UITransform, UISkew } from '../2d/framework';
+import type { UITransform } from '../2d/framework';
+import type { UISkew } from '../2d/framework/ui-skew';
 
 /**
  * @en Node's UI properties abstraction

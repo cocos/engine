@@ -26,7 +26,7 @@ import { Color, Vec3 } from '../../../../core';
 import { IAssembler } from '../../../renderer/base';
 import { MeshRenderData } from '../../../renderer/render-data';
 import { IBatcher } from '../../../renderer/i-batcher';
-import { Graphics } from '../../../components';
+import { Graphics } from '../../../components/graphics';
 import { LineCap, LineJoin, PointFlags } from '../types';
 import { earcut as Earcut } from './earcut';
 import { Impl, Point } from './impl';

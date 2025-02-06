@@ -953,6 +953,26 @@ module.exports = link(mixin({
             label: "基础 2D 功能",
             description: "常用于一般 2D 应用的工具与组件。",
         },
+        rich_text: {
+            label: "富文本",
+            description: "富文本支持。",
+        },
+        mask: {
+            label: "遮罩",
+            description: "遮罩功能支持。",
+        },
+        graphics_2d: {
+            label: "图形绘制",
+            description: "2D 图形绘制支持。",
+        },
+        ui_skew: {
+            label: "斜切",
+            description: "斜切支持。",
+        },
+        affine_transform: {
+            label: "2D 仿射变换",
+            description: "2D 仿射变换支持。",
+        },
         physics_2d: {
             label: "2D 物理系统",
             description: "应用于 2D 的物理系统支持。",

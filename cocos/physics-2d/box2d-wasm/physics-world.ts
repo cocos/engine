@@ -26,10 +26,10 @@ import { EDITOR_NOT_IN_PREVIEW } from 'internal:constants';
 import { B2, getImplPtr, addImplPtrReference, addImplPtrReferenceWASM,
     getTSObjectFromWASMObjectPtr, removeImplPtrReference, removeImplPtrReferenceWASM, B2ObjectType } from './instantiated';
 import { IPhysicsWorld } from '../spec/i-physics-world';
-import { IVec2Like, Vec3, Quat, Vec2, toDegree, Rect, CCObjectFlags, js } from '../../core';
+import { IVec2Like, Vec3, Quat, Vec2, toDegree, Rect, CCObjectFlags, js, errorID } from '../../core';
 import { PHYSICS_2D_PTM_RATIO, ERaycast2DType, ERigidBody2DType } from '../framework/physics-types';
 import { Canvas } from '../../2d/framework';
-import { Graphics } from '../../2d/components';
+import type { Graphics } from '../../2d/components/graphics';
 
 import { B2RigidBody2D } from './rigid-body';
 import { PhysicsContactListener } from './platform/physics-contact-listener';
@@ -133,18 +133,24 @@ export class B2PhysicsWorld implements IPhysicsWorld {
             node.worldPosition = Vec3.ZERO;
             node.layer = Layers.Enum.UI_2D;
 
-            this._debugGraphics = node.addComponent(Graphics);
-            this._debugGraphics.lineWidth = 3;
+            try {
+                this._debugGraphics = node.addComponent('cc.Graphics') as Graphics;
+                this._debugGraphics.lineWidth = 3;
 
-            PhysicsDebugDraw._drawer = this._debugGraphics;
-            const debugDraw = B2.Draw.implement(PhysicsDebugDraw.callback);//new PhysicsDebugDraw();
+                PhysicsDebugDraw._drawer = this._debugGraphics;
+                const debugDraw = B2.Draw.implement(PhysicsDebugDraw.callback);//new PhysicsDebugDraw();
 
-            this._b2DebugDrawer = debugDraw;
-            this._world.SetDebugDraw(debugDraw as B2.Draw);
+                this._b2DebugDrawer = debugDraw;
+                this._world.SetDebugDraw(debugDraw as B2.Draw);
+            } catch (e: any) {
+                errorID(4501, e.message as string);
+            }
         }
 
-        const parent = this._debugGraphics.node.parent!;
-        this._debugGraphics.node.setSiblingIndex(parent.children.length - 1);
+        if (this._debugGraphics) {
+            const parent = this._debugGraphics.node.parent!;
+            this._debugGraphics.node.setSiblingIndex(parent.children.length - 1);
+        }
 
         if (this._b2DebugDrawer) {
             this._b2DebugDrawer.SetFlags(this.debugDrawFlags);

@@ -54,8 +54,27 @@
                 "f0416e68-0200-4b77-a926-4f9d16e494da"
             ]
         },
+        "rich-text": {
+            "modules": ["rich-text"],
+            "dependentModules": ["2d"]
+        },
+        "mask": {
+            "modules": ["mask"],
+            "dependentModules": ["2d"]
+        },
+        "graphics": {
+            "modules": ["graphics"],
+            "dependentModules": ["2d"]
+        },
+        "ui-skew": {
+            "modules": ["ui-skew"],
+            "dependentModules": ["2d"]
+        },
         "ui": {
             "modules": ["ui", "2d"]
+        },
+        "affine-transform": {
+            "modules": ["affine-transform"]
         },
         "particle": {
             "modules": ["particle"],
@@ -691,6 +710,18 @@
             "comment": "An internal constant to indicate whether we need to load physx wasm/asmjs module manually.",
             "type": "boolean",
             "value": false,
+            "internal": true
+        },
+        "USE_3D": {
+            "comment": "An internal constant to indicate whether we're using 3d module.",
+            "type": "boolean",
+            "value": true,
+            "internal": true
+        },
+        "USE_UI_SKEW": {
+            "comment": "An internal constant to indicate whether we're using ui-skew module.",
+            "type": "boolean",
+            "value": true,
             "internal": true
         }
     },

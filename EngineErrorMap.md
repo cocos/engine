@@ -2003,6 +2003,10 @@ Invalid RichText img tag! The sprite frame name can't be found in the ImageAtlas
 
 Graphics: There is no model in %s.
 
+### 4501
+
+Graphics feature is not enabled in 'Project Settings -> Feature Cropping', %s
+
 ### 4600
 
 Script attached to '%s' is missing or invalid.
