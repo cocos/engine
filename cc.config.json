@@ -272,7 +272,6 @@
                 "cocos/rendering/geometry-renderer.ts": "cocos/rendering/geometry-renderer.jsb.ts",
                 "cocos/rendering/custom/index.ts": "cocos/rendering/custom/index.jsb.ts",
                 "cocos/rendering/legacy/index.ts": "cocos/rendering/legacy/index.jsb.ts",
-                "cocos/render-scene/core/native-pools.ts": "cocos/render-scene/core/native-pools.jsb.ts",
                 "cocos/render-scene/core/material-instance.ts": "cocos/render-scene/core/material-instance.jsb.ts",
                 "cocos/render-scene/core/pass.ts": "cocos/render-scene/core/pass.jsb.ts",
                 "cocos/render-scene/core/program-lib.ts": "cocos/render-scene/core/program-lib.jsb.ts",
